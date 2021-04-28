@@ -1,5 +1,4 @@
 package de.uniks.stp.wedoit.accord.client.model;
-
 import java.util.Objects;
 import java.beans.PropertyChangeSupport;
 

@@ -10,13 +10,13 @@ public class LocalUser
 {
    public static final String PROPERTY_NAME = "name";
    public static final String PROPERTY_USER_KEY = "userKey";
-   public static final String PROPERTY_USERS = "users";
    public static final String PROPERTY_SERVERS = "servers";
+   public static final String PROPERTY_USERS = "users";
    private String name;
    private String userKey;
+   private List<Server> servers;
    private List<User> users;
    protected PropertyChangeSupport listeners;
-   private List<Server> servers;
 
    public String getName()
    {
@@ -51,72 +51,6 @@ public class LocalUser
       final String oldValue = this.userKey;
       this.userKey = value;
       this.firePropertyChange(PROPERTY_USER_KEY, oldValue, value);
-      return this;
-   }
-
-   public List<User> getUsers()
-   {
-      return this.users != null ? Collections.unmodifiableList(this.users) : Collections.emptyList();
-   }
-
-   public LocalUser withUsers(User value)
-   {
-      if (this.users == null)
-      {
-         this.users = new ArrayList<>();
-      }
-      if (!this.users.contains(value))
-      {
-         this.users.add(value);
-         value.setLocalUser(this);
-         this.firePropertyChange(PROPERTY_USERS, null, value);
-      }
-      return this;
-   }
-
-   public LocalUser withUsers(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withUsers(item);
-      }
-      return this;
-   }
-
-   public LocalUser withUsers(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withUsers(item);
-      }
-      return this;
-   }
-
-   public LocalUser withoutUsers(User value)
-   {
-      if (this.users != null && this.users.remove(value))
-      {
-         value.setLocalUser(null);
-         this.firePropertyChange(PROPERTY_USERS, value, null);
-      }
-      return this;
-   }
-
-   public LocalUser withoutUsers(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withoutUsers(item);
-      }
-      return this;
-   }
-
-   public LocalUser withoutUsers(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withoutUsers(item);
-      }
       return this;
    }
 
@@ -182,6 +116,72 @@ public class LocalUser
       for (final Server item : value)
       {
          this.withoutServers(item);
+      }
+      return this;
+   }
+
+   public List<User> getUsers()
+   {
+      return this.users != null ? Collections.unmodifiableList(this.users) : Collections.emptyList();
+   }
+
+   public LocalUser withUsers(User value)
+   {
+      if (this.users == null)
+      {
+         this.users = new ArrayList<>();
+      }
+      if (!this.users.contains(value))
+      {
+         this.users.add(value);
+         value.setLocalUser(this);
+         this.firePropertyChange(PROPERTY_USERS, null, value);
+      }
+      return this;
+   }
+
+   public LocalUser withUsers(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withUsers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withUsers(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withUsers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutUsers(User value)
+   {
+      if (this.users != null && this.users.remove(value))
+      {
+         value.setLocalUser(null);
+         this.firePropertyChange(PROPERTY_USERS, value, null);
+      }
+      return this;
+   }
+
+   public LocalUser withoutUsers(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withoutUsers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutUsers(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withoutUsers(item);
       }
       return this;
    }

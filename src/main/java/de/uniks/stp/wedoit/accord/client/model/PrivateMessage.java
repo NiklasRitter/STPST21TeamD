@@ -8,15 +8,15 @@ public class PrivateMessage
    public static final String PROPERTY_TIMESTAMP = "timestamp";
    public static final String PROPERTY_TEXT = "text";
    public static final String PROPERTY_FROM = "from";
-   public static final String PROPERTY_CHAT = "chat";
    public static final String PROPERTY_TO = "to";
+   public static final String PROPERTY_CHAT = "chat";
    private String id;
    private long timestamp;
    private String text;
    private String from;
+   private String to;
    private Chat chat;
    protected PropertyChangeSupport listeners;
-   private String to;
 
    public String getId()
    {
@@ -90,6 +90,24 @@ public class PrivateMessage
       return this;
    }
 
+   public String getTo()
+   {
+      return this.to;
+   }
+
+   public PrivateMessage setTo(String value)
+   {
+      if (Objects.equals(value, this.to))
+      {
+         return this;
+      }
+
+      final String oldValue = this.to;
+      this.to = value;
+      this.firePropertyChange(PROPERTY_TO, oldValue, value);
+      return this;
+   }
+
    public Chat getChat()
    {
       return this.chat;
@@ -114,24 +132,6 @@ public class PrivateMessage
          value.withMessages(this);
       }
       this.firePropertyChange(PROPERTY_CHAT, oldValue, value);
-      return this;
-   }
-
-   public String getTo()
-   {
-      return this.to;
-   }
-
-   public PrivateMessage setTo(String value)
-   {
-      if (Objects.equals(value, this.to))
-      {
-         return this;
-      }
-
-      final String oldValue = this.to;
-      this.to = value;
-      this.firePropertyChange(PROPERTY_TO, oldValue, value);
       return this;
    }
 

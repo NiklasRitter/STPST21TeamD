@@ -4,8 +4,8 @@
   defaultPropertyStyle: 	Bean
   defaultRoleType: 	"java.util.ArrayList<%s>"
   mainJavaDir: 	"src/main/java"
-  packageName: 	de.uniks.stp.wedoit.accord.client
-  packageSrcFolder: 	"src/main/java/de/uniks/stp/wedoit/accord/client"
+  packageName: 	de.uniks.stp.wedoit.accord.client.model
+  packageSrcFolder: 	"src/main/java/de/uniks/stp/wedoit/accord/client/model"
 
 - privateMessage: 	org.fulib.classmodel.Clazz
   attributes: 	privateMessage_id 	privateMessage_timestamp 	privateMessage_text 	privateMessage_from 	privateMessage_to

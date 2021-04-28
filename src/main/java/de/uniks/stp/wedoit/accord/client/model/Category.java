@@ -1,19 +1,18 @@
 package de.uniks.stp.wedoit.accord.client.model;
-
 import java.util.Objects;
 import java.beans.PropertyChangeSupport;
 
 public class Category
 {
    public static final String PROPERTY_NAME = "name";
-   public static final String PROPERTY_SERVER = "server";
    public static final String PROPERTY_ID = "id";
    public static final String PROPERTY_CHANNEL = "channel";
+   public static final String PROPERTY_SERVER = "server";
    private String name;
-   private Server server;
-   protected PropertyChangeSupport listeners;
    private String id;
    private Channel channel;
+   private Server server;
+   protected PropertyChangeSupport listeners;
 
    public String getName()
    {
@@ -30,33 +29,6 @@ public class Category
       final String oldValue = this.name;
       this.name = value;
       this.firePropertyChange(PROPERTY_NAME, oldValue, value);
-      return this;
-   }
-
-   public Server getServer()
-   {
-      return this.server;
-   }
-
-   public Category setServer(Server value)
-   {
-      if (this.server == value)
-      {
-         return this;
-      }
-
-      final Server oldValue = this.server;
-      if (this.server != null)
-      {
-         this.server = null;
-         oldValue.withoutCategories(this);
-      }
-      this.server = value;
-      if (value != null)
-      {
-         value.withCategories(this);
-      }
-      this.firePropertyChange(PROPERTY_SERVER, oldValue, value);
       return this;
    }
 
@@ -102,6 +74,33 @@ public class Category
          value.setCategory(this);
       }
       this.firePropertyChange(PROPERTY_CHANNEL, oldValue, value);
+      return this;
+   }
+
+   public Server getServer()
+   {
+      return this.server;
+   }
+
+   public Category setServer(Server value)
+   {
+      if (this.server == value)
+      {
+         return this;
+      }
+
+      final Server oldValue = this.server;
+      if (this.server != null)
+      {
+         this.server = null;
+         oldValue.withoutCategories(this);
+      }
+      this.server = value;
+      if (value != null)
+      {
+         value.withCategories(this);
+      }
+      this.firePropertyChange(PROPERTY_SERVER, oldValue, value);
       return this;
    }
 

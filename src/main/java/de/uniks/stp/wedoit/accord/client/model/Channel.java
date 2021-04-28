@@ -1,5 +1,4 @@
 package de.uniks.stp.wedoit.accord.client.model;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
