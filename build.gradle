@@ -2,6 +2,8 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'java'
+	// https://plugins.gradle.org/plugin/org.fulib.fulibGradle
+	id 'org.fulib.fulibGradle' version '0.5.0'
 }
 
 javafx {
@@ -9,17 +11,43 @@ javafx {
     modules = ['javafx.controls', 'javafx.graphics']
 }
 
-group 'de.uniks.stp'
+group 'de.uniks.stp.wedoit.accord.client'
 version '1.0.0'
 
 repositories {
     mavenCentral()
     jcenter()
+	mavenLocal()
 }
 
 dependencies {
+
+	// https://mvnrepository.com/artifact/org.fulib/fulibScenarios
+	fulibScenarios group: 'org.fulib', name: 'fulibScenarios', version: '1.7.0'
+	
+	// https://mvnrepository.com/artifact/org.fulib/fulibTools
+	testImplementation group: 'org.fulib', name: 'fulibTools', version: '1.5.1'
+
+	// https://mvnrepository.com/artifact/org.fulib/fulibTables
+	testImplementation group: 'org.fulib', name: 'fulibTables', version: '1.4.0'
+
+	// https://mvnrepository.com/artifact/org.fulib/fulibMockups
+	testImplementation group: 'org.fulib', name: 'fulibMockups', version: '0.4.0'
+
+	// https://mvnrepository.com/artifact/junit/junit
+	testImplementation group: 'junit', name: 'junit', version: '4.13'
+
+	// https://mvnrepository.com/artifact/org.slf4j/slf4j-nop
+	testImplementation group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.30'
 
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.1'
 }
+
+generateScenarioSource {
+	classDiagramSVG = true
+}
+
+mainClassName = "de.uniks.stp.wedoit.accord.client.Launcher"
+

@@ -1,0 +1,40 @@
+- c: 	org.fulib.classmodel.ClassModel
+  classes: 	scenarioTest
+  defaultCollectionType: 	c1
+  defaultPropertyStyle: 	Bean
+  defaultRoleType: 	"java.util.ArrayList<%s>"
+  mainJavaDir: 	"src/test/java"
+  packageName: 	de.uniks.stp.wedoit.accord.client
+  packageSrcFolder: 	"src/test/java/de/uniks/stp/wedoit/accord/client"
+
+- scenarioTest: 	org.fulib.classmodel.Clazz
+  importList: 	org.junit.Test
+  imports: 	org.junit.Test
+  methods: 	scenarioTest_myFirstScenario
+  model: 	c
+  modified: 	false
+  name: 	ScenarioTest
+  propertyStyle: 	Bean
+
+- c1: 	org.fulib.classmodel.CollectionType
+  implClass: 	class java.util.ArrayList
+  implTemplate: 	"java.util.ArrayList<%s>"
+  itf: 	org.fulib.classmodel.CollectionInterface.List
+  qualifiedImplName: 	java.util.ArrayList
+  simpleImplName: 	ArrayList
+
+- scenarioTest_myFirstScenario: 	org.fulib.classmodel.FMethod
+  annotations: 	"@Test"
+  clazz: 	scenarioTest
+  declaration: 	"@Test
+public void myFirstScenario()"
+  id: 	ScenarioTest_myFirstScenario
+  methodBody: 	"      // start typing your scenario or select an example using the dropdown above.
+"
+  modified: 	false
+  modifiers: 	public
+  name: 	myFirstScenario
+  paramsString: 	""
+  returnType: 	void
+  signature: 	"class/ScenarioTest/method/myFirstScenario()"
+

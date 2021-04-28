@@ -1,0 +1,494 @@
+- c: 	org.fulib.classmodel.ClassModel
+  classes: 	privateMessage 	chat 	message 	channel 	category 	server 	user 	localUser
+  defaultCollectionType: 	c1
+  defaultPropertyStyle: 	Bean
+  defaultRoleType: 	"java.util.ArrayList<%s>"
+  mainJavaDir: 	"src/main/java"
+  packageName: 	de.uniks.stp.wedoit.accord.client.model
+  packageSrcFolder: 	"src/main/java/de/uniks/stp/wedoit/accord/client/model"
+
+- privateMessage: 	org.fulib.classmodel.Clazz
+  attributes: 	privateMessage_id 	privateMessage_timestamp 	privateMessage_text 	privateMessage_from 	privateMessage_to
+  model: 	c
+  modified: 	false
+  name: 	PrivateMessage
+  propertyStyle: 	Bean
+  roles: 	privateMessage_chat
+
+- chat: 	org.fulib.classmodel.Clazz
+  attributes: 	chat_name
+  model: 	c
+  modified: 	false
+  name: 	Chat
+  propertyStyle: 	Bean
+  roles: 	chat_messages 	chat_user
+
+- message: 	org.fulib.classmodel.Clazz
+  attributes: 	message_id 	message_timestamp 	message_text 	message_from
+  model: 	c
+  modified: 	false
+  name: 	Message
+  propertyStyle: 	Bean
+  roles: 	message_channel
+
+- channel: 	org.fulib.classmodel.Clazz
+  attributes: 	channel_id 	channel_name 	channel_type 	channel_privileged
+  model: 	c
+  modified: 	false
+  name: 	Channel
+  propertyStyle: 	Bean
+  roles: 	channel_messages 	channel_category 	channel_members
+
+- category: 	org.fulib.classmodel.Clazz
+  attributes: 	category_name 	category_id
+  model: 	c
+  modified: 	false
+  name: 	Category
+  propertyStyle: 	Bean
+  roles: 	category_channel 	category_server
+
+- server: 	org.fulib.classmodel.Clazz
+  attributes: 	server_name 	server_id 	server_owner
+  model: 	c
+  modified: 	false
+  name: 	Server
+  propertyStyle: 	Bean
+  roles: 	server_categories 	server_members 	server_localUser
+
+- user: 	org.fulib.classmodel.Clazz
+  attributes: 	user_name 	user_onlineStatus 	user_id
+  model: 	c
+  modified: 	false
+  name: 	User
+  propertyStyle: 	Bean
+  roles: 	user_channels 	user_servers 	user_privateChat 	user_localUser
+
+- localUser: 	org.fulib.classmodel.Clazz
+  attributes: 	localUser_name 	localUser_userKey
+  model: 	c
+  modified: 	false
+  name: 	LocalUser
+  propertyStyle: 	Bean
+  roles: 	localUser_servers 	localUser_users
+
+- c1: 	org.fulib.classmodel.CollectionType
+  implClass: 	class java.util.ArrayList
+  implTemplate: 	"java.util.ArrayList<%s>"
+  itf: 	org.fulib.classmodel.CollectionInterface.List
+  qualifiedImplName: 	java.util.ArrayList
+  simpleImplName: 	ArrayList
+
+- privateMessage_id: 	org.fulib.classmodel.Attribute
+  clazz: 	privateMessage
+  id: 	PrivateMessage_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- privateMessage_timestamp: 	org.fulib.classmodel.Attribute
+  clazz: 	privateMessage
+  id: 	PrivateMessage_timestamp
+  modified: 	false
+  name: 	timestamp
+  propertyStyle: 	Bean
+  type: 	long
+  typeSignature: 	long
+
+- privateMessage_text: 	org.fulib.classmodel.Attribute
+  clazz: 	privateMessage
+  id: 	PrivateMessage_text
+  modified: 	false
+  name: 	text
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- privateMessage_from: 	org.fulib.classmodel.Attribute
+  clazz: 	privateMessage
+  id: 	PrivateMessage_from
+  modified: 	false
+  name: 	from
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- privateMessage_to: 	org.fulib.classmodel.Attribute
+  clazz: 	privateMessage
+  id: 	PrivateMessage_to
+  modified: 	false
+  name: 	to
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- privateMessage_chat: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	privateMessage
+  id: 	PrivateMessage_chat
+  modified: 	false
+  name: 	chat
+  other: 	chat_messages
+  propertyStyle: 	Bean
+
+- chat_name: 	org.fulib.classmodel.Attribute
+  clazz: 	chat
+  id: 	Chat_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- chat_messages: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	chat
+  collectionType: 	c1
+  id: 	Chat_messages
+  modified: 	false
+  name: 	messages
+  other: 	privateMessage_chat
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- chat_user: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chat
+  id: 	Chat_user
+  modified: 	false
+  name: 	user
+  other: 	user_privateChat
+  propertyStyle: 	Bean
+
+- message_id: 	org.fulib.classmodel.Attribute
+  clazz: 	message
+  id: 	Message_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- message_timestamp: 	org.fulib.classmodel.Attribute
+  clazz: 	message
+  id: 	Message_timestamp
+  modified: 	false
+  name: 	timestamp
+  propertyStyle: 	Bean
+  type: 	long
+  typeSignature: 	long
+
+- message_text: 	org.fulib.classmodel.Attribute
+  clazz: 	message
+  id: 	Message_text
+  modified: 	false
+  name: 	text
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- message_from: 	org.fulib.classmodel.Attribute
+  clazz: 	message
+  id: 	Message_from
+  modified: 	false
+  name: 	from
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- message_channel: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	message
+  id: 	Message_channel
+  modified: 	false
+  name: 	channel
+  other: 	channel_messages
+  propertyStyle: 	Bean
+
+- channel_id: 	org.fulib.classmodel.Attribute
+  clazz: 	channel
+  id: 	Channel_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- channel_name: 	org.fulib.classmodel.Attribute
+  clazz: 	channel
+  id: 	Channel_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- channel_type: 	org.fulib.classmodel.Attribute
+  clazz: 	channel
+  id: 	Channel_type
+  modified: 	false
+  name: 	type
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- channel_privileged: 	org.fulib.classmodel.Attribute
+  clazz: 	channel
+  id: 	Channel_privileged
+  modified: 	false
+  name: 	privileged
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
+- channel_messages: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	channel
+  collectionType: 	c1
+  id: 	Channel_messages
+  modified: 	false
+  name: 	messages
+  other: 	message_channel
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- channel_category: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	channel
+  id: 	Channel_category
+  modified: 	false
+  name: 	category
+  other: 	category_channel
+  propertyStyle: 	Bean
+
+- channel_members: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	channel
+  collectionType: 	c1
+  id: 	Channel_members
+  modified: 	false
+  name: 	members
+  other: 	user_channels
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- category_name: 	org.fulib.classmodel.Attribute
+  clazz: 	category
+  id: 	Category_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- category_id: 	org.fulib.classmodel.Attribute
+  clazz: 	category
+  id: 	Category_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- category_channel: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	category
+  id: 	Category_channel
+  modified: 	false
+  name: 	channel
+  other: 	channel_category
+  propertyStyle: 	Bean
+
+- category_server: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	category
+  id: 	Category_server
+  modified: 	false
+  name: 	server
+  other: 	server_categories
+  propertyStyle: 	Bean
+
+- server_name: 	org.fulib.classmodel.Attribute
+  clazz: 	server
+  id: 	Server_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- server_id: 	org.fulib.classmodel.Attribute
+  clazz: 	server
+  id: 	Server_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- server_owner: 	org.fulib.classmodel.Attribute
+  clazz: 	server
+  id: 	Server_owner
+  modified: 	false
+  name: 	owner
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- server_categories: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	server
+  collectionType: 	c1
+  id: 	Server_categories
+  modified: 	false
+  name: 	categories
+  other: 	category_server
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- server_members: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	server
+  collectionType: 	c1
+  id: 	Server_members
+  modified: 	false
+  name: 	members
+  other: 	user_servers
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- server_localUser: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	server
+  id: 	Server_localUser
+  modified: 	false
+  name: 	localUser
+  other: 	localUser_servers
+  propertyStyle: 	Bean
+
+- user_name: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- user_onlineStatus: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_onlineStatus
+  modified: 	false
+  name: 	onlineStatus
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
+- user_id: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- user_channels: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	user
+  collectionType: 	c1
+  id: 	User_channels
+  modified: 	false
+  name: 	channels
+  other: 	channel_members
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- user_servers: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	user
+  collectionType: 	c1
+  id: 	User_servers
+  modified: 	false
+  name: 	servers
+  other: 	server_members
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- user_privateChat: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	user
+  id: 	User_privateChat
+  modified: 	false
+  name: 	privateChat
+  other: 	chat_user
+  propertyStyle: 	Bean
+
+- user_localUser: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	user
+  id: 	User_localUser
+  modified: 	false
+  name: 	localUser
+  other: 	localUser_users
+  propertyStyle: 	Bean
+
+- localUser_name: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- localUser_userKey: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_userKey
+  modified: 	false
+  name: 	userKey
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- localUser_servers: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	localUser
+  collectionType: 	c1
+  id: 	LocalUser_servers
+  modified: 	false
+  name: 	servers
+  other: 	server_localUser
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- localUser_users: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	localUser
+  collectionType: 	c1
+  id: 	LocalUser_users
+  modified: 	false
+  name: 	users
+  other: 	user_localUser
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
