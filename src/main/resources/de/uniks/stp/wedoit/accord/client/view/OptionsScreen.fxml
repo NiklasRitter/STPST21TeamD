@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox alignment="CENTER" minHeight="100.0" minWidth="267.0" prefHeight="100.0" prefWidth="267.0" spacing="20.0" style="-fx-background-color: BEIGE;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="Darkmode:">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <RadioButton id="rbtnDarkmode" mnemonicParsing="false" />
+   </children>
+</HBox>
