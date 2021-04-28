@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client;
+package de.uniks.stp.wedoit.accord.client.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,13 +10,13 @@ public class LocalUser
 {
    public static final String PROPERTY_NAME = "name";
    public static final String PROPERTY_USER_KEY = "userKey";
-   public static final String PROPERTY_SERVERS = "servers";
    public static final String PROPERTY_USERS = "users";
+   public static final String PROPERTY_SERVERS = "servers";
    private String name;
    private String userKey;
-   private List<Server> servers;
    private List<User> users;
    protected PropertyChangeSupport listeners;
+   private List<Server> servers;
 
    public String getName()
    {
@@ -51,72 +51,6 @@ public class LocalUser
       final String oldValue = this.userKey;
       this.userKey = value;
       this.firePropertyChange(PROPERTY_USER_KEY, oldValue, value);
-      return this;
-   }
-
-   public List<Server> getServers()
-   {
-      return this.servers != null ? Collections.unmodifiableList(this.servers) : Collections.emptyList();
-   }
-
-   public LocalUser withServers(Server value)
-   {
-      if (this.servers == null)
-      {
-         this.servers = new ArrayList<>();
-      }
-      if (!this.servers.contains(value))
-      {
-         this.servers.add(value);
-         value.setLocalUser(this);
-         this.firePropertyChange(PROPERTY_SERVERS, null, value);
-      }
-      return this;
-   }
-
-   public LocalUser withServers(Server... value)
-   {
-      for (final Server item : value)
-      {
-         this.withServers(item);
-      }
-      return this;
-   }
-
-   public LocalUser withServers(Collection<? extends Server> value)
-   {
-      for (final Server item : value)
-      {
-         this.withServers(item);
-      }
-      return this;
-   }
-
-   public LocalUser withoutServers(Server value)
-   {
-      if (this.servers != null && this.servers.remove(value))
-      {
-         value.setLocalUser(null);
-         this.firePropertyChange(PROPERTY_SERVERS, value, null);
-      }
-      return this;
-   }
-
-   public LocalUser withoutServers(Server... value)
-   {
-      for (final Server item : value)
-      {
-         this.withoutServers(item);
-      }
-      return this;
-   }
-
-   public LocalUser withoutServers(Collection<? extends Server> value)
-   {
-      for (final Server item : value)
-      {
-         this.withoutServers(item);
-      }
       return this;
    }
 
@@ -182,6 +116,72 @@ public class LocalUser
       for (final User item : value)
       {
          this.withoutUsers(item);
+      }
+      return this;
+   }
+
+   public List<Server> getServers()
+   {
+      return this.servers != null ? Collections.unmodifiableList(this.servers) : Collections.emptyList();
+   }
+
+   public LocalUser withServers(Server value)
+   {
+      if (this.servers == null)
+      {
+         this.servers = new ArrayList<>();
+      }
+      if (!this.servers.contains(value))
+      {
+         this.servers.add(value);
+         value.setLocalUser(this);
+         this.firePropertyChange(PROPERTY_SERVERS, null, value);
+      }
+      return this;
+   }
+
+   public LocalUser withServers(Server... value)
+   {
+      for (final Server item : value)
+      {
+         this.withServers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withServers(Collection<? extends Server> value)
+   {
+      for (final Server item : value)
+      {
+         this.withServers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutServers(Server value)
+   {
+      if (this.servers != null && this.servers.remove(value))
+      {
+         value.setLocalUser(null);
+         this.firePropertyChange(PROPERTY_SERVERS, value, null);
+      }
+      return this;
+   }
+
+   public LocalUser withoutServers(Server... value)
+   {
+      for (final Server item : value)
+      {
+         this.withoutServers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutServers(Collection<? extends Server> value)
+   {
+      for (final Server item : value)
+      {
+         this.withoutServers(item);
       }
       return this;
    }

@@ -1,21 +1,20 @@
-package de.uniks.stp.wedoit.accord.client;
+package de.uniks.stp.wedoit.accord.client.model;
+
 import java.util.Objects;
 import java.beans.PropertyChangeSupport;
 
-public class PrivateMessage
+public class Message
 {
    public static final String PROPERTY_ID = "id";
    public static final String PROPERTY_TIMESTAMP = "timestamp";
    public static final String PROPERTY_TEXT = "text";
    public static final String PROPERTY_FROM = "from";
-   public static final String PROPERTY_TO = "to";
-   public static final String PROPERTY_CHAT = "chat";
+   public static final String PROPERTY_CHANNEL = "channel";
    private String id;
    private long timestamp;
    private String text;
    private String from;
-   private String to;
-   private Chat chat;
+   private Channel channel;
    protected PropertyChangeSupport listeners;
 
    public String getId()
@@ -23,7 +22,7 @@ public class PrivateMessage
       return this.id;
    }
 
-   public PrivateMessage setId(String value)
+   public Message setId(String value)
    {
       if (Objects.equals(value, this.id))
       {
@@ -41,7 +40,7 @@ public class PrivateMessage
       return this.timestamp;
    }
 
-   public PrivateMessage setTimestamp(long value)
+   public Message setTimestamp(long value)
    {
       if (value == this.timestamp)
       {
@@ -59,7 +58,7 @@ public class PrivateMessage
       return this.text;
    }
 
-   public PrivateMessage setText(String value)
+   public Message setText(String value)
    {
       if (Objects.equals(value, this.text))
       {
@@ -77,7 +76,7 @@ public class PrivateMessage
       return this.from;
    }
 
-   public PrivateMessage setFrom(String value)
+   public Message setFrom(String value)
    {
       if (Objects.equals(value, this.from))
       {
@@ -90,48 +89,30 @@ public class PrivateMessage
       return this;
    }
 
-   public String getTo()
+   public Channel getChannel()
    {
-      return this.to;
+      return this.channel;
    }
 
-   public PrivateMessage setTo(String value)
+   public Message setChannel(Channel value)
    {
-      if (Objects.equals(value, this.to))
+      if (this.channel == value)
       {
          return this;
       }
 
-      final String oldValue = this.to;
-      this.to = value;
-      this.firePropertyChange(PROPERTY_TO, oldValue, value);
-      return this;
-   }
-
-   public Chat getChat()
-   {
-      return this.chat;
-   }
-
-   public PrivateMessage setChat(Chat value)
-   {
-      if (this.chat == value)
+      final Channel oldValue = this.channel;
+      if (this.channel != null)
       {
-         return this;
-      }
-
-      final Chat oldValue = this.chat;
-      if (this.chat != null)
-      {
-         this.chat = null;
+         this.channel = null;
          oldValue.withoutMessages(this);
       }
-      this.chat = value;
+      this.channel = value;
       if (value != null)
       {
          value.withMessages(this);
       }
-      this.firePropertyChange(PROPERTY_CHAT, oldValue, value);
+      this.firePropertyChange(PROPERTY_CHANNEL, oldValue, value);
       return this;
    }
 
@@ -161,12 +142,11 @@ public class PrivateMessage
       result.append(' ').append(this.getId());
       result.append(' ').append(this.getText());
       result.append(' ').append(this.getFrom());
-      result.append(' ').append(this.getTo());
       return result.substring(1);
    }
 
    public void removeYou()
    {
-      this.setChat(null);
+      this.setChannel(null);
    }
 }

@@ -1,4 +1,5 @@
-package de.uniks.stp.wedoit.accord.client;
+package de.uniks.stp.wedoit.accord.client.model;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -9,18 +10,18 @@ import java.beans.PropertyChangeSupport;
 public class Server
 {
    public static final String PROPERTY_NAME = "name";
+   public static final String PROPERTY_CATEGORIES = "categories";
+   public static final String PROPERTY_LOCAL_USER = "localUser";
    public static final String PROPERTY_ID = "id";
    public static final String PROPERTY_OWNER = "owner";
-   public static final String PROPERTY_CATEGORIES = "categories";
    public static final String PROPERTY_MEMBERS = "members";
-   public static final String PROPERTY_LOCAL_USER = "localUser";
    private String name;
-   private String id;
-   private String owner;
    private List<Category> categories;
-   private List<User> members;
    private LocalUser localUser;
    protected PropertyChangeSupport listeners;
+   private String id;
+   private String owner;
+   private List<User> members;
 
    public String getName()
    {
@@ -37,42 +38,6 @@ public class Server
       final String oldValue = this.name;
       this.name = value;
       this.firePropertyChange(PROPERTY_NAME, oldValue, value);
-      return this;
-   }
-
-   public String getId()
-   {
-      return this.id;
-   }
-
-   public Server setId(String value)
-   {
-      if (Objects.equals(value, this.id))
-      {
-         return this;
-      }
-
-      final String oldValue = this.id;
-      this.id = value;
-      this.firePropertyChange(PROPERTY_ID, oldValue, value);
-      return this;
-   }
-
-   public String getOwner()
-   {
-      return this.owner;
-   }
-
-   public Server setOwner(String value)
-   {
-      if (Objects.equals(value, this.owner))
-      {
-         return this;
-      }
-
-      final String oldValue = this.owner;
-      this.owner = value;
-      this.firePropertyChange(PROPERTY_OWNER, oldValue, value);
       return this;
    }
 
@@ -142,6 +107,69 @@ public class Server
       return this;
    }
 
+   public LocalUser getLocalUser()
+   {
+      return this.localUser;
+   }
+
+   public Server setLocalUser(LocalUser value)
+   {
+      if (this.localUser == value)
+      {
+         return this;
+      }
+
+      final LocalUser oldValue = this.localUser;
+      if (this.localUser != null)
+      {
+         this.localUser = null;
+         oldValue.withoutServers(this);
+      }
+      this.localUser = value;
+      if (value != null)
+      {
+         value.withServers(this);
+      }
+      this.firePropertyChange(PROPERTY_LOCAL_USER, oldValue, value);
+      return this;
+   }
+
+   public String getId()
+   {
+      return this.id;
+   }
+
+   public Server setId(String value)
+   {
+      if (Objects.equals(value, this.id))
+      {
+         return this;
+      }
+
+      final String oldValue = this.id;
+      this.id = value;
+      this.firePropertyChange(PROPERTY_ID, oldValue, value);
+      return this;
+   }
+
+   public String getOwner()
+   {
+      return this.owner;
+   }
+
+   public Server setOwner(String value)
+   {
+      if (Objects.equals(value, this.owner))
+      {
+         return this;
+      }
+
+      final String oldValue = this.owner;
+      this.owner = value;
+      this.firePropertyChange(PROPERTY_OWNER, oldValue, value);
+      return this;
+   }
+
    public List<User> getMembers()
    {
       return this.members != null ? Collections.unmodifiableList(this.members) : Collections.emptyList();
@@ -205,33 +233,6 @@ public class Server
       {
          this.withoutMembers(item);
       }
-      return this;
-   }
-
-   public LocalUser getLocalUser()
-   {
-      return this.localUser;
-   }
-
-   public Server setLocalUser(LocalUser value)
-   {
-      if (this.localUser == value)
-      {
-         return this;
-      }
-
-      final LocalUser oldValue = this.localUser;
-      if (this.localUser != null)
-      {
-         this.localUser = null;
-         oldValue.withoutServers(this);
-      }
-      this.localUser = value;
-      if (value != null)
-      {
-         value.withServers(this);
-      }
-      this.firePropertyChange(PROPERTY_LOCAL_USER, oldValue, value);
       return this;
    }
 

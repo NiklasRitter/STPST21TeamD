@@ -1,28 +1,29 @@
-package de.uniks.stp.wedoit.accord.client;
+package de.uniks.stp.wedoit.accord.client.model;
+
+import java.util.Objects;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Collections;
 import java.util.Collection;
-import java.beans.PropertyChangeSupport;
 
 public class User
 {
    public static final String PROPERTY_NAME = "name";
-   public static final String PROPERTY_ONLINE_STATUS = "onlineStatus";
+   public static final String PROPERTY_LOCAL_USER = "localUser";
    public static final String PROPERTY_ID = "id";
+   public static final String PROPERTY_PRIVATE_CHAT = "privateChat";
+   public static final String PROPERTY_ONLINE_STATUS = "onlineStatus";
    public static final String PROPERTY_CHANNELS = "channels";
    public static final String PROPERTY_SERVERS = "servers";
-   public static final String PROPERTY_PRIVATE_CHAT = "privateChat";
-   public static final String PROPERTY_LOCAL_USER = "localUser";
    private String name;
-   private boolean onlineStatus;
-   private String id;
-   private List<Channel> channels;
-   private List<Server> servers;
-   private Chat privateChat;
    private LocalUser localUser;
    protected PropertyChangeSupport listeners;
+   private String id;
+   private Chat privateChat;
+   private boolean onlineStatus;
+   private List<Channel> channels;
+   private List<Server> servers;
 
    public String getName()
    {
@@ -42,21 +43,30 @@ public class User
       return this;
    }
 
-   public boolean isOnlineStatus()
+   public LocalUser getLocalUser()
    {
-      return this.onlineStatus;
+      return this.localUser;
    }
 
-   public User setOnlineStatus(boolean value)
+   public User setLocalUser(LocalUser value)
    {
-      if (value == this.onlineStatus)
+      if (this.localUser == value)
       {
          return this;
       }
 
-      final boolean oldValue = this.onlineStatus;
-      this.onlineStatus = value;
-      this.firePropertyChange(PROPERTY_ONLINE_STATUS, oldValue, value);
+      final LocalUser oldValue = this.localUser;
+      if (this.localUser != null)
+      {
+         this.localUser = null;
+         oldValue.withoutUsers(this);
+      }
+      this.localUser = value;
+      if (value != null)
+      {
+         value.withUsers(this);
+      }
+      this.firePropertyChange(PROPERTY_LOCAL_USER, oldValue, value);
       return this;
    }
 
@@ -75,6 +85,51 @@ public class User
       final String oldValue = this.id;
       this.id = value;
       this.firePropertyChange(PROPERTY_ID, oldValue, value);
+      return this;
+   }
+
+   public Chat getPrivateChat()
+   {
+      return this.privateChat;
+   }
+
+   public User setPrivateChat(Chat value)
+   {
+      if (this.privateChat == value)
+      {
+         return this;
+      }
+
+      final Chat oldValue = this.privateChat;
+      if (this.privateChat != null)
+      {
+         this.privateChat = null;
+         oldValue.setUser(null);
+      }
+      this.privateChat = value;
+      if (value != null)
+      {
+         value.setUser(this);
+      }
+      this.firePropertyChange(PROPERTY_PRIVATE_CHAT, oldValue, value);
+      return this;
+   }
+
+   public boolean isOnlineStatus()
+   {
+      return this.onlineStatus;
+   }
+
+   public User setOnlineStatus(boolean value)
+   {
+      if (value == this.onlineStatus)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.onlineStatus;
+      this.onlineStatus = value;
+      this.firePropertyChange(PROPERTY_ONLINE_STATUS, oldValue, value);
       return this;
    }
 
@@ -207,60 +262,6 @@ public class User
       {
          this.withoutServers(item);
       }
-      return this;
-   }
-
-   public Chat getPrivateChat()
-   {
-      return this.privateChat;
-   }
-
-   public User setPrivateChat(Chat value)
-   {
-      if (this.privateChat == value)
-      {
-         return this;
-      }
-
-      final Chat oldValue = this.privateChat;
-      if (this.privateChat != null)
-      {
-         this.privateChat = null;
-         oldValue.setUser(null);
-      }
-      this.privateChat = value;
-      if (value != null)
-      {
-         value.setUser(this);
-      }
-      this.firePropertyChange(PROPERTY_PRIVATE_CHAT, oldValue, value);
-      return this;
-   }
-
-   public LocalUser getLocalUser()
-   {
-      return this.localUser;
-   }
-
-   public User setLocalUser(LocalUser value)
-   {
-      if (this.localUser == value)
-      {
-         return this;
-      }
-
-      final LocalUser oldValue = this.localUser;
-      if (this.localUser != null)
-      {
-         this.localUser = null;
-         oldValue.withoutUsers(this);
-      }
-      this.localUser = value;
-      if (value != null)
-      {
-         value.withUsers(this);
-      }
-      this.firePropertyChange(PROPERTY_LOCAL_USER, oldValue, value);
       return this;
    }
 

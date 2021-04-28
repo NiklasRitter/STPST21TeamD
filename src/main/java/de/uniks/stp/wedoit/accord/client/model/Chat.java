@@ -1,20 +1,20 @@
-package de.uniks.stp.wedoit.accord.client;
+package de.uniks.stp.wedoit.accord.client.model;
+import java.util.Objects;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Collections;
 import java.util.Collection;
-import java.beans.PropertyChangeSupport;
 
 public class Chat
 {
    public static final String PROPERTY_NAME = "name";
-   public static final String PROPERTY_MESSAGES = "messages";
    public static final String PROPERTY_USER = "user";
+   public static final String PROPERTY_MESSAGES = "messages";
    private String name;
-   private List<PrivateMessage> messages;
    private User user;
    protected PropertyChangeSupport listeners;
+   private List<PrivateMessage> messages;
 
    public String getName()
    {
@@ -31,6 +31,33 @@ public class Chat
       final String oldValue = this.name;
       this.name = value;
       this.firePropertyChange(PROPERTY_NAME, oldValue, value);
+      return this;
+   }
+
+   public User getUser()
+   {
+      return this.user;
+   }
+
+   public Chat setUser(User value)
+   {
+      if (this.user == value)
+      {
+         return this;
+      }
+
+      final User oldValue = this.user;
+      if (this.user != null)
+      {
+         this.user = null;
+         oldValue.setPrivateChat(null);
+      }
+      this.user = value;
+      if (value != null)
+      {
+         value.setPrivateChat(this);
+      }
+      this.firePropertyChange(PROPERTY_USER, oldValue, value);
       return this;
    }
 
@@ -97,33 +124,6 @@ public class Chat
       {
          this.withoutMessages(item);
       }
-      return this;
-   }
-
-   public User getUser()
-   {
-      return this.user;
-   }
-
-   public Chat setUser(User value)
-   {
-      if (this.user == value)
-      {
-         return this;
-      }
-
-      final User oldValue = this.user;
-      if (this.user != null)
-      {
-         this.user = null;
-         oldValue.setPrivateChat(null);
-      }
-      this.user = value;
-      if (value != null)
-      {
-         value.setPrivateChat(this);
-      }
-      this.firePropertyChange(PROPERTY_USER, oldValue, value);
       return this;
    }
 
