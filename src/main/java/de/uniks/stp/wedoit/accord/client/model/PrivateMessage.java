@@ -1,29 +1,29 @@
 package de.uniks.stp.wedoit.accord.client.model;
-import java.util.Objects;
+
 import java.beans.PropertyChangeSupport;
+import java.util.Objects;
 
-public class PrivateMessage
-{
-   public static final String PROPERTY_ID = "id";
-   public static final String PROPERTY_TIMESTAMP = "timestamp";
-   public static final String PROPERTY_TEXT = "text";
-   public static final String PROPERTY_FROM = "from";
-   public static final String PROPERTY_TO = "to";
-   public static final String PROPERTY_CHAT = "chat";
-   private String id;
-   private long timestamp;
-   private String text;
-   private String from;
-   private String to;
-   private Chat chat;
-   protected PropertyChangeSupport listeners;
+public class PrivateMessage {
+    public static final String PROPERTY_ID = "id";
+    public static final String PROPERTY_TIMESTAMP = "timestamp";
+    public static final String PROPERTY_TEXT = "text";
+    public static final String PROPERTY_FROM = "from";
+    public static final String PROPERTY_TO = "to";
+    public static final String PROPERTY_CHAT = "chat";
+    protected PropertyChangeSupport listeners;
+    private String id;
+    private long timestamp;
+    private String text;
+    private String from;
+    private String to;
+    private Chat chat;
 
-   public String getId()
+    public String getId()
    {
       return this.id;
    }
 
-   public PrivateMessage setId(String value)
+    public PrivateMessage setId(String value)
    {
       if (Objects.equals(value, this.id))
       {
@@ -36,12 +36,12 @@ public class PrivateMessage
       return this;
    }
 
-   public long getTimestamp()
+    public long getTimestamp()
    {
       return this.timestamp;
    }
 
-   public PrivateMessage setTimestamp(long value)
+    public PrivateMessage setTimestamp(long value)
    {
       if (value == this.timestamp)
       {
@@ -54,12 +54,12 @@ public class PrivateMessage
       return this;
    }
 
-   public String getText()
+    public String getText()
    {
       return this.text;
    }
 
-   public PrivateMessage setText(String value)
+    public PrivateMessage setText(String value)
    {
       if (Objects.equals(value, this.text))
       {
@@ -72,12 +72,12 @@ public class PrivateMessage
       return this;
    }
 
-   public String getFrom()
+    public String getFrom()
    {
       return this.from;
    }
 
-   public PrivateMessage setFrom(String value)
+    public PrivateMessage setFrom(String value)
    {
       if (Objects.equals(value, this.from))
       {
@@ -90,12 +90,12 @@ public class PrivateMessage
       return this;
    }
 
-   public String getTo()
+    public String getTo()
    {
       return this.to;
    }
 
-   public PrivateMessage setTo(String value)
+    public PrivateMessage setTo(String value)
    {
       if (Objects.equals(value, this.to))
       {
@@ -108,12 +108,12 @@ public class PrivateMessage
       return this;
    }
 
-   public Chat getChat()
+    public Chat getChat()
    {
       return this.chat;
    }
 
-   public PrivateMessage setChat(Chat value)
+    public PrivateMessage setChat(Chat value)
    {
       if (this.chat == value)
       {
@@ -135,7 +135,7 @@ public class PrivateMessage
       return this;
    }
 
-   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
       {
@@ -145,7 +145,7 @@ public class PrivateMessage
       return false;
    }
 
-   public PropertyChangeSupport listeners()
+    public PropertyChangeSupport listeners()
    {
       if (this.listeners == null)
       {
@@ -154,7 +154,7 @@ public class PrivateMessage
       return this.listeners;
    }
 
-   @Override
+    @Override
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
@@ -165,7 +165,7 @@ public class PrivateMessage
       return result.substring(1);
    }
 
-   public void removeYou()
+    public void removeYou()
    {
       this.setChat(null);
    }

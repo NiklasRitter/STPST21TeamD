@@ -7,19 +7,6 @@ public class StageManager extends Application {
 
     private static Stage stage;
 
-    @Override
-    public void start(Stage primaryStage) {
-        stage = primaryStage;
-        showStartScreen();
-        stage.show();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-        cleanup();
-    }
-
     public static void showStartScreen() {
     }
 
@@ -36,6 +23,19 @@ public class StageManager extends Application {
     private static void cleanup() {
 
 
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        stage = primaryStage;
+        showStartScreen();
+        stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        cleanup();
     }
 
 }

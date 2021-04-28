@@ -49,3 +49,5 @@ generateScenarioSource {
 	classDiagramSVG = true
 }
 
+mainClassName = "de.uniks.stp.wedoit.accord.client.Launcher"
+

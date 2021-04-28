@@ -1,27 +1,27 @@
 package de.uniks.stp.wedoit.accord.client.model;
-import java.util.Objects;
+
 import java.beans.PropertyChangeSupport;
+import java.util.Objects;
 
-public class Message
-{
-   public static final String PROPERTY_ID = "id";
-   public static final String PROPERTY_TIMESTAMP = "timestamp";
-   public static final String PROPERTY_TEXT = "text";
-   public static final String PROPERTY_FROM = "from";
-   public static final String PROPERTY_CHANNEL = "channel";
-   private String id;
-   private long timestamp;
-   private String text;
-   private String from;
-   private Channel channel;
-   protected PropertyChangeSupport listeners;
+public class Message {
+    public static final String PROPERTY_ID = "id";
+    public static final String PROPERTY_TIMESTAMP = "timestamp";
+    public static final String PROPERTY_TEXT = "text";
+    public static final String PROPERTY_FROM = "from";
+    public static final String PROPERTY_CHANNEL = "channel";
+    protected PropertyChangeSupport listeners;
+    private String id;
+    private long timestamp;
+    private String text;
+    private String from;
+    private Channel channel;
 
-   public String getId()
+    public String getId()
    {
       return this.id;
    }
 
-   public Message setId(String value)
+    public Message setId(String value)
    {
       if (Objects.equals(value, this.id))
       {
@@ -34,12 +34,12 @@ public class Message
       return this;
    }
 
-   public long getTimestamp()
+    public long getTimestamp()
    {
       return this.timestamp;
    }
 
-   public Message setTimestamp(long value)
+    public Message setTimestamp(long value)
    {
       if (value == this.timestamp)
       {
@@ -52,12 +52,12 @@ public class Message
       return this;
    }
 
-   public String getText()
+    public String getText()
    {
       return this.text;
    }
 
-   public Message setText(String value)
+    public Message setText(String value)
    {
       if (Objects.equals(value, this.text))
       {
@@ -70,12 +70,12 @@ public class Message
       return this;
    }
 
-   public String getFrom()
+    public String getFrom()
    {
       return this.from;
    }
 
-   public Message setFrom(String value)
+    public Message setFrom(String value)
    {
       if (Objects.equals(value, this.from))
       {
@@ -88,12 +88,12 @@ public class Message
       return this;
    }
 
-   public Channel getChannel()
+    public Channel getChannel()
    {
       return this.channel;
    }
 
-   public Message setChannel(Channel value)
+    public Message setChannel(Channel value)
    {
       if (this.channel == value)
       {
@@ -115,7 +115,7 @@ public class Message
       return this;
    }
 
-   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
       {
@@ -125,7 +125,7 @@ public class Message
       return false;
    }
 
-   public PropertyChangeSupport listeners()
+    public PropertyChangeSupport listeners()
    {
       if (this.listeners == null)
       {
@@ -134,7 +134,7 @@ public class Message
       return this.listeners;
    }
 
-   @Override
+    @Override
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
@@ -144,7 +144,7 @@ public class Message
       return result.substring(1);
    }
 
-   public void removeYou()
+    public void removeYou()
    {
       this.setChannel(null);
    }
