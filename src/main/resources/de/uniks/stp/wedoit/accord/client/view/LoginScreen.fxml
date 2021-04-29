@@ -75,13 +75,18 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Button>
-            <Region prefHeight="100.0" prefWidth="343.0" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label id="lblError" textFill="RED" />
+            <Region HBox.hgrow="ALWAYS" />
             <Button id="btnRegister" mnemonicParsing="false" style="-fx-background-color: darkslateblue; -fx-text-fill: white;" text="Register ">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Button>
          </children>
+         <VBox.margin>
+            <Insets left="30.0" right="30.0" />
+         </VBox.margin>
       </HBox>
       <HBox alignment="CENTER" prefHeight="69.0" prefWidth="598.0">
          <children>
