@@ -52,14 +52,14 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <TextField id="tfUserName" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="370.0" text="Amir" />
+            <TextField id="tfUserName" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="370.0" />
             <Region prefHeight="76.0" prefWidth="398.0" />
             <Label text="Enter your password:">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <PasswordField id="pwUserPw" prefHeight="25.0" prefWidth="370.0" text="1234567890" />
+            <PasswordField id="pwUserPw" prefHeight="25.0" prefWidth="370.0" />
          </children>
          <opaqueInsets>
             <Insets />
