@@ -43,6 +43,11 @@ public class LoginScreenController {
 
     }
 
+    /**
+     * login user to server and redirect to MainScreen
+     *
+     * @param actionEvent
+     */
     private void loginButtonAction(ActionEvent actionEvent) {
         RestClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
             if (response.getStatus() != 200) {
