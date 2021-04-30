@@ -42,7 +42,6 @@ public class LoginScreenController {
         btnLogin = (Button) view.lookup("#btnLogin");
 
         btnLogin.setOnAction(this::loginButtonAction);
-
     }
 
     /**
@@ -57,7 +56,7 @@ public class LoginScreenController {
         }
     }
 
-    private void login(){
+    private void login() {
         if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
             tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
