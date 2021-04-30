@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
+import static de.uniks.stp.wedoit.accord.client.StageManager.showMainScreen;
 
 
 public class LoginScreenController {
@@ -75,7 +76,7 @@ public class LoginScreenController {
                 String userKey = loginAnswer.getString("userKey");
 
                 this.model.setUserKey(userKey);
-                StageManager.showMainScreen();
+                showMainScreen();
             }
         });
     }
@@ -94,24 +95,11 @@ public class LoginScreenController {
                 // if user successful registered
                 if (registerResponse.getStatus() == 200) {
                     //login the user
-                    restClient.login(tfUserName.getText(), pwUserPw.getText(), (loginResponse) -> {
-                        if (loginResponse.getStatus() != 200) {
-                            tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-                            pwUserPw.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-
-                            Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
-                        } else {
-                            JSONObject loginAnswer = loginResponse.getBody().getObject().getJSONObject(COM_DATA);
-                            String userKey = loginAnswer.getString(COM_USER_KEY);
-
-                            this.model.setName(tfUserName.getText());
-                            this.model.setUserKey(userKey);
-                            //reset name and password fields
-                            this.tfUserName.setText("");
-                            this.pwUserPw.setText("");
-                            StageManager.showMainScreen();
-                        }
-                    });
+                    //TODO login();
+                    //TODO LÖSCHEN
+                    this.model.setUserKey("TEST");
+                    Platform.runLater(StageManager::showMainScreen);
+                    //TODO Bis hier
                 } else {
                     //reset name and password fields
                     this.tfUserName.setText("");
