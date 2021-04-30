@@ -51,9 +51,6 @@ public class LoginScreenController {
      */
     private void loginButtonAction(ActionEvent actionEvent) {
         login();
-        if (this.model.getUserKey() != null) {
-            StageManager.showMainScreen();
-        }
     }
 
     private void login() {
@@ -62,23 +59,23 @@ public class LoginScreenController {
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
 
             errorLabel.setText("Username or password is empty");
-            return;
+        } else {
+            restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
+                if (response.getStatus() != 200) {
+                    tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+                    pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
+
+                    Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+                } else {
+                    JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
+                    String userKey = loginAnswer.getString(COM_USERKEY);
+
+                    this.model.setName(tfUserName.getText());
+                    this.model.setUserKey(userKey);
+                    Platform.runLater(() -> StageManager.showMainScreen());
+                }
+            });
         }
-
-        restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
-            if (response.getStatus() != 200) {
-                tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-                pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
-
-                Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
-            } else {
-                JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
-                String userKey = loginAnswer.getString(COM_USERKEY);
-
-                this.model.setName(tfUserName.getText());
-                this.model.setUserKey(userKey);
-            }
-        });
     }
 
     public void stop() {
