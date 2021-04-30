@@ -49,6 +49,7 @@ dependencies {
 
     //Mockito
     testImplementation "org.mockito:mockito-core:3.+"
+    testImplementation "org.testfx:testfx-junit:4.0.16-alpha"
 
     testImplementation 'org.testfx:testfx-junit:4.0.16-alpha'
 
