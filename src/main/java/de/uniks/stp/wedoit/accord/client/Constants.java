@@ -11,4 +11,6 @@ public class Constants {
     //Json fields
     public static final String COM_NAME = "name";
     public static final String COM_PASSWORD = "password";
+    public static final String COM_DATA = "data";
+    public static final String COM_USER_KEY = "userKey";
 }

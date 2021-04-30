@@ -13,6 +13,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
+
 
 public class LoginScreenController {
 
@@ -26,10 +29,13 @@ public class LoginScreenController {
     private Label errorLabel;
     private Button btnRegister;
 
+    private final RestClient restClient;
+
     public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.model = model;
         this.editor = editor;
+        this.restClient = new RestClient();
     }
 
     public void init() {
@@ -49,17 +55,19 @@ public class LoginScreenController {
 
     public void stop() {
         btnLogin.setOnAction(null);
+        btnRegister.setOnAction(null);
 
         tfUserName = null;
         pwUserPw = null;
         btnLogin = null;
+        btnRegister = null;
     }
 
     private void loginButtonAction(ActionEvent actionEvent) {
         RestClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
             if (response.getStatus() != 200) {
                 tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-                pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
+                pwUserPw.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 
                 Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
             } else {
@@ -72,41 +80,51 @@ public class LoginScreenController {
         });
     }
 
+    /**
+     * register user to server and login, redirect to MainScreen
+     *
+     * @param actionEvent
+     */
     private void btnRegisterOnClicked(ActionEvent actionEvent) {
         String name = this.tfUserName.getText();
         String password = this.pwUserPw.getText();
 
         if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
-            RestClient.register(name, password, response -> {
-                //TODO VL min 47
+            restClient.register(name, password, registerResponse -> {
+                // if user successful registered
+                if (registerResponse.getStatus() == 200) {
+                    //login the user
+                    restClient.login(tfUserName.getText(), pwUserPw.getText(), (loginResponse) -> {
+                        if (loginResponse.getStatus() != 200) {
+                            tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+                            pwUserPw.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 
-                if (response.getStatus() == 200) {
-                    //TODO response200 = User created?
-                    //user successful registered
+                            Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+                        } else {
+                            JSONObject loginAnswer = loginResponse.getBody().getObject().getJSONObject(COM_DATA);
+                            String userKey = loginAnswer.getString(COM_USER_KEY);
 
-
-                    //TODO Opt1
-                    //login User
-                    //RestClient.login(tfUserName.getText(), pwUserPw.getText()); //TODO ???
-                    //show main screen
-                    StageManager.showMainScreen();
-
-                    //TODO Opt2
-                    //btnLoginOnClicked(actionEvent);
-
-                }
-                else {
-                    tfUserName.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                    pwUserPw.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                    //TODO Label beschreiben - user existiert bereits
+                            this.model.setName(tfUserName.getText());
+                            this.model.setUserKey(userKey);
+                            //reset name and password fields
+                            this.tfUserName.setText("");
+                            this.pwUserPw.setText("");
+                            StageManager.showMainScreen();
+                        }
+                    });
+                } else {
+                    //reset name and password fields
+                    this.tfUserName.setText("");
+                    this.pwUserPw.setText("");
+                    tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+                    pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+                    Platform.runLater(() -> errorLabel.setText("Username already taken."));
                 }
             });
-        }
-        else {
+        } else {
             tfUserName.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-            //TODO Label beschreiben - eins leer
+            Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
-
     }
 }
