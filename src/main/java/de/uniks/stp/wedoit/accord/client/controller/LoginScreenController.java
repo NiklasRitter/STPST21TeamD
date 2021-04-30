@@ -51,6 +51,7 @@ public class LoginScreenController {
                 JSONObject loginAnswer = response.getBody().getObject().getJSONObject("data");
                 String userKey = loginAnswer.getString("userKey");
 
+                this.model.setName(tfUserName.getText());
                 this.model.setUserKey(userKey);
                 StageManager.showMainScreen();
             }
