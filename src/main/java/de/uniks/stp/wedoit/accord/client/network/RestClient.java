@@ -11,6 +11,10 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class RestClient {
 
+    private static void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
+        new Thread(() -> req.asJsonAsync(callback)).start();
+    }
+
     public static void login(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
         String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
@@ -23,7 +27,16 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
-    private static void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
-        new Thread(() -> req.asJsonAsync(callback)).start();
+    /**
+     * Request to get all servers where the User with the given userKey is Member or Owner
+     *
+     * @param userKey userKey of the logged in user
+     * @param callback callback
+     */
+    public void getServers(String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH)
+                .header(COM_USERKEY, userKey);
+
+        sendRequest(req, callback);
     }
 }
