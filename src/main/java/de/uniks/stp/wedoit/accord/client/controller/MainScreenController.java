@@ -96,12 +96,13 @@ public class MainScreenController {
     }
 
     /**
-     * Create a new server and redirect to this one
+     * Opens a pop-up windows, where you can enter the servername
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
         //TODO
+        StageManager.showCreateServerScreen();
     }
 
     /**

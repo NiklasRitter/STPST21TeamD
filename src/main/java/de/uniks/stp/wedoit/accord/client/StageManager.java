@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client;
 
+import de.uniks.stp.wedoit.accord.client.controller.CreateServerScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.LoginScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.MainScreenController;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -9,12 +10,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import javax.sound.midi.Soundbank;
+
 public class StageManager extends Application {
 
     private static Editor editor;
     private static LocalUser model;
     private static LoginScreenController loginScreenController;
     private static MainScreenController mainScreenController;
+    private static CreateServerScreenController createServerScreenController;
 
     @Override
     public void start(Stage primaryStage) {
@@ -48,7 +52,7 @@ public class StageManager extends Application {
             stage.setTitle("Login");
             stage.setScene(scene);
             stage.centerOnScreen();
-            
+
             stage.setResizable(false);
 
         } catch (Exception e) {
@@ -76,6 +80,30 @@ public class StageManager extends Application {
             stage.setTitle("Main");
             stage.setScene(scene);
             stage.centerOnScreen();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing MainScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showCreateServerScreen() {
+        cleanup();
+
+        try {
+            //load view
+            Parent root = FXMLLoader.load(StageManager.class.getResource("view/CreateServerScreen.fxml"));
+            Scene scene = new Scene(root);
+
+            //init controller
+            createServerScreenController = new CreateServerScreenController(root, model, editor);
+            createServerScreenController.init();
+
+            //display
+            stage.setTitle("Create Server");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            stage.setResizable(false);
 
         } catch (Exception e) {
             System.err.println("Error on showing MainScreen");
