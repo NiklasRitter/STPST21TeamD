@@ -119,7 +119,10 @@ public class MainScreenController {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void serverButtonOnClick(ActionEvent actionEvent) {
-        //TODO
+        Server server = serverListView.getSelectionModel().getSelectedItem();
+        if (server != null) {
+            StageManager.showServerScreen(server);
+        }
     }
 
     /**
@@ -128,7 +131,13 @@ public class MainScreenController {
      * @param mouseEvent Expects an mouse event, such as when the listView is doubleclicked
      */
     private void onServerListViewClicked(MouseEvent mouseEvent) {
-        //TODO
+        if (mouseEvent.getClickCount() == 2) {
+            Server server = serverListView.getSelectionModel().getSelectedItem();
+            if (server != null) {
+                StageManager.showServerScreen(server);
+            }
+        }
+
     }
 
     /**
@@ -160,5 +169,4 @@ public class MainScreenController {
         }
         serverListView.refresh();
     }
-
 }
