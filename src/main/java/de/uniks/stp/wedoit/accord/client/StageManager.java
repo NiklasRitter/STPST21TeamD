@@ -52,7 +52,7 @@ public class StageManager extends Application {
             stage.setTitle("Login");
             stage.setScene(scene);
             stage.centerOnScreen();
-            
+
             stage.setResizable(false);
 
         } catch (Exception e) {
