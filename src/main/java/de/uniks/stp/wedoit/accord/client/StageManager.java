@@ -3,16 +3,16 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.controller.LoginScreenController;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
 
 public class StageManager extends Application {
 
-    private Editor editor;
-    private LocalUser model;
-    private LoginScreenController loginScreenController;
+    private static Editor editor;
+    private static LocalUser model;
+    private static LoginScreenController loginScreenController;
 
     @Override
     public void start(Stage primaryStage) {
@@ -31,7 +31,7 @@ public class StageManager extends Application {
 
     private static Stage stage;
 
-    public void showLoginScreen() {
+    public static void showLoginScreen() {
         cleanup();
 
         try {
@@ -46,6 +46,8 @@ public class StageManager extends Application {
             stage.setTitle("Login");
             stage.setScene(scene);
             stage.centerOnScreen();
+            
+            stage.setResizable(false);
 
         } catch (Exception e) {
             System.err.println("Error on showing start screen");
@@ -64,8 +66,10 @@ public class StageManager extends Application {
     }
 
     private static void cleanup() {
-
-
+        if (loginScreenController != null) {
+            loginScreenController.stop();
+            loginScreenController = null;
+        }
     }
 
 }
