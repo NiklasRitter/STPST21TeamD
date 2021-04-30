@@ -24,11 +24,13 @@ public class LoginScreenController {
     private TextField tfUserName;
     private TextField pwUserPw;
     private Label errorLabel;
+    private RestClient restClient;
 
-    public LoginScreenController(Parent view, LocalUser model, Editor editor) {
+    public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
         this.model = model;
         this.editor = editor;
+        this.restClient = restClient;
     }
 
     public void init() {
@@ -49,7 +51,22 @@ public class LoginScreenController {
      * @param actionEvent
      */
     private void loginButtonAction(ActionEvent actionEvent) {
-        RestClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
+        login();
+        if (this.model.getUserKey() != null) {
+            StageManager.showMainScreen();
+        }
+    }
+
+    private void login(){
+        if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
+            tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+            pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
+
+            errorLabel.setText("Username or password is empty");
+            return;
+        }
+
+        restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
             if (response.getStatus() != 200) {
                 tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
                 pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
@@ -61,7 +78,6 @@ public class LoginScreenController {
 
                 this.model.setName(tfUserName.getText());
                 this.model.setUserKey(userKey);
-                StageManager.showMainScreen();
             }
         });
     }

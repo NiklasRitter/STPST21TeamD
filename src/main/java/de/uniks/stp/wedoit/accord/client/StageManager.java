@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.controller.LoginScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.MainScreenController;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,12 +16,15 @@ public class StageManager extends Application {
     private static LocalUser model;
     private static LoginScreenController loginScreenController;
     private static MainScreenController mainScreenController;
+    private static RestClient restClient;
 
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
         editor = new Editor();
         model = editor.haveLocalUser();
+        restClient = new RestClient();
+
         showLoginScreen();
         stage.show();
     }
@@ -41,7 +45,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
             Scene scene = new Scene(root);
 
-            loginScreenController = new LoginScreenController(root, model, editor);
+            loginScreenController = new LoginScreenController(root, model, editor, restClient);
             loginScreenController.init();
 
             //display
