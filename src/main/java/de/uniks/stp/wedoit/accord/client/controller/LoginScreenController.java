@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -12,15 +13,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
+
 public class LoginScreenController {
 
     private LocalUser model;
     private Editor editor;
     private Parent view;
+
     private Button btnLogin;
     private TextField tfUserName;
     private TextField pwUserPw;
     private Label errorLabel;
+    private Button btnRegister;
 
     public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
@@ -38,6 +42,17 @@ public class LoginScreenController {
 
         btnLogin.setOnAction(this::loginButtonAction);
 
+        btnRegister = (Button) view.lookup("#btnRegister");
+
+        this.btnRegister.setOnAction(this::btnRegisterOnClicked);
+    }
+
+    public void stop() {
+        btnLogin.setOnAction(null);
+
+        tfUserName = null;
+        pwUserPw = null;
+        btnLogin = null;
     }
 
     private void loginButtonAction(ActionEvent actionEvent) {
@@ -57,11 +72,41 @@ public class LoginScreenController {
         });
     }
 
-    public void stop() {
-        btnLogin.setOnAction(null);
+    private void btnRegisterOnClicked(ActionEvent actionEvent) {
+        String name = this.tfUserName.getText();
+        String password = this.pwUserPw.getText();
 
-        tfUserName = null;
-        pwUserPw = null;
-        btnLogin = null;
+        if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
+            RestClient.register(name, password, response -> {
+                //TODO VL min 47
+
+                if (response.getStatus() == 200) {
+                    //TODO response200 = User created?
+                    //user successful registered
+
+
+                    //TODO Opt1
+                    //login User
+                    //RestClient.login(tfUserName.getText(), pwUserPw.getText()); //TODO ???
+                    //show main screen
+                    StageManager.showMainScreen();
+
+                    //TODO Opt2
+                    //btnLoginOnClicked(actionEvent);
+
+                }
+                else {
+                    tfUserName.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+                    pwUserPw.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+                    //TODO Label beschreiben - user existiert bereits
+                }
+            });
+        }
+        else {
+            tfUserName.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+            pwUserPw.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+            //TODO Label beschreiben - eins leer
+        }
+
     }
 }
