@@ -12,6 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_USERKEY;
+
 public class LoginScreenController {
 
     private LocalUser model;
@@ -48,8 +51,8 @@ public class LoginScreenController {
 
                 Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
             } else {
-                JSONObject loginAnswer = response.getBody().getObject().getJSONObject("data");
-                String userKey = loginAnswer.getString("userKey");
+                JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
+                String userKey = loginAnswer.getString(COM_USERKEY);
 
                 this.model.setName(tfUserName.getText());
                 this.model.setUserKey(userKey);
