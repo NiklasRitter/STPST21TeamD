@@ -111,11 +111,7 @@ public class LoginScreenController {
                 // if user successful registered
                 if (registerResponse.getStatus() == 200) {
                     //login the user
-                    //TODO login();
-                    //TODO LÖSCHEN
-                    this.model.setUserKey("TEST");
-                    Platform.runLater(StageManager::showMainScreen);
-                    //TODO Bis hier
+                    login();
                 } else {
                     //reset name and password fields
                     this.tfUserName.setText("");
