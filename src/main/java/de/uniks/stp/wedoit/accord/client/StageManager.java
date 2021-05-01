@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import kong.unirest.Unirest;
 
 public class StageManager extends Application {
 
@@ -30,9 +31,15 @@ public class StageManager extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
-        super.stop();
-        cleanup();
+    public void stop() {
+        try {
+            super.stop();
+            Unirest.shutDown();
+            cleanup();
+        } catch (Exception e) {
+            System.err.println("Error while shutdown program");
+            e.printStackTrace();
+        }
     }
 
     private static Stage stage;
