@@ -8,7 +8,7 @@ plugins {
 
 javafx {
     version = '11'
-    modules = ['javafx.controls', 'javafx.graphics']
+    modules = ['javafx.controls', 'javafx.graphics','javafx.fxml', 'javafx.base', ]
 }
 
 group 'de.uniks.stp.wedoit.accord.client'
@@ -40,9 +40,21 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-nop
 	testImplementation group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.30'
 
+    // https://mvnrepository.com/artifact/org.fulib/fulibYaml
+    implementation group: 'org.fulib', name: 'fulibYaml', version: '1.4.0'
+
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.1'
+
+    //Mockito
+    testImplementation "org.mockito:mockito-core:3.+"
+
+    implementation group: 'com.konghq', name:'unirest-java', version: '2.3.02'
+    implementation group: 'com.sparkjava', name: 'spark-core', version: '2.9.1'
+    implementation group: 'org.glassfish', name: 'javax.json', version: '1.1'
+    implementation group: 'org.glassfish.tyrus', name: 'tyrus-client', version: '1.15'
+    implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-client', version: '1.15'
 }
 
 generateScenarioSource {
