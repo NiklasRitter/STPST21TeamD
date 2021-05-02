@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.controller.CreateServerScreenController
 import de.uniks.stp.wedoit.accord.client.controller.LoginScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.MainScreenController;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,6 +17,7 @@ public class StageManager extends Application {
 
     private static Editor editor;
     private static LocalUser model;
+    private static RestClient restClient;
     private static LoginScreenController loginScreenController;
     private static MainScreenController mainScreenController;
     private static CreateServerScreenController createServerScreenController;
@@ -24,6 +26,7 @@ public class StageManager extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         editor = new Editor();
+        restClient = new RestClient();
         model = editor.haveLocalUser();
         showLoginScreen();
         stage.show();
@@ -96,7 +99,7 @@ public class StageManager extends Application {
             Scene scene = new Scene(root);
 
             //init controller
-            createServerScreenController = new CreateServerScreenController(root, model, editor);
+            createServerScreenController = new CreateServerScreenController(root, model, editor, restClient);
             createServerScreenController.init();
 
             //display

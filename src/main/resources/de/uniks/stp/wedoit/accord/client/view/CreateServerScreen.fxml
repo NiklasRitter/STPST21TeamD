@@ -16,11 +16,12 @@
          </font>
       </Label>
       <TextField id="tfServerName" prefHeight="25.0" prefWidth="50.0" text="Servername" />
-      <Region prefHeight="53.0" prefWidth="351.0">
+      <Region prefHeight="37.0" prefWidth="351.0">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
       </Region>
+      <Label id="lblError" textFill="RED" />
       <Button id="btnCreateServer" mnemonicParsing="false" style="-fx-background-color: darkslateblue; -fx-text-fill: white;" text="Create Server">
          <font>
             <Font name="System Bold" size="14.0" />
