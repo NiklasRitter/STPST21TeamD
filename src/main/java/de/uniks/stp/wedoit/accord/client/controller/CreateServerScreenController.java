@@ -12,8 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-import java.lang.invoke.MethodHandles;
-
 public class CreateServerScreenController {
 
     private RestClient restClient;
@@ -35,7 +33,7 @@ public class CreateServerScreenController {
         // Load all view references
         this.btnCreateServer = (Button) view.lookup("#btnCreateServer");
         this.tfServerName = (TextField) view.lookup("tfServerName");
-        errorLabel = (Label) view.lookup("#lblError");
+        this.errorLabel = (Label) view.lookup("#lblError");
 
         // Add action listeners
         this.btnCreateServer.setOnAction(this::createServerButtonOnClick);
@@ -68,6 +66,9 @@ public class CreateServerScreenController {
                     JSONObject createServerAnswer = response.getBody().getObject().getJSONObject("data");
                     String serverId = createServerAnswer.getString("id");
                     String serverName = createServerAnswer.getString("name");
+
+                    //Redirecting to the new server
+                    //TODO
 
                     StageManager.showServerScreen();
                 }

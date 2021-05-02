@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.controller.CreateServerScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.LoginScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.MainScreenController;
+import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Application;
@@ -21,6 +22,7 @@ public class StageManager extends Application {
     private static LoginScreenController loginScreenController;
     private static MainScreenController mainScreenController;
     private static CreateServerScreenController createServerScreenController;
+    private static ServerScreenController serverScreenController;
 
     @Override
     public void start(Stage primaryStage) {
@@ -109,7 +111,7 @@ public class StageManager extends Application {
             stage.setResizable(false);
 
         } catch (Exception e) {
-            System.err.println("Error on showing MainScreen");
+            System.err.println("Error on showing CreateServerScreen");
             e.printStackTrace();
         }
     }
@@ -118,7 +120,26 @@ public class StageManager extends Application {
     }
 
     public static void showServerScreen() {
+        cleanup();
 
+        try {
+            //load view
+            Parent root = FXMLLoader.load(StageManager.class.getResource("view/ServerScreen.fxml"));
+            Scene scene = new Scene(root);
+
+            //init controller
+            serverScreenController = new ServerScreenController(root, model, editor, restClient);
+            serverScreenController.init();
+
+            //display
+            stage.setTitle("Server Screen");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing ServerScreenController");
+            e.printStackTrace();
+        }
     }
 
     public static void showOptionsScreen() {

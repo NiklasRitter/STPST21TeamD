@@ -22,7 +22,7 @@
          </VBox.margin>
       </Region>
       <Label id="lblError" textFill="RED" />
-      <Button id="btnCreateServer" mnemonicParsing="false" style="-fx-background-color: darkslateblue; -fx-text-fill: white;" text="Create Server">
+      <Button id="btnCreateServer" defaultButton="true" mnemonicParsing="false" style="-fx-background-color: darkslateblue; -fx-text-fill: white;" text="Create Server">
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Button>
