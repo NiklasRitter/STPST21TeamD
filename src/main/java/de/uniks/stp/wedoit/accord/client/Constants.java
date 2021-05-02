@@ -23,9 +23,10 @@ public class Constants {
     public static final String COM_FROM = "from";
     public static final String COM_TO = "to";
     public static final String COM_TEXT = "text";
+
+    // api routes
+    public static final String REST_SERVER_URL = "https://ac.uniks.de";
     public static final String USERS_PATH = "/users";
     public static final String LOGIN_PATH = "/login";
     public static final String API_PREFIX = "/api";
-
-    public static final String REST_SERVER_URL = "https://ac.uniks.de";
 }
