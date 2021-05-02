@@ -11,7 +11,7 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class RestClient {
 
-    public static void login(String name, String password, Callback<JsonNode> callback) {
+    public void login(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
         String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
 
@@ -23,7 +23,17 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
-    private static void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
+    public void register(String name, String password, Callback<JsonNode> callback) {
+        // Build Request Body
+        String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
+
+        // Use UniRest to make register request
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH)
+                .body(body);
+        sendRequest(req, callback);
+    }
+
+    private void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         new Thread(() -> req.asJsonAsync(callback)).start();
     }
 }
