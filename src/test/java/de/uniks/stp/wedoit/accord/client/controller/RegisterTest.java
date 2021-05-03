@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class RegisterTest extends ApplicationTest {
+public class RegisterTest extends ApplicationTest{
 
     private Stage stage;
     private StageManager stageManager;

@@ -20,6 +20,7 @@ public class StageManager extends Application {
     private static LoginScreenController loginScreenController;
     private static MainScreenController mainScreenController;
     private static RestClient restClient;
+    private static Stage stage;
     private static WelcomeScreenController welcomeScreenController;
     private static OptionsScreenController optionsScreenController;
 
@@ -49,8 +50,6 @@ public class StageManager extends Application {
     public Editor getEditor(){
         return editor;
     }
-
-    private static Stage stage;
 
     public static void showLoginScreen(RestClient restClient) {
         cleanup();
