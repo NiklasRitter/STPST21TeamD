@@ -56,7 +56,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
             Scene scene = new Scene(root);
 
-            loginScreenController = new LoginScreenController(root, model, editor, restClient);
+            loginScreenController = new LoginScreenController(root, model, editor);
             loginScreenController.init();
 
             //display
