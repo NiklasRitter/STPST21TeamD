@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 public class MainScreenController {
 
     private final RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private Button welcomeButton;
     private Button settingsButton;
     private Button addServerButton;
@@ -33,6 +33,7 @@ public class MainScreenController {
     private Button logoutButton;
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
+    private MainScreenServerListView mainScreenServerListView;
 
     public MainScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -59,13 +60,15 @@ public class MainScreenController {
                 String id = getServersResponse.getJSONObject(index).getString("id");
                 editor.haveServer(localUser, id, name);
             }
-
-            //load list view
-            serverListView.setCellFactory(new MainScreenServerListView());
+            // load list view
+            mainScreenServerListView = new MainScreenServerListView();
+            serverListView.setCellFactory(mainScreenServerListView);
             List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
                     .collect(Collectors.toList());
             this.serverListView.setItems(FXCollections.observableList(localUserServers));
 
+            // Add listener for the loaded listView
+            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
 
         });
 
@@ -78,7 +81,6 @@ public class MainScreenController {
         this.logoutButton.setOnAction(this::logoutButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
 
-        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
 
     }
 
@@ -90,7 +92,6 @@ public class MainScreenController {
         logoutButton.setOnAction(null);
 
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
-
     }
 
     // Additional methods
@@ -159,14 +160,18 @@ public class MainScreenController {
     }
 
     /**
-     * update the listView
+     * update automatically the listView when localUser.getServers changed
      *
-     * @param propertyChangeEvent
+     * @param propertyChangeEvent event which changed the Listener for the servers of the local user
      */
     private void serverListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() instanceof Server) {
-            serverListView.getItems().add((Server) propertyChangeEvent.getNewValue());
+
+        if (propertyChangeEvent.getNewValue() != null) {
+            serverListView.getItems().removeAll();
+            List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
+                    .collect(Collectors.toList());
+            this.serverListView.setItems(FXCollections.observableList(localUserServers));
+            serverListView.refresh();
         }
-        serverListView.refresh();
     }
 }
