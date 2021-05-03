@@ -81,6 +81,8 @@ public class StageManager extends Application {
             stage.setScene(scene);
             stage.centerOnScreen();
 
+            stage.setResizable(true);
+
         } catch (Exception e) {
             System.err.println("Error on showing MainScreen");
             e.printStackTrace();
