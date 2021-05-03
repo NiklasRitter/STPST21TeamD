@@ -33,11 +33,11 @@ public class LoginScreenController {
 
     private RestClient restClient;
 
-    public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.model = model;
         this.editor = editor;
-        this.restClient = restClient;
+        this.restClient = new RestClient();
     }
 
     public void init() {
@@ -63,18 +63,19 @@ public class LoginScreenController {
         pwUserPw = null;
         btnLogin = null;
         btnRegister = null;
+        errorLabel = null;
     }
 
     /**
      * login user to server and redirect to MainScreen
      *
-     * @param actionEvent
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void loginButtonAction(ActionEvent actionEvent) {
         login();
     }
 
-    private void login() {
+    public void login() {
         if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
             tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
@@ -89,8 +90,7 @@ public class LoginScreenController {
                 } else {
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USERKEY);
-                    this.model.setName(tfUserName.getText());
-                    this.model.setUserKey(userKey);
+                    editor.haveLocalUser(tfUserName.getText(), userKey);
                     Platform.runLater(() -> StageManager.showMainScreen());
                 }
             });
