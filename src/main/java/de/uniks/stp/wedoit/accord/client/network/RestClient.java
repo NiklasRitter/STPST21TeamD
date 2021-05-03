@@ -28,7 +28,7 @@ public class RestClient {
     }
 
     /**
-     * Request to get all servers where the User with the given userKey is Member or Owner
+     * Request to get all servers where the user with the given userKey is member or owner
      *
      * @param userKey userKey of the logged in user
      * @param callback callback
