@@ -18,6 +18,8 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
             super.updateItem(item, empty);
             if (!empty) {
                 this.setText(item.getName());
+            } else {
+                this.setText(null);
             }
         }
     }
