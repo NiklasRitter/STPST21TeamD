@@ -23,13 +23,23 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void register(String name, String password, Callback<JsonNode> callback) {
+        // Build Request Body
+        String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
+
+        // Use UniRest to make register request
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH)
+                .body(body);
+        sendRequest(req, callback);
+    }
+
     public void createServer(String name, String userKey, Callback<JsonNode> callback){
         // Build request Body
         String body = Json.createObjectBuilder().add(COM_NAME, name).build().toString();
 
         // Use UniRest to create server
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH)
-                .header(COM_USERKEY, userKey)
+                .header(COM_USER_KEY, userKey)
                 .body(body);
 
         sendRequest(req, callback);

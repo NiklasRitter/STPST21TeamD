@@ -1,9 +1,6 @@
 package de.uniks.stp.wedoit.accord.client;
 
-import de.uniks.stp.wedoit.accord.client.controller.CreateServerScreenController;
-import de.uniks.stp.wedoit.accord.client.controller.LoginScreenController;
-import de.uniks.stp.wedoit.accord.client.controller.MainScreenController;
-import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Application;
@@ -11,16 +8,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import javax.sound.midi.Soundbank;
+import kong.unirest.Unirest;
 
 public class StageManager extends Application {
 
     private static Editor editor;
     private static LocalUser model;
-    private static RestClient restClient;
     private static LoginScreenController loginScreenController;
     private static MainScreenController mainScreenController;
+    private static RestClient restClient;
+    private static Stage stage;
+    private static WelcomeScreenController welcomeScreenController;
+    private static OptionsScreenController optionsScreenController;
     private static CreateServerScreenController createServerScreenController;
     private static ServerScreenController serverScreenController;
 
@@ -28,19 +27,24 @@ public class StageManager extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         editor = new Editor();
-        restClient = new RestClient();
         model = editor.haveLocalUser();
+        restClient = new RestClient();
+
         showLoginScreen();
         stage.show();
     }
 
     @Override
-    public void stop() throws Exception {
-        super.stop();
-        cleanup();
+    public void stop() {
+        try {
+            super.stop();
+            Unirest.shutDown();
+            cleanup();
+        } catch (Exception e) {
+            System.err.println("Error while shutdown program");
+            e.printStackTrace();
+        }
     }
-
-    private static Stage stage;
 
     public static void showLoginScreen() {
         cleanup();
@@ -50,7 +54,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
             Scene scene = new Scene(root);
 
-            loginScreenController = new LoginScreenController(root, model, editor);
+            loginScreenController = new LoginScreenController(root, model, editor, restClient);
             loginScreenController.init();
 
             //display
@@ -117,6 +121,22 @@ public class StageManager extends Application {
     }
 
     public static void showWelcomeScreen() {
+        cleanup();
+
+        try {
+            Parent root = FXMLLoader.load(StageManager.class.getResource("view/WelcomeScreen.fxml"));
+            Scene scene = new Scene(root);
+
+            welcomeScreenController = new WelcomeScreenController(root, model, editor);
+            welcomeScreenController.init();
+
+            stage.setTitle("Welcome");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+        } catch (Exception e) {
+            System.err.println("Error on showing WelcomeScreen");
+            e.printStackTrace();
+        }
     }
 
     public static void showServerScreen() {
@@ -143,7 +163,22 @@ public class StageManager extends Application {
     }
 
     public static void showOptionsScreen() {
+        cleanup();
 
+        try {
+            Parent root = FXMLLoader.load(StageManager.class.getResource("view/OptionsScreen.fxml"));
+            Scene scene = new Scene(root);
+
+            optionsScreenController = new OptionsScreenController(root, model, editor);
+            optionsScreenController.init();
+
+            stage.setTitle("Options");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+        } catch (Exception e) {
+            System.err.println("Error on showing OptionsScreen");
+            e.printStackTrace();
+        }
     }
 
     private static void cleanup() {
@@ -154,6 +189,14 @@ public class StageManager extends Application {
         if (mainScreenController != null) {
             mainScreenController.stop();
             mainScreenController = null;
+        }
+        if (welcomeScreenController != null) {
+            welcomeScreenController.stop();
+            welcomeScreenController = null;
+        }
+        if (optionsScreenController != null) {
+            optionsScreenController.stop();
+            optionsScreenController = null;
         }
     }
 
