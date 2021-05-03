@@ -30,7 +30,7 @@ public class StageManager extends Application {
         model = editor.haveLocalUser();
         restClient = new RestClient();
 
-        showLoginScreen();
+        showLoginScreen(restClient);
         stage.show();
     }
 
@@ -46,9 +46,13 @@ public class StageManager extends Application {
         }
     }
 
+    public Editor getEditor(){
+        return editor;
+    }
+
     private static Stage stage;
 
-    public static void showLoginScreen() {
+    public static void showLoginScreen(RestClient restClient) {
         cleanup();
 
         try {
@@ -56,7 +60,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
             Scene scene = new Scene(root);
 
-            loginScreenController = new LoginScreenController(root, model, editor);
+            loginScreenController = new LoginScreenController(root, model, editor, restClient);
             loginScreenController.init();
 
             //display

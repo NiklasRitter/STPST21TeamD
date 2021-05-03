@@ -13,9 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
+import static de.uniks.stp.wedoit.accord.client.Constants.*;
 import static de.uniks.stp.wedoit.accord.client.StageManager.showMainScreen;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_USERKEY;
 
 
 public class LoginScreenController {
@@ -33,11 +32,11 @@ public class LoginScreenController {
 
     private RestClient restClient;
 
-    public LoginScreenController(Parent view, LocalUser model, Editor editor) {
+    public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
         this.model = model;
         this.editor = editor;
-        this.restClient = new RestClient();
+        this.restClient = restClient;
     }
 
     public void init() {
@@ -47,11 +46,9 @@ public class LoginScreenController {
         errorLabel = (Label) view.lookup("#lblError");
 
         btnLogin = (Button) view.lookup("#btnLogin");
-
-        btnLogin.setOnAction(this::loginButtonAction);
-
         btnRegister = (Button) view.lookup("#btnRegister");
 
+        this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
     }
 
@@ -89,9 +86,9 @@ public class LoginScreenController {
                     Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
                 } else {
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
-                    String userKey = loginAnswer.getString(COM_USERKEY);
+                    String userKey = loginAnswer.getString(COM_USER_KEY);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
-                    Platform.runLater(() -> StageManager.showMainScreen());
+                    Platform.runLater(StageManager::showMainScreen);
                 }
             });
         }

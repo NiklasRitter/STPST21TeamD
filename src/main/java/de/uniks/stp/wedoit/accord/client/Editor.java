@@ -19,4 +19,8 @@ public class Editor {
         this.localUser.setUserKey(userkey);
         return localUser;
     }
+
+    public LocalUser getLocalUser(){
+        return localUser;
+    }
 }
