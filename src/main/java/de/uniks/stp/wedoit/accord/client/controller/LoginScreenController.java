@@ -4,7 +4,6 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -14,7 +13,6 @@ import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
-import static de.uniks.stp.wedoit.accord.client.StageManager.showMainScreen;
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_USERKEY;
 
 
@@ -122,8 +120,8 @@ public class LoginScreenController {
                 }
             });
         } else {
-            tfUserName.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
     }
