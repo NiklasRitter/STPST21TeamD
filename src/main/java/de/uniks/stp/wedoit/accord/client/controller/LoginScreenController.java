@@ -79,17 +79,21 @@ public class LoginScreenController {
 
     public void login() {
         if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
+
             tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
-
-            errorLabel.setText("Username or password is empty");
+            errorLabel.setText("Username or password is missing");
         } else {
             restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
-                if (response.getStatus() != 200) {
+
+                if (!response.getBody().getObject().getString("status").equals("success")) {
+
                     tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
                     pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
                     Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+
                 } else {
+
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
@@ -111,7 +115,8 @@ public class LoginScreenController {
         if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
             restClient.register(name, password, registerResponse -> {
                 // if user successful registered
-                if (registerResponse.getStatus() == 200) {
+                if (registerResponse.getBody().getObject().getString("status").equals("success")) {
+
                     //login the user
                     login();
                 } else {
