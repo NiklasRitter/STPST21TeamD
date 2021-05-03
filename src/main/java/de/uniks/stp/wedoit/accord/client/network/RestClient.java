@@ -11,11 +11,11 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class RestClient {
 
-    private static void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
+    private void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         new Thread(() -> req.asJsonAsync(callback)).start();
     }
 
-    public static void login(String name, String password, Callback<JsonNode> callback) {
+    public void login(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
         String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
 
@@ -30,13 +30,25 @@ public class RestClient {
     /**
      * Request to get all servers where the user with the given userKey is member or owner
      *
-     * @param userKey userKey of the logged in user
+     * @param userKey  userKey of the logged in user
      * @param callback callback
      */
     public void getServers(String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH)
-                .header(COM_USERKEY, userKey);
+                .header(COM_USER_KEY, userKey);
 
         sendRequest(req, callback);
     }
+
+    public void register(String name, String password, Callback<JsonNode> callback) {
+        // Build Request Body
+        String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
+
+        // Use UniRest to make register request
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH)
+                .body(body);
+        sendRequest(req, callback);
+    }
+
+
 }
