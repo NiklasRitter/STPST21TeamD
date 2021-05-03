@@ -23,11 +23,11 @@ public class LoginScreenController {
     private Parent view;
 
     private Button btnLogin;
+    private Button btnRegister;
+    private Button btnOptions;
     private TextField tfUserName;
     private TextField pwUserPw;
     private Label errorLabel;
-
-    private Button btnRegister;
 
     private RestClient restClient;
 
@@ -40,27 +40,29 @@ public class LoginScreenController {
 
     public void init() {
         //Load all view references
-        tfUserName = (TextField) view.lookup("#tfUserName");
-        pwUserPw = (TextField) view.lookup("#pwUserPw");
-        errorLabel = (Label) view.lookup("#lblError");
+        this.tfUserName = (TextField) view.lookup("#tfUserName");
+        this.pwUserPw = (TextField) view.lookup("#pwUserPw");
+        this.errorLabel = (Label) view.lookup("#lblError");
 
-        btnLogin = (Button) view.lookup("#btnLogin");
+        this.btnLogin = (Button) view.lookup("#btnLogin");
+        this.btnRegister = (Button) view.lookup("#btnRegister");
+        this.btnOptions = (Button) view.lookup("#btnOptions");
 
-        btnLogin.setOnAction(this::loginButtonAction);
-
-        btnRegister = (Button) view.lookup("#btnRegister");
-
+        this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
+        this.btnOptions.setOnAction(this::btnOptionsOnClicked);
     }
 
     public void stop() {
         btnLogin.setOnAction(null);
         btnRegister.setOnAction(null);
+        btnOptions.setOnAction(null);
 
         tfUserName = null;
         pwUserPw = null;
         btnLogin = null;
         btnRegister = null;
+        btnOptions = null;
     }
 
     /**
@@ -124,5 +126,14 @@ public class LoginScreenController {
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
+    }
+
+    /**
+     * open Optionsmenu
+     *
+     * @param actionEvent
+     */
+    private void btnOptionsOnClicked(ActionEvent actionEvent) {
+        StageManager.showOptionsScreen();
     }
 }
