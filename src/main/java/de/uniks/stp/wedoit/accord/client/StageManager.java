@@ -20,6 +20,7 @@ public class StageManager extends Application {
     private static LoginScreenController loginScreenController;
     private static MainScreenController mainScreenController;
     private static RestClient restClient;
+    private static Stage stage;
     private static WelcomeScreenController welcomeScreenController;
     private static OptionsScreenController optionsScreenController;
 
@@ -45,8 +46,6 @@ public class StageManager extends Application {
             e.printStackTrace();
         }
     }
-
-    private static Stage stage;
 
     public static void showLoginScreen() {
         cleanup();
