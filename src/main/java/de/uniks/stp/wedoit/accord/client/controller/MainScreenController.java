@@ -27,7 +27,7 @@ public class MainScreenController {
     private final Editor editor;
     private final Parent view;
     private Button welcomeButton;
-    private Button settingsButton;
+    private Button optionsButton;
     private Button addServerButton;
     private Button serverButton;
     private Button logoutButton;
@@ -45,7 +45,7 @@ public class MainScreenController {
     public void init() {
         // Load all view references
         this.welcomeButton = (Button) view.lookup("#btnWelcome");
-        this.settingsButton = (Button) view.lookup("#btnSetting");
+        this.optionsButton = (Button) view.lookup("#btnOptions");
         this.serverButton = (Button) view.lookup("#btnServerList");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
         this.logoutButton = (Button) view.lookup("#btnLogout");
@@ -75,7 +75,7 @@ public class MainScreenController {
 
         // Add action listeners
         this.welcomeButton.setOnAction(this::welcomeButtonOnClick);
-        this.settingsButton.setOnAction(this::settingsButtonOnClick);
+        this.optionsButton.setOnAction(this::optionsButtonOnClick);
         this.serverButton.setOnAction(this::serverButtonOnClick);
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
         this.logoutButton.setOnAction(this::logoutButtonOnClick);
@@ -86,7 +86,7 @@ public class MainScreenController {
 
     public void stop() {
         welcomeButton.setOnAction(null);
-        settingsButton.setOnAction(null);
+        optionsButton.setOnAction(null);
         serverButton.setOnAction(null);
         addServerButton.setOnAction(null);
         logoutButton.setOnAction(null);
@@ -110,7 +110,7 @@ public class MainScreenController {
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
-    private void settingsButtonOnClick(ActionEvent actionEvent) {
+    private void optionsButtonOnClick(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
     }
 
