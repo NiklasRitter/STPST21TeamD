@@ -30,7 +30,7 @@ public class CreateServerScreenController {
         this.restClient = restClient;
     }
 
-    public void init(){
+    public void init() {
         // Load all view references
         this.btnCreateServer = (Button) view.lookup("#btnCreateServer");
         this.tfServerName = (TextField) view.lookup("#tfServerName");
@@ -40,7 +40,7 @@ public class CreateServerScreenController {
         this.btnCreateServer.setOnAction(this::createServerButtonOnClick);
     }
 
-    public void stop(){
+    public void stop() {
         btnCreateServer.setOnAction(null);
     }
 
@@ -53,12 +53,12 @@ public class CreateServerScreenController {
      */
     private void createServerButtonOnClick(ActionEvent actionEvent) {
 
-        if(tfServerName.getText().length() < 2){
+        if (tfServerName.getText().length() < 2) {
             tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 2 symbols long."));
-        }else{
-            restClient.createServer(tfServerName.getText(), localUser.getUserKey(), (response) ->{
+        } else {
+            restClient.createServer(tfServerName.getText(), localUser.getUserKey(), (response) -> {
                 if (response.getStatus() != 200) {
                     tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 
@@ -68,11 +68,9 @@ public class CreateServerScreenController {
                     String serverId = createServerAnswer.getString("id");
                     String serverName = createServerAnswer.getString("name");
 
-                    //Redirecting to the new server
-                    //TODO
                     Server server = editor.haveServer(localUser, serverId, serverName);
                     Platform.runLater(() -> StageManager.showServerScreen(server));
-                    //StageManager.showServerScreen(server);
+
                 }
             });
         }
