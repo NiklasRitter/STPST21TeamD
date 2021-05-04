@@ -34,6 +34,13 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void logout(String userKey, Callback<JsonNode> callback) {
+        // Use UniRest to make register request
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + LOGOUT_PATH)
+                .header(COM_USER_KEY, userKey);
+        sendRequest(req, callback);
+    }
+
     public void createServer(String name, String userKey, Callback<JsonNode> callback){
         // Build request Body
         String body = Json.createObjectBuilder().add(COM_NAME, name).build().toString();
@@ -45,6 +52,7 @@ public class RestClient {
 
         sendRequest(req, callback);
     }
+
     private static void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         new Thread(() -> req.asJsonAsync(callback)).start();
     }
