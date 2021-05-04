@@ -31,4 +31,5 @@ public class Constants {
     public static final String LOGOUT_PATH = "/logout";
     public static final String SERVER_PATH = "/servers";
     public static final String API_PREFIX = "/api";
+
 }

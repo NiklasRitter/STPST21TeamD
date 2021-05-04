@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -32,6 +33,7 @@ public class StageManager extends Application {
 
         showLoginScreen(restClient);
         stage.show();
+        restClient = new RestClient();
     }
 
     @Override
@@ -46,7 +48,7 @@ public class StageManager extends Application {
         }
     }
 
-    public Editor getEditor(){
+    public Editor getEditor() {
         return editor;
     }
 
@@ -93,6 +95,8 @@ public class StageManager extends Application {
             stage.setTitle("Main");
             stage.setScene(scene);
             stage.centerOnScreen();
+
+            stage.setResizable(true);
 
         } catch (Exception e) {
             System.err.println("Error on showing MainScreen");
@@ -143,7 +147,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showServerScreen() {
+    public static void showServerScreen(Server server) {
         cleanup();
 
         try {
@@ -152,11 +156,11 @@ public class StageManager extends Application {
             Scene scene = new Scene(root);
 
             //init controller
-            serverScreenController = new ServerScreenController(root, model, editor, restClient);
+            serverScreenController = new ServerScreenController(root, model, editor, restClient, server);
             serverScreenController.init();
 
             //display
-            stage.setTitle("Server Screen");
+            stage.setTitle("Server");
             stage.setScene(scene);
             stage.centerOnScreen();
 
@@ -164,6 +168,7 @@ public class StageManager extends Application {
             System.err.println("Error on showing ServerScreenController");
             e.printStackTrace();
         }
+
     }
 
     public static void showOptionsScreen() {
