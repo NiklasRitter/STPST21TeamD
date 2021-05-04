@@ -1,9 +1,6 @@
 package de.uniks.stp.wedoit.accord.client;
 
-import de.uniks.stp.wedoit.accord.client.controller.LoginScreenController;
-import de.uniks.stp.wedoit.accord.client.controller.MainScreenController;
-import de.uniks.stp.wedoit.accord.client.controller.OptionsScreenController;
-import de.uniks.stp.wedoit.accord.client.controller.WelcomeScreenController;
+import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -24,6 +21,8 @@ public class StageManager extends Application {
     private static Stage stage;
     private static WelcomeScreenController welcomeScreenController;
     private static OptionsScreenController optionsScreenController;
+    private static CreateServerScreenController createServerScreenController;
+    private static ServerScreenController serverScreenController;
 
     @Override
     public void start(Stage primaryStage) {
@@ -32,7 +31,7 @@ public class StageManager extends Application {
         model = editor.haveLocalUser();
         restClient = new RestClient();
 
-        showLoginScreen();
+        showLoginScreen(restClient);
         stage.show();
         restClient = new RestClient();
     }
@@ -49,7 +48,11 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showLoginScreen() {
+    public Editor getEditor() {
+        return editor;
+    }
+
+    public static void showLoginScreen(RestClient restClient) {
         cleanup();
 
         try {
@@ -101,6 +104,30 @@ public class StageManager extends Application {
         }
     }
 
+    public static void showCreateServerScreen() {
+        cleanup();
+
+        try {
+            //load view
+            Parent root = FXMLLoader.load(StageManager.class.getResource("view/CreateServerScreen.fxml"));
+            Scene scene = new Scene(root);
+
+            //init controller
+            createServerScreenController = new CreateServerScreenController(root, model, editor, restClient);
+            createServerScreenController.init();
+
+            //display
+            stage.setTitle("Create Server");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            stage.setResizable(false);
+
+        } catch (Exception e) {
+            System.err.println("Error on showing CreateServerScreen");
+            e.printStackTrace();
+        }
+    }
+
     public static void showWelcomeScreen() {
         cleanup();
 
@@ -121,7 +148,27 @@ public class StageManager extends Application {
     }
 
     public static void showServerScreen(Server server) {
-        //TODO
+        cleanup();
+
+        try {
+            //load view
+            Parent root = FXMLLoader.load(StageManager.class.getResource("view/ServerScreen.fxml"));
+            Scene scene = new Scene(root);
+
+            //init controller
+            serverScreenController = new ServerScreenController(root, model, editor, restClient, server);
+            serverScreenController.init();
+
+            //display
+            stage.setTitle("Server Screen");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing ServerScreenController");
+            e.printStackTrace();
+        }
+
     }
 
     public static void showOptionsScreen() {

@@ -7,8 +7,24 @@ import java.util.Objects;
 
 public class Editor {
 
+    private LocalUser localUser;
+
     public LocalUser haveLocalUser() {
-        return new LocalUser();
+        localUser = new LocalUser();
+        return localUser;
+    }
+
+    public LocalUser haveLocalUser(String username, String userkey) {
+        if (localUser == null) {
+            this.localUser = new LocalUser();
+        }
+        this.localUser.setName(username);
+        this.localUser.setUserKey(userkey);
+        return localUser;
+    }
+
+    public LocalUser getLocalUser(){
+        return localUser;
     }
 
 
