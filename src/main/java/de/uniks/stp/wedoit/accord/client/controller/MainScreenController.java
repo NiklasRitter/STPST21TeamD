@@ -4,6 +4,8 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -12,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 
 public class MainScreenController {
 
+    private final RestClient restClient;
     private LocalUser localUser;
     private Editor editor;
     private Parent view;
@@ -22,10 +25,11 @@ public class MainScreenController {
     private Button logoutButton;
     private ListView<Server> serverListView;
 
-    public MainScreenController(Parent view, LocalUser model, Editor editor) {
+    public MainScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
+        this.restClient = restClient;
     }
 
     public void init() {
@@ -110,7 +114,20 @@ public class MainScreenController {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        //TODO
+        String userKey = this.localUser.getUserKey();
+
+        restClient.logout(userKey, response -> {
+
+            //if response status is successful
+            if (response.getBody().getObject().getString("status").equals("success")) {
+                this.localUser = null;
+
+                Platform.runLater(StageManager::showLoginScreen);
+            } else {
+                //TODO wie Error besser?
+                System.out.println("Error while logging out");
+            }
+        });
     }
 
 }

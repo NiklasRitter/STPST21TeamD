@@ -83,7 +83,7 @@ public class StageManager extends Application {
             Scene scene = new Scene(root);
 
             //init controller
-            mainScreenController = new MainScreenController(root, model, editor);
+            mainScreenController = new MainScreenController(root, model, editor, restClient);
             mainScreenController.init();
 
             // display
@@ -104,7 +104,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/WelcomeScreen.fxml"));
             Scene scene = new Scene(root);
 
-            welcomeScreenController = new WelcomeScreenController(root, model, editor);
+            welcomeScreenController = new WelcomeScreenController(root, model, editor, restClient);
             welcomeScreenController.init();
 
             stage.setTitle("Welcome");

@@ -3,9 +3,15 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import org.json.JSONObject;
+
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
 public class WelcomeScreenController {
 
@@ -16,10 +22,13 @@ public class WelcomeScreenController {
     private Button btnHome;
     private Button btnLogout;
 
-    public WelcomeScreenController(Parent view, LocalUser model, Editor editor) {
+    private RestClient restClient;
+
+    public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
+        this.restClient = restClient;
     }
 
     public void init() {
@@ -59,7 +68,20 @@ public class WelcomeScreenController {
      * @param actionEvent
      */
     private void btnLogoutOnClicked(ActionEvent actionEvent) {
-        //TODO implement me
+        String userKey = this.localUser.getUserKey();
+
+        restClient.logout(userKey, response -> {
+
+            //if response status is successful
+            if (response.getBody().getObject().getString("status").equals("success")) {
+                this.localUser = null;
+
+                Platform.runLater(StageManager::showLoginScreen);
+            } else {
+                //TODO wie Error besser?
+                System.out.println("Error while logging out");
+            }
+        });
     }
 
     /**
