@@ -3,15 +3,25 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Message;
+import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersListView;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import org.json.JSONObject;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import org.json.JSONArray;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WelcomeScreenController {
 
@@ -23,6 +33,11 @@ public class WelcomeScreenController {
     private Button btnLogout;
 
     private RestClient restClient;
+    private ListView<User> lwOnlineUsers;
+    private TextField tfPrivateChat;
+    private ListView<Message> lwPrivateChat;
+    private WelcomeScreenOnlineUsersListView usersListView;
+    private PropertyChangeListener usersListListener = this::usersListViewChanged;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -36,11 +51,17 @@ public class WelcomeScreenController {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
+        this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
+        this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
+
+        this.lwPrivateChat = (ListView<Message>) view.lookup("#lwPrivateChat");
+
 
         this.btnHome.setOnAction(this::btnHomeOnClicked);
         this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
 
+        this.initOnlineUsersList();
     }
 
     public void stop() {
@@ -91,5 +112,41 @@ public class WelcomeScreenController {
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
+    }
+
+    private void initOnlineUsersList(){
+        //TODO negativen Fall abprüfen
+        // load online Users
+        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
+            JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
+
+            for (int index = 0; index < getServersResponse.length(); index++) {
+                String name = getServersResponse.getJSONObject(index).getString("name");
+                String id = getServersResponse.getJSONObject(index).getString("id");
+                editor.haveUsers(id, name);
+            }
+
+            // load list view
+            usersListView = new WelcomeScreenOnlineUsersListView();
+            lwOnlineUsers.setCellFactory(usersListView);
+            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                    .collect(Collectors.toList());
+
+            this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser));
+
+            // Add listener for the loaded listView
+            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+        });
+    }
+
+    private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
+
+        if (propertyChangeEvent.getNewValue() != null) {
+            lwOnlineUsers.getItems().removeAll();
+            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                    .collect(Collectors.toList());
+            this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser));
+            lwOnlineUsers.refresh();
+        }
     }
 }
