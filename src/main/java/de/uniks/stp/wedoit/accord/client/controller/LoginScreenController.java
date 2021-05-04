@@ -15,7 +15,6 @@ import org.json.JSONObject;
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
-
 public class LoginScreenController {
 
     private LocalUser model;
@@ -48,6 +47,7 @@ public class LoginScreenController {
         this.btnRegister = (Button) view.lookup("#btnRegister");
         this.btnOptions = (Button) view.lookup("#btnOptions");
 
+
         this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
@@ -62,36 +62,42 @@ public class LoginScreenController {
         pwUserPw = null;
         btnLogin = null;
         btnRegister = null;
+
+        errorLabel = null;
+
         btnOptions = null;
     }
 
     /**
      * login user to server and redirect to MainScreen
      *
-     * @param actionEvent
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void loginButtonAction(ActionEvent actionEvent) {
         login();
     }
 
-    private void login() {
+    public void login() {
         if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
+
             tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
-
-            errorLabel.setText("Username or password is empty");
+            errorLabel.setText("Username or password is missing");
         } else {
             restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
-                if (response.getStatus() != 200) {
+
+                if (!response.getBody().getObject().getString("status").equals("success")) {
+
                     tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
                     pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
                     Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+
                 } else {
+
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
-                    this.model.setName(tfUserName.getText());
-                    this.model.setUserKey(userKey);
-                    Platform.runLater(() -> StageManager.showMainScreen());
+                    editor.haveLocalUser(tfUserName.getText(), userKey);
+                    Platform.runLater(StageManager::showMainScreen);
                 }
             });
         }
@@ -109,7 +115,8 @@ public class LoginScreenController {
         if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
             restClient.register(name, password, registerResponse -> {
                 // if user successful registered
-                if (registerResponse.getStatus() == 200) {
+                if (registerResponse.getBody().getObject().getString("status").equals("success")) {
+
                     //login the user
                     login();
                 } else {

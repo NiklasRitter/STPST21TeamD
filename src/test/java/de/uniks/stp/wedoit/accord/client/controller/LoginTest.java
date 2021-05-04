@@ -21,12 +21,9 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-
-public class RegisterTest extends ApplicationTest {
+public class LoginTest extends ApplicationTest {
 
     private Stage stage;
     private StageManager stageManager;
@@ -46,25 +43,13 @@ public class RegisterTest extends ApplicationTest {
     private RestClient restMock;
 
     @Mock
-    private HttpResponse<JsonNode> resRegister;
-
-    @Mock
-    private HttpResponse<JsonNode> resLogin;
-
-    @Mock
     private HttpResponse<JsonNode> res;
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
     @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorRegister;
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorLogin;
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @BeforeEach
     public void setup() {
@@ -72,7 +57,16 @@ public class RegisterTest extends ApplicationTest {
     }
 
     @Test
-    public void testSuccessfulRegister() {
+    public void testSuccessfulLogin() {
+
+        //Mocking of RestClient login function
+        when(res.getBody()).thenReturn(new JsonNode("{" +
+                "\"status\": \"success\",\n" +
+                " \"message\": \"\",\n" +
+                " \"data\": {\n" +
+                " \"userKey\": \"c653b568-d987-4331-8d62-26ae617847bf\"\n" +
+                " }" +
+                "}"));
 
         //TestFX
         String username = "username";
@@ -84,39 +78,16 @@ public class RegisterTest extends ApplicationTest {
         clickOn("#pwUserPw");
         write(password);
 
-        clickOn("#btnRegister");
+        clickOn("#btnLogin");
 
-        //Mocking of RestClient register function
-        when(resRegister.getBody()).thenReturn(new JsonNode("{" +
-                "\"status\": \"success\",\n" +
-                " \"message\": \"User created\",\n" +
-                " \"data\": {}\n}"));
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
 
-        when(resLogin.getBody()).thenReturn(new JsonNode("{" +
-                "\"status\": \"success\",\n" +
-                " \"message\": \"\",\n" +
-                " \"data\": {\n" +
-                " \"userKey\": \"c653b568-d987-4331-8d62-26ae617847bf\"\n" +
-                " }" +
-                "}"));
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
 
-        verify(restMock).register(anyString(), anyString(), callbackArgumentCaptorRegister.capture());
-
-        Callback<JsonNode> callbackRegister = callbackArgumentCaptorRegister.getValue();
-        callbackRegister.completed(resRegister);
-
-        Assert.assertEquals("success", resRegister.getBody().getObject().getString("status"));
-        Assert.assertEquals("User created", resRegister.getBody().getObject().getString("message"));
-        Assert.assertTrue(resRegister.getBody().getObject().getJSONObject("data").isEmpty());
-
-        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptorLogin.capture());
-
-        Callback<JsonNode> callbackLogin = callbackArgumentCaptorLogin.getValue();
-        callbackLogin.completed(resLogin);
-
-        Assert.assertEquals("success", resLogin.getBody().getObject().getString("status"));
-        Assert.assertEquals("", resLogin.getBody().getObject().getString("message"));
-        Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", resLogin.getBody().getObject().getJSONObject("data").getString("userKey"));
+        Assert.assertEquals("success", res.getBody().getObject().getString("status"));
+        Assert.assertEquals("", res.getBody().getObject().getString("message"));
+        Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", res.getBody().getObject().getJSONObject("data").getString("userKey"));
 
         Assert.assertEquals(username, stageManager.getEditor().getLocalUser().getName());
         Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", stageManager.getEditor().getLocalUser().getUserKey());
@@ -125,14 +96,16 @@ public class RegisterTest extends ApplicationTest {
         Assert.assertEquals(stage.getTitle(), "Main");
     }
 
+
     @Test
-    public void testUsernameTaken() {
+    public void testInvalidCredentials() {
 
         //Mocking of RestClient login function
         when(res.getBody()).thenReturn(new JsonNode("{ " +
                 "    \"status\": \"failure\",\n" +
-                "    \"message\": \"Name already taken\",\n" +
-                "    \"data\": {}}"));
+                "    \"message\": \"Invalid credentials\",\n" +
+                "    \"data\": {}" +
+                "}"));
 
         //TestFX
         String username = "username";
@@ -144,22 +117,22 @@ public class RegisterTest extends ApplicationTest {
         clickOn("#pwUserPw");
         write(password);
 
-        clickOn("#btnRegister");
+        clickOn("#btnLogin");
 
-        verify(restMock).register(anyString(), anyString(), callbackArgumentCaptor.capture());
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
 
         Assert.assertEquals("failure", res.getBody().getObject().getString("status"));
-        Assert.assertEquals("Name already taken", res.getBody().getObject().getString("message"));
+        Assert.assertEquals("Invalid credentials", res.getBody().getObject().getString("message"));
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
+        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
+        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
 
 
         Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
@@ -177,16 +150,16 @@ public class RegisterTest extends ApplicationTest {
         clickOn("#pwUserPw");
         write(password);
 
-        clickOn("#btnRegister");
+        clickOn("#btnLogin");
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Please type in username and password.", errorLabel.getText());
+        Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
+        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
+        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
 
         Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
         Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
@@ -204,20 +177,19 @@ public class RegisterTest extends ApplicationTest {
         clickOn("#pwUserPw");
         write("");
 
-        clickOn("#btnRegister");
+        clickOn("#btnLogin");
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Please type in username and password.", errorLabel.getText());
+        Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
+        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
+        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
 
         Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
         Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
     }
 
 }
-

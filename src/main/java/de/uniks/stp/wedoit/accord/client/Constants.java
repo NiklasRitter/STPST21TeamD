@@ -29,5 +29,6 @@ public class Constants {
     public static final String USERS_PATH = "/users";
     public static final String LOGIN_PATH = "/login";
     public static final String LOGOUT_PATH = "/logout";
+    public static final String SERVER_PATH = "/servers";
     public static final String API_PREFIX = "/api";
 }

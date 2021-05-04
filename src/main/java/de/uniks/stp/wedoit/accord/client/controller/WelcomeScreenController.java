@@ -76,7 +76,7 @@ public class WelcomeScreenController {
             if (response.getBody().getObject().getString("status").equals("success")) {
                 this.localUser = null;
 
-                Platform.runLater(StageManager::showLoginScreen);
+                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
             } else {
                 //TODO wie Error besser?
                 System.out.println("Error while logging out");
