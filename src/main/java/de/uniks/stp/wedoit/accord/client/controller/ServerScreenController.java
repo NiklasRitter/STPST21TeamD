@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -13,6 +14,7 @@ import javafx.scene.control.TextField;
 
 public class ServerScreenController {
 
+    private final Server server;
     private RestClient restClient;
     private LocalUser localUser;
     private Editor editor;
@@ -25,11 +27,12 @@ public class ServerScreenController {
     private ListView lvServerUsers;
     private TextField tfInputMessage;
 
-    public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient){
+    public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server){
         this.view = view;
         this.localUser = model;
         this.editor = editor;
         this.restClient = restClient;
+        this.server = server;
     }
 
     public void init(){
