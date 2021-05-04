@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class MainScreenController {
 
     private final RestClient restClient;
-    private final LocalUser localUser;
+    private LocalUser localUser;
     private final Editor editor;
     private final Parent view;
     private Button welcomeButton;
@@ -161,18 +161,17 @@ public class MainScreenController {
     private void logoutButtonOnClick(ActionEvent actionEvent) {
         String userKey = this.localUser.getUserKey();
 
-        restClient.logout(userKey, response -> {
-
-            //if response status is successful
-            if (response.getBody().getObject().getString("status").equals("success")) {
-                this.localUser = null;
-
-                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-            } else {
-                //TODO wie Error besser?
-                System.out.println("Error while logging out");
-            }
-        });
+        if (userKey != null && !userKey.isEmpty()) {
+            restClient.logout(userKey, response -> {
+                //if response status is successful
+                if (response.getBody().getObject().getString("status").equals("success")) {
+                    this.localUser.setUserKey(null);
+                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+                } else {
+                    System.err.println("Error while logging out");
+                }
+            });
+        }
     }
 
     /**

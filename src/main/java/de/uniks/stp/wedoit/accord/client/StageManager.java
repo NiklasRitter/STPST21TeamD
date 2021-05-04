@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -40,6 +41,11 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            String userKey = model.getUserKey();
+            if (userKey != null && !userKey.isEmpty()) {
+                restClient.logout(userKey, response -> {
+                });
+            }
             Unirest.shutDown();
             cleanup();
         } catch (Exception e) {
