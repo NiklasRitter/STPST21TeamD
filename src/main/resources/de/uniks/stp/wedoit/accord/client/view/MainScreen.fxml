@@ -15,6 +15,7 @@
 <?import javafx.scene.text.Font?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="373.0" style="-fx-background-color: BEIGE; -fx-border-color: #3c3f41;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
    <children>
       <HBox alignment="CENTER" prefHeight="69.0" prefWidth="600.0" style="-fx-border-color: #3c3f41; -fx-background-color: WHITE;">
          <children>

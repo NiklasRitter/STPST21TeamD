@@ -135,7 +135,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/WelcomeScreen.fxml"));
             Scene scene = new Scene(root);
 
-            welcomeScreenController = new WelcomeScreenController(root, model, editor);
+            welcomeScreenController = new WelcomeScreenController(root, model, editor, restClient);
             welcomeScreenController.init();
 
             stage.setTitle("Welcome");
