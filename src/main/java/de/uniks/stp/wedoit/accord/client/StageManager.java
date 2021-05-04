@@ -160,7 +160,7 @@ public class StageManager extends Application {
             serverScreenController.init();
 
             //display
-            stage.setTitle("Server Screen");
+            stage.setTitle("Server");
             stage.setScene(scene);
             stage.centerOnScreen();
 

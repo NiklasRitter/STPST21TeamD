@@ -70,7 +70,8 @@ public class CreateServerScreenController {
 
                     //Redirecting to the new server
                     //TODO
-
+                    Server server = editor.haveServer(localUser, serverId, serverName);
+                    Platform.runLater(() -> StageManager.showServerScreen(server));
                     //StageManager.showServerScreen(server);
                 }
             });
