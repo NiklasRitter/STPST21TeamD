@@ -12,7 +12,7 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class RestClient {
 
-    public static void login(String name, String password, Callback<JsonNode> callback) {
+    public void login(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
         String body = JsonUtil.buildLogin(name, password).toString();
 
