@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class MainScreenController {
 
     private final RestClient restClient;
-    private final LocalUser localUser;
+    private LocalUser localUser;
     private final Editor editor;
     private final Parent view;
     private Button welcomeButton;
@@ -165,7 +165,7 @@ public class MainScreenController {
 
             //if response status is successful
             if (response.getBody().getObject().getString("status").equals("success")) {
-                this.localUser = null;
+                this.localUser.setUserKey(null);
 
                 Platform.runLater(() -> StageManager.showLoginScreen(restClient));
             } else {
