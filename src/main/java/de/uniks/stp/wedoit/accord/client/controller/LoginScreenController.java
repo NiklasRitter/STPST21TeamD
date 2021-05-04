@@ -97,7 +97,7 @@ public class LoginScreenController {
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
-                    Platform.runLater(StageManager::showMainScreen);
+                    Platform.runLater(() -> StageManager.showMainScreen(restClient));
                 }
             });
         }

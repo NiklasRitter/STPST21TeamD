@@ -52,7 +52,7 @@ public class ServerScreenController {
     }
 
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        StageManager.showMainScreen(restClient);
     }
 
     private void settingsButtonOnClick(ActionEvent actionEvent) {

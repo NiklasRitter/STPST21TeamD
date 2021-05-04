@@ -85,7 +85,7 @@ public class StageManager extends Application {
     /**
      * load fxml of the MainScreen and show the MainScreen on the window
      */
-    public static void showMainScreen() {
+    public static void showMainScreen(RestClient restClient) {
         cleanup();
 
         try {
@@ -134,7 +134,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showWelcomeScreen() {
+    public static void showWelcomeScreen(RestClient restClient) {
         cleanup();
 
         try {

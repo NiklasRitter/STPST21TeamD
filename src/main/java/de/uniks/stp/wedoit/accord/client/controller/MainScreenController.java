@@ -104,7 +104,7 @@ public class MainScreenController {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void welcomeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showWelcomeScreen();
+        StageManager.showWelcomeScreen(restClient);
     }
 
     /**
