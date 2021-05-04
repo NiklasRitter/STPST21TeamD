@@ -31,7 +31,7 @@ public class StageManager extends Application {
         model = editor.haveLocalUser();
         restClient = new RestClient();
 
-        showLoginScreen();
+        showLoginScreen(restClient);
         stage.show();
     }
 
@@ -47,7 +47,11 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showLoginScreen() {
+    public Editor getEditor(){
+        return editor;
+    }
+
+    public static void showLoginScreen(RestClient restClient) {
         cleanup();
 
         try {

@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import kong.unirest.Callback;
 import kong.unirest.HttpRequest;
 import kong.unirest.JsonNode;
@@ -13,7 +14,7 @@ public class RestClient {
 
     public void login(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
-        String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
+        String body = JsonUtil.buildLogin(name, password).toString();
 
         // Use UniRest to make login request
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + LOGIN_PATH)
