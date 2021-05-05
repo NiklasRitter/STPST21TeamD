@@ -6,9 +6,8 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
-import javafx.collections.FXCollections;
 import javafx.application.Platform;
-
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 public class MainScreenController {
 
     private final RestClient restClient;
-    private final LocalUser localUser;
+    private LocalUser localUser;
     private final Editor editor;
     private final Parent view;
     private Button welcomeButton;
@@ -55,23 +54,26 @@ public class MainScreenController {
 
         // load server of the localUser
         restClient.getServers(localUser.getUserKey(), response -> {
-            JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
+            if (response.getBody().getObject().getString("status").equals("success")) {
+                JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
 
-            for (int index = 0; index < getServersResponse.length(); index++) {
-                String name = getServersResponse.getJSONObject(index).getString("name");
-                String id = getServersResponse.getJSONObject(index).getString("id");
-                editor.haveServer(localUser, id, name);
+                for (int index = 0; index < getServersResponse.length(); index++) {
+                    String name = getServersResponse.getJSONObject(index).getString("name");
+                    String id = getServersResponse.getJSONObject(index).getString("id");
+                    editor.haveServer(localUser, id, name);
+                }
+                // load list view
+                mainScreenServerListView = new MainScreenServerListView();
+                serverListView.setCellFactory(mainScreenServerListView);
+                List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
+                        .collect(Collectors.toList());
+                this.serverListView.setItems(FXCollections.observableList(localUserServers));
+
+                // Add listener for the loaded listView
+                this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
+            } else {
+                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
             }
-            // load list view
-            mainScreenServerListView = new MainScreenServerListView();
-            serverListView.setCellFactory(mainScreenServerListView);
-            List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
-                    .collect(Collectors.toList());
-            this.serverListView.setItems(FXCollections.observableList(localUserServers));
-
-            // Add listener for the loaded listView
-            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
-
         });
 
 
