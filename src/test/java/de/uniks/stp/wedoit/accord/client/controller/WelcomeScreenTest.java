@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class WelcomeScreenTest  extends ApplicationTest {
+public class WelcomeScreenTest extends ApplicationTest {
 
     private Stage stage;
     private StageManager stageManager;
@@ -34,7 +34,7 @@ public class WelcomeScreenTest  extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        this.stageManager.showLoginScreen(restMock);
+        StageManager.showLoginScreen(restMock);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -43,16 +43,10 @@ public class WelcomeScreenTest  extends ApplicationTest {
     private RestClient restMock;
 
     @Mock
-    private HttpResponse<JsonNode> resLogout;
-
-    @Mock
-    private HttpResponse<JsonNode> resLogin;
+    private HttpResponse<JsonNode> res;
 
     @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorLogout;
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorLogin;
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -64,7 +58,7 @@ public class WelcomeScreenTest  extends ApplicationTest {
 
     public void directToWelcomeScreen() {
         //Mocking of RestClient login function
-        when(resLogin.getBody()).thenReturn(new JsonNode("{" +
+        when(res.getBody()).thenReturn(new JsonNode("{" +
                 "\"status\": \"success\",\n" +
                 "\"message\": \"\",\n" +
                 "\"data\": {\n" +
@@ -84,20 +78,19 @@ public class WelcomeScreenTest  extends ApplicationTest {
 
         clickOn("#btnLogin");
 
-        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptorLogin.capture());
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
 
-        Callback<JsonNode> callbackLogin = callbackArgumentCaptorLogin.getValue();
-        callbackLogin.completed(resLogin);
+        Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
+        callbackLogin.completed(res);
 
         WaitForAsyncUtils.waitForFxEvents();
         clickOn("#btnWelcome");
-
     }
 
     @Test
     public void testBtnLogout() {
 
-        when(resLogout.getBody()).thenReturn(new JsonNode("{" +
+        when(res.getBody()).thenReturn(new JsonNode("{" +
                 "\"status\": \"success\",\n" +
                 "\"message\": \"Logged out\",\n" +
                 "\"data\": \"{}\" " +
@@ -112,13 +105,13 @@ public class WelcomeScreenTest  extends ApplicationTest {
         // testing logout button
         clickOn("#btnLogout");
 
-        verify(restMock).logout(anyString(), callbackArgumentCaptorLogout.capture());
+        verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
 
-        Callback<JsonNode> callbackLogout = callbackArgumentCaptorLogout.getValue();
-        callbackLogout.completed(resLogout);
+        Callback<JsonNode> callbackLogout = callbackArgumentCaptor.getValue();
+        callbackLogout.completed(res);
 
-        Assert.assertEquals("success", resLogout.getBody().getObject().getString("status"));
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertEquals("success", res.getBody().getObject().getString("status"));
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Login", stage.getTitle());
