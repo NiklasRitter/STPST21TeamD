@@ -122,7 +122,7 @@
             <VBox alignment="CENTER" prefHeight="327.0" prefWidth="402.0" style="-fx-background-color: WHITE;" HBox.hgrow="ALWAYS">
                <children>
                   <ListView id="lwPrivateChat" minHeight="305.0" minWidth="400.0" VBox.vgrow="ALWAYS" />
-                  <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" style="-fx-border-color: #3c3f41;" text="your message" VBox.vgrow="ALWAYS" />
+                  <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" promptText="your message" style="-fx-border-color: #3c3f41;" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
          </children>
