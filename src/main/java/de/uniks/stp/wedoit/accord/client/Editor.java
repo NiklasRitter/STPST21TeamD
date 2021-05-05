@@ -54,7 +54,7 @@ public class Editor {
     }
 
 
-    public LocalUser haveUsers(String id, String name) {
+    public LocalUser haveUser(String id, String name) {
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
         Objects.requireNonNull(name);

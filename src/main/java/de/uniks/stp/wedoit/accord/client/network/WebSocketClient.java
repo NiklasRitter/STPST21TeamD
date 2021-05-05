@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@ClientEndpoint
 public class WebSocketClient extends Endpoint {
     private final Editor editor;
     private Session session;

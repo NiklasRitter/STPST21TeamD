@@ -7,21 +7,26 @@ import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.json.JSONArray;
 
+import javax.json.JsonObject;
+import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 
 public class WelcomeScreenController {
 
@@ -38,6 +43,7 @@ public class WelcomeScreenController {
     private ListView<Message> lwPrivateChat;
     private WelcomeScreenOnlineUsersListView usersListView;
     private PropertyChangeListener usersListListener = this::usersListViewChanged;
+    private WebSocketClient websocket;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -62,6 +68,13 @@ public class WelcomeScreenController {
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
 
         this.initOnlineUsersList();
+
+        try {
+            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
+        } catch (URISyntaxException e) {
+            System.err.println("Error while making new URI");
+            e.printStackTrace();
+        }
     }
 
     public void stop() {
@@ -122,7 +135,7 @@ public class WelcomeScreenController {
             for (int index = 0; index < getServersResponse.length(); index++) {
                 String name = getServersResponse.getJSONObject(index).getString("name");
                 String id = getServersResponse.getJSONObject(index).getString("id");
-                editor.haveUsers(id, name);
+                editor.haveUser(id, name);
             }
 
             // load list view
@@ -147,5 +160,17 @@ public class WelcomeScreenController {
             this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser));
             lwOnlineUsers.refresh();
         }
+    }
+
+    public void handleMessage(JsonStructure msg) {
+        JsonObject jsonObject = (JsonObject) msg;
+
+        if (jsonObject.getString("action").equals("userJoined")) {
+            System.out.println(jsonObject.toString());
+        }
+        else if(jsonObject.getString("action").equals("userLeft")) {
+            System.out.println(jsonObject.toString());
+        }
+
     }
 }
