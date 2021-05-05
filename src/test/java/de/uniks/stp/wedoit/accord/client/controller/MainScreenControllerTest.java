@@ -7,7 +7,9 @@ import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
+import org.junit.Assert;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -75,6 +77,18 @@ public class MainScreenControllerTest extends ApplicationTest {
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
+    }
+
+    @Test
+    public void welcomeButtonTest() {
+        clickOn("#btnWelcome");
+        Assert.assertEquals("Welcome", stage.getTitle());
+    }
+
+    @Test
+    public void optionsButtonTest() {
+        clickOn("#btnOptions");
+        Assert.assertEquals("Options", stage.getTitle());
     }
 
     // Help methods to create response for mocked rest client
