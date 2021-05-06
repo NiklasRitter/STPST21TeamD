@@ -166,6 +166,8 @@ public class WelcomeScreenController {
     }
 
     private void initPrivateChat(User user) {
+
+        //TODO websocket connection aufbauen
         currentChat = user.getPrivateChat();
 
         // load list view
