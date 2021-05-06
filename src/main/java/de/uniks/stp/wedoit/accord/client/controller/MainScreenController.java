@@ -163,18 +163,17 @@ public class MainScreenController {
     private void logoutButtonOnClick(ActionEvent actionEvent) {
         String userKey = this.localUser.getUserKey();
 
-        restClient.logout(userKey, response -> {
-
-            //if response status is successful
-            if (response.getBody().getObject().getString("status").equals("success")) {
-                this.localUser = null;
-
-                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-            } else {
-                //TODO wie Error besser?
-                System.out.println("Error while logging out");
-            }
-        });
+        if (userKey != null && !userKey.isEmpty()) {
+            restClient.logout(userKey, response -> {
+                //if response status is successful
+                if (response.getBody().getObject().getString("status").equals("success")) {
+                    this.localUser.setUserKey(null);
+                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+                } else {
+                    System.err.println("Error while logging out");
+                }
+            });
+        }
     }
 
     /**
