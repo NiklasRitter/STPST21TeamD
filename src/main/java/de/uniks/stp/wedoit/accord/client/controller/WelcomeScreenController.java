@@ -9,7 +9,7 @@ import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
-import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersListView;
+import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -43,7 +43,7 @@ public class WelcomeScreenController {
     private ListView<User> lwOnlineUsers;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
-    private WelcomeScreenOnlineUsersListView usersListViewCellFactory;
+    private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
     private PropertyChangeListener usersListListener = this::usersListViewChanged;
     private WebSocketClient websocket;
@@ -143,7 +143,7 @@ public class WelcomeScreenController {
             }
 
             // load list view
-            usersListViewCellFactory = new WelcomeScreenOnlineUsersListView();
+            usersListViewCellFactory = new WelcomeScreenOnlineUsersCellFactory();
             lwOnlineUsers.setCellFactory(usersListViewCellFactory);
             List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
                     .collect(Collectors.toList());

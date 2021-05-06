@@ -4,7 +4,7 @@ import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
-public class WelcomeScreenOnlineUsersListView implements javafx.util.Callback<ListView<User>, ListCell<User>> {
+public class WelcomeScreenOnlineUsersCellFactory implements javafx.util.Callback<ListView<User>, ListCell<User>> {
 
     @Override
     public ListCell<User> call(ListView<User> param) {
