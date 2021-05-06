@@ -19,6 +19,9 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,13 +60,13 @@ public class MainScreenTest extends ApplicationTest {
 
     public void directToMainScreen() {
         //Mocking of RestClient login function
-        when(res.getBody()).thenReturn(new JsonNode("{" +
-                "\"status\": \"success\",\n" +
-                "\"message\": \"\",\n" +
-                "\"data\": {\n" +
-                "\"userKey\": \"c653b568-d987-4331-8d62-26ae617847bf\"\n" +
-                " }" +
-                "}"));
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
+                ).build();
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
 
         //TestFX
         String username = "username";
@@ -85,11 +88,12 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void testBtnLogout() {
-        when(res.getBody()).thenReturn(new JsonNode("{" +
-                "\"status\": \"success\",\n" +
-                "\"message\": \"Logged out\",\n" +
-                "\"data\": \"{}\" " +
-                "}"));
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "Logged out")
+                .add("data", "{}")
+                .build();
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
 
         directToMainScreen();
 
