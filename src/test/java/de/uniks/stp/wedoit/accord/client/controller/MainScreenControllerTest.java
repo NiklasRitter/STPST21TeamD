@@ -20,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -159,6 +160,73 @@ public class MainScreenControllerTest extends ApplicationTest {
         Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
         Assert.assertEquals("AOServer", ((Server) listView.getItems().get(1)).getName());
         Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(2)).getName());
+
+    }
+
+    // Test getServer failure message handling, server show LoginScreen
+    @Test
+    public void failureMessageTest() {
+        JsonObject json = buildGetServersFailureResponse();
+
+        mockRestClient(json);
+
+        ListView listView = lookup("#lwServerList").queryListView();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Login", stage.getTitle());
+    }
+
+    // Test open server with a double click on this one
+    @Test
+    public void openServerDoubleClickedTest() {
+        JsonObject json = buildGetServersSuccessWithTwoServers();
+
+        mockRestClient(json);
+
+        ListView listView = lookup("#lwServerList").queryListView();
+
+        Assert.assertEquals(2, listView.getItems().toArray().length);
+        for (Object server : listView.getItems()) {
+            Assert.assertTrue(server instanceof Server);
+        }
+        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+
+        // Select server one
+        listView.getSelectionModel().select(1);
+        Server server = (Server) listView.getSelectionModel().getSelectedItem();
+        doubleClickOn("#lwServerList");
+
+        // Test correct server and correct screen
+        Assert.assertEquals("BMainTestServerOne", server.getName());
+        Assert.assertEquals("Server", stage.getTitle());
+
+    }
+
+    //Test open server with the server button
+    @Test
+    public void serverButtonOnClickTest() {
+        JsonObject json = buildGetServersSuccessWithTwoServers();
+
+        mockRestClient(json);
+
+        ListView listView = lookup("#lwServerList").queryListView();
+
+        Assert.assertEquals(2, listView.getItems().toArray().length);
+        for (Object server : listView.getItems()) {
+            Assert.assertTrue(server instanceof Server);
+        }
+        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+
+        // Select server one
+        listView.getSelectionModel().select(1);
+        Server server = (Server) listView.getSelectionModel().getSelectedItem();
+        clickOn("#btnServer");
+
+        // Test correct server and correct screen
+        Assert.assertEquals("BMainTestServerOne", server.getName());
+        Assert.assertEquals("Server", stage.getTitle());
 
     }
 
