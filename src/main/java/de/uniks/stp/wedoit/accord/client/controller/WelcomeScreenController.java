@@ -2,18 +2,21 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Message;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import org.json.JSONArray;
 
 import javax.json.JsonObject;
@@ -26,8 +29,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
-
 public class WelcomeScreenController {
 
     private Parent view;
@@ -36,14 +37,17 @@ public class WelcomeScreenController {
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
+    private Chat currentChat;
 
     private RestClient restClient;
     private ListView<User> lwOnlineUsers;
     private TextField tfPrivateChat;
-    private ListView<Message> lwPrivateChat;
-    private WelcomeScreenOnlineUsersListView usersListView;
+    private ListView<PrivateMessage> lwPrivateChat;
+    private WelcomeScreenOnlineUsersListView usersListViewCellFactory;
+    private PrivateMessageCellFactory chatCellFactory;
     private PropertyChangeListener usersListListener = this::usersListViewChanged;
     private WebSocketClient websocket;
+    private PropertyChangeListener chatListener = this::newMessage;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -60,7 +64,7 @@ public class WelcomeScreenController {
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
 
-        this.lwPrivateChat = (ListView<Message>) view.lookup("#lwPrivateChat");
+        this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
 
 
         this.btnHome.setOnAction(this::btnHomeOnClicked);
@@ -70,7 +74,7 @@ public class WelcomeScreenController {
         this.initOnlineUsersList();
 
         try {
-            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
+            this.websocket = new WebSocketClient(editor, new URI("wss://ac.uniks.de/ws/chat?user=q"), this::handleMessage);
         } catch (URISyntaxException e) {
             System.err.println("Error while making new URI");
             e.printStackTrace();
@@ -126,7 +130,7 @@ public class WelcomeScreenController {
         StageManager.showOptionsScreen();
     }
 
-    private void initOnlineUsersList(){
+    private void initOnlineUsersList() {
         //TODO negativen Fall abprüfen
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
@@ -139,8 +143,8 @@ public class WelcomeScreenController {
             }
 
             // load list view
-            usersListView = new WelcomeScreenOnlineUsersListView();
-            lwOnlineUsers.setCellFactory(usersListView);
+            usersListViewCellFactory = new WelcomeScreenOnlineUsersListView();
+            lwOnlineUsers.setCellFactory(usersListViewCellFactory);
             List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
                     .collect(Collectors.toList());
 
@@ -152,7 +156,6 @@ public class WelcomeScreenController {
     }
 
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-
         if (propertyChangeEvent.getNewValue() != null) {
             lwOnlineUsers.getItems().removeAll();
             List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
@@ -162,13 +165,37 @@ public class WelcomeScreenController {
         }
     }
 
+    private void initPrivateChat(User user) {
+        currentChat = user.getPrivateChat();
+
+        // load list view
+        chatCellFactory = new PrivateMessageCellFactory();
+        lwPrivateChat.setCellFactory(chatCellFactory);
+        List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
+                .collect(Collectors.toList());
+
+        this.lwPrivateChat.setItems(FXCollections.observableList(messages));
+
+        // Add listener for the loaded listView
+        currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+    }
+
+    private void newMessage(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null) {
+            lwPrivateChat.getItems().removeAll();
+            List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
+                    .collect(Collectors.toList());
+            this.lwPrivateChat.setItems(FXCollections.observableList(messages));
+            lwPrivateChat.refresh();
+        }
+    }
+
     public void handleMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
         if (jsonObject.getString("action").equals("userJoined")) {
             System.out.println(jsonObject.toString());
-        }
-        else if(jsonObject.getString("action").equals("userLeft")) {
+        } else if (jsonObject.getString("action").equals("userLeft")) {
             System.out.println(jsonObject.toString());
         }
 
