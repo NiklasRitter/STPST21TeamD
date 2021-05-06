@@ -2,7 +2,9 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -89,6 +91,75 @@ public class MainScreenControllerTest extends ApplicationTest {
     public void optionsButtonTest() {
         clickOn("#btnOptions");
         Assert.assertEquals("Options", stage.getTitle());
+    }
+
+    // Test: list View load servers correct in the list view and sorted alphabetical
+    @Test
+    public void loadListViewWithTwoServersTest() {
+        JsonObject json = buildGetServersSuccessWithTwoServers();
+
+        // Mock the rest client getServers method
+        mockRestClient(json);
+
+        ListView listView = lookup("#lwServerList").queryListView();
+
+        // Test that two servers are listed in the listView
+        Assert.assertEquals(2, listView.getItems().toArray().length);
+        // Test that only servers are in the list
+        for (Object server : listView.getItems()) {
+            Assert.assertTrue(server instanceof Server);
+        }
+
+        //Test correct alphabetical order of the items and Test correct items in the list view
+        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+
+    }
+
+    // Test: list View load zero servers correct in the list view
+    @Test
+    public void loadListViewWithZeroServersTest() {
+        JsonObject json = buildGetServersSuccessWithZeroServers();
+
+        // Mock the rest client getServers method
+        mockRestClient(json);
+
+        ListView listView = lookup("#lwServerList").queryListView();
+
+        Assert.assertEquals(0, listView.getItems().toArray().length);
+
+    }
+
+    // Test: list view change correct with alphabetical order when a new server was created
+    @Test
+    public void listViewAddPropertyChangeListenerTest() {
+        JsonObject json = buildGetServersSuccessWithTwoServers();
+
+        mockRestClient(json);
+
+        ListView listView = lookup("#lwServerList").queryListView();
+
+        Assert.assertEquals(2, listView.getItems().toArray().length);
+        for (Object server : listView.getItems()) {
+            Assert.assertTrue(server instanceof Server);
+        }
+        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+
+        //create a new server
+        stageManager.getEditor().haveServer(stageManager.getEditor().getLocalUser(), "123", "AOServer");
+
+        // Test count of servers
+        Assert.assertEquals(3, listView.getItems().toArray().length);
+        for (Object server : listView.getItems()) {
+            Assert.assertTrue(server instanceof Server);
+        }
+
+        //Test correct alphabetical order of the items and Test correct items in the list view
+        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
+        Assert.assertEquals("AOServer", ((Server) listView.getItems().get(1)).getName());
+        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(2)).getName());
+
     }
 
     // Help methods to create response for mocked rest client
