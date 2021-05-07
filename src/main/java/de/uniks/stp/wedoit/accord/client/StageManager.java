@@ -66,6 +66,9 @@ public class StageManager extends Application {
         cleanup();
 
         try {
+            editor = new Editor();
+            model = editor.haveLocalUser();
+
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
             Scene scene = new Scene(root);
@@ -218,6 +221,5 @@ public class StageManager extends Application {
             optionsScreenController = null;
         }
     }
-
 }
 
