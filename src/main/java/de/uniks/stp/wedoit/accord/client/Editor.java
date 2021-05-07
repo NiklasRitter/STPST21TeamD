@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
 
 import java.util.Objects;
 
@@ -53,4 +54,13 @@ public class Editor {
     }
 
 
+    public User haveUser(String name, String id, boolean online, Server server) {
+        for (User user: server.getMembers()) {
+            if(user.getId().equals(id)) {
+            return user;
+            }
+        }
+        User user = new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
+        return user;
+    }
 }
