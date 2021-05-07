@@ -48,6 +48,7 @@ public class ServerScreenController {
 
     public void init(){
         // Load all view references
+
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");

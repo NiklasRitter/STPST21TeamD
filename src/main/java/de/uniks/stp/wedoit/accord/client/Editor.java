@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
 
 import java.util.Objects;
 
@@ -53,4 +54,25 @@ public class Editor {
     }
 
 
+    public LocalUser haveUser(String id, String name) {
+        Objects.requireNonNull(localUser);
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(name);
+
+        if (name.equals(localUser.getName())){
+            return localUser;
+        }
+
+        if (localUser.getUsers() != null) {
+            for (User user : localUser.getUsers()) {
+                if (user.getId().equals(id)) {
+                    return localUser;
+                }
+            }
+        }
+
+        User user = new User().setId(id).setName(name);
+        this.localUser.withUsers(user);
+        return localUser;
+    }
 }

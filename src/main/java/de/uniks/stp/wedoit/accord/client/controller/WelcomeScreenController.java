@@ -2,12 +2,35 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import org.json.JSONArray;
+
+import javax.json.JsonObject;
+import javax.json.JsonStructure;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 
 public class WelcomeScreenController {
 
@@ -17,8 +40,17 @@ public class WelcomeScreenController {
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
+    private Chat currentChat;
 
     private RestClient restClient;
+    private ListView<User> lwOnlineUsers;
+    private TextField tfPrivateChat;
+    private ListView<PrivateMessage> lwPrivateChat;
+    private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
+    private PrivateMessageCellFactory chatCellFactory;
+    private PropertyChangeListener usersListListener = this::usersListViewChanged;
+    private WebSocketClient websocket;
+    private PropertyChangeListener chatListener = this::newMessage;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -31,10 +63,24 @@ public class WelcomeScreenController {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
+        this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
+        this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
+
+        this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
+
 
         this.btnHome.setOnAction(this::btnHomeOnClicked);
         this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
+
+        this.initOnlineUsersList();
+
+        try {
+            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
+        } catch (URISyntaxException e) {
+            System.err.println("Error while making new URI");
+            e.printStackTrace();
+        }
     }
 
     public void stop() {
@@ -45,6 +91,8 @@ public class WelcomeScreenController {
         this.btnOptions = null;
         this.btnHome = null;
         this.btnLogout = null;
+
+        this.websocket.stop();
     }
 
     /**
@@ -84,5 +132,78 @@ public class WelcomeScreenController {
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
+    }
+
+    private void initOnlineUsersList() {
+        //TODO negativen Fall abprüfen
+        // load online Users
+        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
+            JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
+
+            for (int index = 0; index < getServersResponse.length(); index++) {
+                String name = getServersResponse.getJSONObject(index).getString("name");
+                String id = getServersResponse.getJSONObject(index).getString("id");
+                editor.haveUser(id, name);
+            }
+
+            // load list view
+            usersListViewCellFactory = new WelcomeScreenOnlineUsersCellFactory();
+            lwOnlineUsers.setCellFactory(usersListViewCellFactory);
+            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                    .collect(Collectors.toList());
+
+            this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser));
+
+            // Add listener for the loaded listView
+            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+        });
+    }
+
+    private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null) {
+            lwOnlineUsers.getItems().removeAll();
+            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                    .collect(Collectors.toList());
+            this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser));
+            lwOnlineUsers.refresh();
+        }
+    }
+
+    private void initPrivateChat(User user) {
+
+        //TODO websocket connection aufbauen
+        currentChat = user.getPrivateChat();
+
+        // load list view
+        chatCellFactory = new PrivateMessageCellFactory();
+        lwPrivateChat.setCellFactory(chatCellFactory);
+        List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
+                .collect(Collectors.toList());
+
+        this.lwPrivateChat.setItems(FXCollections.observableList(messages));
+
+        // Add listener for the loaded listView
+        currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+    }
+
+    private void newMessage(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null) {
+            lwPrivateChat.getItems().removeAll();
+            List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
+                    .collect(Collectors.toList());
+            this.lwPrivateChat.setItems(FXCollections.observableList(messages));
+            lwPrivateChat.refresh();
+        }
+    }
+
+    public void handleMessage(JsonStructure msg) {
+        JsonObject jsonObject = (JsonObject) msg;
+
+        if (jsonObject.getString("action").equals("userJoined")) {
+            System.out.println(jsonObject.toString());
+        } else if (jsonObject.getString("action").equals("userLeft")) {
+            System.out.println(jsonObject.toString());
+        }
+
     }
 }
