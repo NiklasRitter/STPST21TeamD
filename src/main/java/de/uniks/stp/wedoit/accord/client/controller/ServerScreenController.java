@@ -19,7 +19,7 @@ public class ServerScreenController {
     private LocalUser localUser;
     private Editor editor;
     private Parent view;
-    private Button btnOptions;
+    private Button btnSetting;
     private Button btnHome;
     private Button btnLogout;
     private Label lbServerName;
@@ -48,7 +48,7 @@ public class ServerScreenController {
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.btnOptions.setOnAction(this::settingsButtonOnClick);
+        this.btnSetting.setOnAction(this::settingsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
     }
 
