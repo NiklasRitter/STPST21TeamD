@@ -37,7 +37,7 @@ public class ServerScreenController {
 
     public void init(){
         // Load all view references
-        this.btnSetting = (Button) view.lookup("#btnSetting");
+        this.btnSetting = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lbServerName = (Label) view.lookup("#lbServerName");
@@ -52,7 +52,7 @@ public class ServerScreenController {
     }
 
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        StageManager.showMainScreen(restClient);
     }
 
     private void settingsButtonOnClick(ActionEvent actionEvent) {

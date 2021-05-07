@@ -44,10 +44,13 @@ public class StageManager extends Application {
             String userKey = model.getUserKey();
             if (userKey != null && !userKey.isEmpty()) {
                 restClient.logout(userKey, response -> {
+                    Unirest.shutDown();
+                    cleanup();
                 });
+            } else {
+                Unirest.shutDown();
+                cleanup();
             }
-            Unirest.shutDown();
-            cleanup();
         } catch (Exception e) {
             System.err.println("Error while shutdown program");
             e.printStackTrace();
@@ -85,7 +88,7 @@ public class StageManager extends Application {
     /**
      * load fxml of the MainScreen and show the MainScreen on the window
      */
-    public static void showMainScreen() {
+    public static void showMainScreen(RestClient restClient) {
         cleanup();
 
         try {

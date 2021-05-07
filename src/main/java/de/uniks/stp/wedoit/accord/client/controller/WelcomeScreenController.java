@@ -59,7 +59,7 @@ public class WelcomeScreenController {
      * @param actionEvent
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        StageManager.showMainScreen(restClient);
     }
 
     /**
