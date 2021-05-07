@@ -32,4 +32,6 @@ public class Constants {
     public static final String SERVER_PATH = "/servers";
     public static final String API_PREFIX = "/api";
 
+    // Preferences Keys
+    public static final String COM_DARKMODE = "darkmode";
 }
