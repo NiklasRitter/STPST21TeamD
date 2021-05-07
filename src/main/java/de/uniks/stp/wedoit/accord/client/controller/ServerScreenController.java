@@ -37,7 +37,8 @@ public class ServerScreenController {
 
     public void init(){
         // Load all view references
-        this.btnOptions = (Button) view.lookup("#btnOptions");
+
+        this.btnSetting = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lbServerName = (Label) view.lookup("#lbServerName");
@@ -66,6 +67,6 @@ public class ServerScreenController {
     public void stop(){
         this.btnLogout.setOnAction(null);
         this.btnHome.setOnAction(null);
-        this.btnOptions.setOnAction(null);
+        this.btnSetting.setOnAction(null);
     }
 }

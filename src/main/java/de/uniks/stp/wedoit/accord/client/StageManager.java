@@ -44,10 +44,13 @@ public class StageManager extends Application {
             String userKey = model.getUserKey();
             if (userKey != null && !userKey.isEmpty()) {
                 restClient.logout(userKey, response -> {
+                    Unirest.shutDown();
+                    cleanup();
                 });
+            } else {
+                Unirest.shutDown();
+                cleanup();
             }
-            Unirest.shutDown();
-            cleanup();
         } catch (Exception e) {
             System.err.println("Error while shutdown program");
             e.printStackTrace();
