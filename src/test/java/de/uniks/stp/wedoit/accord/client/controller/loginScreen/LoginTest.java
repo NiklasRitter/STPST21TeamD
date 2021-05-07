@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller;
+package de.uniks.stp.wedoit.accord.client.controller.loginScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;

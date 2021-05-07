@@ -15,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import org.json.JSONArray;
@@ -59,7 +60,6 @@ public class WelcomeScreenController {
     }
 
     public void init() {
-
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
@@ -101,7 +101,7 @@ public class WelcomeScreenController {
      * @param actionEvent
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        StageManager.showMainScreen(restClient);
     }
 
     /**
