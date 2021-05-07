@@ -15,7 +15,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" style="-fx-background-color: BEIGE;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" style="-fx-background-color: BEIGE;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" style="-fx-border-color: #3c3f41; -fx-background-color: WHITE;" VBox.vgrow="ALWAYS">
          <children>
@@ -131,7 +131,7 @@
                      </font>
                   </Label>
                   <ListView id="lvTextChat" minHeight="285.0" minWidth="314.0" VBox.vgrow="ALWAYS" />
-                  <TextField id="tfInputMessage" minHeight="21.0" minWidth="336.0" style="-fx-border-color: #3c3f41;" text="your message" VBox.vgrow="ALWAYS" />
+                  <TextField id="tfInputMessage" minHeight="21.0" minWidth="336.0" promptText="your message" style="-fx-border-color: #3c3f41;" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" style="-fx-background-color: white; -fx-border-color: black;" HBox.hgrow="ALWAYS">
