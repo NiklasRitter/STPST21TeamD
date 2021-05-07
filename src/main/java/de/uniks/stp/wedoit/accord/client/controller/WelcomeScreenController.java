@@ -76,7 +76,7 @@ public class WelcomeScreenController {
         this.initOnlineUsersList();
 
         try {
-            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
+            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleSystemMessage);
         } catch (URISyntaxException e) {
             System.err.println("Error while making new URI");
             e.printStackTrace();
@@ -152,7 +152,7 @@ public class WelcomeScreenController {
             List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
                     .collect(Collectors.toList());
 
-            this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser));
+            Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
 
             // Add listener for the loaded listView
             this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
@@ -164,7 +164,7 @@ public class WelcomeScreenController {
             lwOnlineUsers.getItems().removeAll();
             List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
                     .collect(Collectors.toList());
-            this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser));
+            Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
             lwOnlineUsers.refresh();
         }
     }
@@ -196,13 +196,15 @@ public class WelcomeScreenController {
         }
     }
 
-    public void handleMessage(JsonStructure msg) {
+    public void handleSystemMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
+        JsonObject data = jsonObject.getJsonObject("data");
 
         if (jsonObject.getString("action").equals("userJoined")) {
-            System.out.println(jsonObject.toString());
+            this.editor.haveUser(data.getString("id"), data.getString("name"));
+
         } else if (jsonObject.getString("action").equals("userLeft")) {
-            System.out.println(jsonObject.toString());
+            this.editor.userLeft(data.getString("id"));
         }
 
     }

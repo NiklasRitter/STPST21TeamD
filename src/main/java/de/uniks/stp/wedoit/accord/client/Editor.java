@@ -75,4 +75,20 @@ public class Editor {
         this.localUser.withUsers(user);
         return localUser;
     }
+
+    public Editor userLeft(String id){
+        Objects.requireNonNull(localUser);
+        Objects.requireNonNull(id);
+
+        if (localUser.getUsers() != null) {
+            for (User user : localUser.getUsers()) {
+                if (user.getId().equals(id)) {
+                    localUser.withoutUsers(user);
+                    return this;
+                }
+            }
+        }
+
+        return this;
+    }
 }
