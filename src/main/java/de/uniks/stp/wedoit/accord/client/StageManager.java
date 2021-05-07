@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
