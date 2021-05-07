@@ -54,7 +54,11 @@ public class Editor {
     }
 
 
-    public User haveUser(String name, String id, boolean online, Server server) {
+
+    public User haveUserWithServer(String name, String id, boolean online, Server server) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(server);
         for (User user: server.getMembers()) {
             if(user.getId().equals(id)) {
             return user;
@@ -62,5 +66,28 @@ public class Editor {
         }
         User user = new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
         return user;
+    }
+
+    public LocalUser haveUser(String id, String name) {
+        Objects.requireNonNull(localUser);
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(name);
+
+        if (name.equals(localUser.getName())){
+            return localUser;
+        }
+
+        if (localUser.getUsers() != null) {
+            for (User user : localUser.getUsers()) {
+                if (user.getId().equals(id)) {
+                    return localUser;
+                }
+            }
+        }
+
+        User user = new User().setId(id).setName(name);
+        this.localUser.withUsers(user);
+        return localUser;
+
     }
 }

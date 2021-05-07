@@ -33,7 +33,7 @@ public class ServerScreenController {
     private LocalUser localUser;
     private Editor editor;
     private Parent view;
-    private Button btnSetting;
+    private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
     private Label lbServerName;
@@ -52,7 +52,8 @@ public class ServerScreenController {
 
     public void init() {
         // Load all view references
-        this.btnSetting = (Button) view.lookup("#btnOptions");
+
+        this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lbServerName = (Label) view.lookup("#lbServerName");
@@ -78,7 +79,7 @@ public class ServerScreenController {
                     String id = members.getJSONObject(index).getString("id");
                     boolean onlineStatus = members.getJSONObject(index).getBoolean("online");
 
-                    editor.haveUser(name, id, onlineStatus, server);
+                    editor.haveUserWithServer(name, id, onlineStatus, server);
                 }
                 // load list view
                 ServerUserListView serverUserListView = new ServerUserListView();
@@ -96,7 +97,7 @@ public class ServerScreenController {
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.btnSetting.setOnAction(this::settingsButtonOnClick);
+        this.btnOptions.setOnAction(this::settingsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
     }
 
@@ -107,7 +108,7 @@ public class ServerScreenController {
     }
 
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        StageManager.showMainScreen(restClient);
     }
 
     private void settingsButtonOnClick(ActionEvent actionEvent) {
@@ -121,6 +122,6 @@ public class ServerScreenController {
     public void stop() {
         this.btnLogout.setOnAction(null);
         this.btnHome.setOnAction(null);
-        this.btnSetting.setOnAction(null);
+        this.btnOptions.setOnAction(null);
     }
 }

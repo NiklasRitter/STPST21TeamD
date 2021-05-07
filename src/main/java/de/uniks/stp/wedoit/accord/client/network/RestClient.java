@@ -78,6 +78,14 @@ public class RestClient {
 
         sendRequest(req, callback);
     }
+
+    public void getOnlineUsers(String userKey,Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + USERS_PATH)
+                .header(COM_USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
     private void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         new Thread(() -> req.asJsonAsync(callback)).start();
     }
