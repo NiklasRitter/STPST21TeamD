@@ -2,25 +2,22 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
-import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import kong.unirest.JsonNode;
 
-import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_CHANNEL;
+import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class ServerScreenController {
 
@@ -37,6 +34,7 @@ public class ServerScreenController {
     private ListView lvServerUsers;
     private TextField tfInputMessage;
     private ListView listView;
+    private WebSocketClient webSocket;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server){
         this.view = view;
@@ -48,7 +46,6 @@ public class ServerScreenController {
 
     public void init(){
         // Load all view references
-
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
@@ -64,6 +61,22 @@ public class ServerScreenController {
         this.btnOptions.setOnAction(this::settingsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
+
+        try {
+            this.webSocket = new WebSocketClient(editor, new URI(CHAT_USER_URL + this.localUser.getName()
+                    + "&" +  SERVER_ID_URL + this.server.getId()), this::handleMessage);
+        } catch (URISyntaxException e) {
+            System.err.println("Error creating URI");
+            e.printStackTrace();
+        }
+    }
+
+    public void stop(){
+        this.btnLogout.setOnAction(null);
+        this.btnHome.setOnAction(null);
+        this.btnOptions.setOnAction(null);
+
+        this.webSocket.stop();
     }
 
     private void tfInputMessageOnEnter(ActionEvent actionEvent){
@@ -71,33 +84,16 @@ public class ServerScreenController {
         String message = this.tfInputMessage.getText();
         this.tfInputMessage.clear();
 
-        //TODO woher richtiger channel?
-        String serverId = this.server.getId();
-        String dummyChannel = serverId;
+        //TODO hat standardmäßig keinen channel
+        String channelId = this.server.getCategories().get(0).getChannel().getId();
 
-        //this.server.getCategories().get(1).getChannel();
+        //TODO MULTIPLE CHANNELS PER CATEGORY?
 
         // build message
-        JsonUtil.buildServerChatMessage(dummyChannel, message);
+        JsonObject jsonMsg = JsonUtil.buildServerChatMessage(channelId, message);
 
         // send message
-        //TODO muss hier jedes mal neuer WebSocket aufgemacht werden?
-        try {
-            //TODO was ist die URI?
-            //TODO callback handle message implementieren?
-            WebSocketClient wsc = new WebSocketClient(editor, new URI("wss://ac.uniks.de/ws/"), msg -> {
-                JsonObject jsonObject = (JsonObject) msg;
-
-                if (!jsonObject.getString(COM_CHANNEL).equals("private")) {
-                    System.out.println("Received: " + msg.toString());
-                }
-                else {
-                    System.out.println("Not received: " + msg.toString());
-                }
-            });
-        } catch (URISyntaxException e) {
-            System.err.println("URI wrong");
-        }
+        this.webSocket.sendMessage(jsonMsg.toString());
     }
 
     private void homeButtonOnClick(ActionEvent actionEvent) {
@@ -112,9 +108,15 @@ public class ServerScreenController {
         //TODO
     }
 
-    public void stop(){
-        this.btnLogout.setOnAction(null);
-        this.btnHome.setOnAction(null);
-        this.btnOptions.setOnAction(null);
+    public void handleMessage (JsonStructure msg) {
+        JsonObject jsonObject = (JsonObject) msg;
+
+        if (!jsonObject.getString(COM_CHANNEL).equals("private")) {
+            System.out.println("Received: " + msg.toString());
+        }
+        else {
+            System.out.println("Not received: " + msg.toString());
+        }
     }
+
 }
