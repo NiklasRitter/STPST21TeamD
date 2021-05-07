@@ -29,6 +29,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
+
 public class WelcomeScreenController {
 
     private Parent view;
@@ -74,7 +76,7 @@ public class WelcomeScreenController {
         this.initOnlineUsersList();
 
         try {
-            this.websocket = new WebSocketClient(editor, new URI("wss://ac.uniks.de/ws/chat?user=q"), this::handleMessage);
+            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
         } catch (URISyntaxException e) {
             System.err.println("Error while making new URI");
             e.printStackTrace();

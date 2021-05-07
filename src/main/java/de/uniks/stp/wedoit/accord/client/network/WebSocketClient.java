@@ -21,7 +21,8 @@ public class WebSocketClient extends Endpoint {
         this.noopTimer = new Timer();
 
         try {
-            ClientEndpointConfig clientEndpointConfig = ClientEndpointConfig.Builder.create().build();
+            ClientEndpointConfig clientEndpointConfig = ClientEndpointConfig.Builder.create().configurator(new CustomWebSocketConfigurator(this.editor.getLocalUser().getUserKey()))
+                    .build();
 
             WebSocketContainer WebSocketContainer = ContainerProvider.getWebSocketContainer();
             WebSocketContainer.connectToServer(this, clientEndpointConfig, endpoint);
