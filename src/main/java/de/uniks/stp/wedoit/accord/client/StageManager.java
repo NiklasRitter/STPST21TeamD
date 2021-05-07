@@ -137,7 +137,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showWelcomeScreen() {
+    public static void showWelcomeScreen(RestClient restClient) {
         cleanup();
 
         try {

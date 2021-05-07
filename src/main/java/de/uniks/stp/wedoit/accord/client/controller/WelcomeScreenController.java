@@ -8,10 +8,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import org.json.JSONObject;
-
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
 public class WelcomeScreenController {
 
@@ -32,7 +28,6 @@ public class WelcomeScreenController {
     }
 
     public void init() {
-
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
@@ -40,7 +35,6 @@ public class WelcomeScreenController {
         this.btnHome.setOnAction(this::btnHomeOnClicked);
         this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
-
     }
 
     public void stop() {
