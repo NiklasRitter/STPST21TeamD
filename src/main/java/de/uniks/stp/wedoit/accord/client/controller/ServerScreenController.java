@@ -26,6 +26,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.SERVER_ID_URL;
+import static de.uniks.stp.wedoit.accord.client.Constants.WS_SERVER_URL;
+
 public class ServerScreenController {
 
     private final Server server;
@@ -61,39 +64,33 @@ public class ServerScreenController {
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
 
-
-        this.websocket = new WebSocketClient(editor, URI.create("wss://ac.uniks.de/ws/system"), this::handleMessage);
-
-
         // Load list view
         // Load users of the server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
             if (response.getBody().getObject().getString("status").equals("success")) {
                 JSONObject data = response.getBody().getObject().getJSONObject("data");
                 JSONArray members = data.getJSONArray("members");
-
+                JSONArray categories = data.getJSONArray("categories");
+                server.setOwner(data.getString("owner"));
+                System.out.println(members);
                 // create user which are member in the server
-                for (int index = 0; index < members.length(); index++) {
-
-                    String name = members.getJSONObject(index).getString("name");
-                    String id = members.getJSONObject(index).getString("id");
-                    boolean onlineStatus = members.getJSONObject(index).getBoolean("online");
-
-                    editor.haveUserWithServer(name, id, onlineStatus, server);
-                }
-                // load list view
-                ServerUserListView serverUserListView = new ServerUserListView();
-                lvServerUsers.setCellFactory(serverUserListView);
-                List<User> users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
-                        .collect(Collectors.toList());
-                this.lvServerUsers.setItems(FXCollections.observableList(users));
-
+                // Load user list view
+                createUserListView(members);
 
             } else {
-                //LoginScreen?
+                StageManager.showLoginScreen(restClient);
             }
 
         });
+
+        try {
+            this.websocket = new WebSocketClient(editor, new URI(WS_SERVER_URL + SERVER_ID_URL + server.getId()), this::handleMessage);
+            //this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
+        } catch (URISyntaxException e) {
+            System.err.println("Error while making new URI");
+            e.printStackTrace();
+        }
+
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
@@ -101,11 +98,37 @@ public class ServerScreenController {
         this.btnHome.setOnAction(this::homeButtonOnClick);
     }
 
-    private void handleMessage(JsonStructure msg) {
+    /**
+     * create new users which a member of this server and load user list view with this users,
+     * sorted by the online status
+     *
+     * @param members JSONArray with users formatted as JSONObject
+     */
+    private void createUserListView(JSONArray members) {
+        for (int index = 0; index < members.length(); index++) {
 
-        JsonObject jsonObject = (JsonObject) msg;
-        System.out.println(msg);
+            String name = members.getJSONObject(index).getString("name");
+            String id = members.getJSONObject(index).getString("id");
+            boolean onlineStatus = members.getJSONObject(index).getBoolean("online");
+
+            editor.haveUserWithServer(name, id, onlineStatus, server);
+        }
+        // load list view
+        ServerUserListView serverUserListView = new ServerUserListView();
+        lvServerUsers.setCellFactory(serverUserListView);
+        List<User> users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+                .collect(Collectors.toList());
+        this.lvServerUsers.setItems(FXCollections.observableList(users));
     }
+
+    public void stop() {
+        this.btnLogout.setOnAction(null);
+        this.btnHome.setOnAction(null);
+        this.btnOptions.setOnAction(null);
+        this.websocket = null;
+    }
+
+    // Additional methods
 
     private void homeButtonOnClick(ActionEvent actionEvent) {
         StageManager.showMainScreen(restClient);
@@ -119,9 +142,16 @@ public class ServerScreenController {
         //TODO
     }
 
-    public void stop() {
-        this.btnLogout.setOnAction(null);
-        this.btnHome.setOnAction(null);
-        this.btnOptions.setOnAction(null);
+    /**
+     * Handles the response of the websocket server
+     *
+     * @param msg response of the websocket server
+     */
+    private void handleMessage(JsonStructure msg) {
+        JsonObject jsonObject = (JsonObject) msg;
+        System.out.println(msg);
+        //TODO updateUserListView()
+
     }
+    
 }

@@ -35,4 +35,6 @@ public class Constants {
 
     public static final String WS_SERVER_URL = "wss://ac.uniks.de";
     public static final String SYSTEM_SOCKET_URL = WS_SERVER_URL + "/ws/system";
+    public static final String SERVER_ID_URL = "/ws/system?serverId=";
+
 }
