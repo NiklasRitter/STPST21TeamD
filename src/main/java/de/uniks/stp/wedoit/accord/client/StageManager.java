@@ -4,11 +4,12 @@ import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import kong.unirest.Unirest;
 
@@ -24,39 +25,8 @@ public class StageManager extends Application {
     private static OptionsScreenController optionsScreenController;
     private static CreateServerScreenController createServerScreenController;
     private static ServerScreenController serverScreenController;
-
-    @Override
-    public void start(Stage primaryStage) {
-        stage = primaryStage;
-        editor = new Editor();
-        model = editor.haveLocalUser();
-        restClient = new RestClient();
-
-        showLoginScreen(restClient);
-        stage.show();
-        restClient = new RestClient();
-    }
-
-    @Override
-    public void stop() {
-        try {
-            super.stop();
-            String userKey = model.getUserKey();
-            if (userKey != null && !userKey.isEmpty()) {
-                restClient.logout(userKey, response -> {
-                });
-            }
-            Unirest.shutDown();
-            cleanup();
-        } catch (Exception e) {
-            System.err.println("Error while shutdown program");
-            e.printStackTrace();
-        }
-    }
-
-    public Editor getEditor() {
-        return editor;
-    }
+    private static Scene scene;
+    private static Popup popup;
 
     public static void showLoginScreen(RestClient restClient) {
         cleanup();
@@ -64,7 +34,9 @@ public class StageManager extends Application {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
-            Scene scene = new Scene(root);
+            scene = new Scene(root);
+
+            updateDarkmode();
 
             loginScreenController = new LoginScreenController(root, model, editor, restClient);
             loginScreenController.init();
@@ -91,7 +63,9 @@ public class StageManager extends Application {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/MainScreen.fxml"));
-            Scene scene = new Scene(root);
+            scene = new Scene(root);
+
+            updateDarkmode();
 
             //init controller
             mainScreenController = new MainScreenController(root, model, editor, restClient);
@@ -116,7 +90,9 @@ public class StageManager extends Application {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/CreateServerScreen.fxml"));
-            Scene scene = new Scene(root);
+            scene = new Scene(root);
+
+            updateDarkmode();
 
             //init controller
             createServerScreenController = new CreateServerScreenController(root, model, editor, restClient);
@@ -139,7 +115,9 @@ public class StageManager extends Application {
 
         try {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/WelcomeScreen.fxml"));
-            Scene scene = new Scene(root);
+            scene = new Scene(root);
+
+            updateDarkmode();
 
             welcomeScreenController = new WelcomeScreenController(root, model, editor, restClient);
             welcomeScreenController.init();
@@ -159,7 +137,9 @@ public class StageManager extends Application {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/ServerScreen.fxml"));
-            Scene scene = new Scene(root);
+            scene = new Scene(root);
+
+            updateDarkmode();
 
             //init controller
             serverScreenController = new ServerScreenController(root, model, editor, restClient, server);
@@ -178,18 +158,17 @@ public class StageManager extends Application {
     }
 
     public static void showOptionsScreen() {
-        cleanup();
-
         try {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/OptionsScreen.fxml"));
-            Scene scene = new Scene(root);
+            popup = new Popup();
+            popup.getContent().add(root);
+            popup.setWidth(200);
+            popup.setHeight(100);
+            popup.setAutoHide(true);
+            popup.show(stage);
 
             optionsScreenController = new OptionsScreenController(root, model, editor);
             optionsScreenController.init();
-
-            stage.setTitle("Options");
-            stage.setScene(scene);
-            stage.centerOnScreen();
         } catch (Exception e) {
             System.err.println("Error on showing OptionsScreen");
             e.printStackTrace();
@@ -212,6 +191,72 @@ public class StageManager extends Application {
         if (optionsScreenController != null) {
             optionsScreenController.stop();
             optionsScreenController = null;
+        }
+    }
+
+    public static void changeDarkmode(boolean darkmode) {
+        if (scene != null) {
+            if (darkmode) {
+                scene.getStylesheets().remove(StageManager.class.getResource(
+                        "light-theme.css").toExternalForm());
+                scene.getStylesheets().add(StageManager.class.getResource(
+                        "dark-theme.css").toExternalForm());
+            } else {
+                scene.getStylesheets().remove(StageManager.class.getResource(
+                        "dark-theme.css").toExternalForm());
+                scene.getStylesheets().add(StageManager.class.getResource(
+                        "light-theme.css").toExternalForm());
+            }
+        }
+        if (popup != null) {
+            if (darkmode) {
+                popup.getScene().getStylesheets().remove(StageManager.class.getResource(
+                        "light-theme.css").toExternalForm());
+                popup.getScene().getStylesheets().add(StageManager.class.getResource(
+                        "dark-theme.css").toExternalForm());
+            } else {
+                popup.getScene().getStylesheets().remove(StageManager.class.getResource(
+                        "dark-theme.css").toExternalForm());
+                popup.getScene().getStylesheets().add(StageManager.class.getResource(
+                        "light-theme.css").toExternalForm());
+            }
+        }
+    }
+
+    public static void updateDarkmode() {
+        changeDarkmode(model.getOptions().isDarkmode());
+    }
+
+    public Editor getEditor() {
+        return editor;
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        stage = primaryStage;
+        editor = new Editor();
+        model = editor.haveLocalUser();
+        model.setOptions(ResourceManager.loadOptions());
+        restClient = new RestClient();
+
+        showLoginScreen(restClient);
+        stage.show();
+    }
+
+    @Override
+    public void stop() {
+        try {
+            super.stop();
+            String userKey = model.getUserKey();
+            if (userKey != null && !userKey.isEmpty()) {
+                restClient.logout(userKey, response -> {
+                });
+            }
+            Unirest.shutDown();
+            cleanup();
+        } catch (Exception e) {
+            System.err.println("Error while shutdown program");
+            e.printStackTrace();
         }
     }
 
