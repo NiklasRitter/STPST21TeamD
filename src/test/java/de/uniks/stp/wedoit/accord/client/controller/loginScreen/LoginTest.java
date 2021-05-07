@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller;
+package de.uniks.stp.wedoit.accord.client.controller.loginScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -21,6 +21,8 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
+import javax.json.Json;
+
 import static org.mockito.Mockito.*;
 
 public class LoginTest extends ApplicationTest {
@@ -34,7 +36,7 @@ public class LoginTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        this.stageManager.showLoginScreen(restMock);
+        StageManager.showLoginScreen(restMock);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -59,14 +61,15 @@ public class LoginTest extends ApplicationTest {
     @Test
     public void testSuccessfulLogin() {
 
+        String returnMessage = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
+                ).build().toString();
+
         //Mocking of RestClient login function
-        when(res.getBody()).thenReturn(new JsonNode("{" +
-                "\"status\": \"success\",\n" +
-                " \"message\": \"\",\n" +
-                " \"data\": {\n" +
-                " \"userKey\": \"c653b568-d987-4331-8d62-26ae617847bf\"\n" +
-                " }" +
-                "}"));
+        when(res.getBody()).thenReturn(new JsonNode(returnMessage));
 
         //TestFX
         String username = "username";
@@ -99,13 +102,14 @@ public class LoginTest extends ApplicationTest {
 
     @Test
     public void testInvalidCredentials() {
+        String returnMessage = Json.createObjectBuilder()
+                .add("status", "failure")
+                .add("message", "Invalid credentials")
+                .add("data", Json.createObjectBuilder())
+                .build().toString();
 
         //Mocking of RestClient login function
-        when(res.getBody()).thenReturn(new JsonNode("{ " +
-                "    \"status\": \"failure\",\n" +
-                "    \"message\": \"Invalid credentials\",\n" +
-                "    \"data\": {}" +
-                "}"));
+        when(res.getBody()).thenReturn(new JsonNode(returnMessage));
 
         //TestFX
         String username = "username";
@@ -134,6 +138,8 @@ public class LoginTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
 
+        Label errorLabel = lookup("#lblError").query();
+        Assert.assertEquals("Username or password is wrong.", errorLabel.getText());
 
         Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
         Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
