@@ -10,11 +10,25 @@ public class Editor {
 
     private LocalUser localUser;
 
+    /**
+     * create localUser without initialisation and set localUser in Editor
+     *
+     * @return localUser
+     */
     public LocalUser haveLocalUser() {
         localUser = new LocalUser();
         return localUser;
     }
 
+    /**
+     * create localUser with the given arguments and set localUser in Editor
+     *
+     * if localUser already exists set username and userkey to current localUser
+     *
+     * @param username     id of the localUser
+     * @param userkey      name of the localUser
+     * @return localUser
+     */
     public LocalUser haveLocalUser(String username, String userkey) {
         if (localUser == null) {
             this.localUser = new LocalUser();
@@ -24,10 +38,14 @@ public class Editor {
         return localUser;
     }
 
+    /**
+     * return localUser
+     *
+     * @return localUser
+     */
     public LocalUser getLocalUser(){
         return localUser;
     }
-
 
     /**
      * create a sever with the given arguments and with localUser as Member
@@ -53,7 +71,13 @@ public class Editor {
         return server;
     }
 
-
+    /**
+     * create a user with the given arguments and add to users of localUser
+     *
+     * @param id        id of the user
+     * @param name      name of the user
+     * @return localUser
+     */
     public LocalUser haveUser(String id, String name) {
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
@@ -76,6 +100,12 @@ public class Editor {
         return localUser;
     }
 
+    /**
+     * deletes a user with the given id
+     *
+     * @param id        id of the user
+     * @return this
+     */
     public Editor userLeft(String id){
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
