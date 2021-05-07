@@ -91,6 +91,8 @@ public class WelcomeScreenController {
         this.btnOptions = null;
         this.btnHome = null;
         this.btnLogout = null;
+
+        this.websocket.stop();
     }
 
     /**
