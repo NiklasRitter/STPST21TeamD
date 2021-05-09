@@ -134,7 +134,6 @@ public class WelcomeScreenController {
     }
 
     private void initOnlineUsersList() {
-        //TODO negativen Fall abprüfen
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
             JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
@@ -169,8 +168,6 @@ public class WelcomeScreenController {
     }
 
     private void initPrivateChat(User user) {
-
-        //TODO websocket connection aufbauen
         currentChat = user.getPrivateChat();
 
         // load list view
