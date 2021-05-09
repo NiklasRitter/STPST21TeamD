@@ -15,7 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import org.json.JSONArray;
