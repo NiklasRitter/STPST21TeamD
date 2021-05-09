@@ -91,7 +91,7 @@ public class MainScreenControllerTest extends ApplicationTest {
     @Test
     public void optionsButtonTest() {
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stage.getTitle());
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
 
     // Test: list View load servers correct in the list view and sorted alphabetical

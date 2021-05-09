@@ -47,6 +47,6 @@ public class OptionsTest extends ApplicationTest {
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", stage.getTitle());
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
 }
