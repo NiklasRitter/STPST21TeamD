@@ -75,14 +75,12 @@ public class WelcomeScreenController {
 
         this.initOnlineUsersList();
 
-        /*
         try {
             this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
         } catch (URISyntaxException e) {
             System.err.println("Error while making new URI");
             e.printStackTrace();
         }
-        */
     }
 
     public void stop() {
@@ -94,7 +92,7 @@ public class WelcomeScreenController {
         this.btnHome = null;
         this.btnLogout = null;
 
-        //this.websocket.stop();
+        this.websocket.stop();
     }
 
     /**
@@ -136,7 +134,6 @@ public class WelcomeScreenController {
     }
 
     private void initOnlineUsersList() {
-        //TODO negativen Fall abprüfen
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
             JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
@@ -171,8 +168,6 @@ public class WelcomeScreenController {
     }
 
     private void initPrivateChat(User user) {
-
-        //TODO websocket connection aufbauen
         currentChat = user.getPrivateChat();
 
         // load list view
