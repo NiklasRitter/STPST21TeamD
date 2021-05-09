@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -15,9 +16,9 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" style="-fx-background-color: BEIGE;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" style="-fx-border-color: #3c3f41; -fx-background-color: WHITE;" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" VBox.vgrow="ALWAYS">
          <children>
             <Label text="Accord">
                <font>
@@ -47,6 +48,10 @@
          <VBox.margin>
             <Insets />
          </VBox.margin>
+         <styleClass>
+            <String fx:value="styleBorder" />
+            <String fx:value="styleBackgroundHighlight" />
+         </styleClass>
       </HBox>
       <HBox alignment="TOP_CENTER" minHeight="327.0" minWidth="598.0" VBox.vgrow="ALWAYS">
          <children>
@@ -77,7 +82,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button id="btnHome" mnemonicParsing="false" VBox.vgrow="ALWAYS">
+                  <Button id="btnHome" mnemonicParsing="false" styleClass="styleButtons" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -87,7 +92,7 @@
                      </graphic>
                   </Button>
                   <Region minHeight="146.0" minWidth="66.0" VBox.vgrow="ALWAYS" />
-                  <Button id="btnLogout" alignment="CENTER" mnemonicParsing="false" VBox.vgrow="ALWAYS">
+                  <Button id="btnLogout" alignment="CENTER" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -106,10 +111,14 @@
                <HBox.margin>
                   <Insets bottom="5.0" />
                </HBox.margin>
+               <styleClass>
+                  <String fx:value="styleBorder" />
+                  <String fx:value="styleBackgroundHighlight" />
+               </styleClass>
             </VBox>
-            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" style="-fx-background-color: white; -fx-border-color: black;" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label id="lbServerName" prefHeight="19.0" prefWidth="292.0" text="Server: STP" VBox.vgrow="ALWAYS">
+                  <Label id="lbServerName" prefHeight="19.0" prefWidth="292.0" styleClass="styleBorder" text="Server: STP" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets left="2.0" />
                      </padding>
@@ -120,7 +129,7 @@
                   <ListView id="lvServerChannels" prefHeight="303.0" prefWidth="166.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <VBox alignment="CENTER" style="-fx-background-color: WHITE;" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" styleClass="styleBorders" HBox.hgrow="ALWAYS">
                <children>
                   <Label id="lbServerName" minHeight="19.0" minWidth="292.0" text="# -general" VBox.vgrow="ALWAYS">
                      <padding>
@@ -130,13 +139,13 @@
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Label>
-                  <ListView id="lvTextChat" minHeight="285.0" minWidth="314.0" VBox.vgrow="ALWAYS" />
-                  <TextField id="tfInputMessage" minHeight="21.0" minWidth="336.0" style="-fx-border-color: #3c3f41;" text="your message" VBox.vgrow="ALWAYS" />
+                  <ListView id="lvTextChat" minHeight="285.0" minWidth="314.0" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
+                  <TextField id="tfInputMessage" minHeight="21.0" minWidth="336.0" styleClass="styleBorder" text="your message" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" style="-fx-background-color: white; -fx-border-color: black;" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label prefHeight="19.0" prefWidth="97.0" text="Server users:" VBox.vgrow="ALWAYS">
+                  <Label prefHeight="19.0" prefWidth="97.0" styleClass="styleBorder" text="Server users:" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets left="2.0" />
                      </padding>
