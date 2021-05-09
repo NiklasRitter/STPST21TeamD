@@ -12,29 +12,19 @@ public class GenModel implements ClassModelDecorator {
         mm.haveNestedClasses(GenModel.class);
     }
 
+    class AccordClient {
+        @Link("accordClient")
+        LocalUser localUser;
+
+        @Link("accordClient")
+        Options options;
+    }
+
     class Options {
         boolean darkmode;
 
         @Link("options")
-        LocalUser localUser;
-    }
-
-    class User {
-        String name;
-        boolean onlineStatus;
-        String id;
-
-        @Link("users")
-        LocalUser localUser;
-
-        @Link("user")
-        Chat privateChat;
-
-        @Link("members")
-        List<Server> servers;
-
-        @Link("members")
-        List<Channel> channels;
+        AccordClient accordClient;
     }
 
     class LocalUser {
@@ -48,7 +38,26 @@ public class GenModel implements ClassModelDecorator {
         List<Server> servers;
 
         @Link("localUser")
-        Options options;
+        AccordClient accordClient;
+    }
+
+    class User {
+        String name;
+        boolean onlineStatus;
+
+        String id;
+
+        @Link("users")
+        LocalUser localUser;
+
+        @Link("user")
+        Chat privateChat;
+
+        @Link("members")
+        List<Server> servers;
+        @Link("members")
+        List<Channel> channels;
+
     }
 
     class Chat {

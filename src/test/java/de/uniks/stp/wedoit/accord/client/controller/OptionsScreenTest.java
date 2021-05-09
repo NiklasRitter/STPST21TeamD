@@ -13,6 +13,7 @@ import org.testfx.util.WaitForAsyncUtils;
 public class OptionsScreenTest extends ApplicationTest {
     private RestClient restClient;
     private Stage stage;
+    private Stage popupStage;
     private StageManager stageManager;
     private Options oldOptions;
 
@@ -26,6 +27,7 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.restClient = new RestClient();
         this.stageManager.start(stage);
+        this.popupStage = this.stageManager.getPopupStage();
         StageManager.showLoginScreen(restClient);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -42,6 +44,8 @@ public class OptionsScreenTest extends ApplicationTest {
 
         // check if stylesheets contain light theme
         WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(popupStage.isShowing());
+        Assert.assertEquals("Options", popupStage.getTitle());
         Assert.assertTrue(stageManager.getScene().getStylesheets()
                 .contains(StageManager.class.getResource("light-theme.css").toExternalForm()));
 

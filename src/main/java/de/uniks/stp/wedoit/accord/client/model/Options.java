@@ -4,10 +4,10 @@ import java.beans.PropertyChangeSupport;
 public class Options
 {
    public static final String PROPERTY_DARKMODE = "darkmode";
-   public static final String PROPERTY_LOCAL_USER = "localUser";
+   public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
    private boolean darkmode;
-   private LocalUser localUser;
    protected PropertyChangeSupport listeners;
+   private AccordClient accordClient;
 
    public boolean isDarkmode()
    {
@@ -27,30 +27,30 @@ public class Options
       return this;
    }
 
-   public LocalUser getLocalUser()
+   public AccordClient getAccordClient()
    {
-      return this.localUser;
+      return this.accordClient;
    }
 
-   public Options setLocalUser(LocalUser value)
+   public Options setAccordClient(AccordClient value)
    {
-      if (this.localUser == value)
+      if (this.accordClient == value)
       {
          return this;
       }
 
-      final LocalUser oldValue = this.localUser;
-      if (this.localUser != null)
+      final AccordClient oldValue = this.accordClient;
+      if (this.accordClient != null)
       {
-         this.localUser = null;
+         this.accordClient = null;
          oldValue.setOptions(null);
       }
-      this.localUser = value;
+      this.accordClient = value;
       if (value != null)
       {
          value.setOptions(this);
       }
-      this.firePropertyChange(PROPERTY_LOCAL_USER, oldValue, value);
+      this.firePropertyChange(PROPERTY_ACCORD_CLIENT, oldValue, value);
       return this;
    }
 
@@ -75,6 +75,6 @@ public class Options
 
    public void removeYou()
    {
-      this.setLocalUser(null);
+      this.setAccordClient(null);
    }
 }
