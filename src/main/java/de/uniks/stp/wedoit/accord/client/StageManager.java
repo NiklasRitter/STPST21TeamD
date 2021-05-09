@@ -248,6 +248,10 @@ public class StageManager extends Application {
         return popupScene;
     }
 
+    public Stage getPopupStage() {
+        return popupStage;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
