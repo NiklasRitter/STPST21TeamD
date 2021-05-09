@@ -85,10 +85,10 @@ public class ServerScreenController {
         this.tfInputMessage.clear();
 
         /*
-        //TODO hat standardmäßig keinen channel
+        //TODO no general channel yet
         String channelId = this.server.getCategories().get(0).getChannel().getId();
 
-        //TODO mehrere channels per category?
+        //TODO multiple channels per category?
 
         // build message
         JsonObject jsonMsg = JsonUtil.buildServerChatMessage(channelId, message);

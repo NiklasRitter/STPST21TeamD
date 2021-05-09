@@ -75,14 +75,12 @@ public class WelcomeScreenController {
 
         this.initOnlineUsersList();
 
-        /*
         try {
             this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
         } catch (URISyntaxException e) {
             System.err.println("Error while making new URI");
             e.printStackTrace();
         }
-        */
     }
 
     public void stop() {
@@ -94,7 +92,7 @@ public class WelcomeScreenController {
         this.btnHome = null;
         this.btnLogout = null;
 
-        //this.websocket.stop();
+        this.websocket.stop();
     }
 
     /**
