@@ -84,16 +84,18 @@ public class ServerScreenController {
         String message = this.tfInputMessage.getText();
         this.tfInputMessage.clear();
 
+        /*
         //TODO hat standardmäßig keinen channel
         String channelId = this.server.getCategories().get(0).getChannel().getId();
 
-        //TODO MULTIPLE CHANNELS PER CATEGORY?
+        //TODO mehrere channels per category?
 
         // build message
         JsonObject jsonMsg = JsonUtil.buildServerChatMessage(channelId, message);
 
         // send message
         this.webSocket.sendMessage(jsonMsg.toString());
+         */
     }
 
     private void homeButtonOnClick(ActionEvent actionEvent) {
