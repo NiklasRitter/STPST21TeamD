@@ -83,4 +83,11 @@ public class JsonUtil {
                 .setName(categoryJson.getString(COM_NAME))
                 .setServer(new Server().setId(categoryJson.getString(COM_SERVER)));
     }
+
+    public static JsonObject buildServerChatMessage (String channel, String message) {
+        return Json.createObjectBuilder()
+                .add("channel", channel)
+                .add("message", message)
+                .build();
+    }
 }

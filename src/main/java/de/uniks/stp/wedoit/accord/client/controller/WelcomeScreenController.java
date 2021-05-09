@@ -75,12 +75,14 @@ public class WelcomeScreenController {
 
         this.initOnlineUsersList();
 
+        /*
         try {
             this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleMessage);
         } catch (URISyntaxException e) {
             System.err.println("Error while making new URI");
             e.printStackTrace();
         }
+        */
     }
 
     public void stop() {
@@ -92,7 +94,7 @@ public class WelcomeScreenController {
         this.btnHome = null;
         this.btnLogout = null;
 
-        this.websocket.stop();
+        //this.websocket.stop();
     }
 
     /**
@@ -116,7 +118,6 @@ public class WelcomeScreenController {
             restClient.logout(userKey, response -> {
                 //if response status is successful
                 if (response.getBody().getObject().getString("status").equals("success")) {
-                    this.localUser.setUserKey(null);
                     Platform.runLater(() -> StageManager.showLoginScreen(restClient));
                 } else {
                     System.err.println("Error while logging out");
