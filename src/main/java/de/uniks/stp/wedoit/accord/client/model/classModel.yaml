@@ -1,5 +1,5 @@
 - c: 	org.fulib.classmodel.ClassModel
-  classes: 	privateMessage 	chat 	message 	channel 	category 	server 	user 	localUser
+  classes: 	privateMessage 	chat 	message 	channel 	category 	server 	user 	localUser 	options
   defaultCollectionType: 	c1
   defaultPropertyStyle: 	Bean
   defaultRoleType: 	"java.util.ArrayList<%s>"
@@ -69,7 +69,15 @@
   modified: 	false
   name: 	LocalUser
   propertyStyle: 	Bean
-  roles: 	localUser_servers 	localUser_users
+  roles: 	localUser_servers 	localUser_users 	localUser_options
+
+- options: 	org.fulib.classmodel.Clazz
+  attributes: 	options_darkmode
+  model: 	c
+  modified: 	false
+  name: 	Options
+  propertyStyle: 	Bean
+  roles: 	options_localUser
 
 - c1: 	org.fulib.classmodel.CollectionType
   implClass: 	class java.util.ArrayList
@@ -491,4 +499,33 @@
   other: 	user_localUser
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
+
+- localUser_options: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	localUser
+  id: 	LocalUser_options
+  modified: 	false
+  name: 	options
+  other: 	options_localUser
+  propertyStyle: 	Bean
+
+- options_darkmode: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_darkmode
+  modified: 	false
+  name: 	darkmode
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
+- options_localUser: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	options
+  id: 	Options_localUser
+  modified: 	false
+  name: 	localUser
+  other: 	localUser_options
+  propertyStyle: 	Bean
 

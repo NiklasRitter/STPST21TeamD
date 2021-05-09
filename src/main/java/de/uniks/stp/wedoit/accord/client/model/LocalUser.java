@@ -1,23 +1,42 @@
 package de.uniks.stp.wedoit.accord.client.model;
 
 import java.beans.PropertyChangeSupport;
+
 import java.util.*;
+
 import java.util.ArrayList;
+
 import java.util.List;
+
 import java.util.Objects;
+
 import java.util.Collections;
+
 import java.util.Collection;
 
 public class LocalUser {
+
     public static final String PROPERTY_NAME = "name";
+
     public static final String PROPERTY_USER_KEY = "userKey";
+
     public static final String PROPERTY_SERVERS = "servers";
+
     public static final String PROPERTY_USERS = "users";
+
+   public static final String PROPERTY_OPTIONS = "options";
+
     protected PropertyChangeSupport listeners;
+
     private String name;
+
     private String userKey;
+
     private List<Server> servers;
+
     private List<User> users;
+
+   private Options options;
 
     public String getName()
    {
@@ -187,6 +206,33 @@ public class LocalUser {
       return this;
    }
 
+   public Options getOptions()
+   {
+      return this.options;
+   }
+
+   public LocalUser setOptions(Options value)
+   {
+      if (this.options == value)
+      {
+         return this;
+      }
+
+      final Options oldValue = this.options;
+      if (this.options != null)
+      {
+         this.options = null;
+         oldValue.setLocalUser(null);
+      }
+      this.options = value;
+      if (value != null)
+      {
+         value.setLocalUser(this);
+      }
+      this.firePropertyChange(PROPERTY_OPTIONS, oldValue, value);
+      return this;
+   }
+
     public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -219,5 +265,8 @@ public class LocalUser {
    {
       this.withoutServers(new ArrayList<>(this.getServers()));
       this.withoutUsers(new ArrayList<>(this.getUsers()));
+      this.setOptions(null);
    }
+
 }
+
