@@ -23,8 +23,7 @@ public class LocalUser {
     public static final String PROPERTY_SERVERS = "servers";
 
     public static final String PROPERTY_USERS = "users";
-
-   public static final String PROPERTY_OPTIONS = "options";
+   public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
 
     protected PropertyChangeSupport listeners;
 
@@ -35,8 +34,7 @@ public class LocalUser {
     private List<Server> servers;
 
     private List<User> users;
-
-   private Options options;
+   private AccordClient accordClient;
 
     public String getName()
    {
@@ -206,30 +204,30 @@ public class LocalUser {
       return this;
    }
 
-   public Options getOptions()
+   public AccordClient getAccordClient()
    {
-      return this.options;
+      return this.accordClient;
    }
 
-   public LocalUser setOptions(Options value)
+   public LocalUser setAccordClient(AccordClient value)
    {
-      if (this.options == value)
+      if (this.accordClient == value)
       {
          return this;
       }
 
-      final Options oldValue = this.options;
-      if (this.options != null)
+      final AccordClient oldValue = this.accordClient;
+      if (this.accordClient != null)
       {
-         this.options = null;
+         this.accordClient = null;
          oldValue.setLocalUser(null);
       }
-      this.options = value;
+      this.accordClient = value;
       if (value != null)
       {
          value.setLocalUser(this);
       }
-      this.firePropertyChange(PROPERTY_OPTIONS, oldValue, value);
+      this.firePropertyChange(PROPERTY_ACCORD_CLIENT, oldValue, value);
       return this;
    }
 
@@ -265,7 +263,7 @@ public class LocalUser {
    {
       this.withoutServers(new ArrayList<>(this.getServers()));
       this.withoutUsers(new ArrayList<>(this.getUsers()));
-      this.setOptions(null);
+      this.setAccordClient(null);
    }
 
 }

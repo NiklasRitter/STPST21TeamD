@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.*;
+import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -16,7 +17,7 @@ import kong.unirest.Unirest;
 public class StageManager extends Application {
 
     private static Editor editor;
-    private static LocalUser model;
+    private static AccordClient model;
     private static LoginScreenController loginScreenController;
     private static MainScreenController mainScreenController;
     private static RestClient restClient;
@@ -33,16 +34,13 @@ public class StageManager extends Application {
         cleanup();
 
         try {
-            editor = new Editor();
-            model = editor.haveLocalUser();
-
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
             scene = new Scene(root);
 
             updateDarkmode();
 
-            loginScreenController = new LoginScreenController(root, model, editor, restClient);
+            loginScreenController = new LoginScreenController(root, model.getLocalUser(), editor, restClient);
             loginScreenController.init();
 
             //display
@@ -72,7 +70,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            mainScreenController = new MainScreenController(root, model, editor, restClient);
+            mainScreenController = new MainScreenController(root, model.getLocalUser(), editor, restClient);
             mainScreenController.init();
 
             // display
@@ -99,7 +97,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            createServerScreenController = new CreateServerScreenController(root, model, editor, restClient);
+            createServerScreenController = new CreateServerScreenController(root, model.getLocalUser(), editor, restClient);
             createServerScreenController.init();
 
             //display
@@ -123,7 +121,7 @@ public class StageManager extends Application {
 
             updateDarkmode();
 
-            welcomeScreenController = new WelcomeScreenController(root, model, editor, restClient);
+            welcomeScreenController = new WelcomeScreenController(root, model.getLocalUser(), editor, restClient);
             welcomeScreenController.init();
 
             stage.setTitle("Welcome");
@@ -146,7 +144,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            serverScreenController = new ServerScreenController(root, model, editor, restClient, server);
+            serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, restClient, server);
             serverScreenController.init();
 
             //display
@@ -170,7 +168,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            optionsScreenController = new OptionsScreenController(root, model, editor);
+            optionsScreenController = new OptionsScreenController(root, model.getOptions(), editor);
             optionsScreenController.init();
 
             //display
@@ -262,7 +260,8 @@ public class StageManager extends Application {
         popupStage.initModality(Modality.WINDOW_MODAL);
         popupStage.initOwner(stage);
         editor = new Editor();
-        model = editor.haveLocalUser();
+        model = editor.haveAccordClient();
+        editor.haveLocalUser();
         model.setOptions(ResourceManager.loadOptions());
         restClient = new RestClient();
 
@@ -274,12 +273,18 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
-            String userKey = model.getUserKey();
-            if (userKey != null && !userKey.isEmpty()) {
-                restClient.logout(userKey, response -> {
+            LocalUser localUser = model.getLocalUser();
+            if (localUser != null) {
+                String userKey = localUser.getUserKey();
+                if (userKey != null && !userKey.isEmpty()) {
+                    restClient.logout(userKey, response -> {
+                        Unirest.shutDown();
+                        cleanup();
+                    });
+                } else {
                     Unirest.shutDown();
                     cleanup();
-                });
+                }
             } else {
                 Unirest.shutDown();
                 cleanup();
