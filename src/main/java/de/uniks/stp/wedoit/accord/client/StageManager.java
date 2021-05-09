@@ -9,7 +9,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Popup;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import kong.unirest.Unirest;
 
@@ -21,12 +21,13 @@ public class StageManager extends Application {
     private static MainScreenController mainScreenController;
     private static RestClient restClient;
     private static Stage stage;
+    private static Stage popupStage;
     private static WelcomeScreenController welcomeScreenController;
     private static OptionsScreenController optionsScreenController;
     private static CreateServerScreenController createServerScreenController;
     private static ServerScreenController serverScreenController;
     private static Scene scene;
-    private static Popup popup;
+    private static Scene popupScene;
 
     public static void showLoginScreen(RestClient restClient) {
         cleanup();
@@ -159,16 +160,22 @@ public class StageManager extends Application {
 
     public static void showOptionsScreen() {
         try {
+            //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/OptionsScreen.fxml"));
-            popup = new Popup();
-            popup.getContent().add(root);
-            popup.setWidth(200);
-            popup.setHeight(100);
-            popup.setAutoHide(true);
-            popup.show(stage);
+            popupScene = new Scene(root);
 
+            updateDarkmode();
+
+            //init controller
             optionsScreenController = new OptionsScreenController(root, model, editor);
             optionsScreenController.init();
+
+            //display
+            popupStage.setTitle("Options");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing OptionsScreen");
             e.printStackTrace();
@@ -195,33 +202,35 @@ public class StageManager extends Application {
     }
 
     public static void changeDarkmode(boolean darkmode) {
-        if (scene != null) {
-            if (darkmode) {
+        if (darkmode) {
+            if (scene != null) {
                 scene.getStylesheets().remove(StageManager.class.getResource(
                         "light-theme.css").toExternalForm());
                 scene.getStylesheets().add(StageManager.class.getResource(
                         "dark-theme.css").toExternalForm());
-            } else {
+            }
+            if (popupScene != null) {
+                popupScene.getStylesheets().remove(StageManager.class.getResource(
+                        "light-theme.css").toExternalForm());
+                popupScene.getStylesheets().add(StageManager.class.getResource(
+                        "dark-theme.css").toExternalForm());
+            }
+        } else {
+            if (scene != null) {
                 scene.getStylesheets().remove(StageManager.class.getResource(
                         "dark-theme.css").toExternalForm());
                 scene.getStylesheets().add(StageManager.class.getResource(
                         "light-theme.css").toExternalForm());
             }
-        }
-        if (popup != null) {
-            if (darkmode) {
-                popup.getScene().getStylesheets().remove(StageManager.class.getResource(
-                        "light-theme.css").toExternalForm());
-                popup.getScene().getStylesheets().add(StageManager.class.getResource(
+            if (popupScene != null) {
+                popupScene.getStylesheets().remove(StageManager.class.getResource(
                         "dark-theme.css").toExternalForm());
-            } else {
-                popup.getScene().getStylesheets().remove(StageManager.class.getResource(
-                        "dark-theme.css").toExternalForm());
-                popup.getScene().getStylesheets().add(StageManager.class.getResource(
+                popupScene.getStylesheets().add(StageManager.class.getResource(
                         "light-theme.css").toExternalForm());
             }
         }
     }
+
 
     public static void updateDarkmode() {
         changeDarkmode(model.getOptions().isDarkmode());
@@ -235,9 +244,16 @@ public class StageManager extends Application {
         return scene;
     }
 
+    public Scene getPopupScene() {
+        return popupScene;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
+        popupStage = new Stage();
+        popupStage.initModality(Modality.WINDOW_MODAL);
+        popupStage.initOwner(stage);
         editor = new Editor();
         model = editor.haveLocalUser();
         model.setOptions(ResourceManager.loadOptions());
