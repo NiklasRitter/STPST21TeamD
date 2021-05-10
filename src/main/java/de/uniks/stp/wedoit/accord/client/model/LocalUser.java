@@ -1,23 +1,40 @@
 package de.uniks.stp.wedoit.accord.client.model;
 
 import java.beans.PropertyChangeSupport;
+
 import java.util.*;
+
 import java.util.ArrayList;
+
 import java.util.List;
+
 import java.util.Objects;
+
 import java.util.Collections;
+
 import java.util.Collection;
 
 public class LocalUser {
+
     public static final String PROPERTY_NAME = "name";
+
     public static final String PROPERTY_USER_KEY = "userKey";
+
     public static final String PROPERTY_SERVERS = "servers";
+
     public static final String PROPERTY_USERS = "users";
+   public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
+
     protected PropertyChangeSupport listeners;
+
     private String name;
+
     private String userKey;
+
     private List<Server> servers;
+
     private List<User> users;
+   private AccordClient accordClient;
 
     public String getName()
    {
@@ -187,6 +204,33 @@ public class LocalUser {
       return this;
    }
 
+   public AccordClient getAccordClient()
+   {
+      return this.accordClient;
+   }
+
+   public LocalUser setAccordClient(AccordClient value)
+   {
+      if (this.accordClient == value)
+      {
+         return this;
+      }
+
+      final AccordClient oldValue = this.accordClient;
+      if (this.accordClient != null)
+      {
+         this.accordClient = null;
+         oldValue.setLocalUser(null);
+      }
+      this.accordClient = value;
+      if (value != null)
+      {
+         value.setLocalUser(this);
+      }
+      this.firePropertyChange(PROPERTY_ACCORD_CLIENT, oldValue, value);
+      return this;
+   }
+
     public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -219,5 +263,8 @@ public class LocalUser {
    {
       this.withoutServers(new ArrayList<>(this.getServers()));
       this.withoutUsers(new ArrayList<>(this.getUsers()));
+      this.setAccordClient(null);
    }
+
 }
+

@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client;
 
+import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -8,24 +9,31 @@ import java.util.Objects;
 
 public class Editor {
 
-    private LocalUser localUser;
+    private AccordClient accordClient;
 
     public LocalUser haveLocalUser() {
-        localUser = new LocalUser();
+        LocalUser localUser = new LocalUser();
+        accordClient.setLocalUser(localUser);
         return localUser;
+    }
+
+    public AccordClient haveAccordClient() {
+        accordClient = new AccordClient();
+        return accordClient;
     }
 
     public LocalUser haveLocalUser(String username, String userkey) {
+        LocalUser localUser = accordClient.getLocalUser();
         if (localUser == null) {
-            this.localUser = new LocalUser();
+            localUser = new LocalUser();
         }
-        this.localUser.setName(username);
-        this.localUser.setUserKey(userkey);
+        localUser.setName(username);
+        localUser.setUserKey(userkey);
         return localUser;
     }
 
-    public LocalUser getLocalUser(){
-        return localUser;
+    public LocalUser getLocalUser() {
+        return accordClient.getLocalUser();
     }
 
 
@@ -69,11 +77,12 @@ public class Editor {
     }
 
     public LocalUser haveUser(String id, String name) {
+        LocalUser localUser = accordClient.getLocalUser();
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
         Objects.requireNonNull(name);
 
-        if (name.equals(localUser.getName())){
+        if (name.equals(localUser.getName())) {
             return localUser;
         }
 
@@ -86,7 +95,7 @@ public class Editor {
         }
 
         User user = new User().setId(id).setName(name);
-        this.localUser.withUsers(user);
+        localUser.withUsers(user);
         return localUser;
 
     }

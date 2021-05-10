@@ -110,7 +110,6 @@ public class MainScreenTest extends ApplicationTest {
         callbackLogout.completed(res);
 
         Assert.assertEquals("success", res.getBody().getObject().getString("status"));
-        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Login", stage.getTitle());

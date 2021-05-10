@@ -23,10 +23,10 @@ import java.util.stream.Collectors;
 
 public class MainScreenController {
 
-    private final RestClient restClient;
+    private RestClient restClient;
     private LocalUser localUser;
-    private final Editor editor;
-    private final Parent view;
+    private Editor editor;
+    private Parent view;
     private Button welcomeButton;
     private Button optionsButton;
     private Button addServerButton;
@@ -167,7 +167,6 @@ public class MainScreenController {
             restClient.logout(userKey, response -> {
                 //if response status is successful
                 if (response.getBody().getObject().getString("status").equals("success")) {
-                    this.localUser.setUserKey(null);
                     Platform.runLater(() -> StageManager.showLoginScreen(restClient));
                 } else {
                     System.err.println("Error while logging out");
