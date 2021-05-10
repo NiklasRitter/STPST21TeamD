@@ -133,7 +133,7 @@ public class WelcomeScreenTest extends ApplicationTest {
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", stage.getTitle());
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
 
     @Test

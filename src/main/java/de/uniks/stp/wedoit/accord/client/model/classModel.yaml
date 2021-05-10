@@ -1,5 +1,5 @@
 - c: 	org.fulib.classmodel.ClassModel
-  classes: 	privateMessage 	chat 	message 	channel 	category 	server 	user 	localUser 	options
+  classes: 	privateMessage 	chat 	message 	channel 	category 	server 	user 	localUser 	accordClient 	options
   defaultCollectionType: 	c1
   defaultPropertyStyle: 	Bean
   defaultRoleType: 	"java.util.ArrayList<%s>"
@@ -69,7 +69,14 @@
   modified: 	false
   name: 	LocalUser
   propertyStyle: 	Bean
-  roles: 	localUser_servers 	localUser_users 	localUser_options
+  roles: 	localUser_servers 	localUser_users 	localUser_accordClient
+
+- accordClient: 	org.fulib.classmodel.Clazz
+  model: 	c
+  modified: 	false
+  name: 	AccordClient
+  propertyStyle: 	Bean
+  roles: 	accordClient_localUser 	accordClient_options
 
 - options: 	org.fulib.classmodel.Clazz
   attributes: 	options_darkmode
@@ -77,7 +84,7 @@
   modified: 	false
   name: 	Options
   propertyStyle: 	Bean
-  roles: 	options_localUser
+  roles: 	options_accordClient
 
 - c1: 	org.fulib.classmodel.CollectionType
   implClass: 	class java.util.ArrayList
@@ -500,14 +507,34 @@
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
 
-- localUser_options: 	org.fulib.classmodel.AssocRole
+- localUser_accordClient: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	1
   clazz: 	localUser
-  id: 	LocalUser_options
+  id: 	LocalUser_accordClient
+  modified: 	false
+  name: 	accordClient
+  other: 	accordClient_localUser
+  propertyStyle: 	Bean
+
+- accordClient_localUser: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	accordClient
+  id: 	AccordClient_localUser
+  modified: 	false
+  name: 	localUser
+  other: 	localUser_accordClient
+  propertyStyle: 	Bean
+
+- accordClient_options: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	accordClient
+  id: 	AccordClient_options
   modified: 	false
   name: 	options
-  other: 	options_localUser
+  other: 	options_accordClient
   propertyStyle: 	Bean
 
 - options_darkmode: 	org.fulib.classmodel.Attribute
@@ -519,13 +546,13 @@
   type: 	boolean
   typeSignature: 	boolean
 
-- options_localUser: 	org.fulib.classmodel.AssocRole
+- options_accordClient: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	1
   clazz: 	options
-  id: 	Options_localUser
+  id: 	Options_accordClient
   modified: 	false
-  name: 	localUser
-  other: 	localUser_options
+  name: 	accordClient
+  other: 	accordClient_options
   propertyStyle: 	Bean
 
