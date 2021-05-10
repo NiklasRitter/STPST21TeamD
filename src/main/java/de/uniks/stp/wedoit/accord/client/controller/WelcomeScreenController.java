@@ -2,14 +2,16 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.model.Chat;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -68,7 +70,6 @@ public class WelcomeScreenController {
 
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
 
-
         this.btnHome.setOnAction(this::btnHomeOnClicked);
         this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
@@ -76,7 +77,6 @@ public class WelcomeScreenController {
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
         this.initOnlineUsersList();
-
 
         try {
             this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleSystemMessage);
@@ -93,7 +93,6 @@ public class WelcomeScreenController {
         }
 
     }
-
 
     public void stop() {
         this.btnHome.setOnAction(null);
@@ -180,7 +179,9 @@ public class WelcomeScreenController {
     }
 
     private void initPrivateChat(User user) {
-        user.setPrivateChat(new Chat());
+        if (user.getPrivateChat() == null) {
+            user.setPrivateChat(new Chat());
+        }
         this.currentChat = user.getPrivateChat();
 
         // load list view
@@ -239,7 +240,7 @@ public class WelcomeScreenController {
         String message = this.tfPrivateChat.getText();
         this.tfPrivateChat.clear();
 
-        if (message != null && !message.isEmpty()) {
+        if (message != null && !message.isEmpty() && currentChat != null) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
             this.websocket.sendMessage(jsonMsg.toString());
         }
