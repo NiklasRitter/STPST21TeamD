@@ -2,12 +2,10 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.Chat;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
 import javafx.application.Platform;
@@ -17,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import org.json.JSONArray;
 
 import javax.json.JsonObject;
@@ -71,6 +70,8 @@ public class WelcomeScreenController {
         this.btnHome.setOnAction(this::btnHomeOnClicked);
         this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
+        this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
+        this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
         this.initOnlineUsersList();
 
@@ -89,6 +90,7 @@ public class WelcomeScreenController {
         }
 
     }
+
 
     public void stop() {
         this.btnHome.setOnAction(null);
@@ -175,7 +177,8 @@ public class WelcomeScreenController {
     }
 
     private void initPrivateChat(User user) {
-        currentChat = user.getPrivateChat();
+        user.setPrivateChat(new Chat());
+        this.currentChat = user.getPrivateChat();
 
         // load list view
         chatCellFactory = new PrivateMessageCellFactory();
@@ -227,5 +230,25 @@ public class WelcomeScreenController {
         else {
             this.editor.getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
+    }
+
+    private void tfPrivateChatOnEnter(ActionEvent actionEvent) {
+        String message = this.tfPrivateChat.getText();
+        this.tfPrivateChat.clear();
+
+        if (message != null && !message.isEmpty()) {
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
+            this.websocket.sendMessage(jsonMsg.toString());
+        }
+    }
+
+    private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 2) {
+            User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
+            if (user != null) {
+                this.initPrivateChat(user);
+            }
+        }
+
     }
 }
