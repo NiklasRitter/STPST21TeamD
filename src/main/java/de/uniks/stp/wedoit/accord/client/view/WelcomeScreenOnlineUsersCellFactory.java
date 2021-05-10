@@ -14,7 +14,7 @@ public class WelcomeScreenOnlineUsersCellFactory implements javafx.util.Callback
     private static class OnlineUserListCell extends ListCell<User> {
         protected void updateItem(User item, boolean empty) {
             super.updateItem(item, empty);
-            if (!empty) {
+            if (!empty && item != null) {
                 this.setText(item.getName());
             } else {
                 this.setText(null);

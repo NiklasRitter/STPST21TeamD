@@ -29,7 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
+import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class WelcomeScreenController {
 
@@ -77,9 +77,17 @@ public class WelcomeScreenController {
         try {
             this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleSystemMessage);
         } catch (URISyntaxException e) {
-            System.err.println("Error while making new URI");
+            System.err.println("Error while setting up Websocket connection to system channel");
             e.printStackTrace();
         }
+
+        try {
+            this.websocket = new WebSocketClient(editor, new URI(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName()), this::handleChatMessage);
+        } catch (URISyntaxException e) {
+            System.err.println("Error while setting up Websocket connection to private message channel");
+            e.printStackTrace();
+        }
+
     }
 
     public void stop() {
@@ -195,11 +203,29 @@ public class WelcomeScreenController {
         JsonObject jsonObject = (JsonObject) msg;
         JsonObject data = jsonObject.getJsonObject("data");
 
-        if (jsonObject.getString("action").equals("userJoined")) {
+        if (jsonObject.getString(COM_ACTION).equals("userJoined")) {
             this.editor.haveUser(data.getString("id"), data.getString("name"));
 
-        } else if (jsonObject.getString("action").equals("userLeft")) {
+        } else if (jsonObject.getString(COM_ACTION).equals("userLeft")) {
             this.editor.userLeft(data.getString("id"));
+        }
+    }
+
+    private void handleChatMessage(JsonStructure msg) {
+        JsonObject jsonObject = (JsonObject) msg;
+
+        jsonObject.getString(COM_CHANNEL).equals("private");
+        PrivateMessage message = new PrivateMessage();
+        message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
+        message.setText(jsonObject.getString(COM_MESSAGE));
+        message.setFrom(jsonObject.getString(COM_FROM));
+        message.setTo(jsonObject.getString(COM_TO));
+
+        if (jsonObject.getString(COM_FROM).equals(editor.getLocalUser().getName())){
+            this.editor.getUser(message.getTo()).getPrivateChat().withMessages(message);
+        }
+        else {
+            this.editor.getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
     }
 }

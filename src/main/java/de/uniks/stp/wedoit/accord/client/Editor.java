@@ -30,11 +30,11 @@ public class Editor {
 
     /**
      * create localUser with the given arguments and set localUser in Editor
-     *
+     * <p>
      * if localUser already exists set username and userkey to current localUser
      *
-     * @param username     id of the localUser
-     * @param userkey      name of the localUser
+     * @param username id of the localUser
+     * @param userkey  name of the localUser
      * @return localUser
      */
     public LocalUser haveLocalUser(String username, String userkey) {
@@ -110,6 +110,19 @@ public class Editor {
         return localUser;
     }
 
+    public User getUser(String name) {
+        Objects.requireNonNull(name);
+
+        LocalUser localUser = accordClient.getLocalUser();
+
+        for (User user : localUser.getUsers()) {
+            if (user.getName().equals(name)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     /**
      * deletes a user with the given id
      *
@@ -130,7 +143,6 @@ public class Editor {
                 }
             }
         }
-
         return this;
     }
 }
