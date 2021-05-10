@@ -197,7 +197,7 @@ public class WelcomeScreenController {
             lwPrivateChat.getItems().removeAll();
             List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
                     .collect(Collectors.toList());
-            this.lwPrivateChat.setItems(FXCollections.observableList(messages));
+            Platform.runLater(() -> this.lwPrivateChat.setItems(FXCollections.observableList(messages)));
             lwPrivateChat.refresh();
         }
     }
@@ -249,6 +249,5 @@ public class WelcomeScreenController {
                 this.initPrivateChat(user);
             }
         }
-
     }
 }
