@@ -35,6 +35,8 @@ public class Constants {
     public static final String SYSTEM_SOCKET_URL = WS_SERVER_URL + "/ws/system";
     public static final String CHAT_USER_URL = WS_SERVER_URL + "/ws/chat?user=";
     public static final String SERVER_ID_URL = "serverId=";
+    public static final String CATEGORIES = "/categories";
+    public static final String CHANNELS = "/channels";
     
     // Preferences Keys
     public static final String COM_DARKMODE = "darkmode";
