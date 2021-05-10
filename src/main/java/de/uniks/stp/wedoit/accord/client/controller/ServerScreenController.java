@@ -84,6 +84,7 @@ public class ServerScreenController {
         String message = this.tfInputMessage.getText();
         this.tfInputMessage.clear();
 
+        System.out.println(message);
         /*
         //TODO no general channel yet
         String channelId = this.server.getCategories().get(0).getChannel().getId();

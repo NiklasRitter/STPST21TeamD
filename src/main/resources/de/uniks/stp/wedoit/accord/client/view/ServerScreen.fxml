@@ -16,8 +16,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" VBox.vgrow="ALWAYS">
          <children>
@@ -56,7 +55,7 @@
       </HBox>
       <HBox alignment="TOP_CENTER" minHeight="327.0" minWidth="598.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="327.0" prefWidth="78.0" spacing="20.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="356.0" prefWidth="76.0" spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
                      <textFill>
@@ -141,7 +140,7 @@
                      </font>
                   </Label>
                   <ListView id="lvTextChat" minHeight="285.0" minWidth="314.0" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
-                  <TextField id="tfInputMessage" minHeight="21.0" minWidth="336.0" styleClass="styleBorder" text="your message" VBox.vgrow="ALWAYS" />
+                  <TextField id="tfInputMessage" minHeight="21.0" minWidth="336.0" promptText="your message" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">

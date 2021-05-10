@@ -16,7 +16,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" VBox.vgrow="ALWAYS">
          <children>
@@ -67,7 +67,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color blue="1.0" green="1.0" red="1.0" />
+                                    <Color red="1.0" green="1.0" blue="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -131,7 +131,7 @@
             <VBox alignment="CENTER" prefHeight="327.0" prefWidth="402.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
                   <ListView minHeight="305.0" minWidth="400.0" VBox.vgrow="ALWAYS" />
-                  <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" styleClass="styleBorder" text="your message" VBox.vgrow="ALWAYS" />
+                  <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" promptText="your message" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
          </children>
