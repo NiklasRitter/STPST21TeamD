@@ -33,23 +33,23 @@ import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 
 public class WelcomeScreenController {
 
-    private Parent view;
-    private LocalUser localUser;
-    private Editor editor;
+    private final Parent view;
+    private final LocalUser localUser;
+    private final Editor editor;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
     private Chat currentChat;
 
-    private RestClient restClient;
+    private final RestClient restClient;
     private ListView<User> lwOnlineUsers;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
-    private PropertyChangeListener usersListListener = this::usersListViewChanged;
+    private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private WebSocketClient websocket;
-    private PropertyChangeListener chatListener = this::newMessage;
+    private final PropertyChangeListener chatListener = this::newMessage;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -201,6 +201,5 @@ public class WelcomeScreenController {
         } else if (jsonObject.getString("action").equals("userLeft")) {
             this.editor.userLeft(data.getString("id"));
         }
-
     }
 }
