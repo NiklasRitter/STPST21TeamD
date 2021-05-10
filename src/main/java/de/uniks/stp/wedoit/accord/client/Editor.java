@@ -33,16 +33,16 @@ public class Editor {
      * if localUser already exists set username and userkey to current localUser
      *
      * @param username id of the localUser
-     * @param userkey  name of the localUser
+     * @param userKey  name of the localUser
      * @return localUser
      */
-    public LocalUser haveLocalUser(String username, String userkey) {
+    public LocalUser haveLocalUser(String username, String userKey) {
         LocalUser localUser = accordClient.getLocalUser();
         if (localUser == null) {
             localUser = new LocalUser();
         }
         localUser.setName(username);
-        localUser.setUserKey(userkey);
+        localUser.setUserKey(userKey);
         return localUser;
     }
 
