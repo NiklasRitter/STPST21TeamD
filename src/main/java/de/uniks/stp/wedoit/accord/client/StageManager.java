@@ -37,7 +37,7 @@ public class StageManager extends Application {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
             scene = new Scene(root);
-
+            
             model.setLocalUser(new LocalUser());
             
             updateDarkmode();
