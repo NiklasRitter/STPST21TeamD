@@ -108,7 +108,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
                <HBox.margin>
-                  <Insets bottom="5.0" />
+                  <Insets />
                </HBox.margin>
                <styleClass>
                   <String fx:value="styleBackgroundHighlight" />
@@ -139,11 +139,8 @@
                </children>
             </VBox>
          </children>
-         <padding>
-            <Insets right="5.0" />
-         </padding>
          <VBox.margin>
-            <Insets left="5.0" />
+            <Insets />
          </VBox.margin>
       </HBox>
    </children>
