@@ -1,11 +1,10 @@
 package de.uniks.stp.wedoit.accord.client;
 
-import de.uniks.stp.wedoit.accord.client.model.AccordClient;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
 
 import java.util.Objects;
+
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_FROM;
 
 public class Editor {
 
@@ -110,6 +109,10 @@ public class Editor {
         return localUser;
     }
 
+    /**
+     * @param name name of user
+     * @return user with fitting username
+     */
     public User getUser(String name) {
         Objects.requireNonNull(name);
 
@@ -144,5 +147,19 @@ public class Editor {
             }
         }
         return this;
+    }
+
+    /**
+     * add message to privateChat of corresponding user
+     *
+     * @param message to add to the model
+     */
+    public void addNewPrivateMessage(PrivateMessage message){
+        if (message.getFrom().equals(getLocalUser().getName())){
+            getUser(message.getTo()).getPrivateChat().withMessages(message);
+        }
+        else {
+            getUser(message.getFrom()).getPrivateChat().withMessages(message);
+        }
     }
 }

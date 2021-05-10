@@ -52,6 +52,7 @@ public class WelcomeScreenController {
     private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private final PropertyChangeListener chatListener = this::newMessage;
     private WebSocketClient websocket;
+    private WebSocketClient chatWebsocket;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -86,7 +87,7 @@ public class WelcomeScreenController {
         }
 
         try {
-            this.websocket = new WebSocketClient(editor, new URI(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName()), this::handleChatMessage);
+            this.chatWebsocket = new WebSocketClient(editor, new URI(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName()), this::handleChatMessage);
         } catch (URISyntaxException e) {
             System.err.println("Error while setting up Websocket connection to private message channel");
             e.printStackTrace();
@@ -95,15 +96,24 @@ public class WelcomeScreenController {
     }
 
     public void stop() {
+        this.websocket.stop();
+        this.chatWebsocket.stop();
+
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
+        this.tfPrivateChat.setOnAction(null);
+        this.lwOnlineUsers.setOnMouseReleased(null);
 
         this.btnOptions = null;
         this.btnHome = null;
         this.btnLogout = null;
+        this.lwOnlineUsers = null;
+        this.tfPrivateChat = null;
+        this.lwPrivateChat = null;
 
-        this.websocket.stop();
+        this.websocket = null;
+        this.chatWebsocket = null;
     }
 
     /**
@@ -144,14 +154,20 @@ public class WelcomeScreenController {
         StageManager.showOptionsScreen();
     }
 
+    /**
+     * initialize onlineUsers list
+     *
+     * Load online users from server and add them to the data model.
+     * Set CellFactory and build lwOnlineUsers.
+     */
     private void initOnlineUsersList() {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
-            JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
+            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(COM_DATA);
 
             for (int index = 0; index < getServersResponse.length(); index++) {
-                String name = getServersResponse.getJSONObject(index).getString("name");
-                String id = getServersResponse.getJSONObject(index).getString("id");
+                String name = getServersResponse.getJSONObject(index).getString(COM_NAME);
+                String id = getServersResponse.getJSONObject(index).getString(COM_ID);
                 editor.haveUser(id, name);
             }
 
@@ -168,6 +184,11 @@ public class WelcomeScreenController {
         });
     }
 
+    /**
+     * update automatically the listView when a user joined or left
+     *
+     * @param propertyChangeEvent event occurs when a user left or joined
+     */
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             lwOnlineUsers.getItems().removeAll();
@@ -178,6 +199,14 @@ public class WelcomeScreenController {
         }
     }
 
+    /**
+     * initialize private Chat with user
+     *
+     * Load online users from server and add them to the data model.
+     * Set CellFactory and build lwOnlineUsers.
+     *
+     * @param user selected online user in lwOnlineUsers
+     */
     private void initPrivateChat(User user) {
         if (user.getPrivateChat() == null) {
             user.setPrivateChat(new Chat());
@@ -196,6 +225,11 @@ public class WelcomeScreenController {
         currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
     }
 
+    /**
+     * update the chat when a new message arrived
+     *
+     * @param propertyChangeEvent event occurs when a new private message arrives
+     */
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             lwPrivateChat.getItems().removeAll();
@@ -206,18 +240,28 @@ public class WelcomeScreenController {
         }
     }
 
+    /**
+     * handle messages on the system channel by adding or deleting users from the data model
+     *
+     * @param msg message from the server on the system channel
+     */
     public void handleSystemMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
-        JsonObject data = jsonObject.getJsonObject("data");
+        JsonObject data = jsonObject.getJsonObject(COM_DATA);
 
         if (jsonObject.getString(COM_ACTION).equals("userJoined")) {
-            this.editor.haveUser(data.getString("id"), data.getString("name"));
+            this.editor.haveUser(data.getString(COM_ID), data.getString(COM_NAME));
 
         } else if (jsonObject.getString(COM_ACTION).equals("userLeft")) {
-            this.editor.userLeft(data.getString("id"));
+            this.editor.userLeft(data.getString(COM_ID));
         }
     }
 
+    /**
+     * handle chat message by adding it to the data model
+     *
+     * @param msg message from the server on the private chat channel
+     */
     private void handleChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
@@ -228,14 +272,14 @@ public class WelcomeScreenController {
         message.setFrom(jsonObject.getString(COM_FROM));
         message.setTo(jsonObject.getString(COM_TO));
 
-        if (jsonObject.getString(COM_FROM).equals(editor.getLocalUser().getName())){
-            this.editor.getUser(message.getTo()).getPrivateChat().withMessages(message);
-        }
-        else {
-            this.editor.getUser(message.getFrom()).getPrivateChat().withMessages(message);
-        }
+        this.editor.addNewPrivateMessage(message);
     }
 
+    /**
+     * send message in textfield after enter button pressed
+     *
+     * @param actionEvent occurs when enter button is pressed
+     */
     private void tfPrivateChatOnEnter(ActionEvent actionEvent) {
         String message = this.tfPrivateChat.getText();
         this.tfPrivateChat.clear();
@@ -246,6 +290,11 @@ public class WelcomeScreenController {
         }
     }
 
+    /**
+     * initPrivateChat when item of userList is clicked twice
+     *
+     * @param mouseEvent occurs when a listitem is clicked
+     */
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
             User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
