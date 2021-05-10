@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -15,9 +16,9 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" style="-fx-background-color: BEIGE; -fx-border-color: #3c3f41;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" style="-fx-border-color: #3c3f41; -fx-background-color: WHITE;" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" VBox.vgrow="ALWAYS">
          <children>
             <Label text="Accord">
                <font>
@@ -46,8 +47,12 @@
          <padding>
             <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
          </padding>
+         <styleClass>
+            <String fx:value="styleBorder" />
+            <String fx:value="styleBackgroundHighlight" />
+         </styleClass>
       </HBox>
-      <HBox alignment="CENTER_LEFT" minHeight="327.0" minWidth="598.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER_LEFT" minHeight="327.0" minWidth="482.0" prefHeight="332.0" prefWidth="482.0" VBox.vgrow="ALWAYS">
          <children>
             <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="327.0" prefWidth="78.0" spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
@@ -76,7 +81,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button id="btnHome" mnemonicParsing="false" VBox.vgrow="ALWAYS">
+                  <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -86,7 +91,7 @@
                      </graphic>
                   </Button>
                   <Region minHeight="146.0" minWidth="66.0" VBox.vgrow="ALWAYS" />
-                  <Button id="btnLogout" alignment="CENTER" mnemonicParsing="false" VBox.vgrow="ALWAYS">
+                  <Button id="btnLogout" alignment="CENTER" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -105,10 +110,14 @@
                <HBox.margin>
                   <Insets bottom="5.0" />
                </HBox.margin>
+               <styleClass>
+                  <String fx:value="styleBackgroundHighlight" />
+                  <String fx:value="styleBorder" />
+               </styleClass>
             </VBox>
-            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" style="-fx-background-color: white; -fx-border-color: black;" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label prefHeight="17.0" prefWidth="207.0" text="Online users:" VBox.vgrow="ALWAYS">
+                  <Label prefHeight="17.0" prefWidth="207.0" styleClass="styleBorder" text="Online users:" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets left="2.0" />
                      </padding>
@@ -119,7 +128,7 @@
                   <ListView id="lwOnlineUsers" prefHeight="302.0" prefWidth="113.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <VBox alignment="CENTER" prefHeight="327.0" prefWidth="402.0" style="-fx-background-color: WHITE;" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" prefHeight="327.0" prefWidth="402.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
                   <ListView id="lwPrivateChat" minHeight="305.0" minWidth="400.0" VBox.vgrow="ALWAYS" />
                   <HBox prefHeight="100.0" prefWidth="200.0">

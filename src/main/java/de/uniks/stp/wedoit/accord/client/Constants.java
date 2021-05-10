@@ -31,7 +31,11 @@ public class Constants {
     public static final String LOGOUT_PATH = "/logout";
     public static final String SERVER_PATH = "/servers";
     public static final String API_PREFIX = "/api";
-
     public static final String WS_SERVER_URL = "wss://ac.uniks.de";
     public static final String SYSTEM_SOCKET_URL = WS_SERVER_URL + "/ws/system";
+    public static final String CHAT_USER_URL = WS_SERVER_URL + "/ws/chat?user=";
+    public static final String SERVER_ID_URL = "serverId=";
+    
+    // Preferences Keys
+    public static final String COM_DARKMODE = "darkmode";
 }

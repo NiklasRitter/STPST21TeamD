@@ -115,7 +115,6 @@ public class WelcomeScreenController {
             restClient.logout(userKey, response -> {
                 //if response status is successful
                 if (response.getBody().getObject().getString("status").equals("success")) {
-                    this.localUser.setUserKey(null);
                     Platform.runLater(() -> StageManager.showLoginScreen(restClient));
                 } else {
                     System.err.println("Error while logging out");
@@ -134,7 +133,6 @@ public class WelcomeScreenController {
     }
 
     private void initOnlineUsersList() {
-        //TODO negativen Fall abprüfen
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
             JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
@@ -169,8 +167,6 @@ public class WelcomeScreenController {
     }
 
     private void initPrivateChat(User user) {
-
-        //TODO websocket connection aufbauen
         currentChat = user.getPrivateChat();
 
         // load list view
