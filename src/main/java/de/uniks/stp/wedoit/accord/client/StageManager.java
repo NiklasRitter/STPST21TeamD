@@ -90,12 +90,10 @@ public class StageManager extends Application {
     }
 
     public static void showCreateServerScreen() {
-        cleanup();
-
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/CreateServerScreen.fxml"));
-            scene = new Scene(root);
+            popupScene = new Scene(root);
 
             updateDarkmode();
 
@@ -104,11 +102,11 @@ public class StageManager extends Application {
             createServerScreenController.init();
 
             //display
-            stage.setTitle("Create Server");
-            stage.setScene(scene);
-            stage.centerOnScreen();
-            stage.setResizable(false);
-
+            popupStage.setTitle("Create Server");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing CreateServerScreen");
             e.printStackTrace();
@@ -202,6 +200,9 @@ public class StageManager extends Application {
         if (optionsScreenController != null) {
             optionsScreenController.stop();
             optionsScreenController = null;
+        }
+        if (popupStage != null) {
+            popupStage.hide();
         }
     }
 
