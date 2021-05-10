@@ -90,4 +90,12 @@ public class JsonUtil {
                 .add("message", message)
                 .build();
     }
+
+    public static JsonObject buildPrivateChatMessage (String to, String message) {
+        return Json.createObjectBuilder()
+                .add(COM_CHANNEL, "private")
+                .add(COM_TO, to)
+                .add(COM_MESSAGE, message)
+                .build();
+    }
 }
