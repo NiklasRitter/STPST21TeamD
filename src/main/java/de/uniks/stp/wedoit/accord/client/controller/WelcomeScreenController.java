@@ -9,6 +9,7 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -47,8 +48,8 @@ public class WelcomeScreenController {
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
     private final PropertyChangeListener usersListListener = this::usersListViewChanged;
-    private WebSocketClient websocket;
     private final PropertyChangeListener chatListener = this::newMessage;
+    private WebSocketClient websocket;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -58,6 +59,7 @@ public class WelcomeScreenController {
     }
 
     public void init() {
+
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
@@ -74,6 +76,7 @@ public class WelcomeScreenController {
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
         this.initOnlineUsersList();
+
 
         try {
             this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleSystemMessage);
