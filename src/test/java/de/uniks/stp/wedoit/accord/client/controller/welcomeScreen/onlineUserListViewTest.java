@@ -1,12 +1,16 @@
 package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +26,8 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,20 +36,7 @@ public class onlineUserListViewTest extends ApplicationTest {
 
     private Stage stage;
     private StageManager stageManager;
-
-    @Override
-    public void start(Stage stage) {
-        // start application
-        this.stage = stage;
-        this.stageManager = new StageManager();
-        this.stageManager.start(stage);
-        StageManager.showLoginScreen(restMock);
-        this.stage.centerOnScreen();
-        this.stage.setAlwaysOnTop(true);
-    }
-
-    @Mock
-    private WebSocketClient socketMock;
+    private LocalUser localUser;
 
     @Mock
     private RestClient restMock;
@@ -51,62 +44,171 @@ public class onlineUserListViewTest extends ApplicationTest {
     @Mock
     private HttpResponse<JsonNode> res;
 
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
+    @Mock
+    private WebSocketClient systemWebSocketClient;
+
+    @Mock
+    private WebSocketClient chatWebSocketClient;
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
+
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<WSCallback> callbackArgumentSystemCaptorWebSocket;
+    private WSCallback wsSystemCallback;
+
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
-    public void directToWelcomeScreen() {
-        //Mocking of RestClient login function
-        JsonObject json = Json.createObjectBuilder()
-                .add("status", "success")
-                .add("message", "")
-                .add("data", Json.createObjectBuilder()
-                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
-                ).build();
-        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+    @Override
+    public void start(Stage stage) {
+        // start application
+        this.stage = stage;
+        this.stageManager = new StageManager();
+        this.stageManager.start(stage);
 
-        //TestFX
-        String username = "username";
-        String password = "password";
+        //create localUser to skip the login screen and create server to skip the MainScreen
+        this.localUser = stageManager.getEditor().haveLocalUser("Sebastian", "testKey123");
 
-        clickOn("#tfUserName");
-        write(username);
+        this.stageManager.getEditor().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
 
-        clickOn("#pwUserPw");
-        write(password);
+        this.stageManager.showWelcomeScreen(restMock);
+        this.stage.centerOnScreen();
+        this.stage.setAlwaysOnTop(true);
+    }
 
-        clickOn("#btnLogin");
+    public void mockRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+        verify(restMock).getOnlineUsers(anyString(), callbackArgumentCaptor.capture());
 
-        Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
-        callbackLogin.completed(res);
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
 
-        WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnWelcome");
+    public void mockSystemWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(systemWebSocketClient).setCallback(callbackArgumentSystemCaptorWebSocket.capture());
+        wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
+
+        wsSystemCallback.handleMessage(webSocketJson);
     }
 
     @Test
-    public void verifyCallToIsOpenConnection() {
-     /*   WebSocketSession session = mock(WebSocketSession.class);
-        TextMessage textMsg = new TextMessage("Test Message".getBytes());
+    public void initUserListView() {
+        JsonObject restJson = getOnlineUsers();
+        mockRest(restJson);
 
-        when(session.isOpen()).thenReturn(true);
+        ListView userListView = lookup("#lwOnlineUsers").queryListView();
 
-        TextHandler textHandler = new TextHandler();
+        Assert.assertEquals(3, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
 
-        // Pass the mocked session object here
-        textHandler.handleTextMessage(session, textMsg);
-
-        // Now you can verify if session.sendMessage() was called or not
-        verify(session, times(1)).sendMessage(textMsg);*/
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
     }
 
+    @Test
+    public void newUserOnlineListViewUpdated() {
+        JsonObject restJson = getOnlineUsers();
+        mockRest(restJson);
+        JsonObject webSocketJson = webSocketCallbackUserJoined();
+        ListView userListView = lookup("#lwOnlineUsers").queryListView();
+
+        Assert.assertEquals(3, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
+
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
+
+        mockSystemWebSocket(webSocketJson);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(4, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
+
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(3)));
+    }
+
+    @Test
+    public void userLeftListViewUpdated() {
+        JsonObject restJson = getOnlineUsers();
+        mockRest(restJson);
+
+        ListView userListView = lookup("#lwOnlineUsers").queryListView();
+
+        JsonObject webSocketJsonUserJoined = webSocketCallbackUserJoined();
+        mockSystemWebSocket(webSocketJsonUserJoined);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(4, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+
+        JsonObject webSocketJsonUserLeft = webSocketCallbackUserLeft();
+        mockSystemWebSocket(webSocketJsonUserLeft);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        System.out.println(userListView.getItems());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(3, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+    }
+
+
+    /**
+     * @return Json webSocketCallback that user with id: "123456" and name: "Phil" has joined
+     */
+    public JsonObject webSocketCallbackUserJoined() {
+        return Json.createObjectBuilder()
+                .add("action", "userJoined")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", "123456")
+                        .add("name", "Phil"))
+                .build();
+    }
+
+    /**
+     * @return Json webSocketCallback that user with id: "123456" and name: "Phil" has left
+     */
+    public JsonObject webSocketCallbackUserLeft() {
+        return Json.createObjectBuilder()
+                .add("action", "userLeft")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", "123456")
+                        .add("name", "Phil"))
+                .build();
+    }
+
+    public JsonObject getOnlineUsers() {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "12345")
+                                .add("name", "Albert"))
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5678")
+                                .add("name", "Clemens"))
+                        .add(Json.createObjectBuilder()
+                                .add("id", "203040")
+                                .add("name", "Dieter")))
+                .build();
+    }
 }

@@ -26,8 +26,6 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,7 +50,7 @@ public class WelcomeScreenController {
     private PrivateMessageCellFactory chatCellFactory;
     private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private final PropertyChangeListener chatListener = this::newMessage;
-    private WebSocketClient websocket;
+    private WebSocketClient systemWebsocket;
     private WebSocketClient chatWebsocket;
     private Label lblSelectedUser;
 
@@ -82,20 +80,11 @@ public class WelcomeScreenController {
 
         this.initOnlineUsersList();
 
-        try {
-            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleSystemMessage);
-        } catch (URISyntaxException e) {
-            System.err.println("Error while setting up Websocket connection to system channel");
-            e.printStackTrace();
-        }
+        this.systemWebsocket = editor.haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
+        this.systemWebsocket.setCallback(this::handleSystemMessage);
 
-        try {
-            this.chatWebsocket = new WebSocketClient(editor, new URI(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName()), this::handleChatMessage);
-        } catch (URISyntaxException e) {
-            System.err.println("Error while setting up Websocket connection to private message channel");
-            e.printStackTrace();
-        }
-
+        this.chatWebsocket = editor.haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handleChatMessage);
+        this.chatWebsocket.setCallback(this::handleChatMessage);
     }
 
     public void stop() {
@@ -105,9 +94,11 @@ public class WelcomeScreenController {
         }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
 
+        this.editor.withOutWebSocket(SYSTEM_SOCKET_URL);
+        this.editor.withOutWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
 
-        if (websocket != null){
-            this.websocket.stop();
+        if (systemWebsocket != null){
+            this.systemWebsocket.stop();
         }
         if (chatWebsocket != null){
             this.chatWebsocket.stop();
@@ -127,7 +118,7 @@ public class WelcomeScreenController {
         this.lwPrivateChat = null;
         this.lblSelectedUser = null;
 
-        this.websocket = null;
+        this.systemWebsocket = null;
         this.chatWebsocket = null;
     }
 
@@ -274,6 +265,7 @@ public class WelcomeScreenController {
 
         } else if (jsonObject.getString(COM_ACTION).equals("userLeft")) {
             this.editor.userLeft(data.getString(COM_ID));
+            lwOnlineUsers.refresh();
         }
     }
 
