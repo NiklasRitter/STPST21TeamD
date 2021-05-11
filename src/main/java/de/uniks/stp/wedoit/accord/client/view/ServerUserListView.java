@@ -18,10 +18,10 @@ public class ServerUserListView implements javafx.util.Callback<ListView<User>, 
             super.updateItem(item, empty);
             if (!empty) {
                 if (item.isOnlineStatus()) {
-                    this.setText(item.getName() + " online");
+                    this.setText(item.getName() + " [online]");
                     this.setStyle("-fx-border-color: green");
                 } else {
-                    this.setText(item.getName() + " offline");
+                    this.setText(item.getName() + " [offline]");
                     this.setStyle("-fx-border-color: red");
                 }
             } else {
