@@ -14,8 +14,10 @@ import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactor
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -53,6 +55,7 @@ public class WelcomeScreenController {
     private final PropertyChangeListener chatListener = this::newMessage;
     private WebSocketClient websocket;
     private WebSocketClient chatWebsocket;
+    private Label lblSelectedUser;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -68,6 +71,7 @@ public class WelcomeScreenController {
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
+        this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
 
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
 
@@ -99,8 +103,10 @@ public class WelcomeScreenController {
         this.websocket.stop();
         this.chatWebsocket.stop();
 
+        if (this.currentChat != null){
+            this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
-        this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
 
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
@@ -114,6 +120,7 @@ public class WelcomeScreenController {
         this.lwOnlineUsers = null;
         this.tfPrivateChat = null;
         this.lwPrivateChat = null;
+        this.lblSelectedUser = null;
 
         this.websocket = null;
         this.chatWebsocket = null;
@@ -211,10 +218,15 @@ public class WelcomeScreenController {
      * @param user selected online user in lwOnlineUsers
      */
     private void initPrivateChat(User user) {
+        if (this.currentChat != null){
+            this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        }
+
         if (user.getPrivateChat() == null) {
             user.setPrivateChat(new Chat());
         }
         this.currentChat = user.getPrivateChat();
+        this.lblSelectedUser.setText(this.currentChat.getUser().getName());
 
         // load list view
         chatCellFactory = new PrivateMessageCellFactory();
@@ -276,6 +288,7 @@ public class WelcomeScreenController {
         message.setTo(jsonObject.getString(COM_TO));
 
         this.editor.addNewPrivateMessage(message);
+        lwPrivateChat.scrollTo(lwPrivateChat.getItems().get(0));
     }
 
     /**
@@ -289,7 +302,7 @@ public class WelcomeScreenController {
 
         if (message != null && !message.isEmpty() && currentChat != null) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
-            this.websocket.sendMessage(jsonMsg.toString());
+            this.chatWebsocket.sendMessage(jsonMsg.toString());
         }
     }
 
@@ -299,7 +312,7 @@ public class WelcomeScreenController {
      * @param mouseEvent occurs when a listitem is clicked
      */
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 2) {
+        if (mouseEvent.getClickCount() == 1) {
             User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
             if (user != null) {
                 this.initPrivateChat(user);
