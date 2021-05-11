@@ -36,10 +36,14 @@ public class StageManager extends Application {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
-            scene = new Scene(root);
+            if (scene != null) {
+                scene.setRoot(root);
+            } else {
+                scene = new Scene(root);
+            }
 
             model.setLocalUser(new LocalUser());
-            
+
             updateDarkmode();
 
             loginScreenController = new LoginScreenController(root, model.getLocalUser(), editor, restClient);
@@ -48,8 +52,6 @@ public class StageManager extends Application {
             //display
             stage.setTitle("Login");
             stage.setScene(scene);
-            stage.centerOnScreen();
-
             stage.setResizable(false);
 
         } catch (Exception e) {
@@ -67,7 +69,11 @@ public class StageManager extends Application {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/MainScreen.fxml"));
-            scene = new Scene(root);
+            if (scene != null) {
+                scene.setRoot(root);
+            } else {
+                scene = new Scene(root);
+            }
 
             updateDarkmode();
 
@@ -78,8 +84,6 @@ public class StageManager extends Application {
             // display
             stage.setTitle("Main");
             stage.setScene(scene);
-            stage.centerOnScreen();
-
             stage.setResizable(true);
 
         } catch (Exception e) {
@@ -117,16 +121,22 @@ public class StageManager extends Application {
 
         try {
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/WelcomeScreen.fxml"));
-            scene = new Scene(root);
+            if (scene != null) {
+                scene.setRoot(root);
+            } else {
+                scene = new Scene(root);
+            }
 
             updateDarkmode();
 
             welcomeScreenController = new WelcomeScreenController(root, model.getLocalUser(), editor, restClient);
             welcomeScreenController.init();
 
+            //display
             stage.setTitle("Welcome");
             stage.setScene(scene);
-            stage.centerOnScreen();
+            stage.setResizable(true);
+
         } catch (Exception e) {
             System.err.println("Error on showing WelcomeScreen");
             e.printStackTrace();
@@ -139,7 +149,11 @@ public class StageManager extends Application {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/ServerScreen.fxml"));
-            scene = new Scene(root);
+            if (scene != null) {
+                scene.setRoot(root);
+            } else {
+                scene = new Scene(root);
+            }
 
             updateDarkmode();
 
@@ -150,7 +164,7 @@ public class StageManager extends Application {
             //display
             stage.setTitle("Server");
             stage.setScene(scene);
-            stage.centerOnScreen();
+            stage.setResizable(true);
 
         } catch (Exception e) {
             System.err.println("Error on showing ServerScreenController");
@@ -177,6 +191,7 @@ public class StageManager extends Application {
             popupStage.centerOnScreen();
             popupStage.setResizable(false);
             popupStage.show();
+
         } catch (Exception e) {
             System.err.println("Error on showing OptionsScreen");
             e.printStackTrace();

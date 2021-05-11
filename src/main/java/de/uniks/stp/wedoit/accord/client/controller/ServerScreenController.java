@@ -121,7 +121,6 @@ public class ServerScreenController {
     }
 
     private void settingsButtonOnClick(ActionEvent actionEvent) {
-        stop();
         StageManager.showOptionsScreen();
     }
 
@@ -155,7 +154,7 @@ public class ServerScreenController {
      */
     private void handleServerMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
-        System.out.println(msg);
+
         // Create a new user if a user has joined and not member of this server or set user online
         if (jsonObject.getString(COM_ACTION).equals(COM_USER_JOINED)) {
             String id = jsonObject.getJsonObject(COM_DATA).getString(COM_ID);
@@ -217,7 +216,6 @@ public class ServerScreenController {
                 .collect(Collectors.toList());
         Collections.reverse(users);
         lvServerUsers.setItems(FXCollections.observableList(users));
-        System.out.println(users);
         lvServerUsers.refresh();
     }
 

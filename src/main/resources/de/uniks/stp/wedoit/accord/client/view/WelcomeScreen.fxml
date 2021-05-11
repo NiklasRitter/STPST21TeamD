@@ -108,7 +108,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
                <HBox.margin>
-                  <Insets bottom="5.0" />
+                  <Insets />
                </HBox.margin>
                <styleClass>
                   <String fx:value="styleBackgroundHighlight" />
@@ -130,16 +130,17 @@
             </VBox>
             <VBox alignment="CENTER" prefHeight="327.0" prefWidth="402.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <ListView minHeight="305.0" minWidth="400.0" VBox.vgrow="ALWAYS" />
-                  <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" styleClass="styleBorder" text="your message" VBox.vgrow="ALWAYS" />
+                  <ListView id="lwPrivateChat" minHeight="305.0" minWidth="400.0" VBox.vgrow="ALWAYS" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" promptText="your message" style="-fx-border-color: #3c3f41;" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>
-         <padding>
-            <Insets right="5.0" />
-         </padding>
          <VBox.margin>
-            <Insets left="5.0" />
+            <Insets />
          </VBox.margin>
       </HBox>
    </children>
