@@ -173,8 +173,8 @@ public class Editor {
         List<Channel> channels = new ArrayList<>();
 
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
-            channels.add(channel);
+            //Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+            //channels.add(channel);
         }
 
         category.withChannels(channels);

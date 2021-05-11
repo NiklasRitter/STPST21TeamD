@@ -163,6 +163,7 @@ public class ServerScreenController {
             if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
 
+                System.out.println(serversCategoryResponse);
                 editor.haveCategories(this.server, serversCategoryResponse);
             } else {
                 System.err.println("Error while loading categories from server");
@@ -195,6 +196,7 @@ public class ServerScreenController {
         for (Category category: categoryList) {
             loadCategoryChannels(category);
         }
+
     }
 
     //TODO niklas - has to do something

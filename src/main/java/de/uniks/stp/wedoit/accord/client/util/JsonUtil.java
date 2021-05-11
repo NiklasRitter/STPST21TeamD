@@ -82,6 +82,7 @@ public class JsonUtil {
                 .setServer(new Server().setId(categoryJson.getString(COM_SERVER)));
     }
     //TODO that is not good - server has no details
+    //TODO channels are not added
 
     /*
     //TODO niklas
