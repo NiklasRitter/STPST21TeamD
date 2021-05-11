@@ -170,7 +170,13 @@ public class ServerScreenController {
             User userLeft = editor.haveUserWithServer(name, id, false, this.server);
             userLeft.setOnlineStatus(false);
         }
-        
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                updateUserListView();
+            }
+        });
 
     }
 
@@ -201,38 +207,18 @@ public class ServerScreenController {
     }
 
     /**
-     * update the user list view with rest
-     *
-     * @deprecated use updateUserListView()
+     * update user list view
+     * remove all items from the list view and put all member of a server back in the list view
+     * sorted by online status
      */
-    @Deprecated
-    private void updateUserListViewWithRest() {
-        restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
-            if (response.getBody().getObject().getString("status").equals("success")) {
-                JSONObject data = response.getBody().getObject().getJSONObject("data");
-                JSONArray members = data.getJSONArray("members");
-                System.out.println(members);
-                // create user which are member in the server
-                // Load user list view
-                for (int index = 0; index < members.length(); index++) {
-
-                    String name = members.getJSONObject(index).getString("name");
-                    String id = members.getJSONObject(index).getString("id");
-                    boolean onlineStatus = members.getJSONObject(index).getBoolean("online");
-
-                    User user = editor.haveUserWithServer(name, id, onlineStatus, server);
-                    user.setOnlineStatus(onlineStatus);
-                }
-                // load list view
-                lvServerUsers.getItems().removeAll();
-                List<User> users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
-                        .collect(Collectors.toList());
-                this.lvServerUsers.setItems(FXCollections.observableList(users));
-                lvServerUsers.refresh();
-
-            } else {
-            }
-        });
+    public void updateUserListView() {
+        lvServerUsers.getItems().removeAll();
+        List<User> users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+                .collect(Collectors.toList());
+        Collections.reverse(users);
+        lvServerUsers.setItems(FXCollections.observableList(users));
+        System.out.println(users);
+        lvServerUsers.refresh();
     }
 
 }
