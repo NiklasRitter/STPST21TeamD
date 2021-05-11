@@ -16,6 +16,14 @@ public class WebSocketClient extends Endpoint {
     private Timer noopTimer;
     private WSCallback callback;
 
+    public WSCallback getCallback() {
+        return callback;
+    }
+
+    public void setCallback(WSCallback callback) {
+        this.callback = callback;
+    }
+
     public WebSocketClient(Editor editor, URI endpoint, WSCallback callback) {
         this.editor = editor;
         this.noopTimer = new Timer();

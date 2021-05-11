@@ -100,13 +100,19 @@ public class WelcomeScreenController {
     }
 
     public void stop() {
-        this.websocket.stop();
-        this.chatWebsocket.stop();
-
+        
         if (this.currentChat != null){
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+
+
+        if (websocket != null){
+            this.websocket.stop();
+        }
+        if (chatWebsocket != null){
+            this.chatWebsocket.stop();
+        }
 
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
