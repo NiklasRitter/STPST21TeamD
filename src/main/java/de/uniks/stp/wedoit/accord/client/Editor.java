@@ -4,12 +4,18 @@ import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Editor {
 
     private AccordClient accordClient;
+    private Map<String,WebSocketClient> webSocketMap = new HashMap<>();
 
     public LocalUser haveLocalUser() {
         LocalUser localUser = new LocalUser();
@@ -20,6 +26,51 @@ public class Editor {
     public AccordClient haveAccordClient() {
         accordClient = new AccordClient();
         return accordClient;
+    }
+
+    /**
+     * This method is for testing
+     * @param url testUrl
+     * @param webSocketClient testWebSocket
+     * @return webSocketClient which is given
+     */
+    public WebSocketClient haveWebSocket(String url, WebSocketClient webSocketClient) {
+        if (webSocketMap.get(url) != null) {
+            return webSocketMap.get(url);
+        } else {
+            webSocketMap.put(url, webSocketClient);
+        }
+        return webSocketClient;
+    }
+
+    /**
+     * Create a new webSocket and put the webSocket in the WebSocketMap,
+     * The webSocket has to be deleted when the websocket is no longer used
+     * with method editor.withOutUrl(url)
+     * @param url url for the webSocket connection
+     * @param callback callback for the
+     * @return webSocketClient which is given
+     */
+    public WebSocketClient haveWebSocket(String url, WSCallback callback) {
+        WebSocketClient webSocket;
+        if (webSocketMap.get(url) != null) {
+            return webSocketMap.get(url);
+        } else{
+
+        webSocket = new WebSocketClient(this,URI.create(url),callback);
+        webSocketMap.put(url,webSocket);
+        return webSocket;
+        }
+    }
+
+
+    /**
+     * remove a webSocket with given url
+     * @param url url of a webSocket
+     * @return the webSocket which is removed or null if there was no mapping of this url
+     */
+    public WebSocketClient withOutWebSocket(String url) {
+        return webSocketMap.remove(url);
     }
 
     public LocalUser haveLocalUser(String username, String userkey) {
