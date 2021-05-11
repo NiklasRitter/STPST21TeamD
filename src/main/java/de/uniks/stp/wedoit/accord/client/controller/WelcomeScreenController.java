@@ -89,7 +89,7 @@ public class WelcomeScreenController {
 
     public void stop() {
 
-        if (this.currentChat != null){
+        if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
@@ -97,10 +97,10 @@ public class WelcomeScreenController {
         this.editor.withOutWebSocket(SYSTEM_SOCKET_URL);
         this.editor.withOutWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
 
-        if (systemWebsocket != null){
+        if (systemWebsocket != null) {
             this.systemWebsocket.stop();
         }
-        if (chatWebsocket != null){
+        if (chatWebsocket != null) {
             this.chatWebsocket.stop();
         }
 
@@ -162,7 +162,7 @@ public class WelcomeScreenController {
 
     /**
      * initialize onlineUsers list
-     *
+     * <p>
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      */
@@ -196,25 +196,23 @@ public class WelcomeScreenController {
      * @param propertyChangeEvent event occurs when a user left or joined
      */
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != null) {
-            lwOnlineUsers.getItems().removeAll();
-            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
-                    .collect(Collectors.toList());
-            Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
-            lwOnlineUsers.refresh();
-        }
+        lwOnlineUsers.getItems().removeAll();
+        List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                .collect(Collectors.toList());
+        Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
+        lwOnlineUsers.refresh();
     }
 
     /**
      * initialize private Chat with user
-     *
+     * <p>
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      *
      * @param user selected online user in lwOnlineUsers
      */
     private void initPrivateChat(User user) {
-        if (this.currentChat != null){
+        if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
 
@@ -265,7 +263,6 @@ public class WelcomeScreenController {
 
         } else if (jsonObject.getString(COM_ACTION).equals("userLeft")) {
             this.editor.userLeft(data.getString(COM_ID));
-            lwOnlineUsers.refresh();
         }
     }
 
