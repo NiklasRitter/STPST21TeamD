@@ -23,6 +23,8 @@ public class Constants {
     public static final String COM_FROM = "from";
     public static final String COM_TO = "to";
     public static final String COM_TEXT = "text";
+    public static final String COM_USER_JOINED = "userJoined";
+    public static final String COM_USER_LEFT = "userLeft";
 
     // api routes
     public static final String REST_SERVER_URL = "https://ac.uniks.de";
