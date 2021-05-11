@@ -69,7 +69,7 @@ public class CreateServerScreenController {
                     String serverName = createServerAnswer.getString("name");
 
                     Server server = editor.haveServer(localUser, serverId, serverName);
-                    Platform.runLater(() -> StageManager.showServerScreen(server));
+                    Platform.runLater(() -> StageManager.showServerScreen(server, restClient));
 
                 }
             });

@@ -133,7 +133,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showServerScreen(Server server) {
+    public static void showServerScreen(Server server, RestClient restClient) {
         cleanup();
 
         try {
