@@ -14,7 +14,6 @@ import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactor
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -100,7 +99,7 @@ public class WelcomeScreenController {
     }
 
     public void stop() {
-        
+
         if (this.currentChat != null){
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
