@@ -99,6 +99,9 @@ public class WelcomeScreenController {
         this.websocket.stop();
         this.chatWebsocket.stop();
 
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+        this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
@@ -222,7 +225,7 @@ public class WelcomeScreenController {
         this.lwPrivateChat.setItems(FXCollections.observableList(messages));
 
         // Add listener for the loaded listView
-        currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
     }
 
     /**

@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller;
+package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -151,4 +151,27 @@ public class WelcomeScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
     }
+
+    @Test
+    public void testOnlineUserListViewInit(){
+
+        directToWelcomeScreen();
+
+        String returnMessage = Json.createObjectBuilder()
+                .add("status", "success").add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df505")
+                                .add("name", "Albert")
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df506")
+                                .add("name", "Clemens"))
+                ).build().toString();
+
+        when(res.getBody()).thenReturn(new JsonNode(returnMessage));
+        
+    }
+
+
 }

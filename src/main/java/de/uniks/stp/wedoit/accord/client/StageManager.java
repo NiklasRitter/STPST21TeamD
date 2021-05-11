@@ -6,7 +6,6 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -31,6 +30,9 @@ public class StageManager extends Application {
     private static Scene scene;
     private static Scene popupScene;
 
+    /**
+     * load fxml of the LoginScreen and show the LoginScreen on the window
+     */
     public static void showLoginScreen(RestClient restClient) {
         cleanup();
 
