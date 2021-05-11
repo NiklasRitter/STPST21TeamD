@@ -4,12 +4,12 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import org.json.JSONArray;
 
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_FROM;
 
@@ -147,6 +147,41 @@ public class Editor {
         }
         return null;
     }
+
+    //TODO niklas
+    public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
+        Objects.requireNonNull(server);
+        Objects.requireNonNull(serversCategoryResponse);
+
+        List<Category> categories = new ArrayList<>();
+
+        for (int index = 0; index < serversCategoryResponse.length(); index++) {
+            Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
+            categories.add(category);
+        }
+
+        server.withCategories(categories);
+
+        return categories;
+    }
+
+    //TODO niklas
+    public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
+        Objects.requireNonNull(category);
+        Objects.requireNonNull(categoriesChannelResponse);
+
+        List<Channel> channels = new ArrayList<>();
+
+        for (int index = 0; index < categoriesChannelResponse.length(); index++) {
+            Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+            channels.add(channel);
+        }
+
+        category.withChannels(channels);
+
+        return channels;
+    }
+
 
     /**
      * deletes a user with the given id

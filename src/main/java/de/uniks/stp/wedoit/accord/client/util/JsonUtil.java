@@ -1,9 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
-import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
+import org.json.JSONObject;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -78,11 +76,24 @@ public class JsonUtil {
                 .setOwner(serverDetailsJson.getString(COM_OWNER));
     }
 
-    public static Category parseCategory(JsonObject categoryJson) {
+    public static Category parseCategory(JSONObject categoryJson) {
         return new Category().setId(categoryJson.getString(COM_ID))
                 .setName(categoryJson.getString(COM_NAME))
                 .setServer(new Server().setId(categoryJson.getString(COM_SERVER)));
     }
+    //TODO that is not good - server has no details
+
+    /*
+    //TODO niklas
+    public static Channel parseChannel(JSONObject channelJson) {
+        return new Channel().setId(channelJson.getString(COM_ID))
+                .setName(channelJson.getString(COM_NAME))
+                .setType(channelJson.getString(COM_TYPE))
+                .setPrivileged(channelJson.getString(COM_PRIVILEGED).equals("true"))
+                .setCategory(channelJson.getString(COM_CATEGORY))
+                .withMembers(channelJson.getString(COM_MEMBERS));
+    }
+     */
 
     public static JsonObject buildServerChatMessage (String channel, String message) {
         return Json.createObjectBuilder()

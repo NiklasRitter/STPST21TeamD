@@ -86,6 +86,7 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    //TODO niklas
     public void getCategories(String serverId, String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES)
                 .header(COM_USER_KEY, userKey);
@@ -93,15 +94,11 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    //TODO niklas
     public void getChannels (String serverId, String categoryId, String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES + "/" + categoryId + CHANNELS)
                 .header(COM_USER_KEY, userKey);
 
-        //HttpRequest<?> req = Unirest.get( "https://ac.uniks.de/api/servers/" + serverId + "/categories" + categoryId + "/channels")
-        //        .header(COM_USER_KEY, userKey);
-
-        //HttpRequest<?> req = Unirest.get("https://ac.uniks.de/api/servers/5e2ffbd8770dd077d03df505/categories/5e2ffbd8770dd077d03df600/channels")
-        //        .header(COM_USER_KEY, userKey);
         sendRequest(req, callback);
     }
 

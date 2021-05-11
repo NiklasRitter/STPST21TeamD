@@ -11,6 +11,7 @@ public class Constants {
     public static final String COM_PASSWORD = "password";
     public static final String COM_USER_KEY = "userKey";
     public static final String COM_OWNER = "owner";
+    public static final String COM_CATEGORY = "category";
     public static final String COM_CATEGORIES = "categories";
     public static final String COM_MEMBERS = "members";
     public static final String COM_ONLINE = "online";

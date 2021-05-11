@@ -138,6 +138,7 @@ public class ServerScreenController {
         //TODO
     }
 
+    //TODO niklas
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
         // get input message
         String message = this.tfInputMessage.getText();
@@ -156,62 +157,47 @@ public class ServerScreenController {
          */
     }
 
-    private void loadServerData() {
-        System.out.println(this.server.getCategories());
-
+    //TODO niklas
+    private List<Category> loadServerCategories() {
         restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
             if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
 
-                for (int index1 = 0; index1 < serversCategoryResponse.length(); index1++) {
-                    String categoryId = serversCategoryResponse.getJSONObject(index1).getString("id");
-                    String categoryName = serversCategoryResponse.getJSONObject(index1).getString("name");
-                    String categoryServer = serversCategoryResponse.getJSONObject(index1).getString("server");
-
-                    Category category = new Category().setId(categoryId).setName(categoryName).setServer(server);
-
-                    restClient.getChannels(this.server.getId(), categoryId, localUser.getUserKey(), channelsResponse -> {
-                        if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
-                            JSONArray serverChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
-                            //System.out.println(serverChannelResponse.toString());
-                            for (int index2 = 0; index2 < serverChannelResponse.length(); index2++) {
-                                String channelId = serverChannelResponse.getJSONObject(index2).getString("id");
-                                String channelName = serverChannelResponse.getJSONObject(index2).getString("name");
-                                String channelType = serverChannelResponse.getJSONObject(index2).getString("type");
-                                String channelPrivileged = serverChannelResponse.getJSONObject(index2).getString("privileged");
-                                String channelCategory = serverChannelResponse.getJSONObject(index2).getString("category");
-                                JSONArray channelMembers = serverChannelResponse.getJSONObject(index2).getJSONArray("members");
-
-                                //TODO add members
-                                Channel channel = new Channel().setId(channelId).setName(channelName).setType(channelType).setPrivileged(channelPrivileged.equals("true")).setCategory(category).withMembers();
-                                category.withChannels(channel);
-                            }
-                        } else {
-                            System.err.println("Error while loading channels from server");
-                        }
-                    });
-
-                    //TODO everything to Editor
-
-                    this.server.withCategories(category);
-                }
+                editor.haveCategories(this.server, serversCategoryResponse);
             } else {
                 System.err.println("Error while loading categories from server");
             }
-
         });
-        //System.out.println(test);
-        /*
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-         */
-        System.out.println(this.server.getCategories());
+
+        return this.server.getCategories();
     }
 
-    //TODO has to do something
+    //TODO niklas
+    private List<Channel> loadCategoryChannels(Category category) {
+        restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
+            if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
+                JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
+
+                editor.haveChannels(category, categoriesChannelResponse);
+            } else {
+                System.err.println("Error while loading channels from server");
+            }
+        });
+
+        return category.getChannels();
+    }
+
+    //TODO niklas
+    private void loadServerData() {
+
+        //TODO Platform run later
+        List<Category> categoryList = loadServerCategories();
+        for (Category category: categoryList) {
+            loadCategoryChannels(category);
+        }
+    }
+
+    //TODO niklas - has to do something
     public void handleMessage (JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
