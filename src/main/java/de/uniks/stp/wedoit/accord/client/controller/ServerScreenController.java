@@ -2,13 +2,14 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -18,24 +19,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import javafx.event.ActionEvent;
-import javafx.scene.Parent;
-import javafx.scene.control.*;
-
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static de.uniks.stp.wedoit.accord.client.Constants.SERVER_ID_URL;
-import static de.uniks.stp.wedoit.accord.client.Constants.WS_SERVER_URL;
-
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
@@ -56,7 +46,8 @@ public class ServerScreenController {
     private TextField tfInputMessage;
     private ListView listView;
     private WebSocketClient webSocket;
-
+    private WebSocketClient serverWebSocket;
+    private WSCallback serverWSCallback = this::handleServerMessage;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
         this.view = view;
@@ -78,8 +69,10 @@ public class ServerScreenController {
         //TODO what type
         this.listView = (ListView) view.lookup("#lvTextChat");
 
-        // Load list view
-        // Load users of the server
+        this.serverWebSocket = editor.haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        serverWebSocket.setCallback(serverWSCallback);
+
+        // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
             if (response.getBody().getObject().getString("status").equals("success")) {
                 JSONObject data = response.getBody().getObject().getJSONObject("data");
@@ -90,19 +83,16 @@ public class ServerScreenController {
                 createUserListView(members);
 
             } else {
-                StageManager.showLoginScreen(restClient);
+                stop();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        StageManager.showLoginScreen(restClient);
+                    }
+                });
             }
 
         });
-
-        try {
-            this.webSocket = new WebSocketClient(editor, new URI(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId()), this::handleMessage);
-
-        } catch (URISyntaxException e) {
-            System.err.println("Error while making new URI");
-            e.printStackTrace();
-        }
-
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
@@ -110,24 +100,36 @@ public class ServerScreenController {
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
 
-        try {
-            this.webSocket = new WebSocketClient(editor, new URI(CHAT_USER_URL + this.localUser.getName()
-                    + "&" +  SERVER_ID_URL + this.server.getId()), this::handleMessage);
-        } catch (URISyntaxException e) {
-            System.err.println("Error creating URI");
-            e.printStackTrace();
-        }
     }
 
-    public void stop(){
+    public void stop() {
         this.btnLogout.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.btnOptions.setOnAction(null);
-
-        this.webSocket.stop();
+        editor.withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+        this.serverWebSocket.setCallback(null);
+        this.serverWebSocket.stop();
+        this.serverWebSocket = null;
     }
 
-    private void tfInputMessageOnEnter(ActionEvent actionEvent){
+
+    // Additional methods
+
+    private void homeButtonOnClick(ActionEvent actionEvent) {
+        stop();
+        StageManager.showMainScreen(restClient);
+    }
+
+    private void settingsButtonOnClick(ActionEvent actionEvent) {
+        stop();
+        StageManager.showOptionsScreen();
+    }
+
+    private void logoutButtonOnClick(ActionEvent actionEvent) {
+        //TODO
+    }
+
+    private void tfInputMessageOnEnter(ActionEvent actionEvent) {
         // get input message
         String message = this.tfInputMessage.getText();
         this.tfInputMessage.clear();
@@ -145,6 +147,34 @@ public class ServerScreenController {
         this.webSocket.sendMessage(jsonMsg.toString());
          */
     }
+
+    /**
+     * Handles the response of the websocket server
+     *
+     * @param msg response of the websocket server
+     */
+    private void handleServerMessage(JsonStructure msg) {
+        JsonObject jsonObject = (JsonObject) msg;
+        System.out.println(msg);
+        // Create a new user if a user has joined and not member of this server or set user online
+        if (jsonObject.getString(COM_ACTION).equals(COM_USER_JOINED)) {
+            String id = jsonObject.getJsonObject(COM_DATA).getString(COM_ID);
+            String name = jsonObject.getJsonObject(COM_DATA).getString(COM_NAME);
+            User userJoined = editor.haveUserWithServer(name, id, true, this.server);
+            userJoined.setOnlineStatus(true);
+        }
+        // Create a new user if a user has left and not member of this server or set user offline
+        if (jsonObject.getString(COM_ACTION).equals(COM_USER_LEFT)) {
+            String id = jsonObject.getJsonObject(COM_DATA).getString(COM_ID);
+            String name = jsonObject.getJsonObject(COM_DATA).getString(COM_NAME);
+            User userLeft = editor.haveUserWithServer(name, id, false, this.server);
+            userLeft.setOnlineStatus(false);
+        }
+        
+
+    }
+
+    // Methods for the user list view
 
     /**
      * create new users which a member of this server and load user list view with this users,
@@ -166,45 +196,22 @@ public class ServerScreenController {
         lvServerUsers.setCellFactory(serverUserListView);
         List<User> users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
                 .collect(Collectors.toList());
+        Collections.reverse(users);
         this.lvServerUsers.setItems(FXCollections.observableList(users));
     }
 
-    // Additional methods
-
-    private void homeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showMainScreen(restClient);
-    }
-
-    private void settingsButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showOptionsScreen();
-    }
-
-    private void logoutButtonOnClick(ActionEvent actionEvent) {
-        //TODO
-    }
-
-
     /**
-     * Handles the response of the websocket server
+     * update the user list view with rest
      *
-     * @param msg response of the websocket server
+     * @deprecated use updateUserListView()
      */
-    private void handleMessage(JsonStructure msg) {
-        JsonObject jsonObject = (JsonObject) msg;
-        System.out.println(msg);
-        //updateUserListView()
-
-    }
-
-    /**
-     * update the user list view
-     */
-    private void updateUserListView() {
+    @Deprecated
+    private void updateUserListViewWithRest() {
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
             if (response.getBody().getObject().getString("status").equals("success")) {
                 JSONObject data = response.getBody().getObject().getJSONObject("data");
                 JSONArray members = data.getJSONArray("members");
-
+                System.out.println(members);
                 // create user which are member in the server
                 // Load user list view
                 for (int index = 0; index < members.length(); index++) {
@@ -227,17 +234,5 @@ public class ServerScreenController {
             }
         });
     }
-
-
-    /*public void handleMessage (JsonStructure msg) {
-        JsonObject jsonObject = (JsonObject) msg;
-
-        if (!jsonObject.getString(COM_CHANNEL).equals("private")) {
-            System.out.println("Received: " + msg.toString());
-        }
-        else {
-            System.out.println("Not received: " + msg.toString());
-        }
-    }*/
 
 }
