@@ -6,7 +6,6 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -95,16 +94,10 @@ public class StageManager extends Application {
     }
 
     public static void showCreateServerScreen() {
-        cleanup();
-
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/CreateServerScreen.fxml"));
-            if (scene != null) {
-                scene.setRoot(root);
-            } else {
-                scene = new Scene(root);
-            }
+            popupScene = new Scene(root);
 
             updateDarkmode();
 
@@ -113,10 +106,11 @@ public class StageManager extends Application {
             createServerScreenController.init();
 
             //display
-            stage.setTitle("Create Server");
-            stage.setScene(scene);
-            stage.setResizable(false);
-
+            popupStage.setTitle("Create Server");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing CreateServerScreen");
             e.printStackTrace();
@@ -150,7 +144,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showServerScreen(Server server) {
+    public static void showServerScreen(Server server, RestClient restClient) {
         cleanup();
 
         try {
@@ -221,6 +215,9 @@ public class StageManager extends Application {
         if (optionsScreenController != null) {
             optionsScreenController.stop();
             optionsScreenController = null;
+        }
+        if (popupStage != null) {
+            popupStage.hide();
         }
     }
 

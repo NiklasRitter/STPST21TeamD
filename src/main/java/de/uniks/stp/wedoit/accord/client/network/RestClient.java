@@ -37,6 +37,19 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * Request to get explicit information to the server with given id
+     *
+     * @param userKey  userKey of the logged in user
+     * @param callback callback
+     */
+    public void getExplicitServerInformation(String userKey,String serverId, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
+                .header(COM_USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
     public void register(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
         String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();

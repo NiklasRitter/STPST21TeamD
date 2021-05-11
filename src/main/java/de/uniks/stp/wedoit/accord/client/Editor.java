@@ -1,7 +1,14 @@
 package de.uniks.stp.wedoit.accord.client;
 
-import de.uniks.stp.wedoit.accord.client.model.*;
 
+import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_FROM;
@@ -9,6 +16,7 @@ import static de.uniks.stp.wedoit.accord.client.Constants.COM_FROM;
 public class Editor {
 
     private AccordClient accordClient;
+    private Map<String,WebSocketClient> webSocketMap = new HashMap<>();
 
     /**
      * create localUser without initialisation and set localUser in Editor
@@ -79,6 +87,19 @@ public class Editor {
         return server;
     }
 
+    public User haveUserWithServer(String name, String id, boolean online, Server server) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(server);
+        for (User user: server.getMembers()) {
+            if(user.getId().equals(id)) {
+            return user;
+            }
+        }
+        User user = new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
+        return user;
+    }
+
     /**
      * create a user with the given arguments and add to users of localUser
      *
@@ -107,6 +128,7 @@ public class Editor {
         User user = new User().setId(id).setName(name);
         localUser.withUsers(user);
         return localUser;
+
     }
 
     /**
@@ -162,4 +184,50 @@ public class Editor {
             getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
     }
+
+    /**
+     * This method is for testing
+     * @param url testUrl
+     * @param webSocketClient testWebSocket
+     * @return webSocketClient which is given
+     */
+    public WebSocketClient haveWebSocket(String url, WebSocketClient webSocketClient) {
+        if (webSocketMap.get(url) != null) {
+            return webSocketMap.get(url);
+        } else {
+            webSocketMap.put(url, webSocketClient);
+        }
+        return webSocketClient;
+    }
+
+    /**
+     * Create a new webSocket and put the webSocket in the WebSocketMap,
+     * The webSocket has to be deleted when the websocket is no longer used
+     * with method editor.withOutUrl(url)
+     * @param url url for the webSocket connection
+     * @param callback callback for the
+     * @return webSocketClient which is given
+     */
+    public WebSocketClient haveWebSocket(String url, WSCallback callback) {
+        WebSocketClient webSocket;
+        if (webSocketMap.get(url) != null) {
+            return webSocketMap.get(url);
+        } else{
+
+            webSocket = new WebSocketClient(this,URI.create(url),callback);
+            webSocketMap.put(url,webSocket);
+            return webSocket;
+        }
+    }
+
+
+    /**
+     * remove a webSocket with given url
+     * @param url url of a webSocket
+     * @return the webSocket which is removed or null if there was no mapping of this url
+     */
+    public WebSocketClient withOutWebSocket(String url) {
+        return webSocketMap.remove(url);
+    }
+
 }

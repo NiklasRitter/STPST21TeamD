@@ -126,7 +126,7 @@ public class MainScreenController {
     private void serverButtonOnClick(ActionEvent actionEvent) {
         Server server = serverListView.getSelectionModel().getSelectedItem();
         if (server != null) {
-            StageManager.showServerScreen(server);
+            StageManager.showServerScreen(server, restClient);
         }
     }
 
@@ -139,7 +139,7 @@ public class MainScreenController {
         if (mouseEvent.getClickCount() == 2) {
             Server server = serverListView.getSelectionModel().getSelectedItem();
             if (server != null) {
-                StageManager.showServerScreen(server);
+                StageManager.showServerScreen(server, restClient);
             }
         }
 
