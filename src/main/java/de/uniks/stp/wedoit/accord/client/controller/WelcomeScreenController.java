@@ -96,9 +96,12 @@ public class WelcomeScreenController {
     }
 
     public void stop() {
-        this.websocket.stop();
-        this.chatWebsocket.stop();
-
+        if (websocket != null){
+            this.websocket.stop();
+        }
+        if (chatWebsocket != null){
+            this.chatWebsocket.stop();
+        }
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
