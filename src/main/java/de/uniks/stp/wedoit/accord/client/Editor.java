@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_FROM;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_MEMBERS;
 
 public class Editor {
 
@@ -149,6 +150,13 @@ public class Editor {
     }
 
     //TODO niklas
+    /**
+     * builds a category based on the server json answer
+     * !!! no channels added
+     *
+     * @param server which gets the categories
+     * @param serversCategoryResponse server answer for categories of the server
+     */
     public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
@@ -156,7 +164,9 @@ public class Editor {
         List<Category> categories = new ArrayList<>();
 
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
+            //System.out.println(serversCategoryResponse.getJSONObject(index));
             Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
+            category.setServer(server);
             categories.add(category);
         }
 
@@ -171,10 +181,21 @@ public class Editor {
         Objects.requireNonNull(categoriesChannelResponse);
 
         List<Channel> channels = new ArrayList<>();
-
+        System.out.println(categoriesChannelResponse);
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            //Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
-            //channels.add(channel);
+            //TODO here shit
+            Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+            channel.setCategory(category);
+            List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
+            List<User> members = new ArrayList<>();
+            for (String memberId: memberIds) {
+                for (User member: this.haveLocalUser().getUsers()) {
+                    if (memberId.equals(member.getId())) {
+                        members.add(member);
+                    }
+                }
+            }
+            channel.withMembers(members);
         }
 
         category.withChannels(channels);

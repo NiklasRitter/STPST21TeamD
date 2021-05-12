@@ -109,7 +109,7 @@ public class ServerScreenController {
             e.printStackTrace();
         }
 
-        this.loadServerData();
+        this.loadServerCategories();
     }
 
     public void stop() {
@@ -158,45 +158,37 @@ public class ServerScreenController {
     }
 
     //TODO niklas
-    private List<Category> loadServerCategories() {
+    private void loadServerCategories() {
         restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
             if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
 
-                System.out.println(serversCategoryResponse);
                 editor.haveCategories(this.server, serversCategoryResponse);
+
+                List<Category> categoryList = this.server.getCategories();
+                for (Category category: categoryList) {
+                    loadCategoryChannels(category);
+                }
             } else {
                 System.err.println("Error while loading categories from server");
             }
         });
-
-        return this.server.getCategories();
     }
 
     //TODO niklas
-    private List<Channel> loadCategoryChannels(Category category) {
+    private void loadCategoryChannels(Category category) {
         restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
+            System.out.println("HHHHH" + channelsResponse.getBody().getObject().getString("status").equals("success"));
             if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
+                System.out.println("Hier bin ich");
                 JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
 
+                System.out.println("Und hier");
                 editor.haveChannels(category, categoriesChannelResponse);
             } else {
                 System.err.println("Error while loading channels from server");
             }
         });
-
-        return category.getChannels();
-    }
-
-    //TODO niklas
-    private void loadServerData() {
-
-        //TODO Platform run later
-        List<Category> categoryList = loadServerCategories();
-        for (Category category: categoryList) {
-            loadCategoryChannels(category);
-        }
-
     }
 
     //TODO niklas - has to do something

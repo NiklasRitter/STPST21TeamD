@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.model.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.json.Json;
@@ -76,25 +77,52 @@ public class JsonUtil {
                 .setOwner(serverDetailsJson.getString(COM_OWNER));
     }
 
+    //TODO niklas
+    /**
+     * builds a category based on the server json answer
+     * !!! no server and channels added
+     *
+     * @param categoryJson json msg from server with category information
+     */
     public static Category parseCategory(JSONObject categoryJson) {
         return new Category().setId(categoryJson.getString(COM_ID))
-                .setName(categoryJson.getString(COM_NAME))
-                .setServer(new Server().setId(categoryJson.getString(COM_SERVER)));
+                .setName(categoryJson.getString(COM_NAME));
     }
-    //TODO that is not good - server has no details
-    //TODO channels are not added
 
-    /*
     //TODO niklas
+    public static List<String> parseChannels(JSONObject categoryJson) {
+        JSONArray channels = categoryJson.getJSONArray(COM_CHANNELS);
+        List<String> channelIds = new ArrayList<>();
+        for (Object channelId: channels) {
+            channelIds.add(channelId.toString());
+        }
+        return channelIds;
+    }
+
+    //TODO niklas
+    /**
+     * builds a channel based on the server json answer
+     * !!! no category and member added
+     *
+     * @param channelJson json msg from server with channel information
+     */
     public static Channel parseChannel(JSONObject channelJson) {
         return new Channel().setId(channelJson.getString(COM_ID))
                 .setName(channelJson.getString(COM_NAME))
                 .setType(channelJson.getString(COM_TYPE))
-                .setPrivileged(channelJson.getString(COM_PRIVILEGED).equals("true"))
-                .setCategory(channelJson.getString(COM_CATEGORY))
-                .withMembers(channelJson.getString(COM_MEMBERS));
+                .setPrivileged(channelJson.getString(COM_PRIVILEGED).equals("true"));
     }
-     */
+
+    //TODO niklas
+    public static List<String> parseMembers(JSONObject channelJson) {
+        JSONArray members = channelJson.getJSONArray(COM_CHANNELS);
+        List<String> membersIds = new ArrayList<>();
+        for (Object memberId: members) {
+            membersIds.add(memberId.toString());
+        }
+        return membersIds;
+    }
+
 
     public static JsonObject buildServerChatMessage (String channel, String message) {
         return Json.createObjectBuilder()
