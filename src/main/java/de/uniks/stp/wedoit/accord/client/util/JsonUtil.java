@@ -77,45 +77,40 @@ public class JsonUtil {
                 .setOwner(serverDetailsJson.getString(COM_OWNER));
     }
 
-    //TODO niklas
     /**
      * builds a category based on the server json answer
      * !!! no server and channels added
      *
      * @param categoryJson json msg from server with category information
+     * @return category
      */
     public static Category parseCategory(JSONObject categoryJson) {
         return new Category().setId(categoryJson.getString(COM_ID))
                 .setName(categoryJson.getString(COM_NAME));
     }
 
-    //TODO niklas
-    public static List<String> parseChannels(JSONObject categoryJson) {
-        JSONArray channels = categoryJson.getJSONArray(COM_CHANNELS);
-        List<String> channelIds = new ArrayList<>();
-        for (Object channelId: channels) {
-            channelIds.add(channelId.toString());
-        }
-        return channelIds;
-    }
-
-    //TODO niklas
     /**
      * builds a channel based on the server json answer
      * !!! no category and member added
      *
      * @param channelJson json msg from server with channel information
+     * @return channel
      */
     public static Channel parseChannel(JSONObject channelJson) {
         return new Channel().setId(channelJson.getString(COM_ID))
                 .setName(channelJson.getString(COM_NAME))
                 .setType(channelJson.getString(COM_TYPE))
-                .setPrivileged(channelJson.getString(COM_PRIVILEGED).equals("true"));
+                .setPrivileged(channelJson.getBoolean(COM_PRIVILEGED));
     }
 
-    //TODO niklas
+    /**
+     * builds memberIds List based on server json answer
+     *
+     * @param channelJson json msg from server with channel information
+     * @return memberIds List of IDs
+     */
     public static List<String> parseMembers(JSONObject channelJson) {
-        JSONArray members = channelJson.getJSONArray(COM_CHANNELS);
+        JSONArray members = channelJson.getJSONArray(COM_MEMBERS);
         List<String> membersIds = new ArrayList<>();
         for (Object memberId: members) {
             membersIds.add(memberId.toString());

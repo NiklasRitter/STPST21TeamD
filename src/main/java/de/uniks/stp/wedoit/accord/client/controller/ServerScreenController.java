@@ -157,7 +157,9 @@ public class ServerScreenController {
          */
     }
 
-    //TODO niklas
+    /**
+     * load categories of the current server
+     */
     private void loadServerCategories() {
         restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
             if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
@@ -175,15 +177,16 @@ public class ServerScreenController {
         });
     }
 
-    //TODO niklas
+    /**
+     * load the channels of a category
+     *
+     * @param category of which the channels should be loaded
+     */
     private void loadCategoryChannels(Category category) {
         restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
-            System.out.println("HHHHH" + channelsResponse.getBody().getObject().getString("status").equals("success"));
             if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
-                System.out.println("Hier bin ich");
                 JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
 
-                System.out.println("Und hier");
                 editor.haveChannels(category, categoriesChannelResponse);
             } else {
                 System.err.println("Error while loading channels from server");

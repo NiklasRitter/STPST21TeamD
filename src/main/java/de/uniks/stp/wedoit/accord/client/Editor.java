@@ -18,6 +18,7 @@ public class Editor {
 
     private AccordClient accordClient;
     private Map<String,WebSocketClient> webSocketMap = new HashMap<>();
+    private Server currentServer;
 
     /**
      * create localUser without initialisation and set localUser in Editor
@@ -149,7 +150,25 @@ public class Editor {
         return null;
     }
 
-    //TODO niklas
+    /**
+     * get a user by id
+     *
+     * @param id   id of the user
+     * @return user
+     */
+    public User getUserById(String id) {
+        List<User> users = this.currentServer.getMembers();
+        Objects.requireNonNull(users);
+        Objects.requireNonNull(id);
+
+        for (User user: users) {
+            if (id.equals(user.getId())) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     /**
      * builds a category based on the server json answer
      * !!! no channels added
@@ -162,44 +181,37 @@ public class Editor {
         Objects.requireNonNull(serversCategoryResponse);
 
         List<Category> categories = new ArrayList<>();
-
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
-            //System.out.println(serversCategoryResponse.getJSONObject(index));
             Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
             category.setServer(server);
             categories.add(category);
         }
-
         server.withCategories(categories);
-
         return categories;
     }
 
-    //TODO niklas
+    /**
+     * builds a channel based on the server json answer
+     *
+     * @param category which gets the channels
+     * @param categoriesChannelResponse server answer for channels of the category
+     */
     public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
         Objects.requireNonNull(category);
         Objects.requireNonNull(categoriesChannelResponse);
 
+        this.currentServer = category.getServer();
         List<Channel> channels = new ArrayList<>();
-        System.out.println(categoriesChannelResponse);
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            //TODO here shit
             Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
             channel.setCategory(category);
             List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-            List<User> members = new ArrayList<>();
             for (String memberId: memberIds) {
-                for (User member: this.haveLocalUser().getUsers()) {
-                    if (memberId.equals(member.getId())) {
-                        members.add(member);
-                    }
-                }
+                User user = this.getUserById(memberId);
+                channel.withMembers(user);
             }
-            channel.withMembers(members);
         }
-
         category.withChannels(channels);
-
         return channels;
     }
 
