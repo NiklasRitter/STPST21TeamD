@@ -282,7 +282,6 @@ public class WelcomeScreenController {
         message.setTo(jsonObject.getString(COM_TO));
 
         this.editor.addNewPrivateMessage(message);
-        lwPrivateChat.scrollTo(lwPrivateChat.getItems().get(0));
     }
 
     /**
