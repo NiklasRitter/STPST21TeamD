@@ -4,6 +4,8 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -25,6 +27,8 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.Constants.WS_SERVER_ID_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,6 +40,17 @@ public class MainScreenControllerTest extends ApplicationTest {
     private StageManager stageManager;
     private LocalUser localUser;
 
+    @Mock
+    private WebSocketClient systemWebSocketClient;
+
+    @Mock
+    private WebSocketClient chatWebSocketClient;
+
+    private Server server;
+
+    @Mock
+    private WebSocketClient webSocketClient;
+
     @Override
     public void start(Stage stage) {
         // start application
@@ -45,7 +60,8 @@ public class MainScreenControllerTest extends ApplicationTest {
 
         //create localUser to skip the login screen
         localUser = stageManager.getEditor().haveLocalUser("John Doe", "testKey123");
-
+        stageManager.getEditor().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        
         this.stageManager.showMainScreen(restMock);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -84,6 +100,9 @@ public class MainScreenControllerTest extends ApplicationTest {
 
     @Test
     public void welcomeButtonTest() {
+        this.stageManager.getEditor().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
+
         clickOn("#btnWelcome");
         Assert.assertEquals("Welcome", stage.getTitle());
     }
@@ -179,6 +198,7 @@ public class MainScreenControllerTest extends ApplicationTest {
     // Test open server with a double click on this one
     @Test
     public void openServerDoubleClickedTest() {
+
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         mockRestClient(json);
@@ -206,6 +226,7 @@ public class MainScreenControllerTest extends ApplicationTest {
     //Test open server with the server button
     @Test
     public void serverButtonOnClickTest() {
+
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         mockRestClient(json);
