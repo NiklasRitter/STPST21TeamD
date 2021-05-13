@@ -6,7 +6,9 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.view.ServerScreenChannelsCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
+import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -49,6 +51,8 @@ public class ServerScreenController {
     private String test;
     private WebSocketClient serverWebSocket;
     private WSCallback serverWSCallback = this::handleServerMessage;
+    private Channel currentChannel;
+    private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
         this.view = view;
@@ -64,7 +68,8 @@ public class ServerScreenController {
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lbServerName = (Label) view.lookup("#lbServerName");
-        this.lvServerChannels = (ListView) view.lookup("#lvServerChannels");
+        //TODO was tun mit Categories
+        this.lvServerChannels = (ListView<Channel>) view.lookup("#lvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
         //TODO what type
@@ -109,7 +114,11 @@ public class ServerScreenController {
             e.printStackTrace();
         }
 
-        this.loadServerCategories();
+        //this.loadServerCategories();
+        this.initCategoryChannelList();
+
+        //TODO maybe save the last one or always start with the first one
+        //this.currentChannel = this.server.getCategories().get(0).getChannels().get(0);
     }
 
     public void stop() {
@@ -138,6 +147,24 @@ public class ServerScreenController {
         //TODO
     }
 
+    private void initCategoryChannelList() {
+
+        restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
+            if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
+                JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
+
+                editor.haveCategories(this.server, serversCategoryResponse);
+
+                List<Category> categoryList = this.server.getCategories();
+                for (Category category: categoryList) {
+                    loadCategoryChannels(category);
+                }
+            } else {
+                System.err.println("Error while loading categories from server");
+            }
+        });
+    }
+
     //TODO niklas
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
         // get input message
@@ -145,6 +172,10 @@ public class ServerScreenController {
         this.tfInputMessage.clear();
 
         System.out.println(message);
+
+        //TODO Only dummy
+        this.currentChannel = this.server.getCategories().get(0).getChannels().get(0);
+        System.out.println(currentChannel);
 
         /*
         String channelId;
@@ -155,6 +186,18 @@ public class ServerScreenController {
         // send message
         this.webSocket.sendMessage(jsonMsg.toString());
          */
+    }
+
+    //TODO niklas - has to do something
+    public void handleMessage (JsonStructure msg) {
+        JsonObject jsonObject = (JsonObject) msg;
+
+        if (!jsonObject.getString(COM_CHANNEL).equals("private")) {
+            System.out.println("Received: " + msg.toString());
+        }
+        else {
+            System.out.println("Not received: " + msg.toString());
+        }
     }
 
     /**
@@ -188,23 +231,23 @@ public class ServerScreenController {
                 JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
 
                 editor.haveChannels(category, categoriesChannelResponse);
+
+                categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
+                lvServerChannels.setCellFactory(categoriesListViewCellFactory);
+
+                //TODO Problem: Multiple categories
+                List<Channel> channelList = this.server.getCategories().get(0).getChannels().stream().sorted(Comparator.comparing(Channel::getName))
+                        .collect(Collectors.toList());
+
+                Platform.runLater(() -> this.lvServerChannels.setItems(FXCollections.observableList(channelList)));
+
+                //TODO property change
             } else {
                 System.err.println("Error while loading channels from server");
             }
         });
     }
 
-    //TODO niklas - has to do something
-    public void handleMessage (JsonStructure msg) {
-        JsonObject jsonObject = (JsonObject) msg;
-
-        if (!jsonObject.getString(COM_CHANNEL).equals("private")) {
-            System.out.println("Received: " + msg.toString());
-        }
-        else {
-            System.out.println("Not received: " + msg.toString());
-        }
-    }
 
     /**
      * Handles the response of the websocket server
