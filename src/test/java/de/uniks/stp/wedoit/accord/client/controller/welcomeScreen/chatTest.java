@@ -182,7 +182,6 @@ public class chatTest extends ApplicationTest {
 
         lwOnlineUsers.getSelectionModel().select(0);
         User user = (User) lwOnlineUsers.getSelectionModel().getSelectedItem();
-        System.out.println(user.getName());
 
         clickOn("#lwOnlineUsers");
 
@@ -205,7 +204,7 @@ public class chatTest extends ApplicationTest {
 
         lwOnlineUsers.getSelectionModel().select(1);
         User user1 = (User) lwOnlineUsers.getSelectionModel().getSelectedItem();
-        System.out.println(user1.getName());
+
         clickOn("#lwOnlineUsers");
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(user1.getName(), lblSelectedUser.getText());
@@ -217,8 +216,7 @@ public class chatTest extends ApplicationTest {
         clickOn("#lwOnlineUsers");
         WaitForAsyncUtils.waitForFxEvents();
         WaitForAsyncUtils.waitForFxEvents();
-        System.out.println(user2.getName());
-        System.out.println(lblSelectedUser.getText());
+
         //Assert.assertEquals(user2.getName(), lblSelectedUser.getText());
 /*
         Assert.assertEquals(1, lwPrivateChat.getItems().size());
@@ -226,11 +224,6 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user2.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user2.getPrivateChat().getMessages().get(0).getText());
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");*/
-    }
-
-    @Test
-    public void testIfMessagesAreShownProperly() {
-
     }
 
     public void mockRest(JsonObject restClientJson) {

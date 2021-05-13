@@ -162,7 +162,6 @@ public class onlineUserListViewTest extends ApplicationTest {
         mockSystemWebSocket(webSocketJsonUserLeft);
         WaitForAsyncUtils.waitForFxEvents();
 
-        System.out.println(userListView.getItems());
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(3, userListView.getItems().size());
