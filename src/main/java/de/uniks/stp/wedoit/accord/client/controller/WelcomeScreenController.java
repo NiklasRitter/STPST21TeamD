@@ -15,10 +15,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.json.JSONArray;
 
@@ -78,6 +75,8 @@ public class WelcomeScreenController {
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
+        initTooltips();
+
         this.initOnlineUsersList();
 
         this.systemWebsocket = editor.haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
@@ -85,6 +84,20 @@ public class WelcomeScreenController {
 
         this.chatWebsocket = editor.haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handleChatMessage);
         this.chatWebsocket.setCallback(this::handleChatMessage);
+    }
+
+    private void initTooltips() {
+        Tooltip homeButton = new Tooltip();
+        homeButton.setText("home");
+        btnHome.setTooltip(homeButton);
+
+        Tooltip logoutButton = new Tooltip();
+        logoutButton.setText("logout");
+        btnLogout.setTooltip(logoutButton);
+
+        Tooltip optionsButton = new Tooltip();
+        optionsButton.setText("options");
+        btnOptions.setTooltip(optionsButton);
     }
 
     public void stop() {
