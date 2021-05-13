@@ -25,8 +25,6 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,19 +36,18 @@ public class WelcomeScreenController {
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
+    private final RestClient restClient;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
     private Chat currentChat;
-
-    private final RestClient restClient;
     private ListView<User> lwOnlineUsers;
+    private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
+    private final PropertyChangeListener chatListener = this::newMessage;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
-    private final PropertyChangeListener usersListListener = this::usersListViewChanged;
-    private final PropertyChangeListener chatListener = this::newMessage;
     private WebSocketClient websocket;
     private WebSocketClient chatWebsocket;
 
@@ -79,27 +76,16 @@ public class WelcomeScreenController {
 
         this.initOnlineUsersList();
 
-        try {
-            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleSystemMessage);
-        } catch (URISyntaxException e) {
-            System.err.println("Error while setting up Websocket connection to system channel");
-            e.printStackTrace();
-        }
+        this.websocket = editor.haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
 
-        try {
-            this.chatWebsocket = new WebSocketClient(editor, new URI(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName()), this::handleChatMessage);
-        } catch (URISyntaxException e) {
-            System.err.println("Error while setting up Websocket connection to private message channel");
-            e.printStackTrace();
-        }
-
+        this.chatWebsocket = editor.haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handleChatMessage);
     }
 
     public void stop() {
-        if (websocket != null){
+        if (websocket != null) {
             this.websocket.stop();
         }
-        if (chatWebsocket != null){
+        if (chatWebsocket != null) {
             this.chatWebsocket.stop();
         }
         this.btnHome.setOnAction(null);
@@ -159,7 +145,7 @@ public class WelcomeScreenController {
 
     /**
      * initialize onlineUsers list
-     *
+     * <p>
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      */
@@ -204,7 +190,7 @@ public class WelcomeScreenController {
 
     /**
      * initialize private Chat with user
-     *
+     * <p>
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      *
