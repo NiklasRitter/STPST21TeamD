@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import kong.unirest.Unirest;
@@ -277,7 +278,9 @@ public class StageManager extends Application {
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
+        stage.getIcons().add(new Image(StageManager.class.getResourceAsStream("view/images/Logo.png")));
         popupStage = new Stage();
+        popupStage.getIcons().add(new Image(StageManager.class.getResourceAsStream("view/images/Logo.png")));
         popupStage.initModality(Modality.WINDOW_MODAL);
         popupStage.initOwner(stage);
         editor = new Editor();
