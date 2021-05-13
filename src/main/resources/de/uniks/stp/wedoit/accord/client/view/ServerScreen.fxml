@@ -16,7 +16,6 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" VBox.vgrow="ALWAYS">
@@ -69,7 +68,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color red="1.0" green="1.0" blue="1.0" />
+                                    <Color blue="1.0" green="1.0" red="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -110,7 +109,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
                <HBox.margin>
-                  <Insets bottom="5.0" />
+                  <Insets />
                </HBox.margin>
                <styleClass>
                   <String fx:value="styleBorder" />
@@ -159,11 +158,8 @@
             </VBox>
          </children>
          <VBox.margin>
-            <Insets left="5.0" />
+            <Insets />
          </VBox.margin>
-         <padding>
-            <Insets right="5.0" />
-         </padding>
       </HBox>
    </children>
 </VBox>

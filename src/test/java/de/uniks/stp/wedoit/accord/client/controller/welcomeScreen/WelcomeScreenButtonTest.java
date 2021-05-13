@@ -1,7 +1,9 @@
-package de.uniks.stp.wedoit.accord.client.controller;
+package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -22,14 +24,17 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class WelcomeScreenTest extends ApplicationTest {
+public class WelcomeScreenButtonTest extends ApplicationTest {
 
     private Stage stage;
     private StageManager stageManager;
+    private LocalUser localUser;
 
     @Override
     public void start(Stage stage) {
@@ -37,7 +42,12 @@ public class WelcomeScreenTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        StageManager.showLoginScreen(restMock);
+
+        this.stageManager.getEditor().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        this.stageManager.showLoginScreen(restMock);
+
+
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -53,6 +63,12 @@ public class WelcomeScreenTest extends ApplicationTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
+
+    @Mock
+    private WebSocketClient systemWebSocketClient;
+
+    @Mock
+    private WebSocketClient chatWebSocketClient;
 
     @BeforeEach
     public void setup() {
@@ -151,4 +167,27 @@ public class WelcomeScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
     }
+
+    @Test
+    public void testOnlineUserListViewInit(){
+
+        directToWelcomeScreen();
+
+        String returnMessage = Json.createObjectBuilder()
+                .add("status", "success").add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df505")
+                                .add("name", "Albert")
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df506")
+                                .add("name", "Clemens"))
+                ).build().toString();
+
+        when(res.getBody()).thenReturn(new JsonNode(returnMessage));
+        
+    }
+
+
 }

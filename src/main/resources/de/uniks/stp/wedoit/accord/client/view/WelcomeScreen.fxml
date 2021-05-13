@@ -130,12 +130,13 @@
             </VBox>
             <VBox alignment="CENTER" prefHeight="327.0" prefWidth="402.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <ListView id="lwPrivateChat" minHeight="305.0" minWidth="400.0" VBox.vgrow="ALWAYS" />
-                  <HBox prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" promptText="your message" style="-fx-border-color: #3c3f41;" HBox.hgrow="ALWAYS" />
-                     </children>
-                  </HBox>
+                  <Label id="lblSelectedUser" text="No  User selected">
+                     <font>
+                        <Font name="System Bold Italic" size="13.0" />
+                     </font>
+                  </Label>
+                  <ListView id="lwPrivateChat" minHeight="286.0" minWidth="400.0" prefHeight="286.0" prefWidth="400.0" VBox.vgrow="ALWAYS" />
+                  <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" promptText="your message" style="-fx-border-color: #3c3f41;" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
          </children>

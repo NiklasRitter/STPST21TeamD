@@ -15,9 +15,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.json.JSONArray;
 
@@ -25,8 +23,6 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,8 +47,9 @@ public class WelcomeScreenController {
     private PrivateMessageCellFactory chatCellFactory;
     private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private final PropertyChangeListener chatListener = this::newMessage;
-    private WebSocketClient websocket;
+    private WebSocketClient systemWebsocket;
     private WebSocketClient chatWebsocket;
+    private Label lblSelectedUser;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -68,6 +65,7 @@ public class WelcomeScreenController {
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
+        this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
 
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
 
@@ -77,31 +75,48 @@ public class WelcomeScreenController {
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
+        initTooltips();
+
         this.initOnlineUsersList();
 
-        try {
-            this.websocket = new WebSocketClient(editor, new URI(SYSTEM_SOCKET_URL), this::handleSystemMessage);
-        } catch (URISyntaxException e) {
-            System.err.println("Error while setting up Websocket connection to system channel");
-            e.printStackTrace();
-        }
+        this.systemWebsocket = editor.haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
+        this.systemWebsocket.setCallback(this::handleSystemMessage);
 
-        try {
-            this.chatWebsocket = new WebSocketClient(editor, new URI(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName()), this::handleChatMessage);
-        } catch (URISyntaxException e) {
-            System.err.println("Error while setting up Websocket connection to private message channel");
-            e.printStackTrace();
-        }
+        this.chatWebsocket = editor.haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handleChatMessage);
+        this.chatWebsocket.setCallback(this::handleChatMessage);
+    }
 
+    private void initTooltips() {
+        Tooltip homeButton = new Tooltip();
+        homeButton.setText("home");
+        btnHome.setTooltip(homeButton);
+
+        Tooltip logoutButton = new Tooltip();
+        logoutButton.setText("logout");
+        btnLogout.setTooltip(logoutButton);
+
+        Tooltip optionsButton = new Tooltip();
+        optionsButton.setText("options");
+        btnOptions.setTooltip(optionsButton);
     }
 
     public void stop() {
-        if (websocket != null){
-            this.websocket.stop();
+
+        if (this.currentChat != null) {
+            this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
-        if (chatWebsocket != null){
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+
+        this.editor.withOutWebSocket(SYSTEM_SOCKET_URL);
+        this.editor.withOutWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
+
+        if (systemWebsocket != null) {
+            this.systemWebsocket.stop();
+        }
+        if (chatWebsocket != null) {
             this.chatWebsocket.stop();
         }
+
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
@@ -114,8 +129,9 @@ public class WelcomeScreenController {
         this.lwOnlineUsers = null;
         this.tfPrivateChat = null;
         this.lwPrivateChat = null;
+        this.lblSelectedUser = null;
 
-        this.websocket = null;
+        this.systemWebsocket = null;
         this.chatWebsocket = null;
     }
 
@@ -159,7 +175,7 @@ public class WelcomeScreenController {
 
     /**
      * initialize onlineUsers list
-     *
+     * <p>
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      */
@@ -193,28 +209,31 @@ public class WelcomeScreenController {
      * @param propertyChangeEvent event occurs when a user left or joined
      */
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != null) {
-            lwOnlineUsers.getItems().removeAll();
-            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
-                    .collect(Collectors.toList());
-            Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
-            lwOnlineUsers.refresh();
-        }
+        lwOnlineUsers.getItems().removeAll();
+        List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                .collect(Collectors.toList());
+        Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
+        lwOnlineUsers.refresh();
     }
 
     /**
      * initialize private Chat with user
-     *
+     * <p>
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      *
      * @param user selected online user in lwOnlineUsers
      */
     private void initPrivateChat(User user) {
+        if (this.currentChat != null) {
+            this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        }
+
         if (user.getPrivateChat() == null) {
             user.setPrivateChat(new Chat());
         }
         this.currentChat = user.getPrivateChat();
+        this.lblSelectedUser.setText(this.currentChat.getUser().getName());
 
         // load list view
         chatCellFactory = new PrivateMessageCellFactory();
@@ -225,7 +244,7 @@ public class WelcomeScreenController {
         this.lwPrivateChat.setItems(FXCollections.observableList(messages));
 
         // Add listener for the loaded listView
-        currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
     }
 
     /**
@@ -289,7 +308,7 @@ public class WelcomeScreenController {
 
         if (message != null && !message.isEmpty() && currentChat != null) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
-            this.websocket.sendMessage(jsonMsg.toString());
+            this.chatWebsocket.sendMessage(jsonMsg.toString());
         }
     }
 
@@ -299,7 +318,7 @@ public class WelcomeScreenController {
      * @param mouseEvent occurs when a listitem is clicked
      */
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 2) {
+        if (mouseEvent.getClickCount() == 1) {
             User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
             if (user != null) {
                 this.initPrivateChat(user);
