@@ -146,7 +146,6 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
         //receive message
-
         mockChatWebSocket(getServerMessageUserAnswer(user));
         WaitForAsyncUtils.waitForFxEvents();
 
