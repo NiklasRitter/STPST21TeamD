@@ -14,9 +14,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.json.JSONArray;
 
@@ -61,6 +59,7 @@ public class WelcomeScreenController {
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
+        this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
 
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
 
@@ -70,10 +69,28 @@ public class WelcomeScreenController {
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
+        initTooltips();
+
         this.initOnlineUsersList();
+    private void initTooltips() {
+        Tooltip homeButton = new Tooltip();
+        homeButton.setText("home");
+        btnHome.setTooltip(homeButton);
+
+        Tooltip logoutButton = new Tooltip();
+        logoutButton.setText("logout");
+        btnLogout.setTooltip(logoutButton);
+
+        Tooltip optionsButton = new Tooltip();
+        optionsButton.setText("options");
+        btnOptions.setTooltip(optionsButton);
     }
 
     public void stop() {
+        if (this.currentChat != null) {
+            this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        }
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
@@ -86,6 +103,7 @@ public class WelcomeScreenController {
         this.lwOnlineUsers = null;
         this.tfPrivateChat = null;
         this.lwPrivateChat = null;
+        this.lblSelectedUser = null;
     }
 
     /**
@@ -163,13 +181,11 @@ public class WelcomeScreenController {
      * @param propertyChangeEvent event occurs when a user left or joined
      */
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != null) {
-            lwOnlineUsers.getItems().removeAll();
-            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
-                    .collect(Collectors.toList());
-            Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
-            lwOnlineUsers.refresh();
-        }
+        lwOnlineUsers.getItems().removeAll();
+        List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                .collect(Collectors.toList());
+        Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
+        lwOnlineUsers.refresh();
     }
 
     /**
@@ -181,10 +197,15 @@ public class WelcomeScreenController {
      * @param user selected online user in lwOnlineUsers
      */
     private void initPrivateChat(User user) {
+        if (this.currentChat != null) {
+            this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        }
+
         if (user.getPrivateChat() == null) {
             user.setPrivateChat(new Chat());
         }
         this.currentChat = user.getPrivateChat();
+        this.lblSelectedUser.setText(this.currentChat.getUser().getName());
 
         // load list view
         chatCellFactory = new PrivateMessageCellFactory();
@@ -195,7 +216,7 @@ public class WelcomeScreenController {
         this.lwPrivateChat.setItems(FXCollections.observableList(messages));
 
         // Add listener for the loaded listView
-        currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
     }
 
     /**
@@ -234,7 +255,7 @@ public class WelcomeScreenController {
      * @param mouseEvent occurs when a listitem is clicked
      */
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 2) {
+        if (mouseEvent.getClickCount() == 1) {
             User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
             if (user != null) {
                 this.initPrivateChat(user);

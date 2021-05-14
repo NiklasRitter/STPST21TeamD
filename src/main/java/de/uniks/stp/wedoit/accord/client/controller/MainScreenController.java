@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import org.json.JSONArray;
 
@@ -52,6 +53,7 @@ public class MainScreenController {
         this.logoutButton = (Button) view.lookup("#btnLogout");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
 
+        initTooltips();
         // load server of the localUser
         restClient.getServers(localUser.getUserKey(), response -> {
             if (response.getBody().getObject().getString("status").equals("success")) {
@@ -86,6 +88,28 @@ public class MainScreenController {
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
 
 
+    }
+
+    private void initTooltips() {
+        Tooltip welcomeButton = new Tooltip();
+        welcomeButton.setText("private chats");
+        this.welcomeButton.setTooltip(welcomeButton);
+
+        Tooltip logoutButton = new Tooltip();
+        logoutButton.setText("logout");
+        this.logoutButton.setTooltip(logoutButton);
+
+        Tooltip optionsButton = new Tooltip();
+        optionsButton.setText("options");
+        this.optionsButton.setTooltip(optionsButton);
+
+        Tooltip addServerButton = new Tooltip();
+        addServerButton.setText("create new server");
+        this.addServerButton.setTooltip(addServerButton);
+
+        Tooltip serverButton = new Tooltip();
+        serverButton.setText("server");
+        this.serverButton.setTooltip(serverButton);
     }
 
     public void stop() {

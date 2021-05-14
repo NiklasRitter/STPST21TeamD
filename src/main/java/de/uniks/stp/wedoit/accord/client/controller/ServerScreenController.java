@@ -13,10 +13,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -97,6 +94,21 @@ public class ServerScreenController {
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
 
+        initTooltips();
+    }
+
+    private void initTooltips() {
+        Tooltip homeButton = new Tooltip();
+        homeButton.setText("home");
+        btnHome.setTooltip(homeButton);
+
+        Tooltip logoutButton = new Tooltip();
+        logoutButton.setText("logout");
+        btnLogout.setTooltip(logoutButton);
+
+        Tooltip optionsButton = new Tooltip();
+        optionsButton.setText("options");
+        btnOptions.setTooltip(optionsButton);
     }
 
     public void stop() {
