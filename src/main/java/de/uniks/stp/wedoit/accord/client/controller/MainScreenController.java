@@ -175,8 +175,7 @@ public class MainScreenController {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
-        //TODO
-        StageManager.showCreateServerScreen();
+        StageManager.showCreateServerScreen(restClient);
     }
 
     /**
@@ -199,7 +198,7 @@ public class MainScreenController {
             serverListView.getItems().removeAll();
             List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
                     .collect(Collectors.toList());
-            this.serverListView.setItems(FXCollections.observableList(localUserServers));
+            Platform.runLater(() -> this.serverListView.setItems(FXCollections.observableList(localUserServers)));
             serverListView.refresh();
         }
     }
