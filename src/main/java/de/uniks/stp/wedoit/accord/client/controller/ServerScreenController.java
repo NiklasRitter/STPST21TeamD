@@ -175,8 +175,12 @@ public class ServerScreenController {
 
     }
 
+    /**
+     * initialize channel List view
+     * gets Categories from server and calls loadCategoryChannels()
+     *
+     */
     private void initCategoryChannelList() {
-
         restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
             if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
@@ -221,7 +225,7 @@ public class ServerScreenController {
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
 
-        // load list view
+        // init list view
         this.messageCellFactory = new MessageCellFactory();
         lvTextChat.setCellFactory(messageCellFactory);
         List<Message> messages = currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
@@ -239,6 +243,7 @@ public class ServerScreenController {
      * @param propertyChangeEvent event occurs when a new private message arrives
      */
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
+        //TODO dont remove all?
         if (propertyChangeEvent.getNewValue() != null) {
             lvTextChat.getItems().removeAll();
             List<Message> messages = currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
@@ -248,6 +253,11 @@ public class ServerScreenController {
         }
     }
 
+    /**
+     * send msg via websocket if enter
+     *
+     * @param actionEvent
+     */
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
         // get input message
         String message = this.tfInputMessage.getText();
@@ -269,15 +279,16 @@ public class ServerScreenController {
     private void handleChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
-        jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId());
-        Message message = new Message();
-        //TODO allowed?
-        message.setChannel(currentChannel);
-        message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
-        message.setFrom(jsonObject.getString(COM_FROM));
-        message.setText(jsonObject.getString(COM_MESSAGE));
+        if(jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
+            Message message = new Message();
+            //TODO allowed?
+            message.setChannel(currentChannel);
+            message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
+            message.setFrom(jsonObject.getString(COM_FROM));
+            message.setText(jsonObject.getString(COM_TEXT));
 
-        this.editor.addNewChannelMessage(message);
+            this.editor.addNewChannelMessage(message);
+        }
     }
 
     /**

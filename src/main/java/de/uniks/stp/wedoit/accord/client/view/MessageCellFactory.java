@@ -30,6 +30,7 @@ public class MessageCellFactory implements javafx.util.Callback<ListView<Message
 
                 // allow wrapping
                 setWrapText(true);
+                //TODO number to date
                 this.setText("[" + item.getTimestamp() + "] " + item.getFrom() + ": " + item.getText());
             } else {
                 this.setText("");
