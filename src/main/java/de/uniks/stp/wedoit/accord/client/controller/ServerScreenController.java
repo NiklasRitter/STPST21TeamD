@@ -103,7 +103,6 @@ public class ServerScreenController {
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
 
-<<<<<<< HEAD
         try {
             this.webSocket = new WebSocketClient(editor, new URI(CHAT_USER_URL + this.localUser.getName()
                     + "&" +  SERVER_ID_URL + this.server.getId()), this::handleMessage);
@@ -117,7 +116,7 @@ public class ServerScreenController {
 
         //TODO maybe save the last one or always start with the first one
         //this.currentChannel = this.server.getCategories().get(0).getChannels().get(0);
-=======
+
         initTooltips();
     }
 
@@ -133,7 +132,6 @@ public class ServerScreenController {
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
         btnOptions.setTooltip(optionsButton);
->>>>>>> master
     }
 
     public void stop() {
