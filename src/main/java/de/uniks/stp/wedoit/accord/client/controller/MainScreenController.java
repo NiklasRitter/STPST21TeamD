@@ -108,7 +108,7 @@ public class MainScreenController {
         this.addServerButton.setTooltip(addServerButton);
 
         Tooltip serverButton = new Tooltip();
-        serverButton.setText("server");
+        serverButton.setText("Enter selected server");
         this.serverButton.setTooltip(serverButton);
     }
 
@@ -185,18 +185,7 @@ public class MainScreenController {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        String userKey = this.localUser.getUserKey();
-
-        if (userKey != null && !userKey.isEmpty()) {
-            restClient.logout(userKey, response -> {
-                //if response status is successful
-                if (response.getBody().getObject().getString("status").equals("success")) {
-                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-                } else {
-                    System.err.println("Error while logging out");
-                }
-            });
-        }
+        editor.logoutUser(localUser.getUserKey(), restClient);
     }
 
     /**
