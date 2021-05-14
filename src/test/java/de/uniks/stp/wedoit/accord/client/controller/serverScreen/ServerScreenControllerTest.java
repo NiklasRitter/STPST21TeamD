@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller;
+package de.uniks.stp.wedoit.accord.client.controller.serverScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -7,7 +7,6 @@ import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import javafx.application.Platform;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -24,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -35,6 +35,11 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * tests for the ServerScreenController
+ * - user list view
+ * - logout
+ */
 public class ServerScreenControllerTest extends ApplicationTest {
 
     private Stage stage;
@@ -142,7 +147,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
 
         mockWebSocket(webSocketJson);
-        clickOn("#tfInputMessage");
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(4, listView.getItems().toArray().length);
         Assert.assertEquals(4, server.getMembers().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
@@ -167,7 +172,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals(false, userI2.isOnlineStatus());
 
         wsCallback.handleMessage(webSocketCallbackUserLeft());
-        clickOn("#tfInputMessage");
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(false, userPhil.isOnlineStatus());
         Assert.assertEquals(false, userI2.isOnlineStatus());
 
@@ -180,14 +185,47 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(stage.getTitle().equals("Login"));
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Assert.assertTrue(stage.getTitle().equals("Login"));
-            }
-        });
     }
+
+    @Test
+    public void LogoutSuccessfulTest() {
+        Assert.assertTrue(stage.getTitle().equals("Server"));
+        mockRest(getServerIdSuccessful());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        when(res.getBody()).thenReturn(new JsonNode(logoutSuccessful().toString()));
+        clickOn("#btnLogout");
+        verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(stage.getTitle().equals("Login"));
+
+
+    }
+
+    @Test
+    public void logoutFailureTest() {
+        Assert.assertTrue(stage.getTitle().equals("Server"));
+        mockRest(getServerIdSuccessful());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        when(res.getBody()).thenReturn(new JsonNode(logoutFailure().toString()));
+        clickOn("#btnLogout");
+        verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(stage.getTitle().equals("Login"));
+
+
+    }
+
+
+    // Methods for callbacks
 
     /**
      * @return Json webSocketCallback that user with id: "123456" and name: "Phil" has joined
@@ -223,5 +261,20 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder()).build();
     }
 
+    public JsonObject logoutSuccessful() {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "Logged out")
+                .add("data", "{}")
+                .build();
+    }
+
+    public JsonObject logoutFailure() {
+        return Json.createObjectBuilder()
+                .add("status", "failure")
+                .add("message", "Log in first")
+                .add("data", "{}")
+                .build();
+    }
 
 }
