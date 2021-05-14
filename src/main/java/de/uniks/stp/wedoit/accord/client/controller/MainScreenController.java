@@ -108,7 +108,7 @@ public class MainScreenController {
         this.addServerButton.setTooltip(addServerButton);
 
         Tooltip serverButton = new Tooltip();
-        serverButton.setText("server");
+        serverButton.setText("Enter selected server");
         this.serverButton.setTooltip(serverButton);
     }
 
