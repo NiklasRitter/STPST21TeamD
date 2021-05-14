@@ -128,6 +128,8 @@ public class LoginTest extends ApplicationTest {
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
 
+        WaitForAsyncUtils.waitForFxEvents();
+
         Assert.assertEquals("failure", res.getBody().getObject().getString("status"));
         Assert.assertEquals("Invalid credentials", res.getBody().getObject().getString("message"));
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
