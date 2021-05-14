@@ -130,7 +130,6 @@ public class Editor {
         User user = new User().setId(id).setName(name);
         localUser.withUsers(user);
         return localUser;
-
     }
 
     /**

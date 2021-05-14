@@ -13,10 +13,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -106,6 +103,7 @@ public class ServerScreenController {
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
 
+<<<<<<< HEAD
         try {
             this.webSocket = new WebSocketClient(editor, new URI(CHAT_USER_URL + this.localUser.getName()
                     + "&" +  SERVER_ID_URL + this.server.getId()), this::handleMessage);
@@ -119,6 +117,23 @@ public class ServerScreenController {
 
         //TODO maybe save the last one or always start with the first one
         //this.currentChannel = this.server.getCategories().get(0).getChannels().get(0);
+=======
+        initTooltips();
+    }
+
+    private void initTooltips() {
+        Tooltip homeButton = new Tooltip();
+        homeButton.setText("home");
+        btnHome.setTooltip(homeButton);
+
+        Tooltip logoutButton = new Tooltip();
+        logoutButton.setText("logout");
+        btnLogout.setTooltip(logoutButton);
+
+        Tooltip optionsButton = new Tooltip();
+        optionsButton.setText("options");
+        btnOptions.setTooltip(optionsButton);
+>>>>>>> master
     }
 
     public void stop() {
