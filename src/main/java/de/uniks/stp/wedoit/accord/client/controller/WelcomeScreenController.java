@@ -44,6 +44,7 @@ public class WelcomeScreenController {
     private final PropertyChangeListener chatListener = this::newMessage;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
+    private Label lblSelectedUser;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -72,6 +73,8 @@ public class WelcomeScreenController {
         initTooltips();
 
         this.initOnlineUsersList();
+    }
+
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
         homeButton.setText("home");
