@@ -81,12 +81,7 @@ public class ServerScreenController {
 
             } else {
                 stop();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        StageManager.showLoginScreen(restClient);
-                    }
-                });
+                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
             }
 
         });
@@ -137,7 +132,17 @@ public class ServerScreenController {
     }
 
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        //TODO
+        String userKey = this.localUser.getUserKey();
+        if (userKey != null && !userKey.isEmpty()) {
+            restClient.logout(userKey, response -> {
+                if (response.getBody().getObject().getString("status").equals("success")) {
+                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+                } else {
+                    System.err.println("Error while logging out");
+                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+                }
+            });
+        }
     }
 
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
