@@ -169,6 +169,8 @@ public class MainScreenControllerTest extends ApplicationTest {
         //create a new server
         stageManager.getEditor().haveServer(stageManager.getEditor().getLocalUser(), "123", "AOServer");
 
+        WaitForAsyncUtils.waitForFxEvents();
+
         // Test count of servers
         Assert.assertEquals(3, listView.getItems().toArray().length);
         for (Object server : listView.getItems()) {
