@@ -253,6 +253,15 @@ public class Editor {
     }
 
     /**
+     * add message to channel chat
+     *
+     * @param message to add to the model
+     */
+    public void addNewChannelMessage(Message message){
+        message.getChannel().withMessages(message);
+    }
+
+    /**
      * This method is for testing
      * @param url testUrl
      * @param webSocketClient testWebSocket
