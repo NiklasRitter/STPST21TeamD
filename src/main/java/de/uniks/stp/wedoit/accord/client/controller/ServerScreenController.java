@@ -131,18 +131,15 @@ public class ServerScreenController {
         StageManager.showOptionsScreen();
     }
 
+
+    /**
+     * The localUser will be logged out and redirect to the LoginScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        String userKey = this.localUser.getUserKey();
-        if (userKey != null && !userKey.isEmpty()) {
-            restClient.logout(userKey, response -> {
-                if (response.getBody().getObject().getString("status").equals("success")) {
-                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-                } else {
-                    System.err.println("Error while logging out");
-                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-                }
-            });
-        }
+        editor.logoutUser(localUser.getUserKey(), restClient);
+
     }
 
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
