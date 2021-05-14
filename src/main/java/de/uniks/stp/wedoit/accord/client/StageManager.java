@@ -291,6 +291,7 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            editor.getNetworkController().stop();
             LocalUser localUser = model.getLocalUser();
             if (localUser != null) {
                 String userKey = localUser.getUserKey();

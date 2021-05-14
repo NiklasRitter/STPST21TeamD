@@ -167,6 +167,7 @@ public class MainScreenController {
             restClient.logout(userKey, response -> {
                 //if response status is successful
                 if (response.getBody().getObject().getString("status").equals("success")) {
+                    editor.getNetworkController().stop();
                     Platform.runLater(() -> StageManager.showLoginScreen(restClient));
                 } else {
                     System.err.println("Error while logging out");

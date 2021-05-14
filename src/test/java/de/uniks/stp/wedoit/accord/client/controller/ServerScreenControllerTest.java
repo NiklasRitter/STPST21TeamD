@@ -80,7 +80,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
         //create localUser to skip the login screen and create server to skip the MainScreen
         localUser = stageManager.getEditor().haveLocalUser("John Doe", "testKey123");
         server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
-        stageManager.getEditor().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
 
         this.stageManager.showServerScreen(server, restMock);
         this.stage.centerOnScreen();

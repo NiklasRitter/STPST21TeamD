@@ -98,9 +98,7 @@ public class LoginScreenController {
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
-                    editor.haveWebSocket(SYSTEM_SOCKET_URL, (JsonStructure msg) -> {
-                        System.out.println("[WARN] Receiving System message without corresponding handler!");
-                    });
+                    editor.getNetworkController().start();
                     Platform.runLater(() -> StageManager.showMainScreen(restClient));
                 }
             });
