@@ -224,6 +224,18 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
     }
 
+    @Test
+    public void mainScreenButtonTest() {
+        clickOn("#btnHome");
+        Assert.assertEquals("Main", stage.getTitle());
+    }
+
+    @Test
+    public void optionsButtonTest() {
+        clickOn("#btnOptions");
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+    }
+
 
     // Methods for callbacks
 
