@@ -4,7 +4,6 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
-import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Platform;
 
@@ -187,4 +186,23 @@ public class Editor {
         }
     }
 
+    /**
+     * the localUser is logged out and will be redirect to the LoginScreen
+     *
+     * @param userKey    userKey of the user who is logged out
+     * @param restClient restClient instance for the LoginScreenController
+     */
+    public void logoutUser(String userKey, RestClient restClient) {
+        if (userKey != null && !userKey.isEmpty()) {
+            networkController.stop();
+            restClient.logout(userKey, response -> {
+                if (response.getBody().getObject().getString("status").equals("success")) {
+                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+                } else {
+                    System.err.println("Error while logging out");
+                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+                }
+            });
+        }
+    }
 }

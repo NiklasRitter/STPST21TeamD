@@ -12,7 +12,6 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -41,27 +40,21 @@ import static org.mockito.Mockito.when;
 
 public class chatTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
     private JsonStructure msg;
-
     @Mock
     private RestClient restMock;
-
     @Mock
     private HttpResponse<JsonNode> res;
-
     @Mock
     private WebSocketClient systemWebSocketClient;
-
     @Mock
     private WebSocketClient chatWebSocketClient;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
