@@ -96,7 +96,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showCreateServerScreen() {
+    public static void showCreateServerScreen(RestClient restClient) {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/CreateServerScreen.fxml"));
