@@ -3,8 +3,10 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.application.Platform;
 
 import java.util.HashMap;
 import java.util.Map;

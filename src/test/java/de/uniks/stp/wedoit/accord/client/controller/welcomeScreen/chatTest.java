@@ -249,6 +249,8 @@ public class chatTest extends ApplicationTest {
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
 
+        WaitForAsyncUtils.waitForFxEvents();
+
         ListView userListView = lookup("#lwOnlineUsers").queryListView();
 
         Assert.assertEquals(3, userListView.getItems().size());
