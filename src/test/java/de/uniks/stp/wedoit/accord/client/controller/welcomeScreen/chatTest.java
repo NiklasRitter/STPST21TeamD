@@ -210,19 +210,19 @@ public class chatTest extends ApplicationTest {
 
         Assert.assertEquals(0, lwPrivateChat.getItems().size());
 
+        clickOn("#lwPrivateChat");
+
         lwOnlineUsers.getSelectionModel().select(0);
         User user2 = (User) lwOnlineUsers.getSelectionModel().getSelectedItem();
         clickOn("#lwOnlineUsers");
-        WaitForAsyncUtils.waitForFxEvents();
-        WaitForAsyncUtils.waitForFxEvents();
 
-        //Assert.assertEquals(user2.getName(), lblSelectedUser.getText());
-/*
+        Assert.assertEquals(user2.getName(), lblSelectedUser.getText());
+
         Assert.assertEquals(1, lwPrivateChat.getItems().size());
         Assert.assertEquals(user2.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user2.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user2.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");*/
+        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
     }
 
     public void mockRest(JsonObject restClientJson) {
