@@ -8,7 +8,6 @@ import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
-import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerScreenChannelsCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
@@ -51,7 +50,7 @@ public class ServerScreenController {
     private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
     private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
-    private final PropertyChangeListener chatListener = this::newMessage;
+    private final PropertyChangeListener newMessagesListener = this::newMessage;
     private WebSocketClient chatWebSocket;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
@@ -178,7 +177,6 @@ public class ServerScreenController {
     /**
      * initialize channel List view
      * gets Categories from server and calls loadCategoryChannels()
-     *
      */
     private void initCategoryChannelList() {
         restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
@@ -198,13 +196,40 @@ public class ServerScreenController {
     }
 
     /**
+     * load the channels of a category
+     *
+     * @param category of which the channels should be loaded
+     */
+    private void loadCategoryChannels(Category category) {
+        restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
+            if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
+                JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
+
+                editor.haveChannels(category, categoriesChannelResponse);
+
+                //TODO use something different then a cell factory
+                categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
+                lvServerChannels.setCellFactory(categoriesListViewCellFactory);
+
+                List<Channel> channelList = this.server.getCategories().get(0).getChannels().stream().sorted(Comparator.comparing(Channel::getName))
+                        .collect(Collectors.toList());
+
+                Platform.runLater(() -> this.lvServerChannels.setItems(FXCollections.observableList(channelList)));
+
+                //TODO property change
+            } else {
+                System.err.println("Error while loading channels from server");
+            }
+        });
+    }
+
+    /**
      * initChannelChat when channel is clicked twice
      *
      * @param mouseEvent occurs when a listitem is clicked
      */
     private void lvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
-            //TODO why not channel
             Channel channel = (Channel) lvServerChannels.getSelectionModel().getSelectedItem();
             if (channel != null) {
                 this.initChannelChat(channel);
@@ -219,7 +244,7 @@ public class ServerScreenController {
      */
     private void initChannelChat(Channel channel) {
         if (this.currentChannel != null) {
-            this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.chatListener);
+            this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         }
 
         this.currentChannel = channel;
@@ -234,7 +259,7 @@ public class ServerScreenController {
         this.lvTextChat.setItems(FXCollections.observableList(messages));
 
         // Add listener for the loaded listView
-        this.currentChannel.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        this.currentChannel.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.newMessagesListener);
     }
 
     /**
@@ -259,11 +284,8 @@ public class ServerScreenController {
      * @param actionEvent
      */
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
-        // get input message
         String message = this.tfInputMessage.getText();
         this.tfInputMessage.clear();
-
-        System.out.println(message);
 
         if (message != null && !message.isEmpty() && currentChannel != null) {
             JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
@@ -281,7 +303,6 @@ public class ServerScreenController {
 
         if(jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
             Message message = new Message();
-            //TODO allowed?
             message.setChannel(currentChannel);
             message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
             message.setFrom(jsonObject.getString(COM_FROM));
@@ -290,35 +311,6 @@ public class ServerScreenController {
             this.editor.addNewChannelMessage(message);
         }
     }
-
-    /**
-     * load the channels of a category
-     *
-     * @param category of which the channels should be loaded
-     */
-    private void loadCategoryChannels(Category category) {
-        restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
-            if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
-                JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
-
-                editor.haveChannels(category, categoriesChannelResponse);
-
-                categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
-                lvServerChannels.setCellFactory(categoriesListViewCellFactory);
-
-                //TODO Problem: Multiple categories
-                List<Channel> channelList = this.server.getCategories().get(0).getChannels().stream().sorted(Comparator.comparing(Channel::getName))
-                        .collect(Collectors.toList());
-
-                Platform.runLater(() -> this.lvServerChannels.setItems(FXCollections.observableList(channelList)));
-
-                //TODO property change
-            } else {
-                System.err.println("Error while loading channels from server");
-            }
-        });
-    }
-
 
     /**
      * Handles the response of the websocket server
