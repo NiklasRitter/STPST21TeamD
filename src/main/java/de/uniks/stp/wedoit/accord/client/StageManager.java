@@ -219,6 +219,10 @@ public class StageManager extends Application {
             optionsScreenController.stop();
             optionsScreenController = null;
         }
+        if (createServerScreenController != null){
+            createServerScreenController.stop();
+            createServerScreenController = null;
+        }
         if (popupStage != null) {
             popupStage.hide();
         }

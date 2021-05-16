@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
-public class LoginScreenController {
+public class LoginScreenController implements Controller{
 
     private LocalUser model;
     private Editor editor;

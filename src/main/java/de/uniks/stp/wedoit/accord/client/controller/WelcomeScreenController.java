@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
-public class WelcomeScreenController {
+public class WelcomeScreenController implements Controller{
 
     private final Parent view;
     private final LocalUser localUser;
@@ -47,6 +48,8 @@ public class WelcomeScreenController {
     private PrivateMessageCellFactory chatCellFactory;
     private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private final PropertyChangeListener chatListener = this::newMessage;
+    private final WSCallback callbackSystemMessages = this::handleSystemMessage;
+    private final WSCallback callbackChatMessages = this::handleChatMessage;
     private WebSocketClient systemWebsocket;
     private WebSocketClient chatWebsocket;
     private Label lblSelectedUser;
@@ -75,15 +78,15 @@ public class WelcomeScreenController {
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
-        initTooltips();
+        this.initTooltips();
 
         this.initOnlineUsersList();
 
-        this.systemWebsocket = editor.haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
-        this.systemWebsocket.setCallback(this::handleSystemMessage);
+        this.systemWebsocket = editor.haveWebSocket(SYSTEM_SOCKET_URL, callbackSystemMessages);
+        this.systemWebsocket.setCallback(callbackSystemMessages);
 
-        this.chatWebsocket = editor.haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handleChatMessage);
-        this.chatWebsocket.setCallback(this::handleChatMessage);
+        this.chatWebsocket = editor.haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), callbackChatMessages);
+        this.chatWebsocket.setCallback(callbackChatMessages);
     }
 
     private void initTooltips() {
