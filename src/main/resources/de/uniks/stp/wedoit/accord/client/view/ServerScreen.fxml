@@ -131,7 +131,7 @@
             </VBox>
             <VBox alignment="CENTER" styleClass="styleBorders" HBox.hgrow="ALWAYS">
                <children>
-                  <Label id="lbChannelName" minHeight="19.0" minWidth="292.0" text="# -general" VBox.vgrow="ALWAYS">
+                  <Label id="lbChannelName" minHeight="19.0" minWidth="292.0" text="select a server" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets left="2.0" />
                      </padding>
