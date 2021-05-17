@@ -56,21 +56,21 @@ public class CreateServerScreenController implements Controller{
         if (tfServerName.getText().length() < 2) {
             tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 
-            Platform.runLater(() -> errorLabel.setText("Name has to be at least 2 symbols long."));
+            Platform.runLater(() -> errorLabel.setText("Name has to be at least 2 symbols long"));
         } else {
             restClient.createServer(tfServerName.getText(), localUser.getUserKey(), (response) -> {
-                if (response.getStatus() != 200) {
-                    tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-
-                    Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server."));
-                } else {
+                if (response.getBody().getObject().getString("status").equals("success")) {
                     JSONObject createServerAnswer = response.getBody().getObject().getJSONObject("data");
                     String serverId = createServerAnswer.getString("id");
                     String serverName = createServerAnswer.getString("name");
 
                     Server server = editor.haveServer(localUser, serverId, serverName);
+                    stop();
                     Platform.runLater(() -> StageManager.showServerScreen(server, restClient));
+                } else {
+                    tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 
+                    Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server"));
                 }
             });
         }

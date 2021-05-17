@@ -12,7 +12,6 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -41,27 +40,21 @@ import static org.mockito.Mockito.when;
 
 public class chatTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
     private JsonStructure msg;
-
     @Mock
     private RestClient restMock;
-
     @Mock
     private HttpResponse<JsonNode> res;
-
     @Mock
     private WebSocketClient systemWebSocketClient;
-
     @Mock
     private WebSocketClient chatWebSocketClient;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
@@ -90,8 +83,8 @@ public class chatTest extends ApplicationTest {
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = stageManager.getEditor().haveLocalUser("Sebastian", "testKey123");
 
-        this.stageManager.getEditor().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
 
         this.stageManager.showWelcomeScreen(restMock);
         this.stage.centerOnScreen();
@@ -248,6 +241,8 @@ public class chatTest extends ApplicationTest {
     public void initUserListView() {
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
+
+        WaitForAsyncUtils.waitForFxEvents();
 
         ListView userListView = lookup("#lwOnlineUsers").queryListView();
 

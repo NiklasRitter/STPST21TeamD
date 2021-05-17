@@ -1,22 +1,25 @@
 package de.uniks.stp.wedoit.accord.client;
 
 
+import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.application.Platform;
 
-
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_FROM;
-
 public class Editor {
 
     private AccordClient accordClient;
-    private Map<String,WebSocketClient> webSocketMap = new HashMap<>();
+    private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+    private NetworkController networkController = new NetworkController(this);
+
+    public NetworkController getNetworkController() {
+        return networkController;
+    }
 
     /**
      * create localUser without initialisation and set localUser in Editor
@@ -91,9 +94,9 @@ public class Editor {
         Objects.requireNonNull(name);
         Objects.requireNonNull(id);
         Objects.requireNonNull(server);
-        for (User user: server.getMembers()) {
-            if(user.getId().equals(id)) {
-            return user;
+        for (User user : server.getMembers()) {
+            if (user.getId().equals(id)) {
+                return user;
             }
         }
         User user = new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
@@ -175,47 +178,31 @@ public class Editor {
      *
      * @param message to add to the model
      */
-    public void addNewPrivateMessage(PrivateMessage message){
-        if (message.getFrom().equals(getLocalUser().getName())){
+    public void addNewPrivateMessage(PrivateMessage message) {
+        if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
-        }
-        else {
+        } else {
             getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
     }
 
     /**
-     * This method is for testing
-     * @param url testUrl
-     * @param webSocketClient testWebSocket
-     * @return webSocketClient which is given
+     * the localUser is logged out and will be redirect to the LoginScreen
+     *
+     * @param userKey    userKey of the user who is logged out
+     * @param restClient restClient instance for the LoginScreenController
      */
-    public WebSocketClient haveWebSocket(String url, WebSocketClient webSocketClient) {
-        if (webSocketMap.get(url) != null) {
-            return webSocketMap.get(url);
-        } else {
-            webSocketMap.put(url, webSocketClient);
-        }
-        return webSocketClient;
-    }
-
-    /**
-     * Create a new webSocket and put the webSocket in the WebSocketMap,
-     * The webSocket has to be deleted when the websocket is no longer used
-     * with method editor.withOutUrl(url)
-     * @param url url for the webSocket connection
-     * @param callback callback for the
-     * @return webSocketClient which is given
-     */
-    public WebSocketClient haveWebSocket(String url, WSCallback callback) {
-        WebSocketClient webSocket;
-        if (webSocketMap.get(url) != null) {
-            return webSocketMap.get(url);
-        } else{
-
-            webSocket = new WebSocketClient(this,URI.create(url),callback);
-            webSocketMap.put(url,webSocket);
-            return webSocket;
+    public void logoutUser(String userKey, RestClient restClient) {
+        if (userKey != null && !userKey.isEmpty()) {
+            networkController.stop();
+            restClient.logout(userKey, response -> {
+                if (response.getBody().getObject().getString("status").equals("success")) {
+                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+                } else {
+                    System.err.println("Error while logging out");
+                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+                }
+            });
         }
     }
 
@@ -228,4 +215,5 @@ public class Editor {
     public WebSocketClient withOutWebSocket(String url) {
         return webSocketMap.remove(url);
     }
+
 }

@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller;
+package de.uniks.stp.wedoit.accord.client.controller.mainScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class MainScreenTest extends ApplicationTest {
+public class logoutTest extends ApplicationTest {
     private Stage stage;
     private StageManager stageManager;
 
@@ -114,4 +114,6 @@ public class MainScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Login", stage.getTitle());
     }
+
+
 }

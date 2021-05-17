@@ -76,8 +76,8 @@ public class onlineUserListViewTest extends ApplicationTest {
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = stageManager.getEditor().haveLocalUser("Sebastian", "testKey123");
 
-        this.stageManager.getEditor().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
 
         this.stageManager.showWelcomeScreen(restMock);
         this.stage.centerOnScreen();
@@ -108,6 +108,8 @@ public class onlineUserListViewTest extends ApplicationTest {
         mockRest(restJson);
 
         ListView userListView = lookup("#lwOnlineUsers").queryListView();
+
+        WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(3, userListView.getItems().size());
         Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());

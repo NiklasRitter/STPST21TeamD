@@ -12,8 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
+import javax.json.JsonStructure;
+
+import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class LoginScreenController implements Controller{
 
@@ -97,6 +98,7 @@ public class LoginScreenController implements Controller{
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
+                    editor.getNetworkController().start();
                     Platform.runLater(() -> StageManager.showMainScreen(restClient));
                 }
             });

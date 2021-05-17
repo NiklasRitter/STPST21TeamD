@@ -7,8 +7,6 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
-import de.uniks.stp.wedoit.accord.client.network.WSCallback;
-import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
@@ -21,7 +19,6 @@ import javafx.scene.input.MouseEvent;
 import org.json.JSONArray;
 
 import javax.json.JsonObject;
-import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
@@ -35,23 +32,19 @@ public class WelcomeScreenController implements Controller{
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
+    private final RestClient restClient;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
     private Chat currentChat;
-
-    private final RestClient restClient;
     private ListView<User> lwOnlineUsers;
+    private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
+    private final PropertyChangeListener chatListener = this::newMessage;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
-    private final PropertyChangeListener usersListListener = this::usersListViewChanged;
-    private final PropertyChangeListener chatListener = this::newMessage;
-    private final WSCallback callbackSystemMessages = this::handleSystemMessage;
-    private final WSCallback callbackChatMessages = this::handleChatMessage;
-    private WebSocketClient systemWebsocket;
-    private WebSocketClient chatWebsocket;
+
     private Label lblSelectedUser;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
@@ -81,12 +74,6 @@ public class WelcomeScreenController implements Controller{
         this.initTooltips();
 
         this.initOnlineUsersList();
-
-        this.systemWebsocket = editor.haveWebSocket(SYSTEM_SOCKET_URL, callbackSystemMessages);
-        this.systemWebsocket.setCallback(callbackSystemMessages);
-
-        this.chatWebsocket = editor.haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), callbackChatMessages);
-        this.chatWebsocket.setCallback(callbackChatMessages);
     }
 
     private void initTooltips() {
@@ -104,22 +91,10 @@ public class WelcomeScreenController implements Controller{
     }
 
     public void stop() {
-
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
-
-        this.editor.withOutWebSocket(SYSTEM_SOCKET_URL);
-        this.editor.withOutWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
-
-        if (systemWebsocket != null) {
-            this.systemWebsocket.stop();
-        }
-        if (chatWebsocket != null) {
-            this.chatWebsocket.stop();
-        }
-
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
@@ -133,9 +108,6 @@ public class WelcomeScreenController implements Controller{
         this.tfPrivateChat = null;
         this.lwPrivateChat = null;
         this.lblSelectedUser = null;
-
-        this.systemWebsocket = null;
-        this.chatWebsocket = null;
     }
 
     /**
@@ -150,21 +122,10 @@ public class WelcomeScreenController implements Controller{
     /**
      * logout current LocalUser and redirect to the LoginScreen
      *
-     * @param actionEvent
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fire
      */
     private void btnLogoutOnClicked(ActionEvent actionEvent) {
-        String userKey = this.localUser.getUserKey();
-
-        if (userKey != null && !userKey.isEmpty()) {
-            restClient.logout(userKey, response -> {
-                //if response status is successful
-                if (response.getBody().getObject().getString("status").equals("success")) {
-                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-                } else {
-                    System.err.println("Error while logging out");
-                }
-            });
-        }
+        editor.logoutUser(localUser.getUserKey(), restClient);
     }
 
     /**
@@ -266,41 +227,6 @@ public class WelcomeScreenController implements Controller{
     }
 
     /**
-     * handle messages on the system channel by adding or deleting users from the data model
-     *
-     * @param msg message from the server on the system channel
-     */
-    public void handleSystemMessage(JsonStructure msg) {
-        JsonObject jsonObject = (JsonObject) msg;
-        JsonObject data = jsonObject.getJsonObject(COM_DATA);
-
-        if (jsonObject.getString(COM_ACTION).equals("userJoined")) {
-            this.editor.haveUser(data.getString(COM_ID), data.getString(COM_NAME));
-
-        } else if (jsonObject.getString(COM_ACTION).equals("userLeft")) {
-            this.editor.userLeft(data.getString(COM_ID));
-        }
-    }
-
-    /**
-     * handle chat message by adding it to the data model
-     *
-     * @param msg message from the server on the private chat channel
-     */
-    private void handleChatMessage(JsonStructure msg) {
-        JsonObject jsonObject = (JsonObject) msg;
-
-        jsonObject.getString(COM_CHANNEL).equals("private");
-        PrivateMessage message = new PrivateMessage();
-        message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
-        message.setText(jsonObject.getString(COM_MESSAGE));
-        message.setFrom(jsonObject.getString(COM_FROM));
-        message.setTo(jsonObject.getString(COM_TO));
-
-        this.editor.addNewPrivateMessage(message);
-    }
-
-    /**
      * send message in textfield after enter button pressed
      *
      * @param actionEvent occurs when enter button is pressed
@@ -311,7 +237,7 @@ public class WelcomeScreenController implements Controller{
 
         if (message != null && !message.isEmpty() && currentChat != null) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
-            this.chatWebsocket.sendMessage(jsonMsg.toString());
+            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
         }
     }
 

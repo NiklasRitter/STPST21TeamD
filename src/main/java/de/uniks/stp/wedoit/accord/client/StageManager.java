@@ -96,7 +96,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showCreateServerScreen() {
+    public static void showCreateServerScreen(RestClient restClient) {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/CreateServerScreen.fxml"));
@@ -300,6 +300,7 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            editor.getNetworkController().stop();
             LocalUser localUser = model.getLocalUser();
             if (localUser != null) {
                 String userKey = localUser.getUserKey();

@@ -42,8 +42,6 @@ public class ServerScreenController implements Controller{
     private ListView lvServerUsers;
     private TextField tfInputMessage;
     private ListView listView;
-    private WebSocketClient webSocket;
-    private WebSocketClient serverWebSocket;
     private WSCallback serverWSCallback = this::handleServerMessage;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
@@ -66,8 +64,7 @@ public class ServerScreenController implements Controller{
         //TODO what type
         this.listView = (ListView) view.lookup("#lvTextChat");
 
-        this.serverWebSocket = editor.haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
-        serverWebSocket.setCallback(serverWSCallback);
+        editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
 
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
@@ -81,12 +78,7 @@ public class ServerScreenController implements Controller{
 
             } else {
                 stop();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        StageManager.showLoginScreen(restClient);
-                    }
-                });
+                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
             }
 
         });
@@ -118,10 +110,7 @@ public class ServerScreenController implements Controller{
         this.btnLogout.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.btnOptions.setOnAction(null);
-        editor.withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-        this.serverWebSocket.setCallback(null);
-        this.serverWebSocket.stop();
-        this.serverWebSocket = null;
+        editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
     }
 
 
@@ -136,8 +125,15 @@ public class ServerScreenController implements Controller{
         StageManager.showOptionsScreen();
     }
 
+
+    /**
+     * The localUser will be logged out and redirect to the LoginScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        //TODO
+        editor.logoutUser(localUser.getUserKey(), restClient);
+
     }
 
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
