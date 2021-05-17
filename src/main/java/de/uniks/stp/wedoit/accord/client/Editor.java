@@ -228,5 +228,4 @@ public class Editor {
     public WebSocketClient withOutWebSocket(String url) {
         return webSocketMap.remove(url);
     }
-
 }

@@ -258,7 +258,6 @@ public class StageManager extends Application {
         }
     }
 
-
     public static void updateDarkmode() {
         changeDarkmode(model.getOptions().isDarkmode());
     }

@@ -221,7 +221,7 @@ public class WelcomeScreenController implements Controller{
 
     /**
      * initialize private Chat with user
-     * <p>
+     *
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      *
