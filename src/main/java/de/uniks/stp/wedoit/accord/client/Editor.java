@@ -6,15 +6,11 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import org.json.JSONArray;
 import javafx.application.Platform;
-
+import org.json.JSONArray;
 
 import java.net.URI;
 import java.util.*;
-
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_FROM;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_MEMBERS;
 
 public class Editor {
 

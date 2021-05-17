@@ -121,8 +121,8 @@ public class JsonUtil {
 
     public static JsonObject buildServerChatMessage (String channel, String message) {
         return Json.createObjectBuilder()
-                .add("channel", channel)
-                .add("message", message)
+                .add(COM_CHANNEL, channel)
+                .add(COM_MESSAGE, message)
                 .build();
     }
 

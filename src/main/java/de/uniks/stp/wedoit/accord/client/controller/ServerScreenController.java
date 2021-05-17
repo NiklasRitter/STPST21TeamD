@@ -12,6 +12,7 @@ import de.uniks.stp.wedoit.accord.client.view.ServerScreenChannelsCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -55,6 +56,7 @@ public class ServerScreenController {
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private MessageCellFactory messageCellFactory;
+    private ObservableList<Message> observableMessageList;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
         this.view = view;
@@ -104,7 +106,6 @@ public class ServerScreenController {
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.lvServerChannels.setOnMouseReleased(this::lvServerChannelsOnDoubleClicked);
 
-
         this.initCategoryChannelList();
 
         this.chatWebSocket = editor.haveWebSocket(CHAT_USER_URL + this.localUser.getName()
@@ -112,6 +113,7 @@ public class ServerScreenController {
         this.chatWebSocket.setCallback(chatWSCallback);
 
         initTooltips();
+
     }
 
     private void initTooltips() {
@@ -253,10 +255,11 @@ public class ServerScreenController {
         // init list view
         this.messageCellFactory = new MessageCellFactory();
         lvTextChat.setCellFactory(messageCellFactory);
-        List<Message> messages = currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
-                .collect(Collectors.toList());
+        this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
+                .collect(Collectors.toList()));
 
-        this.lvTextChat.setItems(FXCollections.observableList(messages));
+
+        this.lvTextChat.setItems(observableMessageList);
 
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.newMessagesListener);
@@ -268,13 +271,9 @@ public class ServerScreenController {
      * @param propertyChangeEvent event occurs when a new private message arrives
      */
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
-        //TODO dont remove all?
         if (propertyChangeEvent.getNewValue() != null) {
-            lvTextChat.getItems().removeAll();
-            List<Message> messages = currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
-                    .collect(Collectors.toList());
-            Platform.runLater(() -> this.lvTextChat.setItems(FXCollections.observableList(messages)));
-            lvTextChat.refresh();
+            Message newMessage = (Message) propertyChangeEvent.getNewValue();
+            Platform.runLater(() -> this.observableMessageList.add(newMessage));
         }
     }
 
