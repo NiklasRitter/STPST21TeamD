@@ -80,19 +80,20 @@ public class chatTest extends ApplicationTest {
         this.stageManager.start(stage);
         this.editor = stageManager.getEditor();
 
-        //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = stageManager.getEditor().haveLocalUser("Sebastian", "testKey123");
-
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        this.stageManager.showWelcomeScreen(restMock);
+        this.stageManager.showLoginScreen(restMock);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
 
+
+
     @Test
     public void testChatSendMessage() {
+
+        directToWelcomeScreen();
 
         //init user list and select first user
         initUserListView();
@@ -125,6 +126,8 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatIncomingMessage() {
+        directToWelcomeScreen();
+
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
@@ -151,6 +154,8 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatNoUserSelected() {
+        directToWelcomeScreen();
+
         //init user list and select first user
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
@@ -166,6 +171,8 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatMessagesCachedProperlyAfterChatChange() {
+        directToWelcomeScreen();
+
         //init user list and select first user
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
@@ -290,5 +297,40 @@ public class chatTest extends ApplicationTest {
                 .add("from", user.getName())
                 .add("to", localUser.getName())
                 .build();
+    }
+
+    public void directToWelcomeScreen() {
+
+        //Mocking of RestClient login function
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
+                ).build();
+
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+
+        //TestFX
+        String username = "username";
+        String password = "password";
+
+        clickOn("#tfUserName");
+        write(username);
+
+        clickOn("#pwUserPw");
+        write(password);
+
+        clickOn("#btnLogin");
+
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
+        callbackLogin.completed(res);
+
+        this.localUser = editor.getLocalUser();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn("#btnWelcome");
     }
 }
