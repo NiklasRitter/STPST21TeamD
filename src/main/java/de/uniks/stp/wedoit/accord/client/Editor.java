@@ -10,12 +10,15 @@ import javafx.application.Platform;
 import org.json.JSONArray;
 
 import java.net.URI;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class Editor {
 
     private AccordClient accordClient;
-    private Map<String,WebSocketClient> webSocketMap = new HashMap<>();
+    private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private Server currentServer;
 
     /**
@@ -91,9 +94,9 @@ public class Editor {
         Objects.requireNonNull(name);
         Objects.requireNonNull(id);
         Objects.requireNonNull(server);
-        for (User user: server.getMembers()) {
-            if(user.getId().equals(id)) {
-            return user;
+        for (User user : server.getMembers()) {
+            if (user.getId().equals(id)) {
+                return user;
             }
         }
         User user = new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
@@ -150,7 +153,7 @@ public class Editor {
     /**
      * get a user by id
      *
-     * @param id   id of the user
+     * @param id id of the user
      * @return user
      */
     public User getUserById(String id) {
@@ -158,7 +161,7 @@ public class Editor {
         Objects.requireNonNull(users);
         Objects.requireNonNull(id);
 
-        for (User user: users) {
+        for (User user : users) {
             if (id.equals(user.getId())) {
                 return user;
             }
@@ -167,30 +170,27 @@ public class Editor {
     }
 
     /**
-     * builds a category based on the server json answer
-     * !!! no channels added
+     * This method gives the the server categories which are created with the data of the JSONArray
+     * The categories dont have channels.
      *
-     * @param server which gets the categories
+     * @param server                  server which gets the categories
      * @param serversCategoryResponse server answer for categories of the server
      */
     public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
-        List<Category> categories = new ArrayList<>();
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
             Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
             category.setServer(server);
-            categories.add(category);
         }
-        server.withCategories(categories);
-        return categories;
+        return server.getCategories();
     }
 
     /**
-     * builds a channel based on the server json answer
+     * This method gives the category channels which are created with the data of the JSONArray
      *
-     * @param category which gets the channels
+     * @param category                  category which gets the channels
      * @param categoriesChannelResponse server answer for channels of the category
      */
     public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
@@ -198,18 +198,17 @@ public class Editor {
         Objects.requireNonNull(categoriesChannelResponse);
 
         this.currentServer = category.getServer();
-        List<Channel> channels = new ArrayList<>();
+
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
             Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
             channel.setCategory(category);
             List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-            for (String memberId: memberIds) {
+            for (String memberId : memberIds) {
                 User user = this.getUserById(memberId);
                 channel.withMembers(user);
             }
         }
-        category.withChannels(channels);
-        return channels;
+        return category.getChannels();
     }
 
 
@@ -241,11 +240,10 @@ public class Editor {
      *
      * @param message to add to the model
      */
-    public void addNewPrivateMessage(PrivateMessage message){
-        if (message.getFrom().equals(getLocalUser().getName())){
+    public void addNewPrivateMessage(PrivateMessage message) {
+        if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
-        }
-        else {
+        } else {
             getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
     }
@@ -255,13 +253,14 @@ public class Editor {
      *
      * @param message to add to the model
      */
-    public void addNewChannelMessage(Message message){
+    public void addNewChannelMessage(Message message) {
         message.getChannel().withMessages(message);
     }
 
     /**
      * This method is for testing
-     * @param url testUrl
+     *
+     * @param url             testUrl
      * @param webSocketClient testWebSocket
      * @return webSocketClient which is given
      */
@@ -278,7 +277,8 @@ public class Editor {
      * Create a new webSocket and put the webSocket in the WebSocketMap,
      * The webSocket has to be deleted when the websocket is no longer used
      * with method editor.withOutUrl(url)
-     * @param url url for the webSocket connection
+     *
+     * @param url      url for the webSocket connection
      * @param callback callback for the
      * @return webSocketClient which is given
      */
@@ -286,10 +286,10 @@ public class Editor {
         WebSocketClient webSocket;
         if (webSocketMap.get(url) != null) {
             return webSocketMap.get(url);
-        } else{
+        } else {
 
-            webSocket = new WebSocketClient(this,URI.create(url),callback);
-            webSocketMap.put(url,webSocket);
+            webSocket = new WebSocketClient(this, URI.create(url), callback);
+            webSocketMap.put(url, webSocket);
             return webSocket;
         }
     }
@@ -297,6 +297,7 @@ public class Editor {
 
     /**
      * remove a webSocket with given url
+     *
      * @param url url of a webSocket
      * @return the webSocket which is removed or null if there was no mapping of this url
      */
@@ -307,7 +308,7 @@ public class Editor {
     /**
      * the localUser is logged out and will be redirect to the LoginScreen
      *
-     * @param userKey userKey of the user who is logged out
+     * @param userKey    userKey of the user who is logged out
      * @param restClient restClient instance for the LoginScreenController
      */
     public void logoutUser(String userKey, RestClient restClient) {
