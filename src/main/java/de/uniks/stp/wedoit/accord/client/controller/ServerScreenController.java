@@ -38,7 +38,7 @@ public class ServerScreenController {
     private Button btnHome;
     private Button btnLogout;
     private Label lbServerName;
-    private ListView lvServerChannels;
+    private TreeView tvServerChannels;
     private ListView lvServerUsers;
     private TextField tfInputMessage;
     private ListView listView;
@@ -60,7 +60,7 @@ public class ServerScreenController {
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lbServerName = (Label) view.lookup("#lbServerName");
-        this.lvServerChannels = (ListView) view.lookup("#lvServerChannels");
+        this.tvServerChannels = (TreeView) view.lookup("#tvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
         //TODO what type
@@ -83,7 +83,7 @@ public class ServerScreenController {
                 stop();
                 Platform.runLater(() -> StageManager.showLoginScreen(restClient));
             }
-
+            
         });
 
         // Add action listeners
