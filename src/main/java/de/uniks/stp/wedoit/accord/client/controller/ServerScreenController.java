@@ -47,6 +47,7 @@ public class ServerScreenController {
     private ListView lvServerUsers;
     private TextField tfInputMessage;
     private WebSocketClient serverWebSocket;
+    private ListView listView;
     private WSCallback serverWSCallback = this::handleServerMessage;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
@@ -79,8 +80,7 @@ public class ServerScreenController {
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
-        this.serverWebSocket = editor.haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
-        serverWebSocket.setCallback(serverWSCallback);
+        editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
 
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
@@ -108,12 +108,10 @@ public class ServerScreenController {
 
         this.initCategoryChannelList();
 
-        this.chatWebSocket = editor.haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        this.chatWebSocket = editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
-        this.chatWebSocket.setCallback(chatWSCallback);
 
         initTooltips();
-
     }
 
     private void initTooltips() {
@@ -137,11 +135,11 @@ public class ServerScreenController {
         this.btnLogout = null;
         this.btnHome = null;
         this.btnOptions = null;
-        editor.withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+        editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         this.serverWebSocket.setCallback(null);
         this.serverWebSocket.stop();
         this.serverWebSocket = null;
-        editor.withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
+        editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId());
         this.chatWebSocket.setCallback(null);
         this.chatWebSocket.stop();

@@ -30,7 +30,6 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_TO;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -83,9 +82,9 @@ public class ServerScreenControllerTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen and create server to skip the MainScreen
-        localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
+        localUser = stageManager.getEditor().haveLocalUser("John Doe", "testKey123");
         server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
-        stageManager.getEditor().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
 
         this.stageManager.showServerScreen(server, restMock);
         this.stage.centerOnScreen();
@@ -284,6 +283,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     }
     //TODO implement
 
+
     // Methods for callbacks
 
     /**
@@ -320,16 +320,6 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder()).build();
     }
 
-    public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
-        return Json.createObjectBuilder()
-                .add("id", "5e2ffbd8770dd077d03dr458")
-                .add("channel", "5e2ffbd8770dd077d03dt445")
-                .add("timestamp", 1616935874)
-                .add("from", localUser.getName())
-                .add("message", test_message.getString(COM_MESSAGE))
-                .build();
-    }
-
     public JsonObject logoutSuccessful() {
         return Json.createObjectBuilder()
                 .add("status", "success")
@@ -343,6 +333,16 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 .add("status", "failure")
                 .add("message", "Log in first")
                 .add("data", "{}")
+                .build();
+    }
+
+    public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
+        return Json.createObjectBuilder()
+                .add("id", "5e2ffbd8770dd077d03dr458")
+                .add("channel", "5e2ffbd8770dd077d03dt445")
+                .add("timestamp", 1616935874)
+                .add("from", localUser.getName())
+                .add("message", test_message.getString(COM_MESSAGE))
                 .build();
     }
 

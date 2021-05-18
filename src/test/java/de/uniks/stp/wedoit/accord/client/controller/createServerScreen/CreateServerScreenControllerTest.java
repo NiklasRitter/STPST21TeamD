@@ -53,7 +53,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
 
         //create localUser to skip the login screen
         localUser = stageManager.getEditor().haveLocalUser("John", "testKey123");
-        stageManager.getEditor().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
         this.stageManager.showMainScreen(restMock);
         this.stage.centerOnScreen();
