@@ -2,17 +2,21 @@ package de.uniks.stp.wedoit.accord.client.model;
 
 import java.beans.PropertyChangeSupport;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+import java.util.Collection;
 
 public class Category {
     public static final String PROPERTY_NAME = "name";
     public static final String PROPERTY_ID = "id";
-    public static final String PROPERTY_CHANNEL = "channel";
     public static final String PROPERTY_SERVER = "server";
+   public static final String PROPERTY_CHANNELS = "channels";
     protected PropertyChangeSupport listeners;
     private String name;
     private String id;
-    private Channel channel;
     private Server server;
+   private List<Channel> channels;
 
     public String getName()
    {
@@ -50,33 +54,6 @@ public class Category {
       return this;
    }
 
-    public Channel getChannel()
-   {
-      return this.channel;
-   }
-
-    public Category setChannel(Channel value)
-   {
-      if (this.channel == value)
-      {
-         return this;
-      }
-
-      final Channel oldValue = this.channel;
-      if (this.channel != null)
-      {
-         this.channel = null;
-         oldValue.setCategory(null);
-      }
-      this.channel = value;
-      if (value != null)
-      {
-         value.setCategory(this);
-      }
-      this.firePropertyChange(PROPERTY_CHANNEL, oldValue, value);
-      return this;
-   }
-
     public Server getServer()
    {
       return this.server;
@@ -101,6 +78,72 @@ public class Category {
          value.withCategories(this);
       }
       this.firePropertyChange(PROPERTY_SERVER, oldValue, value);
+      return this;
+   }
+
+   public List<Channel> getChannels()
+   {
+      return this.channels != null ? Collections.unmodifiableList(this.channels) : Collections.emptyList();
+   }
+
+   public Category withChannels(Channel value)
+   {
+      if (this.channels == null)
+      {
+         this.channels = new ArrayList<>();
+      }
+      if (!this.channels.contains(value))
+      {
+         this.channels.add(value);
+         value.setCategory(this);
+         this.firePropertyChange(PROPERTY_CHANNELS, null, value);
+      }
+      return this;
+   }
+
+   public Category withChannels(Channel... value)
+   {
+      for (final Channel item : value)
+      {
+         this.withChannels(item);
+      }
+      return this;
+   }
+
+   public Category withChannels(Collection<? extends Channel> value)
+   {
+      for (final Channel item : value)
+      {
+         this.withChannels(item);
+      }
+      return this;
+   }
+
+   public Category withoutChannels(Channel value)
+   {
+      if (this.channels != null && this.channels.remove(value))
+      {
+         value.setCategory(null);
+         this.firePropertyChange(PROPERTY_CHANNELS, value, null);
+      }
+      return this;
+   }
+
+   public Category withoutChannels(Channel... value)
+   {
+      for (final Channel item : value)
+      {
+         this.withoutChannels(item);
+      }
+      return this;
+   }
+
+   public Category withoutChannels(Collection<? extends Channel> value)
+   {
+      for (final Channel item : value)
+      {
+         this.withoutChannels(item);
+      }
       return this;
    }
 
@@ -134,7 +177,7 @@ public class Category {
 
     public void removeYou()
    {
-      this.setChannel(null);
+      this.withoutChannels(new ArrayList<>(this.getChannels()));
       this.setServer(null);
    }
 }
