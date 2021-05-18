@@ -24,7 +24,9 @@ public class NetworkController {
 
     public void start() {
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
-        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handlePrivateChatMessage);
+        //haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handlePrivateChatMessage);
+        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getCleanUsername(), this::handlePrivateChatMessage);
+        System.out.println(PRIVATE_USER_CHAT_PREFIX + this.editor.getCleanUsername());
     }
 
     public WebSocketClient getOrCreateWebSocket(String url) {
@@ -121,7 +123,8 @@ public class NetworkController {
 
     public void sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
+                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getCleanUsername());
+
         webSocketClient.sendMessage(jsonMsgString);
     }
 

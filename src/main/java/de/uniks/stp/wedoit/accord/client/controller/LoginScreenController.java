@@ -12,8 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-import javax.json.JsonStructure;
-
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class LoginScreenController implements Controller{

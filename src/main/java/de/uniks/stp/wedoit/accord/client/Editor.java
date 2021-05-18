@@ -123,12 +123,13 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
+                    user.setOnlineStatus(true);
                     return localUser;
                 }
             }
         }
 
-        User user = new User().setId(id).setName(name);
+        User user = new User().setId(id).setName(name).setOnlineStatus(true);;
         localUser.withUsers(user);
         return localUser;
     }
@@ -165,7 +166,7 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
-                    localUser.withoutUsers(user);
+                    user.setOnlineStatus(false);
                     return this;
                 }
             }
@@ -216,4 +217,12 @@ public class Editor {
         return webSocketMap.remove(url);
     }
 
+
+    public String getCleanUsername() {
+        String name = this.getLocalUser().getName();
+        //System.out.println(name);
+        String cleanUsername = name.replace(" ", "");
+        //System.out.println(cleanUsername);
+        return cleanUsername;
+    }
 }
