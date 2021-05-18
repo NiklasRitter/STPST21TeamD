@@ -11,6 +11,7 @@ public class Constants {
     public static final String COM_PASSWORD = "password";
     public static final String COM_USER_KEY = "userKey";
     public static final String COM_OWNER = "owner";
+    public static final String COM_CATEGORY = "category";
     public static final String COM_CATEGORIES = "categories";
     public static final String COM_MEMBERS = "members";
     public static final String COM_ONLINE = "online";
@@ -42,6 +43,9 @@ public class Constants {
     public static final String WS_SERVER_ID_URL = "/ws/system?serverId=";
     public static final String CHAT_USER_URL = WS_SERVER_URL + "/ws/chat?user=";
     public static final String SERVER_ID_URL = "serverId=";
+    public static final String AND_SERVER_ID_URL = "&" + SERVER_ID_URL;
+    public static final String CATEGORIES = "/categories";
+    public static final String CHANNELS = "/channels";
     public static final String PRIVATE_USER_CHAT_PREFIX = WS_SERVER_URL + CHAT_PATH + "?user=";
 
     // Preferences Keys

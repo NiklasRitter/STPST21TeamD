@@ -2,23 +2,28 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.ServerScreenChannelsCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,10 +46,17 @@ public class ServerScreenController {
     private TreeView tvServerChannels;
     private ListView lvServerUsers;
     private TextField tfInputMessage;
-    private ListView listView;
-    private WebSocketClient webSocket;
     private WebSocketClient serverWebSocket;
     private WSCallback serverWSCallback = this::handleServerMessage;
+    private WSCallback chatWSCallback = this::handleChatMessage;
+    private Channel currentChannel;
+    private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
+    private final PropertyChangeListener newMessagesListener = this::newMessage;
+    private WebSocketClient chatWebSocket;
+    private ListView<Message> lvTextChat;
+    private Label lbChannelName;
+    private MessageCellFactory messageCellFactory;
+    private ObservableList<Message> observableMessageList;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
         this.view = view;
@@ -63,8 +75,8 @@ public class ServerScreenController {
         this.tvServerChannels = (TreeView) view.lookup("#tvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
-        //TODO what type
-        this.listView = (ListView) view.lookup("#lvTextChat");
+        this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
+        this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
         this.serverWebSocket = editor.haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         serverWebSocket.setCallback(serverWSCallback);
@@ -91,8 +103,16 @@ public class ServerScreenController {
         this.btnOptions.setOnAction(this::settingsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
+        //this.lvServerChannels.setOnMouseReleased(this::lvServerChannelsOnDoubleClicked);
+
+        this.initCategoryChannelList();
+
+        this.chatWebSocket = editor.haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+        this.chatWebSocket.setCallback(chatWSCallback);
 
         initTooltips();
+
     }
 
     private void initTooltips() {
@@ -113,10 +133,23 @@ public class ServerScreenController {
         this.btnLogout.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.btnOptions.setOnAction(null);
+        this.btnLogout = null;
+        this.btnHome = null;
+        this.btnOptions = null;
         editor.withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         this.serverWebSocket.setCallback(null);
         this.serverWebSocket.stop();
         this.serverWebSocket = null;
+        editor.withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId());
+        this.chatWebSocket.setCallback(null);
+        this.chatWebSocket.stop();
+        this.chatWebSocket = null;
+        this.lbServerName = null;
+        this.tvServerChannels = null;
+        this.lvServerUsers = null;
+        this.tfInputMessage = null;
+        this.lvTextChat = null;
     }
 
 
@@ -142,23 +175,139 @@ public class ServerScreenController {
 
     }
 
+    /**
+     * initialize channel List view
+     * gets Categories from server and calls loadCategoryChannels()
+     */
+    private void initCategoryChannelList() {
+        restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
+            if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
+                JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
+
+                editor.haveCategories(this.server, serversCategoryResponse);
+
+                List<Category> categoryList = this.server.getCategories();
+                for (Category category: categoryList) {
+                    loadCategoryChannels(category);
+                }
+            } else {
+                System.err.println("Error while loading categories from server");
+            }
+        });
+    }
+
+    /**
+     * load the channels of a category
+     *
+     * @param category of which the channels should be loaded
+     */
+    private void loadCategoryChannels(Category category) {
+        restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
+            if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
+                JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
+
+                editor.haveChannels(category, categoriesChannelResponse);
+
+                //TODO use something different then a cell factory
+                // categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
+                // lvServerChannels.setCellFactory(categoriesListViewCellFactory);
+
+                List<Channel> channelList = this.server.getCategories().get(0).getChannels().stream().sorted(Comparator.comparing(Channel::getName))
+                        .collect(Collectors.toList());
+
+                //Platform.runLater(() -> this.lvServerChannels.setItems(FXCollections.observableList(channelList)));
+
+                //TODO property change
+            } else {
+                System.err.println("Error while loading channels from server");
+            }
+        });
+    }
+
+    /**
+     * initChannelChat when channel is clicked twice
+     *
+     * @param mouseEvent occurs when a listitem is clicked
+     */
+    private void lvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 1) {
+            /*Channel channel = (Channel) lvServerChannels.getSelectionModel().getSelectedItem();
+            if (channel != null) {
+                this.initChannelChat(channel);
+            }*/
+        }
+    }
+
+    /**
+     * initialize channel Chat
+     *
+     * @param channel selected channel in lvServerChannels
+     */
+    private void initChannelChat(Channel channel) {
+        if (this.currentChannel != null) {
+            this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        }
+
+        this.currentChannel = channel;
+        this.lbChannelName.setText(this.currentChannel.getName());
+
+        // init list view
+        this.messageCellFactory = new MessageCellFactory();
+        lvTextChat.setCellFactory(messageCellFactory);
+        this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
+                .collect(Collectors.toList()));
+
+
+        this.lvTextChat.setItems(observableMessageList);
+
+        // Add listener for the loaded listView
+        this.currentChannel.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.newMessagesListener);
+    }
+
+    /**
+     * update the chat when a new message arrived
+     *
+     * @param propertyChangeEvent event occurs when a new private message arrives
+     */
+    private void newMessage(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null) {
+            Message newMessage = (Message) propertyChangeEvent.getNewValue();
+            Platform.runLater(() -> this.observableMessageList.add(newMessage));
+        }
+    }
+
+    /**
+     * send msg via websocket if enter
+     *
+     * @param actionEvent
+     */
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
-        // get input message
         String message = this.tfInputMessage.getText();
         this.tfInputMessage.clear();
 
-        /*
-        //TODO no general channel yet
-        String channelId = this.server.getCategories().get(0).getChannel().getId();
+        if (message != null && !message.isEmpty() && currentChannel != null) {
+            JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
+            this.chatWebSocket.sendMessage(jsonMsg.toString());
+        }
+    }
 
-        //TODO multiple channels per category?
+    /**
+     * handles channel message by adding it to the data model
+     *
+     * @param msg message from the server on the channel
+     */
+    private void handleChatMessage(JsonStructure msg) {
+        JsonObject jsonObject = (JsonObject) msg;
 
-        // build message
-        JsonObject jsonMsg = JsonUtil.buildServerChatMessage(channelId, message);
+        if(jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
+            Message message = new Message();
+            message.setChannel(currentChannel);
+            message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
+            message.setFrom(jsonObject.getString(COM_FROM));
+            message.setText(jsonObject.getString(COM_TEXT));
 
-        // send message
-        this.webSocket.sendMessage(jsonMsg.toString());
-         */
+            this.editor.addNewChannelMessage(message);
+        }
     }
 
     /**
@@ -232,5 +381,4 @@ public class ServerScreenController {
         lvServerUsers.setItems(FXCollections.observableList(users));
         lvServerUsers.refresh();
     }
-
 }
