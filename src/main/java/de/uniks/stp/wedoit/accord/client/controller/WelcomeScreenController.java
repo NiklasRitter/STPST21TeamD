@@ -12,6 +12,7 @@ import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -44,6 +45,7 @@ public class WelcomeScreenController implements Controller{
     private final PropertyChangeListener chatListener = this::newMessage;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
+    private ObservableList<PrivateMessage> privateMessageObservableList;
 
     private Label lblSelectedUser;
 
@@ -202,10 +204,10 @@ public class WelcomeScreenController implements Controller{
         // load list view
         chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
-        List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
-                .collect(Collectors.toList());
+        this.privateMessageObservableList = FXCollections.observableList(currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
+                .collect(Collectors.toList()));
 
-        this.lwPrivateChat.setItems(FXCollections.observableList(messages));
+        this.lwPrivateChat.setItems(privateMessageObservableList);
 
         // Add listener for the loaded listView
         this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
@@ -218,11 +220,8 @@ public class WelcomeScreenController implements Controller{
      */
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
-            lwPrivateChat.getItems().removeAll();
-            List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
-                    .collect(Collectors.toList());
-            Platform.runLater(() -> this.lwPrivateChat.setItems(FXCollections.observableList(messages)));
-            lwPrivateChat.refresh();
+            PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
+            Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
     }
 

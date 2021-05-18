@@ -25,15 +25,15 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
         protected void updateItem(PrivateMessage item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
-                // set the width's
-                setMinWidth(param.getWidth());
-                setMaxWidth(param.getWidth());
-                setPrefWidth(param.getWidth());
+
+                // set the width (-20 to eliminate overhang in ListView)
+                setMinWidth(param.getWidth() - 20);
+                setMaxWidth(param.getWidth() - 20);
+                setPrefWidth(param.getWidth() - 20);
 
                 // allow wrapping
                 setWrapText(true);
-                //java.util.Date time = new java.util.Date((long) item.getTimestamp()*1000);
-
+                
                 String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp() * 1000));
                 this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
             } else {
