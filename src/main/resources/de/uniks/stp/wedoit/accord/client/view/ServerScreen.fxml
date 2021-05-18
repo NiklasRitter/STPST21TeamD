@@ -17,7 +17,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0" VBox.vgrow="ALWAYS">
          <children>
@@ -69,7 +69,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color red="1.0" green="1.0" blue="1.0" />
+                                    <Color blue="1.0" green="1.0" red="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -117,9 +117,9 @@
                   <String fx:value="styleBackgroundHighlight" />
                </styleClass>
             </VBox>
-            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="150.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label id="lbServerName" prefHeight="19.0" prefWidth="292.0" styleClass="styleBorder" text="Server: STP" VBox.vgrow="ALWAYS">
+                  <Label id="lbServerName" minWidth="150.0" prefHeight="19.0" prefWidth="292.0" styleClass="styleBorder" text="Server: STP" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets left="2.0" />
                      </padding>
@@ -127,12 +127,12 @@
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Label>
-                  <TreeView id="tvServerChannels" prefHeight="303.0" prefWidth="166.0" VBox.vgrow="ALWAYS" />
+                  <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="303.0" prefWidth="166.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox alignment="CENTER" styleClass="styleBorders" HBox.hgrow="ALWAYS">
                <children>
-                  <Label id="lbChannelName" minHeight="19.0" minWidth="292.0" text="select a server" VBox.vgrow="ALWAYS">
+                  <Label id="lbChannelName" minHeight="19.0" minWidth="250.0" text="select a channel" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets left="2.0" />
                      </padding>
@@ -140,8 +140,8 @@
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Label>
-                  <ListView id="lvTextChat" minHeight="285.0" minWidth="314.0" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
-                  <TextField id="tfInputMessage" minHeight="21.0" minWidth="336.0" promptText="your message" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
+                  <ListView id="lvTextChat" minHeight="285.0" minWidth="270.0" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
+                  <TextField id="tfInputMessage" minHeight="21.0" minWidth="236.0" promptText="your message" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
