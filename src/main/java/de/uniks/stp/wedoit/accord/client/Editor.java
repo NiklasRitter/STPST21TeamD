@@ -216,13 +216,4 @@ public class Editor {
     public WebSocketClient withOutWebSocket(String url) {
         return webSocketMap.remove(url);
     }
-
-
-    public String getCleanUsername() {
-        String name = this.getLocalUser().getName();
-        //System.out.println(name);
-        String cleanUsername = name.replace(" ", "");
-        //System.out.println(cleanUsername);
-        return cleanUsername;
-    }
 }
