@@ -262,7 +262,7 @@ public class ServerScreenController {
         this.lvTextChat.setItems(observableMessageList);
 
         // Add listener for the loaded listView
-        this.currentChannel.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.newMessagesListener);
+        this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
     }
 
     /**

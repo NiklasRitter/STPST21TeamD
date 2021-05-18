@@ -1,12 +1,12 @@
 package de.uniks.stp.wedoit.accord.client.controller.serverScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -29,8 +29,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.WS_SERVER_ID_URL;
-import static de.uniks.stp.wedoit.accord.client.Constants.WS_SERVER_URL;
+import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_TO;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -236,6 +236,53 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
 
+    @Test
+    public void sendChatMessageTest() {
+        //init channel list and select first channel
+        initUserListView();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lwPrivateChat = lookup("#lvTextChat").queryListView();
+        ListView lvServerChannels = lookup("#lvServerChannels").queryListView();
+
+        lvServerChannels.getSelectionModel().select(0);
+        Channel channel = (Channel) lvServerChannels.getSelectionModel().getSelectedItem();
+
+        clickOn("#lvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //send message
+        clickOn("#tfInputMessage");
+        write("Test Message");
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getName(), "Test Message");
+        mockWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(1, lwPrivateChat.getItems().size());
+        Assert.assertEquals(channel.getMessages().size(), lwPrivateChat.getItems().size());
+        Assert.assertEquals(lwPrivateChat.getItems().get(0), channel.getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
+        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+    }
+
+    @Test
+    public void incomingChatMessageTest() {
+
+    }
+    //TODO implement
+
+    @Test
+    public void noChannelSelectedTest() {
+
+    }
+    //TODO implement
+
+    @Test
+    public void testChatMessagesCachedProperlyAfterChatChange() {
+    }
+    //TODO implement
 
     // Methods for callbacks
 
@@ -271,6 +318,16 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public JsonObject getServerIdFailure() {
         return Json.createObjectBuilder().add("status", "failure").add("message", "")
                 .add("data", Json.createObjectBuilder()).build();
+    }
+
+    public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
+        return Json.createObjectBuilder()
+                .add("id", "5e2ffbd8770dd077d03dr458")
+                .add("channel", "5e2ffbd8770dd077d03dt445")
+                .add("timestamp", 1616935874)
+                .add("from", localUser.getName())
+                .add("message", test_message.getString(COM_MESSAGE))
+                .build();
     }
 
     public JsonObject logoutSuccessful() {
