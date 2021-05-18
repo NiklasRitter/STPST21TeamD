@@ -57,6 +57,9 @@ public class ServerScreenControllerTest extends ApplicationTest {
     WebSocketClient webSocketClient;
 
     @Mock
+    WebSocketClient chatWebSocketClient;
+
+    @Mock
     WSCallback callback;
 
     @Rule
@@ -82,11 +85,14 @@ public class ServerScreenControllerTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen and create server to skip the MainScreen
-        localUser = stageManager.getEditor().haveLocalUser("John Doe", "testKey123");
+        localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId(),chatWebSocketClient);
 
         this.stageManager.showServerScreen(server, restMock);
+
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }

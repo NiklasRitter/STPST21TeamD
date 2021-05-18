@@ -256,7 +256,6 @@ public class ServerScreenController {
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
-
         this.lvTextChat.setItems(observableMessageList);
 
         // Add listener for the loaded listView
