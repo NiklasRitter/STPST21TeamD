@@ -45,6 +45,7 @@ public class StageManager extends Application {
         try {
             //load view
             Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
+
             if (scene != null) {
                 scene.setRoot(root);
             } else {

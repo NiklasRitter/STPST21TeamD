@@ -1,9 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
-import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -78,16 +77,52 @@ public class JsonUtil {
                 .setOwner(serverDetailsJson.getString(COM_OWNER));
     }
 
-    public static Category parseCategory(JsonObject categoryJson) {
+    /**
+     * builds a category based on the server json answer
+     * !!! no server and channels added
+     *
+     * @param categoryJson json msg from server with category information
+     * @return category
+     */
+    public static Category parseCategory(JSONObject categoryJson) {
         return new Category().setId(categoryJson.getString(COM_ID))
-                .setName(categoryJson.getString(COM_NAME))
-                .setServer(new Server().setId(categoryJson.getString(COM_SERVER)));
+                .setName(categoryJson.getString(COM_NAME));
     }
 
-    public static JsonObject buildServerChatMessage (String channel, String message) {
+    /**
+     * builds a channel based on the server json answer
+     * !!! no category and member added
+     *
+     * @param channelJson json msg from server with channel information
+     * @return channel
+     */
+    public static Channel parseChannel(JSONObject channelJson) {
+        return new Channel().setId(channelJson.getString(COM_ID))
+                .setName(channelJson.getString(COM_NAME))
+                .setType(channelJson.getString(COM_TYPE))
+                .setPrivileged(channelJson.getBoolean(COM_PRIVILEGED));
+    }
+
+    /**
+     * builds memberIds List based on server json answer
+     *
+     * @param channelJson json msg from server with channel information
+     * @return memberIds List of IDs
+     */
+    public static List<String> parseMembers(JSONObject channelJson) {
+        JSONArray members = channelJson.getJSONArray(COM_MEMBERS);
+        List<String> membersIds = new ArrayList<>();
+        for (Object memberId: members) {
+            membersIds.add(memberId.toString());
+        }
+        return membersIds;
+    }
+
+
+    public static JsonObject buildServerChatMessage (String channelId, String message) {
         return Json.createObjectBuilder()
-                .add("channel", channel)
-                .add("message", message)
+                .add(COM_CHANNEL, channelId)
+                .add(COM_MESSAGE, message)
                 .build();
     }
 

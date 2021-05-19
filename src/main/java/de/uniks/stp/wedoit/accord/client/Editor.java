@@ -5,7 +5,12 @@ import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
+import org.json.JSONArray;
+
+import java.net.URI;
+import java.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,9 +21,14 @@ public class Editor {
     private AccordClient accordClient;
     private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private NetworkController networkController = new NetworkController(this);
+    private Server currentServer;
 
     public NetworkController getNetworkController() {
         return networkController;
+    }
+
+    public Server getCurrentServer() {
+        return currentServer;
     }
 
     /**
@@ -151,6 +161,72 @@ public class Editor {
     }
 
     /**
+     * get a user by id
+     *
+     * @param id   id of the user
+     * @return user
+     */
+    public User getUserById(String id) {
+        List<User> users = currentServer.getMembers();
+        Objects.requireNonNull(users);
+        Objects.requireNonNull(id);
+
+        for (User user: users) {
+            if (id.equals(user.getId())) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * builds a category based on the server json answer
+     * !!! no channels added
+     *
+     * @param server which gets the categories
+     * @param serversCategoryResponse server answer for categories of the server
+     */
+    public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
+        Objects.requireNonNull(server);
+        Objects.requireNonNull(serversCategoryResponse);
+
+        List<Category> categories = new ArrayList<>();
+        for (int index = 0; index < serversCategoryResponse.length(); index++) {
+            Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
+            category.setServer(server);
+            categories.add(category);
+        }
+        server.withCategories(categories);
+        return categories;
+    }
+
+    /**
+     * builds a channel based on the server json answer
+     *
+     * @param category which gets the channels
+     * @param categoriesChannelResponse server answer for channels of the category
+     */
+    public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
+        Objects.requireNonNull(category);
+        Objects.requireNonNull(categoriesChannelResponse);
+
+        this.currentServer = category.getServer();
+        List<Channel> channels = new ArrayList<>();
+        for (int index = 0; index < categoriesChannelResponse.length(); index++) {
+            Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+            channel.setCategory(category);
+            List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
+            for (String memberId: memberIds) {
+                User user = this.getUserById(memberId);
+                channel.withMembers(user);
+            }
+        }
+        category.withChannels(channels);
+        return channels;
+    }
+
+
+    /**
      * deletes a user with the given id
      *
      * @param id id of the user
@@ -181,9 +257,19 @@ public class Editor {
     public void addNewPrivateMessage(PrivateMessage message) {
         if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
-        } else {
+        }
+        else {
             getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
+    }
+
+    /**
+     * add message to channel chat
+     *
+     * @param message to add to the model
+     */
+    public void addNewChannelMessage(Message message){
+        message.getChannel().withMessages(message);
     }
 
     /**

@@ -44,6 +44,9 @@ public class MainScreenControllerTest extends ApplicationTest {
     @Mock
     private WebSocketClient chatWebSocketClient;
 
+    @Mock
+    private WebSocketClient channelChatWebSocketClient;
+
     private Server server;
 
     @Mock
@@ -57,7 +60,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen
-        localUser = stageManager.getEditor().haveLocalUser("John Doe", "testKey123");
+        localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
 
         this.stageManager.showMainScreen(restMock);
@@ -215,6 +218,10 @@ public class MainScreenControllerTest extends ApplicationTest {
         // Select server one
         listView.getSelectionModel().select(1);
         Server server = (Server) listView.getSelectionModel().getSelectedItem();
+
+        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+
         doubleClickOn("#lwServerList");
 
         // Test correct server and correct screen
@@ -243,6 +250,10 @@ public class MainScreenControllerTest extends ApplicationTest {
         // Select server one
         listView.getSelectionModel().select(1);
         Server server = (Server) listView.getSelectionModel().getSelectedItem();
+
+        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+
         clickOn("#btnServer");
 
         // Test correct server and correct screen

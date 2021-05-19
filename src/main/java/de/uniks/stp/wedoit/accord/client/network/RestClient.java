@@ -86,6 +86,35 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * Request to get the categories of the given server id
+     *
+     * @param serverId of the server, the categories should be requested from
+     * @param userKey  userKey of the logged in user
+     * @param callback callback
+     */
+    public void getCategories(String serverId, String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES)
+                .header(COM_USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
+    /**
+     * Request to get the channels of the given category id
+     *
+     * @param serverId of the category server
+     * @param categoryId of the category, the channels should be requested from
+     * @param userKey  userKey of the logged in user
+     * @param callback callback
+     */
+    public void getChannels (String serverId, String categoryId, String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES + "/" + categoryId + CHANNELS)
+                .header(COM_USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
     private void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         req.asJsonAsync(callback);
     }
