@@ -5,7 +5,6 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
-import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerScreenChannelsCellFactory;
@@ -47,14 +46,14 @@ public class ServerScreenController implements Controller {
     private TextField tfInputMessage;
     private ListView listView;
     private WSCallback serverWSCallback = this::handleServerMessage;
-    private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
+    private WSCallback chatWSCallback = this::handleChatMessage;
     private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
-    private final PropertyChangeListener newMessagesListener = this::newMessage;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private MessageCellFactory messageCellFactory;
     private ObservableList<Message> observableMessageList;
+    private final PropertyChangeListener newMessagesListener = this::newMessage;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
         this.view = view;
@@ -84,7 +83,7 @@ public class ServerScreenController implements Controller {
         this.initCategoryChannelList();
 
         editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
@@ -129,7 +128,7 @@ public class ServerScreenController implements Controller {
         this.btnOptions = null;
         editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId());
+                + AND_SERVER_ID_URL + this.server.getId());
         this.lbServerName = null;
         this.lvServerChannels = null;
         this.lvServerUsers = null;
@@ -172,7 +171,7 @@ public class ServerScreenController implements Controller {
                 editor.haveCategories(this.server, serversCategoryResponse);
 
                 List<Category> categoryList = this.server.getCategories();
-                for (Category category: categoryList) {
+                for (Category category : categoryList) {
                     loadCategoryChannels(category);
                 }
             } else {
@@ -281,7 +280,7 @@ public class ServerScreenController implements Controller {
     private void handleChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
-        if(jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
+        if (jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
             Message message = new Message();
             message.setChannel(currentChannel);
             message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
