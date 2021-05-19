@@ -23,15 +23,9 @@ public class StageManager extends Application {
 
     private static Editor editor;
     private static AccordClient model;
-    private static LoginScreenController loginScreenController;
-    private static MainScreenController mainScreenController;
     private static RestClient restClient;
     private static Stage stage;
     private static Stage popupStage;
-    private static WelcomeScreenController welcomeScreenController;
-    private static OptionsScreenController optionsScreenController;
-    private static CreateServerScreenController createServerScreenController;
-    private static ServerScreenController serverScreenController;
     private static Scene scene;
     private static Scene popupScene;
     private static Map<String, Controller> controllerMap = new HashMap<>();
@@ -55,7 +49,7 @@ public class StageManager extends Application {
 
             updateDarkmode();
 
-            loginScreenController = new LoginScreenController(root, model.getLocalUser(), editor, restClient);
+            LoginScreenController loginScreenController = new LoginScreenController(root, model.getLocalUser(), editor, restClient);
             loginScreenController.init();
             controllerMap.put("loginScreenController", loginScreenController);
 
@@ -88,7 +82,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            mainScreenController = new MainScreenController(root, model.getLocalUser(), editor, restClient);
+            MainScreenController mainScreenController = new MainScreenController(root, model.getLocalUser(), editor, restClient);
             mainScreenController.init();
             controllerMap.put("mainScreenController", mainScreenController);
 
@@ -112,7 +106,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            createServerScreenController = new CreateServerScreenController(root, model.getLocalUser(), editor, restClient);
+            CreateServerScreenController createServerScreenController = new CreateServerScreenController(root, model.getLocalUser(), editor, restClient);
             createServerScreenController.init();
             controllerMap.put("createServerScreenController", createServerScreenController);
 
@@ -141,7 +135,7 @@ public class StageManager extends Application {
 
             updateDarkmode();
 
-            welcomeScreenController = new WelcomeScreenController(root, model.getLocalUser(), editor, restClient);
+            WelcomeScreenController welcomeScreenController = new WelcomeScreenController(root, model.getLocalUser(), editor, restClient);
             welcomeScreenController.init();
             controllerMap.put("welcomeScreenController", welcomeScreenController);
 
@@ -171,7 +165,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, restClient, server);
+            ServerScreenController serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, restClient, server);
             serverScreenController.init();
 
             //display
@@ -195,7 +189,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            optionsScreenController = new OptionsScreenController(root, model.getOptions(), editor);
+            OptionsScreenController optionsScreenController = new OptionsScreenController(root, model.getOptions(), editor);
             optionsScreenController.init();
             controllerMap.put("optionsScreenController", optionsScreenController);
 
