@@ -46,6 +46,7 @@ public class WelcomeScreenController implements Controller{
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
     private ObservableList<PrivateMessage> privateMessageObservableList;
+    private ObservableList<User> onlineUserObservableList;
 
     private Label lblSelectedUser;
 

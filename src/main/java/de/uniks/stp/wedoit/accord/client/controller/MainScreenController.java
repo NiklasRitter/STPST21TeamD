@@ -53,7 +53,7 @@ public class MainScreenController implements Controller{
         this.logoutButton = (Button) view.lookup("#btnLogout");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
 
-        initTooltips();
+        this.initTooltips();
         // load server of the localUser
         restClient.getServers(localUser.getUserKey(), response -> {
             if (response.getBody().getObject().getString("status").equals("success")) {

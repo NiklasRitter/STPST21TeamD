@@ -123,13 +123,12 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
-                    user.setOnlineStatus(true);
                     return localUser;
                 }
             }
         }
 
-        User user = new User().setId(id).setName(name).setOnlineStatus(true);;
+        User user = new User().setId(id).setName(name);
         localUser.withUsers(user);
         return localUser;
     }
@@ -166,7 +165,7 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
-                    user.setOnlineStatus(false);
+                    localUser.withoutUsers(user);
                     return this;
                 }
             }
