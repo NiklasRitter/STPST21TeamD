@@ -17,7 +17,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import org.json.JSONArray;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -26,9 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
-
-public class WelcomeScreenController implements Controller{
+public class WelcomeScreenController implements Controller {
 
     private final Parent view;
     private final LocalUser localUser;
@@ -42,10 +39,10 @@ public class WelcomeScreenController implements Controller{
     private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
-    private final PropertyChangeListener chatListener = this::newMessage;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
     private ObservableList<PrivateMessage> privateMessageObservableList;
+    private final PropertyChangeListener chatListener = this::newMessage;
     private ObservableList<User> onlineUserObservableList;
 
     private Label lblSelectedUser;
@@ -148,26 +145,20 @@ public class WelcomeScreenController implements Controller{
      */
     private void initOnlineUsersList() {
         // load online Users
-        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
-            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(COM_DATA);
+        editor.getNetworkController().getOnlineUsers(localUser, this);
+    }
 
-            for (int index = 0; index < getServersResponse.length(); index++) {
-                String name = getServersResponse.getJSONObject(index).getString(COM_NAME);
-                String id = getServersResponse.getJSONObject(index).getString(COM_ID);
-                editor.haveUser(id, name);
-            }
+    public void handleGetOnlineUsers() {
+        // load list view
+        usersListViewCellFactory = new WelcomeScreenOnlineUsersCellFactory();
+        lwOnlineUsers.setCellFactory(usersListViewCellFactory);
+        List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                .collect(Collectors.toList());
 
-            // load list view
-            usersListViewCellFactory = new WelcomeScreenOnlineUsersCellFactory();
-            lwOnlineUsers.setCellFactory(usersListViewCellFactory);
-            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
-                    .collect(Collectors.toList());
+        Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
 
-            Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
-
-            // Add listener for the loaded listView
-            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
-        });
+        // Add listener for the loaded listView
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
     }
 
     /**

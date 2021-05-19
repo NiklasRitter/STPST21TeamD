@@ -10,11 +10,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.json.JSONObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
-
-public class LoginScreenController implements Controller{
+public class LoginScreenController implements Controller {
 
     private LocalUser model;
     private Editor editor;
@@ -77,35 +74,32 @@ public class LoginScreenController implements Controller{
     }
 
     public void login() {
-        if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
+        String name = this.tfUserName.getText();
+        String password = this.pwUserPw.getText();
+        if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
 
             tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
             errorLabel.setText("Username or password is missing");
-        }
-        else if (tfUserName.getText().contains(" ")) {
+        } else if (name.contains(" ")) {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
-        }
-        else {
-            restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
-                if (!response.getBody().getObject().getString("status").equals("success")) {
-
-                    tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-                    pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
-                    Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
-
-                } else {
-                    JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
-                    String userKey = loginAnswer.getString(COM_USER_KEY);
-                    editor.haveLocalUser(tfUserName.getText(), userKey);
-                    editor.getNetworkController().start();
-                    Platform.runLater(() -> StageManager.showMainScreen(restClient));
-                }
-            });
+        } else {
+            editor.getNetworkController().loginUser(name, password, this);
         }
     }
+
+    public void handleLogin(boolean success) {
+        if (!success) {
+            tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+            pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
+            Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+        } else {
+            Platform.runLater(() -> StageManager.showMainScreen(restClient));
+        }
+    }
+
 
     /**
      * register user to server and login, redirect to MainScreen
@@ -117,33 +111,32 @@ public class LoginScreenController implements Controller{
         String password = this.pwUserPw.getText();
 
         if (name != null && !name.isEmpty() && password != null && !password.isEmpty() && !name.contains(" ")) {
-            restClient.register(name, password, registerResponse -> {
-                // if user successful registered
-                if (registerResponse.getBody().getObject().getString("status").equals("success")) {
-
-                    //login the user
-                    login();
-                } else {
-                    //reset name and password fields
-                    this.tfUserName.setText("");
-                    this.pwUserPw.setText("");
-                    tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-                    pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-                    Platform.runLater(() -> errorLabel.setText("Username already taken."));
-                }
-            });
-        }
-        else if (name.contains(" ")){
+            editor.getNetworkController().registerUser(name, password, this);
+        } else if (name.contains(" ")) {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
-        }
-        else {
+        } else {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
     }
+
+    public void handleRegister(boolean success) {
+        if (!success) {
+            //reset name and password fields
+            this.tfUserName.setText("");
+            this.pwUserPw.setText("");
+            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            Platform.runLater(() -> errorLabel.setText("Username already taken."));
+        } else {
+            //login the user
+            login();
+        }
+    }
+
 
     /**
      * open Optionsmenu

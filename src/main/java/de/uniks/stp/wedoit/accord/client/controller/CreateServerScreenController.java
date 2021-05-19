@@ -11,9 +11,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.json.JSONObject;
 
-public class CreateServerScreenController implements Controller{
+public class CreateServerScreenController implements Controller {
 
     private RestClient restClient;
     private LocalUser localUser;
@@ -58,21 +57,18 @@ public class CreateServerScreenController implements Controller{
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 2 symbols long"));
         } else {
-            restClient.createServer(tfServerName.getText(), localUser.getUserKey(), (response) -> {
-                if (response.getBody().getObject().getString("status").equals("success")) {
-                    JSONObject createServerAnswer = response.getBody().getObject().getJSONObject("data");
-                    String serverId = createServerAnswer.getString("id");
-                    String serverName = createServerAnswer.getString("name");
+            editor.getNetworkController().createServer(tfServerName.getText(), this);
+        }
+    }
 
-                    Server server = editor.haveServer(localUser, serverId, serverName);
-                    stop();
-                    Platform.runLater(() -> StageManager.showServerScreen(server, restClient));
-                } else {
-                    tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+    public void handleCreateServer(Server server) {
+        if (server != null) {
+            stop();
+            Platform.runLater(() -> StageManager.showServerScreen(server, restClient));
+        } else {
+            tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 
-                    Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server"));
-                }
-            });
+            Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server"));
         }
     }
 }

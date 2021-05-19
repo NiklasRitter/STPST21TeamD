@@ -7,7 +7,6 @@ import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
-import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -15,7 +14,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
@@ -27,7 +25,7 @@ import java.util.stream.Collectors;
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 
-public class ServerScreenController implements Controller{
+public class ServerScreenController implements Controller {
 
     private final Server server;
     private RestClient restClient;
@@ -67,21 +65,7 @@ public class ServerScreenController implements Controller{
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
 
         // get members of this server
-        restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
-            if (response.getBody().getObject().getString("status").equals("success")) {
-                JSONObject data = response.getBody().getObject().getJSONObject("data");
-                JSONArray members = data.getJSONArray("members");
-                server.setOwner(data.getString("owner"));
-
-                // create user which are member in the server and load user list view
-                createUserListView(members);
-
-            } else {
-                stop();
-                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-            }
-
-        });
+        editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
@@ -90,6 +74,16 @@ public class ServerScreenController implements Controller{
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
 
         initTooltips();
+    }
+
+    public void handleGetExplicitServerInformation(JSONArray members) {
+        if (members != null) {
+            // create users which are member in the server and load user list view
+            createUserListView(members);
+        } else {
+            stop();
+            Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+        }
     }
 
     private void initTooltips() {

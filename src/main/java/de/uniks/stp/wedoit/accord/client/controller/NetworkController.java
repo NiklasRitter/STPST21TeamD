@@ -1,9 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
@@ -17,6 +22,7 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 public class NetworkController {
     private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private Editor editor;
+    private RestClient restClient = new RestClient();
 
     public NetworkController(Editor editor) {
         this.editor = editor;
@@ -123,6 +129,88 @@ public class NetworkController {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
         webSocketClient.sendMessage(jsonMsgString);
+    }
+
+    public void createServer(String serverNameInput, CreateServerScreenController controller) {
+        restClient.createServer(serverNameInput, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString("status").equals("success")) {
+                JSONObject createServerAnswer = response.getBody().getObject().getJSONObject("data");
+                String serverId = createServerAnswer.getString("id");
+                String serverName = createServerAnswer.getString("name");
+
+                Server server = editor.haveServer(editor.getLocalUser(), serverId, serverName);
+                controller.handleCreateServer(server);
+            } else {
+                controller.handleCreateServer(null);
+            }
+        });
+    }
+
+    public void loginUser(String username, String password, LoginScreenController controller) {
+        restClient.login(username, password, (response) -> {
+            if (!response.getBody().getObject().getString("status").equals("success")) {
+                controller.handleLogin(false);
+            } else {
+                JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
+                String userKey = loginAnswer.getString(COM_USER_KEY);
+                editor.haveLocalUser(username, userKey);
+                start();
+                controller.handleLogin(true);
+            }
+        });
+    }
+
+    public void registerUser(String username, String password, LoginScreenController controller) {
+        restClient.register(username, password, registerResponse -> {
+            controller.handleRegister(registerResponse.getBody().getObject().getString("status").equals("success"));
+        });
+    }
+
+    public void getServers(LocalUser localUser, MainScreenController controller) {
+        restClient.getServers(localUser.getUserKey(), response -> {
+            if (response.getBody().getObject().getString("status").equals("success")) {
+                JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
+
+                for (int index = 0; index < getServersResponse.length(); index++) {
+                    String name = getServersResponse.getJSONObject(index).getString("name");
+                    String id = getServersResponse.getJSONObject(index).getString("id");
+                    editor.haveServer(localUser, id, name);
+                }
+                controller.handleGetServers(true);
+            } else {
+                controller.handleGetServers(false);
+            }
+        });
+    }
+
+    public void getExplicitServerInformation(LocalUser localUser, Server server, ServerScreenController controller) {
+        // get members of this server
+        restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
+            if (response.getBody().getObject().getString("status").equals("success")) {
+                JSONObject data = response.getBody().getObject().getJSONObject("data");
+                JSONArray members = data.getJSONArray("members");
+                server.setOwner(data.getString("owner"));
+
+                controller.handleGetExplicitServerInformation(members);
+            } else {
+                controller.handleGetExplicitServerInformation(null);
+            }
+
+        });
+    }
+
+    public void getOnlineUsers(LocalUser localUser, WelcomeScreenController controller) {
+        // load online Users
+        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
+            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(COM_DATA);
+
+            for (int index = 0; index < getServersResponse.length(); index++) {
+                String name = getServersResponse.getJSONObject(index).getString(COM_NAME);
+                String id = getServersResponse.getJSONObject(index).getString(COM_ID);
+                editor.haveUser(id, name);
+            }
+            controller.handleGetOnlineUsers();
+        });
     }
 
     public void stop() {
