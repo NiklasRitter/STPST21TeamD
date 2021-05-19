@@ -183,9 +183,9 @@ public class WelcomeScreenController implements Controller{
     }
 
     /**
-     * update automatically the listView when a user joined or left
+     * update automatically the listView when goes offline or online
      *
-     * @param propertyChangeEvent event occurs when a user left or joined
+     * @param propertyChangeEvent event occurs when a users online status changes
      */
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         User user = (User) propertyChangeEvent.getSource();
@@ -200,6 +200,12 @@ public class WelcomeScreenController implements Controller{
         }
     }
 
+
+    /**
+     * update automatically the listView when a new user joined
+     *
+     * @param propertyChangeEvent event occurs when a user joined
+     */
     private void newUser(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             User newUser = (User) propertyChangeEvent.getNewValue();
