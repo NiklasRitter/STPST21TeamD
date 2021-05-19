@@ -37,3 +37,7 @@
     -fx-background-color: #5f5599;
     -fx-text-fill: #FFFFFF
 }
+
+.redLabel {
+    -fx-text-fill:"RED"
+}

@@ -205,4 +205,14 @@ public class Editor {
             });
         }
     }
+
+
+    /**
+     * remove a webSocket with given url
+     * @param url url of a webSocket
+     * @return the webSocket which is removed or null if there was no mapping of this url
+     */
+    public WebSocketClient withOutWebSocket(String url) {
+        return webSocketMap.remove(url);
+    }
 }

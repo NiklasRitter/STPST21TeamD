@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 
-public class ServerScreenController {
+public class ServerScreenController implements Controller{
 
     private final Server server;
     private RestClient restClient;

@@ -81,7 +81,7 @@
                </font>
             </Button>
             <Region HBox.hgrow="ALWAYS" />
-            <Label id="lblError" textFill="RED" />
+            <Label id="lblError" styleClass="redLabel"/>
             <Region HBox.hgrow="ALWAYS" />
             <Button id="btnRegister" mnemonicParsing="false" styleClass="styleButton" text="Register ">
                <font>

@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller.loginScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -23,6 +24,8 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 import static org.mockito.Mockito.*;
 
 public class LoginTest extends ApplicationTest {
@@ -36,6 +39,10 @@ public class LoginTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
+
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+
         StageManager.showLoginScreen(restMock);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -43,6 +50,12 @@ public class LoginTest extends ApplicationTest {
 
     @Mock
     private RestClient restMock;
+
+    @Mock
+    private WebSocketClient systemWebSocketClient;
+
+    @Mock
+    private WebSocketClient chatWebSocketClient;
 
     @Mock
     private HttpResponse<JsonNode> res;
