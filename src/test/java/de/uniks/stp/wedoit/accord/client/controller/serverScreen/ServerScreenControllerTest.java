@@ -126,6 +126,34 @@ public class ServerScreenControllerTest extends ApplicationTest {
         wsCallback.handleMessage(webSocketJson);
     }
 
+    public void mockChannelRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).getChannels(anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockCategoryRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).getCategories(anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockChatWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(chatWebSocketClient).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
+        chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
+
+        chatWsCallback.handleMessage(webSocketJson);
+    }
+
     @Test
     public void initUserListView() {
         JsonObject restJson = getServerIdSuccessful();
@@ -142,6 +170,25 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertFalse(listView.getItems().contains(new Server()));
 
         mockWebSocket(webSocketJson);
+    }
+
+    private void initChannelListView() {
+        JsonObject categoriesRestJson = getServerCategories();
+        mockCategoryRest(categoriesRestJson);
+        JsonObject channelRestJson = getCategoryChannels();
+        mockChannelRest(channelRestJson);
+    }
+
+    public void initChannelListViewChannelFailure() {
+        JsonObject categoriesRestJson = getServerCategories();
+        mockCategoryRest(categoriesRestJson);
+        JsonObject channelRestJson = getCategoryChannelsFailure();
+        mockChannelRest(channelRestJson);
+    }
+
+    public void initChannelListViewCategoryFailure() {
+        JsonObject categoriesRestJson = getServerCategoriesFailure();
+        mockCategoryRest(categoriesRestJson);
     }
 
     @Test
@@ -201,7 +248,6 @@ public class ServerScreenControllerTest extends ApplicationTest {
         mockRest(restJson);
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(stage.getTitle().equals("Login"));
-
     }
 
     @Test
@@ -250,74 +296,6 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
 
-    private void initChannelListView() {
-        JsonObject categoriesRestJson = getServerCategories();
-        mockCategoryRest(categoriesRestJson);
-        JsonObject channelRestJson = getCategoryChannels();
-        mockChannelRest(channelRestJson);
-    }
-
-    public void mockChannelRest(JsonObject restClientJson) {
-        // mock rest client
-        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
-
-        verify(restMock).getChannels(anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
-
-        Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
-        callback.completed(res);
-    }
-
-    public void mockCategoryRest(JsonObject restClientJson) {
-        // mock rest client
-        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
-
-        verify(restMock).getCategories(anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
-
-        Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
-        callback.completed(res);
-    }
-
-    public JsonObject getCategoryChannels() {
-        return Json.createObjectBuilder()
-                .add("status", "success")
-                .add("message", "")
-                .add("data", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                                .add("id", "idTest1")
-                                .add("name", "channelName1")
-                                .add("type", "text")
-                                .add("privileged", false)
-                                .add("category", "categoryId1")
-                                .add("members", Json.createArrayBuilder()))
-                        .add(Json.createObjectBuilder()
-                                .add("id", "idTest2")
-                                .add("name", "channelName2")
-                                .add("type", "text")
-                                .add("privileged", false)
-                                .add("category", "categoryId2")
-                                .add("members", Json.createArrayBuilder()))).build();
-    }
-
-    public JsonObject getServerCategories() {
-        return Json.createObjectBuilder()
-                .add("status", "success")
-                .add("message", "")
-                .add("data", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                                .add("id", "idTest")
-                                .add("name", "categoryName")
-                                .add("server", this.server.getId())
-                                .add("channels", Json.createArrayBuilder().add("idTest")))).build();
-    }
-
-    public void mockChatWebSocket(JsonObject webSocketJson) {
-        // mock websocket
-        verify(chatWebSocketClient).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
-        chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
-
-        chatWsCallback.handleMessage(webSocketJson);
-    }
-
     @Test
     public void sendChatMessageTest() {
         //init channel list and select first channel
@@ -350,6 +328,26 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
         Assert.assertEquals("Test Message", lvTextChat.getItems().get(0).getText());
+    }
+
+    @Test
+    public void getCategoryChannelsFailureTest() {
+        //init channel list and select first channel
+        initUserListView();
+        initChannelListViewChannelFailure();
+        ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(0, lvServerChannels.getItems().size());
+    }
+
+    @Test
+    public void getServerCategoriesFailureTest() {
+        //init channel list and select first channel
+        initUserListView();
+        initChannelListViewCategoryFailure();
+        ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(0, lvServerChannels.getItems().size());
     }
 
     @Test
@@ -470,5 +468,52 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 .add("from", localUser.getName())
                 .add("text", test_message.getString(COM_MESSAGE))
                 .build();
+    }
+
+    public JsonObject getCategoryChannels() {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "idTest1")
+                                .add("name", "channelName1")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "categoryId1")
+                                .add("members", Json.createArrayBuilder()))
+                        .add(Json.createObjectBuilder()
+                                .add("id", "idTest2")
+                                .add("name", "channelName2")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "categoryId2")
+                                .add("members", Json.createArrayBuilder()))).build();
+    }
+
+    public JsonObject getServerCategories() {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "idTest")
+                                .add("name", "categoryName")
+                                .add("server", this.server.getId())
+                                .add("channels", Json.createArrayBuilder().add("idTest")))).build();
+    }
+
+    public JsonObject getCategoryChannelsFailure() {
+        return Json.createObjectBuilder()
+                .add("status", "failure")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()).build();
+    }
+
+    public JsonObject getServerCategoriesFailure() {
+        return Json.createObjectBuilder()
+                .add("status", "failure")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()).build();
     }
 }
