@@ -14,16 +14,16 @@ public class Channel {
     public static final String PROPERTY_TYPE = "type";
     public static final String PROPERTY_PRIVILEGED = "privileged";
     public static final String PROPERTY_MESSAGES = "messages";
-    public static final String PROPERTY_CATEGORY = "category";
     public static final String PROPERTY_MEMBERS = "members";
+   public static final String PROPERTY_CATEGORY = "category";
     protected PropertyChangeSupport listeners;
     private String id;
     private String name;
     private String type;
     private boolean privileged;
     private List<Message> messages;
-    private Category category;
     private List<User> members;
+   private Category category;
 
     public String getId()
    {
@@ -163,33 +163,6 @@ public class Channel {
       return this;
    }
 
-    public Category getCategory()
-   {
-      return this.category;
-   }
-
-    public Channel setCategory(Category value)
-   {
-      if (this.category == value)
-      {
-         return this;
-      }
-
-      final Category oldValue = this.category;
-      if (this.category != null)
-      {
-         this.category = null;
-         oldValue.setChannel(null);
-      }
-      this.category = value;
-      if (value != null)
-      {
-         value.setChannel(this);
-      }
-      this.firePropertyChange(PROPERTY_CATEGORY, oldValue, value);
-      return this;
-   }
-
     public List<User> getMembers()
    {
       return this.members != null ? Collections.unmodifiableList(this.members) : Collections.emptyList();
@@ -253,6 +226,33 @@ public class Channel {
       {
          this.withoutMembers(item);
       }
+      return this;
+   }
+
+   public Category getCategory()
+   {
+      return this.category;
+   }
+
+   public Channel setCategory(Category value)
+   {
+      if (this.category == value)
+      {
+         return this;
+      }
+
+      final Category oldValue = this.category;
+      if (this.category != null)
+      {
+         this.category = null;
+         oldValue.withoutChannels(this);
+      }
+      this.category = value;
+      if (value != null)
+      {
+         value.withChannels(this);
+      }
+      this.firePropertyChange(PROPERTY_CATEGORY, oldValue, value);
       return this;
    }
 

@@ -55,7 +55,7 @@
       </HBox>
       <HBox alignment="TOP_CENTER" minHeight="327.0" minWidth="598.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="327.0" prefWidth="78.0" spacing="20.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="356.0" prefWidth="76.0" spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
                      <textFill>
@@ -68,7 +68,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color blue="1.0" green="1.0" red="1.0" />
+                                    <Color red="1.0" green="1.0" blue="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -131,7 +131,7 @@
             </VBox>
             <VBox alignment="CENTER" styleClass="styleBorders" HBox.hgrow="ALWAYS">
                <children>
-                  <Label id="lbServerName" minHeight="19.0" minWidth="292.0" text="# -general" VBox.vgrow="ALWAYS">
+                  <Label id="lbChannelName" minHeight="19.0" minWidth="292.0" text="select a server" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets left="2.0" />
                      </padding>

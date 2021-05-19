@@ -249,3 +249,4 @@ public class onlineUserListViewTest extends ApplicationTest {
         clickOn("#btnWelcome");
     }
 }
+

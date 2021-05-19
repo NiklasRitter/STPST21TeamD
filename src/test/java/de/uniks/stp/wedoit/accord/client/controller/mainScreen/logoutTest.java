@@ -49,13 +49,13 @@ public class logoutTest extends ApplicationTest {
     }
 
     @Mock
-    private RestClient restMock;
-
-    @Mock
     private WebSocketClient systemWebSocketClient;
 
     @Mock
     private WebSocketClient chatWebSocketClient;
+
+    @Mock
+    private RestClient restMock;
 
     @Mock
     private HttpResponse<JsonNode> res;

@@ -45,7 +45,7 @@
   modified: 	false
   name: 	Category
   propertyStyle: 	Bean
-  roles: 	category_channel 	category_server
+  roles: 	category_channels 	category_server
 
 - server: 	org.fulib.classmodel.Clazz
   attributes: 	server_name 	server_id 	server_owner
@@ -280,7 +280,7 @@
   id: 	Channel_category
   modified: 	false
   name: 	category
-  other: 	category_channel
+  other: 	category_channels
   propertyStyle: 	Bean
 
 - channel_members: 	org.fulib.classmodel.AssocRole
@@ -313,15 +313,17 @@
   type: 	String
   typeSignature: 	String
 
-- category_channel: 	org.fulib.classmodel.AssocRole
+- category_channels: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
-  cardinality: 	1
+  cardinality: 	42
   clazz: 	category
-  id: 	Category_channel
+  collectionType: 	c1
+  id: 	Category_channels
   modified: 	false
-  name: 	channel
+  name: 	channels
   other: 	channel_category
   propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
 
 - category_server: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
