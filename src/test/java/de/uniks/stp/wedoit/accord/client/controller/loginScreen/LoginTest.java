@@ -187,6 +187,33 @@ public class LoginTest extends ApplicationTest {
     }
 
     @Test
+    public void wrongUsername() {
+        //TestFX
+        String username = "user name";
+        String password = "password";
+
+        clickOn("#tfUserName");
+        write(username);
+
+        clickOn("#pwUserPw");
+        write(password);
+
+        clickOn("#btnLogin");
+
+        Label errorLabel = lookup("#lblError").query();
+        Assert.assertEquals("Usernames are not allowed to contain blanks!", errorLabel.getText());
+
+        TextField tfUserName = lookup("#tfUserName").query();
+        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
+
+        TextField pwUserPw = lookup("#pwUserPw").query();
+        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
+
+        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
+        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+    }
+
+    @Test
     public void testMissingPassword() {
 
         //TestFX
