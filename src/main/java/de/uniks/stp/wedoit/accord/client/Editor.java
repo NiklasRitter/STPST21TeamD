@@ -3,22 +3,18 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import org.json.JSONArray;
-
-import java.net.URI;
-import java.util.*;
 
 import java.util.*;
 
 public class Editor {
 
     private AccordClient accordClient;
-    private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
-    private NetworkController networkController = new NetworkController(this);
+    private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+    private final NetworkController networkController = new NetworkController(this);
     private Server currentServer;
 
     public NetworkController getNetworkController() {
@@ -162,7 +158,7 @@ public class Editor {
     /**
      * get a user by id
      *
-     * @param id   id of the user
+     * @param id id of the user
      * @return user
      */
     public User getUserById(String id) {
@@ -170,7 +166,7 @@ public class Editor {
         Objects.requireNonNull(users);
         Objects.requireNonNull(id);
 
-        for (User user: users) {
+        for (User user : users) {
             if (id.equals(user.getId())) {
                 return user;
             }
@@ -182,7 +178,7 @@ public class Editor {
      * builds a category based on the server json answer
      * !!! no channels added
      *
-     * @param server which gets the categories
+     * @param server                  which gets the categories
      * @param serversCategoryResponse server answer for categories of the server
      */
     public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
@@ -202,7 +198,7 @@ public class Editor {
     /**
      * builds a channel based on the server json answer
      *
-     * @param category which gets the channels
+     * @param category                  which gets the channels
      * @param categoriesChannelResponse server answer for channels of the category
      */
     public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
@@ -215,7 +211,7 @@ public class Editor {
             Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
             channel.setCategory(category);
             List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-            for (String memberId: memberIds) {
+            for (String memberId : memberIds) {
                 User user = this.getUserById(memberId);
                 channel.withMembers(user);
             }
@@ -256,8 +252,7 @@ public class Editor {
     public void addNewPrivateMessage(PrivateMessage message) {
         if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
-        }
-        else {
+        } else {
             getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
     }
@@ -267,33 +262,35 @@ public class Editor {
      *
      * @param message to add to the model
      */
-    public void addNewChannelMessage(Message message){
+    public void addNewChannelMessage(Message message) {
         message.getChannel().withMessages(message);
     }
 
     /**
      * the localUser is logged out and will be redirect to the LoginScreen
      *
-     * @param userKey    userKey of the user who is logged out
-     * @param restClient restClient instance for the LoginScreenController
+     * @param userKey userKey of the user who is logged out
      */
-    public void logoutUser(String userKey, RestClient restClient) {
+    public void logoutUser(String userKey) {
         if (userKey != null && !userKey.isEmpty()) {
             networkController.stop();
-            restClient.logout(userKey, response -> {
-                if (response.getBody().getObject().getString("status").equals("success")) {
-                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-                } else {
-                    System.err.println("Error while logging out");
-                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-                }
-            });
+            networkController.logoutUser(userKey);
+        }
+    }
+
+    public void handleLogoutUser(boolean success) {
+        if (success) {
+            Platform.runLater(StageManager::showLoginScreen);
+        } else {
+            System.err.println("Error while logging out");
+            Platform.runLater(StageManager::showLoginScreen);
         }
     }
 
 
     /**
      * remove a webSocket with given url
+     *
      * @param url url of a webSocket
      * @return the webSocket which is removed or null if there was no mapping of this url
      */
@@ -301,11 +298,11 @@ public class Editor {
         return webSocketMap.remove(url);
     }
 
-    public List<User> getOnlineUsers(){
+    public List<User> getOnlineUsers() {
         List<User> allUsers = this.getLocalUser().getUsers();
         List<User> onlineUsers = new ArrayList<>();
-        for (User user: allUsers) {
-            if (user.isOnlineStatus()){
+        for (User user : allUsers) {
+            if (user.isOnlineStatus()) {
                 onlineUsers.add(user);
             }
         }
