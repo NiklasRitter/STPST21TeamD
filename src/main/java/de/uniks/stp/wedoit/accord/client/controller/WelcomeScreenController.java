@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ public class WelcomeScreenController implements Controller{
     private Chat currentChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersListListener = this::usersListViewChanged;
+    private final PropertyChangeListener newUsersListener = this::newUser;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
     private final PropertyChangeListener chatListener = this::newMessage;
@@ -47,6 +49,7 @@ public class WelcomeScreenController implements Controller{
     private PrivateMessageCellFactory chatCellFactory;
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private ObservableList<User> onlineUserObservableList;
+    private List<User> availableUsers = new ArrayList<User>();
 
     private Label lblSelectedUser;
 
@@ -98,6 +101,10 @@ public class WelcomeScreenController implements Controller{
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+
+        for (User user: availableUsers) {
+            user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
+        }
         this.btnHome.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
@@ -160,13 +167,18 @@ public class WelcomeScreenController implements Controller{
             // load list view
             usersListViewCellFactory = new WelcomeScreenOnlineUsersCellFactory();
             lwOnlineUsers.setCellFactory(usersListViewCellFactory);
-            List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+            availableUsers = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
                     .collect(Collectors.toList());
 
-            Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
+            this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
 
+            Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
+
+            for (User user: availableUsers) {
+                user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
+            }
             // Add listener for the loaded listView
-            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
         });
     }
 
@@ -176,11 +188,29 @@ public class WelcomeScreenController implements Controller{
      * @param propertyChangeEvent event occurs when a user left or joined
      */
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-        lwOnlineUsers.getItems().removeAll();
-        List<User> availableUser = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
-                .collect(Collectors.toList());
-        Platform.runLater(() -> this.lwOnlineUsers.setItems(FXCollections.observableList(availableUser)));
-        lwOnlineUsers.refresh();
+        User user = (User) propertyChangeEvent.getSource();
+        if (!user.isOnlineStatus()){
+            Platform.runLater(() -> this.onlineUserObservableList.remove(user));
+        }
+        else {
+            Platform.runLater(() -> {
+                this.onlineUserObservableList.add(user);
+                this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
+            });
+        }
+    }
+
+    private void newUser(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null) {
+            User newUser = (User) propertyChangeEvent.getNewValue();
+            newUser.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
+            this.availableUsers.add(newUser);
+            Platform.runLater(() -> {
+                this.onlineUserObservableList.add(newUser);
+                this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
+                this.lwOnlineUsers.refresh();
+            });
+        }
     }
 
     /**
@@ -223,6 +253,9 @@ public class WelcomeScreenController implements Controller{
         if (propertyChangeEvent.getNewValue() != null) {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
+        }
+        if (this.privateMessageObservableList.size() >= 100){
+            Platform.runLater(() -> this.privateMessageObservableList.remove(0));
         }
     }
 

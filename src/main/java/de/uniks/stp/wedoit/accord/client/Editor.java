@@ -7,9 +7,7 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Platform;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Editor {
 
@@ -123,12 +121,13 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
+                    user.setOnlineStatus(true);
                     return localUser;
                 }
             }
         }
 
-        User user = new User().setId(id).setName(name);
+        User user = new User().setId(id).setName(name).setOnlineStatus(true);
         localUser.withUsers(user);
         return localUser;
     }
@@ -165,7 +164,7 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
-                    localUser.withoutUsers(user);
+                    user.setOnlineStatus(false);
                     return this;
                 }
             }
@@ -214,5 +213,16 @@ public class Editor {
      */
     public WebSocketClient withOutWebSocket(String url) {
         return webSocketMap.remove(url);
+    }
+
+    public List<User> getOnlineUsers(){
+        List<User> allUsers = this.getLocalUser().getUsers();
+        List<User> onlineUsers = new ArrayList<>();
+        for (User user: allUsers) {
+            if (user.isOnlineStatus()){
+                onlineUsers.add(user);
+            }
+        }
+        return onlineUsers;
     }
 }
