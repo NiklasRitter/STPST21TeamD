@@ -4,7 +4,6 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -14,19 +13,17 @@ import javafx.scene.control.TextField;
 
 public class CreateServerScreenController implements Controller {
 
-    private RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private TextField tfServerName;
     private Button btnCreateServer;
     private Label errorLabel;
 
-    public CreateServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    public CreateServerScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
     public void init() {
@@ -64,7 +61,7 @@ public class CreateServerScreenController implements Controller {
     public void handleCreateServer(Server server) {
         if (server != null) {
             stop();
-            Platform.runLater(() -> StageManager.showServerScreen(server, restClient));
+            Platform.runLater(() -> StageManager.showServerScreen(server));
         } else {
             tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 

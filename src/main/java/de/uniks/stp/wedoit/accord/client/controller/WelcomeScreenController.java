@@ -6,7 +6,6 @@ import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
@@ -31,7 +30,6 @@ public class WelcomeScreenController implements Controller {
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
-    private final RestClient restClient;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
@@ -49,11 +47,10 @@ public class WelcomeScreenController implements Controller {
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser;
 
-    public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    public WelcomeScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
     public void init() {
@@ -122,7 +119,7 @@ public class WelcomeScreenController implements Controller {
      * @param actionEvent
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        StageManager.showMainScreen(restClient);
+        StageManager.showMainScreen();
     }
 
     /**
@@ -131,7 +128,7 @@ public class WelcomeScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fire
      */
     private void btnLogoutOnClicked(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey(), restClient);
+        editor.logoutUser(localUser.getUserKey());
     }
 
     /**

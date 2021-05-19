@@ -4,7 +4,6 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -23,24 +22,22 @@ import java.util.stream.Collectors;
 
 public class MainScreenController implements Controller {
 
-    private RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private Button welcomeButton;
     private Button optionsButton;
     private Button addServerButton;
     private Button serverButton;
     private Button logoutButton;
     private ListView<Server> serverListView;
-    private PropertyChangeListener serverListListener = this::serverListViewChanged;
+    private final PropertyChangeListener serverListListener = this::serverListViewChanged;
     private MainScreenServerListView mainScreenServerListView;
 
-    public MainScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    public MainScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
     public void init() {
@@ -78,7 +75,7 @@ public class MainScreenController implements Controller {
             // Add listener for the loaded listView
             this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
         } else {
-            Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+            Platform.runLater(StageManager::showLoginScreen);
         }
     }
 
@@ -122,7 +119,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void welcomeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showWelcomeScreen(restClient);
+        StageManager.showWelcomeScreen();
     }
 
     /**
@@ -142,7 +139,7 @@ public class MainScreenController implements Controller {
     private void serverButtonOnClick(ActionEvent actionEvent) {
         Server server = serverListView.getSelectionModel().getSelectedItem();
         if (server != null) {
-            StageManager.showServerScreen(server, restClient);
+            StageManager.showServerScreen(server);
         }
     }
 
@@ -155,7 +152,7 @@ public class MainScreenController implements Controller {
         if (mouseEvent.getClickCount() == 2) {
             Server server = serverListView.getSelectionModel().getSelectedItem();
             if (server != null) {
-                StageManager.showServerScreen(server, restClient);
+                StageManager.showServerScreen(server);
             }
         }
 
@@ -167,7 +164,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showCreateServerScreen(restClient);
+        StageManager.showCreateServerScreen();
     }
 
     /**
@@ -176,7 +173,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey(), restClient);
+        editor.logoutUser(localUser.getUserKey());
     }
 
     /**

@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -13,9 +12,9 @@ import javafx.scene.control.TextField;
 
 public class LoginScreenController implements Controller {
 
-    private LocalUser model;
-    private Editor editor;
-    private Parent view;
+    private final LocalUser model;
+    private final Editor editor;
+    private final Parent view;
 
     private Button btnLogin;
     private Button btnRegister;
@@ -24,13 +23,11 @@ public class LoginScreenController implements Controller {
     private TextField pwUserPw;
     private Label errorLabel;
 
-    private RestClient restClient;
 
-    public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.model = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
     public void init() {
@@ -96,7 +93,7 @@ public class LoginScreenController implements Controller {
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
             Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
         } else {
-            Platform.runLater(() -> StageManager.showMainScreen(restClient));
+            Platform.runLater(StageManager::showMainScreen);
         }
     }
 
