@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -69,8 +70,18 @@ public class ServerScreenControllerTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Captor
+    private ArgumentCaptor<Callback<JsonNode>> channelCallbackArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> categoriesCallbackArgumentCaptor;
+
+    @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentCaptorWebSocket;
     private WSCallback wsCallback;
+
+    @Captor
+    private ArgumentCaptor<WSCallback> chatCallbackArgumentCaptorWebSocket;
+    private WSCallback chatWsCallback;
 
     @BeforeEach
     public void setup() {
@@ -131,8 +142,6 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertFalse(listView.getItems().contains(new Server()));
 
         mockWebSocket(webSocketJson);
-
-
     }
 
     @Test
@@ -241,16 +250,79 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
 
+    private void initChannelListView() {
+        JsonObject categoriesRestJson = getServerCategories();
+        mockCategoryRest(categoriesRestJson);
+        JsonObject channelRestJson = getCategoryChannels();
+        mockChannelRest(channelRestJson);
+    }
+
+    public void mockChannelRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).getChannels(anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockCategoryRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).getCategories(anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public JsonObject getCategoryChannels() {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "idTest")
+                                .add("name", "channelName")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "categoryId")
+                                .add("members", Json.createArrayBuilder()))).build();
+    }
+
+    public JsonObject getServerCategories() {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "idTest")
+                                .add("name", "categoryName")
+                                .add("server", this.server.getId())
+                                .add("channels", Json.createArrayBuilder().add("idTest")))).build();
+    }
+
+    public void mockChatWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(chatWebSocketClient).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
+        chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
+
+        chatWsCallback.handleMessage(webSocketJson);
+    }
+
     @Test
     public void sendChatMessageTest() {
         //init channel list and select first channel
         initUserListView();
+        initChannelListView();
         Label lblChannelName = lookup("#lbChannelName").query();
-        ListView<Message> lwPrivateChat = lookup("#lvTextChat").queryListView();
-        ListView lvServerChannels = lookup("#lvServerChannels").queryListView();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
 
+        WaitForAsyncUtils.waitForFxEvents();
         lvServerChannels.getSelectionModel().select(0);
-        Channel channel = (Channel) lvServerChannels.getSelectionModel().getSelectedItem();
+        Channel channel = lvServerChannels.getSelectionModel().getSelectedItem();
 
         clickOn("#lvServerChannels");
 
@@ -260,21 +332,46 @@ public class ServerScreenControllerTest extends ApplicationTest {
         //send message
         clickOn("#tfInputMessage");
         write("Test Message");
+        press(KeyCode.ENTER);
 
-        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getName(), "Test Message");
-        mockWebSocket(getTestMessageServerAnswer(test_message));
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(1, lwPrivateChat.getItems().size());
-        Assert.assertEquals(channel.getMessages().size(), lwPrivateChat.getItems().size());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0), channel.getMessages().get(0));
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals(1, lvTextChat.getItems().size());
+        Assert.assertEquals(channel.getMessages().size(), lvTextChat.getItems().size());
+        Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
+        Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
+        Assert.assertEquals("Test Message", lvTextChat.getItems().get(0).getText());
     }
 
     @Test
     public void incomingChatMessageTest() {
+        //init channel list and select first channel
+        initUserListView();
+        initChannelListView();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
 
+        WaitForAsyncUtils.waitForFxEvents();
+        lvServerChannels.getSelectionModel().select(0);
+        Channel channel = lvServerChannels.getSelectionModel().getSelectedItem();
+
+        clickOn("#lvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getIncomingTestMessageServerAnswer(channel));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(1, lvTextChat.getItems().size());
+        Assert.assertEquals(channel.getMessages().size(), lvTextChat.getItems().size());
+        Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
+        Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
+        Assert.assertEquals("My name is Bond", lvTextChat.getItems().get(0).getText());
     }
     //TODO implement
 
@@ -345,10 +442,20 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
         return Json.createObjectBuilder()
                 .add("id", "5e2ffbd8770dd077d03dr458")
-                .add("channel", "5e2ffbd8770dd077d03dt445")
+                .add("channel", "idTest")
                 .add("timestamp", 1616935874)
                 .add("from", localUser.getName())
-                .add("message", test_message.getString(COM_MESSAGE))
+                .add("text", test_message.getString(COM_MESSAGE))
+                .build();
+    }
+
+    public JsonObject getIncomingTestMessageServerAnswer(Channel channel) {
+        return Json.createObjectBuilder()
+                .add("id", "5e2ffbd8770dd077d03dr458")
+                .add("channel", channel.getId())
+                .add("timestamp", 1616935874)
+                .add("from", "James")
+                .add("text", "My name is Bond")
                 .build();
     }
 
