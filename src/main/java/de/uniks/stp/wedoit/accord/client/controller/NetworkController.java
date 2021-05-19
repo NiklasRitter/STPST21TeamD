@@ -1,9 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -13,24 +11,33 @@ import org.json.JSONObject;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class NetworkController {
-    private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
-    private Editor editor;
+    private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+    private final Editor editor;
     private RestClient restClient = new RestClient();
 
     public NetworkController(Editor editor) {
         this.editor = editor;
     }
 
-    public void start() {
+    public RestClient getRestClient() {
+        return restClient;
+    }
+
+    public NetworkController setRestClient(RestClient restClient) {
+        this.restClient = restClient;
+        return this;
+    }
+
+    public NetworkController start() {
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
         haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handlePrivateChatMessage);
+        return this;
     }
 
     public WebSocketClient getOrCreateWebSocket(String url) {
@@ -94,8 +101,9 @@ public class NetworkController {
      * handle messages on the system channel by adding or deleting users from the data model
      *
      * @param msg message from the server on the system channel
+     * @return
      */
-    public void handleSystemMessage(JsonStructure msg) {
+    public NetworkController handleSystemMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
         JsonObject data = jsonObject.getJsonObject(COM_DATA);
 
@@ -105,14 +113,16 @@ public class NetworkController {
         } else if (jsonObject.getString(COM_ACTION).equals("userLeft")) {
             editor.userLeft(data.getString(COM_ID));
         }
+        return this;
     }
 
     /**
      * handle chat message by adding it to the data model
      *
      * @param msg message from the server on the private chat channel
+     * @return
      */
-    public void handlePrivateChatMessage(JsonStructure msg) {
+    public NetworkController handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
         jsonObject.getString(COM_CHANNEL).equals("private");
@@ -123,22 +133,25 @@ public class NetworkController {
         message.setTo(jsonObject.getString(COM_TO));
 
         editor.addNewPrivateMessage(message);
+        return this;
     }
 
-    public void sendPrivateChatMessage(String jsonMsgString) {
+    public NetworkController sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
         webSocketClient.sendMessage(jsonMsgString);
+        return this;
     }
 
-    public void sendChannelChatMessage(String jsonMsgString) {
+    public NetworkController sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(CHAT_USER_URL + this.editor.getLocalUser().getName()
                         + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
+        return this;
     }
 
-    public void createServer(String serverNameInput, CreateServerScreenController controller) {
+    public NetworkController createServer(String serverNameInput, CreateServerScreenController controller) {
         restClient.createServer(serverNameInput, editor.getLocalUser().getUserKey(), (response) -> {
             if (response.getBody().getObject().getString("status").equals("success")) {
                 JSONObject createServerAnswer = response.getBody().getObject().getJSONObject("data");
@@ -151,9 +164,10 @@ public class NetworkController {
                 controller.handleCreateServer(null);
             }
         });
+        return this;
     }
 
-    public void loginUser(String username, String password, LoginScreenController controller) {
+    public NetworkController loginUser(String username, String password, LoginScreenController controller) {
         restClient.login(username, password, (response) -> {
             if (!response.getBody().getObject().getString("status").equals("success")) {
                 controller.handleLogin(false);
@@ -165,15 +179,17 @@ public class NetworkController {
                 controller.handleLogin(true);
             }
         });
+        return this;
     }
 
-    public void registerUser(String username, String password, LoginScreenController controller) {
+    public NetworkController registerUser(String username, String password, LoginScreenController controller) {
         restClient.register(username, password, registerResponse -> {
             controller.handleRegister(registerResponse.getBody().getObject().getString("status").equals("success"));
         });
+        return this;
     }
 
-    public void getServers(LocalUser localUser, MainScreenController controller) {
+    public NetworkController getServers(LocalUser localUser, MainScreenController controller) {
         restClient.getServers(localUser.getUserKey(), response -> {
             if (response.getBody().getObject().getString("status").equals("success")) {
                 JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
@@ -188,9 +204,10 @@ public class NetworkController {
                 controller.handleGetServers(false);
             }
         });
+        return this;
     }
 
-    public void getExplicitServerInformation(LocalUser localUser, Server server, ServerScreenController controller) {
+    public NetworkController getExplicitServerInformation(LocalUser localUser, Server server, ServerScreenController controller) {
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
             if (response.getBody().getObject().getString("status").equals("success")) {
@@ -202,11 +219,11 @@ public class NetworkController {
             } else {
                 controller.handleGetExplicitServerInformation(null);
             }
-
         });
+        return this;
     }
 
-    public void getOnlineUsers(LocalUser localUser, WelcomeScreenController controller) {
+    public NetworkController getOnlineUsers(LocalUser localUser, WelcomeScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
             JSONArray getServersResponse = response.getBody().getObject().getJSONArray(COM_DATA);
@@ -218,14 +235,56 @@ public class NetworkController {
             }
             controller.handleGetOnlineUsers();
         });
+        return this;
     }
 
-    public void stop() {
+    public NetworkController logoutUser(String userKey) {
+        restClient.logout(userKey, response -> {
+            editor.handleLogoutUser(response.getBody().getObject().getString("status").equals("success"));
+        });
+        return this;
+    }
+
+    public NetworkController getCategories(LocalUser localUser, Server server, ServerScreenController controller) {
+        restClient.getCategories(server.getId(), localUser.getUserKey(), categoryResponse -> {
+            if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
+                JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
+
+                editor.haveCategories(server, serversCategoryResponse);
+
+                List<Category> categoryList = server.getCategories();
+                controller.handleGetCategories(categoryList);
+            } else {
+                controller.handleGetCategories(null);
+            }
+        });
+        return this;
+    }
+
+    public NetworkController getChannels(LocalUser localUser, Server server, Category category, ServerScreenController controller) {
+        restClient.getChannels(server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
+            if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
+                JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
+
+                editor.haveChannels(category, categoriesChannelResponse);
+
+                List<Channel> channelList = server.getCategories().get(0).getChannels().stream().sorted(Comparator.comparing(Channel::getName))
+                        .collect(Collectors.toList());
+                controller.handleGetChannels(channelList);
+            } else {
+                controller.handleGetChannels(null);
+            }
+        });
+        return this;
+    }
+
+    public NetworkController stop() {
         Iterator<Map.Entry<String, WebSocketClient>> iterator = webSocketMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, WebSocketClient> entry = iterator.next();
             iterator.remove();
             entry.getValue().stop();
         }
+        return this;
     }
 }

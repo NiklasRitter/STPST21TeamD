@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
@@ -33,10 +32,9 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 public class ServerScreenController implements Controller {
 
     private final Server server;
-    private RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
@@ -45,9 +43,9 @@ public class ServerScreenController implements Controller {
     private ListView lvServerUsers;
     private TextField tfInputMessage;
     private ListView listView;
-    private WSCallback serverWSCallback = this::handleServerMessage;
+    private final WSCallback serverWSCallback = this::handleServerMessage;
     private Channel currentChannel;
-    private WSCallback chatWSCallback = this::handleChatMessage;
+    private final WSCallback chatWSCallback = this::handleChatMessage;
     private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
@@ -55,11 +53,10 @@ public class ServerScreenController implements Controller {
     private ObservableList<Message> observableMessageList;
     private final PropertyChangeListener newMessagesListener = this::newMessage;
 
-    public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
+    public ServerScreenController(Parent view, LocalUser model, Editor editor, Server server) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
         this.server = server;
     }
 
@@ -101,7 +98,7 @@ public class ServerScreenController implements Controller {
             createUserListView(members);
         } else {
             stop();
-            Platform.runLater(() -> StageManager.showLoginScreen(restClient));
+            Platform.runLater(StageManager::showLoginScreen);
         }
     }
 
@@ -141,7 +138,7 @@ public class ServerScreenController implements Controller {
 
     private void homeButtonOnClick(ActionEvent actionEvent) {
         stop();
-        StageManager.showMainScreen(restClient);
+        StageManager.showMainScreen();
     }
 
     private void settingsButtonOnClick(ActionEvent actionEvent) {
@@ -155,7 +152,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey(), restClient);
+        editor.logoutUser(localUser.getUserKey());
 
     }
 
@@ -164,20 +161,17 @@ public class ServerScreenController implements Controller {
      * gets Categories from server and calls loadCategoryChannels()
      */
     private void initCategoryChannelList() {
-        restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
-            if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
-                JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
+        editor.getNetworkController().getCategories(localUser, server, this);
+    }
 
-                editor.haveCategories(this.server, serversCategoryResponse);
-
-                List<Category> categoryList = this.server.getCategories();
-                for (Category category : categoryList) {
-                    loadCategoryChannels(category);
-                }
-            } else {
-                System.err.println("Error while loading categories from server");
+    public void handleGetCategories(List<Category> categoryList) {
+        if (categoryList != null) {
+            for (Category category : categoryList) {
+                loadCategoryChannels(category);
             }
-        });
+        } else {
+            System.err.println("Error while loading categories from server");
+        }
     }
 
     /**
@@ -186,24 +180,18 @@ public class ServerScreenController implements Controller {
      * @param category of which the channels should be loaded
      */
     private void loadCategoryChannels(Category category) {
-        restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
-            if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
-                JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
+        editor.getNetworkController().getChannels(localUser, server, category, this);
+    }
 
-                editor.haveChannels(category, categoriesChannelResponse);
-
-                //TODO use something different then a cell factory
-                categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
-                lvServerChannels.setCellFactory(categoriesListViewCellFactory);
-
-                List<Channel> channelList = this.server.getCategories().get(0).getChannels().stream().sorted(Comparator.comparing(Channel::getName))
-                        .collect(Collectors.toList());
-
-                Platform.runLater(() -> this.lvServerChannels.setItems(FXCollections.observableList(channelList)));
-            } else {
-                System.err.println("Error while loading channels from server");
-            }
-        });
+    public void handleGetChannels(List<Channel> channelList) {
+        if (channelList != null) {
+            //TODO use something different then a cell factory
+            categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
+            lvServerChannels.setCellFactory(categoriesListViewCellFactory);
+            Platform.runLater(() -> this.lvServerChannels.setItems(FXCollections.observableList(channelList)));
+        } else {
+            System.err.println("Error while loading channels from server");
+        }
     }
 
     /**
