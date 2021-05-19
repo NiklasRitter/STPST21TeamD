@@ -186,7 +186,6 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
                 ).build().toString();
 
         when(res.getBody()).thenReturn(new JsonNode(returnMessage));
-        
     }
 
 

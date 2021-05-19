@@ -15,6 +15,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import kong.unirest.Unirest;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class StageManager extends Application {
 
     private static Editor editor;
@@ -30,6 +34,7 @@ public class StageManager extends Application {
     private static ServerScreenController serverScreenController;
     private static Scene scene;
     private static Scene popupScene;
+    private static Map<String, Controller> controllerMap = new HashMap<>();
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -53,6 +58,7 @@ public class StageManager extends Application {
 
             loginScreenController = new LoginScreenController(root, model.getLocalUser(), editor, restClient);
             loginScreenController.init();
+            controllerMap.put("loginScreenController", loginScreenController);
 
             //display
             stage.setTitle("Login");
@@ -85,6 +91,7 @@ public class StageManager extends Application {
             //init controller
             mainScreenController = new MainScreenController(root, model.getLocalUser(), editor, restClient);
             mainScreenController.init();
+            controllerMap.put("mainScreenController", mainScreenController);
 
             // display
             stage.setTitle("Main");
@@ -108,6 +115,7 @@ public class StageManager extends Application {
             //init controller
             createServerScreenController = new CreateServerScreenController(root, model.getLocalUser(), editor, restClient);
             createServerScreenController.init();
+            controllerMap.put("createServerScreenController", createServerScreenController);
 
             //display
             popupStage.setTitle("Create Server");
@@ -136,6 +144,7 @@ public class StageManager extends Application {
 
             welcomeScreenController = new WelcomeScreenController(root, model.getLocalUser(), editor, restClient);
             welcomeScreenController.init();
+            controllerMap.put("welcomeScreenController", welcomeScreenController);
 
             //display
             stage.setTitle("Welcome");
@@ -189,6 +198,7 @@ public class StageManager extends Application {
             //init controller
             optionsScreenController = new OptionsScreenController(root, model.getOptions(), editor);
             optionsScreenController.init();
+            controllerMap.put("optionsScreenController", optionsScreenController);
 
             //display
             popupStage.setTitle("Options");
@@ -204,24 +214,19 @@ public class StageManager extends Application {
     }
 
     private static void cleanup() {
-        if (loginScreenController != null) {
-            loginScreenController.stop();
-            loginScreenController = null;
-        }
-        if (mainScreenController != null) {
-            mainScreenController.stop();
-            mainScreenController = null;
-        }
-        if (welcomeScreenController != null) {
-            welcomeScreenController.stop();
-            welcomeScreenController = null;
-        }
-        if (optionsScreenController != null) {
-            optionsScreenController.stop();
-            optionsScreenController = null;
-        }
+        stopController();
+
         if (popupStage != null) {
             popupStage.hide();
+        }
+    }
+
+    private static void stopController() {
+        Iterator<Map.Entry<String, Controller>> iterator = controllerMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Controller> entry = iterator.next();
+            iterator.remove();
+            entry.getValue().stop();
         }
     }
 
@@ -254,7 +259,6 @@ public class StageManager extends Application {
             }
         }
     }
-
 
     public static void updateDarkmode() {
         changeDarkmode(model.getOptions().isDarkmode());

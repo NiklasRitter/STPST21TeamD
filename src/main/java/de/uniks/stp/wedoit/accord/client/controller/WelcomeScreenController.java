@@ -12,6 +12,7 @@ import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
-public class WelcomeScreenController {
+public class WelcomeScreenController implements Controller{
 
     private final Parent view;
     private final LocalUser localUser;
@@ -44,6 +45,9 @@ public class WelcomeScreenController {
     private final PropertyChangeListener chatListener = this::newMessage;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private PrivateMessageCellFactory chatCellFactory;
+    private ObservableList<PrivateMessage> privateMessageObservableList;
+    private ObservableList<User> onlineUserObservableList;
+
     private Label lblSelectedUser;
 
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
@@ -70,7 +74,7 @@ public class WelcomeScreenController {
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
-        initTooltips();
+        this.initTooltips();
 
         this.initOnlineUsersList();
     }
@@ -181,7 +185,7 @@ public class WelcomeScreenController {
 
     /**
      * initialize private Chat with user
-     * <p>
+     *
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      *
@@ -201,10 +205,10 @@ public class WelcomeScreenController {
         // load list view
         chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
-        List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
-                .collect(Collectors.toList());
+        this.privateMessageObservableList = FXCollections.observableList(currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
+                .collect(Collectors.toList()));
 
-        this.lwPrivateChat.setItems(FXCollections.observableList(messages));
+        this.lwPrivateChat.setItems(privateMessageObservableList);
 
         // Add listener for the loaded listView
         this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
@@ -217,11 +221,8 @@ public class WelcomeScreenController {
      */
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
-            lwPrivateChat.getItems().removeAll();
-            List<PrivateMessage> messages = currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
-                    .collect(Collectors.toList());
-            Platform.runLater(() -> this.lwPrivateChat.setItems(FXCollections.observableList(messages)));
-            lwPrivateChat.refresh();
+            PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
+            Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
     }
 

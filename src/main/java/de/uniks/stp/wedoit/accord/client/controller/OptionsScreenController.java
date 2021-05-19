@@ -6,7 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 
-public class OptionsScreenController {
+public class OptionsScreenController implements Controller{
 
     private Parent view;
     private Options options;
@@ -35,5 +35,4 @@ public class OptionsScreenController {
     private void btnDarkmodeOnClick(ActionEvent actionEvent) {
         options.setDarkmode(btnDarkmode.isSelected());
     }
-
 }

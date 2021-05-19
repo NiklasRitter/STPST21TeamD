@@ -12,11 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-import javax.json.JsonStructure;
-
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
-public class LoginScreenController {
+public class LoginScreenController implements Controller{
 
     private LocalUser model;
     private Editor editor;
@@ -84,9 +82,14 @@ public class LoginScreenController {
             tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
             errorLabel.setText("Username or password is missing");
-        } else {
+        }
+        else if (tfUserName.getText().contains(" ")) {
+            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
+        }
+        else {
             restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
-
                 if (!response.getBody().getObject().getString("status").equals("success")) {
 
                     tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
@@ -94,7 +97,6 @@ public class LoginScreenController {
                     Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
 
                 } else {
-
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
@@ -114,7 +116,7 @@ public class LoginScreenController {
         String name = this.tfUserName.getText();
         String password = this.pwUserPw.getText();
 
-        if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
+        if (name != null && !name.isEmpty() && password != null && !password.isEmpty() && !name.contains(" ")) {
             restClient.register(name, password, registerResponse -> {
                 // if user successful registered
                 if (registerResponse.getBody().getObject().getString("status").equals("success")) {
@@ -130,7 +132,13 @@ public class LoginScreenController {
                     Platform.runLater(() -> errorLabel.setText("Username already taken."));
                 }
             });
-        } else {
+        }
+        else if (name.contains(" ")){
+            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
+        }
+        else {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
