@@ -190,14 +190,11 @@ public class Editor {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
-        List<Category> categories = new ArrayList<>();
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
             Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
             category.setServer(server);
-            categories.add(category);
         }
-        server.withCategories(categories);
-        return categories;
+        return server.getCategories();
     }
 
     /**
@@ -211,7 +208,7 @@ public class Editor {
         Objects.requireNonNull(categoriesChannelResponse);
 
         this.currentServer = category.getServer();
-        List<Channel> channels = new ArrayList<>();
+
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
             Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
             channel.setCategory(category);
@@ -221,8 +218,7 @@ public class Editor {
                 channel.withMembers(user);
             }
         }
-        category.withChannels(channels);
-        return channels;
+        return category.getChannels();
     }
 
 

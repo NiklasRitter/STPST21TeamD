@@ -34,7 +34,7 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class ServerScreenController implements Controller{
 
-    private final Server server;
+    private Server server;
     private RestClient restClient;
     private LocalUser localUser;
     private Editor editor;
@@ -90,7 +90,6 @@ public class ServerScreenController implements Controller{
                 createUserListView(members);
 
             } else {
-                stop();
                 Platform.runLater(() -> StageManager.showLoginScreen(restClient));
             }
 
@@ -135,18 +134,21 @@ public class ServerScreenController implements Controller{
         editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId());
+
+        this.localUser.withoutServers(server);
+
         this.lbServerName = null;
         this.lvServerChannels = null;
         this.lvServerUsers = null;
         this.tfInputMessage = null;
         this.lvTextChat = null;
+        this.server = null;
     }
 
 
     // Additional methods
 
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        stop();
         StageManager.showMainScreen(restClient);
     }
 
