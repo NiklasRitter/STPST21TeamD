@@ -27,9 +27,9 @@ public class MessageCellFactory implements javafx.util.Callback<ListView<Message
             super.updateItem(item, empty);
             if (!empty) {
                 // set the width's
-                setMinWidth(param.getWidth());
-                setMaxWidth(param.getWidth());
-                setPrefWidth(param.getWidth());
+                setMinWidth(param.getWidth() - 20);
+                setMaxWidth(param.getWidth() - 20);
+                setPrefWidth(param.getWidth() - 20);
 
                 // allow wrapping
                 setWrapText(true);
