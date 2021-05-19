@@ -34,7 +34,7 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
                 // allow wrapping
                 setWrapText(true);
                 
-                String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp() * 1000));
+                String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
                 this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
             } else {
                 this.setText("");

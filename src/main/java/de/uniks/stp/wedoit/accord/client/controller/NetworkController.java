@@ -111,7 +111,7 @@ public class NetworkController {
 
         jsonObject.getString(COM_CHANNEL).equals("private");
         PrivateMessage message = new PrivateMessage();
-        message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
+        message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
         message.setText(jsonObject.getString(COM_MESSAGE));
         message.setFrom(jsonObject.getString(COM_FROM));
         message.setTo(jsonObject.getString(COM_TO));
