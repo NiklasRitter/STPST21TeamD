@@ -291,7 +291,7 @@ public class ServerScreenController implements Controller{
         if(jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
             Message message = new Message();
             message.setChannel(currentChannel);
-            message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
+            message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
             message.setFrom(jsonObject.getString(COM_FROM));
             message.setText(jsonObject.getString(COM_TEXT));
 
