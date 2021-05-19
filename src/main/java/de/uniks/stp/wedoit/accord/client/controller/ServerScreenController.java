@@ -46,14 +46,12 @@ public class ServerScreenController {
     private ListView lvServerChannels;
     private ListView lvServerUsers;
     private TextField tfInputMessage;
-    private WebSocketClient serverWebSocket;
     private ListView listView;
     private WSCallback serverWSCallback = this::handleServerMessage;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
     private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
     private final PropertyChangeListener newMessagesListener = this::newMessage;
-    private WebSocketClient chatWebSocket;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private MessageCellFactory messageCellFactory;
@@ -73,7 +71,6 @@ public class ServerScreenController {
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lbServerName = (Label) view.lookup("#lbServerName");
-        //TODO how to handle Categories
         this.lvServerChannels = (ListView<Channel>) view.lookup("#lvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
@@ -99,17 +96,17 @@ public class ServerScreenController {
 
         });
 
+        this.initCategoryChannelList();
+
+        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.btnOptions.setOnAction(this::settingsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.lvServerChannels.setOnMouseReleased(this::lvServerChannelsOnDoubleClicked);
-
-        this.initCategoryChannelList();
-
-        this.chatWebSocket = editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         initTooltips();
     }
@@ -136,14 +133,8 @@ public class ServerScreenController {
         this.btnHome = null;
         this.btnOptions = null;
         editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-        this.serverWebSocket.setCallback(null);
-        this.serverWebSocket.stop();
-        this.serverWebSocket = null;
         editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId());
-        this.chatWebSocket.setCallback(null);
-        this.chatWebSocket.stop();
-        this.chatWebSocket = null;
         this.lbServerName = null;
         this.lvServerChannels = null;
         this.lvServerUsers = null;
@@ -215,8 +206,6 @@ public class ServerScreenController {
                         .collect(Collectors.toList());
 
                 Platform.runLater(() -> this.lvServerChannels.setItems(FXCollections.observableList(channelList)));
-
-                //TODO property change
             } else {
                 System.err.println("Error while loading channels from server");
             }
@@ -285,7 +274,7 @@ public class ServerScreenController {
 
         if (message != null && !message.isEmpty() && currentChannel != null) {
             JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
-            this.chatWebSocket.sendMessage(jsonMsg.toString());
+            editor.getNetworkController().sendChannelChatMessage(jsonMsg.toString());
         }
     }
 

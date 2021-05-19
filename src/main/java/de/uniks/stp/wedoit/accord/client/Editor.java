@@ -27,6 +27,10 @@ public class Editor {
         return networkController;
     }
 
+    public Server getCurrentServer() {
+        return currentServer;
+    }
+
     /**
      * create localUser without initialisation and set localUser in Editor
      *

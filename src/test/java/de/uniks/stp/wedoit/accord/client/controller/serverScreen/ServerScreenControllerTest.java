@@ -283,11 +283,18 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 .add("message", "")
                 .add("data", Json.createArrayBuilder()
                         .add(Json.createObjectBuilder()
-                                .add("id", "idTest")
-                                .add("name", "channelName")
+                                .add("id", "idTest1")
+                                .add("name", "channelName1")
                                 .add("type", "text")
                                 .add("privileged", false)
-                                .add("category", "categoryId")
+                                .add("category", "categoryId1")
+                                .add("members", Json.createArrayBuilder()))
+                        .add(Json.createObjectBuilder()
+                                .add("id", "idTest2")
+                                .add("name", "channelName2")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "categoryId2")
                                 .add("members", Json.createArrayBuilder()))).build();
     }
 
@@ -346,11 +353,11 @@ public class ServerScreenControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void incomingChatMessageTest() {
-        //init channel list and select first channel
+    public void testChatMessagesCachedProperlyAfterChannelChange() {
+        //init user list and select first user
         initUserListView();
         initChannelListView();
-        Label lblChannelName = lookup("#lbChannelName").query();
+        Label lbChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
 
@@ -361,30 +368,46 @@ public class ServerScreenControllerTest extends ApplicationTest {
         clickOn("#lvServerChannels");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+        Assert.assertEquals(channel.getName(), lbChannelName.getText());
 
-        //JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
-        mockChatWebSocket(getIncomingTestMessageServerAnswer(channel));
+        //send message
+        clickOn("#tfInputMessage");
+        write("Test Message");
+        press(KeyCode.ENTER);
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(1, lvTextChat.getItems().size());
         Assert.assertEquals(channel.getMessages().size(), lvTextChat.getItems().size());
         Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
-        Assert.assertEquals("My name is Bond", lvTextChat.getItems().get(0).getText());
-    }
-    //TODO implement
+        Assert.assertEquals("Test Message", lvTextChat.getItems().get(0).getText());
 
-    @Test
-    public void noChannelSelectedTest() {
+        lvServerChannels.getSelectionModel().select(1);
+        Channel channel1 = lvServerChannels.getSelectionModel().getSelectedItem();
 
-    }
-    //TODO implement
+        clickOn("#lvServerChannels");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel1.getName(), lbChannelName.getText());
 
-    @Test
-    public void testChatMessagesCachedProperlyAfterChatChange() {
+        Assert.assertEquals(0, lvTextChat.getItems().size());
+
+        clickOn("#tfInputMessage");
+
+        lvServerChannels.getSelectionModel().select(0);
+        Channel channel2 = lvServerChannels.getSelectionModel().getSelectedItem();
+        clickOn("#lvServerChannels");
+
+        Assert.assertEquals(channel2.getName(), lbChannelName.getText());
+
+        Assert.assertEquals(1, lvTextChat.getItems().size());
+        Assert.assertEquals(channel2.getMessages().size(), lvTextChat.getItems().size());
+        Assert.assertEquals(lvTextChat.getItems().get(0), channel2.getMessages().get(0));
+        Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel2.getMessages().get(0).getText());
+        Assert.assertEquals(lvTextChat.getItems().get(0).getText(), "Test Message");
     }
-    //TODO implement
 
 
     // Methods for callbacks
@@ -442,21 +465,10 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
         return Json.createObjectBuilder()
                 .add("id", "5e2ffbd8770dd077d03dr458")
-                .add("channel", "idTest")
+                .add("channel", "idTest1")
                 .add("timestamp", 1616935874)
                 .add("from", localUser.getName())
                 .add("text", test_message.getString(COM_MESSAGE))
                 .build();
     }
-
-    public JsonObject getIncomingTestMessageServerAnswer(Channel channel) {
-        return Json.createObjectBuilder()
-                .add("id", "5e2ffbd8770dd077d03dr458")
-                .add("channel", channel.getId())
-                .add("timestamp", 1616935874)
-                .add("from", "James")
-                .add("text", "My name is Bond")
-                .build();
-    }
-
 }
