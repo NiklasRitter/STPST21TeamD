@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainScreenController {
+public class MainScreenController implements Controller{
 
     private RestClient restClient;
     private LocalUser localUser;
@@ -53,7 +53,7 @@ public class MainScreenController {
         this.logoutButton = (Button) view.lookup("#btnLogout");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
 
-        initTooltips();
+        this.initTooltips();
         // load server of the localUser
         restClient.getServers(localUser.getUserKey(), response -> {
             if (response.getBody().getObject().getString("status").equals("success")) {

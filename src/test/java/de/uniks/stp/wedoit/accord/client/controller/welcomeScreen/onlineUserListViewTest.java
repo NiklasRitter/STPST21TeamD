@@ -73,37 +73,18 @@ public class onlineUserListViewTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
-        //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = stageManager.getEditor().haveLocalUser("Sebastian", "testKey123");
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        this.stageManager.getEditor().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
-
-        this.stageManager.showWelcomeScreen(restMock);
+        this.stageManager.showLoginScreen(restMock);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
 
-    public void mockRest(JsonObject restClientJson) {
-        // mock rest client
-        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
-
-        verify(restMock).getOnlineUsers(anyString(), callbackArgumentCaptor.capture());
-
-        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
-        callback.completed(res);
-    }
-
-    public void mockSystemWebSocket(JsonObject webSocketJson) {
-        // mock websocket
-        verify(systemWebSocketClient).setCallback(callbackArgumentSystemCaptorWebSocket.capture());
-        wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
-
-        wsSystemCallback.handleMessage(webSocketJson);
-    }
-
     @Test
     public void initUserListView() {
+        directToWelcomeScreen();
+
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
 
@@ -121,6 +102,8 @@ public class onlineUserListViewTest extends ApplicationTest {
 
     @Test
     public void newUserOnlineListViewUpdated() {
+        directToWelcomeScreen();
+
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
         JsonObject webSocketJson = webSocketCallbackUserJoined();
@@ -147,6 +130,8 @@ public class onlineUserListViewTest extends ApplicationTest {
 
     @Test
     public void userLeftListViewUpdated() {
+        directToWelcomeScreen();
+
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
 
@@ -164,7 +149,6 @@ public class onlineUserListViewTest extends ApplicationTest {
         mockSystemWebSocket(webSocketJsonUserLeft);
         WaitForAsyncUtils.waitForFxEvents();
 
-        WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(3, userListView.getItems().size());
         Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
@@ -211,5 +195,58 @@ public class onlineUserListViewTest extends ApplicationTest {
                                 .add("id", "203040")
                                 .add("name", "Dieter")))
                 .build();
+    }
+
+    public void mockRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).getOnlineUsers(anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockSystemWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(systemWebSocketClient).setCallback(callbackArgumentSystemCaptorWebSocket.capture());
+        wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
+
+        wsSystemCallback.handleMessage(webSocketJson);
+    }
+
+    public void directToWelcomeScreen() {
+
+        //Mocking of RestClient login function
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
+                ).build();
+
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+
+        //TestFX
+        String username = "username";
+        String password = "password";
+
+        clickOn("#tfUserName");
+        write(username);
+
+        clickOn("#pwUserPw");
+        write(password);
+
+        clickOn("#btnLogin");
+
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
+        callbackLogin.completed(res);
+
+        this.localUser = stageManager.getEditor().getLocalUser();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn("#btnWelcome");
     }
 }

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 
-public class ServerScreenController {
+public class ServerScreenController implements Controller{
 
     private final Server server;
     private RestClient restClient;
@@ -42,8 +42,6 @@ public class ServerScreenController {
     private ListView lvServerUsers;
     private TextField tfInputMessage;
     private ListView listView;
-    private WebSocketClient webSocket;
-    private WebSocketClient serverWebSocket;
     private WSCallback serverWSCallback = this::handleServerMessage;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
@@ -66,8 +64,7 @@ public class ServerScreenController {
         //TODO what type
         this.listView = (ListView) view.lookup("#lvTextChat");
 
-        this.serverWebSocket = editor.haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
-        serverWebSocket.setCallback(serverWSCallback);
+        editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
 
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
@@ -113,10 +110,7 @@ public class ServerScreenController {
         this.btnLogout.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.btnOptions.setOnAction(null);
-        editor.withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-        this.serverWebSocket.setCallback(null);
-        this.serverWebSocket.stop();
-        this.serverWebSocket = null;
+        editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
     }
 
 
