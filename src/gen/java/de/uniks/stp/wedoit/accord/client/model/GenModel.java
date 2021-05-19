@@ -92,7 +92,7 @@ public class GenModel implements ClassModelDecorator {
         String type;
         boolean privileged;
 
-        @Link("channel")
+        @Link("channels")
         Category category;
 
         @Link("channels")
@@ -107,7 +107,7 @@ public class GenModel implements ClassModelDecorator {
         String id;
 
         @Link("category")
-        Channel channel;
+        List<Channel> channels;
 
         @Link("categories")
         Server server;

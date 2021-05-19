@@ -117,7 +117,7 @@ public class NetworkController {
 
         jsonObject.getString(COM_CHANNEL).equals("private");
         PrivateMessage message = new PrivateMessage();
-        message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
+        message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
         message.setText(jsonObject.getString(COM_MESSAGE));
         message.setFrom(jsonObject.getString(COM_FROM));
         message.setTo(jsonObject.getString(COM_TO));
@@ -128,6 +128,13 @@ public class NetworkController {
     public void sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
+        webSocketClient.sendMessage(jsonMsgString);
+    }
+
+    public void sendChannelChatMessage(String jsonMsgString) {
+        WebSocketClient webSocketClient =
+                getOrCreateWebSocket(CHAT_USER_URL + this.editor.getLocalUser().getName()
+                        +  AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
     }
 

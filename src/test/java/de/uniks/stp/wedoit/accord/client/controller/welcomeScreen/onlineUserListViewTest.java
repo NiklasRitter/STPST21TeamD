@@ -151,8 +151,7 @@ public class onlineUserListViewTest extends ApplicationTest {
 
 
         Assert.assertEquals(3, userListView.getItems().size());
-        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
-        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+        Assert.assertEquals(stageManager.getEditor().getOnlineUsers().size(), userListView.getItems().size());
     }
 
 
@@ -250,3 +249,4 @@ public class onlineUserListViewTest extends ApplicationTest {
         clickOn("#btnWelcome");
     }
 }
+
