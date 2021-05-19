@@ -64,7 +64,8 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         localUser = stageManager.getEditor().haveLocalUser("John", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
-        this.stageManager.showMainScreen(restMock);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }

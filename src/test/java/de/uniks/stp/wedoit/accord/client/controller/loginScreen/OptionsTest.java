@@ -16,8 +16,12 @@ import org.testfx.util.WaitForAsyncUtils;
 
 public class OptionsTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
+    @Mock
+    private RestClient restMock;
 
     @Override
     public void start(Stage stage) {
@@ -25,16 +29,12 @@ public class OptionsTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        StageManager.showLoginScreen(restMock);
+
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
-    @Mock
-    private RestClient restMock;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     @BeforeEach
     public void setup() {

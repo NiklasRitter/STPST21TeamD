@@ -34,23 +34,27 @@ import static org.mockito.Mockito.when;
 
 public class MainScreenControllerTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
-
     @Mock
     private WebSocketClient systemWebSocketClient;
-
     @Mock
     private WebSocketClient chatWebSocketClient;
-
     @Mock
     private WebSocketClient channelChatWebSocketClient;
-
     private Server server;
-
     @Mock
     private WebSocketClient webSocketClient;
+    @Mock
+    private RestClient restMock;
+
+    @Mock
+    private HttpResponse<JsonNode> res;
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Override
     public void start(Stage stage) {
@@ -63,22 +67,11 @@ public class MainScreenControllerTest extends ApplicationTest {
         localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
 
-        this.stageManager.showMainScreen(restMock);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
-    @Mock
-    private RestClient restMock;
-
-    @Mock
-    private HttpResponse<JsonNode> res;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @BeforeEach
     public void setup() {
@@ -220,7 +213,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         Server server = (Server) listView.getSelectionModel().getSelectedItem();
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
 
         doubleClickOn("#lwServerList");
 
@@ -252,7 +245,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         Server server = (Server) listView.getSelectionModel().getSelectedItem();
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
 
         clickOn("#btnServer");
 

@@ -28,7 +28,9 @@ public class OptionsScreenTest extends ApplicationTest {
         this.restClient = new RestClient();
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getPopupStage();
-        StageManager.showLoginScreen(restClient);
+
+        this.stageManager.getEditor().getNetworkController().setRestClient(restClient);
+        StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }

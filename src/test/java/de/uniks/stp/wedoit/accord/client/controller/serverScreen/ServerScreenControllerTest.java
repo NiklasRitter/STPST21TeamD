@@ -42,30 +42,23 @@ import static org.mockito.Mockito.when;
  */
 public class ServerScreenControllerTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
+    @Mock
+    WebSocketClient webSocketClient;
+    @Mock
+    WebSocketClient chatWebSocketClient;
+    @Mock
+    WSCallback callback;
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
     private JsonStructure msg;
-
     @Mock
     private RestClient restMock;
-
     @Mock
     private HttpResponse<JsonNode> res;
-
-    @Mock
-    WebSocketClient webSocketClient;
-
-    @Mock
-    WebSocketClient chatWebSocketClient;
-
-    @Mock
-    WSCallback callback;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
@@ -100,9 +93,10 @@ public class ServerScreenControllerTest extends ApplicationTest {
         server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId(),chatWebSocketClient);
+                + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
-        this.stageManager.showServerScreen(server, restMock);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showServerScreen(server);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
