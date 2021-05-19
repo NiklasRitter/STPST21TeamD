@@ -9,12 +9,15 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import org.json.JSONArray;
 
+import javax.json.JsonObject;
 import java.net.URI;
 import java.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
 
 public class Editor {
 
@@ -190,9 +193,23 @@ public class Editor {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
+        this.currentServer = server;
+
+        boolean exists = false;
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
-            Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
-            category.setServer(server);
+            for (Category category: currentServer.getCategories()) {
+                if (category.getId().equals(serversCategoryResponse.getJSONObject(index).getString(COM_ID))) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
+                category.setServer(server);
+            }
+            else {
+                exists = false;
+            }
         }
         return server.getCategories();
     }
@@ -209,13 +226,24 @@ public class Editor {
 
         this.currentServer = category.getServer();
 
+        boolean exists = false;
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
-            channel.setCategory(category);
-            List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-            for (String memberId: memberIds) {
-                User user = this.getUserById(memberId);
-                channel.withMembers(user);
+            for (Channel channel: category.getChannels()) {
+                if (channel.getId().equals(categoriesChannelResponse.getJSONObject(index).getString(COM_ID))) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+                channel.setCategory(category);
+                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
+                for (String memberId: memberIds) {
+                    User user = this.getUserById(memberId);
+                    channel.withMembers(user);
+                }
+            } else {
+                exists = false;
             }
         }
         return category.getChannels();

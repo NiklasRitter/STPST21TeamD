@@ -135,7 +135,7 @@ public class ServerScreenController implements Controller{
         editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId());
 
-        this.localUser.withoutServers(server);
+        //this.localUser.withoutServers(server);
 
         this.lbServerName = null;
         this.lvServerChannels = null;
