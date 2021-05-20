@@ -10,7 +10,7 @@ public class OptionsScreenController implements Controller{
 
     private final Parent view;
     private final Options options;
-    private Editor editor;
+    private final Editor editor;
 
     private CheckBox btnDarkmode;
 

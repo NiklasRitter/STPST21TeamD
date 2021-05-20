@@ -34,7 +34,6 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
 
     private Stage stage;
     private StageManager stageManager;
-    private LocalUser localUser;
 
     @Override
     public void start(Stage stage) {
@@ -45,7 +44,7 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
 
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
-        this.stageManager.showLoginScreen(restMock);
+        StageManager.showLoginScreen(restMock);
 
 
         this.stage.centerOnScreen();

@@ -109,7 +109,6 @@ public class NetworkController {
     public void handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
-        jsonObject.getString(COM_CHANNEL).equals("private");
         PrivateMessage message = new PrivateMessage();
         message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
         message.setText(jsonObject.getString(COM_MESSAGE));

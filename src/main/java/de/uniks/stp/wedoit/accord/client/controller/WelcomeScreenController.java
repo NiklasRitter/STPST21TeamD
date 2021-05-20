@@ -122,7 +122,7 @@ public class WelcomeScreenController implements Controller{
     /**
      * redirect to Main Screen
      *
-     * @param actionEvent
+     * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
         StageManager.showMainScreen(restClient);
@@ -140,7 +140,7 @@ public class WelcomeScreenController implements Controller{
     /**
      * redirect to Options Menu
      *
-     * @param actionEvent
+     * @param actionEvent occurs when Options Button is clicked
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();

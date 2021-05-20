@@ -105,8 +105,7 @@ public class Editor {
                 return user;
             }
         }
-        User user = new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
-        return user;
+        return new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
     }
 
     /**
