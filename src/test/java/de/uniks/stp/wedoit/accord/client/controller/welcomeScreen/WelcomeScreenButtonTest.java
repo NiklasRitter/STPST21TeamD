@@ -43,8 +43,8 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
-        this.stageManager.getEditor().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
         this.stageManager.showLoginScreen(restMock);
 
 
@@ -186,7 +186,6 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
                 ).build().toString();
 
         when(res.getBody()).thenReturn(new JsonNode(returnMessage));
-        
     }
 
 

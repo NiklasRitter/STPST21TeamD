@@ -1,3 +1,4 @@
+
 package de.uniks.stp.wedoit.accord.client.controller.createServerScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -43,8 +44,9 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
 
     @Mock
     private WebSocketClient webSocketClient;
+
     @Mock
-    private WebSocketClient serverWebSocket;
+    private WebSocketClient channelChatWebSocketClient;
 
     @Override
     public void start(Stage stage) {
@@ -55,9 +57,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
 
         //create localUser to skip the login screen
         localUser = stageManager.getEditor().haveLocalUser("John", "testKey123");
-        stageManager.getEditor().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
-        stageManager.getEditor().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                + AND_SERVER_ID_URL + "123", serverWebSocket);
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
         this.stageManager.showMainScreen(restMock);
         this.stage.centerOnScreen();
@@ -124,8 +124,6 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
 
-        WaitForAsyncUtils.waitForFxEvents();
-
         Server server = null;
         for (Server serverIterator : localUser.getServers()) {
             if (serverIterator.getName().equals(serverName)) {
@@ -133,8 +131,13 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
             }
         }
         Assert.assertNotNull(server);
-        Assert.assertEquals("Server", stage.getTitle());
 
+        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("Server", stage.getTitle());
     }
 
     @Test

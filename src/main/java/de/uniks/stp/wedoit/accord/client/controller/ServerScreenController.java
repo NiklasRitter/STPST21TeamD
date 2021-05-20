@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 
-public class ServerScreenController {
+public class ServerScreenController implements Controller{
 
     private final Server server;
     private RestClient restClient;
@@ -46,12 +46,11 @@ public class ServerScreenController {
     private TreeView tvServerChannels;
     private ListView lvServerUsers;
     private TextField tfInputMessage;
-    private WebSocketClient serverWebSocket;
+    private ListView listView;
     private WSCallback serverWSCallback = this::handleServerMessage;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
     private final PropertyChangeListener newMessagesListener = this::newMessage;
-    private WebSocketClient chatWebSocket;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private MessageCellFactory messageCellFactory;
@@ -78,11 +77,9 @@ public class ServerScreenController {
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
-        this.serverWebSocket = editor.haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
-        serverWebSocket.setCallback(serverWSCallback);
-        this.chatWebSocket = editor.haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
-        this.chatWebSocket.setCallback(chatWSCallback);
+        editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
 
         tvServerChannelsRoot = new TreeItem<>();
@@ -108,15 +105,20 @@ public class ServerScreenController {
 
         });
 
+
         initTooltips();
         addActionListener();
     }
 
     public void addActionListener() {
+
+        // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.btnOptions.setOnAction(this::settingsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
+        this.tvServerChannels.setOnMouseReleased(this::lvServerChannelsOnDoubleClicked);
+
     }
 
     private void initTooltips() {
@@ -141,21 +143,18 @@ public class ServerScreenController {
         this.btnLogout = null;
         this.btnHome = null;
         this.btnOptions = null;
-        editor.withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-        this.serverWebSocket.setCallback(null);
-        this.serverWebSocket.stop();
-        this.serverWebSocket = null;
-        editor.withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
-                + AND_SERVER_ID_URL + this.server.getId());
-        this.chatWebSocket.setCallback(null);
-        this.chatWebSocket.stop();
-        this.chatWebSocket = null;
+        editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+        editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId());
         this.lbServerName = null;
         this.tvServerChannels = null;
         this.lvServerUsers = null;
         this.tfInputMessage = null;
         this.lvTextChat = null;
     }
+
+
+
 
 
     // Additional methods
@@ -178,6 +177,8 @@ public class ServerScreenController {
         editor.logoutUser(localUser.getUserKey(), restClient);
 
     }
+
+
 
     /**
      * initialize channel List view
@@ -220,7 +221,6 @@ public class ServerScreenController {
                     categoryItem.getChildren().add(channelItem);
                 }
                 tvServerChannelsRoot.getChildren().add(categoryItem);
-
             } else {
                 System.err.println("Error while loading channels from server");
             }
@@ -260,11 +260,10 @@ public class ServerScreenController {
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
-
         this.lvTextChat.setItems(observableMessageList);
 
         // Add listener for the loaded listView
-        this.currentChannel.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.newMessagesListener);
+        this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
     }
 
     /**
@@ -290,7 +289,7 @@ public class ServerScreenController {
 
         if (message != null && !message.isEmpty() && currentChannel != null) {
             JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
-            this.chatWebSocket.sendMessage(jsonMsg.toString());
+            editor.getNetworkController().sendChannelChatMessage(jsonMsg.toString());
         }
     }
 
@@ -305,7 +304,7 @@ public class ServerScreenController {
         if (jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
             Message message = new Message();
             message.setChannel(currentChannel);
-            message.setTimestamp(jsonObject.getInt(COM_TIMESTAMP));
+            message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
             message.setFrom(jsonObject.getString(COM_FROM));
             message.setText(jsonObject.getString(COM_TEXT));
 

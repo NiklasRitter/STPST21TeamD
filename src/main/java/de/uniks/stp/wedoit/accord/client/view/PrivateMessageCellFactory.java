@@ -4,6 +4,9 @@ import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<PrivateMessage>, ListCell<PrivateMessage>> {
 
     @Override
@@ -22,14 +25,17 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
         protected void updateItem(PrivateMessage item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
-                // set the width's
-                setMinWidth(param.getWidth());
-                setMaxWidth(param.getWidth());
-                setPrefWidth(param.getWidth());
+
+                // set the width (-20 to eliminate overhang in ListView)
+                setMinWidth(param.getWidth() - 20);
+                setMaxWidth(param.getWidth() - 20);
+                setPrefWidth(param.getWidth() - 20);
 
                 // allow wrapping
                 setWrapText(true);
-                this.setText("[" + item.getTimestamp() + "] " + item.getFrom() + ": " + item.getText());
+                
+                String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
+                this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
             } else {
                 this.setText("");
             }

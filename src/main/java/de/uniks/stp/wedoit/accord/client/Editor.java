@@ -1,9 +1,9 @@
 package de.uniks.stp.wedoit.accord.client;
 
 
+import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
-import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
@@ -15,11 +15,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import java.util.*;
+
 public class Editor {
 
     private AccordClient accordClient;
     private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+
+    private NetworkController networkController = new NetworkController(this);
+
     private Server currentServer;
+
+    public NetworkController getNetworkController() {
+        return networkController;
+    }
+
+    public Server getCurrentServer() {
+        return currentServer;
+    }
 
     /**
      * create localUser without initialisation and set localUser in Editor
@@ -123,12 +136,13 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
+                    user.setOnlineStatus(true);
                     return localUser;
                 }
             }
         }
 
-        User user = new User().setId(id).setName(name);
+        User user = new User().setId(id).setName(name).setOnlineStatus(true);
         localUser.withUsers(user);
         return localUser;
     }
@@ -157,7 +171,7 @@ public class Editor {
      * @return user
      */
     public User getUserById(String id) {
-        List<User> users = this.currentServer.getMembers();
+        List<User> users = currentServer.getMembers();
         Objects.requireNonNull(users);
         Objects.requireNonNull(id);
 
@@ -227,7 +241,7 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
-                    localUser.withoutUsers(user);
+                    user.setOnlineStatus(false);
                     return this;
                 }
             }
@@ -258,54 +272,6 @@ public class Editor {
     }
 
     /**
-     * This method is for testing
-     *
-     * @param url             testUrl
-     * @param webSocketClient testWebSocket
-     * @return webSocketClient which is given
-     */
-    public WebSocketClient haveWebSocket(String url, WebSocketClient webSocketClient) {
-        if (webSocketMap.get(url) != null) {
-            return webSocketMap.get(url);
-        } else {
-            webSocketMap.put(url, webSocketClient);
-        }
-        return webSocketClient;
-    }
-
-    /**
-     * Create a new webSocket and put the webSocket in the WebSocketMap,
-     * The webSocket has to be deleted when the websocket is no longer used
-     * with method editor.withOutUrl(url)
-     *
-     * @param url      url for the webSocket connection
-     * @param callback callback for the
-     * @return webSocketClient which is given
-     */
-    public WebSocketClient haveWebSocket(String url, WSCallback callback) {
-        WebSocketClient webSocket;
-        if (webSocketMap.get(url) != null) {
-            return webSocketMap.get(url);
-        } else {
-
-            webSocket = new WebSocketClient(this, URI.create(url), callback);
-            webSocketMap.put(url, webSocket);
-            return webSocket;
-        }
-    }
-
-
-    /**
-     * remove a webSocket with given url
-     *
-     * @param url url of a webSocket
-     * @return the webSocket which is removed or null if there was no mapping of this url
-     */
-    public WebSocketClient withOutWebSocket(String url) {
-        return webSocketMap.remove(url);
-    }
-
-    /**
      * the localUser is logged out and will be redirect to the LoginScreen
      *
      * @param userKey    userKey of the user who is logged out
@@ -313,6 +279,7 @@ public class Editor {
      */
     public void logoutUser(String userKey, RestClient restClient) {
         if (userKey != null && !userKey.isEmpty()) {
+            networkController.stop();
             restClient.logout(userKey, response -> {
                 if (response.getBody().getObject().getString("status").equals("success")) {
                     Platform.runLater(() -> StageManager.showLoginScreen(restClient));
@@ -322,5 +289,26 @@ public class Editor {
                 }
             });
         }
+    }
+
+
+    /**
+     * remove a webSocket with given url
+     * @param url url of a webSocket
+     * @return the webSocket which is removed or null if there was no mapping of this url
+     */
+    public WebSocketClient withOutWebSocket(String url) {
+        return webSocketMap.remove(url);
+    }
+
+    public List<User> getOnlineUsers(){
+        List<User> allUsers = this.getLocalUser().getUsers();
+        List<User> onlineUsers = new ArrayList<>();
+        for (User user: allUsers) {
+            if (user.isOnlineStatus()){
+                onlineUsers.add(user);
+            }
+        }
+        return onlineUsers;
     }
 }
