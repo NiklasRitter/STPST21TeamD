@@ -5,10 +5,10 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
-import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.ServerScreenChannelsCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -34,26 +34,29 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class ServerScreenController implements Controller{
 
-    private final Server server;
-    private RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private Server server;
+    private final RestClient restClient;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
     private Label lbServerName;
+
     private TreeView tvServerChannels;
     private ListView lvServerUsers;
+
     private TextField tfInputMessage;
-    private ListView listView;
     private WSCallback serverWSCallback = this::handleServerMessage;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
-    private final PropertyChangeListener newMessagesListener = this::newMessage;
+
+    private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
+    private PropertyChangeListener newMessagesListener = this::newMessage;
+
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
-    private MessageCellFactory messageCellFactory;
     private ObservableList<Message> observableMessageList;
     private TreeItem<Object> tvServerChannelsRoot;
 
@@ -77,16 +80,18 @@ public class ServerScreenController implements Controller{
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
+        this.lbServerName.setText(server.getName());
+
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
-
 
         tvServerChannelsRoot = new TreeItem<>();
         ChannelTreeView channelTreeView = new ChannelTreeView();
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
+
 
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
@@ -105,7 +110,6 @@ public class ServerScreenController implements Controller{
 
         });
 
-
         initTooltips();
         addActionListener();
     }
@@ -114,7 +118,7 @@ public class ServerScreenController implements Controller{
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.btnOptions.setOnAction(this::settingsButtonOnClick);
+        this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
@@ -138,19 +142,33 @@ public class ServerScreenController implements Controller{
     public void stop() {
         localUser.withoutServers(server);
         this.btnLogout.setOnAction(null);
-        this.btnHome.setOnAction(null);
         this.btnOptions.setOnAction(null);
+        this.btnHome.setOnAction(null);
+        this.tfInputMessage.setOnAction(null);
+        this.tvServerChannels.setOnMouseReleased(null);
         this.btnLogout = null;
         this.btnHome = null;
         this.btnOptions = null;
-        editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-        editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId());
+
         this.lbServerName = null;
         this.tvServerChannels = null;
         this.lvServerUsers = null;
         this.tfInputMessage = null;
         this.lvTextChat = null;
+
+        this.editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+        this.editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId());
+
+        this.server = null;
+
+        if (this.currentChannel != null) {
+            this.currentChannel.listeners()
+                    .removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        }
+        this.chatWSCallback = null;
+        this.serverWSCallback = null;
+        this.newMessagesListener = null;
     }
 
 
@@ -158,12 +176,23 @@ public class ServerScreenController implements Controller{
 
 
     // Additional methods
-
+    /**
+     * The localUser will be redirect to the HomeScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        Platform.runLater(() -> StageManager.showMainScreen(restClient));
-    }
+        //Platform.runLater(() -> StageManager.showMainScreen(restClient));
 
-    private void settingsButtonOnClick(ActionEvent actionEvent) {
+        StageManager.showMainScreen(restClient);
+
+    }
+    /**
+     * The localUser will be redirect to the OptionsScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
+    private void optionsButtonOnClick(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
     }
 
@@ -189,7 +218,7 @@ public class ServerScreenController implements Controller{
             if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
 
-                editor.haveCategories(this.server, serversCategoryResponse);
+                this.editor.haveCategories(this.server, serversCategoryResponse);
 
                 List<Category> categoryList = this.server.getCategories();
                 for (Category category : categoryList) {
@@ -212,6 +241,7 @@ public class ServerScreenController implements Controller{
         restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
             if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
+
                 editor.haveChannels(category, categoriesChannelResponse);
 
                 TreeItem<Object> categoryItem = new TreeItem(category);
@@ -221,6 +251,7 @@ public class ServerScreenController implements Controller{
                     categoryItem.getChildren().add(channelItem);
                 }
                 tvServerChannelsRoot.getChildren().add(categoryItem);
+
             } else {
                 System.err.println("Error while loading channels from server");
             }
@@ -234,6 +265,7 @@ public class ServerScreenController implements Controller{
      */
     private void tvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
+
             if (tvServerChannels.getSelectionModel().getSelectedItem() instanceof Channel) {
                 Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem();
 
@@ -256,8 +288,7 @@ public class ServerScreenController implements Controller{
         this.lbChannelName.setText(this.currentChannel.getName());
 
         // init list view
-        this.messageCellFactory = new MessageCellFactory();
-        lvTextChat.setCellFactory(messageCellFactory);
+        lvTextChat.setCellFactory(new MessageCellFactory());
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
@@ -282,7 +313,7 @@ public class ServerScreenController implements Controller{
     /**
      * send msg via websocket if enter
      *
-     * @param actionEvent
+     * @param actionEvent occurs on enter
      */
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
         String message = this.tfInputMessage.getText();

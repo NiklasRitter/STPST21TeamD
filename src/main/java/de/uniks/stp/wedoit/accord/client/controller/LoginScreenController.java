@@ -17,8 +17,8 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 public class LoginScreenController implements Controller{
 
     private LocalUser model;
-    private Editor editor;
-    private Parent view;
+    private final Editor editor;
+    private final Parent view;
 
     private Button btnLogin;
     private Button btnRegister;
@@ -27,7 +27,7 @@ public class LoginScreenController implements Controller{
     private TextField pwUserPw;
     private Label errorLabel;
 
-    private RestClient restClient;
+    private final RestClient restClient;
 
     public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -110,7 +110,7 @@ public class LoginScreenController implements Controller{
     /**
      * register user to server and login, redirect to MainScreen
      *
-     * @param actionEvent
+     * @param actionEvent occurs when clicking the register button
      */
     private void btnRegisterOnClicked(ActionEvent actionEvent) {
         String name = this.tfUserName.getText();
@@ -148,7 +148,7 @@ public class LoginScreenController implements Controller{
     /**
      * open Optionsmenu
      *
-     * @param actionEvent
+     * @param actionEvent occurs when clicking the options button
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();

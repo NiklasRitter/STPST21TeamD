@@ -1,6 +1,5 @@
 package de.uniks.stp.wedoit.accord.client;
 
-
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -9,20 +8,16 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import org.json.JSONArray;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import java.util.*;
+
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
 
 public class Editor {
 
     private AccordClient accordClient;
-    private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
 
-    private NetworkController networkController = new NetworkController(this);
+    private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+    private final NetworkController networkController = new NetworkController(this);
 
     private Server currentServer;
 
@@ -112,8 +107,7 @@ public class Editor {
                 return user;
             }
         }
-        User user = new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
-        return user;
+        return new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
     }
 
     /**
@@ -167,16 +161,16 @@ public class Editor {
     /**
      * get a user by id
      *
-     * @param id id of the user
+     * @param userId   id of the user
      * @return user
      */
-    public User getUserById(String id) {
-        List<User> users = currentServer.getMembers();
+    public User getServerUserById(Server server, String userId) {
+        List<User> users = server.getMembers();
         Objects.requireNonNull(users);
-        Objects.requireNonNull(id);
+        Objects.requireNonNull(userId);
 
-        for (User user : users) {
-            if (id.equals(user.getId())) {
+        for (User user: users) {
+            if (userId.equals(user.getId())) {
                 return user;
             }
         }
@@ -194,9 +188,17 @@ public class Editor {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
+        this.currentServer = server;
+
+        List<String> categoryIds = new ArrayList<>();
+        for (Category category: server.getCategories()) {
+            categoryIds.add(category.getId());
+        }
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
-            Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
-            category.setServer(server);
+            if (!categoryIds.contains(serversCategoryResponse.getJSONObject(index).getString(COM_ID))) {
+                Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
+                category.setServer(server);
+            }
         }
         return server.getCategories();
     }
@@ -213,18 +215,23 @@ public class Editor {
 
         this.currentServer = category.getServer();
 
+        List<String> channelIds = new ArrayList<>();
+        for (Channel channel: category.getChannels()) {
+            channelIds.add(channel.getId());
+        }
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
-            channel.setCategory(category);
-            List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-            for (String memberId : memberIds) {
-                User user = this.getUserById(memberId);
-                channel.withMembers(user);
+            if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(COM_ID))) {
+                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+                channel.setCategory(category);
+                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
+                for (String memberId: memberIds) {
+                    User user = this.getServerUserById(category.getServer(), memberId);
+                    channel.withMembers(user);
+                }
             }
         }
         return category.getChannels();
     }
-
 
     /**
      * deletes a user with the given id

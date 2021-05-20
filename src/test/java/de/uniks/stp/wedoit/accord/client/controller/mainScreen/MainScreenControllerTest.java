@@ -64,7 +64,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
 
-        this.stageManager.showMainScreen(restMock);
+        StageManager.showMainScreen(restMock);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -146,7 +146,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         // Mock the rest client getServers method
         mockRestClient(json);
 
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         Assert.assertEquals(0, listView.getItems().toArray().length);
 
@@ -159,14 +159,14 @@ public class MainScreenControllerTest extends ApplicationTest {
 
         mockRestClient(json);
 
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         Assert.assertEquals(2, listView.getItems().toArray().length);
         for (Object server : listView.getItems()) {
             Assert.assertTrue(server instanceof Server);
         }
-        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
-        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
 
         //create a new server
         stageManager.getEditor().haveServer(stageManager.getEditor().getLocalUser(), "123", "AOServer");
@@ -193,7 +193,7 @@ public class MainScreenControllerTest extends ApplicationTest {
 
         mockRestClient(json);
 
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Login", stage.getTitle());
@@ -207,18 +207,18 @@ public class MainScreenControllerTest extends ApplicationTest {
 
         mockRestClient(json);
 
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         Assert.assertEquals(2, listView.getItems().toArray().length);
         for (Object server : listView.getItems()) {
             Assert.assertTrue(server instanceof Server);
         }
-        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
-        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
 
         // Select server one
         listView.getSelectionModel().select(1);
-        Server server = (Server) listView.getSelectionModel().getSelectedItem();
+        Server server = listView.getSelectionModel().getSelectedItem();
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
@@ -239,18 +239,18 @@ public class MainScreenControllerTest extends ApplicationTest {
 
         mockRestClient(json);
 
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         Assert.assertEquals(2, listView.getItems().toArray().length);
         for (Object server : listView.getItems()) {
             Assert.assertTrue(server instanceof Server);
         }
-        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
-        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
 
         // Select server one
         listView.getSelectionModel().select(1);
-        Server server = (Server) listView.getSelectionModel().getSelectedItem();
+        Server server = listView.getSelectionModel().getSelectedItem();
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
