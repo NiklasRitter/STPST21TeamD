@@ -117,7 +117,7 @@ public class ServerScreenController implements Controller{
         this.btnOptions.setOnAction(this::settingsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
-        this.tvServerChannels.setOnMouseReleased(this::lvServerChannelsOnDoubleClicked);
+        this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
 
     }
 
@@ -232,12 +232,13 @@ public class ServerScreenController implements Controller{
      *
      * @param mouseEvent occurs when a listitem is clicked
      */
-    private void lvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
+    private void tvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
-            /*Channel channel = (Channel) lvServerChannels.getSelectionModel().getSelectedItem();
-            if (channel != null) {
+            if (tvServerChannels.getSelectionModel().getSelectedItem() instanceof Channel) {
+                Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem();
+
                 this.initChannelChat(channel);
-            }*/
+            }
         }
     }
 
