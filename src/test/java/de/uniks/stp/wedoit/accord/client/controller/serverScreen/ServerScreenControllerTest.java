@@ -64,6 +64,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     @Mock
     List<Callback<JsonNode>> callbacks;
 
+    @Mock
     WebSocketClient chatWebSocketClient;
 
     @Mock
