@@ -15,8 +15,8 @@ import java.util.Map;
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class NetworkController {
-    private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
-    private Editor editor;
+    private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+    private final Editor editor;
 
     public NetworkController(Editor editor) {
         this.editor = editor;
@@ -109,7 +109,6 @@ public class NetworkController {
     public void handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
-        jsonObject.getString(COM_CHANNEL).equals("private");
         PrivateMessage message = new PrivateMessage();
         message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
         message.setText(jsonObject.getString(COM_MESSAGE));
