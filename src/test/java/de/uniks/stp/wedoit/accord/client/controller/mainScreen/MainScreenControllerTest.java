@@ -49,6 +49,9 @@ public class MainScreenControllerTest extends ApplicationTest {
     @Mock
     private WebSocketClient webSocketClient;
 
+    @Mock
+    WebSocketClient serverWebSocket;
+
     @Override
     public void start(Stage stage) {
         // start application
@@ -59,6 +62,8 @@ public class MainScreenControllerTest extends ApplicationTest {
         //create localUser to skip the login screen
         localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         stageManager.getEditor().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        stageManager.getEditor().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                + AND_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", serverWebSocket);
 
         this.stageManager.showMainScreen(restMock);
         this.stage.centerOnScreen();
@@ -100,6 +105,7 @@ public class MainScreenControllerTest extends ApplicationTest {
     public void welcomeButtonTest() {
         this.stageManager.getEditor().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
+
 
         clickOn("#btnWelcome");
         Assert.assertEquals("Welcome", stage.getTitle());
