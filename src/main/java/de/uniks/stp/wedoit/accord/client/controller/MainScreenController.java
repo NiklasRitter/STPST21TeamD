@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 
 public class MainScreenController implements Controller{
 
-    private RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private final RestClient restClient;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private Button welcomeButton;
     private Button optionsButton;
     private Button addServerButton;

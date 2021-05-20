@@ -34,18 +34,17 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 public class ServerScreenController implements Controller{
 
     private Server server;
-    private RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private final RestClient restClient;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
     private Label lbServerName;
-    private ListView lvServerChannels;
-    private ListView lvServerUsers;
+    private ListView<Channel> lvServerChannels;
+    private ListView<User> lvServerUsers;
     private TextField tfInputMessage;
-    private ListView listView;
     private WSCallback serverWSCallback = this::handleServerMessage;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
@@ -53,7 +52,6 @@ public class ServerScreenController implements Controller{
     private PropertyChangeListener newMessagesListener = this::newMessage;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
-    private MessageCellFactory messageCellFactory;
     private ObservableList<Message> observableMessageList;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
@@ -76,7 +74,11 @@ public class ServerScreenController implements Controller{
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
+        this.lbServerName.setText(server.getName());
+
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
@@ -96,12 +98,9 @@ public class ServerScreenController implements Controller{
 
         this.initCategoryChannelList();
 
-        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
-
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.btnOptions.setOnAction(this::settingsButtonOnClick);
+        this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.lvServerChannels.setOnMouseReleased(this::lvServerChannelsOnDoubleClicked);
@@ -125,34 +124,51 @@ public class ServerScreenController implements Controller{
 
     public void stop() {
         this.btnLogout.setOnAction(null);
-        this.btnHome.setOnAction(null);
         this.btnOptions.setOnAction(null);
+        this.btnHome.setOnAction(null);
+        this.tfInputMessage.setOnAction(null);
+        this.lvServerChannels.setOnMouseReleased(null);
         this.btnLogout = null;
         this.btnHome = null;
         this.btnOptions = null;
-        editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-        editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId());
-
-        //this.localUser.withoutServers(server);
 
         this.lbServerName = null;
         this.lvServerChannels = null;
         this.lvServerUsers = null;
         this.tfInputMessage = null;
         this.lvTextChat = null;
+
+        editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+        editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
+                +  AND_SERVER_ID_URL + this.server.getId());
+
         this.server = null;
+
+        if (this.currentChannel != null) {
+            this.currentChannel.listeners()
+                    .removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        }
+        this.chatWSCallback = null;
+        this.serverWSCallback = null;
         this.newMessagesListener = null;
     }
 
 
     // Additional methods
-
+    /**
+     * The localUser will be redirect to the HomeScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void homeButtonOnClick(ActionEvent actionEvent) {
         StageManager.showMainScreen(restClient);
     }
-
-    private void settingsButtonOnClick(ActionEvent actionEvent) {
+    /**
+     * The localUser will be redirect to the OptionsScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
+    private void optionsButtonOnClick(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
     }
 
@@ -200,7 +216,6 @@ public class ServerScreenController implements Controller{
 
                 editor.haveChannels(category, categoriesChannelResponse);
 
-                //TODO use something different then a cell factory
                 categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
                 lvServerChannels.setCellFactory(categoriesListViewCellFactory);
 
@@ -221,7 +236,7 @@ public class ServerScreenController implements Controller{
      */
     private void lvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
-            Channel channel = (Channel) lvServerChannels.getSelectionModel().getSelectedItem();
+            Channel channel = this.lvServerChannels.getSelectionModel().getSelectedItem();
             if (channel != null) {
                 this.initChannelChat(channel);
             }
@@ -242,8 +257,7 @@ public class ServerScreenController implements Controller{
         this.lbChannelName.setText(this.currentChannel.getName());
 
         // init list view
-        this.messageCellFactory = new MessageCellFactory();
-        lvTextChat.setCellFactory(messageCellFactory);
+        lvTextChat.setCellFactory(new MessageCellFactory());
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
