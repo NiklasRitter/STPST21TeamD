@@ -166,6 +166,7 @@ public class StageManager extends Application {
             //init controller
             ServerScreenController serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, server);
             serverScreenController.init();
+            controllerMap.put("serverScreenController", serverScreenController);
 
             //display
             stage.setTitle("Server");

@@ -154,8 +154,8 @@ public class LoginTest extends ApplicationTest {
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username or password is wrong.", errorLabel.getText());
 
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
     @Test
@@ -180,8 +180,8 @@ public class LoginTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
 
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
     @Test
@@ -207,8 +207,8 @@ public class LoginTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
 
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
     @Test
@@ -234,8 +234,8 @@ public class LoginTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
 
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
 }

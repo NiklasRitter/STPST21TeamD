@@ -101,7 +101,7 @@ public class LoginScreenController implements Controller {
     /**
      * register user to server and login, redirect to MainScreen
      *
-     * @param actionEvent
+     * @param actionEvent occurs when clicking the register button
      */
     private void btnRegisterOnClicked(ActionEvent actionEvent) {
         String name = this.tfUserName.getText();
@@ -138,7 +138,7 @@ public class LoginScreenController implements Controller {
     /**
      * open Optionsmenu
      *
-     * @param actionEvent
+     * @param actionEvent occurs when clicking the options button
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();

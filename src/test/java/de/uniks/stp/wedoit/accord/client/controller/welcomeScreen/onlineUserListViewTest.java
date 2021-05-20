@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -58,8 +59,6 @@ public class onlineUserListViewTest extends ApplicationTest {
 
     @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentSystemCaptorWebSocket;
-    private WSCallback wsSystemCallback;
-
 
     @BeforeEach
     public void setup() {
@@ -89,7 +88,7 @@ public class onlineUserListViewTest extends ApplicationTest {
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
 
-        ListView userListView = lookup("#lwOnlineUsers").queryListView();
+        ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
 
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -108,7 +107,7 @@ public class onlineUserListViewTest extends ApplicationTest {
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
         JsonObject webSocketJson = webSocketCallbackUserJoined();
-        ListView userListView = lookup("#lwOnlineUsers").queryListView();
+        ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
 
         Assert.assertEquals(3, userListView.getItems().size());
         Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
@@ -136,7 +135,7 @@ public class onlineUserListViewTest extends ApplicationTest {
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
 
-        ListView userListView = lookup("#lwOnlineUsers").queryListView();
+        ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
 
         JsonObject webSocketJsonUserJoined = webSocketCallbackUserJoined();
         mockSystemWebSocket(webSocketJsonUserJoined);
@@ -210,7 +209,7 @@ public class onlineUserListViewTest extends ApplicationTest {
     public void mockSystemWebSocket(JsonObject webSocketJson) {
         // mock websocket
         verify(systemWebSocketClient).setCallback(callbackArgumentSystemCaptorWebSocket.capture());
-        wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
+        WSCallback wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
 
         wsSystemCallback.handleMessage(webSocketJson);
     }

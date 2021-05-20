@@ -31,7 +31,7 @@ public class MainScreenController implements Controller {
     private Button serverButton;
     private Button logoutButton;
     private ListView<Server> serverListView;
-    private final PropertyChangeListener serverListListener = this::serverListViewChanged;
+    private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private MainScreenServerListView mainScreenServerListView;
 
     public MainScreenController(Parent view, LocalUser model, Editor editor) {
@@ -109,6 +109,7 @@ public class MainScreenController implements Controller {
         logoutButton.setOnAction(null);
 
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
+        this.serverListListener = null;
     }
 
     // Additional methods

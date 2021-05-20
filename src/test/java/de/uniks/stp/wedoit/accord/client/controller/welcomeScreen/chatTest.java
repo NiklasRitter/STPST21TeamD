@@ -62,9 +62,6 @@ public class chatTest extends ApplicationTest {
     private ArgumentCaptor<WSCallback> callbackArgumentSystemCaptorWebSocket;
     private WSCallback wsSystemCallback;
 
-    @Captor
-    private ArgumentCaptor<WSCallback> callbackArgumentCaptorChatWebSocket;
-    private WSCallback wsChatCallback;
     private Editor editor;
 
     @BeforeEach
@@ -99,10 +96,10 @@ public class chatTest extends ApplicationTest {
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
-        ListView lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
 
         lwOnlineUsers.getSelectionModel().select(0);
-        User user = (User) lwOnlineUsers.getSelectionModel().getSelectedItem();
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
 
         clickOn("#lwOnlineUsers");
 
@@ -131,11 +128,11 @@ public class chatTest extends ApplicationTest {
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
-        ListView lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
 
 
         lwOnlineUsers.getSelectionModel().select(0);
-        User user = (User) lwOnlineUsers.getSelectionModel().getSelectedItem();
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
 
         clickOn("#lwOnlineUsers");
         WaitForAsyncUtils.waitForFxEvents();
@@ -158,9 +155,7 @@ public class chatTest extends ApplicationTest {
 
         //init user list and select first user
         initUserListView();
-        Label lblSelectedUser = lookup("#lblSelectedUser").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
-        ListView lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
 
         //send message
         clickOn("#tfEnterPrivateChat");
@@ -177,10 +172,10 @@ public class chatTest extends ApplicationTest {
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
-        ListView lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
 
         lwOnlineUsers.getSelectionModel().select(0);
-        User user = (User) lwOnlineUsers.getSelectionModel().getSelectedItem();
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
 
         clickOn("#lwOnlineUsers");
 
@@ -202,7 +197,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
 
         lwOnlineUsers.getSelectionModel().select(1);
-        User user1 = (User) lwOnlineUsers.getSelectionModel().getSelectedItem();
+        User user1 = lwOnlineUsers.getSelectionModel().getSelectedItem();
 
         clickOn("#lwOnlineUsers");
         WaitForAsyncUtils.waitForFxEvents();
@@ -213,7 +208,7 @@ public class chatTest extends ApplicationTest {
         clickOn("#lwPrivateChat");
 
         lwOnlineUsers.getSelectionModel().select(0);
-        User user2 = (User) lwOnlineUsers.getSelectionModel().getSelectedItem();
+        User user2 = lwOnlineUsers.getSelectionModel().getSelectedItem();
         clickOn("#lwOnlineUsers");
 
         Assert.assertEquals(user2.getName(), lblSelectedUser.getText());
@@ -251,7 +246,7 @@ public class chatTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        ListView userListView = lookup("#lwOnlineUsers").queryListView();
+        ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
 
         Assert.assertEquals(3, userListView.getItems().size());
         Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());

@@ -96,11 +96,11 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         // Mock the rest client getServers method
         mockRestClient(json);
         WaitForAsyncUtils.waitForFxEvents();
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         Assert.assertEquals(2, listView.getItems().toArray().length);
-        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
-        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
 
         clickOn("#btnAddServer");
 
@@ -141,11 +141,11 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         // Mock the rest client getServers method
         mockRestClient(json);
         WaitForAsyncUtils.waitForFxEvents();
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         Assert.assertEquals(2, listView.getItems().toArray().length);
-        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
-        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
 
         clickOn("#btnAddServer");
 
@@ -188,11 +188,11 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         // Mock the rest client getServers method
         mockRestClient(json);
         WaitForAsyncUtils.waitForFxEvents();
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         Assert.assertEquals(2, listView.getItems().toArray().length);
-        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
-        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(1)).getName());
+        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
 
         clickOn("#btnAddServer");
 

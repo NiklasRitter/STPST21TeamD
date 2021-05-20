@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.stage.Stage;
@@ -32,9 +31,22 @@ import static org.mockito.Mockito.when;
 
 public class WelcomeScreenButtonTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
-    private LocalUser localUser;
+    @Mock
+    private RestClient restMock;
+
+    @Mock
+    private HttpResponse<JsonNode> res;
+
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
+    @Mock
+    private WebSocketClient systemWebSocketClient;
+    @Mock
+    private WebSocketClient chatWebSocketClient;
 
     @Override
     public void start(Stage stage) {
@@ -51,24 +63,6 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
-    @Mock
-    private RestClient restMock;
-
-    @Mock
-    private HttpResponse<JsonNode> res;
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
-    @Mock
-    private WebSocketClient systemWebSocketClient;
-
-    @Mock
-    private WebSocketClient chatWebSocketClient;
 
     @BeforeEach
     public void setup() {

@@ -38,7 +38,6 @@ public class WelcomeScreenController implements Controller {
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
-    private PrivateMessageCellFactory chatCellFactory;
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private final PropertyChangeListener chatListener = this::newMessage;
     private ObservableList<User> onlineUserObservableList;
@@ -116,7 +115,7 @@ public class WelcomeScreenController implements Controller {
     /**
      * redirect to Main Screen
      *
-     * @param actionEvent
+     * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
         StageManager.showMainScreen();
@@ -134,7 +133,7 @@ public class WelcomeScreenController implements Controller {
     /**
      * redirect to Options Menu
      *
-     * @param actionEvent
+     * @param actionEvent occurs when Options Button is clicked
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
@@ -226,7 +225,7 @@ public class WelcomeScreenController implements Controller {
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
 
         // load list view
-        chatCellFactory = new PrivateMessageCellFactory();
+        PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
         this.privateMessageObservableList = FXCollections.observableList(currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
                 .collect(Collectors.toList()));

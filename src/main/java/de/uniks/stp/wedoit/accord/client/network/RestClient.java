@@ -60,6 +60,12 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * Request to logout given user
+     *
+     * @param userKey  userKey of the user to be logged out
+     * @param callback callback
+     */
     public void logout(String userKey, Callback<JsonNode> callback) {
         // Use UniRest to make register request
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + LOGOUT_PATH)
