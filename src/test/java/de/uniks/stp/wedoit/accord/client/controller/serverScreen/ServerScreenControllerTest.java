@@ -60,9 +60,6 @@ public class ServerScreenControllerTest extends ApplicationTest {
     @Mock
     WebSocketClient chatWebSocketClient;
 
-    @Mock
-    WSCallback callback;
-
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
@@ -96,10 +93,10 @@ public class ServerScreenControllerTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen and create server to skip the MainScreen
-        localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
-        server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
-        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
-        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        this.localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
+        this.server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId(),chatWebSocketClient);
 
         this.stageManager.showServerScreen(server, restMock);
@@ -121,9 +118,9 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public void mockWebSocket(JsonObject webSocketJson) {
         // mock websocket
         verify(webSocketClient).setCallback(callbackArgumentCaptorWebSocket.capture());
-        wsCallback = callbackArgumentCaptorWebSocket.getValue();
+        this.wsCallback = callbackArgumentCaptorWebSocket.getValue();
 
-        wsCallback.handleMessage(webSocketJson);
+        this.wsCallback.handleMessage(webSocketJson);
     }
 
     public void mockChannelRest(JsonObject restClientJson) {
@@ -149,9 +146,9 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public void mockChatWebSocket(JsonObject webSocketJson) {
         // mock websocket
         verify(chatWebSocketClient).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
-        chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
+        this.chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
 
-        chatWsCallback.handleMessage(webSocketJson);
+        this.chatWsCallback.handleMessage(webSocketJson);
     }
 
     @Test
@@ -229,13 +226,13 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 }
             }
         }
-        Assert.assertEquals(true, userPhil.isOnlineStatus());
-        Assert.assertEquals(false, userI2.isOnlineStatus());
+        Assert.assertTrue(userPhil.isOnlineStatus());
+        Assert.assertFalse(userI2.isOnlineStatus());
 
         wsCallback.handleMessage(webSocketCallbackUserLeft());
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(false, userPhil.isOnlineStatus());
-        Assert.assertEquals(false, userI2.isOnlineStatus());
+        Assert.assertFalse(userPhil.isOnlineStatus());
+        Assert.assertFalse(userI2.isOnlineStatus());
 
     }
 
@@ -247,12 +244,12 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(stage.getTitle().equals("Login"));
+        Assert.assertEquals("Login", stage.getTitle());
     }
 
     @Test
     public void LogoutSuccessfulTest() {
-        Assert.assertTrue(stage.getTitle().equals("Server"));
+        Assert.assertEquals("Server", stage.getTitle());
         mockRest(getServerIdSuccessful());
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -262,14 +259,14 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(stage.getTitle().equals("Login"));
+        Assert.assertEquals("Login", stage.getTitle());
 
 
     }
 
     @Test
     public void logoutFailureTest() {
-        Assert.assertTrue(stage.getTitle().equals("Server"));
+        Assert.assertEquals("Server", stage.getTitle());
         mockRest(getServerIdSuccessful());
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -279,7 +276,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(stage.getTitle().equals("Login"));
+        Assert.assertEquals("Login", stage.getTitle());
 
 
     }

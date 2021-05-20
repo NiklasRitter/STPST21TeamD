@@ -1,6 +1,5 @@
 package de.uniks.stp.wedoit.accord.client;
 
-
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -9,7 +8,6 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import org.json.JSONArray;
 
-import javax.json.JsonObject;
 import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
@@ -17,8 +15,8 @@ import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
 public class Editor {
 
     private AccordClient accordClient;
-    private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
-    private NetworkController networkController = new NetworkController(this);
+    private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+    private final NetworkController networkController = new NetworkController(this);
     private Server currentServer;
 
     public NetworkController getNetworkController() {

@@ -138,8 +138,8 @@ public class ServerScreenController implements Controller{
         this.tfInputMessage = null;
         this.lvTextChat = null;
 
-        editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-        editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
+        this.editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+        this.editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId());
 
         this.server = null;
@@ -192,7 +192,7 @@ public class ServerScreenController implements Controller{
             if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
 
-                editor.haveCategories(this.server, serversCategoryResponse);
+                this.editor.haveCategories(this.server, serversCategoryResponse);
 
                 List<Category> categoryList = this.server.getCategories();
                 for (Category category: categoryList) {
@@ -214,7 +214,7 @@ public class ServerScreenController implements Controller{
             if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
 
-                editor.haveChannels(category, categoriesChannelResponse);
+                this.editor.haveChannels(category, categoriesChannelResponse);
 
                 categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
                 lvServerChannels.setCellFactory(categoriesListViewCellFactory);
@@ -282,7 +282,7 @@ public class ServerScreenController implements Controller{
     /**
      * send msg via websocket if enter
      *
-     * @param actionEvent
+     * @param actionEvent occurs on enter
      */
     private void tfInputMessageOnEnter(ActionEvent actionEvent) {
         String message = this.tfInputMessage.getText();

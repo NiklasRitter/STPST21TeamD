@@ -15,8 +15,8 @@ import java.util.Map;
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class NetworkController {
-    private Map<String, WebSocketClient> webSocketMap = new HashMap<>();
-    private Editor editor;
+    private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+    private final Editor editor;
 
     public NetworkController(Editor editor) {
         this.editor = editor;

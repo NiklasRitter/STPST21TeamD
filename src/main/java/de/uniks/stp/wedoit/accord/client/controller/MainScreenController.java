@@ -120,6 +120,7 @@ public class MainScreenController implements Controller{
         logoutButton.setOnAction(null);
 
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
+        this.serverListListener = null;
     }
 
     // Additional methods
