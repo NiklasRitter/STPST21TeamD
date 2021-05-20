@@ -1,7 +1,6 @@
-package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
+package de.uniks.stp.wedoit.accord.client.controller.privateChatsScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.stage.Stage;
@@ -30,7 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class WelcomeScreenButtonTest extends ApplicationTest {
+public class PrivateChatsScreenButtonTest extends ApplicationTest {
 
     private Stage stage;
     private StageManager stageManager;
@@ -74,7 +73,7 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    public void directToWelcomeScreen() {
+    public void directToPrivateChatsScreen() {
         //Mocking of RestClient login function
         JsonObject json = Json.createObjectBuilder()
                 .add("status", "success")
@@ -102,7 +101,7 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
         callbackLogin.completed(res);
 
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnWelcome");
+        clickOn("#btnPrivateChats");
     }
 
     @Test
@@ -115,11 +114,11 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
                 .build();
         when(res.getBody()).thenReturn(new JsonNode(json.toString()));
 
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
-        // got to welcome screen
+        // got to privateChats screen
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Welcome", stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
 
         // testing logout button
         clickOn("#btnLogout");
@@ -138,11 +137,11 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
     @Test
     public void testBtnOptions() {
 
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
-        // got to welcome screen
+        // got to privateChats screen
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Welcome", stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
 
         // testing options button
         clickOn("#btnOptions");
@@ -154,11 +153,11 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
     @Test
     public void testBtnHome() {
 
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
-        // got to welcome screen
+        // got to privateChats screen
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Welcome", stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
 
         // testing home button
         clickOn("#btnHome");
@@ -170,7 +169,7 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
     @Test
     public void testOnlineUserListViewInit(){
 
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         String returnMessage = Json.createObjectBuilder()
                 .add("status", "success").add("message", "")

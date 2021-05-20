@@ -100,12 +100,12 @@ public class MainScreenControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void welcomeButtonTest() {
+    public void privateChatsButtonTest() {
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
 
-        clickOn("#btnWelcome");
-        Assert.assertEquals("Welcome", stage.getTitle());
+        clickOn("#btnPrivateChats");
+        Assert.assertEquals("Private Chats", stage.getTitle());
     }
 
     @Test

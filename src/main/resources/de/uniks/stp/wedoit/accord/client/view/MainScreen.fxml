@@ -69,7 +69,7 @@
                         </LinearGradient>
                      </textFill>
                   </Button>
-                  <Button id="btnWelcome" mnemonicParsing="false" styleClass="styleButton">
+                  <Button id="btnPrivateChats" mnemonicParsing="false" styleClass="styleButton">
                      <graphic>
                         <ImageView id="btnWelcome" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>

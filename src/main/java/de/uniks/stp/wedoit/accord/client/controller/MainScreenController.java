@@ -28,7 +28,7 @@ public class MainScreenController implements Controller{
     private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
-    private Button welcomeButton;
+    private Button privateChatsButton;
     private Button optionsButton;
     private Button addServerButton;
     private Button serverButton;
@@ -46,7 +46,7 @@ public class MainScreenController implements Controller{
 
     public void init() {
         // Load all view references
-        this.welcomeButton = (Button) view.lookup("#btnWelcome");
+        this.privateChatsButton = (Button) view.lookup("#btnPrivateChats");
         this.optionsButton = (Button) view.lookup("#btnOptions");
         this.serverButton = (Button) view.lookup("#btnServerList");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
@@ -80,7 +80,7 @@ public class MainScreenController implements Controller{
 
 
         // Add action listeners
-        this.welcomeButton.setOnAction(this::welcomeButtonOnClick);
+        this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
         this.optionsButton.setOnAction(this::optionsButtonOnClick);
         this.serverButton.setOnAction(this::serverButtonOnClick);
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
@@ -91,9 +91,9 @@ public class MainScreenController implements Controller{
     }
 
     private void initTooltips() {
-        Tooltip welcomeButton = new Tooltip();
-        welcomeButton.setText("private chats");
-        this.welcomeButton.setTooltip(welcomeButton);
+        Tooltip privateChatsButton = new Tooltip();
+        privateChatsButton.setText("private chats");
+        this.privateChatsButton.setTooltip(privateChatsButton);
 
         Tooltip logoutButton = new Tooltip();
         logoutButton.setText("logout");
@@ -113,7 +113,7 @@ public class MainScreenController implements Controller{
     }
 
     public void stop() {
-        welcomeButton.setOnAction(null);
+        privateChatsButton.setOnAction(null);
         optionsButton.setOnAction(null);
         serverButton.setOnAction(null);
         addServerButton.setOnAction(null);
@@ -126,12 +126,12 @@ public class MainScreenController implements Controller{
     // Additional methods
 
     /**
-     * Redirect to the WelcomeScreen
+     * Redirect to the PrivateChatsScreen
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
-    private void welcomeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showWelcomeScreen(restClient);
+    private void privateChatsButtonOnClick(ActionEvent actionEvent) {
+        StageManager.showPrivateChatsScreen(restClient);
     }
 
     /**
