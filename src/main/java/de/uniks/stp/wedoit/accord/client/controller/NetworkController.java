@@ -7,7 +7,10 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,7 +27,18 @@ public class NetworkController {
 
     public void start() {
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
-        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handlePrivateChatMessage);
+        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername(), this::handlePrivateChatMessage);
+        System.out.println(PRIVATE_USER_CHAT_PREFIX + clearUsername());
+    }
+
+    public String clearUsername(){
+        String newName = null;
+        try {
+            newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return newName;
     }
 
     public WebSocketClient getOrCreateWebSocket(String url) {
@@ -120,13 +134,13 @@ public class NetworkController {
 
     public void sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
+                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername());
         webSocketClient.sendMessage(jsonMsgString);
     }
 
     public void sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(CHAT_USER_URL + this.editor.getLocalUser().getName()
+                getOrCreateWebSocket(CHAT_USER_URL + clearUsername()
                         +  AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
     }

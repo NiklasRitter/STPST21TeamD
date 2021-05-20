@@ -83,11 +83,6 @@ public class LoginScreenController implements Controller{
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
             errorLabel.setText("Username or password is missing");
         }
-        else if (tfUserName.getText().contains(" ")) {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
-        }
         else {
             restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
                 if (!response.getBody().getObject().getString("status").equals("success")) {
@@ -99,6 +94,7 @@ public class LoginScreenController implements Controller{
                 } else {
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
+                    System.out.println(userKey);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
                     editor.getNetworkController().start();
                     Platform.runLater(() -> StageManager.showMainScreen(restClient));
@@ -116,7 +112,7 @@ public class LoginScreenController implements Controller{
         String name = this.tfUserName.getText();
         String password = this.pwUserPw.getText();
 
-        if (name != null && !name.isEmpty() && password != null && !password.isEmpty() && !name.contains(" ")) {
+        if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
             restClient.register(name, password, registerResponse -> {
                 // if user successful registered
                 if (registerResponse.getBody().getObject().getString("status").equals("success")) {
@@ -132,11 +128,6 @@ public class LoginScreenController implements Controller{
                     Platform.runLater(() -> errorLabel.setText("Username already taken."));
                 }
             });
-        }
-        else if (name.contains(" ")){
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
         }
         else {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");

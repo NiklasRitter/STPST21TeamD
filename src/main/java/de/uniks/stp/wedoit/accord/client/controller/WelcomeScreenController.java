@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -79,6 +80,7 @@ public class WelcomeScreenController implements Controller{
         this.initTooltips();
 
         this.initOnlineUsersList();
+
     }
 
     private void initTooltips() {
