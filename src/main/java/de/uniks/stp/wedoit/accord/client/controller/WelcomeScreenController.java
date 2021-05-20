@@ -158,7 +158,7 @@ public class WelcomeScreenController implements Controller {
                 .collect(Collectors.toList());
 
         // Add listener for the loaded listView
-        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
         this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
 
         Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));

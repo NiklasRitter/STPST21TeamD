@@ -96,7 +96,6 @@ public class ServerScreenController implements Controller {
             // create users which are member in the server and load user list view
             createUserListView(members);
         } else {
-            stop();
             Platform.runLater(StageManager::showLoginScreen);
         }
     }
