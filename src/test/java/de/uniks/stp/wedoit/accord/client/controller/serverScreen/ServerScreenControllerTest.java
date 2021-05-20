@@ -28,17 +28,17 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
+import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.WS_SERVER_ID_URL;
-import static de.uniks.stp.wedoit.accord.client.Constants.WS_SERVER_URL;
+import static de.uniks.stp.wedoit.accord.client.Constants.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * tests for the ServerScreenController
- * - user list view
- * - logout
+ * - user list view test
+ * - logout test
+ * - channel tree view
  */
 public class ServerScreenControllerTest extends ApplicationTest {
 
@@ -58,7 +58,10 @@ public class ServerScreenControllerTest extends ApplicationTest {
     WebSocketClient webSocketClient;
 
     @Mock
-    WSCallback callback;
+    WebSocketClient serverWebSocket;
+
+    @Mock
+    List<Callback<JsonNode>> callback;
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -67,8 +70,15 @@ public class ServerScreenControllerTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorSecond;
+
+    @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentCaptorWebSocket;
     private WSCallback wsCallback;
+
+    @Captor
+    private ArgumentCaptor<WSCallback> callbackArgumentCaptorServerWebSocket;
+    private WSCallback wsServerCallback;
 
     @BeforeEach
     public void setup() {
@@ -86,6 +96,8 @@ public class ServerScreenControllerTest extends ApplicationTest {
         localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
         stageManager.getEditor().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        stageManager.getEditor().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                + AND_SERVER_ID_URL + this.server.getId(), serverWebSocket);
 
         this.stageManager.showServerScreen(server, restMock);
         this.stage.centerOnScreen();
@@ -108,6 +120,14 @@ public class ServerScreenControllerTest extends ApplicationTest {
         wsCallback = callbackArgumentCaptorWebSocket.getValue();
 
         wsCallback.handleMessage(webSocketJson);
+    }
+
+    public void mockServerWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(serverWebSocket).setCallback(callbackArgumentCaptorServerWebSocket.capture());
+        wsServerCallback = callbackArgumentCaptorServerWebSocket.getValue();
+
+        wsServerCallback.handleMessage(webSocketJson);
     }
 
     @Test
@@ -236,6 +256,57 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
 
+    @Test
+    public void initChannelsTest() {
+        JsonObject restJson = getServerIdSuccessful();
+        JsonObject webSocketJson = webSocketCallbackUserJoined();
+        ListView listView = lookup("#lvServerUsers").queryListView();
+        Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
+        Assert.assertEquals(0, listView.getItems().toArray().length);
+        mockRest(restJson);
+        Assert.assertEquals(3, listView.getItems().toArray().length);
+        Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
+        Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
+        Assert.assertTrue(listView.getItems().contains(server.getMembers().get(1)));
+        Assert.assertTrue(listView.getItems().contains(server.getMembers().get(2)));
+        Assert.assertFalse(listView.getItems().contains(new Server()));
+
+        when(res.getBody()).thenReturn(new JsonNode(getCategories().toString()));
+
+        verify(restMock).getCategories(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+
+        Callback<JsonNode> catCallback = callbackArgumentCaptor.getValue();
+        catCallback.completed(res);
+
+        when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
+
+        verify(restMock, atLeastOnce()).getChannels(anyString(), anyString(), anyString(), callbackArgumentCaptorSecond.capture());
+        callback = callbackArgumentCaptorSecond.getAllValues();
+        for (Callback callBack : callback
+        ) {
+            callBack.completed(res);
+
+        }
+        //callback.completed(res);
+
+        /*when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
+        verify(restMock).getChannels(anyString(), anyString(), anyString(), callbackArgumentCaptorSecond.capture());
+        Callback<JsonNode> callback2 = callbackArgumentCaptorSecond.getValue();
+        callback2.completed(res);*/
+        /*when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
+        verify(restMock, times(2)).getChannels(anyString(), anyString(), anyString(), callbackArgumentCaptorSecond.capture());
+        callback = callbackArgumentCaptorSecond.getValue();
+        callback.completed(res);*/
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
     // Methods for callbacks
 
@@ -287,6 +358,42 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 .add("message", "Log in first")
                 .add("data", "{}")
                 .build();
+    }
+
+    public JsonObject getCategories() {
+        return Json.createObjectBuilder()
+                .add("status", "success").add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df505")
+                                .add("name", "Cat1")
+                                .add("server", "123").add("channels", Json.createArrayBuilder())
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df506")
+                                .add("name", "Cat2")
+                                .add("server", "123").add("channels", Json.createArrayBuilder())
+                        )).build();
+    }
+
+    public JsonObject getChannels() {
+        return Json.createObjectBuilder()
+                .add("status", "success").add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df505")
+                                .add("name", "Ch_1")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "123").add("members", Json.createArrayBuilder())
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df506")
+                                .add("name", "Ch_2")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "123").add("members", Json.createArrayBuilder())
+                        )).build();
     }
 
 }
