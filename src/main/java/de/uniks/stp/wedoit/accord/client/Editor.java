@@ -10,9 +10,6 @@ import javafx.application.Platform;
 import org.json.JSONArray;
 
 import javax.json.JsonObject;
-import java.net.URI;
-import java.util.*;
-
 import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
@@ -165,16 +162,16 @@ public class Editor {
     /**
      * get a user by id
      *
-     * @param id   id of the user
+     * @param userId   id of the user
      * @return user
      */
-    public User getUserById(String id) {
-        List<User> users = currentServer.getMembers();
+    public User getServerUserById(Server server, String userId) {
+        List<User> users = server.getMembers();
         Objects.requireNonNull(users);
-        Objects.requireNonNull(id);
+        Objects.requireNonNull(userId);
 
         for (User user: users) {
-            if (id.equals(user.getId())) {
+            if (userId.equals(user.getId())) {
                 return user;
             }
         }
@@ -192,22 +189,14 @@ public class Editor {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
-        this.currentServer = server;
-
-        boolean exists = false;
+        List<String> categoryIds = new ArrayList<>();
+        for (Category category: server.getCategories()) {
+            categoryIds.add(category.getId());
+        }
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
-            for (Category category: currentServer.getCategories()) {
-                if (category.getId().equals(serversCategoryResponse.getJSONObject(index).getString(COM_ID))) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
+            if (!categoryIds.contains(serversCategoryResponse.getJSONObject(index).getString(COM_ID))) {
                 Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
                 category.setServer(server);
-            }
-            else {
-                exists = false;
             }
         }
         return server.getCategories();
@@ -223,31 +212,23 @@ public class Editor {
         Objects.requireNonNull(category);
         Objects.requireNonNull(categoriesChannelResponse);
 
-        this.currentServer = category.getServer();
-
-        boolean exists = false;
+        List<String> channelIds = new ArrayList<>();
+        for (Channel channel: category.getChannels()) {
+            channelIds.add(channel.getId());
+        }
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            for (Channel channel: category.getChannels()) {
-                if (channel.getId().equals(categoriesChannelResponse.getJSONObject(index).getString(COM_ID))) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
+            if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(COM_ID))) {
                 Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
                 channel.setCategory(category);
                 List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
                 for (String memberId: memberIds) {
-                    User user = this.getUserById(memberId);
+                    User user = this.getServerUserById(category.getServer(), memberId);
                     channel.withMembers(user);
                 }
-            } else {
-                exists = false;
             }
         }
         return category.getChannels();
     }
-
 
     /**
      * deletes a user with the given id

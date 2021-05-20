@@ -5,7 +5,6 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
-import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerScreenChannelsCellFactory;
@@ -51,7 +50,7 @@ public class ServerScreenController implements Controller{
     private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
     private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
-    private final PropertyChangeListener newMessagesListener = this::newMessage;
+    private PropertyChangeListener newMessagesListener = this::newMessage;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private MessageCellFactory messageCellFactory;
@@ -143,6 +142,7 @@ public class ServerScreenController implements Controller{
         this.tfInputMessage = null;
         this.lvTextChat = null;
         this.server = null;
+        this.newMessagesListener = null;
     }
 
 
