@@ -10,6 +10,7 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,11 +28,24 @@ import javax.json.Json;
 import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 import static org.mockito.Mockito.*;
+import static org.testfx.api.FxToolkit.registerPrimaryStage;
 
 public class LoginTest extends ApplicationTest {
 
     private Stage stage;
     private StageManager stageManager;
+
+    @BeforeClass
+    public static void setupSpec() throws Exception {
+        if (Boolean.getBoolean("headless")) {
+            System.setProperty("testfx.robot", "glass");
+            System.setProperty("testfx.headless", "true");
+            System.setProperty("prism.order", "sw");
+            System.setProperty("prism.text", "t2k");
+            System.setProperty("java.awt.headless", "true");
+        }
+        registerPrimaryStage();
+    }
 
     @Override
     public void start(Stage stage) {
@@ -156,8 +170,8 @@ public class LoginTest extends ApplicationTest {
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username or password is wrong.", errorLabel.getText());
 
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
     @Test
@@ -182,36 +196,11 @@ public class LoginTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
 
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
-    @Test
-    public void wrongUsername() {
-        //TestFX
-        String username = "user name";
-        String password = "password";
-
-        clickOn("#tfUserName");
-        write(username);
-
-        clickOn("#pwUserPw");
-        write(password);
-
-        clickOn("#btnLogin");
-
-        Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Usernames are not allowed to contain blanks!", errorLabel.getText());
-
-        TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
-
-        TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
-
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
-    }
+    
 
     @Test
     public void testMissingPassword() {
@@ -236,8 +225,8 @@ public class LoginTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
 
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals(null, stageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
 }

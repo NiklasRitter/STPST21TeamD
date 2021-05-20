@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
 import java.util.HashMap;
@@ -168,6 +169,7 @@ public class StageManager extends Application {
             //init controller
             ServerScreenController serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, restClient, server);
             serverScreenController.init();
+            controllerMap.put("serverScreenController", serverScreenController);
 
             //display
             stage.setTitle("Server");

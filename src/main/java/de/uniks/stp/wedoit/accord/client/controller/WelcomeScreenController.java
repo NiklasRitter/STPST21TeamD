@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -46,7 +47,6 @@ public class WelcomeScreenController implements Controller{
     private ListView<PrivateMessage> lwPrivateChat;
     private final PropertyChangeListener chatListener = this::newMessage;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
-    private PrivateMessageCellFactory chatCellFactory;
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private ObservableList<User> onlineUserObservableList;
     private List<User> availableUsers = new ArrayList<User>();
@@ -80,6 +80,7 @@ public class WelcomeScreenController implements Controller{
         this.initTooltips();
 
         this.initOnlineUsersList();
+
     }
 
     private void initTooltips() {
@@ -123,7 +124,7 @@ public class WelcomeScreenController implements Controller{
     /**
      * redirect to Main Screen
      *
-     * @param actionEvent
+     * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
         StageManager.showMainScreen(restClient);
@@ -141,7 +142,7 @@ public class WelcomeScreenController implements Controller{
     /**
      * redirect to Options Menu
      *
-     * @param actionEvent
+     * @param actionEvent occurs when Options Button is clicked
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
@@ -239,7 +240,7 @@ public class WelcomeScreenController implements Controller{
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
 
         // load list view
-        chatCellFactory = new PrivateMessageCellFactory();
+        PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
         this.privateMessageObservableList = FXCollections.observableList(currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
                 .collect(Collectors.toList()));

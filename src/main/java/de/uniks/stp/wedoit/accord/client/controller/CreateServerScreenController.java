@@ -15,10 +15,10 @@ import org.json.JSONObject;
 
 public class CreateServerScreenController implements Controller{
 
-    private RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private final RestClient restClient;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private TextField tfServerName;
     private Button btnCreateServer;
     private Label errorLabel;

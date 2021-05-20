@@ -8,9 +8,9 @@ import javafx.scene.control.CheckBox;
 
 public class OptionsScreenController implements Controller{
 
-    private Parent view;
-    private Options options;
-    private Editor editor;
+    private final Parent view;
+    private final Options options;
+    private final Editor editor;
 
     private CheckBox btnDarkmode;
 

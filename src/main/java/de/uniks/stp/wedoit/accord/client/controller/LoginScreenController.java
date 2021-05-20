@@ -17,8 +17,8 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 public class LoginScreenController implements Controller{
 
     private LocalUser model;
-    private Editor editor;
-    private Parent view;
+    private final Editor editor;
+    private final Parent view;
 
     private Button btnLogin;
     private Button btnRegister;
@@ -27,7 +27,7 @@ public class LoginScreenController implements Controller{
     private TextField pwUserPw;
     private Label errorLabel;
 
-    private RestClient restClient;
+    private final RestClient restClient;
 
     public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
@@ -83,11 +83,6 @@ public class LoginScreenController implements Controller{
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
             errorLabel.setText("Username or password is missing");
         }
-        else if (tfUserName.getText().contains(" ")) {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
-        }
         else {
             restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
                 if (!response.getBody().getObject().getString("status").equals("success")) {
@@ -99,6 +94,7 @@ public class LoginScreenController implements Controller{
                 } else {
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
+                    System.out.println(userKey);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
                     editor.getNetworkController().start();
                     Platform.runLater(() -> StageManager.showMainScreen(restClient));
@@ -110,13 +106,13 @@ public class LoginScreenController implements Controller{
     /**
      * register user to server and login, redirect to MainScreen
      *
-     * @param actionEvent
+     * @param actionEvent occurs when clicking the register button
      */
     private void btnRegisterOnClicked(ActionEvent actionEvent) {
         String name = this.tfUserName.getText();
         String password = this.pwUserPw.getText();
 
-        if (name != null && !name.isEmpty() && password != null && !password.isEmpty() && !name.contains(" ")) {
+        if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
             restClient.register(name, password, registerResponse -> {
                 // if user successful registered
                 if (registerResponse.getBody().getObject().getString("status").equals("success")) {
@@ -133,11 +129,6 @@ public class LoginScreenController implements Controller{
                 }
             });
         }
-        else if (name.contains(" ")){
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
-        }
         else {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
@@ -148,7 +139,7 @@ public class LoginScreenController implements Controller{
     /**
      * open Optionsmenu
      *
-     * @param actionEvent
+     * @param actionEvent occurs when clicking the options button
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();

@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 
 public class MainScreenController implements Controller{
 
-    private RestClient restClient;
-    private LocalUser localUser;
-    private Editor editor;
-    private Parent view;
+    private final RestClient restClient;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final Parent view;
     private Button welcomeButton;
     private Button optionsButton;
     private Button addServerButton;
@@ -56,6 +56,8 @@ public class MainScreenController implements Controller{
         this.initTooltips();
         // load server of the localUser
         restClient.getServers(localUser.getUserKey(), response -> {
+            System.out.println(response.getBody());
+            System.out.println(localUser.getUserKey());
             if (response.getBody().getObject().getString("status").equals("success")) {
                 JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
 
@@ -120,6 +122,7 @@ public class MainScreenController implements Controller{
         logoutButton.setOnAction(null);
 
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
+        this.serverListListener = null;
     }
 
     // Additional methods
