@@ -128,21 +128,10 @@ public class ServerScreenController implements Controller{
         this.btnHome.setOnAction(null);
         this.tfInputMessage.setOnAction(null);
         this.lvServerChannels.setOnMouseReleased(null);
-        this.btnLogout = null;
-        this.btnHome = null;
-        this.btnOptions = null;
-
-        this.lbServerName = null;
-        this.lvServerChannels = null;
-        this.lvServerUsers = null;
-        this.tfInputMessage = null;
-        this.lvTextChat = null;
 
         this.editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         this.editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 +  AND_SERVER_ID_URL + this.server.getId());
-
-        this.server = null;
 
         if (this.currentChannel != null) {
             this.currentChannel.listeners()

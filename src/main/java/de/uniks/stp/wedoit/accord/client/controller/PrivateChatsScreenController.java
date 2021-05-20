@@ -109,14 +109,6 @@ public class PrivateChatsScreenController implements Controller{
         this.btnOptions.setOnAction(null);
         this.tfPrivateChat.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
-
-        this.btnOptions = null;
-        this.btnHome = null;
-        this.btnLogout = null;
-        this.lwOnlineUsers = null;
-        this.tfPrivateChat = null;
-        this.lwPrivateChat = null;
-        this.lblSelectedUser = null;
     }
 
     /**

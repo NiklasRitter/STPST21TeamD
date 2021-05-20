@@ -56,15 +56,6 @@ public class LoginScreenController implements Controller{
         btnLogin.setOnAction(null);
         btnRegister.setOnAction(null);
         btnOptions.setOnAction(null);
-
-        tfUserName = null;
-        pwUserPw = null;
-        btnLogin = null;
-        btnRegister = null;
-
-        errorLabel = null;
-
-        btnOptions = null;
     }
 
     /**

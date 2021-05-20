@@ -29,7 +29,7 @@ public class OptionsScreenController implements Controller{
     }
 
     public void stop() {
-        btnDarkmode = null;
+        btnDarkmode.setOnAction(null);
     }
 
     private void btnDarkmodeOnClick(ActionEvent actionEvent) {
