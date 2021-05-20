@@ -80,6 +80,10 @@ public class ServerScreenController {
 
         this.serverWebSocket = editor.haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         serverWebSocket.setCallback(serverWSCallback);
+        this.chatWebSocket = editor.haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+        this.chatWebSocket.setCallback(chatWSCallback);
+
 
         tvServerChannelsRoot = new TreeItem<>();
         ChannelTreeView channelTreeView = new ChannelTreeView();
@@ -104,12 +108,8 @@ public class ServerScreenController {
 
         });
 
-        this.chatWebSocket = editor.haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
-        this.chatWebSocket.setCallback(chatWSCallback);
-
         initTooltips();
-
+        addActionListener();
     }
 
     public void addActionListener() {
@@ -192,7 +192,9 @@ public class ServerScreenController {
 
                 List<Category> categoryList = this.server.getCategories();
                 for (Category category : categoryList) {
+
                     loadCategoryChannels(category);
+
                 }
             } else {
                 System.err.println("Error while loading categories from server");
@@ -218,8 +220,6 @@ public class ServerScreenController {
                     categoryItem.getChildren().add(channelItem);
                 }
                 tvServerChannelsRoot.getChildren().add(categoryItem);
-
-                addActionListener();
 
             } else {
                 System.err.println("Error while loading channels from server");
