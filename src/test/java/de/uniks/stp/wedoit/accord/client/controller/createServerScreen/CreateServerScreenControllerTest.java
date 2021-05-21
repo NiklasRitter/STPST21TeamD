@@ -180,7 +180,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertNull(server);
 
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals(textField.getStyle(), "-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Something went wrong while creating the server", errorLabel.getText());
@@ -220,7 +220,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         }
         Assert.assertNull(server);
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals(textField.getStyle(), "-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Name has to be at least 2 symbols long", errorLabel.getText());
