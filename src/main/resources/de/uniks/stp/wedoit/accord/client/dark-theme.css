@@ -41,3 +41,8 @@
 .redLabel {
     -fx-text-fill: #ff0000
 }
+
+.error {
+    -fx-border-color: #ff0000 ;
+    -fx-border-width: 2px;
+}

@@ -36,7 +36,7 @@ public class NetworkController {
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            return this.editor.getLocalUser().getName();
         }
         return newName;
     }

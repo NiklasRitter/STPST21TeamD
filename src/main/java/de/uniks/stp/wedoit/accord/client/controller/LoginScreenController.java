@@ -79,16 +79,16 @@ public class LoginScreenController implements Controller{
     public void login() {
         if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
 
-            tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-            pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             errorLabel.setText("Username or password is missing");
         }
         else {
             restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
                 if (!response.getBody().getObject().getString("status").equals("success")) {
 
-                    tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-                    pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
+                    tfUserName.getStyleClass().add("error");
+                    pwUserPw.getStyleClass().add("error");
                     Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
 
                 } else {
@@ -123,15 +123,15 @@ public class LoginScreenController implements Controller{
                     //reset name and password fields
                     this.tfUserName.setText("");
                     this.pwUserPw.setText("");
-                    tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-                    pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+                    tfUserName.getStyleClass().add("error");
+                    pwUserPw.getStyleClass().add("error");
                     Platform.runLater(() -> errorLabel.setText("Username already taken."));
                 }
             });
         }
         else {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
     }

@@ -35,18 +35,6 @@ public class LoginTest extends ApplicationTest {
     private Stage stage;
     private StageManager stageManager;
 
-    @BeforeClass
-    public static void setupSpec() throws Exception {
-        if (Boolean.getBoolean("headless")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("testfx.headless", "true");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("prism.text", "t2k");
-            System.setProperty("java.awt.headless", "true");
-        }
-        registerPrimaryStage();
-    }
-
     @Override
     public void start(Stage stage) {
         // start application
@@ -162,10 +150,10 @@ public class LoginTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username or password is wrong.", errorLabel.getText());
@@ -191,10 +179,10 @@ public class LoginTest extends ApplicationTest {
         Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
@@ -220,10 +208,10 @@ public class LoginTest extends ApplicationTest {
         Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
