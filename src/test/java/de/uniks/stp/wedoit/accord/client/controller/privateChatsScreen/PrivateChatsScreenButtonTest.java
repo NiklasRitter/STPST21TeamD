@@ -167,7 +167,7 @@ public class PrivateChatsScreenButtonTest extends ApplicationTest {
     }
 
     @Test
-    public void testOnlineUserListViewInit(){
+    public void testOnlineUserListViewInit() {
 
         directToPrivateChatsScreen();
 

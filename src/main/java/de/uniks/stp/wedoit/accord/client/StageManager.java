@@ -18,6 +18,7 @@ import kong.unirest.Unirest;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 public class StageManager extends Application {
 
@@ -28,7 +29,7 @@ public class StageManager extends Application {
     private static Stage popupStage;
     private static Scene scene;
     private static Scene popupScene;
-    private static Map<String, Controller> controllerMap = new HashMap<>();
+    private static final Map<String, Controller> controllerMap = new HashMap<>();
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -38,7 +39,7 @@ public class StageManager extends Application {
 
         try {
             //load view
-            Parent root = FXMLLoader.load(StageManager.class.getResource("view/LoginScreen.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/LoginScreen.fxml")));
 
             if (scene != null) {
                 scene.setRoot(root);
@@ -73,7 +74,7 @@ public class StageManager extends Application {
 
         try {
             //load view
-            Parent root = FXMLLoader.load(StageManager.class.getResource("view/MainScreen.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/MainScreen.fxml")));
             if (scene != null) {
                 scene.setRoot(root);
             } else {
@@ -101,7 +102,7 @@ public class StageManager extends Application {
     public static void showCreateServerScreen(RestClient restClient) {
         try {
             //load view
-            Parent root = FXMLLoader.load(StageManager.class.getResource("view/CreateServerScreen.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateServerScreen.fxml")));
             popupScene = new Scene(root);
 
             updateDarkmode();
@@ -127,7 +128,7 @@ public class StageManager extends Application {
         cleanup();
 
         try {
-            Parent root = FXMLLoader.load(StageManager.class.getResource("view/PrivateChatsScreen.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/WelcomeScreen.fxml")));
             if (scene != null) {
                 scene.setRoot(root);
             } else {
@@ -156,7 +157,7 @@ public class StageManager extends Application {
 
         try {
             //load view
-            Parent root = FXMLLoader.load(StageManager.class.getResource("view/ServerScreen.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/ServerScreen.fxml")));
             if (scene != null) {
                 scene.setRoot(root);
             } else {
@@ -185,7 +186,7 @@ public class StageManager extends Application {
     public static void showOptionsScreen() {
         try {
             //load view
-            Parent root = FXMLLoader.load(StageManager.class.getResource("view/OptionsScreen.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/OptionsScreen.fxml")));
             popupScene = new Scene(root);
 
             updateDarkmode();
@@ -228,29 +229,29 @@ public class StageManager extends Application {
     public static void changeDarkmode(boolean darkmode) {
         if (darkmode) {
             if (scene != null) {
-                scene.getStylesheets().remove(StageManager.class.getResource(
-                        "light-theme.css").toExternalForm());
-                scene.getStylesheets().add(StageManager.class.getResource(
-                        "dark-theme.css").toExternalForm());
+                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
+                scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
             }
             if (popupScene != null) {
-                popupScene.getStylesheets().remove(StageManager.class.getResource(
-                        "light-theme.css").toExternalForm());
-                popupScene.getStylesheets().add(StageManager.class.getResource(
-                        "dark-theme.css").toExternalForm());
+                popupScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
+                popupScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
             }
         } else {
             if (scene != null) {
-                scene.getStylesheets().remove(StageManager.class.getResource(
-                        "dark-theme.css").toExternalForm());
-                scene.getStylesheets().add(StageManager.class.getResource(
-                        "light-theme.css").toExternalForm());
+                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
+                scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
             }
             if (popupScene != null) {
-                popupScene.getStylesheets().remove(StageManager.class.getResource(
-                        "dark-theme.css").toExternalForm());
-                popupScene.getStylesheets().add(StageManager.class.getResource(
-                        "light-theme.css").toExternalForm());
+                popupScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
+                popupScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
             }
         }
     }
@@ -278,9 +279,9 @@ public class StageManager extends Application {
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
-        stage.getIcons().add(new Image(StageManager.class.getResourceAsStream("view/images/Logo.png")));
+        stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
         popupStage = new Stage();
-        popupStage.getIcons().add(new Image(StageManager.class.getResourceAsStream("view/images/Logo.png")));
+        popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
         popupStage.initModality(Modality.WINDOW_MODAL);
         popupStage.initOwner(stage);
         editor = new Editor();

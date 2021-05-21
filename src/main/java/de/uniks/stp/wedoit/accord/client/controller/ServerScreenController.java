@@ -114,6 +114,9 @@ public class ServerScreenController implements Controller {
 
     public void addActionListener() {
 
+        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + editor.getNetworkController().clearUsername()
+                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.btnOptions.setOnAction(this::optionsButtonOnClick);

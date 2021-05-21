@@ -6,7 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 
-public class OptionsScreenController implements Controller{
+public class OptionsScreenController implements Controller {
 
     private final Parent view;
     private final Options options;

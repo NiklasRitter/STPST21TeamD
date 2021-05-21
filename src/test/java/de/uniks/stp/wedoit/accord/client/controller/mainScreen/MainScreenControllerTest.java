@@ -121,7 +121,11 @@ public class MainScreenControllerTest extends ApplicationTest {
         // Mock the rest client getServers method
         mockRestClient(json);
 
+<<<<<<< HEAD
         ListView<Server> listView = lookup("#lwServerList").queryListView();
+=======
+        ListView<Object> listView = lookup("#lwServerList").queryListView();
+>>>>>>> master
 
         // Test that two servers are listed in the listView
         Assert.assertEquals(2, listView.getItems().toArray().length);
@@ -178,9 +182,15 @@ public class MainScreenControllerTest extends ApplicationTest {
         }
 
         //Test correct alphabetical order of the items and Test correct items in the list view
+<<<<<<< HEAD
         Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
         Assert.assertEquals("AOServer", (listView.getItems().get(1)).getName());
         Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(2)).getName());
+=======
+        Assert.assertEquals("AMainTestServerTwo", listView.getItems().get(0).getName());
+        Assert.assertEquals("AOServer", listView.getItems().get(1).getName());
+        Assert.assertEquals("BMainTestServerOne", listView.getItems().get(2).getName());
+>>>>>>> master
 
     }
 
@@ -217,13 +227,49 @@ public class MainScreenControllerTest extends ApplicationTest {
         Server server = listView.getSelectionModel().getSelectedItem();
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
 
         doubleClickOn("#lwServerList");
 
         // Test correct server and correct screen
         Assert.assertEquals("BMainTestServerOne", server.getName());
         Assert.assertEquals("Server", stage.getTitle());
+<<<<<<< HEAD
+=======
+
+    }
+
+    //Test open server with the server button
+    @Test
+    public void serverButtonOnClickTest() {
+
+        JsonObject json = buildGetServersSuccessWithTwoServers();
+
+        mockRestClient(json);
+
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
+
+        Assert.assertEquals(2, listView.getItems().toArray().length);
+        for (Object server : listView.getItems()) {
+            Assert.assertTrue(server instanceof Server);
+        }
+        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
+
+        // Select server one
+        listView.getSelectionModel().select(1);
+        Server server = listView.getSelectionModel().getSelectedItem();
+
+        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+
+        clickOn("#btnServer");
+
+        // Test correct server and correct screen
+        Assert.assertEquals("BMainTestServerOne", server.getName());
+        Assert.assertEquals("Server", stage.getTitle());
+
+>>>>>>> master
     }
 
     // Help methods to create response for mocked rest client
