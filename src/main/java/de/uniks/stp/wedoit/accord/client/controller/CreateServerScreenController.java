@@ -13,7 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-public class CreateServerScreenController implements Controller{
+public class CreateServerScreenController implements Controller {
 
     private final RestClient restClient;
     private final LocalUser localUser;

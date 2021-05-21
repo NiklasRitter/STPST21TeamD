@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainScreenController implements Controller{
+public class MainScreenController implements Controller {
 
     private final RestClient restClient;
     private final LocalUser localUser;

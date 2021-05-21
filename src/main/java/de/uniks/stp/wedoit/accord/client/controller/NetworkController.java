@@ -127,7 +127,7 @@ public class NetworkController {
     public void sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(CHAT_USER_URL + this.editor.getLocalUser().getName()
-                        +  AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
+                        + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
     }
 

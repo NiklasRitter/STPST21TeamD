@@ -39,7 +39,7 @@
 }
 
 .redLabel {
-    -fx-text-fill:"RED"
+    -fx-text-fill: "RED"
 }
 
 .listViewUserOnline {

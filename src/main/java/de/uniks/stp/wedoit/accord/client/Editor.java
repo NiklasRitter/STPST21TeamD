@@ -161,7 +161,7 @@ public class Editor {
     /**
      * get a user by id
      *
-     * @param userId   id of the user
+     * @param userId id of the user
      * @return user
      */
     public User getServerUserById(Server server, String userId) {
@@ -169,7 +169,7 @@ public class Editor {
         Objects.requireNonNull(users);
         Objects.requireNonNull(userId);
 
-        for (User user: users) {
+        for (User user : users) {
             if (userId.equals(user.getId())) {
                 return user;
             }
@@ -191,7 +191,7 @@ public class Editor {
         this.currentServer = server;
 
         List<String> categoryIds = new ArrayList<>();
-        for (Category category: server.getCategories()) {
+        for (Category category : server.getCategories()) {
             categoryIds.add(category.getId());
         }
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
@@ -216,7 +216,7 @@ public class Editor {
         this.currentServer = category.getServer();
 
         List<String> channelIds = new ArrayList<>();
-        for (Channel channel: category.getChannels()) {
+        for (Channel channel : category.getChannels()) {
             channelIds.add(channel.getId());
         }
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
@@ -224,7 +224,7 @@ public class Editor {
                 Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
                 channel.setCategory(category);
                 List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-                for (String memberId: memberIds) {
+                for (String memberId : memberIds) {
                     User user = this.getServerUserById(category.getServer(), memberId);
                     channel.withMembers(user);
                 }
@@ -296,11 +296,11 @@ public class Editor {
         }
     }
 
-    public List<User> getOnlineUsers(){
+    public List<User> getOnlineUsers() {
         List<User> allUsers = this.getLocalUser().getUsers();
         List<User> onlineUsers = new ArrayList<>();
-        for (User user: allUsers) {
-            if (user.isOnlineStatus()){
+        for (User user : allUsers) {
+            if (user.isOnlineStatus()) {
                 onlineUsers.add(user);
             }
         }

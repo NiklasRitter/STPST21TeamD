@@ -4,6 +4,7 @@ import javax.websocket.ClientEndpointConfig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
 public class CustomWebSocketConfigurator extends ClientEndpointConfig.Configurator {

@@ -30,7 +30,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
-import static de.uniks.stp.wedoit.accord.client.Constants.AND_SERVER_ID_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -133,7 +132,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertNotNull(server);
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
 
         WaitForAsyncUtils.waitForFxEvents();
 
