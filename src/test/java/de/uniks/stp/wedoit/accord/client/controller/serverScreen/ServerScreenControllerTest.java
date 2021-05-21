@@ -150,7 +150,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
     public void mockChatWebSocket(JsonObject webSocketJson) {
         // mock websocket
-        verify(chatWebSocketClient).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
+        verify(chatWebSocketClient, atLeastOnce()).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
         WSCallback chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
 
         chatWsCallback.handleMessage(webSocketJson);

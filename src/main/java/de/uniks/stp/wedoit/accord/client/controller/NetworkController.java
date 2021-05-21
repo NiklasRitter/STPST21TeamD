@@ -28,7 +28,6 @@ public class NetworkController {
     public void start() {
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
         haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername(), this::handlePrivateChatMessage);
-        System.out.println(PRIVATE_USER_CHAT_PREFIX + clearUsername());
     }
 
     public String clearUsername(){
