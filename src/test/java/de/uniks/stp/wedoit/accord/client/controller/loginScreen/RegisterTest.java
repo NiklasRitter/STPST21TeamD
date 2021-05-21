@@ -180,10 +180,10 @@ public class RegisterTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username already taken.", errorLabel.getText());
@@ -209,10 +209,10 @@ public class RegisterTest extends ApplicationTest {
         Assert.assertEquals("Please type in username and password.", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
@@ -236,10 +236,10 @@ public class RegisterTest extends ApplicationTest {
         Assert.assertEquals("Please type in username and password.", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());

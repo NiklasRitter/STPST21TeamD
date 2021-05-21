@@ -98,14 +98,11 @@ public class ServerScreenControllerTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen and create server to skip the MainScreen
-
-        localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
-        server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
-
-        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
-        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
-
+        this.localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
+        this.server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().getNetworkController().clearUsername()
+                +  AND_SERVER_ID_URL + this.server.getId(),chatWebSocketClient);
 
         StageManager.showServerScreen(server, restMock);
 
@@ -153,7 +150,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
     public void mockChatWebSocket(JsonObject webSocketJson) {
         // mock websocket
-        verify(chatWebSocketClient).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
+        verify(chatWebSocketClient, atLeastOnce()).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
         WSCallback chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
 
         chatWsCallback.handleMessage(webSocketJson);

@@ -54,7 +54,7 @@ public class CreateServerScreenController implements Controller {
     private void createServerButtonOnClick(ActionEvent actionEvent) {
 
         if (tfServerName.getText().length() < 1 || tfServerName.getText() == null) {
-            tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+            tfServerName.getStyleClass().add("error");
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
@@ -68,7 +68,7 @@ public class CreateServerScreenController implements Controller {
                     stop();
                     Platform.runLater(() -> StageManager.showServerScreen(server, restClient));
                 } else {
-                    tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+                    tfServerName.getStyleClass().add("error");
 
                     Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server"));
                 }
