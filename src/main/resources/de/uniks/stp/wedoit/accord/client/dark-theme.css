@@ -41,3 +41,11 @@
 .redLabel {
     -fx-text-fill: #ff0000
 }
+
+.listViewUserOnline {
+    -fx-border-color: #008000
+}
+
+.listViewUserOffline {
+    -fx-border-color: #ff0000
+}
