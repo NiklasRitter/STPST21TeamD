@@ -13,7 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-public class CreateServerScreenController implements Controller{
+public class CreateServerScreenController implements Controller {
 
     private final RestClient restClient;
     private final LocalUser localUser;
@@ -53,10 +53,10 @@ public class CreateServerScreenController implements Controller{
      */
     private void createServerButtonOnClick(ActionEvent actionEvent) {
 
-        if (tfServerName.getText().length() < 2) {
+        if (tfServerName.getText().length() < 1 || tfServerName.getText() == null) {
             tfServerName.getStyleClass().add("error");
 
-            Platform.runLater(() -> errorLabel.setText("Name has to be at least 2 symbols long"));
+            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
             restClient.createServer(tfServerName.getText(), localUser.getUserKey(), (response) -> {
                 if (response.getBody().getObject().getString("status").equals("success")) {

@@ -104,7 +104,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
         this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().getNetworkController().clearUsername()
                 +  AND_SERVER_ID_URL + this.server.getId(),chatWebSocketClient);
 
-        this.stageManager.showServerScreen(server, restMock);
+        StageManager.showServerScreen(server, restMock);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -160,7 +160,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public void initUserListView() {
         JsonObject restJson = getServerIdSuccessful();
         JsonObject webSocketJson = webSocketCallbackUserJoined();
-        ListView listView = lookup("#lvServerUsers").queryListView();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
@@ -197,7 +197,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public void updateUserListView() {
         JsonObject restJson = getServerIdSuccessful();
         JsonObject webSocketJson = webSocketCallbackUserJoined();
-        ListView listView = lookup("#lvServerUsers").queryListView();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
@@ -246,7 +246,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     @Test
     public void restClientFailureResponse() {
         JsonObject restJson = getServerIdFailure();
-        ListView listView = lookup("#lvServerUsers").queryListView();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
@@ -303,7 +303,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     @Test
     public void initChannelsTest() {
         JsonObject restJson = getServerIdSuccessful();
-        ListView listView = lookup("#lvServerUsers").queryListView();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);

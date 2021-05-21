@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.model.Message;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 

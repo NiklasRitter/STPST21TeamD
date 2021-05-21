@@ -45,9 +45,7 @@ public class JsonUtil {
 
     public static List<User> parseServerUsers(JsonArray serverUsersJsonArray) {
         List<User> users = new ArrayList<>();
-        serverUsersJsonArray.forEach((jsonValue) -> {
-            users.add(parseServerUser(jsonValue.asJsonObject()));
-        });
+        serverUsersJsonArray.forEach((jsonValue) -> users.add(parseServerUser(jsonValue.asJsonObject())));
         return users;
     }
 
@@ -58,18 +56,14 @@ public class JsonUtil {
 
     public static List<Server> parseServers(JsonArray serversJsonArray) {
         List<Server> servers = new ArrayList<>();
-        serversJsonArray.forEach((jsonValue) -> {
-            servers.add(parseServer(jsonValue.asJsonObject()));
-        });
+        serversJsonArray.forEach((jsonValue) -> servers.add(parseServer(jsonValue.asJsonObject())));
         return servers;
     }
 
     public static Server parseServerDetails(JsonObject serverDetailsJson) {
         JsonArray categoriesJson = serverDetailsJson.getJsonArray(COM_CATEGORIES);
         List<Category> categories = new ArrayList<>();
-        categoriesJson.forEach((jsonValue) -> {
-            categories.add(new Category().setId(jsonValue.toString()));
-        });
+        categoriesJson.forEach((jsonValue) -> categories.add(new Category().setId(jsonValue.toString())));
         List<User> members = parseServerUsers(serverDetailsJson.getJsonArray(COM_MEMBERS));
         return parseServer(serverDetailsJson)
                 .withCategories(categories)
@@ -112,21 +106,21 @@ public class JsonUtil {
     public static List<String> parseMembers(JSONObject channelJson) {
         JSONArray members = channelJson.getJSONArray(COM_MEMBERS);
         List<String> membersIds = new ArrayList<>();
-        for (Object memberId: members) {
+        for (Object memberId : members) {
             membersIds.add(memberId.toString());
         }
         return membersIds;
     }
 
 
-    public static JsonObject buildServerChatMessage (String channelId, String message) {
+    public static JsonObject buildServerChatMessage(String channelId, String message) {
         return Json.createObjectBuilder()
                 .add(COM_CHANNEL, channelId)
                 .add(COM_MESSAGE, message)
                 .build();
     }
 
-    public static JsonObject buildPrivateChatMessage (String to, String message) {
+    public static JsonObject buildPrivateChatMessage(String to, String message) {
         return Json.createObjectBuilder()
                 .add(COM_CHANNEL, "private")
                 .add(COM_TO, to)
