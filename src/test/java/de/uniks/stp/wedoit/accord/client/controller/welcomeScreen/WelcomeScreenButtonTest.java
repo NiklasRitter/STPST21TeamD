@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.stage.Stage;
@@ -168,7 +167,7 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
     }
 
     @Test
-    public void testOnlineUserListViewInit(){
+    public void testOnlineUserListViewInit() {
 
         directToWelcomeScreen();
 

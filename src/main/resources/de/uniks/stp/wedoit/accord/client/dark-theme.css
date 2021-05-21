@@ -43,6 +43,14 @@
 }
 
 .error {
-    -fx-border-color: #FF603D ;
+    -fx-border-color: #FF603D;
     -fx-border-width: 2px;
+}
+
+.listViewUserOnline {
+    -fx-border-color: #008000
+}
+
+.listViewUserOffline {
+    -fx-border-color: #ff0000
 }

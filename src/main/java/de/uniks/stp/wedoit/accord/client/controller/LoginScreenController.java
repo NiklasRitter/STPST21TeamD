@@ -12,11 +12,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
-public class LoginScreenController implements Controller{
+public class LoginScreenController implements Controller {
 
-    private LocalUser model;
+    private final LocalUser model;
     private final Editor editor;
     private final Parent view;
 
@@ -82,8 +83,8 @@ public class LoginScreenController implements Controller{
             tfUserName.getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
             errorLabel.setText("Username or password is missing");
-        }
-        else {
+
+        } else {
             restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
                 if (!response.getBody().getObject().getString("status").equals("success")) {
 
@@ -127,8 +128,7 @@ public class LoginScreenController implements Controller{
                     Platform.runLater(() -> errorLabel.setText("Username already taken."));
                 }
             });
-        }
-        else {
+        } else {
             tfUserName.getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
