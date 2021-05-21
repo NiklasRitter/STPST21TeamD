@@ -33,7 +33,7 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class ServerScreenController implements Controller {
 
-    private Server server;
+    private final Server server;
     private final RestClient restClient;
     private final LocalUser localUser;
     private final Editor editor;

@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainScreenController implements Controller{
+public class MainScreenController implements Controller {
 
     private final RestClient restClient;
     private final LocalUser localUser;
@@ -31,7 +31,6 @@ public class MainScreenController implements Controller{
     private Button privateChatsButton;
     private Button optionsButton;
     private Button addServerButton;
-    private Button serverButton;
     private Button logoutButton;
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
@@ -48,7 +47,6 @@ public class MainScreenController implements Controller{
         // Load all view references
         this.privateChatsButton = (Button) view.lookup("#btnPrivateChats");
         this.optionsButton = (Button) view.lookup("#btnOptions");
-        this.serverButton = (Button) view.lookup("#btnServerList");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
         this.logoutButton = (Button) view.lookup("#btnLogout");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
@@ -82,12 +80,9 @@ public class MainScreenController implements Controller{
         // Add action listeners
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
         this.optionsButton.setOnAction(this::optionsButtonOnClick);
-        this.serverButton.setOnAction(this::serverButtonOnClick);
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
         this.logoutButton.setOnAction(this::logoutButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
-
-
     }
 
     private void initTooltips() {
@@ -109,13 +104,11 @@ public class MainScreenController implements Controller{
 
         Tooltip serverButton = new Tooltip();
         serverButton.setText("Enter selected server");
-        this.serverButton.setTooltip(serverButton);
     }
 
     public void stop() {
         privateChatsButton.setOnAction(null);
         optionsButton.setOnAction(null);
-        serverButton.setOnAction(null);
         addServerButton.setOnAction(null);
         logoutButton.setOnAction(null);
 
@@ -146,18 +139,6 @@ public class MainScreenController implements Controller{
     /**
      * Redirect to the ServerScreen of the chosen server
      *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void serverButtonOnClick(ActionEvent actionEvent) {
-        Server server = serverListView.getSelectionModel().getSelectedItem();
-        if (server != null) {
-            StageManager.showServerScreen(server, restClient);
-        }
-    }
-
-    /**
-     * Redirect to the ServerScreen of the chosen server
-     *
      * @param mouseEvent Expects an mouse event, such as when the listView is doubleclicked
      */
     private void onServerListViewClicked(MouseEvent mouseEvent) {
@@ -167,7 +148,6 @@ public class MainScreenController implements Controller{
                 StageManager.showServerScreen(server, restClient);
             }
         }
-
     }
 
     /**
