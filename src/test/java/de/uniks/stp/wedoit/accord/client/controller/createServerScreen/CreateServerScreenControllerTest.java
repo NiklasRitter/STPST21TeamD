@@ -1,3 +1,4 @@
+
 package de.uniks.stp.wedoit.accord.client.controller.createServerScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -174,7 +175,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertNull(server);
 
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals(textField.getStyle(), "-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Something went wrong while creating the server", errorLabel.getText());
@@ -199,7 +200,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals("Create Server", stageManager.getPopupStage().getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
-        String serverName = "M";
+        String serverName = "";
         serverTextField.setText(serverName);
 
         clickOn("#btnCreateServer");
@@ -214,10 +215,10 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         }
         Assert.assertNull(server);
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals(textField.getStyle(), "-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Name has to be at least 2 symbols long", errorLabel.getText());
+        Assert.assertEquals("Name has to be at least 1 symbols long", errorLabel.getText());
     }
 
 

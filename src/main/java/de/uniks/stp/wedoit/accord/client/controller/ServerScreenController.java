@@ -5,8 +5,8 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
-import de.uniks.stp.wedoit.accord.client.view.ServerScreenChannelsCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -39,8 +39,10 @@ public class ServerScreenController implements Controller {
     private Button btnHome;
     private Button btnLogout;
     private Label lbServerName;
-    private ListView<Channel> lvServerChannels;
+
+    private TreeView<Object> tvServerChannels;
     private ListView<User> lvServerUsers;
+
     private TextField tfInputMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
     private Channel currentChannel;
@@ -50,6 +52,7 @@ public class ServerScreenController implements Controller {
     private Label lbChannelName;
     private ObservableList<Message> observableMessageList;
     private PropertyChangeListener newMessagesListener = this::newMessage;
+    private TreeItem<Object> tvServerChannelsRoot;
 
     public ServerScreenController(Parent view, LocalUser model, Editor editor, Server server) {
         this.view = view;
@@ -64,7 +67,7 @@ public class ServerScreenController implements Controller {
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lbServerName = (Label) view.lookup("#lbServerName");
-        this.lvServerChannels = (ListView<Channel>) view.lookup("#lvServerChannels");
+        this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
@@ -76,19 +79,30 @@ public class ServerScreenController implements Controller {
         editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
+        tvServerChannelsRoot = new TreeItem<>();
+        ChannelTreeView channelTreeView = new ChannelTreeView();
+        tvServerChannels.setCellFactory(channelTreeView);
+        tvServerChannels.setShowRoot(false);
+        tvServerChannels.setRoot(tvServerChannelsRoot);
+
+
         // get members of this server
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
-        this.initCategoryChannelList();
+                initCategoryChannelList();
+
+    public void addActionListener() {
+
+        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + editor.getNetworkController().clearUsername()
+                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
-        this.lvServerChannels.setOnMouseReleased(this::lvServerChannelsOnDoubleClicked);
+        this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
 
-        initTooltips();
     }
 
     public void handleGetExplicitServerInformation(JSONArray members) {
@@ -115,17 +129,18 @@ public class ServerScreenController implements Controller {
     }
 
     public void stop() {
+        localUser.withoutServers(server);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.tfInputMessage.setOnAction(null);
-        this.lvServerChannels.setOnMouseReleased(null);
+        this.tvServerChannels.setOnMouseReleased(null);
         this.btnLogout = null;
         this.btnHome = null;
         this.btnOptions = null;
 
         this.lbServerName = null;
-        this.lvServerChannels = null;
+        this.tvServerChannels = null;
         this.lvServerUsers = null;
         this.tfInputMessage = null;
         this.lvTextChat = null;
@@ -177,6 +192,7 @@ public class ServerScreenController implements Controller {
 
     }
 
+
     /**
      * initialize channel List view
      * gets Categories from server and calls loadCategoryChannels()
@@ -188,7 +204,12 @@ public class ServerScreenController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList != null) {
             for (Category category : categoryList) {
-                loadCategoryChannels(category);
+                    TreeItem<Object> categoryItem = new TreeItem<>(category);
+                    categoryItem.setExpanded(true);
+
+                    tvServerChannelsRoot.getChildren().add(categoryItem);
+
+                    loadCategoryChannels(category, categoryItem);
             }
         } else {
             System.err.println("Error while loading categories from server");
@@ -207,9 +228,10 @@ public class ServerScreenController implements Controller {
     public void handleGetChannels(List<Channel> channelList) {
         if (channelList != null) {
             //TODO use something different then a cell factory
-            categoriesListViewCellFactory = new ServerScreenChannelsCellFactory();
-            lvServerChannels.setCellFactory(categoriesListViewCellFactory);
-            Platform.runLater(() -> this.lvServerChannels.setItems(FXCollections.observableList(channelList)));
+                for (Channel channel : category.getChannels()) {
+                    TreeItem<Object> channelItem = new TreeItem<>(channel);
+                    categoryItem.getChildren().add(channelItem);
+                }
         } else {
             System.err.println("Error while loading channels from server");
         }
@@ -220,11 +242,15 @@ public class ServerScreenController implements Controller {
      *
      * @param mouseEvent occurs when a listitem is clicked
      */
-    private void lvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
+    private void tvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
-            Channel channel = this.lvServerChannels.getSelectionModel().getSelectedItem();
-            if (channel != null) {
-                this.initChannelChat(channel);
+
+            if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
+                if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
+
+                    Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
+                    this.initChannelChat(channel);
+                }
             }
         }
     }
@@ -322,12 +348,7 @@ public class ServerScreenController implements Controller {
             userLeft.setOnlineStatus(false);
         }
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                updateUserListView();
-            }
-        });
+        Platform.runLater(this::updateUserListView);
 
     }
 

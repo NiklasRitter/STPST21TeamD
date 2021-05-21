@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
+import java.util.Objects;
+
 public class OptionsScreenTest extends ApplicationTest {
     private RestClient restClient;
     private Stage stage;
@@ -49,7 +51,7 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertTrue(popupStage.isShowing());
         Assert.assertEquals("Options", popupStage.getTitle());
         Assert.assertTrue(stageManager.getScene().getStylesheets()
-                .contains(StageManager.class.getResource("light-theme.css").toExternalForm()));
+                .contains(Objects.requireNonNull(StageManager.class.getResource("light-theme.css")).toExternalForm()));
 
         // test darkmode button
         clickOn("#btnDarkmode");
@@ -57,7 +59,7 @@ public class OptionsScreenTest extends ApplicationTest {
         // check if stylesheets contain dark theme
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(stageManager.getScene().getStylesheets()
-                .contains(StageManager.class.getResource("dark-theme.css").toExternalForm()));
+                .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
     }
 

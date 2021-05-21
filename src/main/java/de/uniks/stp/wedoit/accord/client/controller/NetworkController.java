@@ -10,7 +10,13 @@ import org.json.JSONObject;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,8 +42,18 @@ public class NetworkController {
 
     public NetworkController start() {
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
-        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName(), this::handlePrivateChatMessage);
+        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername(), this::handlePrivateChatMessage);
         return this;
+    }
+
+    public String clearUsername(){
+        String newName;
+        try {
+            newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            return this.editor.getLocalUser().getName();
+        }
+        return newName;
     }
 
     public WebSocketClient getOrCreateWebSocket(String url) {
@@ -137,15 +153,15 @@ public class NetworkController {
 
     public NetworkController sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + this.editor.getLocalUser().getName());
+                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername());
         webSocketClient.sendMessage(jsonMsgString);
         return this;
     }
 
     public NetworkController sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(CHAT_USER_URL + this.editor.getLocalUser().getName()
-                        + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
+                getOrCreateWebSocket(CHAT_USER_URL + clearUsername()
+                        +  AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
         return this;
     }

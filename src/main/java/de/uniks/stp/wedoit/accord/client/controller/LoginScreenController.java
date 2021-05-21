@@ -10,6 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
+
 public class LoginScreenController implements Controller {
 
     private final LocalUser model;
@@ -75,13 +78,9 @@ public class LoginScreenController implements Controller {
         String password = this.pwUserPw.getText();
         if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
 
-            tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-            pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             errorLabel.setText("Username or password is missing");
-        } else if (name.contains(" ")) {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
         } else {
             editor.getNetworkController().loginUser(name, password, this);
         }
@@ -89,9 +88,9 @@ public class LoginScreenController implements Controller {
 
     public void handleLogin(boolean success) {
         if (!success) {
-            tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-            pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
-            Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+                    tfUserName.getStyleClass().add("error");
+                    pwUserPw.getStyleClass().add("error");
+                    Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
         } else {
             Platform.runLater(StageManager::showMainScreen);
         }
@@ -107,15 +106,17 @@ public class LoginScreenController implements Controller {
         String name = this.tfUserName.getText();
         String password = this.pwUserPw.getText();
 
-        if (name != null && !name.isEmpty() && password != null && !password.isEmpty() && !name.contains(" ")) {
+        if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
             editor.getNetworkController().registerUser(name, password, this);
-        } else if (name.contains(" ")) {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
         } else {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
+                    //reset name and password fields
+                    this.tfUserName.setText("");
+                    this.pwUserPw.setText("");
+                    tfUserName.getStyleClass().add("error");
+                    pwUserPw.getStyleClass().add("error");
+                    Platform.runLater(() -> errorLabel.setText("Username already taken."));
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
     }

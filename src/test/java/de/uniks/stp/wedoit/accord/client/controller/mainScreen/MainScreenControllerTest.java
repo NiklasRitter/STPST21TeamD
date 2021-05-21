@@ -1,3 +1,4 @@
+
 package de.uniks.stp.wedoit.accord.client.controller.mainScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -46,6 +47,7 @@ public class MainScreenControllerTest extends ApplicationTest {
     @Mock
     private WebSocketClient channelChatWebSocketClient;
     private Server server;
+
     @Mock
     private WebSocketClient webSocketClient;
     @Mock
@@ -115,7 +117,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         // Mock the rest client getServers method
         mockRestClient(json);
 
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Object> listView = lookup("#lwServerList").queryListView();
 
         // Test that two servers are listed in the listView
         Assert.assertEquals(2, listView.getItems().toArray().length);
@@ -172,9 +174,9 @@ public class MainScreenControllerTest extends ApplicationTest {
         }
 
         //Test correct alphabetical order of the items and Test correct items in the list view
-        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
-        Assert.assertEquals("AOServer", ((Server) listView.getItems().get(1)).getName());
-        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(2)).getName());
+        Assert.assertEquals("AMainTestServerTwo", listView.getItems().get(0).getName());
+        Assert.assertEquals("AOServer", listView.getItems().get(1).getName());
+        Assert.assertEquals("BMainTestServerOne", listView.getItems().get(2).getName());
 
     }
 
@@ -184,8 +186,6 @@ public class MainScreenControllerTest extends ApplicationTest {
         JsonObject json = buildGetServersFailureResponse();
 
         mockRestClient(json);
-
-        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Login", stage.getTitle());

@@ -14,8 +14,10 @@ import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
 public class Editor {
 
     private AccordClient accordClient;
+
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final NetworkController networkController = new NetworkController(this);
+
     private Server currentServer;
 
     public NetworkController getNetworkController() {
@@ -158,7 +160,7 @@ public class Editor {
     /**
      * get a user by id
      *
-     * @param userId   id of the user
+     * @param userId id of the user
      * @return user
      */
     public User getServerUserById(Server server, String userId) {
@@ -166,7 +168,7 @@ public class Editor {
         Objects.requireNonNull(users);
         Objects.requireNonNull(userId);
 
-        for (User user: users) {
+        for (User user : users) {
             if (userId.equals(user.getId())) {
                 return user;
             }
@@ -175,10 +177,10 @@ public class Editor {
     }
 
     /**
-     * builds a category based on the server json answer
-     * !!! no channels added
+     * This method gives the the server categories which are created with the data of the JSONArray
+     * The categories dont have channels.
      *
-     * @param server                  which gets the categories
+     * @param server                  server which gets the categories
      * @param serversCategoryResponse server answer for categories of the server
      */
     public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
@@ -188,7 +190,7 @@ public class Editor {
         this.currentServer = server;
 
         List<String> categoryIds = new ArrayList<>();
-        for (Category category: server.getCategories()) {
+        for (Category category : server.getCategories()) {
             categoryIds.add(category.getId());
         }
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
@@ -201,9 +203,9 @@ public class Editor {
     }
 
     /**
-     * builds a channel based on the server json answer
+     * This method gives the category channels which are created with the data of the JSONArray
      *
-     * @param category                  which gets the channels
+     * @param category                  category which gets the channels
      * @param categoriesChannelResponse server answer for channels of the category
      */
     public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
@@ -213,14 +215,14 @@ public class Editor {
         this.currentServer = category.getServer();
 
         List<String> channelIds = new ArrayList<>();
-        for (Channel channel: category.getChannels()) {
+        for (Channel channel : category.getChannels()) {
             channelIds.add(channel.getId());
         }
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
                 Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
                 channel.setCategory(category);
                 List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-                for (String memberId: memberIds) {
+                for (String memberId : memberIds) {
                     User user = this.getServerUserById(category.getServer(), memberId);
                     channel.withMembers(user);
                 }
@@ -294,17 +296,6 @@ public class Editor {
             System.err.println("Error while logging out");
             Platform.runLater(StageManager::showLoginScreen);
         }
-    }
-
-
-    /**
-     * remove a webSocket with given url
-     *
-     * @param url url of a webSocket
-     * @return the webSocket which is removed or null if there was no mapping of this url
-     */
-    public WebSocketClient withOutWebSocket(String url) {
-        return webSocketMap.remove(url);
     }
 
     public List<User> getOnlineUsers() {
