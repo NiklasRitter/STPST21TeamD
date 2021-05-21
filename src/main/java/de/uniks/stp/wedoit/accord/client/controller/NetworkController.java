@@ -32,7 +32,7 @@ public class NetworkController {
     }
 
     public String clearUsername(){
-        String newName = null;
+        String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
