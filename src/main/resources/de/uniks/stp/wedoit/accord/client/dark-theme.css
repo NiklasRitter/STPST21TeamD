@@ -39,10 +39,10 @@
 }
 
 .redLabel {
-    -fx-text-fill: #ff0000
+    -fx-text-fill: #FF603D
 }
 
 .error {
-    -fx-border-color: #ff0000 ;
+    -fx-border-color: #FF603D ;
     -fx-border-width: 2px;
 }
