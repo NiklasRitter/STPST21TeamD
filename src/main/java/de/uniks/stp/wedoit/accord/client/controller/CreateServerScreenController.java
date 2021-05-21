@@ -53,10 +53,10 @@ public class CreateServerScreenController implements Controller {
      */
     private void createServerButtonOnClick(ActionEvent actionEvent) {
 
-        if (tfServerName.getText().length() < 2) {
+        if (tfServerName.getText().length() < 1 || tfServerName.getText() == null) {
             tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
 
-            Platform.runLater(() -> errorLabel.setText("Name has to be at least 2 symbols long"));
+            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
             restClient.createServer(tfServerName.getText(), localUser.getUserKey(), (response) -> {
                 if (response.getBody().getObject().getString("status").equals("success")) {
