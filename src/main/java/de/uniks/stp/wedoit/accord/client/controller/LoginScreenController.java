@@ -29,6 +29,14 @@ public class LoginScreenController implements Controller{
 
     private final RestClient restClient;
 
+    /**
+     * Create a new Controller
+     *
+     * @param view The view this Controller belongs to
+     * @param model The model this Controller belongs to
+     * @param editor The editor of the Application
+     * @param restClient The RestClient of the Application
+     */
     public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
         this.model = model;
@@ -36,6 +44,13 @@ public class LoginScreenController implements Controller{
         this.restClient = restClient;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     *
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
         //Load all view references
         this.tfUserName = (TextField) view.lookup("#tfUserName");
@@ -47,12 +62,19 @@ public class LoginScreenController implements Controller{
         this.btnOptions = (Button) view.lookup("#btnOptions");
 
 
+        // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
     }
 
+    /**
+     * Called to stop this controller
+     *
+     * Remove action listeners
+     */
     public void stop() {
+        // Remove all action listeners
         btnLogin.setOnAction(null);
         btnRegister.setOnAction(null);
         btnOptions.setOnAction(null);

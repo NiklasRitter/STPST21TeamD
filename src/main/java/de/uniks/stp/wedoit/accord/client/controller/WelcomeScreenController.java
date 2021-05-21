@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
-public class WelcomeScreenController implements Controller{
+public class WelcomeScreenController implements Controller {
 
     private final Parent view;
     private final LocalUser localUser;
@@ -40,18 +40,25 @@ public class WelcomeScreenController implements Controller{
     private Button btnLogout;
     private Chat currentChat;
     private ListView<User> lwOnlineUsers;
-    private final PropertyChangeListener usersListListener = this::usersListViewChanged;
-    private final PropertyChangeListener newUsersListener = this::newUser;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
-    private final PropertyChangeListener chatListener = this::newMessage;
     private WelcomeScreenOnlineUsersCellFactory usersListViewCellFactory;
     private ObservableList<PrivateMessage> privateMessageObservableList;
+    private final PropertyChangeListener chatListener = this::newMessage;
     private ObservableList<User> onlineUserObservableList;
+    private final PropertyChangeListener usersListListener = this::usersListViewChanged;
     private List<User> availableUsers = new ArrayList<User>();
-
+    private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser;
 
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     * @param restClient The RestClient of the Application
+     */
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
         this.view = view;
         this.localUser = model;
@@ -59,6 +66,13 @@ public class WelcomeScreenController implements Controller{
         this.restClient = restClient;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
 
         this.btnOptions = (Button) view.lookup("#btnOptions");
@@ -81,6 +95,9 @@ public class WelcomeScreenController implements Controller{
         this.initOnlineUsersList();
     }
 
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
         homeButton.setText("home");
@@ -95,13 +112,18 @@ public class WelcomeScreenController implements Controller{
         btnOptions.setTooltip(optionsButton);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
 
-        for (User user: availableUsers) {
+        for (User user : availableUsers) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
         }
         this.btnHome.setOnAction(null);
@@ -173,7 +195,7 @@ public class WelcomeScreenController implements Controller{
 
             Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
 
-            for (User user: availableUsers) {
+            for (User user : availableUsers) {
                 user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
             }
             // Add listener for the loaded listView
@@ -188,10 +210,9 @@ public class WelcomeScreenController implements Controller{
      */
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         User user = (User) propertyChangeEvent.getSource();
-        if (!user.isOnlineStatus()){
+        if (!user.isOnlineStatus()) {
             Platform.runLater(() -> this.onlineUserObservableList.remove(user));
-        }
-        else {
+        } else {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
@@ -220,7 +241,7 @@ public class WelcomeScreenController implements Controller{
 
     /**
      * initialize private Chat with user
-     *
+     * <p>
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      *
@@ -259,7 +280,7 @@ public class WelcomeScreenController implements Controller{
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
-        if (this.privateMessageObservableList.size() >= 100){
+        if (this.privateMessageObservableList.size() >= 100) {
             Platform.runLater(() -> this.privateMessageObservableList.remove(0));
         }
     }

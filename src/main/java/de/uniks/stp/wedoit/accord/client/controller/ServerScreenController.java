@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 
-public class ServerScreenController implements Controller{
+public class ServerScreenController implements Controller {
 
-    private Server server;
     private final RestClient restClient;
     private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
+    private Server server;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
@@ -46,14 +46,23 @@ public class ServerScreenController implements Controller{
     private ListView<User> lvServerUsers;
     private TextField tfInputMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
-    private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
+    private WSCallback chatWSCallback = this::handleChatMessage;
     private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
-    private PropertyChangeListener newMessagesListener = this::newMessage;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private ObservableList<Message> observableMessageList;
+    private PropertyChangeListener newMessagesListener = this::newMessage;
 
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     * @param restClient The RestClient of the Application
+     * @param server     The Server this Screen belongs to
+     */
     public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
         this.view = view;
         this.localUser = model;
@@ -62,6 +71,14 @@ public class ServerScreenController implements Controller{
         this.server = server;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     * Add necessary webSocketClients
+     */
     public void init() {
         // Load all view references
         this.btnOptions = (Button) view.lookup("#btnOptions");
@@ -78,7 +95,7 @@ public class ServerScreenController implements Controller{
 
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
@@ -108,6 +125,9 @@ public class ServerScreenController implements Controller{
         initTooltips();
     }
 
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
         homeButton.setText("home");
@@ -122,6 +142,11 @@ public class ServerScreenController implements Controller{
         btnOptions.setTooltip(optionsButton);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
@@ -140,7 +165,7 @@ public class ServerScreenController implements Controller{
 
         this.editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         this.editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + this.server.getId());
+                + AND_SERVER_ID_URL + this.server.getId());
 
         this.server = null;
 
@@ -154,7 +179,6 @@ public class ServerScreenController implements Controller{
     }
 
 
-    // Additional methods
     /**
      * The localUser will be redirect to the HomeScreen
      *
@@ -163,6 +187,7 @@ public class ServerScreenController implements Controller{
     private void homeButtonOnClick(ActionEvent actionEvent) {
         StageManager.showMainScreen(restClient);
     }
+
     /**
      * The localUser will be redirect to the OptionsScreen
      *
@@ -195,7 +220,7 @@ public class ServerScreenController implements Controller{
                 this.editor.haveCategories(this.server, serversCategoryResponse);
 
                 List<Category> categoryList = this.server.getCategories();
-                for (Category category: categoryList) {
+                for (Category category : categoryList) {
                     loadCategoryChannels(category);
                 }
             } else {
@@ -302,7 +327,7 @@ public class ServerScreenController implements Controller{
     private void handleChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
-        if(jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
+        if (jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
             Message message = new Message();
             message.setChannel(currentChannel);
             message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
@@ -373,6 +398,7 @@ public class ServerScreenController implements Controller{
 
     /**
      * update user list view
+     * <p>
      * remove all items from the list view and put all member of a server back in the list view
      * sorted by online status
      */
