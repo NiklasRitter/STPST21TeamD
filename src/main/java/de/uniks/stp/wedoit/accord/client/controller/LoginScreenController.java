@@ -94,7 +94,6 @@ public class LoginScreenController implements Controller{
                 } else {
                     JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
                     String userKey = loginAnswer.getString(COM_USER_KEY);
-                    System.out.println(userKey);
                     editor.haveLocalUser(tfUserName.getText(), userKey);
                     editor.getNetworkController().start();
                     Platform.runLater(() -> StageManager.showMainScreen(restClient));

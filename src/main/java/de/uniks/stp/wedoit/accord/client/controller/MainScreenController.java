@@ -56,8 +56,6 @@ public class MainScreenController implements Controller{
         this.initTooltips();
         // load server of the localUser
         restClient.getServers(localUser.getUserKey(), response -> {
-            System.out.println(response.getBody());
-            System.out.println(localUser.getUserKey());
             if (response.getBody().getObject().getString("status").equals("success")) {
                 JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
 
