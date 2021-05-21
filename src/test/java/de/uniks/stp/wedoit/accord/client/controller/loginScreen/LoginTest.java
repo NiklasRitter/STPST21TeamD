@@ -28,7 +28,6 @@ import javax.json.Json;
 import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 import static org.mockito.Mockito.*;
-import static org.testfx.api.FxToolkit.registerPrimaryStage;
 
 public class LoginTest extends ApplicationTest {
 

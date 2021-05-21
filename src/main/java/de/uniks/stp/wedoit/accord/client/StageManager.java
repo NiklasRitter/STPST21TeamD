@@ -128,7 +128,7 @@ public class StageManager extends Application {
         cleanup();
 
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/WelcomeScreen.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/PrivateChatsScreen.fxml")));
             if (scene != null) {
                 scene.setRoot(root);
             } else {

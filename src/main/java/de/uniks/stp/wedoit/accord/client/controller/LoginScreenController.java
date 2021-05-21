@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
@@ -71,7 +73,7 @@ public class LoginScreenController implements Controller {
     public void login() {
         if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
 
-            tfUserName.getStyleClass().add("error");
+            Objects.requireNonNull(tfUserName).getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
             errorLabel.setText("Username or password is missing");
 
