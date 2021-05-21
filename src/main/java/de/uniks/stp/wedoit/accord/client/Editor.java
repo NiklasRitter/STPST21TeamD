@@ -15,8 +15,10 @@ import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
 public class Editor {
 
     private AccordClient accordClient;
+
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final NetworkController networkController = new NetworkController(this);
+
     private Server currentServer;
 
     public NetworkController getNetworkController() {
@@ -176,10 +178,10 @@ public class Editor {
     }
 
     /**
-     * builds a category based on the server json answer
-     * !!! no channels added
+     * This method gives the the server categories which are created with the data of the JSONArray
+     * The categories dont have channels.
      *
-     * @param server which gets the categories
+     * @param server                  server which gets the categories
      * @param serversCategoryResponse server answer for categories of the server
      */
     public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
@@ -202,9 +204,9 @@ public class Editor {
     }
 
     /**
-     * builds a channel based on the server json answer
+     * This method gives the category channels which are created with the data of the JSONArray
      *
-     * @param category which gets the channels
+     * @param category                  category which gets the channels
      * @param categoriesChannelResponse server answer for channels of the category
      */
     public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
@@ -262,8 +264,7 @@ public class Editor {
     public void addNewPrivateMessage(PrivateMessage message) {
         if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
-        }
-        else {
+        } else {
             getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
     }
@@ -273,7 +274,7 @@ public class Editor {
      *
      * @param message to add to the model
      */
-    public void addNewChannelMessage(Message message){
+    public void addNewChannelMessage(Message message) {
         message.getChannel().withMessages(message);
     }
 
