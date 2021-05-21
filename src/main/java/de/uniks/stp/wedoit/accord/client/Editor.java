@@ -288,24 +288,12 @@ public class Editor {
         if (userKey != null && !userKey.isEmpty()) {
             networkController.stop();
             restClient.logout(userKey, response -> {
-                if (response.getBody().getObject().getString("status").equals("success")) {
-                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-                } else {
+                if (!response.getBody().getObject().getString("status").equals("success")) {
                     System.err.println("Error while logging out");
-                    Platform.runLater(() -> StageManager.showLoginScreen(restClient));
                 }
+                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
             });
         }
-    }
-
-
-    /**
-     * remove a webSocket with given url
-     * @param url url of a webSocket
-     * @return the webSocket which is removed or null if there was no mapping of this url
-     */
-    public WebSocketClient withOutWebSocket(String url) {
-        return webSocketMap.remove(url);
     }
 
     public List<User> getOnlineUsers(){
