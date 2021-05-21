@@ -8,6 +8,8 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -28,17 +30,17 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonStructure;
+import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * tests for the ServerScreenController
- * - user list view
- * - logout
+ * - user list view test
+ * - logout test
+ * - channel tree view test
  */
 public class ServerScreenControllerTest extends ApplicationTest {
 
@@ -46,7 +48,6 @@ public class ServerScreenControllerTest extends ApplicationTest {
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
-    private JsonStructure msg;
 
     @Mock
     private RestClient restMock;
@@ -60,6 +61,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     @Mock
     WebSocketClient chatWebSocketClient;
 
+
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
@@ -67,10 +69,14 @@ public class ServerScreenControllerTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Captor
+    private ArgumentCaptor<Callback<JsonNode>> channelsCallbackArgumentCaptor;
+
+    @Captor
     private ArgumentCaptor<Callback<JsonNode>> channelCallbackArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> categoriesCallbackArgumentCaptor;
+
 
     @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentCaptorWebSocket;
@@ -78,7 +84,6 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
     @Captor
     private ArgumentCaptor<WSCallback> chatCallbackArgumentCaptorWebSocket;
-    private WSCallback chatWsCallback;
 
     @BeforeEach
     public void setup() {
@@ -146,9 +151,9 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public void mockChatWebSocket(JsonObject webSocketJson) {
         // mock websocket
         verify(chatWebSocketClient).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
-        this.chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
+        WSCallback chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
 
-        this.chatWsCallback.handleMessage(webSocketJson);
+        chatWsCallback.handleMessage(webSocketJson);
     }
 
     @Test
@@ -226,6 +231,8 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 }
             }
         }
+        Assert.assertNotNull(userPhil);
+        Assert.assertNotNull(userI2);
         Assert.assertTrue(userPhil.isOnlineStatus());
         Assert.assertFalse(userI2.isOnlineStatus());
 
@@ -294,19 +301,66 @@ public class ServerScreenControllerTest extends ApplicationTest {
     }
 
     @Test
+    public void initChannelsTest() {
+        JsonObject restJson = getServerIdSuccessful();
+        ListView listView = lookup("#lvServerUsers").queryListView();
+        Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
+        Assert.assertEquals(0, listView.getItems().toArray().length);
+        mockRest(restJson);
+        Assert.assertEquals(3, listView.getItems().toArray().length);
+        Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
+        Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
+        Assert.assertTrue(listView.getItems().contains(server.getMembers().get(1)));
+        Assert.assertTrue(listView.getItems().contains(server.getMembers().get(2)));
+        Assert.assertFalse(listView.getItems().contains(new Server()));
+
+        when(res.getBody()).thenReturn(new JsonNode(getCategories().toString()));
+        verify(restMock).getCategories(anyString(), anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> catCallback = callbackArgumentCaptor.getValue();
+        catCallback.completed(res);
+
+        when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
+
+        verify(restMock, atLeastOnce()).getChannels(anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
+        List<Callback<JsonNode>> channelCallbacks = channelsCallbackArgumentCaptor.getAllValues();
+
+        for (Callback<JsonNode> callback : channelCallbacks
+        ) {
+            callback.completed(res);
+        }
+
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        WaitForAsyncUtils.waitForFxEvents();
+        TreeItem<Object> treeRoot = tvServerChannels.getRoot();
+        Category categoryOne = (Category) treeRoot.getChildren().get(0).getValue();
+        Category categoryTwo = (Category) treeRoot.getChildren().get(1).getValue();
+        Category categoryThree = (Category) treeRoot.getChildren().get(2).getValue();
+        Assert.assertEquals("Category1", categoryOne.getName());
+        Assert.assertEquals("Category2", categoryTwo.getName());
+        Assert.assertEquals("Category3", categoryThree.getName());
+
+        Assert.assertEquals(3, categoryOne.getChannels().size());
+        Assert.assertEquals(3, categoryTwo.getChannels().size());
+        Assert.assertEquals(3, categoryThree.getChannels().size());
+
+    }
+
+
+    @Test
     public void sendChatMessageTest() {
         //init channel list and select first channel
         initUserListView();
         initChannelListView();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
-        ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
+
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
-        lvServerChannels.getSelectionModel().select(0);
-        Channel channel = lvServerChannels.getSelectionModel().getSelectedItem();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
-        clickOn("#lvServerChannels");
+        clickOn("#tvServerChannels");
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(channel.getName(), lblChannelName.getText());
@@ -332,9 +386,15 @@ public class ServerScreenControllerTest extends ApplicationTest {
         //init channel list and select first channel
         initUserListView();
         initChannelListViewChannelFailure();
-        ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
+
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(0, lvServerChannels.getItems().size());
+        TreeItem<Object> root = tvServerChannels.getRoot();
+        for (Object category : root.getChildren()) {
+            Assert.assertTrue(category instanceof TreeItem);
+            Assert.assertEquals(0, ((TreeItem<?>) category).getChildren().size());
+        }
+
     }
 
     @Test
@@ -342,9 +402,11 @@ public class ServerScreenControllerTest extends ApplicationTest {
         //init channel list and select first channel
         initUserListView();
         initChannelListViewCategoryFailure();
-        ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(0, lvServerChannels.getItems().size());
+        TreeItem<Object> root = tvServerChannels.getRoot();
+        Assert.assertEquals(0, root.getChildren().size());
+
     }
 
     @Test
@@ -354,13 +416,14 @@ public class ServerScreenControllerTest extends ApplicationTest {
         initChannelListView();
         Label lbChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
-        ListView<Channel> lvServerChannels = lookup("#lvServerChannels").queryListView();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
-        lvServerChannels.getSelectionModel().select(0);
-        Channel channel = lvServerChannels.getSelectionModel().getSelectedItem();
+        tvServerChannels.getSelectionModel().select(1);
+        TreeItem<Object> channelItem = tvServerChannels.getRoot().getChildren().get(0).getChildren().get(0);
+        Channel channel = (Channel) channelItem.getValue();
 
-        clickOn("#lvServerChannels");
+        clickOn("#tvServerChannels");
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(channel.getName(), lbChannelName.getText());
@@ -380,10 +443,11 @@ public class ServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
         Assert.assertEquals("Test Message", lvTextChat.getItems().get(0).getText());
 
-        lvServerChannels.getSelectionModel().select(1);
-        Channel channel1 = lvServerChannels.getSelectionModel().getSelectedItem();
+        tvServerChannels.getSelectionModel().select(2);
+        channelItem = tvServerChannels.getRoot().getChildren().get(0).getChildren().get(1);
+        Channel channel1 = (Channel) channelItem.getValue();
 
-        clickOn("#lvServerChannels");
+        clickOn("#tvServerChannels");
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(channel1.getName(), lbChannelName.getText());
 
@@ -391,9 +455,10 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
         clickOn("#tfInputMessage");
 
-        lvServerChannels.getSelectionModel().select(0);
-        Channel channel2 = lvServerChannels.getSelectionModel().getSelectedItem();
-        clickOn("#lvServerChannels");
+        tvServerChannels.getSelectionModel().select(1);
+        channelItem = tvServerChannels.getRoot().getChildren().get(0).getChildren().get(0);
+        Channel channel2 = (Channel) channelItem.getValue();
+        clickOn("#tvServerChannels");
 
         Assert.assertEquals(channel2.getName(), lbChannelName.getText());
 
@@ -455,6 +520,54 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 .add("message", "Log in first")
                 .add("data", "{}")
                 .build();
+    }
+
+    public JsonObject getCategories() {
+        return Json.createObjectBuilder()
+                .add("status", "success").add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df505")
+                                .add("name", "Category1")
+                                .add("server", "123").add("channels", Json.createArrayBuilder())
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df506")
+                                .add("name", "Category2")
+                                .add("server", "123").add("channels", Json.createArrayBuilder())
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df507")
+                                .add("name", "Category3")
+                                .add("server", "123").add("channels", Json.createArrayBuilder())
+                        )).build();
+    }
+
+    public JsonObject getChannels() {
+        return Json.createObjectBuilder()
+                .add("status", "success").add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df505")
+                                .add("name", "Channel_1")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "123").add("members", Json.createArrayBuilder())
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df506")
+                                .add("name", "Channel_2")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "123").add("members", Json.createArrayBuilder())
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df507")
+                                .add("name", "Channel_3")
+                                .add("type", "text")
+                                .add("privileged", false)
+                                .add("category", "123").add("members", Json.createArrayBuilder())
+                        )).build();
     }
 
     public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
