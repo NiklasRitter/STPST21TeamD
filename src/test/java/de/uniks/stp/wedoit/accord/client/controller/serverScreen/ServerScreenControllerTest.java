@@ -56,22 +56,10 @@ public class ServerScreenControllerTest extends ApplicationTest {
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
-    private JsonStructure msg;
     @Mock
     private RestClient restMock;
     @Mock
     private HttpResponse<JsonNode> res;
-
-    @Mock
-    WebSocketClient webSocketClient;
-
-    @Mock
-    WebSocketClient chatWebSocketClient;
-
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
@@ -109,7 +97,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
         this.server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
         this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().getNetworkController().clearUsername()
-                +  AND_SERVER_ID_URL + this.server.getId(),chatWebSocketClient);
+                + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showServerScreen(server);

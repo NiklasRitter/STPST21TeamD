@@ -63,7 +63,7 @@ public class CreateServerScreenController implements Controller {
             stop();
             Platform.runLater(() -> StageManager.showServerScreen(server));
         } else {
-            tfServerName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+            tfServerName.getStyleClass().add("error");
 
             Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server"));
         }

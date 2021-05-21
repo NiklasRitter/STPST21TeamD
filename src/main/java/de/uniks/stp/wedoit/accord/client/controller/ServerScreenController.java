@@ -47,7 +47,6 @@ public class ServerScreenController implements Controller {
     private WSCallback serverWSCallback = this::handleServerMessage;
     private Channel currentChannel;
     private WSCallback chatWSCallback = this::handleChatMessage;
-    private ServerScreenChannelsCellFactory categoriesListViewCellFactory;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private ObservableList<Message> observableMessageList;
@@ -89,12 +88,13 @@ public class ServerScreenController implements Controller {
         // get members of this server
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
-                initCategoryChannelList();
+        initCategoryChannelList();
+    }
 
     public void addActionListener() {
 
         editor.getNetworkController().haveWebSocket(CHAT_USER_URL + editor.getNetworkController().clearUsername()
-                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
@@ -204,12 +204,12 @@ public class ServerScreenController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList != null) {
             for (Category category : categoryList) {
-                    TreeItem<Object> categoryItem = new TreeItem<>(category);
-                    categoryItem.setExpanded(true);
+                TreeItem<Object> categoryItem = new TreeItem<>(category);
+                categoryItem.setExpanded(true);
 
-                    tvServerChannelsRoot.getChildren().add(categoryItem);
+                tvServerChannelsRoot.getChildren().add(categoryItem);
 
-                    loadCategoryChannels(category, categoryItem);
+                loadCategoryChannels(category, categoryItem);
             }
         } else {
             System.err.println("Error while loading categories from server");
@@ -221,17 +221,17 @@ public class ServerScreenController implements Controller {
      *
      * @param category of which the channels should be loaded
      */
-    private void loadCategoryChannels(Category category) {
-        editor.getNetworkController().getChannels(localUser, server, category, this);
+    private void loadCategoryChannels(Category category, TreeItem<Object> categoryItem) {
+        editor.getNetworkController().getChannels(localUser, server, category, categoryItem, this);
     }
 
-    public void handleGetChannels(List<Channel> channelList) {
+    public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
         if (channelList != null) {
             //TODO use something different then a cell factory
-                for (Channel channel : category.getChannels()) {
-                    TreeItem<Object> channelItem = new TreeItem<>(channel);
-                    categoryItem.getChildren().add(channelItem);
-                }
+            for (Channel channel : channelList) {
+                TreeItem<Object> channelItem = new TreeItem<>(channel);
+                categoryItem.getChildren().add(channelItem);
+            }
         } else {
             System.err.println("Error while loading channels from server");
         }

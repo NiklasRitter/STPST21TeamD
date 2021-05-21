@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.scene.control.TreeItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -46,7 +47,7 @@ public class NetworkController {
         return this;
     }
 
-    public String clearUsername(){
+    public String clearUsername() {
         String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
@@ -161,7 +162,7 @@ public class NetworkController {
     public NetworkController sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(CHAT_USER_URL + clearUsername()
-                        +  AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
+                        + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
         return this;
     }
@@ -276,7 +277,7 @@ public class NetworkController {
         return this;
     }
 
-    public NetworkController getChannels(LocalUser localUser, Server server, Category category, ServerScreenController controller) {
+    public NetworkController getChannels(LocalUser localUser, Server server, Category category, TreeItem<Object> categoryItem, ServerScreenController controller) {
         restClient.getChannels(server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
             if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
                 JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
@@ -285,9 +286,9 @@ public class NetworkController {
 
                 List<Channel> channelList = server.getCategories().get(0).getChannels().stream().sorted(Comparator.comparing(Channel::getName))
                         .collect(Collectors.toList());
-                controller.handleGetChannels(channelList);
+                controller.handleGetChannels(channelList, categoryItem);
             } else {
-                controller.handleGetChannels(null);
+                controller.handleGetChannels(null, categoryItem);
             }
         });
         return this;
