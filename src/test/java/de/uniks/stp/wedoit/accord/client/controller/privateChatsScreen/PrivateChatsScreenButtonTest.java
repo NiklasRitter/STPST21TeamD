@@ -181,6 +181,4 @@ public class PrivateChatsScreenButtonTest extends ApplicationTest {
 
         when(res.getBody()).thenReturn(new JsonNode(returnMessage));
     }
-
-
 }
