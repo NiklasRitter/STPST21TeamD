@@ -12,14 +12,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
-public class LoginScreenController implements Controller{
+public class LoginScreenController implements Controller {
 
-    private LocalUser model;
     private final Editor editor;
     private final Parent view;
-
+    private final RestClient restClient;
+    private final LocalUser model;
     private Button btnLogin;
     private Button btnRegister;
     private Button btnOptions;
@@ -27,14 +28,12 @@ public class LoginScreenController implements Controller{
     private TextField pwUserPw;
     private Label errorLabel;
 
-    private final RestClient restClient;
-
     /**
      * Create a new Controller
      *
-     * @param view The view this Controller belongs to
-     * @param model The model this Controller belongs to
-     * @param editor The editor of the Application
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
      * @param restClient The RestClient of the Application
      */
     public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
@@ -47,7 +46,7 @@ public class LoginScreenController implements Controller{
     /**
      * Called to start this controller
      * Only call after corresponding fxml is loaded
-     *
+     * <p>
      * Load necessary GUI elements
      * Add action listeners
      */
@@ -70,7 +69,7 @@ public class LoginScreenController implements Controller{
 
     /**
      * Called to stop this controller
-     *
+     * <p>
      * Remove action listeners
      */
     public void stop() {
@@ -104,13 +103,11 @@ public class LoginScreenController implements Controller{
             tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
             pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
             errorLabel.setText("Username or password is missing");
-        }
-        else if (tfUserName.getText().contains(" ")) {
+        } else if (tfUserName.getText().contains(" ")) {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
-        }
-        else {
+        } else {
             restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
                 if (!response.getBody().getObject().getString("status").equals("success")) {
 
@@ -154,13 +151,11 @@ public class LoginScreenController implements Controller{
                     Platform.runLater(() -> errorLabel.setText("Username already taken."));
                 }
             });
-        }
-        else if (name.contains(" ")){
+        } else if (name.contains(" ")) {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
-        }
-        else {
+        } else {
             tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));

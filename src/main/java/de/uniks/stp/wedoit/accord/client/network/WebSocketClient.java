@@ -13,7 +13,7 @@ import java.util.TimerTask;
 public class WebSocketClient extends Endpoint {
     private final Editor editor;
     private Session session;
-    private Timer noopTimer;
+    private final Timer noopTimer;
     private WSCallback callback;
 
     /**

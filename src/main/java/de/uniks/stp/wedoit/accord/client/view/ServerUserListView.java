@@ -25,8 +25,8 @@ public class ServerUserListView implements javafx.util.Callback<ListView<User>, 
                     this.setStyle("-fx-border-color: red");
                 }
             } else {
-            this.setText(null);
-            this.setStyle(null);
+                this.setText(null);
+                this.setStyle(null);
             }
         }
     }

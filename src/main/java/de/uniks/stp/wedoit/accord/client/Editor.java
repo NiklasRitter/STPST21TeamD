@@ -14,11 +14,17 @@ import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
 
 public class Editor {
 
-    private AccordClient accordClient;
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final NetworkController networkController = new NetworkController(this);
+    private AccordClient accordClient;
     private Server currentServer;
 
+
+    /**
+     * 
+     *
+     * @return
+     */
     public NetworkController getNetworkController() {
         return networkController;
     }
@@ -159,7 +165,7 @@ public class Editor {
     /**
      * get a user by id
      *
-     * @param userId   id of the user
+     * @param userId id of the user
      * @return user
      */
     public User getServerUserById(Server server, String userId) {
@@ -167,7 +173,7 @@ public class Editor {
         Objects.requireNonNull(users);
         Objects.requireNonNull(userId);
 
-        for (User user: users) {
+        for (User user : users) {
             if (userId.equals(user.getId())) {
                 return user;
             }
@@ -179,7 +185,7 @@ public class Editor {
      * builds a category based on the server json answer
      * !!! no channels added
      *
-     * @param server which gets the categories
+     * @param server                  which gets the categories
      * @param serversCategoryResponse server answer for categories of the server
      */
     public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
@@ -189,7 +195,7 @@ public class Editor {
         this.currentServer = server;
 
         List<String> categoryIds = new ArrayList<>();
-        for (Category category: server.getCategories()) {
+        for (Category category : server.getCategories()) {
             categoryIds.add(category.getId());
         }
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
@@ -204,7 +210,7 @@ public class Editor {
     /**
      * builds a channel based on the server json answer
      *
-     * @param category which gets the channels
+     * @param category                  which gets the channels
      * @param categoriesChannelResponse server answer for channels of the category
      */
     public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
@@ -214,7 +220,7 @@ public class Editor {
         this.currentServer = category.getServer();
 
         List<String> channelIds = new ArrayList<>();
-        for (Channel channel: category.getChannels()) {
+        for (Channel channel : category.getChannels()) {
             channelIds.add(channel.getId());
         }
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
@@ -222,7 +228,7 @@ public class Editor {
                 Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
                 channel.setCategory(category);
                 List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-                for (String memberId: memberIds) {
+                for (String memberId : memberIds) {
                     User user = this.getServerUserById(category.getServer(), memberId);
                     channel.withMembers(user);
                 }
@@ -262,8 +268,7 @@ public class Editor {
     public void addNewPrivateMessage(PrivateMessage message) {
         if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
-        }
-        else {
+        } else {
             getUser(message.getFrom()).getPrivateChat().withMessages(message);
         }
     }
@@ -273,7 +278,7 @@ public class Editor {
      *
      * @param message to add to the model
      */
-    public void addNewChannelMessage(Message message){
+    public void addNewChannelMessage(Message message) {
         message.getChannel().withMessages(message);
     }
 
@@ -300,6 +305,7 @@ public class Editor {
 
     /**
      * remove a webSocket with given url
+     *
      * @param url url of a webSocket
      * @return the webSocket which is removed or null if there was no mapping of this url
      */
@@ -307,11 +313,11 @@ public class Editor {
         return webSocketMap.remove(url);
     }
 
-    public List<User> getOnlineUsers(){
+    public List<User> getOnlineUsers() {
         List<User> allUsers = this.getLocalUser().getUsers();
         List<User> onlineUsers = new ArrayList<>();
-        for (User user: allUsers) {
-            if (user.isOnlineStatus()){
+        for (User user : allUsers) {
+            if (user.isOnlineStatus()) {
                 onlineUsers.add(user);
             }
         }

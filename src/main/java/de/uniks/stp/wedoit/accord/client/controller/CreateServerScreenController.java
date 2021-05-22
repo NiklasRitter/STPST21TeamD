@@ -13,7 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.json.JSONObject;
 
-public class CreateServerScreenController implements Controller{
+public class CreateServerScreenController implements Controller {
 
     private final RestClient restClient;
     private final LocalUser localUser;
@@ -26,9 +26,9 @@ public class CreateServerScreenController implements Controller{
     /**
      * Create a new Controller
      *
-     * @param view The view this Controller belongs to
-     * @param model The model this Controller belongs to
-     * @param editor The editor of the Application
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
      * @param restClient The RestClient of the Application
      */
     public CreateServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
@@ -41,7 +41,7 @@ public class CreateServerScreenController implements Controller{
     /**
      * Called to start this controller
      * Only call after corresponding fxml is loaded
-     *
+     * <p>
      * Load necessary GUI elements
      * Add action listeners
      */
@@ -57,7 +57,7 @@ public class CreateServerScreenController implements Controller{
 
     /**
      * Called to stop this controller
-     *
+     * <p>
      * Remove action listeners
      */
     public void stop() {

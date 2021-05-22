@@ -9,7 +9,7 @@ public interface Controller {
     /**
      * Called to start this controller
      * Only call after corresponding fxml is loaded
-     *
+     * <p>
      * Load necessary GUI elements
      * Add action listeners
      */
@@ -18,7 +18,7 @@ public interface Controller {
 
     /**
      * Called to stop this controller
-     *
+     * <p>
      * Remove action listeners
      */
     void stop();

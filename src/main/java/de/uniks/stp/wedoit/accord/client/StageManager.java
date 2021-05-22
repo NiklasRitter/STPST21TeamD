@@ -28,7 +28,7 @@ public class StageManager extends Application {
     private static Stage popupStage;
     private static Scene scene;
     private static Scene popupScene;
-    private static Map<String, Controller> controllerMap = new HashMap<>();
+    private static final Map<String, Controller> controllerMap = new HashMap<>();
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
