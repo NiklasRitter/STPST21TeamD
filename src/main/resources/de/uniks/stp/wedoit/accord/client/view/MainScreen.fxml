@@ -53,7 +53,7 @@
          <children>
             <VBox alignment="TOP_CENTER" maxWidth="-Infinity" prefHeight="327.0" prefWidth="78.0" spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
+                  <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;" styleClass="styleButton">
                      <graphic>
                         <ImageView id="btnOptions" fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                            <image>
