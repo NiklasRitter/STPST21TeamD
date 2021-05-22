@@ -16,6 +16,13 @@ public class WebSocketClient extends Endpoint {
     private Timer noopTimer;
     private WSCallback callback;
 
+    /**
+     * Create a new WebsocketClient.
+     *
+     * @param editor   The Editor of the Application.
+     * @param endpoint The URI the WebsocketClient listens to.
+     * @param callback The Callback to be called when a message is received.
+     */
     public WebSocketClient(Editor editor, URI endpoint, WSCallback callback) {
         this.editor = editor;
         this.noopTimer = new Timer();
@@ -33,14 +40,30 @@ public class WebSocketClient extends Endpoint {
         }
     }
 
+    /**
+     * Get the Callback of this WebsocketClient.
+     *
+     * @return THe current Callback of this websocketClient.
+     */
     public WSCallback getCallback() {
         return callback;
     }
 
+    /**
+     * Set the Callback of this WebsocketClient.
+     *
+     * @param callback The new callback this WebsocketClient is supposed to call.
+     */
     public void setCallback(WSCallback callback) {
         this.callback = callback;
     }
 
+    /**
+     * Called when this WebsocketClient is opened.
+     *
+     * @param session The Session of this WebsocketClient.
+     * @param config  The Configuration of this WebsocketClient.
+     */
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         this.session = session;
@@ -55,6 +78,12 @@ public class WebSocketClient extends Endpoint {
         }, 0, 1000 * 30);
     }
 
+    /**
+     * Called when this WebsocketClient is closed.
+     *
+     * @param session     The Session of this WebsocketClient.
+     * @param closeReason The Reason the Connection was closed for.
+     */
     @Override
     public void onClose(Session session, CloseReason closeReason) {
         super.onClose(session, closeReason);
@@ -62,18 +91,35 @@ public class WebSocketClient extends Endpoint {
         this.session = null;
     }
 
+    /**
+     * Called when this WebsocketClient receives a message.
+     * <p>
+     * Calls the Callback with the parsed Message.
+     *
+     * @param message The message received from the Server.
+     */
     public void onMessage(String message) {
         JsonObject jsonMessage = JsonUtil.parse(message);
 
         this.callback.handleMessage(jsonMessage);
     }
 
+    /**
+     * Send a message to the Server.
+     *
+     * @param message The Message to be sent.
+     */
     public void sendMessage(String message) {
         if (this.session.isOpen()) {
             this.session.getAsyncRemote().sendText(message);
         }
     }
 
+    /**
+     * Stops this WebsocketClient.
+     * <p>
+     * Cancels the timer and closes the Session.
+     */
     public void stop() {
         this.noopTimer.cancel();
         try {

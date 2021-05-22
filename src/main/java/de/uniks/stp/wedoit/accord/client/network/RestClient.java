@@ -12,6 +12,13 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class RestClient {
 
+    /**
+     * Login the user with given name and password.
+     *
+     * @param name     The Name of the user to be logged in.
+     * @param password The Password for the USer to be logged in.
+     * @param callback The Callback to be called after the Request.
+     */
     public void login(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
         String body = JsonUtil.buildLogin(name, password).toString();
@@ -25,10 +32,10 @@ public class RestClient {
     }
 
     /**
-     * Request to get all servers where the user with the given userKey is member or owner
+     * Get all Servers the currently logged in User is Member and/or owner of.
      *
-     * @param userKey  userKey of the logged in user
-     * @param callback callback
+     * @param userKey  The userKey of the currently logged in User.
+     * @param callback The Callback to be called after the Request.
      */
     public void getServers(String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH)
@@ -38,10 +45,11 @@ public class RestClient {
     }
 
     /**
-     * Request to get explicit information to the server with given id
+     * Get the explicit Information of a given Server.
      *
-     * @param userKey  userKey of the logged in user
-     * @param callback callback
+     * @param userKey  The userKey of the currently logged in User.
+     * @param serverId The ID of the Server the explicit Information are being requested of.
+     * @param callback The Callback to be called after the Request.
      */
     public void getExplicitServerInformation(String userKey, String serverId, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
@@ -50,6 +58,13 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * Create a User with a given Name and Password.
+     *
+     * @param name     The Name of the User to be created.
+     * @param password The Password for the User to be created.
+     * @param callback The Callback to be called after the Request.
+     */
     public void register(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
         String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
@@ -61,10 +76,10 @@ public class RestClient {
     }
 
     /**
-     * Request to logout given user
+     * Log out the currently logged in User.
      *
-     * @param userKey  userKey of the user to be logged out
-     * @param callback callback
+     * @param userKey  The userKey of the currently logged in User.
+     * @param callback The Callback to be called after the Request.
      */
     public void logout(String userKey, Callback<JsonNode> callback) {
         // Use UniRest to make register request
@@ -73,6 +88,13 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * Create a Server with a given Name.
+     *
+     * @param name     The Name of the Server to be created.
+     * @param userKey  The userKey of the currently logged in User.
+     * @param callback The Callback to be called after the Request.
+     */
     public void createServer(String name, String userKey, Callback<JsonNode> callback) {
         // Build request Body
         String body = Json.createObjectBuilder().add(COM_NAME, name).build().toString();
@@ -85,6 +107,12 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * Get all Users who are currently online.
+     *
+     * @param userKey  The userKey of the currently logged in User.
+     * @param callback The Callback to be called after the Request.
+     */
     public void getOnlineUsers(String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + USERS_PATH)
                 .header(COM_USER_KEY, userKey);
@@ -93,11 +121,11 @@ public class RestClient {
     }
 
     /**
-     * Request to get the categories of the given server id
+     * Get the Categories of a given Server.
      *
-     * @param serverId of the server, the categories should be requested from
-     * @param userKey  userKey of the logged in user
-     * @param callback callback
+     * @param serverId The ID of the Server the Categories are being requested for.
+     * @param userKey  The userKey of the currently logged in User.
+     * @param callback The Callback to be called after the Request.
      */
     public void getCategories(String serverId, String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES)
@@ -107,20 +135,26 @@ public class RestClient {
     }
 
     /**
-     * Request to get the channels of the given category id
+     * Get the Channels of a given Category in a given Server.
      *
-     * @param serverId of the category server
-     * @param categoryId of the category, the channels should be requested from
-     * @param userKey  userKey of the logged in user
-     * @param callback callback
+     * @param serverId   The ID of the Server the Category belongs to.
+     * @param categoryId The ID of the Category the Channels are being requested for.
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
      */
-    public void getChannels (String serverId, String categoryId, String userKey, Callback<JsonNode> callback) {
+    public void getChannels(String serverId, String categoryId, String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES + "/" + categoryId + CHANNELS)
                 .header(COM_USER_KEY, userKey);
 
         sendRequest(req, callback);
     }
 
+    /**
+     * Send a Request and call the Callback asynchronously.
+     *
+     * @param req      The Request to be sent.
+     * @param callback The Callback to be called after the Request.
+     */
     private void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         req.asJsonAsync(callback);
     }
