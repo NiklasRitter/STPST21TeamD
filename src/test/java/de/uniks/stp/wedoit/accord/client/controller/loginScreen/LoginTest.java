@@ -10,7 +10,6 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,6 @@ import javax.json.Json;
 import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 import static org.mockito.Mockito.*;
-import static org.testfx.api.FxToolkit.registerPrimaryStage;
 
 public class LoginTest extends ApplicationTest {
 
@@ -186,7 +184,6 @@ public class LoginTest extends ApplicationTest {
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
-    
 
     @Test
     public void testMissingPassword() {

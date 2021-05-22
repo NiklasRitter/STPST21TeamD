@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
+package de.uniks.stp.wedoit.accord.client.controller.privateChatsScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -83,7 +83,7 @@ public class onlineUserListViewTest extends ApplicationTest {
 
     @Test
     public void initUserListView() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
@@ -102,7 +102,7 @@ public class onlineUserListViewTest extends ApplicationTest {
 
     @Test
     public void newUserOnlineListViewUpdated() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
@@ -130,7 +130,7 @@ public class onlineUserListViewTest extends ApplicationTest {
 
     @Test
     public void userLeftListViewUpdated() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         JsonObject restJson = getOnlineUsers();
         mockRest(restJson);
@@ -214,7 +214,7 @@ public class onlineUserListViewTest extends ApplicationTest {
         wsSystemCallback.handleMessage(webSocketJson);
     }
 
-    public void directToWelcomeScreen() {
+    public void directToPrivateChatsScreen() {
 
         //Mocking of RestClient login function
         JsonObject json = Json.createObjectBuilder()
@@ -246,7 +246,7 @@ public class onlineUserListViewTest extends ApplicationTest {
         this.localUser = stageManager.getEditor().getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnWelcome");
+        clickOn("#btnPrivateChats");
     }
 }
 

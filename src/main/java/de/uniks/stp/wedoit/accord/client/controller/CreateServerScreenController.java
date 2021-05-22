@@ -23,9 +23,9 @@ public class CreateServerScreenController implements Controller {
     /**
      * Create a new Controller
      *
-     * @param view       The view this Controller belongs to
-     * @param model      The model this Controller belongs to
-     * @param editor     The editor of the Application
+     * @param view   The view this Controller belongs to
+     * @param model  The model this Controller belongs to
+     * @param editor The editor of the Application
      */
     public CreateServerScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;

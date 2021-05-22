@@ -24,6 +24,9 @@
                <font>
                   <Font name="Comic Sans MS" size="24.0" />
                </font>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
             </Label>
             <Region HBox.hgrow="ALWAYS">
                <HBox.margin>
@@ -34,7 +37,7 @@
                   <Image url="@images/Logo.png" />
                </image>
                <HBox.margin>
-                  <Insets />
+                  <Insets right="10.0" />
                </HBox.margin>
             </ImageView>
          </children>
@@ -67,7 +70,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color blue="1.0" green="1.0" red="1.0" />
+                                    <Color red="1.0" green="1.0" blue="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -76,7 +79,7 @@
                      <graphic>
                         <ImageView id="btnSetting" fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/settings.png" />
+                              <Image url="@images/options.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -85,7 +88,7 @@
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/home-icon-silhouette.png" />
+                              <Image url="@images/home.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -95,12 +98,12 @@
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/logout.png" />
+                              <Image url="@images/log_out.png" />
                            </image>
                         </ImageView>
                      </graphic>
                      <VBox.margin>
-                        <Insets />
+                        <Insets bottom="10.0" />
                      </VBox.margin>
                   </Button>
                </children>

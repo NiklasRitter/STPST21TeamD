@@ -25,10 +25,9 @@ public class MainScreenController implements Controller {
     private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
-    private Button welcomeButton;
+    private Button privateChatsButton;
     private Button optionsButton;
     private Button addServerButton;
-    private Button serverButton;
     private Button logoutButton;
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
@@ -37,9 +36,9 @@ public class MainScreenController implements Controller {
     /**
      * Create a new Controller
      *
-     * @param view       The view this Controller belongs to
-     * @param model      The model this Controller belongs to
-     * @param editor     The editor of the Application
+     * @param view   The view this Controller belongs to
+     * @param model  The model this Controller belongs to
+     * @param editor The editor of the Application
      */
     public MainScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
@@ -56,9 +55,8 @@ public class MainScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        this.welcomeButton = (Button) view.lookup("#btnWelcome");
+        this.privateChatsButton = (Button) view.lookup("#btnPrivateChats");
         this.optionsButton = (Button) view.lookup("#btnOptions");
-        this.serverButton = (Button) view.lookup("#btnServerList");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
         this.logoutButton = (Button) view.lookup("#btnLogout");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
@@ -69,9 +67,8 @@ public class MainScreenController implements Controller {
         editor.getNetworkController().getServers(localUser, this);
 
         // Add action listeners
-        this.welcomeButton.setOnAction(this::welcomeButtonOnClick);
+        this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
         this.optionsButton.setOnAction(this::optionsButtonOnClick);
-        this.serverButton.setOnAction(this::serverButtonOnClick);
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
         this.logoutButton.setOnAction(this::logoutButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
@@ -97,9 +94,9 @@ public class MainScreenController implements Controller {
      * Initializes the Tooltips for the Buttons
      */
     private void initTooltips() {
-        Tooltip welcomeButton = new Tooltip();
-        welcomeButton.setText("private chats");
-        this.welcomeButton.setTooltip(welcomeButton);
+        Tooltip privateChatsButton = new Tooltip();
+        privateChatsButton.setText("private chats");
+        this.privateChatsButton.setTooltip(privateChatsButton);
 
         Tooltip logoutButton = new Tooltip();
         logoutButton.setText("logout");
@@ -115,7 +112,6 @@ public class MainScreenController implements Controller {
 
         Tooltip serverButton = new Tooltip();
         serverButton.setText("Enter selected server");
-        this.serverButton.setTooltip(serverButton);
     }
 
     /**
@@ -124,9 +120,8 @@ public class MainScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        welcomeButton.setOnAction(null);
+        privateChatsButton.setOnAction(null);
         optionsButton.setOnAction(null);
-        serverButton.setOnAction(null);
         addServerButton.setOnAction(null);
         logoutButton.setOnAction(null);
 
@@ -135,12 +130,12 @@ public class MainScreenController implements Controller {
     }
 
     /**
-     * Redirect to the WelcomeScreen
+     * Redirect to the PrivateChatsScreen
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
-    private void welcomeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showWelcomeScreen();
+    private void privateChatsButtonOnClick(ActionEvent actionEvent) {
+        StageManager.showPrivateChatsScreen();
     }
 
     /**
@@ -155,18 +150,6 @@ public class MainScreenController implements Controller {
     /**
      * Redirect to the ServerScreen of the chosen server
      *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void serverButtonOnClick(ActionEvent actionEvent) {
-        Server server = serverListView.getSelectionModel().getSelectedItem();
-        if (server != null) {
-            StageManager.showServerScreen(server);
-        }
-    }
-
-    /**
-     * Redirect to the ServerScreen of the chosen server
-     *
      * @param mouseEvent Expects an mouse event, such as when the listView is doubleclicked
      */
     private void onServerListViewClicked(MouseEvent mouseEvent) {
@@ -176,7 +159,6 @@ public class MainScreenController implements Controller {
                 StageManager.showServerScreen(server);
             }
         }
-
     }
 
     /**

@@ -15,15 +15,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class NetworkController {
+
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final Editor editor;
     private RestClient restClient = new RestClient();
@@ -133,7 +131,7 @@ public class NetworkController {
      * handle messages on the system channel by adding or deleting users from the data model
      *
      * @param msg message from the server on the system channel
-     * @return
+     * @return NetworkController
      */
     public NetworkController handleSystemMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
@@ -152,7 +150,7 @@ public class NetworkController {
      * handle chat message by adding it to the data model
      *
      * @param msg message from the server on the private chat channel
-     * @return
+     * @return NetworkController
      */
     public NetworkController handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
@@ -264,7 +262,7 @@ public class NetworkController {
         return this;
     }
 
-    public NetworkController getOnlineUsers(LocalUser localUser, WelcomeScreenController controller) {
+    public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
             JSONArray getServersResponse = response.getBody().getObject().getJSONArray(COM_DATA);

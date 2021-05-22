@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
+package de.uniks.stp.wedoit.accord.client.controller.privateChatsScreen;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -85,7 +85,7 @@ public class chatTest extends ApplicationTest {
     @Test
     public void testChatSendMessage() {
 
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         //init user list and select first user
         initUserListView();
@@ -118,7 +118,7 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatIncomingMessage() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
@@ -146,7 +146,7 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatNoUserSelected() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         //init user list and select first user
         initUserListView();
@@ -161,7 +161,7 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatMessagesCachedProperlyAfterChatChange() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         //init user list and select first user
         initUserListView();
@@ -289,7 +289,7 @@ public class chatTest extends ApplicationTest {
                 .build();
     }
 
-    public void directToWelcomeScreen() {
+    public void directToPrivateChatsScreen() {
 
         //Mocking of RestClient login function
         JsonObject json = Json.createObjectBuilder()
@@ -321,6 +321,6 @@ public class chatTest extends ApplicationTest {
         this.localUser = editor.getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnWelcome");
+        clickOn("#btnPrivateChats");
     }
 }

@@ -35,11 +35,11 @@ public class OptionsScreenController implements Controller {
      * Add action listeners
      */
     public void init() {
-        btnDarkmode = (CheckBox) view.lookup("#btnDarkmode");
+        this.btnDarkmode = (CheckBox) view.lookup("#btnDarkmode");
 
-        btnDarkmode.setSelected(options.isDarkmode());
+        this.btnDarkmode.setSelected(options.isDarkmode());
 
-        btnDarkmode.setOnAction(this::btnDarkmodeOnClick);
+        this.btnDarkmode.setOnAction(this::btnDarkmodeOnClick);
     }
 
     /**
@@ -48,7 +48,7 @@ public class OptionsScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        btnDarkmode = null;
+        btnDarkmode.setOnAction(null);
     }
 
     /**
