@@ -20,12 +20,26 @@ public class CreateServerScreenController implements Controller {
     private Button btnCreateServer;
     private Label errorLabel;
 
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     */
     public CreateServerScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
         // Load all view references
         this.btnCreateServer = (Button) view.lookup("#btnCreateServer");
@@ -36,14 +50,20 @@ public class CreateServerScreenController implements Controller {
         this.btnCreateServer.setOnAction(this::createServerButtonOnClick);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
+        // Remove all action listeners
         btnCreateServer.setOnAction(null);
     }
 
-    // Additional methods
 
     /**
-     * After pressing "Create Server", the server will be created with the name in the textfield, and you get redirected
+     * After pressing "Create Server", the server will be created with the name in the text field and you get
+     * redirected to the Screen for the Server
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */

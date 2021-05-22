@@ -28,6 +28,11 @@ public class NetworkController {
     private final Editor editor;
     private RestClient restClient = new RestClient();
 
+    /**
+     * Create a NetworkController.
+     *
+     * @param editor The editor of the Application
+     */
     public NetworkController(Editor editor) {
         this.editor = editor;
     }
@@ -41,6 +46,12 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * Called to start this controller.
+     * Only call after corresponding fxml is loaded.
+     * <p>
+     * Create default WebSocketClients.
+     */
     public NetworkController start() {
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
         haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername(), this::handlePrivateChatMessage);
@@ -57,6 +68,10 @@ public class NetworkController {
         return newName;
     }
 
+    /**
+     * @param url
+     * @return -
+     */
     public WebSocketClient getOrCreateWebSocket(String url) {
         WebSocketClient webSocket = webSocketMap.get(url);
         if (webSocket == null) {
@@ -67,11 +82,12 @@ public class NetworkController {
     }
 
     /**
-     * This method is for testing
+     * Add a new WebSocketClient to the Controller
+     * Override any previous WebSocketClients
      *
-     * @param url             testUrl
-     * @param webSocketClient testWebSocket
-     * @return webSocketClient which is given
+     * @param url             The URL of the webSocket
+     * @param webSocketClient The WebSocketClient to be added
+     * @return The given WebSocketClient
      */
     public WebSocketClient haveWebSocket(String url, WebSocketClient webSocketClient) {
         webSocketMap.put(url, webSocketClient);
@@ -79,13 +95,12 @@ public class NetworkController {
     }
 
     /**
-     * Create a new webSocket and put the webSocket in the WebSocketMap,
-     * The webSocket has to be deleted when the websocket is no longer used
-     * with method editor.withOutUrl(url)
+     * Create a new webSocket and add it
+     * Override the Callback of any WebSocketClient for given URL
      *
-     * @param url      url for the webSocket connection
-     * @param callback callback for the
-     * @return webSocketClient which is givenMr Spock
+     * @param url      The URL of the webSocket
+     * @param callback The Callback for the URL
+     * @return The created WebSocketClient
      */
     public WebSocketClient haveWebSocket(String url, WSCallback callback) {
         WebSocketClient webSocket = webSocketMap.get(url);
@@ -152,6 +167,11 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * Send a private chat message.
+     *
+     * @param jsonMsgString The stringified Json message
+     */
     public NetworkController sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername());
@@ -159,6 +179,11 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * Send a message in the current Server Channel
+     *
+     * @param jsonMsgString The stringified Json message
+     */
     public NetworkController sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(CHAT_USER_URL + clearUsername()
@@ -294,6 +319,11 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Stop and remove WebSocketClients
+     */
     public NetworkController stop() {
         Iterator<Map.Entry<String, WebSocketClient>> iterator = webSocketMap.entrySet().iterator();
         while (iterator.hasNext()) {

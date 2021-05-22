@@ -53,6 +53,14 @@ public class ServerScreenController implements Controller {
     private PropertyChangeListener newMessagesListener = this::newMessage;
     private TreeItem<Object> tvServerChannelsRoot;
 
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     * @param server     The Server this Screen belongs to
+     */
     public ServerScreenController(Parent view, LocalUser model, Editor editor, Server server) {
         this.view = view;
         this.localUser = model;
@@ -60,6 +68,14 @@ public class ServerScreenController implements Controller {
         this.server = server;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     * Add necessary webSocketClients
+     */
     public void init() {
         // Load all view references
         this.btnOptions = (Button) view.lookup("#btnOptions");
@@ -115,6 +131,9 @@ public class ServerScreenController implements Controller {
         }
     }
 
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
         homeButton.setText("home");
@@ -129,6 +148,11 @@ public class ServerScreenController implements Controller {
         btnOptions.setTooltip(optionsButton);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         localUser.withoutServers(server);
         this.btnLogout.setOnAction(null);
@@ -381,6 +405,7 @@ public class ServerScreenController implements Controller {
 
     /**
      * update user list view
+     * <p>
      * remove all items from the list view and put all member of a server back in the list view
      * sorted by online status
      */

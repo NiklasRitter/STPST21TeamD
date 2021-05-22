@@ -34,12 +34,26 @@ public class MainScreenController implements Controller {
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private MainScreenServerListView mainScreenServerListView;
 
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     */
     public MainScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
         // Load all view references
         this.welcomeButton = (Button) view.lookup("#btnWelcome");
@@ -79,6 +93,9 @@ public class MainScreenController implements Controller {
         }
     }
 
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
     private void initTooltips() {
         Tooltip welcomeButton = new Tooltip();
         welcomeButton.setText("private chats");
@@ -101,6 +118,11 @@ public class MainScreenController implements Controller {
         this.serverButton.setTooltip(serverButton);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         welcomeButton.setOnAction(null);
         optionsButton.setOnAction(null);
@@ -111,8 +133,6 @@ public class MainScreenController implements Controller {
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
         this.serverListListener = null;
     }
-
-    // Additional methods
 
     /**
      * Redirect to the WelcomeScreen

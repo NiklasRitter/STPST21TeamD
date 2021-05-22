@@ -13,13 +13,15 @@ import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
 
 public class Editor {
 
-    private AccordClient accordClient;
-
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final NetworkController networkController = new NetworkController(this);
-
+    private AccordClient accordClient;
     private Server currentServer;
 
+
+    /**
+     * @return
+     */
     public NetworkController getNetworkController() {
         return networkController;
     }
@@ -219,13 +221,13 @@ public class Editor {
             channelIds.add(channel.getId());
         }
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
-                channel.setCategory(category);
-                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-                for (String memberId : memberIds) {
-                    User user = this.getServerUserById(category.getServer(), memberId);
-                    channel.withMembers(user);
-                }
+            Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+            channel.setCategory(category);
+            List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
+            for (String memberId : memberIds) {
+                User user = this.getServerUserById(category.getServer(), memberId);
+                channel.withMembers(user);
+            }
             if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(COM_ID))) {
             }
         }

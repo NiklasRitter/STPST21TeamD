@@ -46,12 +46,26 @@ public class WelcomeScreenController implements Controller {
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser;
 
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     */
     public WelcomeScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
 
         this.btnOptions = (Button) view.lookup("#btnOptions");
@@ -74,6 +88,9 @@ public class WelcomeScreenController implements Controller {
         this.initOnlineUsersList();
     }
 
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
         homeButton.setText("home");
@@ -88,6 +105,11 @@ public class WelcomeScreenController implements Controller {
         btnOptions.setTooltip(optionsButton);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);

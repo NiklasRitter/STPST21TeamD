@@ -10,12 +10,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
+import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
+
 public class LoginScreenController implements Controller {
 
-    private final LocalUser model;
     private final Editor editor;
     private final Parent view;
-
+    private final LocalUser model;
     private Button btnLogin;
     private Button btnRegister;
     private Button btnOptions;
@@ -23,13 +25,26 @@ public class LoginScreenController implements Controller {
     private TextField pwUserPw;
     private Label errorLabel;
 
-
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     */
     public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.model = model;
         this.editor = editor;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
         //Load all view references
         this.tfUserName = (TextField) view.lookup("#tfUserName");
@@ -41,12 +56,19 @@ public class LoginScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
 
 
+        // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
+        // Remove all action listeners
         btnLogin.setOnAction(null);
         btnRegister.setOnAction(null);
         btnOptions.setOnAction(null);
