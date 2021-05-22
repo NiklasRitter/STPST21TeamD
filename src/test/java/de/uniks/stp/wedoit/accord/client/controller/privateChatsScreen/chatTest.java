@@ -113,7 +113,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Hallo");
+        Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(0).getText());
     }
 
     @Test
@@ -189,7 +189,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
 
         lwOnlineUsers.getSelectionModel().select(1);
         User user1 = lwOnlineUsers.getSelectionModel().getSelectedItem();
@@ -212,7 +212,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user2.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user2.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user2.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
     }
 
     public void mockRest(JsonObject restClientJson) {

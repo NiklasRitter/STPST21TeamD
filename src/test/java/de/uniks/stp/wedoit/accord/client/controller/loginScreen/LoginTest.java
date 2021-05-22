@@ -107,7 +107,7 @@ public class LoginTest extends ApplicationTest {
         Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", stageManager.getEditor().getLocalUser().getUserKey());
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(stage.getTitle(), "Main");
+        Assert.assertEquals("Main", stage.getTitle());
     }
 
 
