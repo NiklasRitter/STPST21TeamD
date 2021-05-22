@@ -6,7 +6,6 @@ import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.WelcomeScreenOnlineUsersCellFactory;
@@ -17,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import org.json.JSONArray;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -27,14 +25,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
-
 public class WelcomeScreenController implements Controller {
 
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
-    private final RestClient restClient;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
@@ -57,13 +52,11 @@ public class WelcomeScreenController implements Controller {
      * @param view       The view this Controller belongs to
      * @param model      The model this Controller belongs to
      * @param editor     The editor of the Application
-     * @param restClient The RestClient of the Application
      */
-    public WelcomeScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    public WelcomeScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
     /**
@@ -147,7 +140,7 @@ public class WelcomeScreenController implements Controller {
      * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        StageManager.showMainScreen(restClient);
+        StageManager.showMainScreen();
     }
 
     /**
@@ -156,7 +149,7 @@ public class WelcomeScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fire
      */
     private void btnLogoutOnClicked(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey(), restClient);
+        editor.logoutUser(localUser.getUserKey());
     }
 
     /**
@@ -176,32 +169,27 @@ public class WelcomeScreenController implements Controller {
      */
     private void initOnlineUsersList() {
         // load online Users
-        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
-            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(COM_DATA);
-
-            for (int index = 0; index < getServersResponse.length(); index++) {
-                String name = getServersResponse.getJSONObject(index).getString(COM_NAME);
-                String id = getServersResponse.getJSONObject(index).getString(COM_ID);
-                editor.haveUser(id, name);
-            }
-
-            // load list view
-            usersListViewCellFactory = new WelcomeScreenOnlineUsersCellFactory();
-            lwOnlineUsers.setCellFactory(usersListViewCellFactory);
-            availableUsers = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
-                    .collect(Collectors.toList());
-
-            this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
-
-            Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
-
-            for (User user : availableUsers) {
-                user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
-            }
-            // Add listener for the loaded listView
-            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
-        });
+        editor.getNetworkController().getOnlineUsers(localUser, this);
     }
+
+    public void handleGetOnlineUsers() {
+        // load list view
+        usersListViewCellFactory = new WelcomeScreenOnlineUsersCellFactory();
+        lwOnlineUsers.setCellFactory(usersListViewCellFactory);
+        availableUsers = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                .collect(Collectors.toList());
+
+        // Add listener for the loaded listView
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
+        this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
+
+        Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
+
+        for (User user : availableUsers) {
+            user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
+        }
+    }
+
 
     /**
      * update automatically the listView when goes offline or online

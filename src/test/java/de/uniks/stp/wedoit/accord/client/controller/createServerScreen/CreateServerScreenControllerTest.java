@@ -1,3 +1,4 @@
+
 package de.uniks.stp.wedoit.accord.client.controller.createServerScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -29,7 +30,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
-import static de.uniks.stp.wedoit.accord.client.Constants.AND_SERVER_ID_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,15 +37,22 @@ import static org.mockito.Mockito.when;
 
 public class CreateServerScreenControllerTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
-
     @Mock
     private WebSocketClient webSocketClient;
-
     @Mock
     private WebSocketClient channelChatWebSocketClient;
+    @Mock
+    private RestClient restMock;
+
+    @Mock
+    private HttpResponse<JsonNode> res;
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Override
     public void start(Stage stage) {
@@ -58,22 +65,11 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         localUser = stageManager.getEditor().haveLocalUser("John", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
-        StageManager.showMainScreen(restMock);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
-    @Mock
-    private RestClient restMock;
-
-    @Mock
-    private HttpResponse<JsonNode> res;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @BeforeEach
     public void setup() {
@@ -132,7 +128,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertNotNull(server);
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
 
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -179,7 +175,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertNull(server);
 
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals(textField.getStyle(), "-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Something went wrong while creating the server", errorLabel.getText());
@@ -204,7 +200,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals("Create Server", stageManager.getPopupStage().getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
-        String serverName = "M";
+        String serverName = "";
         serverTextField.setText(serverName);
 
         clickOn("#btnCreateServer");
@@ -219,10 +215,10 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         }
         Assert.assertNull(server);
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals(textField.getStyle(), "-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
+        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Name has to be at least 2 symbols long", errorLabel.getText());
+        Assert.assertEquals("Name has to be at least 1 symbols long", errorLabel.getText());
     }
 
 

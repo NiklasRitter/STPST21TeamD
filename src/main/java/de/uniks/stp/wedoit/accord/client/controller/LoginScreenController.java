@@ -3,14 +3,12 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.json.JSONObject;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
 import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
@@ -19,7 +17,6 @@ public class LoginScreenController implements Controller {
 
     private final Editor editor;
     private final Parent view;
-    private final RestClient restClient;
     private final LocalUser model;
     private Button btnLogin;
     private Button btnRegister;
@@ -34,13 +31,11 @@ public class LoginScreenController implements Controller {
      * @param view       The view this Controller belongs to
      * @param model      The model this Controller belongs to
      * @param editor     The editor of the Application
-     * @param restClient The RestClient of the Application
      */
-    public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.model = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
     /**
@@ -98,33 +93,28 @@ public class LoginScreenController implements Controller {
     }
 
     public void login() {
-        if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
+        String name = this.tfUserName.getText();
+        String password = this.pwUserPw.getText();
+        if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
 
-            tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-            pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             errorLabel.setText("Username or password is missing");
-        } else if (tfUserName.getText().contains(" ")) {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
         } else {
-            restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
-                if (!response.getBody().getObject().getString("status").equals("success")) {
-
-                    tfUserName.setStyle("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;");
-                    pwUserPw.setStyle("-fx-border-color: red ; -fx-border-width: 2px ;");
-                    Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
-
-                } else {
-                    JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
-                    String userKey = loginAnswer.getString(COM_USER_KEY);
-                    editor.haveLocalUser(tfUserName.getText(), userKey);
-                    editor.getNetworkController().start();
-                    Platform.runLater(() -> StageManager.showMainScreen(restClient));
-                }
-            });
+            editor.getNetworkController().loginUser(name, password, this);
         }
     }
+
+    public void handleLogin(boolean success) {
+        if (!success) {
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
+            Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+        } else {
+            Platform.runLater(StageManager::showMainScreen);
+        }
+    }
+
 
     /**
      * register user to server and login, redirect to MainScreen
@@ -135,32 +125,30 @@ public class LoginScreenController implements Controller {
         String name = this.tfUserName.getText();
         String password = this.pwUserPw.getText();
 
-        if (name != null && !name.isEmpty() && password != null && !password.isEmpty() && !name.contains(" ")) {
-            restClient.register(name, password, registerResponse -> {
-                // if user successful registered
-                if (registerResponse.getBody().getObject().getString("status").equals("success")) {
-
-                    //login the user
-                    login();
-                } else {
-                    //reset name and password fields
-                    this.tfUserName.setText("");
-                    this.pwUserPw.setText("");
-                    tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-                    pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-                    Platform.runLater(() -> errorLabel.setText("Username already taken."));
-                }
-            });
-        } else if (name.contains(" ")) {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            Platform.runLater(() -> errorLabel.setText("Usernames are not allowed to contain blanks!"));
+        if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
+            editor.getNetworkController().registerUser(name, password, this);
         } else {
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            //reset name and password fields
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
     }
+
+    public void handleRegister(boolean success) {
+        if (!success) {
+            //reset name and password fields
+            this.tfUserName.setText("");
+            this.pwUserPw.setText("");
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
+            Platform.runLater(() -> errorLabel.setText("Username already taken."));
+        } else {
+            //login the user
+            login();
+        }
+    }
+
 
     /**
      * open Optionsmenu

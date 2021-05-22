@@ -10,6 +10,7 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,27 +28,14 @@ import javax.json.Json;
 import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
 import static org.mockito.Mockito.*;
+import static org.testfx.api.FxToolkit.registerPrimaryStage;
 
 public class LoginTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
-
-    @Override
-    public void start(Stage stage) {
-        // start application
-        this.stage = stage;
-        this.stageManager = new StageManager();
-        this.stageManager.start(stage);
-
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
-
-        StageManager.showLoginScreen(restMock);
-        this.stage.centerOnScreen();
-        this.stage.setAlwaysOnTop(true);
-    }
-
     @Mock
     private RestClient restMock;
 
@@ -59,12 +47,24 @@ public class LoginTest extends ApplicationTest {
 
     @Mock
     private HttpResponse<JsonNode> res;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
+
+    @Override
+    public void start(Stage stage) {
+        // start application
+        this.stage = stage;
+        this.stageManager = new StageManager();
+        this.stageManager.start(stage);
+
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showLoginScreen();
+        this.stage.centerOnScreen();
+        this.stage.setAlwaysOnTop(true);
+    }
 
     @BeforeEach
     public void setup() {
@@ -148,10 +148,10 @@ public class LoginTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username or password is wrong.", errorLabel.getText());
@@ -177,41 +177,16 @@ public class LoginTest extends ApplicationTest {
         Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
-    @Test
-    public void wrongUsername() {
-        //TestFX
-        String username = "user name";
-        String password = "password";
-
-        clickOn("#tfUserName");
-        write(username);
-
-        clickOn("#pwUserPw");
-        write(password);
-
-        clickOn("#btnLogin");
-
-        Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Usernames are not allowed to contain blanks!", errorLabel.getText());
-
-        TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", tfUserName.getStyle());
-
-        TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: #ff0000; -fx-border-width: 2px;", pwUserPw.getStyle());
-
-        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
-        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
-    }
+    
 
     @Test
     public void testMissingPassword() {
@@ -231,10 +206,10 @@ public class LoginTest extends ApplicationTest {
         Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("-fx-border-color: #ff0000 ; -fx-border-width: 2px ;", tfUserName.getStyle());
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("-fx-border-color: red ; -fx-border-width: 2px ;", pwUserPw.getStyle());
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());

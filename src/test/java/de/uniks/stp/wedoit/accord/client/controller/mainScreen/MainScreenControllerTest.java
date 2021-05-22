@@ -1,3 +1,4 @@
+
 package de.uniks.stp.wedoit.accord.client.controller.mainScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -34,23 +35,28 @@ import static org.mockito.Mockito.when;
 
 public class MainScreenControllerTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
-
     @Mock
     private WebSocketClient systemWebSocketClient;
-
     @Mock
     private WebSocketClient chatWebSocketClient;
-
     @Mock
     private WebSocketClient channelChatWebSocketClient;
-
     private Server server;
 
     @Mock
     private WebSocketClient webSocketClient;
+    @Mock
+    private RestClient restMock;
+
+    @Mock
+    private HttpResponse<JsonNode> res;
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Override
     public void start(Stage stage) {
@@ -63,22 +69,11 @@ public class MainScreenControllerTest extends ApplicationTest {
         localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
 
-        StageManager.showMainScreen(restMock);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
-    @Mock
-    private RestClient restMock;
-
-    @Mock
-    private HttpResponse<JsonNode> res;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @BeforeEach
     public void setup() {
@@ -122,7 +117,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         // Mock the rest client getServers method
         mockRestClient(json);
 
-        ListView listView = lookup("#lwServerList").queryListView();
+        ListView<Object> listView = lookup("#lwServerList").queryListView();
 
         // Test that two servers are listed in the listView
         Assert.assertEquals(2, listView.getItems().toArray().length);
@@ -179,9 +174,9 @@ public class MainScreenControllerTest extends ApplicationTest {
         }
 
         //Test correct alphabetical order of the items and Test correct items in the list view
-        Assert.assertEquals("AMainTestServerTwo", ((Server) listView.getItems().get(0)).getName());
-        Assert.assertEquals("AOServer", ((Server) listView.getItems().get(1)).getName());
-        Assert.assertEquals("BMainTestServerOne", ((Server) listView.getItems().get(2)).getName());
+        Assert.assertEquals("AMainTestServerTwo", listView.getItems().get(0).getName());
+        Assert.assertEquals("AOServer", listView.getItems().get(1).getName());
+        Assert.assertEquals("BMainTestServerOne", listView.getItems().get(2).getName());
 
     }
 
@@ -191,8 +186,6 @@ public class MainScreenControllerTest extends ApplicationTest {
         JsonObject json = buildGetServersFailureResponse();
 
         mockRestClient(json);
-
-        ListView<Server> listView = lookup("#lwServerList").queryListView();
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Login", stage.getTitle());
@@ -220,7 +213,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         Server server = listView.getSelectionModel().getSelectedItem();
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
 
         doubleClickOn("#lwServerList");
 
@@ -252,7 +245,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         Server server = listView.getSelectionModel().getSelectedItem();
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                +  AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
+                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
 
         clickOn("#btnServer");
 

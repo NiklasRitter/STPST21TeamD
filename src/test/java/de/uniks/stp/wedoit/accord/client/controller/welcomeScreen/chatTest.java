@@ -4,7 +4,6 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -31,7 +30,6 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonStructure;
 
 import static de.uniks.stp.wedoit.accord.client.Constants.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -45,8 +43,6 @@ public class chatTest extends ApplicationTest {
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
-    private Server server;
-    private JsonStructure msg;
     @Mock
     private RestClient restMock;
     @Mock
@@ -60,7 +56,6 @@ public class chatTest extends ApplicationTest {
 
     @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentSystemCaptorWebSocket;
-    private WSCallback wsSystemCallback;
 
     private Editor editor;
 
@@ -80,11 +75,11 @@ public class chatTest extends ApplicationTest {
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        StageManager.showLoginScreen(restMock);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
 
 
     @Test
@@ -234,7 +229,7 @@ public class chatTest extends ApplicationTest {
     public void mockChatWebSocket(JsonObject webSocketJson) {
         // mock websocket
         verify(chatWebSocketClient).setCallback(callbackArgumentSystemCaptorWebSocket.capture());
-        wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
+        WSCallback wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
 
         wsSystemCallback.handleMessage(webSocketJson);
     }
