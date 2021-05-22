@@ -6,7 +6,6 @@ import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.PrivateChatsScreenOnlineUsersCellFactory;
@@ -17,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import org.json.JSONArray;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -27,14 +25,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
-
 public class PrivateChatsScreenController implements Controller{
 
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
-    private final RestClient restClient;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
@@ -49,16 +44,29 @@ public class PrivateChatsScreenController implements Controller{
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private ObservableList<User> onlineUserObservableList;
     private List<User> availableUsers = new ArrayList<User>();
-
     private Label lblSelectedUser;
 
-    public PrivateChatsScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     */
+    public PrivateChatsScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
+
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
 
         this.btnOptions = (Button) view.lookup("#btnOptions");
@@ -81,6 +89,9 @@ public class PrivateChatsScreenController implements Controller{
         this.initOnlineUsersList();
     }
 
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
         homeButton.setText("home");
@@ -95,6 +106,11 @@ public class PrivateChatsScreenController implements Controller{
         btnOptions.setTooltip(optionsButton);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
@@ -117,7 +133,7 @@ public class PrivateChatsScreenController implements Controller{
      * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        StageManager.showMainScreen(restClient);
+        StageManager.showMainScreen();
     }
 
     /**
@@ -126,7 +142,7 @@ public class PrivateChatsScreenController implements Controller{
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fire
      */
     private void btnLogoutOnClicked(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey(), restClient);
+        editor.logoutUser(localUser.getUserKey());
     }
 
     /**
@@ -146,31 +162,25 @@ public class PrivateChatsScreenController implements Controller{
      */
     private void initOnlineUsersList() {
         // load online Users
-        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
-            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(COM_DATA);
+        editor.getNetworkController().getOnlineUsers(localUser, this);
+    }
 
-            for (int index = 0; index < getServersResponse.length(); index++) {
-                String name = getServersResponse.getJSONObject(index).getString(COM_NAME);
-                String id = getServersResponse.getJSONObject(index).getString(COM_ID);
-                editor.haveUser(id, name);
-            }
+    public void handleGetOnlineUsers() {
+        // load list view
+        usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
+        lwOnlineUsers.setCellFactory(usersListViewCellFactory);
+        availableUsers = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+                .collect(Collectors.toList());
 
-            // load list view
-            this.usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
-            this.lwOnlineUsers.setCellFactory(usersListViewCellFactory);
-            this.availableUsers = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
-                    .collect(Collectors.toList());
+        // Add listener for the loaded listView
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
+        this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
 
-            this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
+        Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
 
-            Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
-
-            for (User user: availableUsers) {
-                user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
-            }
-            // Add listener for the loaded listView
-            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
-        });
+        for (User user : availableUsers) {
+            user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
+        }
     }
 
     /**
@@ -191,9 +201,8 @@ public class PrivateChatsScreenController implements Controller{
         }
     }
 
-
     /**
-     * update automatically the listView when a new user joined
+     * update the listView automatically when a new user joined
      *
      * @param propertyChangeEvent event occurs when a user joined
      */

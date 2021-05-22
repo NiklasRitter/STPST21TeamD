@@ -4,7 +4,6 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -14,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import org.json.JSONArray;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 
 public class MainScreenController implements Controller {
 
-    private final RestClient restClient;
     private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
@@ -36,13 +33,26 @@ public class MainScreenController implements Controller {
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private MainScreenServerListView mainScreenServerListView;
 
-    public MainScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     */
+    public MainScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
         // Load all view references
         this.privateChatsButton = (Button) view.lookup("#btnPrivateChats");
@@ -52,30 +62,9 @@ public class MainScreenController implements Controller {
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
 
         this.initTooltips();
-        // load server of the localUser
-        restClient.getServers(localUser.getUserKey(), response -> {
-            if (response.getBody().getObject().getString("status").equals("success")) {
-                JSONArray getServersResponse = response.getBody().getObject().getJSONArray("data");
 
-                for (int index = 0; index < getServersResponse.length(); index++) {
-                    String name = getServersResponse.getJSONObject(index).getString("name");
-                    String id = getServersResponse.getJSONObject(index).getString("id");
-                    editor.haveServer(localUser, id, name);
-                }
-                // load list view
-                mainScreenServerListView = new MainScreenServerListView();
-                serverListView.setCellFactory(mainScreenServerListView);
-                List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
-                        .collect(Collectors.toList());
-                this.serverListView.setItems(FXCollections.observableList(localUserServers));
-
-                // Add listener for the loaded listView
-                this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
-            } else {
-                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-            }
-        });
-
+        // load servers of the localUser
+        editor.getNetworkController().getServers(localUser, this);
 
         // Add action listeners
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
@@ -85,6 +74,25 @@ public class MainScreenController implements Controller {
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
     }
 
+    public void handleGetServers(boolean success) {
+        if (success) {
+            // load list view
+            mainScreenServerListView = new MainScreenServerListView();
+            serverListView.setCellFactory(mainScreenServerListView);
+            List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
+                    .collect(Collectors.toList());
+            this.serverListView.setItems(FXCollections.observableList(localUserServers));
+
+            // Add listener for the loaded listView
+            this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
+        } else {
+            Platform.runLater(StageManager::showLoginScreen);
+        }
+    }
+
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
     private void initTooltips() {
         Tooltip privateChatsButton = new Tooltip();
         privateChatsButton.setText("private chats");
@@ -106,6 +114,11 @@ public class MainScreenController implements Controller {
         serverButton.setText("Enter selected server");
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         privateChatsButton.setOnAction(null);
         optionsButton.setOnAction(null);
@@ -116,15 +129,13 @@ public class MainScreenController implements Controller {
         this.serverListListener = null;
     }
 
-    // Additional methods
-
     /**
      * Redirect to the PrivateChatsScreen
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void privateChatsButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showPrivateChatsScreen(restClient);
+        StageManager.showPrivateChatsScreen();
     }
 
     /**
@@ -145,7 +156,7 @@ public class MainScreenController implements Controller {
         if (mouseEvent.getClickCount() == 2) {
             Server server = serverListView.getSelectionModel().getSelectedItem();
             if (server != null) {
-                StageManager.showServerScreen(server, restClient);
+                StageManager.showServerScreen(server);
             }
         }
     }
@@ -156,7 +167,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showCreateServerScreen(restClient);
+        StageManager.showCreateServerScreen();
     }
 
     /**
@@ -165,7 +176,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey(), restClient);
+        editor.logoutUser(localUser.getUserKey());
     }
 
     /**

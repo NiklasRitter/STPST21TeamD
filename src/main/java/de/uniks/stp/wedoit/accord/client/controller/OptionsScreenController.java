@@ -14,12 +14,26 @@ public class OptionsScreenController implements Controller {
 
     private CheckBox btnDarkmode;
 
+    /**
+     * Create a new Controller
+     *
+     * @param view   The view this Controller belongs to
+     * @param model  The model this Controller belongs to
+     * @param editor The editor of the Application
+     */
     public OptionsScreenController(Parent view, Options model, Editor editor) {
         this.view = view;
         this.options = model;
         this.editor = editor;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
         btnDarkmode = (CheckBox) view.lookup("#btnDarkmode");
 
@@ -28,10 +42,20 @@ public class OptionsScreenController implements Controller {
         btnDarkmode.setOnAction(this::btnDarkmodeOnClick);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         btnDarkmode.setOnAction(null);
     }
 
+    /**
+     * Change the darkmode to the value of the CheckBox
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void btnDarkmodeOnClick(ActionEvent actionEvent) {
         options.setDarkmode(btnDarkmode.isSelected());
     }

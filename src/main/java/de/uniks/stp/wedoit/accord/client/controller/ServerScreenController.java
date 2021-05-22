@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
@@ -17,7 +16,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
@@ -33,11 +31,10 @@ import static de.uniks.stp.wedoit.accord.client.Constants.*;
 
 public class ServerScreenController implements Controller {
 
-    private final Server server;
-    private final RestClient restClient;
     private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
+    private final Server server;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
@@ -48,24 +45,37 @@ public class ServerScreenController implements Controller {
 
     private TextField tfInputMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
-    private WSCallback chatWSCallback = this::handleChatMessage;
     private Channel currentChannel;
-
-    private PropertyChangeListener newMessagesListener = this::newMessage;
-
+    private WSCallback chatWSCallback = this::handleChatMessage;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private ObservableList<Message> observableMessageList;
+    private PropertyChangeListener newMessagesListener = this::newMessage;
     private TreeItem<Object> tvServerChannelsRoot;
 
-    public ServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient, Server server) {
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     * @param server     The Server this Screen belongs to
+     */
+    public ServerScreenController(Parent view, LocalUser model, Editor editor, Server server) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
         this.server = server;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     * Add necessary webSocketClients
+     */
     public void init() {
         // Load all view references
         this.btnOptions = (Button) view.lookup("#btnOptions");
@@ -90,32 +100,18 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
 
+        addActionListener();
 
         // get members of this server
-        restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
-            if (response.getBody().getObject().getString("status").equals("success")) {
-                JSONObject data = response.getBody().getObject().getJSONObject("data");
-                JSONArray members = data.getJSONArray("members");
-                server.setOwner(data.getString("owner"));
+        editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
-                // create user which are member in the server and load user list view
-                createUserListView(members);
-                initCategoryChannelList();
-
-            } else {
-                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-            }
-
-        });
-
-        initTooltips();
-        addActionListener();
+        initCategoryChannelList();
     }
 
     public void addActionListener() {
 
         editor.getNetworkController().haveWebSocket(CHAT_USER_URL + editor.getNetworkController().clearUsername()
-                +  AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
@@ -126,6 +122,18 @@ public class ServerScreenController implements Controller {
 
     }
 
+    public void handleGetExplicitServerInformation(JSONArray members) {
+        if (members != null) {
+            // create users which are member in the server and load user list view
+            createUserListView(members);
+        } else {
+            Platform.runLater(StageManager::showLoginScreen);
+        }
+    }
+
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
         homeButton.setText("home");
@@ -140,6 +148,11 @@ public class ServerScreenController implements Controller {
         btnOptions.setTooltip(optionsButton);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         localUser.withoutServers(server);
         this.btnLogout.setOnAction(null);
@@ -170,8 +183,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showMainScreen(restClient);
-
+        StageManager.showMainScreen();
     }
 
     /**
@@ -190,7 +202,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey(), restClient);
+        editor.logoutUser(localUser.getUserKey());
 
     }
 
@@ -200,26 +212,22 @@ public class ServerScreenController implements Controller {
      * gets Categories from server and calls loadCategoryChannels()
      */
     private void initCategoryChannelList() {
-        restClient.getCategories(this.server.getId(), this.localUser.getUserKey(), categoryResponse -> {
-            if (categoryResponse.getBody().getObject().getString("status").equals("success")) {
-                JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray("data");
+        editor.getNetworkController().getCategories(localUser, server, this);
+    }
 
-                this.editor.haveCategories(this.server, serversCategoryResponse);
+    public void handleGetCategories(List<Category> categoryList) {
+        if (categoryList != null) {
+            for (Category category : categoryList) {
+                TreeItem<Object> categoryItem = new TreeItem<>(category);
+                categoryItem.setExpanded(true);
 
-                List<Category> categoryList = this.server.getCategories();
-                for (Category category : categoryList) {
-                    TreeItem<Object> categoryItem = new TreeItem<>(category);
-                    categoryItem.setExpanded(true);
+                tvServerChannelsRoot.getChildren().add(categoryItem);
 
-                    tvServerChannelsRoot.getChildren().add(categoryItem);
-
-                    loadCategoryChannels(category, categoryItem);
-
-                }
-            } else {
-                System.err.println("Error while loading categories from server");
+                loadCategoryChannels(category, categoryItem);
             }
-        });
+        } else {
+            System.err.println("Error while loading categories from server");
+        }
     }
 
     /**
@@ -228,21 +236,19 @@ public class ServerScreenController implements Controller {
      * @param category of which the channels should be loaded
      */
     private void loadCategoryChannels(Category category, TreeItem<Object> categoryItem) {
-        restClient.getChannels(this.server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
-            if (channelsResponse.getBody().getObject().getString("status").equals("success")) {
-                JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray("data");
+        editor.getNetworkController().getChannels(localUser, server, category, categoryItem, this);
+    }
 
-                editor.haveChannels(category, categoriesChannelResponse);
-
-                for (Channel channel : category.getChannels()) {
-                    TreeItem<Object> channelItem = new TreeItem<>(channel);
-                    categoryItem.getChildren().add(channelItem);
-                }
-
-            } else {
-                System.err.println("Error while loading channels from server");
+    public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
+        if (channelList != null) {
+            //TODO use something different then a cell factory
+            for (Channel channel : channelList) {
+                TreeItem<Object> channelItem = new TreeItem<>(channel);
+                categoryItem.getChildren().add(channelItem);
             }
-        });
+        } else {
+            System.err.println("Error while loading channels from server");
+        }
     }
 
     /**
@@ -388,6 +394,7 @@ public class ServerScreenController implements Controller {
 
     /**
      * update user list view
+     * <p>
      * remove all items from the list view and put all member of a server back in the list view
      * sorted by online status
      */

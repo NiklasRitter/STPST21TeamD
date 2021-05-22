@@ -3,14 +3,12 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -19,10 +17,9 @@ import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
 
 public class LoginScreenController implements Controller {
 
-    private final LocalUser model;
     private final Editor editor;
     private final Parent view;
-
+    private final LocalUser model;
     private Button btnLogin;
     private Button btnRegister;
     private Button btnOptions;
@@ -30,15 +27,26 @@ public class LoginScreenController implements Controller {
     private TextField pwUserPw;
     private Label errorLabel;
 
-    private final RestClient restClient;
-
-    public LoginScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    /**
+     * Create a new Controller
+     *
+     * @param view       The view this Controller belongs to
+     * @param model      The model this Controller belongs to
+     * @param editor     The editor of the Application
+     */
+    public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.model = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
+    /**
+     * Called to start this controller
+     * Only call after corresponding fxml is loaded
+     * <p>
+     * Load necessary GUI elements
+     * Add action listeners
+     */
     public void init() {
         //Load all view references
         this.tfUserName = (TextField) view.lookup("#tfUserName");
@@ -50,12 +58,19 @@ public class LoginScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
 
 
+        // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
+        // Remove all action listeners
         btnLogin.setOnAction(null);
         btnRegister.setOnAction(null);
         btnOptions.setOnAction(null);
@@ -71,30 +86,28 @@ public class LoginScreenController implements Controller {
     }
 
     public void login() {
-        if (tfUserName == null || tfUserName.getText().isEmpty() || pwUserPw == null || pwUserPw.getText().isEmpty()) {
+        String name = this.tfUserName.getText();
+        String password = this.pwUserPw.getText();
+        if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
 
             Objects.requireNonNull(tfUserName).getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
             errorLabel.setText("Username or password is missing");
-
         } else {
-            restClient.login(tfUserName.getText(), pwUserPw.getText(), (response) -> {
-                if (!response.getBody().getObject().getString("status").equals("success")) {
-
-                    tfUserName.getStyleClass().add("error");
-                    pwUserPw.getStyleClass().add("error");
-                    Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
-
-                } else {
-                    JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
-                    String userKey = loginAnswer.getString(COM_USER_KEY);
-                    editor.haveLocalUser(tfUserName.getText(), userKey);
-                    editor.getNetworkController().start();
-                    Platform.runLater(() -> StageManager.showMainScreen(restClient));
-                }
-            });
+            editor.getNetworkController().loginUser(name, password, this);
         }
     }
+
+    public void handleLogin(boolean success) {
+        if (!success) {
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
+            Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+        } else {
+            Platform.runLater(StageManager::showMainScreen);
+        }
+    }
+
 
     /**
      * register user to server and login, redirect to MainScreen
@@ -106,27 +119,29 @@ public class LoginScreenController implements Controller {
         String password = this.pwUserPw.getText();
 
         if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
-            restClient.register(name, password, registerResponse -> {
-                // if user successful registered
-                if (registerResponse.getBody().getObject().getString("status").equals("success")) {
-
-                    //login the user
-                    login();
-                } else {
-                    //reset name and password fields
-                    this.tfUserName.setText("");
-                    this.pwUserPw.setText("");
-                    tfUserName.getStyleClass().add("error");
-                    pwUserPw.getStyleClass().add("error");
-                    Platform.runLater(() -> errorLabel.setText("Username already taken."));
-                }
-            });
+            editor.getNetworkController().registerUser(name, password, this);
         } else {
+            //reset name and password fields
             tfUserName.getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
     }
+
+    public void handleRegister(boolean success) {
+        if (!success) {
+            //reset name and password fields
+            this.tfUserName.setText("");
+            this.pwUserPw.setText("");
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
+            Platform.runLater(() -> errorLabel.setText("Username already taken."));
+        } else {
+            //login the user
+            login();
+        }
+    }
+
 
     /**
      * open Optionsmenu
