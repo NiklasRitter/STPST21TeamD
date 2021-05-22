@@ -32,24 +32,10 @@ import static org.testfx.api.FxToolkit.registerPrimaryStage;
 
 public class LoginTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
-
-    @Override
-    public void start(Stage stage) {
-        // start application
-        this.stage = stage;
-        this.stageManager = new StageManager();
-        this.stageManager.start(stage);
-
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
-
-        StageManager.showLoginScreen(restMock);
-        this.stage.centerOnScreen();
-        this.stage.setAlwaysOnTop(true);
-    }
-
     @Mock
     private RestClient restMock;
 
@@ -61,12 +47,24 @@ public class LoginTest extends ApplicationTest {
 
     @Mock
     private HttpResponse<JsonNode> res;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
+
+    @Override
+    public void start(Stage stage) {
+        // start application
+        this.stage = stage;
+        this.stageManager = new StageManager();
+        this.stageManager.start(stage);
+
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showLoginScreen();
+        this.stage.centerOnScreen();
+        this.stage.setAlwaysOnTop(true);
+    }
 
     @BeforeEach
     public void setup() {

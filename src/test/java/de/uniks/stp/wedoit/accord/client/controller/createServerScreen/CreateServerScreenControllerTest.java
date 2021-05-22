@@ -37,15 +37,22 @@ import static org.mockito.Mockito.when;
 
 public class CreateServerScreenControllerTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
-
     @Mock
     private WebSocketClient webSocketClient;
-
     @Mock
     private WebSocketClient channelChatWebSocketClient;
+    @Mock
+    private RestClient restMock;
+
+    @Mock
+    private HttpResponse<JsonNode> res;
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Override
     public void start(Stage stage) {
@@ -58,22 +65,11 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         localUser = stageManager.getEditor().haveLocalUser("John", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
-        StageManager.showMainScreen(restMock);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
-    @Mock
-    private RestClient restMock;
-
-    @Mock
-    private HttpResponse<JsonNode> res;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @BeforeEach
     public void setup() {

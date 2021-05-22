@@ -31,8 +31,22 @@ import static org.mockito.Mockito.when;
 
 public class WelcomeScreenButtonTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
+    @Mock
+    private RestClient restMock;
+
+    @Mock
+    private HttpResponse<JsonNode> res;
+
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
+    @Mock
+    private WebSocketClient systemWebSocketClient;
+    @Mock
+    private WebSocketClient chatWebSocketClient;
 
     @Override
     public void start(Stage stage) {
@@ -43,30 +57,12 @@ public class WelcomeScreenButtonTest extends ApplicationTest {
 
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
-        StageManager.showLoginScreen(restMock);
 
-
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
-    @Mock
-    private RestClient restMock;
-
-    @Mock
-    private HttpResponse<JsonNode> res;
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
-    @Mock
-    private WebSocketClient systemWebSocketClient;
-
-    @Mock
-    private WebSocketClient chatWebSocketClient;
 
     @BeforeEach
     public void setup() {

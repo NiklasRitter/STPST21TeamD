@@ -4,18 +4,15 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.json.JSONObject;
 
 public class CreateServerScreenController implements Controller {
 
-    private final RestClient restClient;
     private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
@@ -23,11 +20,10 @@ public class CreateServerScreenController implements Controller {
     private Button btnCreateServer;
     private Label errorLabel;
 
-    public CreateServerScreenController(Parent view, LocalUser model, Editor editor, RestClient restClient) {
+    public CreateServerScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.restClient = restClient;
     }
 
     public void init() {
@@ -58,21 +54,18 @@ public class CreateServerScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
-            restClient.createServer(tfServerName.getText(), localUser.getUserKey(), (response) -> {
-                if (response.getBody().getObject().getString("status").equals("success")) {
-                    JSONObject createServerAnswer = response.getBody().getObject().getJSONObject("data");
-                    String serverId = createServerAnswer.getString("id");
-                    String serverName = createServerAnswer.getString("name");
+            editor.getNetworkController().createServer(tfServerName.getText(), this);
+        }
+    }
 
-                    Server server = editor.haveServer(localUser, serverId, serverName);
-                    stop();
-                    Platform.runLater(() -> StageManager.showServerScreen(server, restClient));
-                } else {
-                    tfServerName.getStyleClass().add("error");
+    public void handleCreateServer(Server server) {
+        if (server != null) {
+            stop();
+            Platform.runLater(() -> StageManager.showServerScreen(server));
+        } else {
+            tfServerName.getStyleClass().add("error");
 
-                    Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server"));
-                }
-            });
+            Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server"));
         }
     }
 }

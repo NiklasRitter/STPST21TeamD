@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
@@ -220,7 +219,6 @@ public class Editor {
             channelIds.add(channel.getId());
         }
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(COM_ID))) {
                 Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
                 channel.setCategory(category);
                 List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
@@ -228,6 +226,7 @@ public class Editor {
                     User user = this.getServerUserById(category.getServer(), memberId);
                     channel.withMembers(user);
                 }
+            if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(COM_ID))) {
             }
         }
         return category.getChannels();
@@ -281,18 +280,21 @@ public class Editor {
     /**
      * the localUser is logged out and will be redirect to the LoginScreen
      *
-     * @param userKey    userKey of the user who is logged out
-     * @param restClient restClient instance for the LoginScreenController
+     * @param userKey userKey of the user who is logged out
      */
-    public void logoutUser(String userKey, RestClient restClient) {
+    public void logoutUser(String userKey) {
         if (userKey != null && !userKey.isEmpty()) {
             networkController.stop();
-            restClient.logout(userKey, response -> {
-                if (!response.getBody().getObject().getString("status").equals("success")) {
-                    System.err.println("Error while logging out");
-                }
-                Platform.runLater(() -> StageManager.showLoginScreen(restClient));
-            });
+            networkController.logoutUser(userKey);
+        }
+    }
+
+    public void handleLogoutUser(boolean success) {
+        if (success) {
+            Platform.runLater(StageManager::showLoginScreen);
+        } else {
+            System.err.println("Error while logging out");
+            Platform.runLater(StageManager::showLoginScreen);
         }
     }
 
