@@ -12,9 +12,6 @@ import javafx.scene.control.TextField;
 
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
-
 public class LoginScreenController implements Controller {
 
     private final Editor editor;
@@ -30,9 +27,9 @@ public class LoginScreenController implements Controller {
     /**
      * Create a new Controller
      *
-     * @param view       The view this Controller belongs to
-     * @param model      The model this Controller belongs to
-     * @param editor     The editor of the Application
+     * @param view   The view this Controller belongs to
+     * @param model  The model this Controller belongs to
+     * @param editor The editor of the Application
      */
     public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;

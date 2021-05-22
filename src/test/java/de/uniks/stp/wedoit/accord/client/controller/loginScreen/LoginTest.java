@@ -10,7 +10,6 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -185,7 +184,6 @@ public class LoginTest extends ApplicationTest {
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
 
-    
 
     @Test
     public void testMissingPassword() {

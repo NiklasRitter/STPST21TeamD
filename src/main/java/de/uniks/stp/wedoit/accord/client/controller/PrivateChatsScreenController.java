@@ -7,8 +7,8 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.PrivateChatsScreenOnlineUsersCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,7 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PrivateChatsScreenController implements Controller{
+public class PrivateChatsScreenController implements Controller {
 
     private final Parent view;
     private final LocalUser localUser;
@@ -43,15 +43,15 @@ public class PrivateChatsScreenController implements Controller{
     private PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory;
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private ObservableList<User> onlineUserObservableList;
-    private List<User> availableUsers = new ArrayList<User>();
+    private List<User> availableUsers = new ArrayList<>();
     private Label lblSelectedUser;
 
     /**
      * Create a new Controller
      *
-     * @param view       The view this Controller belongs to
-     * @param model      The model this Controller belongs to
-     * @param editor     The editor of the Application
+     * @param view   The view this Controller belongs to
+     * @param model  The model this Controller belongs to
+     * @param editor The editor of the Application
      */
     public PrivateChatsScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
@@ -117,7 +117,7 @@ public class PrivateChatsScreenController implements Controller{
         }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
 
-        for (User user: availableUsers) {
+        for (User user : availableUsers) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
         }
         this.btnHome.setOnAction(null);
@@ -190,10 +190,9 @@ public class PrivateChatsScreenController implements Controller{
      */
     private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         User user = (User) propertyChangeEvent.getSource();
-        if (!user.isOnlineStatus()){
+        if (!user.isOnlineStatus()) {
             Platform.runLater(() -> this.onlineUserObservableList.remove(user));
-        }
-        else {
+        } else {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
@@ -221,7 +220,7 @@ public class PrivateChatsScreenController implements Controller{
 
     /**
      * initialize private Chat with user
-     *
+     * <p>
      * Load online users from server and add them to the data model.
      * Set CellFactory and build lwOnlineUsers.
      *
@@ -260,7 +259,7 @@ public class PrivateChatsScreenController implements Controller{
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
-        if (this.privateMessageObservableList.size() >= 100){
+        if (this.privateMessageObservableList.size() >= 100) {
             Platform.runLater(() -> this.privateMessageObservableList.remove(0));
         }
     }

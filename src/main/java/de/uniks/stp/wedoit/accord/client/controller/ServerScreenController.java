@@ -56,10 +56,10 @@ public class ServerScreenController implements Controller {
     /**
      * Create a new Controller
      *
-     * @param view       The view this Controller belongs to
-     * @param model      The model this Controller belongs to
-     * @param editor     The editor of the Application
-     * @param server     The Server this Screen belongs to
+     * @param view   The view this Controller belongs to
+     * @param model  The model this Controller belongs to
+     * @param editor The editor of the Application
+     * @param server The Server this Screen belongs to
      */
     public ServerScreenController(Parent view, LocalUser model, Editor editor, Server server) {
         this.view = view;
@@ -241,7 +241,6 @@ public class ServerScreenController implements Controller {
 
     public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
         if (channelList != null) {
-            //TODO use something different then a cell factory
             for (Channel channel : channelList) {
                 TreeItem<Object> channelItem = new TreeItem<>(channel);
                 categoryItem.getChildren().add(channelItem);
