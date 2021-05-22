@@ -16,7 +16,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0">
          <children>
@@ -95,7 +95,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="69.0" prefWidth="598.0">
          <children>
-            <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="36.0" style="-fx-background-color: transparent;">
+            <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="36.0" style="-fx-background-color: transparent;" styleClass="styleButton">
                <graphic>
                   <ImageView id="btnSetting" fitHeight="52.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
                      <image>
