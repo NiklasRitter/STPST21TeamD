@@ -84,6 +84,7 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
 
+        addActionListener();
 
         // get members of this server
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);

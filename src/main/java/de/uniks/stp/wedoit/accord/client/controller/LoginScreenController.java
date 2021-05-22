@@ -10,9 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
-
 public class LoginScreenController implements Controller {
 
     private final LocalUser model;
@@ -88,9 +85,9 @@ public class LoginScreenController implements Controller {
 
     public void handleLogin(boolean success) {
         if (!success) {
-                    tfUserName.getStyleClass().add("error");
-                    pwUserPw.getStyleClass().add("error");
-                    Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
+            Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
         } else {
             Platform.runLater(StageManager::showMainScreen);
         }
@@ -109,14 +106,9 @@ public class LoginScreenController implements Controller {
         if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
             editor.getNetworkController().registerUser(name, password, this);
         } else {
+            //reset name and password fields
             tfUserName.getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
-                    //reset name and password fields
-                    this.tfUserName.setText("");
-                    this.pwUserPw.setText("");
-                    tfUserName.getStyleClass().add("error");
-                    pwUserPw.getStyleClass().add("error");
-                    Platform.runLater(() -> errorLabel.setText("Username already taken."));
             Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
         }
     }
@@ -126,8 +118,8 @@ public class LoginScreenController implements Controller {
             //reset name and password fields
             this.tfUserName.setText("");
             this.pwUserPw.setText("");
-            tfUserName.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
-            pwUserPw.setStyle("-fx-border-color: #ff0000; -fx-border-width: 2px;");
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> errorLabel.setText("Username already taken."));
         } else {
             //login the user

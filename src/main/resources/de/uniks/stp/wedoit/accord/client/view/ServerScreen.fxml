@@ -17,7 +17,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="613.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" maxHeight="69.0" VBox.vgrow="ALWAYS">
          <children>
@@ -69,7 +69,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color blue="1.0" green="1.0" red="1.0" />
+                                    <Color red="1.0" green="1.0" blue="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -83,7 +83,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button id="btnHome" mnemonicParsing="false" styleClass="styleButtons" VBox.vgrow="ALWAYS">
+                  <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
