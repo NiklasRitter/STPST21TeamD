@@ -10,9 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_DATA;
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
-
 public class LoginScreenController implements Controller {
 
     private final Editor editor;

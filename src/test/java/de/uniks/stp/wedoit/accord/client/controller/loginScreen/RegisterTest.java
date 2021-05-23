@@ -24,8 +24,8 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
-import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
