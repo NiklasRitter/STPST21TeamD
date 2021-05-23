@@ -57,9 +57,9 @@
             <String fx:value="styleBackgroundHighlight" />
          </styleClass>
       </HBox>
-      <HBox alignment="TOP_CENTER" minHeight="327.0" minWidth="598.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="TOP_CENTER" minHeight="310.0" minWidth="598.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="356.0" prefWidth="76.0" spacing="20.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" maxWidth="75.0" minWidth="75.0" prefHeight="356.0" prefWidth="76.0" spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
                      <textFill>
@@ -72,7 +72,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color red="1.0" green="1.0" blue="1.0" />
+                                    <Color blue="1.0" green="1.0" red="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -95,7 +95,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Region minHeight="146.0" minWidth="66.0" VBox.vgrow="ALWAYS" />
+                  <Region minHeight="126.0" minWidth="66.0" prefHeight="126.0" prefWidth="67.0" VBox.vgrow="ALWAYS" />
                   <Button id="btnLogout" alignment="CENTER" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
@@ -110,7 +110,7 @@
                   </Button>
                </children>
                <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  <Insets top="5.0" />
                </padding>
                <HBox.margin>
                   <Insets />
@@ -130,7 +130,7 @@
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Label>
-                  <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="303.0" prefWidth="166.0" VBox.vgrow="ALWAYS" />
+                  <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="292.0" prefWidth="167.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox alignment="CENTER" styleClass="styleBorders" HBox.hgrow="ALWAYS">
@@ -143,7 +143,7 @@
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Label>
-                  <ListView id="lvTextChat" minHeight="285.0" minWidth="270.0" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
+                  <ListView id="lvTextChat" minHeight="276.0" minWidth="270.0" prefHeight="276.0" prefWidth="270.0" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
                   <TextField id="tfInputMessage" minHeight="21.0" minWidth="236.0" promptText="your message" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
@@ -157,7 +157,7 @@
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Label>
-                  <ListView id="lvServerUsers" prefHeight="305.0" prefWidth="98.0" VBox.vgrow="ALWAYS" />
+                  <ListView id="lvServerUsers" prefHeight="301.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
          </children>

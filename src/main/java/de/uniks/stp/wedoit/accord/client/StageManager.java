@@ -56,6 +56,9 @@ public class StageManager extends Application {
             //display
             stage.setTitle("Login");
             stage.setScene(scene);
+            stage.setHeight(450);
+            stage.setWidth(600);
+            stage.centerOnScreen();
             stage.setResizable(false);
 
         } catch (Exception e) {
@@ -287,6 +290,8 @@ public class StageManager extends Application {
         editor.haveLocalUser();
         model.setOptions(ResourceManager.loadOptions());
 
+        stage.setMinHeight(450);
+        stage.setMinWidth(600);
         showLoginScreen();
         stage.show();
     }

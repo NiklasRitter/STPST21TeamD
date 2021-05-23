@@ -15,10 +15,10 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
 
    <children>
-      <HBox alignment="CENTER">
+      <HBox alignment="CENTER" maxHeight="69.0">
          <children>
             <Label text="Accord">
                <font>
@@ -51,7 +51,7 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="327.0" prefWidth="438.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
          <children>
-            <VBox alignment="TOP_CENTER" maxWidth="-Infinity" prefHeight="327.0" prefWidth="78.0" spacing="20.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" maxWidth="75.0" minWidth="75.0" prefHeight="327.0" prefWidth="75.0" spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
                      <graphic>
@@ -71,7 +71,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color red="1.0" green="1.0" blue="1.0" />
+                                    <Color blue="1.0" green="1.0" red="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -96,7 +96,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Region prefHeight="91.0" prefWidth="78.0" VBox.vgrow="ALWAYS" />
+                  <Region prefHeight="45.0" prefWidth="78.0" VBox.vgrow="ALWAYS" />
                   <Button id="btnLogout" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
