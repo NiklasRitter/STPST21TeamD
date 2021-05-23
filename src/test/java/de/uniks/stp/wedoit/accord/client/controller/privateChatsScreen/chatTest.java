@@ -31,7 +31,10 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -113,7 +116,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
     }
 
     @Test
@@ -141,7 +144,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Hallo");
+        Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(0).getText());
     }
 
     @Test
@@ -189,7 +192,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
 
         lwOnlineUsers.getSelectionModel().select(1);
         User user1 = lwOnlineUsers.getSelectionModel().getSelectedItem();
@@ -212,7 +215,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user2.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user2.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user2.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
     }
 
     public void mockRest(JsonObject restClientJson) {
@@ -273,9 +276,9 @@ public class chatTest extends ApplicationTest {
         return Json.createObjectBuilder()
                 .add("channel", "private")
                 .add("timestamp", 1614938)
-                .add("message", test_message.getString(COM_MESSAGE))
+                .add("message", test_message.getString(MESSAGE))
                 .add("from", localUser.getName())
-                .add("to", test_message.getString(COM_TO))
+                .add("to", test_message.getString(TO))
                 .build();
     }
 
