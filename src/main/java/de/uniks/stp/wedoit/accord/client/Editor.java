@@ -13,7 +13,6 @@ import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
 
 public class Editor {
 
-    private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final NetworkController networkController = new NetworkController(this);
     private AccordClient accordClient;
     private Server currentServer;

@@ -214,7 +214,7 @@ public class JsonUtil {
      */
     public static JsonObject buildPrivateChatMessage(String to, String message) {
         return Json.createObjectBuilder()
-                .add(CHANNEL, "private")
+                .add(CHANNEL, PRIVATE)
                 .add(TO, to)
                 .add(MESSAGE, message)
                 .build();
