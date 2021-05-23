@@ -18,7 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 public class NetworkController {
 
@@ -135,13 +136,13 @@ public class NetworkController {
      */
     public NetworkController handleSystemMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
-        JsonObject data = jsonObject.getJsonObject(COM_DATA);
+        JsonObject data = jsonObject.getJsonObject(DATA);
 
-        if (jsonObject.getString(COM_ACTION).equals("userJoined")) {
-            editor.haveUser(data.getString(COM_ID), data.getString(COM_NAME));
+        if (jsonObject.getString(ACTION).equals("userJoined")) {
+            editor.haveUser(data.getString(ID), data.getString(NAME));
 
-        } else if (jsonObject.getString(COM_ACTION).equals("userLeft")) {
-            editor.userLeft(data.getString(COM_ID));
+        } else if (jsonObject.getString(ACTION).equals("userLeft")) {
+            editor.userLeft(data.getString(ID));
         }
         return this;
     }
@@ -156,10 +157,10 @@ public class NetworkController {
         JsonObject jsonObject = (JsonObject) msg;
 
         PrivateMessage message = new PrivateMessage();
-        message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
-        message.setText(jsonObject.getString(COM_MESSAGE));
-        message.setFrom(jsonObject.getString(COM_FROM));
-        message.setTo(jsonObject.getString(COM_TO));
+        message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
+        message.setText(jsonObject.getString(MESSAGE));
+        message.setFrom(jsonObject.getString(FROM));
+        message.setTo(jsonObject.getString(TO));
 
         editor.addNewPrivateMessage(message);
         return this;
@@ -211,8 +212,8 @@ public class NetworkController {
             if (!response.getBody().getObject().getString("status").equals("success")) {
                 controller.handleLogin(false);
             } else {
-                JSONObject loginAnswer = response.getBody().getObject().getJSONObject(COM_DATA);
-                String userKey = loginAnswer.getString(COM_USER_KEY);
+                JSONObject loginAnswer = response.getBody().getObject().getJSONObject(DATA);
+                String userKey = loginAnswer.getString(USER_KEY);
                 editor.haveLocalUser(username, userKey);
                 start();
                 controller.handleLogin(true);
@@ -265,11 +266,11 @@ public class NetworkController {
     public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
-            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(COM_DATA);
+            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(DATA);
 
             for (int index = 0; index < getServersResponse.length(); index++) {
-                String name = getServersResponse.getJSONObject(index).getString(COM_NAME);
-                String id = getServersResponse.getJSONObject(index).getString(COM_ID);
+                String name = getServersResponse.getJSONObject(index).getString(NAME);
+                String id = getServersResponse.getJSONObject(index).getString(ID);
                 editor.haveUser(id, name);
             }
             controller.handleGetOnlineUsers();

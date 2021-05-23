@@ -6,7 +6,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.prefs.Preferences;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_DARKMODE;
+import static de.uniks.stp.wedoit.accord.client.constants.Preferences.DARKMODE;
 
 public class PreferenceManager {
     public static PropertyChangeListener darkmodeListener = PreferenceManager::onDarkmodeChanged;
@@ -18,7 +18,7 @@ public class PreferenceManager {
      */
     public static boolean loadDarkmode() {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-        return preferences.getBoolean(COM_DARKMODE, false);
+        return preferences.getBoolean(DARKMODE, false);
     }
 
     /**
@@ -28,7 +28,7 @@ public class PreferenceManager {
      */
     public static void saveDarkmode(boolean darkmode) {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-        preferences.putBoolean(COM_DARKMODE, darkmode);
+        preferences.putBoolean(DARKMODE, darkmode);
     }
 
     /**

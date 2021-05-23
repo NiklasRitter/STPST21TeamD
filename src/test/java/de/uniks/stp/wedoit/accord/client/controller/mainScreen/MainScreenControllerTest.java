@@ -1,4 +1,3 @@
-
 package de.uniks.stp.wedoit.accord.client.controller.mainScreen;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -27,7 +26,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

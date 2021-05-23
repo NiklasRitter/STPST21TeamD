@@ -23,15 +23,31 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.PRIVATE_USER_CHAT_PREFIX;
-import static de.uniks.stp.wedoit.accord.client.Constants.SYSTEM_SOCKET_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class logoutTest extends ApplicationTest {
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
+    @Mock
+    private WebSocketClient systemWebSocketClient;
+
+    @Mock
+    private WebSocketClient chatWebSocketClient;
+
+    @Mock
+    private RestClient restMock;
+
+    @Mock
+    private HttpResponse<JsonNode> res;
+
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Override
     public void start(Stage stage) {
@@ -48,24 +64,6 @@ public class logoutTest extends ApplicationTest {
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
-
-    @Mock
-    private WebSocketClient systemWebSocketClient;
-
-    @Mock
-    private WebSocketClient chatWebSocketClient;
-
-    @Mock
-    private RestClient restMock;
-
-    @Mock
-    private HttpResponse<JsonNode> res;
-
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     @BeforeEach
     public void setup() {

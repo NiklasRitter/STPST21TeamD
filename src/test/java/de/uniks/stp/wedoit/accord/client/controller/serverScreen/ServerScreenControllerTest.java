@@ -32,7 +32,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -572,7 +573,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
                 .add("channel", "idTest1")
                 .add("timestamp", 1616935874)
                 .add("from", localUser.getName())
-                .add("text", test_message.getString(COM_MESSAGE))
+                .add("text", test_message.getString(MESSAGE))
                 .build();
     }
 

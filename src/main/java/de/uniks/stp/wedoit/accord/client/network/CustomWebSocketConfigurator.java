@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_USER_KEY;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.USER_KEY;
 
 public class CustomWebSocketConfigurator extends ClientEndpointConfig.Configurator {
     private final String userKey;
@@ -30,6 +30,6 @@ public class CustomWebSocketConfigurator extends ClientEndpointConfig.Configurat
         super.beforeRequest(headers);
         ArrayList<String> key = new ArrayList<>();
         key.add(this.userKey);
-        headers.put(COM_USER_KEY, key);
+        headers.put(USER_KEY, key);
     }
 }
