@@ -80,9 +80,9 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Button>
-            <Region HBox.hgrow="ALWAYS" />
+            <Region maxWidth="200.0" HBox.hgrow="ALWAYS" />
             <Label id="lblError" styleClass="redLabel" />
-            <Region HBox.hgrow="ALWAYS" />
+            <Region maxWidth="200.0" HBox.hgrow="ALWAYS" />
             <Button id="btnRegister" mnemonicParsing="false" styleClass="styleButton" text="Register ">
                <font>
                   <Font name="System Bold" size="14.0" />
@@ -113,7 +113,7 @@
                         </Stop>
                         <Stop offset="1.0">
                            <color>
-                              <Color red="1.0" green="1.0" blue="1.0" />
+                              <Color blue="1.0" green="1.0" red="1.0" />
                            </color>
                         </Stop>
                      </stops>

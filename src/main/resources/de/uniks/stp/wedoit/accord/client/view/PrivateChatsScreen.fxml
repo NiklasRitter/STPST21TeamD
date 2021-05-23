@@ -16,9 +16,9 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox minHeight="400.0" minWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER" maxHeight="69.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER" maxHeight="75.0" minHeight="75.0" VBox.vgrow="ALWAYS">
          <children>
             <Label text="Accord">
                <font>
@@ -55,9 +55,9 @@
             <String fx:value="styleBackgroundHighlight" />
          </styleClass>
       </HBox>
-      <HBox alignment="CENTER_LEFT" prefHeight="327.0" prefWidth="438.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
          <children>
-            <VBox alignment="CENTER" maxWidth="75.0" minWidth="75.0" prefHeight="279.0" prefWidth="75.0" spacing="20.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" maxWidth="75.0" minWidth="75.0" spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
                   <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
                      <textFill>
@@ -93,7 +93,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Region minHeight="103.0" minWidth="66.0" prefHeight="103.0" prefWidth="66.0" VBox.vgrow="ALWAYS" />
+                  <Region VBox.vgrow="ALWAYS" />
                   <Button id="btnLogout" alignment="CENTER" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
@@ -118,28 +118,28 @@
                   <String fx:value="styleBorder" />
                </styleClass>
             </VBox>
-            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" prefHeight="327.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="125.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label prefHeight="17.0" prefWidth="207.0" styleClass="styleBorder" text="Online users:" VBox.vgrow="ALWAYS">
+                  <Label prefWidth="200.0" styleClass="styleBorder" text="Online users:" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font name="System Bold Italic" size="13.0" />
+                     </font>
                      <padding>
                         <Insets left="2.0" />
                      </padding>
-                     <font>
-                        <Font name="System Bold Italic" size="13.0" />
-                     </font>
                   </Label>
-                  <ListView id="lwOnlineUsers" prefHeight="303.0" prefWidth="124.0" VBox.vgrow="ALWAYS" />
+                  <ListView id="lwOnlineUsers" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <VBox alignment="CENTER" prefHeight="327.0" prefWidth="402.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" minWidth="400.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label id="lblSelectedUser" text="No  User selected" VBox.vgrow="ALWAYS">
+                  <Label id="lblSelectedUser" styleClass="styleBorder" text="No User selected" VBox.vgrow="ALWAYS">
                      <font>
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Label>
-                  <ListView id="lwPrivateChat" minWidth="400.0" prefWidth="400.0" VBox.vgrow="ALWAYS" />
-                  <TextField id="tfEnterPrivateChat" prefHeight="21.0" prefWidth="400.0" promptText="your message" style="-fx-border-color: #3c3f41;" VBox.vgrow="ALWAYS" />
+                  <ListView id="lwPrivateChat" VBox.vgrow="ALWAYS" />
+                  <TextField id="tfEnterPrivateChat" promptText="your message" style="-fx-border-color: #3c3f41;" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
          </children>
