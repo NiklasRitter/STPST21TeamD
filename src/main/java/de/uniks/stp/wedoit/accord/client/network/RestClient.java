@@ -131,7 +131,7 @@ public class RestClient {
      * @param callback The Callback to be called after the Request.
      */
     public void getCategories(String serverId, String userKey, Callback<JsonNode> callback) {
-        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES)
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES)
                 .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
@@ -146,7 +146,7 @@ public class RestClient {
      * @param callback   The Callback to be called after the Request.
      */
     public void getChannels(String serverId, String categoryId, String userKey, Callback<JsonNode> callback) {
-        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES + "/" + categoryId + CHANNELS)
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS)
                 .header(USER_KEY, userKey);
 
         sendRequest(req, callback);

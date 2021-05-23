@@ -377,9 +377,9 @@ public class ServerScreenController implements Controller {
     private void createUserListView(JSONArray members) {
         for (int index = 0; index < members.length(); index++) {
 
-            String name = members.getJSONObject(index).getString("name");
-            String id = members.getJSONObject(index).getString("id");
-            boolean onlineStatus = members.getJSONObject(index).getBoolean("online");
+            String name = members.getJSONObject(index).getString(NAME);
+            String id = members.getJSONObject(index).getString(ID);
+            boolean onlineStatus = members.getJSONObject(index).getBoolean(ONLINE);
 
             editor.haveUserWithServer(name, id, onlineStatus, server);
         }
