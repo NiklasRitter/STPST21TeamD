@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.welcomeScreen;
+package de.uniks.stp.wedoit.accord.client.controller.privateChatsScreen;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -88,7 +88,7 @@ public class chatTest extends ApplicationTest {
     @Test
     public void testChatSendMessage() {
 
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         //init user list and select first user
         initUserListView();
@@ -116,12 +116,12 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
     }
 
     @Test
     public void testChatIncomingMessage() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
@@ -144,12 +144,12 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Hallo");
+        Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(0).getText());
     }
 
     @Test
     public void testChatNoUserSelected() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         //init user list and select first user
         initUserListView();
@@ -164,7 +164,7 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatMessagesCachedProperlyAfterChatChange() {
-        directToWelcomeScreen();
+        directToPrivateChatsScreen();
 
         //init user list and select first user
         initUserListView();
@@ -192,7 +192,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
 
         lwOnlineUsers.getSelectionModel().select(1);
         User user1 = lwOnlineUsers.getSelectionModel().getSelectedItem();
@@ -215,7 +215,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user2.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user2.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user2.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), "Test Message");
+        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
     }
 
     public void mockRest(JsonObject restClientJson) {
@@ -292,7 +292,7 @@ public class chatTest extends ApplicationTest {
                 .build();
     }
 
-    public void directToWelcomeScreen() {
+    public void directToPrivateChatsScreen() {
 
         //Mocking of RestClient login function
         JsonObject json = Json.createObjectBuilder()
@@ -324,6 +324,6 @@ public class chatTest extends ApplicationTest {
         this.localUser = editor.getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnWelcome");
+        clickOn("#btnPrivateChats");
     }
 }

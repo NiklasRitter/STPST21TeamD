@@ -22,6 +22,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 public class NetworkController {
+
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final Editor editor;
     private RestClient restClient = new RestClient();
@@ -131,7 +132,7 @@ public class NetworkController {
      * handle messages on the system channel by adding or deleting users from the data model
      *
      * @param msg message from the server on the system channel
-     * @return
+     * @return NetworkController
      */
     public NetworkController handleSystemMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
@@ -150,7 +151,7 @@ public class NetworkController {
      * handle chat message by adding it to the data model
      *
      * @param msg message from the server on the private chat channel
-     * @return
+     * @return NetworkController
      */
     public NetworkController handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
@@ -262,7 +263,7 @@ public class NetworkController {
         return this;
     }
 
-    public NetworkController getOnlineUsers(LocalUser localUser, WelcomeScreenController controller) {
+    public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
             JSONArray getServersResponse = response.getBody().getObject().getJSONArray(DATA);

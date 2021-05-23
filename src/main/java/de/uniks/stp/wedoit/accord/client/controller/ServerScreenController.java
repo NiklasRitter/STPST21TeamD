@@ -35,7 +35,7 @@ public class ServerScreenController implements Controller {
     private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
-    private Server server;
+    private final Server server;
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
@@ -161,21 +161,10 @@ public class ServerScreenController implements Controller {
         this.btnHome.setOnAction(null);
         this.tfInputMessage.setOnAction(null);
         this.tvServerChannels.setOnMouseReleased(null);
-        this.btnLogout = null;
-        this.btnHome = null;
-        this.btnOptions = null;
-
-        this.lbServerName = null;
-        this.tvServerChannels = null;
-        this.lvServerUsers = null;
-        this.tfInputMessage = null;
-        this.lvTextChat = null;
 
         this.editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         this.editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + this.server.getId());
-
-        this.server = null;
 
         if (this.currentChannel != null) {
             this.currentChannel.listeners()
@@ -253,7 +242,6 @@ public class ServerScreenController implements Controller {
 
     public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
         if (channelList != null) {
-            //TODO use something different then a cell factory
             for (Channel channel : channelList) {
                 TreeItem<Object> channelItem = new TreeItem<>(channel);
                 categoryItem.getChildren().add(channelItem);

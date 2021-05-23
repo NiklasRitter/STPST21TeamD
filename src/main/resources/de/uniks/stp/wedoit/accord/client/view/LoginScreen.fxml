@@ -81,7 +81,7 @@
                </font>
             </Button>
             <Region HBox.hgrow="ALWAYS" />
-            <Label id="lblError" styleClass="redLabel"/>
+            <Label id="lblError" styleClass="redLabel" />
             <Region HBox.hgrow="ALWAYS" />
             <Button id="btnRegister" mnemonicParsing="false" styleClass="styleButton" text="Register ">
                <font>
@@ -95,11 +95,11 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="69.0" prefWidth="598.0">
          <children>
-            <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="36.0" style="-fx-background-color: transparent;">
+            <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="36.0" style="-fx-background-color: transparent;" styleClass="styleButton">
                <graphic>
                   <ImageView id="btnSetting" fitHeight="52.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@images/settings.png" />
+                        <Image url="@images/options.png" />
                      </image>
                   </ImageView>
                </graphic>

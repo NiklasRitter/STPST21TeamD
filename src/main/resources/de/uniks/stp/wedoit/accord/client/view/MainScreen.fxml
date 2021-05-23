@@ -24,12 +24,18 @@
                <font>
                   <Font name="Comic Sans MS" size="24.0" />
                </font>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
             <ImageView fitHeight="64.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/Logo.png" />
                </image>
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
             </ImageView>
          </children>
          <opaqueInsets>
@@ -51,7 +57,7 @@
                      <graphic>
                         <ImageView id="btnOptions" fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/settings.png" />
+                              <Image url="@images/options.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -65,27 +71,18 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color blue="1.0" green="1.0" red="1.0" />
+                                    <Color red="1.0" green="1.0" blue="1.0" />
                                  </color>
                               </Stop>
                            </stops>
                         </LinearGradient>
                      </textFill>
                   </Button>
-                  <Button id="btnWelcome" mnemonicParsing="false" styleClass="styleButton">
+                  <Button id="btnPrivateChats" mnemonicParsing="false" styleClass="styleButton">
                      <graphic>
-                        <ImageView id="btnWelcome" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView id="btnWelcome" fitHeight="32.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/welcome.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button id="btnServerList" mnemonicParsing="false" styleClass="styleButton">
-                     <graphic>
-                        <ImageView id="btnServer" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@images/datenbank.png" />
+                              <Image url="@images/chat.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -94,20 +91,23 @@
                      <graphic>
                         <ImageView id="btnAddServer" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/plus.png" />
+                              <Image url="@images/addServer.png" />
                            </image>
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Region prefHeight="8.0" prefWidth="76.0" />
-                  <Button id="btnLogout" mnemonicParsing="false" styleClass="styleButton">
+                  <Region prefHeight="91.0" prefWidth="78.0" VBox.vgrow="ALWAYS" />
+                  <Button id="btnLogout" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>
                         <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/logout.png" />
+                              <Image url="@images/log_out.png" />
                            </image>
                         </ImageView>
                      </graphic>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
                   </Button>
                </children>
                <padding>
@@ -120,7 +120,7 @@
             </VBox>
             <VBox alignment="TOP_CENTER" prefHeight="327.0" prefWidth="293.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label prefHeight="19.0" prefWidth="292.0" text="Server list:" VBox.vgrow="ALWAYS">
+                  <Label prefHeight="19.0" prefWidth="292.0" styleClass="styleBorder" text="Server list:" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets left="2.0" />
                      </padding>

@@ -10,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import java.util.Objects;
+
 public class LoginScreenController implements Controller {
 
     private final Editor editor;
@@ -25,9 +27,9 @@ public class LoginScreenController implements Controller {
     /**
      * Create a new Controller
      *
-     * @param view       The view this Controller belongs to
-     * @param model      The model this Controller belongs to
-     * @param editor     The editor of the Application
+     * @param view   The view this Controller belongs to
+     * @param model  The model this Controller belongs to
+     * @param editor The editor of the Application
      */
     public LoginScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
@@ -69,15 +71,6 @@ public class LoginScreenController implements Controller {
         btnLogin.setOnAction(null);
         btnRegister.setOnAction(null);
         btnOptions.setOnAction(null);
-
-        tfUserName = null;
-        pwUserPw = null;
-        btnLogin = null;
-        btnRegister = null;
-
-        errorLabel = null;
-
-        btnOptions = null;
     }
 
     /**
@@ -94,7 +87,7 @@ public class LoginScreenController implements Controller {
         String password = this.pwUserPw.getText();
         if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
 
-            tfUserName.getStyleClass().add("error");
+            Objects.requireNonNull(tfUserName).getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
             errorLabel.setText("Username or password is missing");
         } else {

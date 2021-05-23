@@ -122,11 +122,11 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showWelcomeScreen() {
+    public static void showPrivateChatsScreen() {
         cleanup();
 
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/WelcomeScreen.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/PrivateChatsScreen.fxml")));
             if (scene != null) {
                 scene.setRoot(root);
             } else {
@@ -135,17 +135,17 @@ public class StageManager extends Application {
 
             updateDarkmode();
 
-            WelcomeScreenController welcomeScreenController = new WelcomeScreenController(root, model.getLocalUser(), editor);
-            welcomeScreenController.init();
-            controllerMap.put("welcomeScreenController", welcomeScreenController);
+            PrivateChatsScreenController privateChatsScreenController = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
+            privateChatsScreenController.init();
+            controllerMap.put("privateChatsScreenController", privateChatsScreenController);
 
             //display
-            stage.setTitle("Welcome");
+            stage.setTitle("Private Chats");
             stage.setScene(scene);
             stage.setResizable(true);
 
         } catch (Exception e) {
-            System.err.println("Error on showing WelcomeScreen");
+            System.err.println("Error on showing PrivateChatsScreen");
             e.printStackTrace();
         }
     }
