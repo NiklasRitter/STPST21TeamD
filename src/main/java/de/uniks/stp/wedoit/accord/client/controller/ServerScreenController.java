@@ -107,6 +107,8 @@ public class ServerScreenController implements Controller {
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
         initCategoryChannelList();
+
+        initTooltips();
     }
 
     public void addActionListener() {

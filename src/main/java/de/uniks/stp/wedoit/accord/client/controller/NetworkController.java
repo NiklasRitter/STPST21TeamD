@@ -68,7 +68,7 @@ public class NetworkController {
     }
 
     /**
-     * @param url
+     * @param url url of the web socket
      * @return -
      */
     public WebSocketClient getOrCreateWebSocket(String url) {
