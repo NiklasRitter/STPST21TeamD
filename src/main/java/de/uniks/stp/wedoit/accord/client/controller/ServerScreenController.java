@@ -101,12 +101,11 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
 
-        addActionListener();
-
         // get members of this server
+        // load categories after get users of a server
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
-        initCategoryChannelList();
+        addActionListener();
 
         initTooltips();
     }
@@ -154,7 +153,6 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        localUser.withoutServers(server);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
@@ -245,6 +243,7 @@ public class ServerScreenController implements Controller {
                 TreeItem<Object> channelItem = new TreeItem<>(channel);
                 categoryItem.getChildren().add(channelItem);
             }
+
         } else {
             System.err.println("Error while loading channels from server");
         }
@@ -382,6 +381,10 @@ public class ServerScreenController implements Controller {
 
             editor.haveUserWithServer(name, id, onlineStatus, server);
         }
+
+        // load categories
+        initCategoryChannelList();
+
         // load list view
         ServerUserListView serverUserListView = new ServerUserListView();
         lvServerUsers.setCellFactory(serverUserListView);

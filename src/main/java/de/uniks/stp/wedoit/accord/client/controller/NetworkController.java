@@ -308,7 +308,7 @@ public class NetworkController {
 
                 editor.haveChannels(category, categoriesChannelResponse);
 
-                List<Channel> channelList = server.getCategories().get(0).getChannels().stream().sorted(Comparator.comparing(Channel::getName))
+                List<Channel> channelList = category.getChannels().stream().sorted(Comparator.comparing(Channel::getName))
                         .collect(Collectors.toList());
                 controller.handleGetChannels(channelList, categoryItem);
             } else {
