@@ -31,7 +31,10 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -273,9 +276,9 @@ public class chatTest extends ApplicationTest {
         return Json.createObjectBuilder()
                 .add("channel", "private")
                 .add("timestamp", 1614938)
-                .add("message", test_message.getString(COM_MESSAGE))
+                .add("message", test_message.getString(MESSAGE))
                 .add("from", localUser.getName())
-                .add("to", test_message.getString(COM_TO))
+                .add("to", test_message.getString(TO))
                 .build();
     }
 

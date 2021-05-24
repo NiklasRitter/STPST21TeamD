@@ -259,9 +259,6 @@ public class PrivateChatsScreenController implements Controller {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
-        if (this.privateMessageObservableList.size() >= 100) {
-            Platform.runLater(() -> this.privateMessageObservableList.remove(0));
-        }
     }
 
     /**

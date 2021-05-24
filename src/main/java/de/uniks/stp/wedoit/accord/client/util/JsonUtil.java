@@ -11,7 +11,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 
 public class JsonUtil {
     /**
@@ -43,8 +43,8 @@ public class JsonUtil {
      */
     public static JsonObject buildLogin(String name, String password) {
         return Json.createObjectBuilder()
-                .add(COM_NAME, name)
-                .add(COM_PASSWORD, password)
+                .add(NAME, name)
+                .add(PASSWORD, password)
                 .build();
     }
 
@@ -55,7 +55,7 @@ public class JsonUtil {
      * @return The parsed LocalUser.
      */
     public static LocalUser parseTempUser(JsonObject tempUserJson) {
-        return new LocalUser().setName(tempUserJson.getString(COM_NAME));
+        return new LocalUser().setName(tempUserJson.getString(NAME));
     }
 
     /**
@@ -67,8 +67,8 @@ public class JsonUtil {
      * @return The parsed User.
      */
     public static User parseOnlineUser(JsonObject onlineUserJson) {
-        return new User().setId(onlineUserJson.getString(COM_ID))
-                .setName(onlineUserJson.getString(COM_NAME))
+        return new User().setId(onlineUserJson.getString(ID))
+                .setName(onlineUserJson.getString(NAME))
                 .setOnlineStatus(true);
     }
 
@@ -81,7 +81,7 @@ public class JsonUtil {
      * @return The parsed User.
      */
     public static User parseServerUser(JsonObject serverUserJson) {
-        return parseOnlineUser(serverUserJson).setOnlineStatus(serverUserJson.getBoolean(COM_ONLINE));
+        return parseOnlineUser(serverUserJson).setOnlineStatus(serverUserJson.getBoolean(ONLINE));
     }
 
 
@@ -108,8 +108,8 @@ public class JsonUtil {
      * @return The parsed Server.
      */
     public static Server parseServer(JsonObject serverJson) {
-        return new Server().setId(serverJson.getString(COM_ID))
-                .setName(serverJson.getString(COM_NAME));
+        return new Server().setId(serverJson.getString(ID))
+                .setName(serverJson.getString(NAME));
     }
 
     /**
@@ -135,14 +135,14 @@ public class JsonUtil {
      * @return The parsed Server.
      */
     public static Server parseServerDetails(JsonObject serverDetailsJson) {
-        JsonArray categoriesJson = serverDetailsJson.getJsonArray(COM_CATEGORIES);
+        JsonArray categoriesJson = serverDetailsJson.getJsonArray(CATEGORIES);
         List<Category> categories = new ArrayList<>();
         categoriesJson.forEach((jsonValue) -> categories.add(new Category().setId(jsonValue.toString())));
-        List<User> members = parseServerUsers(serverDetailsJson.getJsonArray(COM_MEMBERS));
+        List<User> members = parseServerUsers(serverDetailsJson.getJsonArray(MEMBERS));
         return parseServer(serverDetailsJson)
                 .withCategories(categories)
                 .withMembers(members)
-                .setOwner(serverDetailsJson.getString(COM_OWNER));
+                .setOwner(serverDetailsJson.getString(OWNER));
     }
 
     /**
@@ -154,8 +154,8 @@ public class JsonUtil {
      * @return The parsed Category.
      */
     public static Category parseCategory(JSONObject categoryJson) {
-        return new Category().setId(categoryJson.getString(COM_ID))
-                .setName(categoryJson.getString(COM_NAME));
+        return new Category().setId(categoryJson.getString(ID))
+                .setName(categoryJson.getString(NAME));
     }
 
     /**
@@ -167,10 +167,10 @@ public class JsonUtil {
      * @return The parsed Channel.
      */
     public static Channel parseChannel(JSONObject channelJson) {
-        return new Channel().setId(channelJson.getString(COM_ID))
-                .setName(channelJson.getString(COM_NAME))
-                .setType(channelJson.getString(COM_TYPE))
-                .setPrivileged(channelJson.getBoolean(COM_PRIVILEGED));
+        return new Channel().setId(channelJson.getString(ID))
+                .setName(channelJson.getString(NAME))
+                .setType(channelJson.getString(TYPE))
+                .setPrivileged(channelJson.getBoolean(PRIVILEGED));
     }
 
     /**
@@ -182,7 +182,7 @@ public class JsonUtil {
      * @return The MemberID List.
      */
     public static List<String> parseMembers(JSONObject channelJson) {
-        JSONArray members = channelJson.getJSONArray(COM_MEMBERS);
+        JSONArray members = channelJson.getJSONArray(MEMBERS);
         List<String> membersIds = new ArrayList<>();
         for (Object memberId : members) {
             membersIds.add(memberId.toString());
@@ -200,8 +200,8 @@ public class JsonUtil {
      */
     public static JsonObject buildServerChatMessage(String channelId, String message) {
         return Json.createObjectBuilder()
-                .add(COM_CHANNEL, channelId)
-                .add(COM_MESSAGE, message)
+                .add(CHANNEL, channelId)
+                .add(MESSAGE, message)
                 .build();
     }
 
@@ -214,9 +214,9 @@ public class JsonUtil {
      */
     public static JsonObject buildPrivateChatMessage(String to, String message) {
         return Json.createObjectBuilder()
-                .add(COM_CHANNEL, "private")
-                .add(COM_TO, to)
-                .add(COM_MESSAGE, message)
+                .add(CHANNEL, PRIVATE)
+                .add(TO, to)
+                .add(MESSAGE, message)
                 .build();
     }
 }

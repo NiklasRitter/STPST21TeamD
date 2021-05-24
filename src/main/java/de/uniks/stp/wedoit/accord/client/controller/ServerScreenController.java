@@ -26,7 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 
 public class ServerScreenController implements Controller {
@@ -106,12 +107,11 @@ public class ServerScreenController implements Controller {
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
         initCategoryChannelList();
+
+        initTooltips();
     }
 
     public void addActionListener() {
-
-        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + editor.getNetworkController().clearUsername()
-                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         // Add action listeners
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
@@ -327,12 +327,12 @@ public class ServerScreenController implements Controller {
     private void handleChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
 
-        if (jsonObject.getString(COM_CHANNEL).equals(currentChannel.getId())) {
+        if (jsonObject.getString(CHANNEL).equals(currentChannel.getId())) {
             Message message = new Message();
             message.setChannel(currentChannel);
-            message.setTimestamp(jsonObject.getJsonNumber(COM_TIMESTAMP).longValue());
-            message.setFrom(jsonObject.getString(COM_FROM));
-            message.setText(jsonObject.getString(COM_TEXT));
+            message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
+            message.setFrom(jsonObject.getString(FROM));
+            message.setText(jsonObject.getString(TEXT));
 
             this.editor.addNewChannelMessage(message);
         }
@@ -347,16 +347,16 @@ public class ServerScreenController implements Controller {
         JsonObject jsonObject = (JsonObject) msg;
 
         // Create a new user if a user has joined and not member of this server or set user online
-        if (jsonObject.getString(COM_ACTION).equals(COM_USER_JOINED)) {
-            String id = jsonObject.getJsonObject(COM_DATA).getString(COM_ID);
-            String name = jsonObject.getJsonObject(COM_DATA).getString(COM_NAME);
+        if (jsonObject.getString(ACTION).equals(USER_JOINED)) {
+            String id = jsonObject.getJsonObject(DATA).getString(ID);
+            String name = jsonObject.getJsonObject(DATA).getString(NAME);
             User userJoined = editor.haveUserWithServer(name, id, true, this.server);
             userJoined.setOnlineStatus(true);
         }
         // Create a new user if a user has left and not member of this server or set user offline
-        if (jsonObject.getString(COM_ACTION).equals(COM_USER_LEFT)) {
-            String id = jsonObject.getJsonObject(COM_DATA).getString(COM_ID);
-            String name = jsonObject.getJsonObject(COM_DATA).getString(COM_NAME);
+        if (jsonObject.getString(ACTION).equals(USER_LEFT)) {
+            String id = jsonObject.getJsonObject(DATA).getString(ID);
+            String name = jsonObject.getJsonObject(DATA).getString(NAME);
             User userLeft = editor.haveUserWithServer(name, id, false, this.server);
             userLeft.setOnlineStatus(false);
         }
@@ -376,9 +376,9 @@ public class ServerScreenController implements Controller {
     private void createUserListView(JSONArray members) {
         for (int index = 0; index < members.length(); index++) {
 
-            String name = members.getJSONObject(index).getString("name");
-            String id = members.getJSONObject(index).getString("id");
-            boolean onlineStatus = members.getJSONObject(index).getBoolean("online");
+            String name = members.getJSONObject(index).getString(NAME);
+            String id = members.getJSONObject(index).getString(ID);
+            boolean onlineStatus = members.getJSONObject(index).getBoolean(ONLINE);
 
             editor.haveUserWithServer(name, id, onlineStatus, server);
         }

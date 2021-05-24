@@ -8,7 +8,10 @@ import kong.unirest.Unirest;
 
 import javax.json.Json;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.CATEGORIES;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.CHANNELS;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 public class RestClient {
 
@@ -25,7 +28,7 @@ public class RestClient {
 
         // Use UniRest to make login request
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + LOGIN_PATH)
-                .header(COM_NAME, name)
+                .header(NAME, name)
                 .body(body);
 
         sendRequest(req, callback);
@@ -39,7 +42,7 @@ public class RestClient {
      */
     public void getServers(String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH)
-                .header(COM_USER_KEY, userKey);
+                .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
     }
@@ -53,7 +56,7 @@ public class RestClient {
      */
     public void getExplicitServerInformation(String userKey, String serverId, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
-                .header(COM_USER_KEY, userKey);
+                .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
     }
@@ -67,7 +70,7 @@ public class RestClient {
      */
     public void register(String name, String password, Callback<JsonNode> callback) {
         // Build Request Body
-        String body = Json.createObjectBuilder().add(COM_NAME, name).add(COM_PASSWORD, password).build().toString();
+        String body = Json.createObjectBuilder().add(NAME, name).add(PASSWORD, password).build().toString();
 
         // Use UniRest to make register request
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH)
@@ -84,7 +87,7 @@ public class RestClient {
     public void logout(String userKey, Callback<JsonNode> callback) {
         // Use UniRest to make register request
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + LOGOUT_PATH)
-                .header(COM_USER_KEY, userKey);
+                .header(USER_KEY, userKey);
         sendRequest(req, callback);
     }
 
@@ -97,11 +100,11 @@ public class RestClient {
      */
     public void createServer(String name, String userKey, Callback<JsonNode> callback) {
         // Build request Body
-        String body = Json.createObjectBuilder().add(COM_NAME, name).build().toString();
+        String body = Json.createObjectBuilder().add(NAME, name).build().toString();
 
         // Use UniRest to create server
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH)
-                .header(COM_USER_KEY, userKey)
+                .header(USER_KEY, userKey)
                 .body(body);
 
         sendRequest(req, callback);
@@ -115,7 +118,7 @@ public class RestClient {
      */
     public void getOnlineUsers(String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + USERS_PATH)
-                .header(COM_USER_KEY, userKey);
+                .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
     }
@@ -128,8 +131,8 @@ public class RestClient {
      * @param callback The Callback to be called after the Request.
      */
     public void getCategories(String serverId, String userKey, Callback<JsonNode> callback) {
-        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES)
-                .header(COM_USER_KEY, userKey);
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES)
+                .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
     }
@@ -143,8 +146,8 @@ public class RestClient {
      * @param callback   The Callback to be called after the Request.
      */
     public void getChannels(String serverId, String categoryId, String userKey, Callback<JsonNode> callback) {
-        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + "/" + serverId + CATEGORIES + "/" + categoryId + CHANNELS)
-                .header(COM_USER_KEY, userKey);
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS)
+                .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
     }

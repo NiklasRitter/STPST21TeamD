@@ -9,11 +9,10 @@ import org.json.JSONArray;
 
 import java.util.*;
 
-import static de.uniks.stp.wedoit.accord.client.Constants.COM_ID;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
 
 public class Editor {
 
-    private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final NetworkController networkController = new NetworkController(this);
     private AccordClient accordClient;
     private Server currentServer;
@@ -196,7 +195,7 @@ public class Editor {
             categoryIds.add(category.getId());
         }
         for (int index = 0; index < serversCategoryResponse.length(); index++) {
-            if (!categoryIds.contains(serversCategoryResponse.getJSONObject(index).getString(COM_ID))) {
+            if (!categoryIds.contains(serversCategoryResponse.getJSONObject(index).getString(ID))) {
                 Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
                 category.setServer(server);
             }
@@ -228,7 +227,7 @@ public class Editor {
                 User user = this.getServerUserById(category.getServer(), memberId);
                 channel.withMembers(user);
             }
-            if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(COM_ID))) {
+            if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(ID))) {
             }
         }
         return category.getChannels();
