@@ -369,7 +369,7 @@ public class ServerScreenController implements Controller {
         JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
         String action = ((JsonObject) msg).getString(ACTION);
 
-        if (action.equals(USER_JOINED) || action.equals(USER_LEFT)) {
+        if (action.equals(USER_JOINED) || action.equals(USER_LEFT) || action.equals(USER_ARRIVED) || action.equals(USER_EXITED)) {
             // Create a new user if a user has joined and not member of this server or set user online
             if (action.equals(USER_JOINED)) {
                 String id = data.getString(ID);
@@ -384,21 +384,39 @@ public class ServerScreenController implements Controller {
                 User userLeft = editor.haveUserWithServer(name, id, false, this.server);
                 userLeft.setOnlineStatus(false);
             }
-            //updateUserListView();
+
+            // userArrived
+
+            // userExited
+
             Platform.runLater(this::updateUserListView);
         }
-        // userArrived
 
-        // userExited
-        // serverUpdated
-        // serverDeleted
-        // categoryCreated
-        // categoryUpdated
-        // categoryDeleted
-        // channelCreated
-        // channelUpdated
-        // channelDeleted
-        // inviteExpired
+        if (action.equals(SERVER_UPDATED) || action.equals(SERVER_DELETED)) {
+            // serverUpdated
+            // serverDeleted
+        }
+
+        if (action.equals(CATEGORY_CREATED) || action.equals(CATEGORY_UPDATED) || action.equals(CATEGORY_DELETED)) {
+
+            // categoryCreated
+            // categoryUpdated
+            // categoryDeleted
+
+            // changeTreeView for categories
+        }
+
+        if (action.equals(CATEGORY_CREATED) || action.equals(CATEGORY_UPDATED) || action.equals(CATEGORY_DELETED)) {
+
+            // channelCreated
+            // channelUpdated
+            // channelDeleted
+
+            // changeTreeView for channels
+        }
+        if (action.equals(INVITE_EXPIRED)) {
+            // inviteExpired
+        }
 
 
     }
