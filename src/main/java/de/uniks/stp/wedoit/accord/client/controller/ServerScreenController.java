@@ -53,6 +53,7 @@ public class ServerScreenController implements Controller {
     private ObservableList<Message> observableMessageList;
     private PropertyChangeListener newMessagesListener = this::newMessage;
     private TreeItem<Object> tvServerChannelsRoot;
+    private Boolean propertyChangeListenerAdded = false;
 
     /**
      * Create a new Controller
@@ -90,8 +91,9 @@ public class ServerScreenController implements Controller {
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
         this.lbServerName.setText(server.getName());
-
+        // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        // Add chat server web socket
         editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
@@ -103,6 +105,7 @@ public class ServerScreenController implements Controller {
 
         // get members of this server
         // load categories after get users of a server
+        // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
         addActionListener();
@@ -121,14 +124,14 @@ public class ServerScreenController implements Controller {
 
     }
 
-    public void handleGetExplicitServerInformation(JSONArray members) {
-        if (members != null) {
-            // create users which are member in the server and load user list view
-            createUserListView(members);
-        } else {
-            Platform.runLater(StageManager::showLoginScreen);
-        }
+    public void addPropertyChangeListener() {
+        propertyChangeListenerAdded = true;
     }
+
+    public void removePropertyChangeListener() {
+        propertyChangeListenerAdded = false;
+    }
+
 
     /**
      * Initializes the Tooltips for the Buttons
@@ -170,10 +173,24 @@ public class ServerScreenController implements Controller {
         this.chatWSCallback = null;
         this.serverWSCallback = null;
         this.newMessagesListener = null;
+
+        if (propertyChangeListenerAdded) {
+            removePropertyChangeListener();
+
+        }
     }
 
 
     // Additional methods
+
+    public void handleGetExplicitServerInformation(JSONArray members) {
+        if (members != null) {
+            // create users which are member in the server and load user list view
+            createUserListView(members);
+        } else {
+            Platform.runLater(StageManager::showLoginScreen);
+        }
+    }
 
     /**
      * The localUser will be redirect to the HomeScreen
@@ -225,6 +242,7 @@ public class ServerScreenController implements Controller {
             }
         } else {
             System.err.println("Error while loading categories from server");
+            Platform.runLater(StageManager::showLoginScreen);
         }
     }
 
@@ -244,8 +262,12 @@ public class ServerScreenController implements Controller {
                 categoryItem.getChildren().add(channelItem);
             }
 
+            //add PropertyChangeListener
+            addPropertyChangeListener();
+
         } else {
             System.err.println("Error while loading channels from server");
+            Platform.runLater(StageManager::showLoginScreen);
         }
     }
 
@@ -343,24 +365,41 @@ public class ServerScreenController implements Controller {
      * @param msg response of the websocket server
      */
     private void handleServerMessage(JsonStructure msg) {
-        JsonObject jsonObject = (JsonObject) msg;
+        //JsonObject jsonObject = (JsonObject) msg;
+        JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
+        String action = ((JsonObject) msg).getString(ACTION);
 
-        // Create a new user if a user has joined and not member of this server or set user online
-        if (jsonObject.getString(ACTION).equals(USER_JOINED)) {
-            String id = jsonObject.getJsonObject(DATA).getString(ID);
-            String name = jsonObject.getJsonObject(DATA).getString(NAME);
-            User userJoined = editor.haveUserWithServer(name, id, true, this.server);
-            userJoined.setOnlineStatus(true);
+        if (action.equals(USER_JOINED) || action.equals(USER_LEFT)) {
+            // Create a new user if a user has joined and not member of this server or set user online
+            if (action.equals(USER_JOINED)) {
+                String id = data.getString(ID);
+                String name = data.getString(NAME);
+                User userJoined = editor.haveUserWithServer(name, id, true, this.server);
+                userJoined.setOnlineStatus(true);
+            }
+            // Create a new user if a user has left and not member of this server or set user offline
+            if (action.equals(USER_LEFT)) {
+                String id = data.getString(ID);
+                String name = data.getString(NAME);
+                User userLeft = editor.haveUserWithServer(name, id, false, this.server);
+                userLeft.setOnlineStatus(false);
+            }
+            //updateUserListView();
+            Platform.runLater(this::updateUserListView);
         }
-        // Create a new user if a user has left and not member of this server or set user offline
-        if (jsonObject.getString(ACTION).equals(USER_LEFT)) {
-            String id = jsonObject.getJsonObject(DATA).getString(ID);
-            String name = jsonObject.getJsonObject(DATA).getString(NAME);
-            User userLeft = editor.haveUserWithServer(name, id, false, this.server);
-            userLeft.setOnlineStatus(false);
-        }
+        // userArrived
 
-        Platform.runLater(this::updateUserListView);
+        // userExited
+        // serverUpdated
+        // serverDeleted
+        // categoryCreated
+        // categoryUpdated
+        // categoryDeleted
+        // channelCreated
+        // channelUpdated
+        // channelDeleted
+        // inviteExpired
+
 
     }
 
