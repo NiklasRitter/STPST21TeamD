@@ -220,14 +220,14 @@ public class Editor {
             channelIds.add(channel.getId());
         }
         for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
-            channel.setCategory(category);
-            List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
-            for (String memberId : memberIds) {
-                User user = this.getServerUserById(category.getServer(), memberId);
-                channel.withMembers(user);
-            }
             if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(ID))) {
+                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+                channel.setCategory(category);
+                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
+                for (String memberId : memberIds) {
+                    User user = this.getServerUserById(category.getServer(), memberId);
+                    channel.withMembers(user);
+                }
             }
         }
         return category.getChannels();
