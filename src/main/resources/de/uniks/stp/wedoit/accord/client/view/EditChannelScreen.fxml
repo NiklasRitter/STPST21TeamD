@@ -10,16 +10,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox>
          <children>
-            <Label text="Channel Name:">
+            <Label prefWidth="160.0" text="Channel Name:">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
                <HBox.margin>
-                  <Insets right="15.0" top="2.0" />
+                  <Insets top="2.0" />
                </HBox.margin>
             </Label>
             <TextField id="tfChannelName" prefWidth="200.0">
@@ -34,12 +34,12 @@
       </HBox>
       <HBox>
          <children>
-            <Label text="Privileged:">
+            <Label prefWidth="140.0" text="Privileged:">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
                <HBox.margin>
-                  <Insets right="45.0" />
+                  <Insets />
                </HBox.margin>
             </Label>
             <CheckBox id="checkBoxPrivileged" mnemonicParsing="false">
