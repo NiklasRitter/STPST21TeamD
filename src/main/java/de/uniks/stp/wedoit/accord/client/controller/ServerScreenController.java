@@ -39,6 +39,7 @@ public class ServerScreenController implements Controller {
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
+    private Button btnEdit;
     private Label lbServerName;
 
     private TreeView<Object> tvServerChannels;
@@ -82,6 +83,7 @@ public class ServerScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
+        this.btnEdit = (Button) view.lookup("#btnEdit");
         this.lbServerName = (Label) view.lookup("#lbServerName");
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
@@ -116,6 +118,7 @@ public class ServerScreenController implements Controller {
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
+        this.btnEdit.setOnAction(this::editButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
 
@@ -156,6 +159,7 @@ public class ServerScreenController implements Controller {
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
+        this.btnEdit.setOnAction(null);
         this.tfInputMessage.setOnAction(null);
         this.tvServerChannels.setOnMouseReleased(null);
 
@@ -202,6 +206,15 @@ public class ServerScreenController implements Controller {
     private void logoutButtonOnClick(ActionEvent actionEvent) {
         editor.logoutUser(localUser.getUserKey());
 
+    }
+
+    /**
+     * The localUser will be redirected to the EditServerScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
+    private void editButtonOnClick(ActionEvent actionEvent) {
+        StageManager.showEditServerScreen(this.server);
     }
 
 
