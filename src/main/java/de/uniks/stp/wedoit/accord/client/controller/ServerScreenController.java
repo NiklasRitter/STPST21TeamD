@@ -372,6 +372,8 @@ public class ServerScreenController implements Controller {
         }
     }
 
+    // Methods for handle server messages of the websocket
+
     /**
      * Handles the response of the websocket server
      *
@@ -424,16 +426,23 @@ public class ServerScreenController implements Controller {
             tvServerChannels.refresh();
         }
 
-        if (action.equals(CATEGORY_CREATED) || action.equals(CATEGORY_UPDATED) || action.equals(CATEGORY_DELETED)) {
-
-            // channelCreated
-            // channelUpdated
-            // channelDeleted
-
-            // changeTreeView for channels
+        // change channel
+        if (action.equals(CHANNEL_UPDATED)) {
+            Channel channel = editor.updateChannel(server, data.getString(ID),data.getString(NAME), data.getString(TYPE),
+                    data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
+            if (channel == null) {
+                Platform.runLater(() -> StageManager.showServerScreen(server));
+            }
+            tvServerChannels.refresh();
         }
+        if (action.equals(CHANNEL_CREATED) || action.equals(CHANNEL_DELETED)) {
+            changeChannelTreeItems(action, data);
+            tvServerChannels.refresh();
+        }
+
+        // change invitation
         if (action.equals(INVITE_EXPIRED)) {
-            // inviteExpired
+            // TODO inviteExpired
         }
 
 
@@ -480,6 +489,66 @@ public class ServerScreenController implements Controller {
                 category.removeYou();
             }
 
+        }
+    }
+
+    /**
+     * This method
+     * <p>
+     * gets the TreeItem with the category as value which value have the same id as from the data -> category.
+     * <p>
+     * If there is no category whit this id, then load the whole server again
+     * <p>
+     * else if there is a category then get the channel with the same id as from the data
+     * <p>
+     * --- If there is no channel whit this id, then create a new channel with the data,
+     * <p>
+     * --- else if there is a channel and the action is "CHANNEL_DELETED" then delete the channel self.
+     *
+     * @param action action of the web socket message to distinguish between created and deleted
+     * @param data data to handle for the action
+     */
+    private void changeChannelTreeItems(String action, JsonObject data) {
+
+        TreeItem<Object> category = null;
+        for (TreeItem<Object> categoryItem : tvServerChannelsRoot.getChildren()) {
+            Category currentCategory = (Category) categoryItem.getValue();
+            if (currentCategory.getId().equals(data.getString(CATEGORY))) {
+                category = categoryItem;
+                break;
+            }
+        }
+        if (category == null) {
+            StageManager.showServerScreen(server);
+        } else {
+            Channel channel = null;
+            TreeItem<Object> channelItem = null;
+            for (TreeItem<Object> channelItemIterator : category.getChildren()) {
+                Channel currentChannel = (Channel) channelItemIterator.getValue();
+                if (currentChannel.getId().equals(data.getString(ID))) {
+                    channel = currentChannel;
+                    channelItem = channelItemIterator;
+                    break;
+                }
+            }
+
+            if (channel == null) {
+                if (action.equals(CHANNEL_CREATED)) {
+                    Channel newChannel = editor.haveChannel(data.getString(ID), data.getString(NAME),
+                            data.getString(TYPE), data.getBoolean(PRIVILEGED), (Category) category.getValue(),
+                            data.getJsonArray(MEMBERS));
+                    TreeItem<Object> newChannelItem = new TreeItem<>(newChannel);
+                    newChannelItem.setExpanded(true);
+                    category.getChildren().add(newChannelItem);
+                } else {
+                    Platform.runLater(() -> StageManager.showServerScreen(server));
+                }
+            } else {
+                if (action.equals(CHANNEL_DELETED)) {
+                    category.getChildren().remove(channelItem);
+                    channel.removeYou();
+                }
+            }
         }
     }
 

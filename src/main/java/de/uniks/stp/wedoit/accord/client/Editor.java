@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import org.json.JSONArray;
 
+import javax.json.JsonArray;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -336,6 +337,43 @@ public class Editor {
             }
         }
         return new Category().setName(name).setId(id).setServer(server);
+    }
+
+    /**
+     * This method
+     * <p>
+     * updates a channel with the given name, privileged and members. Only name, privileged and members will upgraded
+     *
+     * @param id        id of the channel which channels compared by
+     * @return channel upgraded channel or null
+     */
+    public Channel updateChannel(Server server, String id, String name, String type, Boolean privileged, String categoryId, JsonArray members) {
+
+        for (Category category: server.getCategories()) {
+            if (category.getId().equals(categoryId)) {
+                for (Channel channel: category.getChannels()) {
+                    if (channel.getId().equals(id)) {
+                        channel.setName(name);
+                        channel.setPrivileged(privileged);
+                        channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+                        if (privileged) {
+                            List<String> membersIds = new ArrayList<>();
+                            for (int index = 0; index < members.toArray().length; index++) {
+                                membersIds.add(members.getString(index));
+                            }
+
+                            for (String memberId : membersIds) {
+                                User user = this.getServerUserById(category.getServer(), memberId);
+                                Objects.requireNonNull(user);
+                                channel.withMembers(user);
+                            }
+                        }
+                        return channel;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 }
