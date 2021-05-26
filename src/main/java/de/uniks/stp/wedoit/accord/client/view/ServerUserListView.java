@@ -26,7 +26,7 @@ public class ServerUserListView implements javafx.util.Callback<ListView<User>, 
                 }
             } else {
                 this.setText(null);
-                this.setStyle(null);
+                this.getStyleClass().removeAll("listViewUserOffline", "listViewUserOnline");
             }
         }
     }

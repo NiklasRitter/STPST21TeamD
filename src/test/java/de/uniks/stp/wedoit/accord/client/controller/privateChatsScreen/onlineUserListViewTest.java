@@ -102,7 +102,7 @@ public class onlineUserListViewTest extends ApplicationTest {
         mockRest(restJson);
         JsonObject webSocketJson = webSocketCallbackUserJoined();
         ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
-
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(3, userListView.getItems().size());
         Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
 
