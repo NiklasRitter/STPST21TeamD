@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Platform;
 import javafx.scene.control.ListView;
@@ -26,11 +27,12 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.lang.model.util.Types;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 public class MainScreenControllerTest extends ApplicationTest {
@@ -57,6 +59,10 @@ public class MainScreenControllerTest extends ApplicationTest {
     private HttpResponse<JsonNode> res;
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<WSCallback> callbackArgumentCaptorWebSocket;
+    private WSCallback wsCallback;
 
     @Override
     public void start(Stage stage) {
@@ -226,7 +232,59 @@ public class MainScreenControllerTest extends ApplicationTest {
         Assert.assertEquals("Server", stage.getTitle());
     }
 
+    public void mockWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(webSocketClient, times(2)).setCallback(callbackArgumentCaptorWebSocket.capture());
+        this.wsCallback = callbackArgumentCaptorWebSocket.getValue();
+
+        this.wsCallback.handleMessage(webSocketJson);
+    }
+
+    @Test
+    public void handleServerMessage() {
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
+        Assert.assertNotNull(listView);
+
+        mockRestClient(buildGetServersSuccessWithTwoServers());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(2, listView.getItems().size());
+
+
+        Server setServer = null;
+        for (Server server: listView.getItems()) {
+            if (server.getId().equals(webSocketCallbackServerUpdated().getJsonObject(DATA).getString(ID))) {
+                setServer = server;
+            }
+        }
+        Assert.assertNotNull(setServer);
+        Assert.assertNotEquals(setServer.getName(), webSocketCallbackServerUpdated().getJsonObject(DATA).getString(NAME));
+
+
+        mockWebSocket(webSocketCallbackServerUpdated());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(setServer.getName(), webSocketCallbackServerUpdated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(2, listView.getItems().size());
+
+        mockWebSocket(webSocketCallbackServerDeleted());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertFalse(listView.getItems().contains(setServer));
+        Assert.assertEquals(1, listView.getItems().size());
+    }
+
     // Help methods to create response for mocked rest client
+
+    public JsonObject webSocketCallbackServerUpdated() {
+        return Json.createObjectBuilder().add("action", "serverUpdated").add("data",
+                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")).build();
+    }
+
+    public JsonObject webSocketCallbackServerDeleted() {
+        return Json.createObjectBuilder().add("action", "serverDeleted").add("data",
+                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")).build();
+    }
 
     /**
      * create a getServers response with two servers with id an name:

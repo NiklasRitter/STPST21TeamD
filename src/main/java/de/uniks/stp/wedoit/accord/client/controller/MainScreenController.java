@@ -236,6 +236,7 @@ public class MainScreenController implements Controller {
                     Platform.runLater(() -> {
                         this.serverListView.getItems().remove(server);
                         server.removeYou();
+                        serverListView.getItems().sort(Comparator.comparing(Server::getName));
                         serverListView.refresh();
                     });
                 }
