@@ -405,9 +405,13 @@ public class ServerScreenController implements Controller {
             Platform.runLater(this::updateUserListView);
         }
 
-        if (action.equals(SERVER_UPDATED) || action.equals(SERVER_DELETED)) {
-            // serverUpdated
-            // serverDeleted
+        // change data of the server
+        if (action.equals(SERVER_UPDATED)) {
+            server.setName(data.getString(NAME));
+            Platform.runLater(() -> lbServerName.setText(server.getName()));
+        }
+        if (action.equals(SERVER_DELETED)) {
+            Platform.runLater(StageManager::showMainScreen);
         }
 
         if (action.equals(CATEGORY_CREATED) || action.equals(CATEGORY_UPDATED) || action.equals(CATEGORY_DELETED)) {
