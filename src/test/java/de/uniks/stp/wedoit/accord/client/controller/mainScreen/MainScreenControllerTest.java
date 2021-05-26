@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.application.Platform;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -67,6 +68,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         //create localUser to skip the login screen
         localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showMainScreen();
@@ -212,9 +214,13 @@ public class MainScreenControllerTest extends ApplicationTest {
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
-
+        WaitForAsyncUtils.async(() -> {
+            while (!stage.getTitle().equals("Server")) {
+                stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+            }
+        });
         doubleClickOn("#lwServerList");
-
+        WaitForAsyncUtils.waitForFxEvents();
         // Test correct server and correct screen
         Assert.assertEquals("BMainTestServerOne", server.getName());
         Assert.assertEquals("Server", stage.getTitle());
