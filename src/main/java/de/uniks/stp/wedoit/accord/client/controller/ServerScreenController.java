@@ -80,8 +80,6 @@ public class ServerScreenController implements Controller {
      * Add necessary webSocketClients
      */
     public void init() {
-        System.out.println(localUser.getUserKey());
-        System.out.println(server.getId());
         // Load all view references
         editor.setCurrentServer(server);
         this.btnOptions = (Button) view.lookup("#btnOptions");

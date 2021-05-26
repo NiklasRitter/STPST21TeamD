@@ -64,7 +64,6 @@ public class MainScreenController implements Controller {
      * Add action listeners
      */
     public void init() {
-        System.out.println(localUser.getUserKey());
         // Load all view references
         this.privateChatsButton = (Button) view.lookup("#btnPrivateChats");
         this.optionsButton = (Button) view.lookup("#btnOptions");
@@ -224,7 +223,6 @@ public class MainScreenController implements Controller {
      * @param msg message from the web socket
      */
     private void handleServersMessage(JsonStructure msg) {
-        System.out.println(msg);
         JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
         String action = ((JsonObject) msg).getString(ACTION);
 
