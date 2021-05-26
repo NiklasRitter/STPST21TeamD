@@ -54,7 +54,6 @@ public class ServerScreenController implements Controller {
     private ObservableList<Message> observableMessageList;
     private PropertyChangeListener newMessagesListener = this::newMessage;
     private TreeItem<Object> tvServerChannelsRoot;
-    private Boolean propertyChangeListenerAdded = false;
 
     /**
      * Create a new Controller
@@ -126,14 +125,6 @@ public class ServerScreenController implements Controller {
 
     }
 
-    public void addPropertyChangeListener() {
-        propertyChangeListenerAdded = true;
-    }
-
-    public void removePropertyChangeListener() {
-        propertyChangeListenerAdded = false;
-    }
-
 
     /**
      * Initializes the Tooltips for the Buttons
@@ -176,10 +167,6 @@ public class ServerScreenController implements Controller {
         this.serverWSCallback = null;
         this.newMessagesListener = null;
 
-        if (propertyChangeListenerAdded) {
-            removePropertyChangeListener();
-
-        }
         editor.setCurrentServer(null);
         deleteCurrentServer();
     }
