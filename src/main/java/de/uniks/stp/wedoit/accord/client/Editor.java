@@ -342,6 +342,49 @@ public class Editor {
     /**
      * This method
      * <p>
+     * - creates a channel with the given arguments
+     * <p>
+     * - updates a channel with the given name, type, privileged, category and members
+     * if the channel has already been created
+     *
+     * to update a channel use updateChannel()
+     *
+     * @param id        id of the channel which channels compared by
+     * @return category with given id and name and with server server
+     */
+    public Channel haveChannel(String id, String name, String type, Boolean privileged, Category category, JsonArray members) {
+        Server server = category.getServer();
+        Channel channel = null;
+        for (Channel channelIterator: category.getChannels()) {
+            if (channelIterator.getId().equals(id)) {
+                channel = channelIterator;
+                break;
+            }
+        }
+        if (channel == null) {
+            channel = new Channel();
+        }
+        channel.setName(name).setPrivileged(privileged).setType(type).setId(id).setCategory(category);
+        channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+
+        List<String> membersIds = new ArrayList<>();
+        for (int index = 0; index < members.toArray().length; index++) {
+            membersIds.add(members.getString(index));
+        }
+
+        if (privileged) {
+            for (User user: server.getMembers()) {
+                if (membersIds.contains(user.getId())) {
+                    channel.withMembers(user);
+                }
+            }
+        }
+        return channel;
+    }
+
+    /**
+     * This method
+     * <p>
      * updates a channel with the given name, privileged and members. Only name, privileged and members will upgraded
      *
      * @param id        id of the channel which channels compared by
