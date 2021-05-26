@@ -80,6 +80,8 @@ public class ServerScreenController implements Controller {
      * Add necessary webSocketClients
      */
     public void init() {
+        System.out.println(localUser.getUserKey());
+        System.out.println(server.getId());
         // Load all view references
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
@@ -275,9 +277,6 @@ public class ServerScreenController implements Controller {
                 categoryItem.getChildren().add(channelItem);
             }
 
-            //add PropertyChangeListener
-            addPropertyChangeListener();
-
         } else {
             System.err.println("Error while loading channels from server");
             Platform.runLater(StageManager::showLoginScreen);
@@ -428,7 +427,7 @@ public class ServerScreenController implements Controller {
 
         // change channel
         if (action.equals(CHANNEL_UPDATED)) {
-            Channel channel = editor.updateChannel(server, data.getString(ID),data.getString(NAME), data.getString(TYPE),
+            Channel channel = editor.updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE),
                     data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
             if (channel == null) {
                 Platform.runLater(() -> StageManager.showServerScreen(server));
@@ -445,7 +444,6 @@ public class ServerScreenController implements Controller {
             // TODO inviteExpired
         }
 
-
     }
 
     /**
@@ -458,7 +456,7 @@ public class ServerScreenController implements Controller {
      * else if there is a category and the action is "CATEGORY_DELETED" then delete all channels and the category self.
      *
      * @param action action of the web socket message to distinguish between created and deleted
-     * @param data data to handle for the action
+     * @param data   data to handle for the action
      */
     private void changeCategoryTreeItems(String action, JsonObject data) {
         Category category = null;
@@ -483,7 +481,7 @@ public class ServerScreenController implements Controller {
         } else {
             if (action.equals(CATEGORY_DELETED)) {
                 tvServerChannelsRoot.getChildren().remove(categoryTreeItem);
-                for (Channel channel: category.getChannels()) {
+                for (Channel channel : category.getChannels()) {
                     channel.removeYou();
                 }
                 category.removeYou();
@@ -506,7 +504,7 @@ public class ServerScreenController implements Controller {
      * --- else if there is a channel and the action is "CHANNEL_DELETED" then delete the channel self.
      *
      * @param action action of the web socket message to distinguish between created and deleted
-     * @param data data to handle for the action
+     * @param data   data to handle for the action
      */
     private void changeChannelTreeItems(String action, JsonObject data) {
 
