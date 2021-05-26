@@ -414,13 +414,14 @@ public class ServerScreenController implements Controller {
             Platform.runLater(StageManager::showMainScreen);
         }
 
-        if (action.equals(CATEGORY_CREATED) || action.equals(CATEGORY_UPDATED) || action.equals(CATEGORY_DELETED)) {
-
-            // categoryCreated
-            // categoryUpdated
-            // categoryDeleted
-
-            // changeTreeView for categories
+        //change category
+        if (action.equals(CATEGORY_UPDATED)) {
+            editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+            tvServerChannels.refresh();
+        }
+        if (action.equals(CATEGORY_CREATED) || action.equals(CATEGORY_DELETED)) {
+            changeCategoryTreeItems(action, data);
+            tvServerChannels.refresh();
         }
 
         if (action.equals(CATEGORY_CREATED) || action.equals(CATEGORY_UPDATED) || action.equals(CATEGORY_DELETED)) {
@@ -436,6 +437,50 @@ public class ServerScreenController implements Controller {
         }
 
 
+    }
+
+    /**
+     * This method
+     * <p>
+     * gets the TreeItem with the category as value which value have the same id as from the data.
+     * <p>
+     * If there is no category whit this id, then create a new category with the data,
+     * <p>
+     * else if there is a category and the action is "CATEGORY_DELETED" then delete all channels and the category self.
+     *
+     * @param action action of the web socket message to distinguish between created and deleted
+     * @param data data to handle for the action
+     */
+    private void changeCategoryTreeItems(String action, JsonObject data) {
+        Category category = null;
+        TreeItem categoryTreeItem = null;
+        for (TreeItem<Object> categoryItem : tvServerChannelsRoot.getChildren()) {
+            Category currentCategory = (Category) categoryItem.getValue();
+            if (currentCategory.getId().equals(data.getString(ID))) {
+                categoryTreeItem = categoryItem;
+                category = currentCategory;
+                break;
+            }
+        }
+        if (category == null) {
+            if (action.equals(CATEGORY_CREATED)) {
+                Category newCategory = editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+                TreeItem<Object> categoryItem = new TreeItem<>(newCategory);
+                categoryItem.setExpanded(true);
+                tvServerChannelsRoot.getChildren().add(categoryItem);
+            } else {
+                Platform.runLater(() -> StageManager.showServerScreen(server));
+            }
+        } else {
+            if (action.equals(CATEGORY_DELETED)) {
+                tvServerChannelsRoot.getChildren().remove(categoryTreeItem);
+                for (Channel channel: category.getChannels()) {
+                    channel.removeYou();
+                }
+                category.removeYou();
+            }
+
+        }
     }
 
     // Methods for the user list view

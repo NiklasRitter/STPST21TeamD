@@ -317,4 +317,25 @@ public class Editor {
         return null;
     }
 
+    /**
+     * This method
+     * <p>
+     * - creates a category with the given arguments
+     * <p>
+     * - updates a category with the given name if the category has already been created
+     *
+     * @param id        id of the category
+     * @param name      name of the category
+     * @return category with given id and name and with server server
+     */
+    public Category haveCategory(String id, String name, Server server) {
+
+        for (Category category: server.getCategories()) {
+            if (category.getId().equals(id)) {
+                return category.setName(name);
+            }
+        }
+        return new Category().setName(name).setId(id).setServer(server);
+    }
+
 }
