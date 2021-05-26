@@ -57,7 +57,6 @@ public class EditChannelScreenController implements Controller {
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::editChannelButtonOnClick);
         this.btnDeleteChannel.setOnAction(this::deleteChannelButtonOnClick);
-        System.out.println(this.channel);
     }
 
     /**

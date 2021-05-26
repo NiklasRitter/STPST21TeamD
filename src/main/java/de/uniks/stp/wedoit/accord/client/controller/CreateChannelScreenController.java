@@ -54,7 +54,6 @@ public class CreateChannelScreenController implements Controller {
 
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::createChannelButtonOnClick);
-        System.out.println(this.category);
     }
 
     /**
