@@ -378,30 +378,30 @@ public class ServerScreenController implements Controller {
      * @param msg response of the websocket server
      */
     private void handleServerMessage(JsonStructure msg) {
-        //JsonObject jsonObject = (JsonObject) msg;
         JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
         String action = ((JsonObject) msg).getString(ACTION);
 
+        // change members
         if (action.equals(USER_JOINED) || action.equals(USER_LEFT) || action.equals(USER_ARRIVED) || action.equals(USER_EXITED)) {
-            // Create a new user if a user has joined and not member of this server or set user online
-            if (action.equals(USER_JOINED)) {
-                String id = data.getString(ID);
-                String name = data.getString(NAME);
-                User userJoined = editor.haveUserWithServer(name, id, true, this.server);
-                userJoined.setOnlineStatus(true);
+            String id = data.getString(ID);
+            String name = data.getString(NAME);
+
+            if (action.equals(USER_EXITED)) {
+                editor.userWithoutServer(id, this.server);
+            } else {
+                // create or get a new user with the data
+                User user = editor.haveUserWithServer(name, id, false, this.server);
+
+                if (action.equals(USER_JOINED)) {
+                    user.setOnlineStatus(true);
+                }
+                if (action.equals(USER_LEFT)) {
+                    user.setOnlineStatus(false);
+                }
+                if (action.equals(USER_ARRIVED)) {
+                    user.setOnlineStatus(data.getBoolean(ONLINE));
+                }
             }
-            // Create a new user if a user has left and not member of this server or set user offline
-            if (action.equals(USER_LEFT)) {
-                String id = data.getString(ID);
-                String name = data.getString(NAME);
-                User userLeft = editor.haveUserWithServer(name, id, false, this.server);
-                userLeft.setOnlineStatus(false);
-            }
-
-            // userArrived
-
-            // userExited
-
             Platform.runLater(this::updateUserListView);
         }
 

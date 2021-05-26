@@ -300,4 +300,21 @@ public class Editor {
         }
         return onlineUsers;
     }
+
+    /**
+     * Delete a member of a server with the given id
+     * @param id id of the member who should deleted
+     * @param server server with member
+     * @return the given server if the user was deleted
+     * return null, if user was not in the members list
+     */
+    public Server userWithoutServer(String id, Server server) {
+        for (User user: server.getMembers()) {
+            if (user.getId().equals(id)) {
+                return server.withoutMembers(user);
+            }
+        }
+        return null;
+    }
+
 }
