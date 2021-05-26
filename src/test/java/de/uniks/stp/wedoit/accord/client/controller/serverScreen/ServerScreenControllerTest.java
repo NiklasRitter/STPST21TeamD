@@ -467,7 +467,31 @@ public class ServerScreenControllerTest extends ApplicationTest {
     }
 
 
+    @Test
+    public void handleServerMessages() {
+        initUserListView();
+        initChannelListView();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mockWebSocket(webSocketCallbackCategoryUpdated());
+
+
+    }
+
     // Methods for callbacks
+
+    // websocket callbacks
 
     /**
      * @return Json webSocketCallback that user with id: "123456" and name: "Phil" has joined
@@ -484,6 +508,62 @@ public class ServerScreenControllerTest extends ApplicationTest {
         return Json.createObjectBuilder().add("action", "userLeft").add("data",
                 Json.createObjectBuilder().add("id", "123456").add("name", "Phil")).build();
     }
+
+    public JsonObject webSocketCallbackServerUpdated() {
+        return Json.createObjectBuilder().add("action", "serverUpdated").add("data",
+                Json.createObjectBuilder().add("id", "testId").add("name", "serverUpdated")).build();
+    }
+
+    public JsonObject webSocketCallbackServerDeleted() {
+        return Json.createObjectBuilder().add("action", "serverDeleted").add("data",
+                Json.createObjectBuilder().add("id", "testId").add("name", "serverUpdated")).build();
+    }
+
+    public JsonObject webSocketCallbackUserExited() {
+        return Json.createObjectBuilder().add("action", "userExited").add("data",
+                Json.createObjectBuilder().add("id", "123456").add("name", "Phil")).build();
+    }
+
+    public JsonObject webSocketCallbackUserArrived() {
+        return Json.createObjectBuilder().add("action", "userArrived").add("data",
+                Json.createObjectBuilder().add("id", "12345678").add("name", "Tom").add("online", true)).build();
+    }
+
+    public JsonObject webSocketCallbackChannelCreated() {
+        return Json.createObjectBuilder().add("action", "channelCreated").add("data",
+                Json.createObjectBuilder().add("id", "ch1").add("name", "TestChannel").
+                        add("type","text").add("privileged", false).add("category", "cat1").add("members", Json.createArrayBuilder())).build();
+    }
+
+    public JsonObject webSocketCallbackChannelUpdated() {
+        return Json.createObjectBuilder().add("action", "channelUpdated").add("data",
+                Json.createObjectBuilder().add("id", "ch1").add("name", "channelUpdated").
+                        add("type","text").add("privileged", false).add("category", "cat1")).build();
+    }
+
+    public JsonObject webSocketCallbackChannelDeleted() {
+        return Json.createObjectBuilder().add("action", "channelDeleted").add("data",
+                Json.createObjectBuilder().add("id", "ch1").add("name", "channelUpdated")
+                        .add("category", "cat1")).build();
+    }
+
+    public JsonObject webSocketCallbackCategoryCreated() {
+        return Json.createObjectBuilder().add("action", "categoryCreated").add("data",
+                Json.createObjectBuilder().add("id", "cat1").add("name", "Cat1").add("server", "testId")).build();
+    }
+
+    public JsonObject webSocketCallbackCategoryUpdated() {
+        return Json.createObjectBuilder().add("action", "categoryCreated").add("data",
+                Json.createObjectBuilder().add("id", "cat1").add("name", "CatUpdated").add("server", "testId")).build();
+    }
+
+    public JsonObject webSocketCallbackCategoryDeleted() {
+        return Json.createObjectBuilder().add("action", "categoryDeleted").add("data",
+                Json.createObjectBuilder().add("id", "cat1").add("name", "CatUpdated")).build();
+    }
+
+
+    // rest callbacks
 
     public JsonObject getServerIdSuccessful() {
         return Json.createObjectBuilder().add("status", "success").add("message", "")
