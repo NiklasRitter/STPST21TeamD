@@ -83,6 +83,7 @@ public class ServerScreenController implements Controller {
         System.out.println(localUser.getUserKey());
         System.out.println(server.getId());
         // Load all view references
+        editor.setCurrentServer(server);
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
@@ -159,7 +160,6 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        deleteCurrentServer();
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
@@ -182,6 +182,8 @@ public class ServerScreenController implements Controller {
             removePropertyChangeListener();
 
         }
+        editor.setCurrentServer(null);
+        deleteCurrentServer();
     }
 
 
@@ -252,7 +254,6 @@ public class ServerScreenController implements Controller {
                 categoryItem.setExpanded(true);
 
                 tvServerChannelsRoot.getChildren().add(categoryItem);
-
                 loadCategoryChannels(category, categoryItem);
             }
         } else {

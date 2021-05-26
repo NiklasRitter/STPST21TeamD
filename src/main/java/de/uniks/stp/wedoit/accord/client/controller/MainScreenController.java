@@ -220,6 +220,7 @@ public class MainScreenController implements Controller {
      * This method
      * <p>
      * handels a server message
+     *
      * @param msg message from the web socket
      */
     private void handleServersMessage(JsonStructure msg) {

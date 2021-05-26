@@ -17,12 +17,21 @@ public class Editor {
 
     private final NetworkController networkController = new NetworkController(this);
     private AccordClient accordClient;
+    private Server currentServer;
 
     /**
      * @return private final NetworkController networkController
      */
     public NetworkController getNetworkController() {
         return networkController;
+    }
+
+    public Server getCurrentServer() {
+        return currentServer;
+    }
+
+    public void setCurrentServer(Server currentServer) {
+        this.currentServer = currentServer;
     }
 
     /**
