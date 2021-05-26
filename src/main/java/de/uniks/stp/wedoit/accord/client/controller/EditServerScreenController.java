@@ -3,12 +3,15 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 public class EditServerScreenController implements Controller {
@@ -30,6 +33,8 @@ public class EditServerScreenController implements Controller {
     private TextField tfInvitationLink;
 
     private VBox vBoxAdminOnly;
+    private VBox mainVBox;
+
 
     /**
      * Create a new Controller
@@ -67,10 +72,13 @@ public class EditServerScreenController implements Controller {
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
 
         this.vBoxAdminOnly = (VBox) view.lookup("#vBoxAdminOnly");
+        this.mainVBox = (VBox) view.lookup("#mainVBox");
 
-        // TODO: Depending on if localUser is admin or not display the correct editMenu
+        // Depending on if localUser is admin or not display the correct editMenu
+        loadDefaultSettings();
+
         // TODO: implement function of buttons and so on
-        
+
 
         addActionListener();
     }
@@ -80,6 +88,8 @@ public class EditServerScreenController implements Controller {
         this.btnCreateInvitation.setOnAction(this::createInvitationButtonOnClick);
         this.btnDelete.setOnAction(this::deleteButtonOnClick);
         this.btnSave.setOnAction(this::saveButtonOnClick);
+        this.radioBtnMaxCount.setOnMouseClicked(this::radioBtnMaxCountOnClick);
+        this.radioBtnTemporal.setOnMouseClicked(this::radioBtnTemporalOnClick);
     }
 
     /**
@@ -91,6 +101,51 @@ public class EditServerScreenController implements Controller {
         this.btnCreateInvitation.setOnAction(null);
         this.btnDelete.setOnAction(null);
         this.btnSave.setOnAction(null);
+        this.radioBtnMaxCount.setOnMouseClicked(null);
+        this.radioBtnTemporal.setOnMouseClicked(null);
+    }
+
+    /**
+     * Called to load the correct EditorScreen depending on whether the localUser is admin of server or not
+     */
+    private void loadDefaultSettings() {
+        if (!localUserIsAdmin()) {
+            this.btnDelete.setVisible(false);
+            this.btnDelete.setDisable(true);
+            vBoxAdminOnly.setVisible(false);
+            vBoxAdminOnly.setDisable(true);
+            for (Node child : this.mainVBox.getChildren()) {
+                child.getId();
+                if (child.getId() != null && child.getId().equals("vBoxAdminOnly")) {
+                    this.mainVBox.getChildren().remove(child);
+                    break;
+                }
+            }
+            this.mainVBox.setPrefHeight(150);
+            this.mainVBox.setPrefWidth(350);
+        } else {
+            ToggleGroup toggleGroup = new ToggleGroup();
+            radioBtnMaxCount.setToggleGroup(toggleGroup);
+            radioBtnTemporal.setToggleGroup(toggleGroup);
+            radioBtnTemporal.setSelected(true);
+            this.tfMaxCountAmountInput.setEditable(false);
+            this.tfMaxCountAmountInput.setDisable(true);
+        }
+    }
+
+    /**
+     * A not so beautiful way to find out if localUser is admin or not
+     * @return true if localUser is admin of the server, else false
+     */
+    public boolean localUserIsAdmin() {
+        String ownerId = this.server.getOwner();
+        for (int i = 0; i < this.server.getMembers().size(); i++) {
+            User currentUser = this.server.getMembers().get(i);
+            if (currentUser.getId().equals(ownerId) && currentUser.getName().equals(localUser.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void saveButtonOnClick(ActionEvent actionEvent) {
@@ -104,4 +159,19 @@ public class EditServerScreenController implements Controller {
     private void createInvitationButtonOnClick(ActionEvent actionEvent) {
 
     }
+
+    private void radioBtnMaxCountOnClick(MouseEvent mouseEvent) {
+        if (this.radioBtnMaxCount.isFocused()) {
+            this.tfMaxCountAmountInput.setEditable(true);
+            this.tfMaxCountAmountInput.setDisable(false);
+        }
+    }
+
+    private void radioBtnTemporalOnClick(MouseEvent mouseEvent) {
+        if (this.radioBtnTemporal.isFocused()) {
+            this.tfMaxCountAmountInput.setEditable(false);
+            this.tfMaxCountAmountInput.setDisable(true);
+        }
+    }
+
 }
