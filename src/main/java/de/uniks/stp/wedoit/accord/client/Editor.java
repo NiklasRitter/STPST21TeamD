@@ -2,12 +2,13 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import org.json.JSONArray;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
 
@@ -15,18 +16,12 @@ public class Editor {
 
     private final NetworkController networkController = new NetworkController(this);
     private AccordClient accordClient;
-    private Server currentServer;
-
 
     /**
      * @return
      */
     public NetworkController getNetworkController() {
         return networkController;
-    }
-
-    public Server getCurrentServer() {
-        return currentServer;
     }
 
     /**
@@ -188,8 +183,6 @@ public class Editor {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
-        this.currentServer = server;
-
         List<String> categoryIds = new ArrayList<>();
         for (Category category : server.getCategories()) {
             categoryIds.add(category.getId());
@@ -212,8 +205,6 @@ public class Editor {
     public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
         Objects.requireNonNull(category);
         Objects.requireNonNull(categoriesChannelResponse);
-
-        this.currentServer = category.getServer();
 
         List<String> channelIds = new ArrayList<>();
         for (Channel channel : category.getChannels()) {

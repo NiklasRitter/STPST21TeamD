@@ -21,6 +21,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -156,6 +157,7 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
+        deleteCurrentServer();
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
@@ -182,6 +184,17 @@ public class ServerScreenController implements Controller {
 
 
     // Additional methods
+
+    public void deleteCurrentServer() {
+        // Delete all connection to the server in the data model
+        for (Category category : server.getCategories()) {
+            for (Channel channel : category.getChannels()) {
+                channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+            }
+        }
+        server.withoutMembers(new ArrayList<>(server.getMembers()));
+        localUser.withoutServers(server);
+    }
 
     public void handleGetExplicitServerInformation(JSONArray members) {
         if (members != null) {
