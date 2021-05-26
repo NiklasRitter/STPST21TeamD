@@ -17,7 +17,7 @@ Build in Java and using JavaFX. Content of the first release below.
 - A Darkmode
 
 
-##Upcoming next Release
+## Upcoming next Release
 - Notification by incoming messages
 - Join other Servers
 - Delete Server
