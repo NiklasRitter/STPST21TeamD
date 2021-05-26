@@ -32,7 +32,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -51,8 +51,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     WebSocketClient webSocketClient;
     @Mock
     WebSocketClient chatWebSocketClient;
-    @Mock
-    WSCallback callback;
+
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
@@ -471,21 +470,121 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public void handleServerMessages() {
         initUserListView();
         initChannelListView();
-        Label lblChannelName = lookup("#lbChannelName").query();
-        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
 
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        mockWebSocket(webSocketCallbackCategoryUpdated());
+        mockWebSocket(webSocketCallbackCategoryCreated());
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(3);
+        Assert.assertNotNull(tvServerChannels.getSelectionModel().getSelectedItem());
+        Assert.assertTrue(tvServerChannels.getSelectionModel().getSelectedItem().getValue() instanceof Category);
+        Category category = (Category) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+        Assert.assertEquals(category.getName(), webSocketCallbackCategoryCreated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(category.getId(), webSocketCallbackCategoryCreated().getJsonObject(DATA).getString(ID));
+        Assert.assertEquals(category.getServer().getCategories().size(), 2);
 
+        mockWebSocket(webSocketCallbackCategoryUpdated());
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(null);
+        tvServerChannels.getSelectionModel().select(3);
+        Assert.assertNotNull(tvServerChannels.getSelectionModel().getSelectedItem());
+        Assert.assertTrue(tvServerChannels.getSelectionModel().getSelectedItem().getValue() instanceof Category);
+        category = (Category) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+        Assert.assertNotEquals(category.getName(), webSocketCallbackCategoryCreated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(category.getName(), webSocketCallbackCategoryUpdated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(category.getId(), webSocketCallbackCategoryUpdated().getJsonObject(DATA).getString(ID));
+        Assert.assertEquals(category.getServer().getCategories().size(), 2);
+
+        mockWebSocket(webSocketCallbackChannelCreated());
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(null);
+        tvServerChannels.getSelectionModel().select(4);
+        Assert.assertNotNull(tvServerChannels.getSelectionModel().getSelectedItem());
+        Assert.assertTrue(tvServerChannels.getSelectionModel().getSelectedItem().getValue() instanceof Channel);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+        Assert.assertEquals(channel.getName(), webSocketCallbackChannelCreated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(channel.getId(), webSocketCallbackChannelCreated().getJsonObject(DATA).getString(ID));
+        Assert.assertEquals(category.getServer().getCategories().size(), 2);
+        Assert.assertEquals(category.getChannels().size(), 1);
+
+        mockWebSocket(webSocketCallbackChannelUpdated());
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(null);
+        tvServerChannels.getSelectionModel().select(4);
+        Assert.assertNotNull(tvServerChannels.getSelectionModel().getSelectedItem());
+        Assert.assertTrue(tvServerChannels.getSelectionModel().getSelectedItem().getValue() instanceof Channel);
+        channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+        Assert.assertNotEquals(channel.getName(), webSocketCallbackChannelCreated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(channel.getName(), webSocketCallbackChannelUpdated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(channel.getId(), webSocketCallbackChannelUpdated().getJsonObject(DATA).getString(ID));
+        Assert.assertEquals(category.getServer().getCategories().size(), 2);
+        Assert.assertEquals(category.getChannels().size(), 1);
+
+        mockWebSocket(webSocketCallbackChannelCreated());
+        WaitForAsyncUtils.waitForFxEvents();
+        mockWebSocket(webSocketCallbackChannelDeleted());
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(null);
+        tvServerChannels.getSelectionModel().select(4);
+        Assert.assertNull(tvServerChannels.getSelectionModel().getSelectedItem());
+        Assert.assertEquals(category.getChannels().size(), 0);
+        Assert.assertEquals(category.getServer().getCategories().size(), 2);
+
+        Server server = category.getServer();
+
+        mockWebSocket(webSocketCallbackCategoryDeleted());
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(null);
+        tvServerChannels.getSelectionModel().select(3);
+        Assert.assertNull(tvServerChannels.getSelectionModel().getSelectedItem());
+        Assert.assertEquals(server.getCategories().size(), 1);
+
+
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
+        Assert.assertNotNull(listView);
+        Assert.assertEquals(4,listView.getItems().size());
+
+        mockWebSocket(webSocketCallbackUserArrived());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(5, listView.getItems().size());
+        User setUser = null;
+        User phil = null;
+        for (User user: server.getMembers()) {
+            if (user.getId().equals(webSocketCallbackUserArrived().getJsonObject(DATA).getString(ID))) {
+                setUser = user;
+            }
+            if (user.getName().equals(webSocketCallbackUserExited().getJsonObject(DATA).getString(NAME))){
+                phil = user;
+            }
+        }
+        Assert.assertNotNull(setUser);
+        Assert.assertNotNull(phil);
+        Assert.assertNotEquals(setUser.getId(), phil.getId());
+        Assert.assertEquals(setUser.getName(), webSocketCallbackUserArrived().getJsonObject(DATA).getString(NAME));
+        Assert.assertTrue(listView.getItems().contains(setUser));
+
+        mockWebSocket(webSocketCallbackUserExited());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(4,listView.getItems().size());
+        Assert.assertFalse(listView.getItems().contains(phil));
+        Assert.assertFalse(server.getMembers().contains(phil));
+
+
+        Label labelServerName = lookup("#lbServerName").query();
+        Assert.assertNotNull(labelServerName);
+        Assert.assertNotEquals(server.getName(), webSocketCallbackServerUpdated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(labelServerName.getText(), server.getName());
+
+        mockWebSocket(webSocketCallbackServerUpdated());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(labelServerName.getText(), webSocketCallbackServerUpdated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(server.getName(), webSocketCallbackServerUpdated().getJsonObject(DATA).getString(NAME));
+
+        mockWebSocket(webSocketCallbackServerDeleted());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
 
     }
 
@@ -553,7 +652,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
     }
 
     public JsonObject webSocketCallbackCategoryUpdated() {
-        return Json.createObjectBuilder().add("action", "categoryCreated").add("data",
+        return Json.createObjectBuilder().add("action", "categoryUpdated").add("data",
                 Json.createObjectBuilder().add("id", "cat1").add("name", "CatUpdated").add("server", "testId")).build();
     }
 
