@@ -16,6 +16,7 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,9 +81,13 @@ public class ServerScreenControllerTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<WSCallback> chatCallbackArgumentCaptorWebSocket;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
+    @BeforeClass
+    public static void before() {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
     }
 
     @Override
@@ -104,6 +109,31 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
+    }
+
+    @Override
+    public void stop() {
+        rule = null;
+        webSocketClient = null;
+        chatWebSocketClient = null;
+        stage = null;
+        stageManager = null;
+        localUser = null;
+        server = null;
+        restMock = null;
+        res = null;
+        callbackArgumentCaptor = null;
+        channelsCallbackArgumentCaptor = null;
+        channelCallbackArgumentCaptor = null;
+        categoriesCallbackArgumentCaptor = null;
+        callbackArgumentCaptorWebSocket = null;
+        wsCallback = null;
+        chatCallbackArgumentCaptorWebSocket = null;
+    }
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
     public void mockRest(JsonObject restClientJson) {
@@ -544,18 +574,18 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
         ListView<Object> listView = lookup("#lvServerUsers").queryListView();
         Assert.assertNotNull(listView);
-        Assert.assertEquals(4,listView.getItems().size());
+        Assert.assertEquals(4, listView.getItems().size());
 
         mockWebSocket(webSocketCallbackUserArrived());
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(5, listView.getItems().size());
         User setUser = null;
         User phil = null;
-        for (User user: server.getMembers()) {
+        for (User user : server.getMembers()) {
             if (user.getId().equals(webSocketCallbackUserArrived().getJsonObject(DATA).getString(ID))) {
                 setUser = user;
             }
-            if (user.getName().equals(webSocketCallbackUserExited().getJsonObject(DATA).getString(NAME))){
+            if (user.getName().equals(webSocketCallbackUserExited().getJsonObject(DATA).getString(NAME))) {
                 phil = user;
             }
         }
@@ -567,7 +597,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
         mockWebSocket(webSocketCallbackUserExited());
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(4,listView.getItems().size());
+        Assert.assertEquals(4, listView.getItems().size());
         Assert.assertFalse(listView.getItems().contains(phil));
         Assert.assertFalse(server.getMembers().contains(phil));
 
@@ -631,13 +661,13 @@ public class ServerScreenControllerTest extends ApplicationTest {
     public JsonObject webSocketCallbackChannelCreated() {
         return Json.createObjectBuilder().add("action", "channelCreated").add("data",
                 Json.createObjectBuilder().add("id", "ch1").add("name", "TestChannel").
-                        add("type","text").add("privileged", false).add("category", "cat1").add("members", Json.createArrayBuilder())).build();
+                        add("type", "text").add("privileged", false).add("category", "cat1").add("members", Json.createArrayBuilder())).build();
     }
 
     public JsonObject webSocketCallbackChannelUpdated() {
         return Json.createObjectBuilder().add("action", "channelUpdated").add("data",
                 Json.createObjectBuilder().add("id", "ch1").add("name", "channelUpdated").
-                        add("type","text").add("privileged", false).add("category", "cat1")).build();
+                        add("type", "text").add("privileged", false).add("category", "cat1")).build();
     }
 
     public JsonObject webSocketCallbackChannelDeleted() {

@@ -13,6 +13,7 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,15 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
+    @BeforeClass
+    public static void before() {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
+    }
+
     @Override
     public void start(Stage stage) {
         // start application
@@ -70,6 +80,19 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
+    }
+
+    @Override
+    public void stop() {
+        rule = null;
+        stage = null;
+        stageManager = null;
+        localUser = null;
+        webSocketClient = null;
+        channelChatWebSocketClient = null;
+        restMock = null;
+        res = null;
+        callbackArgumentCaptor = null;
     }
 
     @BeforeEach

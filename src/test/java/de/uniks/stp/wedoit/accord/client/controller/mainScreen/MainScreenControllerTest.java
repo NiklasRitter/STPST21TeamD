@@ -6,13 +6,13 @@ import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import javafx.application.Platform;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,6 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.lang.model.util.Types;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -64,6 +63,15 @@ public class MainScreenControllerTest extends ApplicationTest {
     private ArgumentCaptor<WSCallback> callbackArgumentCaptorWebSocket;
     private WSCallback wsCallback;
 
+    @BeforeClass
+    public static void before() {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
+    }
+
     @Override
     public void start(Stage stage) {
         // start application
@@ -80,6 +88,24 @@ public class MainScreenControllerTest extends ApplicationTest {
         StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
+    }
+
+    @Override
+    public void stop() {
+        rule = null;
+        stage = null;
+        stageManager = null;
+        localUser = null;
+        systemWebSocketClient = null;
+        chatWebSocketClient = null;
+        channelChatWebSocketClient = null;
+        server = null;
+        webSocketClient = null;
+        restMock = null;
+        res = null;
+        callbackArgumentCaptor = null;
+        callbackArgumentCaptorWebSocket = null;
+        wsCallback = null;
     }
 
     @BeforeEach
@@ -252,7 +278,7 @@ public class MainScreenControllerTest extends ApplicationTest {
 
 
         Server setServer = null;
-        for (Server server: listView.getItems()) {
+        for (Server server : listView.getItems()) {
             if (server.getId().equals(webSocketCallbackServerUpdated().getJsonObject(DATA).getString(ID))) {
                 setServer = server;
             }
