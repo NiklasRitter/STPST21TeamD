@@ -16,6 +16,7 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,9 +82,13 @@ public class ServerScreenControllerTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<WSCallback> chatCallbackArgumentCaptorWebSocket;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
+    @BeforeClass
+    public static void before() {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
     }
 
     @Override
@@ -105,6 +110,32 @@ public class ServerScreenControllerTest extends ApplicationTest {
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
+    }
+
+    @Override
+    public void stop() {
+        rule = null;
+        webSocketClient = null;
+        chatWebSocketClient = null;
+        callback = null;
+        stage = null;
+        stageManager = null;
+        localUser = null;
+        server = null;
+        restMock = null;
+        res = null;
+        callbackArgumentCaptor = null;
+        channelsCallbackArgumentCaptor = null;
+        channelCallbackArgumentCaptor = null;
+        categoriesCallbackArgumentCaptor = null;
+        callbackArgumentCaptorWebSocket = null;
+        wsCallback = null;
+        chatCallbackArgumentCaptorWebSocket = null;
+    }
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
     public void mockRest(JsonObject restClientJson) {
