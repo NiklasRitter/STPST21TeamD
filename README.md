@@ -1,5 +1,8 @@
 ## STP ST21 Team D - WeDoIT
 
+[![Build Status](https://www.travis-ci.com/sekassel/STPST21TeamD.svg?token=iv8L4W51ZozK2puhSbJk&branch=master)](https://www.travis-ci.com/sekassel/STPST21TeamD)
+[![codecov](https://codecov.io/gh/sekassel/STPST21TeamD/branch/master/graph/badge.svg?token=Y6F8AP879T)](https://codecov.io/gh/sekassel/STPST21TeamD)
+
 ## Accord - Message Client
 A message client, which communicates with a server located at University of Kassel.
 <br/>
@@ -17,7 +20,7 @@ Build in Java and using JavaFX. Content of the first release below.
 - A Darkmode
 
 
-##Upcoming next Release
+## Upcoming next Release
 - Notification by incoming messages
 - Join other Servers
 - Delete Server

@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
@@ -27,10 +28,10 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 public class MainScreenControllerTest extends ApplicationTest {
@@ -58,6 +59,10 @@ public class MainScreenControllerTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor<WSCallback> callbackArgumentCaptorWebSocket;
+    private WSCallback wsCallback;
+
     @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
@@ -77,6 +82,7 @@ public class MainScreenControllerTest extends ApplicationTest {
         //create localUser to skip the login screen
         localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showMainScreen();
@@ -98,6 +104,8 @@ public class MainScreenControllerTest extends ApplicationTest {
         restMock = null;
         res = null;
         callbackArgumentCaptor = null;
+        callbackArgumentCaptorWebSocket = null;
+        wsCallback = null;
     }
 
     @BeforeEach
@@ -238,15 +246,71 @@ public class MainScreenControllerTest extends ApplicationTest {
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
-
+        WaitForAsyncUtils.async(() -> {
+            while (!stage.getTitle().equals("Server")) {
+                stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+            }
+        });
         doubleClickOn("#lwServerList");
-
+        WaitForAsyncUtils.waitForFxEvents();
         // Test correct server and correct screen
         Assert.assertEquals("BMainTestServerOne", server.getName());
         Assert.assertEquals("Server", stage.getTitle());
     }
 
+    public void mockWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(webSocketClient, times(2)).setCallback(callbackArgumentCaptorWebSocket.capture());
+        this.wsCallback = callbackArgumentCaptorWebSocket.getValue();
+
+        this.wsCallback.handleMessage(webSocketJson);
+    }
+
+    @Test
+    public void handleServerMessage() {
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
+        Assert.assertNotNull(listView);
+
+        mockRestClient(buildGetServersSuccessWithTwoServers());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(2, listView.getItems().size());
+
+
+        Server setServer = null;
+        for (Server server : listView.getItems()) {
+            if (server.getId().equals(webSocketCallbackServerUpdated().getJsonObject(DATA).getString(ID))) {
+                setServer = server;
+            }
+        }
+        Assert.assertNotNull(setServer);
+        Assert.assertNotEquals(setServer.getName(), webSocketCallbackServerUpdated().getJsonObject(DATA).getString(NAME));
+
+
+        mockWebSocket(webSocketCallbackServerUpdated());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(setServer.getName(), webSocketCallbackServerUpdated().getJsonObject(DATA).getString(NAME));
+        Assert.assertEquals(2, listView.getItems().size());
+
+        mockWebSocket(webSocketCallbackServerDeleted());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertFalse(listView.getItems().contains(setServer));
+        Assert.assertEquals(1, listView.getItems().size());
+    }
+
     // Help methods to create response for mocked rest client
+
+    public JsonObject webSocketCallbackServerUpdated() {
+        return Json.createObjectBuilder().add("action", "serverUpdated").add("data",
+                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")).build();
+    }
+
+    public JsonObject webSocketCallbackServerDeleted() {
+        return Json.createObjectBuilder().add("action", "serverDeleted").add("data",
+                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")).build();
+    }
 
     /**
      * create a getServers response with two servers with id an name:
