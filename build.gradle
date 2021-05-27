@@ -4,6 +4,7 @@ plugins {
     id 'java'
 	// https://plugins.gradle.org/plugin/org.fulib.fulibGradle
 	id 'org.fulib.fulibGradle' version '0.5.0'
+    id 'jacoco' // DO NOT DELETE
 }
 
 javafx {
@@ -75,3 +76,12 @@ jar {
 application {
     mainClassName = 'de.uniks.stp.wedoit.accord.client.Launcher'
 }
+
+/* DO NOT CHANGE THIS PART */
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
+check.dependsOn jacocoTestReport
