@@ -66,6 +66,9 @@ public class MainScreenController implements Controller {
         // load servers of the localUser
         editor.getNetworkController().getServers(localUser, this);
 
+        // load localUserId in order to later be able to edit server
+        editor.getNetworkController().getLocalUserId(localUser);
+
         // Add action listeners
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
         this.optionsButton.setOnAction(this::optionsButtonOnClick);

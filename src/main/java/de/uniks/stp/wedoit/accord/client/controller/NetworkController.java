@@ -278,6 +278,24 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController getLocalUserId(LocalUser localUser) {
+        // load online Users
+        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
+            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(DATA);
+
+            for (int index = 0; index < getServersResponse.length(); index++) {
+                String name = getServersResponse.getJSONObject(index).getString(NAME);
+                String id = getServersResponse.getJSONObject(index).getString(ID);
+                if (name.equals(localUser.getName())) {
+                    localUser.setId(id);
+                    return;
+                }
+            }
+
+        });
+        return this;
+    }
+
     public NetworkController logoutUser(String userKey) {
         restClient.logout(userKey, response -> {
             editor.handleLogoutUser(response.getBody().getObject().getString(STATUS).equals(SUCCESS));

@@ -109,7 +109,7 @@ public class EditServerScreenController implements Controller {
      * Called to load the correct EditorScreen depending on whether the localUser is admin of server or not
      */
     private void loadDefaultSettings() {
-        if (!localUserIsAdmin()) {
+        if (!localUser.getId().equals(server.getOwner())) {
             this.btnDelete.setVisible(false);
             this.btnDelete.setDisable(true);
             vBoxAdminOnly.setVisible(false);
@@ -131,21 +131,6 @@ public class EditServerScreenController implements Controller {
             this.tfMaxCountAmountInput.setEditable(false);
             this.tfMaxCountAmountInput.setDisable(true);
         }
-    }
-
-    /**
-     * A not so beautiful way to find out if localUser is admin or not
-     * @return true if localUser is admin of the server, else false
-     */
-    public boolean localUserIsAdmin() {
-        String ownerId = this.server.getOwner();
-        for (int i = 0; i < this.server.getMembers().size(); i++) {
-            User currentUser = this.server.getMembers().get(i);
-            if (currentUser.getId().equals(ownerId) && currentUser.getName().equals(localUser.getName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void saveButtonOnClick(ActionEvent actionEvent) {
