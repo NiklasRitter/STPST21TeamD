@@ -23,9 +23,22 @@ public class JSON {
     public static final String FROM = "from";
     public static final String TO = "to";
     public static final String TEXT = "text";
-    public static final String USER_JOINED = "userJoined";
-    public static final String USER_LEFT = "userLeft";
     public static final String SUCCESS = "success";
     public static final String PRIVATE = "private";
+
+    // Constants for system messages
+    public static final String USER_JOINED = "userJoined";
+    public static final String USER_LEFT = "userLeft";
+    public static final String USER_ARRIVED = "userArrived";
+    public static final String USER_EXITED = "userExited";
+    public static final String SERVER_UPDATED = "serverUpdated";
+    public static final String SERVER_DELETED = "serverDeleted";
+    public static final String CATEGORY_CREATED = "categoryCreated";
+    public static final String CATEGORY_UPDATED = "categoryUpdated";
+    public static final String CATEGORY_DELETED = "categoryDeleted";
+    public static final String CHANNEL_CREATED = "channelCreated";
+    public static final String CHANNEL_UPDATED = "channelUpdated";
+    public static final String CHANNEL_DELETED = "channelDeleted";
+    public static final String INVITE_EXPIRED = "inviteExpired";
 
 }
