@@ -16,10 +16,12 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Font;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,6 +35,7 @@ public class PrivateChatsScreenController implements Controller {
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
+    private Button btnEmoji;
     private Chat currentChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersListListener = this::usersListViewChanged;
@@ -72,15 +75,16 @@ public class PrivateChatsScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
+        this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
-
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
 
         this.btnHome.setOnAction(this::btnHomeOnClicked);
         this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
+        this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
@@ -152,6 +156,15 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
+    }
+
+    /**
+     * Opens the Emoji Picker
+     *
+     * @param actionEvent occurs when Emoji Button is clicked
+     */
+    private void btnEmojiOnClicked(ActionEvent actionEvent) {
+        StageManager.showEmojiScreen();
     }
 
     /**

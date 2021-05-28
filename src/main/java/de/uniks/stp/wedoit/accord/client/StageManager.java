@@ -24,8 +24,8 @@ public class StageManager extends Application {
     private static Editor editor;
     private static AccordClient model;
     private static Stage stage;
-    private static Stage popupStage;
     private static Scene scene;
+    private static Stage popupStage;
     private static Scene popupScene;
     private static final Map<String, Controller> controllerMap = new HashMap<>();
 
@@ -206,6 +206,32 @@ public class StageManager extends Application {
 
         } catch (Exception e) {
             System.err.println("Error on showing OptionsScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showEmojiScreen() {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor);
+            emojiScreenController.init();
+            controllerMap.put("emojiScreenController", emojiScreenController);
+
+            //display
+            popupStage.setTitle("Emoji Screen");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing EmojiScreen");
             e.printStackTrace();
         }
     }
