@@ -184,6 +184,37 @@ public class StageManager extends Application {
 
     }
 
+    public static void showGameScreen() {
+        cleanup();
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
+            if (scene != null) {
+                scene.setRoot(root);
+            } else {
+                scene = new Scene(root);
+            }
+
+            //updateDarkmode();
+
+            //init controller
+            GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), editor);
+            gameScreenController.init();
+            controllerMap.put("gameScreenController", gameScreenController);
+
+            // display
+            stage.setTitle("Rock - Paper - Scissors");
+            stage.setMinHeight(200);
+            stage.setMinWidth(400);
+            stage.setScene(scene);
+            stage.setResizable(true);
+
+
+        } catch (Exception e) {
+            System.err.println("Error on showing GameScreen");
+            e.printStackTrace();
+        }
+    }
+
     public static void showOptionsScreen() {
         try {
             //load view
