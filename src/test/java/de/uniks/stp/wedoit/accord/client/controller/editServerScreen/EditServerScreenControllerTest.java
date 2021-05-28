@@ -15,6 +15,7 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,15 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
+
+    @BeforeClass
+    public static void before() {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw"); // this line causes a fatal error for which I found no other solution than deleting this line.
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
+    }
 
     @Override
     public void start(Stage stage) {
@@ -98,6 +108,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
 
         clickOn("#btnEdit");
 
+        // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
     }
 
@@ -109,10 +120,10 @@ public class EditServerScreenControllerTest extends ApplicationTest {
 
         clickOn("#btnEdit");
 
-        // Window opens
+        // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
 
-        // Assert that window shows correct widgets
+        // Assert that Pop-Up Window shows correct widgets
         VBox vBoxAdminOnly = lookup("#vBoxAdminOnly").query();
         RadioButton radioBtnTemporal = lookup("#radioBtnTemporal").query();
         RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
@@ -143,16 +154,14 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     public void editServerScreenOpensAsMember() {
         localUser.setId("alice123");
         JsonObject jsonObject = buildServerInformationWithTwoMembers();
-        System.out.println(server.getMembers().size());
         mockRest(jsonObject);
-        System.out.println(server.getMembers().size());
 
         clickOn("#btnEdit");
 
-        // Window opens
+        // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
 
-        // Assert that window shows correct widgets and that the vBoxAdmin is deleted
+        // Assert that Pop-Up Window shows correct widgets and that the vBoxAdmin is deleted
         VBox mainVBox = lookup("#mainVBox").query();
         Button btnDelete = lookup("#btnDelete").query();
 
@@ -174,6 +183,20 @@ public class EditServerScreenControllerTest extends ApplicationTest {
                                 .add(Json.createObjectBuilder().add("id", "bob123").add("name", "Bob")
                                         .add("online", true))))
                 .build();
+    }
+
+    @Override
+    public void stop() {
+        stage = null;
+        stageManager = null;
+        localUser = null;
+        server = null;
+        restMock = null;
+        res = null;
+        webSocketClientMock = null;
+        chatWebSocketClientMock = null;
+        callbackArgumentCaptor = null;
+        rule = null;
     }
 
 }
