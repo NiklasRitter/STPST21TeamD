@@ -2,12 +2,14 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import org.json.JSONArray;
 
-import java.util.*;
+import javax.json.JsonArray;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
 
@@ -17,9 +19,8 @@ public class Editor {
     private AccordClient accordClient;
     private Server currentServer;
 
-
     /**
-     * @return
+     * @return private final NetworkController networkController
      */
     public NetworkController getNetworkController() {
         return networkController;
@@ -27,6 +28,10 @@ public class Editor {
 
     public Server getCurrentServer() {
         return currentServer;
+    }
+
+    public void setCurrentServer(Server currentServer) {
+        this.currentServer = currentServer;
     }
 
     /**
@@ -39,7 +44,6 @@ public class Editor {
         accordClient.setLocalUser(localUser);
         return localUser;
     }
-
 
     public AccordClient haveAccordClient() {
         accordClient = new AccordClient();
@@ -75,7 +79,11 @@ public class Editor {
     }
 
     /**
-     * create a sever with the given arguments and with localUser as Member
+     * This method
+     * <p>
+     * creates a sever with the given arguments and with localUser as Member
+     * <p>
+     * updates a server with the given name if the server has already been created
      *
      * @param localUser localUser is member of the server with following id and name
      * @param id        id of the sever
@@ -89,7 +97,7 @@ public class Editor {
         if (localUser.getServers() != null) {
             for (Server server : localUser.getServers()) {
                 if (server.getId().equals(id)) {
-                    return server;
+                    return server.setName(name);
                 }
             }
         }
@@ -188,8 +196,6 @@ public class Editor {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
-        this.currentServer = server;
-
         List<String> categoryIds = new ArrayList<>();
         for (Category category : server.getCategories()) {
             categoryIds.add(category.getId());
@@ -213,8 +219,6 @@ public class Editor {
         Objects.requireNonNull(category);
         Objects.requireNonNull(categoriesChannelResponse);
 
-        this.currentServer = category.getServer();
-
         List<String> channelIds = new ArrayList<>();
         for (Channel channel : category.getChannels()) {
             channelIds.add(channel.getId());
@@ -226,6 +230,7 @@ public class Editor {
                 List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
                 for (String memberId : memberIds) {
                     User user = this.getServerUserById(category.getServer(), memberId);
+
                     channel.withMembers(user);
                 }
             }
@@ -309,4 +314,123 @@ public class Editor {
         }
         return onlineUsers;
     }
+
+    /**
+     * Delete a member of a server with the given id
+     *
+     * @param id     id of the member who should deleted
+     * @param server server with member
+     * @return the given server if the user was deleted
+     * return null, if user was not in the members list
+     */
+    public Server userWithoutServer(String id, Server server) {
+        for (User user : server.getMembers()) {
+            if (user.getId().equals(id)) {
+                return server.withoutMembers(user);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This method
+     * <p>
+     * - creates a category with the given arguments
+     * <p>
+     * - updates a category with the given name if the category has already been created
+     *
+     * @param id   id of the category
+     * @param name name of the category
+     * @return category with given id and name and with server server
+     */
+    public Category haveCategory(String id, String name, Server server) {
+
+        for (Category category : server.getCategories()) {
+            if (category.getId().equals(id)) {
+                return category.setName(name);
+            }
+        }
+        return new Category().setName(name).setId(id).setServer(server);
+    }
+
+    /**
+     * This method
+     * <p>
+     * - creates a channel with the given arguments
+     * <p>
+     * - updates a channel with the given name, type, privileged, category and members
+     * if the channel has already been created
+     * <p>
+     * to update a channel use updateChannel()
+     *
+     * @param id id of the channel which channels compared by
+     * @return category with given id and name and with server server
+     */
+    public Channel haveChannel(String id, String name, String type, Boolean privileged, Category category, JsonArray members) {
+        Server server = category.getServer();
+        Channel channel = null;
+        for (Channel channelIterator : category.getChannels()) {
+            if (channelIterator.getId().equals(id)) {
+                channel = channelIterator;
+                break;
+            }
+        }
+        if (channel == null) {
+            channel = new Channel();
+        }
+        channel.setName(name).setPrivileged(privileged).setType(type).setId(id).setCategory(category);
+        channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+
+        List<String> membersIds = new ArrayList<>();
+        for (int index = 0; index < members.toArray().length; index++) {
+            membersIds.add(members.getString(index));
+        }
+
+        if (privileged) {
+            for (User user : server.getMembers()) {
+                if (membersIds.contains(user.getId())) {
+                    channel.withMembers(user);
+                }
+            }
+        }
+        return channel;
+    }
+
+    /**
+     * This method
+     * <p>
+     * updates a channel with the given name, privileged and members. Only name, privileged and members will upgraded
+     *
+     * @param id id of the channel which channels compared by
+     * @return channel upgraded channel or null
+     */
+    public Channel updateChannel(Server server, String id, String name, String type, Boolean privileged, String categoryId, JsonArray members) {
+
+        for (Category category : server.getCategories()) {
+            if (category.getId().equals(categoryId)) {
+                for (Channel channel : category.getChannels()) {
+                    if (channel.getId().equals(id)) {
+                        channel.setName(name);
+                        channel.setPrivileged(privileged);
+                        channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+                        if (privileged) {
+                            List<String> membersIds = new ArrayList<>();
+                            for (int index = 0; index < members.toArray().length; index++) {
+                                membersIds.add(members.getString(index));
+                            }
+
+                            for (String memberId : membersIds) {
+                                User user = this.getServerUserById(category.getServer(), memberId);
+                                Objects.requireNonNull(user);
+                                channel.withMembers(user);
+                            }
+                        }
+                        return channel;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 }

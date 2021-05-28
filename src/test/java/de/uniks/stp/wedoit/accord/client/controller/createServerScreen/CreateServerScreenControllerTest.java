@@ -13,6 +13,7 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,15 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
+    @BeforeClass
+    public static void before() {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
+    }
+
     @Override
     public void start(Stage stage) {
         // start application
@@ -61,12 +71,28 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
 
         //create localUser to skip the login screen
         localUser = stageManager.getEditor().haveLocalUser("John", "testKey123");
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
+
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
+    }
+
+    @Override
+    public void stop() {
+        rule = null;
+        stage = null;
+        stageManager = null;
+        localUser = null;
+        webSocketClient = null;
+        channelChatWebSocketClient = null;
+        restMock = null;
+        res = null;
+        callbackArgumentCaptor = null;
     }
 
     @BeforeEach

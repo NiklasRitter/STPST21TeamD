@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.stage.Stage;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -18,6 +19,15 @@ public class OptionsScreenTest extends ApplicationTest {
     private Stage popupStage;
     private StageManager stageManager;
     private Options oldOptions;
+
+    @BeforeClass
+    public static void before() {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
+    }
 
     @Override
     public void start(Stage stage) {
@@ -35,6 +45,17 @@ public class OptionsScreenTest extends ApplicationTest {
         StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        ResourceManager.saveOptions(this.oldOptions);
+        super.stop();
+        restClient = null;
+        stage = null;
+        popupStage = null;
+        stageManager = null;
+        oldOptions = null;
     }
 
     public void directToOptionsScreen() {
@@ -61,11 +82,5 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertTrue(stageManager.getScene().getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
-    }
-
-    @Override
-    public void stop() throws Exception {
-        ResourceManager.saveOptions(this.oldOptions);
-        super.stop();
     }
 }
