@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -14,11 +15,18 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 
+import javax.json.JsonObject;
+import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_ID_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_URL;
 
 public class MainScreenController implements Controller {
 
@@ -32,6 +40,8 @@ public class MainScreenController implements Controller {
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private MainScreenServerListView mainScreenServerListView;
+    private WSCallback serverWSCallback = this::handleServersMessage;
+    private final List<String> webSocketServerUrls = new ArrayList<>();
 
     /**
      * Create a new Controller
@@ -88,6 +98,12 @@ public class MainScreenController implements Controller {
 
             // Add listener for the loaded listView
             this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
+
+            // Add server websockets
+            for (Server server : localUser.getServers()) {
+                webSocketServerUrls.add(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+                editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+            }
         } else {
             Platform.runLater(StageManager::showLoginScreen);
         }
@@ -123,6 +139,10 @@ public class MainScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
+        for (String url : webSocketServerUrls) {
+            editor.getNetworkController().withOutWebSocket(url);
+        }
+        serverWSCallback = null;
         privateChatsButton.setOnAction(null);
         optionsButton.setOnAction(null);
         addServerButton.setOnAction(null);
@@ -197,4 +217,34 @@ public class MainScreenController implements Controller {
             serverListView.refresh();
         }
     }
+
+    /**
+     * This method
+     * <p>
+     * handels a server message
+     *
+     * @param msg message from the web socket
+     */
+    private void handleServersMessage(JsonStructure msg) {
+        JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
+        String action = ((JsonObject) msg).getString(ACTION);
+
+        if (action.equals(SERVER_UPDATED)) {
+            editor.haveServer(localUser, data.getString(ID), data.getString(NAME));
+            serverListView.refresh();
+        }
+        if (action.equals(SERVER_DELETED)) {
+            for (Server server : localUser.getServers()) {
+                if (server.getId().equals(data.getString(ID))) {
+                    Platform.runLater(() -> {
+                        this.serverListView.getItems().remove(server);
+                        server.removeYou();
+                        serverListView.getItems().sort(Comparator.comparing(Server::getName));
+                        serverListView.refresh();
+                    });
+                }
+            }
+        }
+    }
+
 }

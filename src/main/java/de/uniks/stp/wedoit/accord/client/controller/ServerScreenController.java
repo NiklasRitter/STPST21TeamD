@@ -21,6 +21,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -80,6 +81,7 @@ public class ServerScreenController implements Controller {
      */
     public void init() {
         // Load all view references
+        editor.setCurrentServer(server);
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
@@ -92,8 +94,9 @@ public class ServerScreenController implements Controller {
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
         this.lbServerName.setText(server.getName());
-
+        // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        // Add chat server web socket
         editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
@@ -105,6 +108,7 @@ public class ServerScreenController implements Controller {
 
         // get members of this server
         // load categories after get users of a server
+        // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
         addActionListener();
@@ -124,14 +128,6 @@ public class ServerScreenController implements Controller {
 
     }
 
-    public void handleGetExplicitServerInformation(JSONArray members) {
-        if (members != null) {
-            // create users which are member in the server and load user list view
-            createUserListView(members);
-        } else {
-            Platform.runLater(StageManager::showLoginScreen);
-        }
-    }
 
     /**
      * Initializes the Tooltips for the Buttons
@@ -174,10 +170,33 @@ public class ServerScreenController implements Controller {
         this.chatWSCallback = null;
         this.serverWSCallback = null;
         this.newMessagesListener = null;
+
+        editor.setCurrentServer(null);
+        deleteCurrentServer();
     }
 
 
     // Additional methods
+
+    public void deleteCurrentServer() {
+        // Delete all connection to the server in the data model
+        for (Category category : server.getCategories()) {
+            for (Channel channel : category.getChannels()) {
+                channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+            }
+        }
+        server.withoutMembers(new ArrayList<>(server.getMembers()));
+        localUser.withoutServers(server);
+    }
+
+    public void handleGetExplicitServerInformation(JSONArray members) {
+        if (members != null) {
+            // create users which are member in the server and load user list view
+            createUserListView(members);
+        } else {
+            Platform.runLater(StageManager::showLoginScreen);
+        }
+    }
 
     /**
      * The localUser will be redirect to the HomeScreen
@@ -233,11 +252,11 @@ public class ServerScreenController implements Controller {
                 categoryItem.setExpanded(true);
 
                 tvServerChannelsRoot.getChildren().add(categoryItem);
-
                 loadCategoryChannels(category, categoryItem);
             }
         } else {
             System.err.println("Error while loading categories from server");
+            Platform.runLater(StageManager::showLoginScreen);
         }
     }
 
@@ -259,6 +278,7 @@ public class ServerScreenController implements Controller {
 
         } else {
             System.err.println("Error while loading channels from server");
+            Platform.runLater(StageManager::showLoginScreen);
         }
     }
 
@@ -350,31 +370,183 @@ public class ServerScreenController implements Controller {
         }
     }
 
+    // Methods for handle server messages of the websocket
+
     /**
      * Handles the response of the websocket server
      *
      * @param msg response of the websocket server
      */
     private void handleServerMessage(JsonStructure msg) {
-        JsonObject jsonObject = (JsonObject) msg;
+        JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
+        String action = ((JsonObject) msg).getString(ACTION);
 
-        // Create a new user if a user has joined and not member of this server or set user online
-        if (jsonObject.getString(ACTION).equals(USER_JOINED)) {
-            String id = jsonObject.getJsonObject(DATA).getString(ID);
-            String name = jsonObject.getJsonObject(DATA).getString(NAME);
-            User userJoined = editor.haveUserWithServer(name, id, true, this.server);
-            userJoined.setOnlineStatus(true);
+        // change members
+        if (action.equals(USER_JOINED) || action.equals(USER_LEFT) || action.equals(USER_ARRIVED) || action.equals(USER_EXITED)) {
+            String id = data.getString(ID);
+            String name = data.getString(NAME);
+
+            if (action.equals(USER_EXITED)) {
+                editor.userWithoutServer(id, this.server);
+            } else {
+                // create or get a new user with the data
+                User user = editor.haveUserWithServer(name, id, false, this.server);
+
+                if (action.equals(USER_JOINED)) {
+                    user.setOnlineStatus(true);
+                }
+                if (action.equals(USER_LEFT)) {
+                    user.setOnlineStatus(false);
+                }
+                if (action.equals(USER_ARRIVED)) {
+                    user.setOnlineStatus(data.getBoolean(ONLINE));
+                }
+            }
+            Platform.runLater(this::updateUserListView);
         }
-        // Create a new user if a user has left and not member of this server or set user offline
-        if (jsonObject.getString(ACTION).equals(USER_LEFT)) {
-            String id = jsonObject.getJsonObject(DATA).getString(ID);
-            String name = jsonObject.getJsonObject(DATA).getString(NAME);
-            User userLeft = editor.haveUserWithServer(name, id, false, this.server);
-            userLeft.setOnlineStatus(false);
+
+        // change data of the server
+        if (action.equals(SERVER_UPDATED)) {
+            server.setName(data.getString(NAME));
+            Platform.runLater(() -> lbServerName.setText(server.getName()));
+        }
+        if (action.equals(SERVER_DELETED)) {
+            Platform.runLater(StageManager::showMainScreen);
         }
 
-        Platform.runLater(this::updateUserListView);
+        //change category
+        if (action.equals(CATEGORY_UPDATED)) {
+            editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+            tvServerChannels.refresh();
+        }
+        if (action.equals(CATEGORY_CREATED) || action.equals(CATEGORY_DELETED)) {
+            changeCategoryTreeItems(action, data);
+            tvServerChannels.refresh();
+        }
 
+        // change channel
+        if (action.equals(CHANNEL_UPDATED)) {
+            Channel channel = editor.updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE),
+                    data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
+            if (channel == null) {
+                Platform.runLater(() -> StageManager.showServerScreen(server));
+            }
+            tvServerChannels.refresh();
+        }
+        if (action.equals(CHANNEL_CREATED) || action.equals(CHANNEL_DELETED)) {
+            changeChannelTreeItems(action, data);
+            tvServerChannels.refresh();
+        }
+
+        // change invitation
+        if (action.equals(INVITE_EXPIRED)) {
+            // TODO inviteExpired
+        }
+
+    }
+
+    /**
+     * This method
+     * <p>
+     * gets the TreeItem with the category as value which value have the same id as from the data.
+     * <p>
+     * If there is no category whit this id, then create a new category with the data,
+     * <p>
+     * else if there is a category and the action is "CATEGORY_DELETED" then delete all channels and the category self.
+     *
+     * @param action action of the web socket message to distinguish between created and deleted
+     * @param data   data to handle for the action
+     */
+    private void changeCategoryTreeItems(String action, JsonObject data) {
+        Category category = null;
+        TreeItem categoryTreeItem = null;
+        for (TreeItem<Object> categoryItem : tvServerChannelsRoot.getChildren()) {
+            Category currentCategory = (Category) categoryItem.getValue();
+            if (currentCategory.getId().equals(data.getString(ID))) {
+                categoryTreeItem = categoryItem;
+                category = currentCategory;
+                break;
+            }
+        }
+        if (category == null) {
+            if (action.equals(CATEGORY_CREATED)) {
+                Category newCategory = editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+                TreeItem<Object> categoryItem = new TreeItem<>(newCategory);
+                categoryItem.setExpanded(true);
+                tvServerChannelsRoot.getChildren().add(categoryItem);
+            } else {
+                Platform.runLater(() -> StageManager.showServerScreen(server));
+            }
+        } else {
+            if (action.equals(CATEGORY_DELETED)) {
+                tvServerChannelsRoot.getChildren().remove(categoryTreeItem);
+                for (Channel channel : category.getChannels()) {
+                    channel.removeYou();
+                }
+                category.removeYou();
+            }
+
+        }
+    }
+
+    /**
+     * This method
+     * <p>
+     * gets the TreeItem with the category as value which value have the same id as from the data -> category.
+     * <p>
+     * If there is no category whit this id, then load the whole server again
+     * <p>
+     * else if there is a category then get the channel with the same id as from the data
+     * <p>
+     * --- If there is no channel whit this id, then create a new channel with the data,
+     * <p>
+     * --- else if there is a channel and the action is "CHANNEL_DELETED" then delete the channel self.
+     *
+     * @param action action of the web socket message to distinguish between created and deleted
+     * @param data   data to handle for the action
+     */
+    private void changeChannelTreeItems(String action, JsonObject data) {
+
+        TreeItem<Object> category = null;
+        for (TreeItem<Object> categoryItem : tvServerChannelsRoot.getChildren()) {
+            Category currentCategory = (Category) categoryItem.getValue();
+            if (currentCategory.getId().equals(data.getString(CATEGORY))) {
+                category = categoryItem;
+                break;
+            }
+        }
+        if (category == null) {
+            StageManager.showServerScreen(server);
+        } else {
+            Channel channel = null;
+            TreeItem<Object> channelItem = null;
+            for (TreeItem<Object> channelItemIterator : category.getChildren()) {
+                Channel currentChannel = (Channel) channelItemIterator.getValue();
+                if (currentChannel.getId().equals(data.getString(ID))) {
+                    channel = currentChannel;
+                    channelItem = channelItemIterator;
+                    break;
+                }
+            }
+
+            if (channel == null) {
+                if (action.equals(CHANNEL_CREATED)) {
+                    Channel newChannel = editor.haveChannel(data.getString(ID), data.getString(NAME),
+                            data.getString(TYPE), data.getBoolean(PRIVILEGED), (Category) category.getValue(),
+                            data.getJsonArray(MEMBERS));
+                    TreeItem<Object> newChannelItem = new TreeItem<>(newChannel);
+                    newChannelItem.setExpanded(true);
+                    category.getChildren().add(newChannelItem);
+                } else {
+                    Platform.runLater(() -> StageManager.showServerScreen(server));
+                }
+            } else {
+                if (action.equals(CHANNEL_DELETED)) {
+                    category.getChildren().remove(channelItem);
+                    channel.removeYou();
+                }
+            }
+        }
     }
 
     // Methods for the user list view

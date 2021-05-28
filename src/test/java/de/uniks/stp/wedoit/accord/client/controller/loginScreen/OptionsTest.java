@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.stage.Stage;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,15 @@ public class OptionsTest extends ApplicationTest {
     @Mock
     private RestClient restMock;
 
+    @BeforeClass
+    public static void before() {
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
+    }
+
     @Override
     public void start(Stage stage) {
         // start application
@@ -34,6 +44,14 @@ public class OptionsTest extends ApplicationTest {
         StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
+    }
+
+    @Override
+    public void stop() {
+        rule = null;
+        stage = null;
+        stageManager = null;
+        restMock = null;
     }
 
     @BeforeEach
