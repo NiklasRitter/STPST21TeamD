@@ -26,6 +26,7 @@ public class NetworkController {
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final Editor editor;
     private RestClient restClient = new RestClient();
+    private String clearLocalUserName;
 
     /**
      * Create a NetworkController.
@@ -52,8 +53,9 @@ public class NetworkController {
      * Create default WebSocketClients.
      */
     public NetworkController start() {
+        clearLocalUserName = clearUsername();
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
-        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername(), this::handlePrivateChatMessage);
+        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearLocalUserName, this::handlePrivateChatMessage);
         return this;
     }
 
