@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -127,9 +126,7 @@ public class EditServerScreenController implements Controller {
             ToggleGroup toggleGroup = new ToggleGroup();
             radioBtnMaxCount.setToggleGroup(toggleGroup);
             radioBtnTemporal.setToggleGroup(toggleGroup);
-            radioBtnTemporal.setSelected(true);
-            this.tfMaxCountAmountInput.setEditable(false);
-            this.tfMaxCountAmountInput.setDisable(true);
+            radioBtnMaxCount.setSelected(true);
         }
     }
 
@@ -148,14 +145,12 @@ public class EditServerScreenController implements Controller {
     private void radioBtnMaxCountOnClick(MouseEvent mouseEvent) {
         if (this.radioBtnMaxCount.isFocused()) {
             this.tfMaxCountAmountInput.setEditable(true);
-            this.tfMaxCountAmountInput.setDisable(false);
         }
     }
 
     private void radioBtnTemporalOnClick(MouseEvent mouseEvent) {
         if (this.radioBtnTemporal.isFocused()) {
             this.tfMaxCountAmountInput.setEditable(false);
-            this.tfMaxCountAmountInput.setDisable(true);
         }
     }
 
