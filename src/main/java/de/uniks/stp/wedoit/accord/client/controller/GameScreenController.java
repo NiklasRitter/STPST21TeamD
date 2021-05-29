@@ -22,9 +22,8 @@ public class GameScreenController implements Controller {
 
     @Override
     public void init() {
-
-        System.out.println("localUser:" + localUser + ", opponent:" + opponent);
-
+        localUser.withoutGameInvites(opponent);
+        localUser.withoutGameRequests(opponent);
     }
 
     @Override
