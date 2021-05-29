@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -184,7 +185,7 @@ public class StageManager extends Application {
 
     }
 
-    public static void showGameScreen() {
+    public static void showGameScreen(User opponent) {
         cleanup();
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
@@ -197,7 +198,7 @@ public class StageManager extends Application {
             //updateDarkmode();
 
             //init controller
-            GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), editor);
+            GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(),opponent, editor);
             gameScreenController.init();
             controllerMap.put("gameScreenController", gameScreenController);
 

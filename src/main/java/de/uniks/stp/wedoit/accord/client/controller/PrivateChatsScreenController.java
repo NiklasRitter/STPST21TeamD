@@ -20,9 +20,12 @@ import javafx.scene.input.MouseEvent;
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PrivateChatsScreenController implements Controller {
@@ -30,7 +33,7 @@ public class PrivateChatsScreenController implements Controller {
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
-    private Button btnOptions;
+    private Button btnOptions,btnPlay;
     private Button btnHome;
     private Button btnLogout;
     private Chat currentChat;
@@ -70,6 +73,7 @@ public class PrivateChatsScreenController implements Controller {
     public void init() {
 
         this.btnOptions = (Button) view.lookup("#btnOptions");
+        this.btnPlay = (Button) view.lookup("#btnPlay");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
@@ -78,7 +82,9 @@ public class PrivateChatsScreenController implements Controller {
 
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
 
+
         this.btnHome.setOnAction(this::btnHomeOnClicked);
+        this.btnPlay.setOnAction(this::btnPlayOnClicked);
         this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
@@ -121,6 +127,7 @@ public class PrivateChatsScreenController implements Controller {
             user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
         }
         this.btnHome.setOnAction(null);
+        this.btnPlay.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.tfPrivateChat.setOnAction(null);
@@ -134,6 +141,26 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
         StageManager.showMainScreen();
+    }
+
+    /**
+     * //TODO
+     *
+     * @param actionEvent occurs when Play Button is clicked
+     */
+    private void btnPlayOnClicked(ActionEvent actionEvent){
+        if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play")){
+            String message = "###game### Invites you to Rock - Paper - Scissors!";
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
+            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+        }else if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")){
+            //when Accept button was pressed
+            String message = "###game### Accepts!";
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
+            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+            StageManager.showGameScreen(currentChat.getUser());
+        }
+
     }
 
     /**
@@ -257,6 +284,15 @@ public class PrivateChatsScreenController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
+            if(localUser.getGameInvites().contains(editor.getUser(message.getFrom()))){
+                Platform.runLater(() -> btnPlay.setText("Accept"));
+            }
+
+            if(message.getText().equals("###game### Accepts!")) {
+                message.setText(message.getText().substring(10));
+                Platform.runLater(() -> StageManager.showGameScreen(editor.getUser(message.getFrom())));
+            }
+
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
     }
@@ -283,9 +319,10 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
-            User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
-            if (user != null) {
-                this.initPrivateChat(user);
+            User selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ? "Accept" : "Play");
+                this.initPrivateChat(selectedUser);
             }
         }
     }
