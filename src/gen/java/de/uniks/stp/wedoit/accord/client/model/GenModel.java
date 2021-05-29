@@ -30,6 +30,7 @@ public class GenModel implements ClassModelDecorator {
     class LocalUser {
         String name;
         String userKey;
+        String id;
         List<User> gameInvites;
         List<User> gameRequests;
 

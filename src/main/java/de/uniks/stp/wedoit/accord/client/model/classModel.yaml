@@ -65,6 +65,7 @@
 
 - localUser: 	org.fulib.classmodel.Clazz
   attributes: 	localUser_name 	localUser_userKey 	localUser_gameInvites 	localUser_gameRequests
+  attributes: 	localUser_name 	localUser_userKey 	localUser_id
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -504,6 +505,15 @@
   propertyStyle: 	Bean
   type: 	User
   typeSignature: 	User
+
+- localUser_id: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
 
 - localUser_servers: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -238,6 +239,107 @@ public class StageManager extends Application {
 
         } catch (Exception e) {
             System.err.println("Error on showing OptionsScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showCreateCategoryScreen() {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateCategoryScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, model.getLocalUser(), editor);
+            createCategoryScreenController.init();
+            controllerMap.put("createCategoryScreenController", createCategoryScreenController);
+
+            //display
+            popupStage.setTitle("Create Category");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing CreateCategoryScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showCreateChannelScreen(Category category) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateChannelScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            CreateChannelScreenController createChannelScreenController = new CreateChannelScreenController(root, model.getLocalUser(), editor, category);
+            createChannelScreenController.init();
+            controllerMap.put("createChannelScreenController", createChannelScreenController);
+
+            //display
+            popupStage.setTitle("Create Channel");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing CreateChannelScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showEditChannelScreen(Channel channel) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditChannelScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            EditChannelScreenController editChannelScreenController = new EditChannelScreenController(root, model.getLocalUser(), editor, channel);
+            editChannelScreenController.init();
+            controllerMap.put("editChannelScreenController", editChannelScreenController);
+
+            //display
+            popupStage.setTitle("Edit Channel");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing EditChannelScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showEditServerScreen(Server server) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditServerScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            EditServerScreenController editServerScreenController = new EditServerScreenController(root, model.getLocalUser(), editor, server);
+            editServerScreenController.init();
+            controllerMap.put("editServerScreenController", editServerScreenController);
+
+            //display
+            popupStage.setTitle("Edit Server");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing EditServerScreen");
             e.printStackTrace();
         }
     }
