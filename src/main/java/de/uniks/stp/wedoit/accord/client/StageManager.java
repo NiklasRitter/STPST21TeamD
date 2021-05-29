@@ -1,9 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.*;
-import de.uniks.stp.wedoit.accord.client.model.AccordClient;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -211,20 +209,46 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEmojiScreen(TextField tfForEmoji) {
+
+    public static void showCreateCategoryScreen() {
         try {
             //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateCategoryScreen.fxml")));
+
             popupScene = new Scene(root);
 
             updateDarkmode();
 
-            //init controller
+
+            CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, model.getLocalUser(), editor);
+            createCategoryScreenController.init();
+            controllerMap.put("createCategoryScreenController", createCategoryScreenController);
+
+            //display
+            popupStage.setTitle("Create Category");
+
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing CreateCategoryScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showEmojiScreen(TextField tfForEmoji) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
+
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor, tfForEmoji);
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
 
             //display
+
             popupStage.setTitle("Emoji Screen");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
@@ -233,6 +257,56 @@ public class StageManager extends Application {
 
         } catch (Exception e) {
             System.err.println("Error on showing EmojiScreen");
+        }
+    }
+
+
+    public static void showCreateChannelScreen(Category category) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateChannelScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            CreateChannelScreenController createChannelScreenController = new CreateChannelScreenController(root, model.getLocalUser(), editor, category);
+            createChannelScreenController.init();
+            controllerMap.put("createChannelScreenController", createChannelScreenController);
+
+            //display
+            popupStage.setTitle("Create Channel");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing CreateChannelScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showEditChannelScreen(Channel channel) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditChannelScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            EditChannelScreenController editChannelScreenController = new EditChannelScreenController(root, model.getLocalUser(), editor, channel);
+            editChannelScreenController.init();
+            controllerMap.put("editChannelScreenController", editChannelScreenController);
+
+            //display
+            popupStage.setTitle("Edit Channel");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing EditChannelScreen");
             e.printStackTrace();
         }
     }
