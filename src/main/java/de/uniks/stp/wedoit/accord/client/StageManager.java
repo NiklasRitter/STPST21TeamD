@@ -205,9 +205,9 @@ public class StageManager extends Application {
 
             // display
             stage.setTitle("Rock - Paper - Scissors");
-            stage.setMinHeight(200);
-            stage.setMinWidth(400);
             stage.setScene(scene);
+            stage.setMinHeight(400);
+            stage.setMinWidth(600);
             stage.setResizable(true);
 
 

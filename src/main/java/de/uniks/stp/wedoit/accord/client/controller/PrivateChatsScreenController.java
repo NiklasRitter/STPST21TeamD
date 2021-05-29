@@ -151,7 +151,6 @@ public class PrivateChatsScreenController implements Controller {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEINVITE);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
         }else if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")){
-            //when Accept button was pressed
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
             StageManager.showGameScreen(currentChat.getUser());
@@ -311,6 +310,7 @@ public class PrivateChatsScreenController implements Controller {
 
     /**
      * initPrivateChat when item of userList is clicked twice
+     * manages the the Play button
      *
      * @param mouseEvent occurs when a listitem is clicked
      */

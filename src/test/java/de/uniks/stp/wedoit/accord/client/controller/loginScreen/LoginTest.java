@@ -98,8 +98,8 @@ public class LoginTest extends ApplicationTest {
                 .add("status", "success")
                 .add("message", "")
                 .add("data", Json.createObjectBuilder()
-                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
-                ).build().toString();
+                .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf"))
+                .build().toString();
 
         //Mocking of RestClient login function
         when(res.getBody()).thenReturn(new JsonNode(returnMessage));
