@@ -243,6 +243,10 @@ public class StageManager extends Application {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor, tfForEmoji);
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
