@@ -283,6 +283,32 @@ public class StageManager extends Application {
         }
     }
 
+    public static void showEditServerScreen(Server server) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditServerScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            EditServerScreenController editServerScreenController = new EditServerScreenController(root, model.getLocalUser(), editor, server);
+            editServerScreenController.init();
+            controllerMap.put("editServerScreenController", editServerScreenController);
+
+            //display
+            popupStage.setTitle("Edit Server");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing EditServerScreen");
+            e.printStackTrace();
+        }
+    }
+
     private static void cleanup() {
         stopController();
 
