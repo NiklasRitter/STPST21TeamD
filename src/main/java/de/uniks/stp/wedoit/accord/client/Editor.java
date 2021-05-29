@@ -10,9 +10,9 @@ import javax.json.JsonArray;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class Editor {
 
@@ -268,14 +268,11 @@ public class Editor {
      * @param message to add to the model
      */
     public void addNewPrivateMessage(PrivateMessage message) {
-        if(message.getText().equals("###game### Invites you to Rock - Paper - Scissors!")){
+        if(message.getText().equals(GAMEINVITE)){
             if(message.getFrom().equals(getLocalUser().getName())) getLocalUser().withGameRequests(getUser(message.getTo()));
             else getLocalUser().withGameInvites(getUser(message.getFrom()));
-
-            message.setText(message.getText().substring(10));
+            message.setText(message.getText().substring(PREFIX.length()));
         }
-
-
         if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
         } else {

@@ -16,17 +16,15 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class PrivateChatsScreenController implements Controller {
 
@@ -144,19 +142,17 @@ public class PrivateChatsScreenController implements Controller {
     }
 
     /**
-     * //TODO
+     * Send a game request or accept a pending invite, if invite accepted redirect to GameScreen
      *
      * @param actionEvent occurs when Play Button is clicked
      */
     private void btnPlayOnClicked(ActionEvent actionEvent){
         if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play")){
-            String message = "###game### Invites you to Rock - Paper - Scissors!";
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEINVITE);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
         }else if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")){
             //when Accept button was pressed
-            String message = "###game### Accepts!";
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
             StageManager.showGameScreen(currentChat.getUser());
         }
@@ -278,6 +274,7 @@ public class PrivateChatsScreenController implements Controller {
 
     /**
      * update the chat when a new message arrived
+     * Filter for messages with ###game### prefix and handle when a game invite is accepted
      *
      * @param propertyChangeEvent event occurs when a new private message arrives
      */
@@ -288,7 +285,7 @@ public class PrivateChatsScreenController implements Controller {
                 Platform.runLater(() -> btnPlay.setText("Accept"));
             }
 
-            if(message.getText().equals("###game### Accepts!")) {
+            if(message.getText().equals(GAMEACCEPT)) {
                 message.setText(message.getText().substring(10));
                 Platform.runLater(() -> StageManager.showGameScreen(editor.getUser(message.getFrom())));
             }
