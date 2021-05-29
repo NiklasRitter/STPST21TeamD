@@ -58,7 +58,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     public static void before() {
         System.setProperty("testfx.robot", "glass");
         System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw"); // this line causes a fatal error for which I found no other solution than deleting this line.
+        System.setProperty("prism.order", "sw");
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
     }
@@ -148,6 +148,8 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         Assert.assertTrue(radioBtnTemporal.isSelected());
         Assert.assertFalse(radioBtnMaxCount.isSelected());
         Assert.assertFalse(tfMaxCountAmountInput.isEditable());
+
+        clickOn("#radioBtnMaxCount");
 
     }
 
