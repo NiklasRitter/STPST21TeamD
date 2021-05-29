@@ -292,7 +292,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            EditServerScreenController editServerScreenController = new EditServerScreenController(root, model.getLocalUser(), editor, server);
+            EditServerScreenController editServerScreenController = new EditServerScreenController(root, model.getLocalUser(), editor, server, popupStage);
             editServerScreenController.init();
             controllerMap.put("editServerScreenController", editServerScreenController);
 

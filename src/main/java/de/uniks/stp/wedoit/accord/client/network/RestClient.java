@@ -153,6 +153,24 @@ public class RestClient {
     }
 
     /**
+     * Updates the name of a server
+     *
+     * @param serverId   The ID of the Server which name should be changed.
+     * @param newServerName The new name of the Server
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
+     */
+    public void changeServerName(String serverId, String newServerName, String userKey, Callback<JsonNode> callback) {
+        String body = Json.createObjectBuilder().add(NAME, newServerName).build().toString();
+
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    /**
      * Send a Request and call the Callback asynchronously.
      *
      * @param req      The Request to be sent.
