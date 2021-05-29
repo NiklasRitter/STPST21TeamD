@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -210,7 +211,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEmojiScreen() {
+    public static void showEmojiScreen(TextField tfForEmoji) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
@@ -219,7 +220,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor);
+            EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor, tfForEmoji);
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
 

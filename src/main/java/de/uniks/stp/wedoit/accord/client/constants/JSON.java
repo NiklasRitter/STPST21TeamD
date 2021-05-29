@@ -27,5 +27,4 @@ public class JSON {
     public static final String USER_LEFT = "userLeft";
     public static final String SUCCESS = "success";
     public static final String PRIVATE = "private";
-
 }

@@ -3,14 +3,21 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class EmojiScreenController implements Controller {
@@ -19,39 +26,73 @@ public class EmojiScreenController implements Controller {
     private final LocalUser localUser;
     private final Editor editor;
     private GridPane pane;
-    private TextField tfPrivateChat;
-    private EmojiButton emojiButton;
+    private TextField tfForEmoji;
 
-    public EmojiScreenController(Parent view, LocalUser localUser, Editor editor) {
+    private EmojiButton btnEmoji;
+    private HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<EmojiButton, String>();
+    private List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
+
+    public EmojiScreenController(Parent view, LocalUser localUser, Editor editor, TextField tfForEmoji) {
         this.view = view;
         this.localUser = localUser;
         this.editor = editor;
+        this.tfForEmoji = tfForEmoji;
     }
 
+    /**
+     * Initializes GridPane, the use it as emoji picker
+     * call the emoji picker creator
+     */
     public void init() {
-        tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
-
-        List<Icons> days = Arrays.asList(Icons.values());
 
         this.pane = (GridPane) this.view.lookup("#panelForEmojis");
-//        pane.setHgap(5);
-//        pane.setVgap(5);
+        this.pane.setStyle("-fx-background-color: #000000;");
+        this.pane.setHgap(15);
+        this.pane.setVgap(15);
+        this.pane.setAlignment(Pos.CENTER);
 
-        int GRIDWIDTH = 5;//how many buttons are to fit in one row
-        for (int i = 0; i < days.size(); i++) {
-            emojiButton = new EmojiButton(days.get(i).toString());
-            emojiButton.setOnAction(this::btnEmojiOnClick);
-            pane.add(emojiButton, i % GRIDWIDTH, i / GRIDWIDTH, 1, 1);
+        createEmojiPicker();
+
+    }
+
+    /**
+     * create dynamic buttons to show emojis
+     * add emoji buttons to a hashMap
+     * add created emoji buttons to the GridPane
+     * call the action listener of each created emoji button
+     */
+    private void createEmojiPicker() {
+        //how many buttons are to fit in one row
+        int gridWidth = 5;
+
+        for (int i = 0; i < iconsUnicodeList.size(); i++) {
+            btnEmoji = new EmojiButton(iconsUnicodeList.get(i).toString());
+            hashMapForEmojiButtons.put(btnEmoji, btnEmoji.getText());
+            btnEmoji.setOnAction(this::btnEmojiOnClick);
+            this.pane.add(btnEmoji, i % gridWidth, i / gridWidth, 1, 1);
         }
 
+
     }
 
+    /**
+     * The text of the selected button from the hashMap is retrieved
+     * added the emoji button text in the chat text field
+     */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
-        System.out.println(emojiButton.getText());
+        Platform.runLater(() -> {
+                    this.tfForEmoji.setText(this.tfForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource()));
+                }
+        );
     }
 
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     @Override
     public void stop() {
-
+        btnEmoji.setOnAction(null);
     }
 }

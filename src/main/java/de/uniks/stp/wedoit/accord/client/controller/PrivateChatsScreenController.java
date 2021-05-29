@@ -164,7 +164,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Emoji Button is clicked
      */
     private void btnEmojiOnClicked(ActionEvent actionEvent) {
-        StageManager.showEmojiScreen();
+        StageManager.showEmojiScreen(tfPrivateChat);
     }
 
     /**
