@@ -1,29 +1,29 @@
 package de.uniks.stp.wedoit.accord.client.model;
-
-import java.beans.PropertyChangeSupport;
-import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Collections;
 import java.util.Collection;
+import java.beans.PropertyChangeSupport;
 
-public class Category {
-    public static final String PROPERTY_NAME = "name";
-    public static final String PROPERTY_ID = "id";
-    public static final String PROPERTY_SERVER = "server";
+public class Category
+{
+   public static final String PROPERTY_NAME = "name";
+   public static final String PROPERTY_ID = "id";
    public static final String PROPERTY_CHANNELS = "channels";
-    protected PropertyChangeSupport listeners;
-    private String name;
-    private String id;
-    private Server server;
+   public static final String PROPERTY_SERVER = "server";
+   private String name;
+   private String id;
    private List<Channel> channels;
+   private Server server;
+   protected PropertyChangeSupport listeners;
 
-    public String getName()
+   public String getName()
    {
       return this.name;
    }
 
-    public Category setName(String value)
+   public Category setName(String value)
    {
       if (Objects.equals(value, this.name))
       {
@@ -36,12 +36,12 @@ public class Category {
       return this;
    }
 
-    public String getId()
+   public String getId()
    {
       return this.id;
    }
 
-    public Category setId(String value)
+   public Category setId(String value)
    {
       if (Objects.equals(value, this.id))
       {
@@ -51,33 +51,6 @@ public class Category {
       final String oldValue = this.id;
       this.id = value;
       this.firePropertyChange(PROPERTY_ID, oldValue, value);
-      return this;
-   }
-
-    public Server getServer()
-   {
-      return this.server;
-   }
-
-    public Category setServer(Server value)
-   {
-      if (this.server == value)
-      {
-         return this;
-      }
-
-      final Server oldValue = this.server;
-      if (this.server != null)
-      {
-         this.server = null;
-         oldValue.withoutCategories(this);
-      }
-      this.server = value;
-      if (value != null)
-      {
-         value.withCategories(this);
-      }
-      this.firePropertyChange(PROPERTY_SERVER, oldValue, value);
       return this;
    }
 
@@ -147,7 +120,34 @@ public class Category {
       return this;
    }
 
-    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+   public Server getServer()
+   {
+      return this.server;
+   }
+
+   public Category setServer(Server value)
+   {
+      if (this.server == value)
+      {
+         return this;
+      }
+
+      final Server oldValue = this.server;
+      if (this.server != null)
+      {
+         this.server = null;
+         oldValue.withoutCategories(this);
+      }
+      this.server = value;
+      if (value != null)
+      {
+         value.withCategories(this);
+      }
+      this.firePropertyChange(PROPERTY_SERVER, oldValue, value);
+      return this;
+   }
+
+   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
       {
@@ -157,7 +157,7 @@ public class Category {
       return false;
    }
 
-    public PropertyChangeSupport listeners()
+   public PropertyChangeSupport listeners()
    {
       if (this.listeners == null)
       {
@@ -166,7 +166,7 @@ public class Category {
       return this.listeners;
    }
 
-    @Override
+   @Override
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
@@ -175,7 +175,7 @@ public class Category {
       return result.substring(1);
    }
 
-    public void removeYou()
+   public void removeYou()
    {
       this.withoutChannels(new ArrayList<>(this.getChannels()));
       this.setServer(null);

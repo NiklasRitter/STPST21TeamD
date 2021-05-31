@@ -6,8 +6,8 @@ public class Options
    public static final String PROPERTY_DARKMODE = "darkmode";
    public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
    private boolean darkmode;
-   protected PropertyChangeSupport listeners;
    private AccordClient accordClient;
+   protected PropertyChangeSupport listeners;
 
    public boolean isDarkmode()
    {
