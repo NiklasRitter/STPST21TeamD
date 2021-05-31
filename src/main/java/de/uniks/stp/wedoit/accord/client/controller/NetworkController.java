@@ -26,7 +26,7 @@ public class NetworkController {
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final Editor editor;
     private RestClient restClient = new RestClient();
-    private String clearLocalUserName;
+    private String cleanLocalUserName;
 
     /**
      * Create a NetworkController.
@@ -37,8 +37,8 @@ public class NetworkController {
         this.editor = editor;
     }
 
-    public String getClearLocalUserName() {
-        return clearLocalUserName;
+    public String getCleanLocalUserName() {
+        return cleanLocalUserName;
     }
 
     public RestClient getRestClient() {
@@ -59,7 +59,7 @@ public class NetworkController {
     public NetworkController start() {
         setClearUsername();
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
-        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearLocalUserName, this::handlePrivateChatMessage);
+        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + cleanLocalUserName, this::handlePrivateChatMessage);
         return this;
     }
 
@@ -67,11 +67,11 @@ public class NetworkController {
         String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
-            clearLocalUserName =  newName;
+            cleanLocalUserName =  newName;
         } catch (UnsupportedEncodingException e) {
-            clearLocalUserName = this.editor.getLocalUser().getName();
+            cleanLocalUserName = this.editor.getLocalUser().getName();
         }
-        return clearLocalUserName;
+        return cleanLocalUserName;
     }
 
     /**
@@ -180,7 +180,7 @@ public class NetworkController {
      */
     public NetworkController sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + clearLocalUserName);
+                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + cleanLocalUserName);
         webSocketClient.sendMessage(jsonMsgString);
         return this;
     }
@@ -192,7 +192,7 @@ public class NetworkController {
      */
     public NetworkController sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(CHAT_USER_URL + clearLocalUserName
+                getOrCreateWebSocket(CHAT_USER_URL + cleanLocalUserName
                         + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
         return this;

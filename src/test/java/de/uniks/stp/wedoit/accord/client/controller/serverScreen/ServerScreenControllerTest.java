@@ -102,7 +102,7 @@ public class ServerScreenControllerTest extends ApplicationTest {
         this.server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
         this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().
-                getNetworkController().getClearLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
+                getNetworkController().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showServerScreen(server);
