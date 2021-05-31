@@ -99,7 +99,7 @@ public class ServerScreenController implements Controller {
         // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
-        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().getCleanLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         tvServerChannelsRoot = new TreeItem<>();
