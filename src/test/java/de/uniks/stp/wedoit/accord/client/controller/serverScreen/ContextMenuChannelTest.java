@@ -96,7 +96,7 @@ public class ContextMenuChannelTest extends ApplicationTest {
         this.localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
         this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().getNetworkController().clearUsername()
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().getNetworkController().getClearLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);

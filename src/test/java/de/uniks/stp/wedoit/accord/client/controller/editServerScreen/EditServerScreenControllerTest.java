@@ -73,7 +73,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         this.localUser = stageManager.getEditor().haveLocalUser("Alice", "userKey123");
         this.server = stageManager.getEditor().haveServer(localUser, "id456", "AliceServer");
         this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().getNetworkController().clearUsername()
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().getNetworkController().getClearLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClientMock);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);

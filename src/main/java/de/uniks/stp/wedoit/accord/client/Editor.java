@@ -325,10 +325,22 @@ public class Editor {
      * return null, if user was not in the members list
      */
     public Server userWithoutServer(String id, Server server) {
+        User thisUser = null;
         for (User user : server.getMembers()) {
             if (user.getId().equals(id)) {
-                return server.withoutMembers(user);
+                thisUser = user;
+                server.withoutMembers(user);
             }
+        }
+        if (thisUser != null) {
+            for (Category category : server.getCategories()) {
+                for (Channel channel : category.getChannels()) {
+                    if (channel.getMembers().contains(thisUser)) {
+                        channel.withoutMembers(thisUser);
+                    }
+                }
+            }
+            return server;
         }
         return null;
     }
