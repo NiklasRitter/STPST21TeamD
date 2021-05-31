@@ -37,6 +37,10 @@ public class NetworkController {
         this.editor = editor;
     }
 
+    public String getClearLocalUserName() {
+        return clearLocalUserName;
+    }
+
     public RestClient getRestClient() {
         return restClient;
     }
@@ -53,20 +57,21 @@ public class NetworkController {
      * Create default WebSocketClients.
      */
     public NetworkController start() {
-        clearLocalUserName = clearUsername();
+        setClearUsername();
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
         haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearLocalUserName, this::handlePrivateChatMessage);
         return this;
     }
 
-    public String clearUsername() {
+    public String setClearUsername() {
         String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
+            clearLocalUserName =  newName;
         } catch (UnsupportedEncodingException e) {
-            return this.editor.getLocalUser().getName();
+            clearLocalUserName = this.editor.getLocalUser().getName();
         }
-        return newName;
+        return clearLocalUserName;
     }
 
     /**
@@ -175,7 +180,7 @@ public class NetworkController {
      */
     public NetworkController sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername());
+                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + clearLocalUserName);
         webSocketClient.sendMessage(jsonMsgString);
         return this;
     }
@@ -187,7 +192,7 @@ public class NetworkController {
      */
     public NetworkController sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(CHAT_USER_URL + clearUsername()
+                getOrCreateWebSocket(CHAT_USER_URL + clearLocalUserName
                         + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
         return this;
