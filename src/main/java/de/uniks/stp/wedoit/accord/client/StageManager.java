@@ -1,6 +1,10 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.*;
+import de.uniks.stp.wedoit.accord.client.model.AccordClient;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
@@ -180,6 +184,37 @@ public class StageManager extends Application {
             e.printStackTrace();
         }
 
+    }
+
+    public static void showGameScreen(User opponent) {
+        cleanup();
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
+            if (scene != null) {
+                scene.setRoot(root);
+            } else {
+                scene = new Scene(root);
+            }
+
+            //updateDarkmode();
+
+            //init controller
+            GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), opponent, editor);
+            gameScreenController.init();
+            controllerMap.put("gameScreenController", gameScreenController);
+
+            // display
+            stage.setTitle("Rock - Paper - Scissors");
+            stage.setScene(scene);
+            stage.setMinHeight(400);
+            stage.setMinWidth(600);
+            stage.setResizable(true);
+
+
+        } catch (Exception e) {
+            System.err.println("Error on showing GameScreen");
+            e.printStackTrace();
+        }
     }
 
     public static void showOptionsScreen() {
