@@ -152,8 +152,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertNotNull(server);
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
-
+                + AND_SERVER_ID_URL + "123", channelChatWebSocketClient);
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("Server", stage.getTitle());
