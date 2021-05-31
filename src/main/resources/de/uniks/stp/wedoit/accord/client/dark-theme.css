@@ -54,3 +54,9 @@
 .listViewUserOffline {
     -fx-border-color: #ff0000
 }
+
+.newMessage {
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #5e0000;
+    -fx-border-color: #ff0000;
+}
