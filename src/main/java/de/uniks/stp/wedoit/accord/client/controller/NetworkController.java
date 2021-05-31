@@ -355,6 +355,22 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController createCategory(Server server, String categoryNameInput, CreateCategoryScreenController controller) {
+        restClient.createCategory(server.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JSONObject createCategoryAnswer = response.getBody().getObject().getJSONObject(DATA);
+                String categoryId = createCategoryAnswer.getString(ID);
+                String categoryName = createCategoryAnswer.getString(NAME);
+
+                Category category = editor.haveCategory(categoryId, categoryName, server);
+                controller.handleCreateCategory(category);
+            } else {
+                controller.handleCreateCategory(null);
+            }
+        });
+        return this;
+    }
+
     /**
      * Called to stop this controller
      * <p>
