@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox id="mainVBox" prefHeight="380.0" prefWidth="350.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Region prefHeight="24.0" prefWidth="30.0" />
+            <Label text="Change Name: ">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TextField id="tfNewServernameInput" prefHeight="25.0" prefWidth="178.0" promptText="new Servername" />
+         </children>
+      </HBox>
+      <VBox id="vBoxAdminOnly" prefHeight="218.0" prefWidth="350.0">
+         <children>
+            <VBox prefHeight="100.0" prefWidth="350.0">
+               <children>
+                  <HBox prefHeight="47.0" prefWidth="350.0">
+                     <children>
+                        <Region prefHeight="24.0" prefWidth="30.0" />
+                        <Label text="Invite:">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Region prefHeight="24.0" prefWidth="90.0" />
+                        <VBox alignment="CENTER_LEFT" prefHeight="77.0" prefWidth="260.0">
+                           <children>
+                              <RadioButton id="radioBtnTemporal" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Temporal">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <Region prefHeight="10.0" prefWidth="90.0" />
+                              <HBox prefHeight="25.0" prefWidth="260.0">
+                                 <children>
+                                    <RadioButton id="radioBtnMaxCount" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Max. Count">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </RadioButton>
+                                    <TextField id="tfMaxCountAmountInput" prefHeight="25.0" prefWidth="120.0" promptText="Amount" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <Region prefHeight="20.0" prefWidth="350.0" />
+            <HBox alignment="CENTER" prefHeight="94.0" prefWidth="350.0">
+               <children>
+                  <VBox alignment="TOP_CENTER" prefHeight="119.0" prefWidth="290.0">
+                     <children>
+                        <Button id="btnCreateInvitation" mnemonicParsing="false" prefHeight="30.0" prefWidth="162.0" styleClass="styleButton" text="Create Invitation">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                        <Region prefHeight="20.0" />
+                        <TextField id="tfInvitationLink" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="290.0" promptText="Invitation link">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER">
+         <children>
+            <Button id="btnDelete" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" styleClass="styleButton" text="Delete">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Region prefHeight="60.0" prefWidth="65.0" />
+            <Button id="btnSave" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" styleClass="styleButton" text="Save">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+   <styleClass>
+      <String fx:value="styleBorder" />
+      <String fx:value="styleBackgroundHighlight" />
+   </styleClass>
+</VBox>

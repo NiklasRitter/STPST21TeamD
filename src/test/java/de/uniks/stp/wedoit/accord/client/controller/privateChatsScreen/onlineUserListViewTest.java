@@ -31,8 +31,7 @@ import javax.json.JsonObject;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class onlineUserListViewTest extends ApplicationTest {
 
@@ -218,7 +217,7 @@ public class onlineUserListViewTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).getOnlineUsers(anyString(), callbackArgumentCaptor.capture());
+        verify(restMock, atLeastOnce()).getOnlineUsers(anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);

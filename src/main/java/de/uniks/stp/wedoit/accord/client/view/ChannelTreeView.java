@@ -1,7 +1,10 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 
@@ -22,10 +25,34 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                 }
                 if (item instanceof Channel) {
                     this.setText(((Channel) item).getName());
+                    this.setContextMenu(addContextMenuChannel((Channel)item));
                 }
             } else {
                 this.setText(null);
             }
         }
     }
+
+    private static ContextMenu addContextMenuChannel(Channel item) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItem1 = new MenuItem("- add category");
+        MenuItem menuItem2 = new MenuItem("- add channel");
+        MenuItem menuItem3 = new MenuItem("- edit channel");
+        contextMenu.getItems().add(menuItem1);
+        contextMenu.getItems().add(menuItem2);
+        contextMenu.getItems().add(menuItem3);
+
+        menuItem1.setOnAction((event) -> {
+            StageManager.showCreateCategoryScreen();
+        });
+        menuItem2.setOnAction((event) -> {
+            StageManager.showCreateChannelScreen(item.getCategory());
+        });
+        menuItem3.setOnAction((event) -> {
+            StageManager.showEditChannelScreen(item);
+        });
+
+        return contextMenu;
+    }
+
 }

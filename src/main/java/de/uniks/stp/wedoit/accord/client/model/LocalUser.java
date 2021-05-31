@@ -24,6 +24,7 @@ public class LocalUser {
 
     public static final String PROPERTY_USERS = "users";
    public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
+   public static final String PROPERTY_ID = "id";
 
     protected PropertyChangeSupport listeners;
 
@@ -35,6 +36,7 @@ public class LocalUser {
 
     private List<User> users;
    private AccordClient accordClient;
+   private String id;
 
     public String getName()
    {
@@ -231,6 +233,24 @@ public class LocalUser {
       return this;
    }
 
+   public String getId()
+   {
+      return this.id;
+   }
+
+   public LocalUser setId(String value)
+   {
+      if (Objects.equals(value, this.id))
+      {
+         return this;
+      }
+
+      final String oldValue = this.id;
+      this.id = value;
+      this.firePropertyChange(PROPERTY_ID, oldValue, value);
+      return this;
+   }
+
     public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -256,6 +276,7 @@ public class LocalUser {
       final StringBuilder result = new StringBuilder();
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());
+      result.append(' ').append(this.getId());
       return result.substring(1);
    }
 
