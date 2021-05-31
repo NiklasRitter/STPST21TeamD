@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
+import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
@@ -270,7 +271,14 @@ public class Editor {
         if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
         } else {
-            getUser(message.getFrom()).getPrivateChat().withMessages(message);
+            SystemTrayController systemTrayController = StageManager.getSystemTrayController();
+            if (systemTrayController != null) {
+                systemTrayController.displayPrivateMessageNotification(message);
+            }
+            User user = getUser(message.getFrom());
+            Chat privateChat = user.getPrivateChat();
+            privateChat.withMessages(message);
+            user.setChatRead(false);
         }
     }
 
