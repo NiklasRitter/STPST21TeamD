@@ -130,8 +130,11 @@ public class chatTest extends ApplicationTest {
         clickOn("#lwOnlineUsers");
 
         WaitForAsyncUtils.waitForFxEvents();
+
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
+        clickOn(btnPlay);
+        WaitForAsyncUtils.waitForFxEvents();
         //send game invite
         JsonObject gameInvite = JsonUtil.buildPrivateChatMessage(user.getName(), GAMEINVITE);
         mockChatWebSocket(getTestMessageServerAnswer(gameInvite));
@@ -177,7 +180,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
         Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(0).getText());
-        
+
     }
 
     @Test
