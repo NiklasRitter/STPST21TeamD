@@ -66,6 +66,7 @@ public class Editor {
         }
         localUser.setName(username);
         localUser.setUserKey(userKey);
+        networkController.setClearUsername();
         return localUser;
     }
 
