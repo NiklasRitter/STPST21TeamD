@@ -284,7 +284,7 @@ public class PrivateChatsScreenController implements Controller {
                 Platform.runLater(() -> btnPlay.setText("Accept"));
             }
 
-            if(message.getText().equals(GAMEACCEPT)) {
+            if(message.getText().equals(GAMEACCEPT) && localUser.getGameRequests().contains(editor.getUser(message.getFrom()))) {
                 message.setText(message.getText().substring(10));
                 Platform.runLater(() -> StageManager.showGameScreen(editor.getUser(message.getFrom())));
             }

@@ -199,7 +199,7 @@ public class StageManager extends Application {
             //updateDarkmode();
 
             //init controller
-            GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(),opponent, editor);
+            GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), opponent, editor);
             gameScreenController.init();
             controllerMap.put("gameScreenController", gameScreenController);
 
