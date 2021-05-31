@@ -270,6 +270,18 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController changeServerName(LocalUser localUser, Server server, String newServerName, EditServerScreenController controller) {
+        restClient.changeServerName(server.getId(), newServerName, localUser.getUserKey(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                server.setName(newServerName);
+                controller.handleChangeServerName(true);
+            } else {
+                controller.handleChangeServerName(false);
+            }
+        });
+        return this;
+    }
+
     public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
