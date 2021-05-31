@@ -12,20 +12,24 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import kong.unirest.Unirest;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+
 public class StageManager extends Application {
 
+    private static final Map<String, Controller> controllerMap = new HashMap<>();
+    private static SystemTrayController systemTrayController;
     private static Editor editor;
     private static AccordClient model;
     private static Stage stage;
     private static Stage popupStage;
     private static Scene scene;
     private static Scene popupScene;
-    private static final Map<String, Controller> controllerMap = new HashMap<>();
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -49,7 +53,7 @@ public class StageManager extends Application {
 
             LoginScreenController loginScreenController = new LoginScreenController(root, model.getLocalUser(), editor);
             loginScreenController.init();
-            controllerMap.put("loginScreenController", loginScreenController);
+            controllerMap.put(LOGIN_SCREEN_CONTROLLER, loginScreenController);
 
             //display
             stage.setTitle("Login");
@@ -85,7 +89,7 @@ public class StageManager extends Application {
             //init controller
             MainScreenController mainScreenController = new MainScreenController(root, model.getLocalUser(), editor);
             mainScreenController.init();
-            controllerMap.put("mainScreenController", mainScreenController);
+            controllerMap.put(MAIN_SCREEN_CONTROLLER, mainScreenController);
 
             // display
             stage.setTitle("Main");
@@ -109,7 +113,7 @@ public class StageManager extends Application {
             //init controller
             CreateServerScreenController createServerScreenController = new CreateServerScreenController(root, model.getLocalUser(), editor);
             createServerScreenController.init();
-            controllerMap.put("createServerScreenController", createServerScreenController);
+            controllerMap.put(CREATE_SERVER_SCREEN_CONTROLLER, createServerScreenController);
 
             //display
             popupStage.setTitle("Create Server");
@@ -138,7 +142,7 @@ public class StageManager extends Application {
 
             PrivateChatsScreenController privateChatsScreenController = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
             privateChatsScreenController.init();
-            controllerMap.put("privateChatsScreenController", privateChatsScreenController);
+            controllerMap.put(PRIVATE_CHATS_SCREEN_CONTROLLER, privateChatsScreenController);
 
             //display
             stage.setTitle("Private Chats");
@@ -168,7 +172,7 @@ public class StageManager extends Application {
             //init controller
             ServerScreenController serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, server);
             serverScreenController.init();
-            controllerMap.put("serverScreenController", serverScreenController);
+            controllerMap.put(SERVER_SCREEN_CONTROLLER, serverScreenController);
 
             //display
             stage.setTitle("Server");
@@ -193,7 +197,7 @@ public class StageManager extends Application {
             //init controller
             OptionsScreenController optionsScreenController = new OptionsScreenController(root, model.getOptions(), editor);
             optionsScreenController.init();
-            controllerMap.put("optionsScreenController", optionsScreenController);
+            controllerMap.put(OPTIONS_SCREEN_CONTROLLER, optionsScreenController);
 
             //display
             popupStage.setTitle("Options");
@@ -360,19 +364,31 @@ public class StageManager extends Application {
         changeDarkmode(model.getOptions().isDarkmode());
     }
 
-    public Editor getEditor() {
+    public static Map<String, Controller> getControllerMap() {
+        return controllerMap;
+    }
+
+    public static SystemTrayController getSystemTrayController() {
+        return systemTrayController;
+    }
+
+    public static Editor getEditor() {
         return editor;
     }
 
-    public Scene getScene() {
+    public static Scene getScene() {
         return scene;
     }
 
-    public Scene getPopupScene() {
+    public static Stage getStage() {
+        return stage;
+    }
+
+    public static Scene getPopupScene() {
         return popupScene;
     }
 
-    public Stage getPopupStage() {
+    public static Stage getPopupStage() {
         return popupStage;
     }
 
@@ -388,6 +404,11 @@ public class StageManager extends Application {
         model = editor.haveAccordClient();
         editor.haveLocalUser();
         model.setOptions(ResourceManager.loadOptions());
+        if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
+        else {
+            systemTrayController = new SystemTrayController(editor);
+            systemTrayController.init();
+        }
 
         stage.setMinHeight(450);
         stage.setMinWidth(600);
@@ -399,6 +420,7 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            if (systemTrayController != null) systemTrayController.stop();
             editor.getNetworkController().stop();
             LocalUser localUser = model.getLocalUser();
             if (localUser != null) {
