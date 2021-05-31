@@ -5,7 +5,6 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -114,31 +113,16 @@ public class EditServerScreenController implements Controller {
      */
     private void loadDefaultSettings() {
         lblError.setVisible(false);
-        if (!localUser.getId().equals(server.getOwner())) {
-            btnDelete.setVisible(false);
-            btnDelete.setDisable(true);
-            vBoxAdminOnly.setVisible(false);
-            vBoxAdminOnly.setDisable(true);
-            for (Node child : mainVBox.getChildren()) {
-                child.getId();
-                if (child.getId() != null && child.getId().equals("vBoxAdminOnly")) {
-                    mainVBox.getChildren().remove(child);
-                    break;
-                }
-            }
-            mainVBox.setPrefHeight(150);
-            mainVBox.setPrefWidth(350);
-        } else {
-            ToggleGroup toggleGroup = new ToggleGroup();
-            radioBtnMaxCount.setToggleGroup(toggleGroup);
-            radioBtnTemporal.setToggleGroup(toggleGroup);
-            radioBtnMaxCount.setSelected(true);
-        }
+        ToggleGroup toggleGroup = new ToggleGroup();
+        radioBtnMaxCount.setToggleGroup(toggleGroup);
+        radioBtnTemporal.setToggleGroup(toggleGroup);
+        radioBtnMaxCount.setSelected(true);
     }
 
     /**
      * In this method a new servername has to be set if set if the
      * user types in a new servername and close popup Window
+     *
      * @param actionEvent
      */
     private void saveButtonOnClick(ActionEvent actionEvent) {

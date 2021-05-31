@@ -93,6 +93,8 @@ public class ServerScreenController implements Controller {
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
+        this.btnEdit.setVisible(false);
+
         this.lbServerName.setText(server.getName());
         // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
@@ -195,6 +197,9 @@ public class ServerScreenController implements Controller {
             createUserListView(members);
         } else {
             Platform.runLater(StageManager::showLoginScreen);
+        }
+        if (this.localUser.getId().equals(this.server.getOwner())) {
+            this.btnEdit.setVisible(true);
         }
     }
 
