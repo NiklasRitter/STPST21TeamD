@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.event.ActionEvent;
@@ -12,6 +13,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
 
 public class EditServerScreenController implements Controller {
 
@@ -123,9 +127,9 @@ public class EditServerScreenController implements Controller {
             this.mainVBox.setPrefHeight(150);
             this.mainVBox.setPrefWidth(350);
         } else {
-            ToggleGroup toggleGroup = new ToggleGroup();
-            radioBtnMaxCount.setToggleGroup(toggleGroup);
-            radioBtnTemporal.setToggleGroup(toggleGroup);
+            ToggleGroup invitationToggleGroup = new ToggleGroup();
+            radioBtnMaxCount.setToggleGroup(invitationToggleGroup);
+            radioBtnTemporal.setToggleGroup(invitationToggleGroup);
             radioBtnMaxCount.setSelected(true);
         }
     }
@@ -139,7 +143,21 @@ public class EditServerScreenController implements Controller {
     }
 
     private void createInvitationButtonOnClick(ActionEvent actionEvent) {
+        if (radioBtnMaxCount.isSelected()) {
+            if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*")){
+                int max = Integer.parseInt(tfMaxCountAmountInput.getText());
+                editor.getNetworkController().createInvitation(COUNT, max, this);
+            } else {
+                tfMaxCountAmountInput.setText("");
+                tfMaxCountAmountInput.setPromptText("Insert Amount");
+            }
+        } else if (radioBtnTemporal.isSelected()) {
+            editor.getNetworkController().createInvitation(TEMPORAL, 0, this);
+        }
+    }
 
+    public void handleInvitation(String invitationLink) {
+        tfInvitationLink.setText(invitationLink);
     }
 
     private void radioBtnMaxCountOnClick(MouseEvent mouseEvent) {
