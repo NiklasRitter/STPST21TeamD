@@ -4,13 +4,20 @@ import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
 import java.util.HashMap;
@@ -251,16 +258,16 @@ public class StageManager extends Application {
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
 
-            //display
-
-            popupStage.setTitle("Emoji Screen");
+            popupStage.setTitle("Emoji Picker");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
             popupStage.setResizable(false);
+
             popupStage.show();
 
         } catch (Exception e) {
             System.err.println("Error on showing EmojiScreen");
+            e.printStackTrace();
         }
     }
 
@@ -386,10 +393,19 @@ public class StageManager extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+
         popupStage = new Stage();
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
-        popupStage.initModality(Modality.WINDOW_MODAL);
+
+        //removes button (close, minimize, maximize from stage)
+        popupStage.initStyle(StageStyle.UNDECORATED);
         popupStage.initOwner(stage);
+        stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                popupStage.hide();
+            }
+        });
+
         editor = new Editor();
         model = editor.haveAccordClient();
         editor.haveLocalUser();
