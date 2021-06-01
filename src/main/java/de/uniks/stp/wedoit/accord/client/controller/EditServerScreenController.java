@@ -149,7 +149,7 @@ public class EditServerScreenController implements Controller {
                 editor.getNetworkController().createInvitation(COUNT, max, server.getId(), localUser.getUserKey(), this);
             } else {
                 tfMaxCountAmountInput.setText("");
-                tfMaxCountAmountInput.setPromptText("Insert Amount > 1");
+                tfMaxCountAmountInput.setPromptText("Insert Amount > 0");
             }
         } else if (radioBtnTemporal.isSelected()) {
             editor.getNetworkController().createInvitation(TEMPORAL, 0, server.getId(), localUser.getUserKey(), this);
@@ -162,7 +162,7 @@ public class EditServerScreenController implements Controller {
         if (invitationLink != null) {
             tfInvitationLink.setText(invitationLink);
         } else {
-            tfInvitationLink.setPromptText("Create invitation again");
+            tfInvitationLink.setPromptText("generation failed");
         }
     }
 
