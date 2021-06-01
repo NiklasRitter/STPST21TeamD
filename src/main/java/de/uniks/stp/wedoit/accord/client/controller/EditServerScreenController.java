@@ -146,18 +146,24 @@ public class EditServerScreenController implements Controller {
         if (radioBtnMaxCount.isSelected()) {
             if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*")){
                 int max = Integer.parseInt(tfMaxCountAmountInput.getText());
-                editor.getNetworkController().createInvitation(COUNT, max, this);
+                editor.getNetworkController().createInvitation(COUNT, max, server.getId(), localUser.getUserKey(), this);
             } else {
                 tfMaxCountAmountInput.setText("");
-                tfMaxCountAmountInput.setPromptText("Insert Amount");
+                tfMaxCountAmountInput.setPromptText("Insert Amount > 1");
             }
         } else if (radioBtnTemporal.isSelected()) {
-            editor.getNetworkController().createInvitation(TEMPORAL, 0, this);
+            editor.getNetworkController().createInvitation(TEMPORAL, 0, server.getId(), localUser.getUserKey(), this);
         }
     }
 
     public void handleInvitation(String invitationLink) {
-        tfInvitationLink.setText(invitationLink);
+        tfMaxCountAmountInput.setText("");
+        tfMaxCountAmountInput.setPromptText("Amount");
+        if (invitationLink != null) {
+            tfInvitationLink.setText(invitationLink);
+        } else {
+            tfInvitationLink.setPromptText("Create invitation again");
+        }
     }
 
     private void radioBtnMaxCountOnClick(MouseEvent mouseEvent) {
