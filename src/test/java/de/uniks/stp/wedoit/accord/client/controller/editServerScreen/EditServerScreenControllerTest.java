@@ -26,11 +26,15 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.DATA;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.LINK;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -172,6 +176,137 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         Assert.assertTrue(btnDelete.isDisabled());
         Assert.assertFalse(btnDelete.isVisible());
     }
+
+    @Test
+    public void createCountInvitationSuccessful() {
+        localUser.setId("owner123");
+        mockRest(buildServerInformationWithTwoMembers());
+        clickOn("#btnEdit");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        when(res.getBody()).thenReturn(new JsonNode(buildInvitationSuccessful().toString()));
+
+        RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
+        TextField tfMaxCountAmountInput = lookup("#tfMaxCountAmountInput").query();
+        TextField tfInvitationLink = lookup("#tfInvitationLink").query();
+
+        clickOn(radioBtnMaxCount);
+        tfMaxCountAmountInput.setText("15");
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        verify(restMock).createInvite(anyInt() ,anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK),tfInvitationLink.getText());
+        Assert.assertEquals("Amount", tfMaxCountAmountInput.getPromptText());
+
+    }
+
+    @Test
+    public void createTemporalInvitationSuccessful() {
+        localUser.setId("owner123");
+        mockRest(buildServerInformationWithTwoMembers());
+        clickOn("#btnEdit");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        when(res.getBody()).thenReturn(new JsonNode(buildInvitationSuccessful().toString()));
+
+        RadioButton radioBtnTemporal = lookup("#radioBtnTemporal").query();
+        TextField tfInvitationLink = lookup("#tfInvitationLink").query();
+
+        clickOn(radioBtnTemporal);
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        verify(restMock).createInvite(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK),tfInvitationLink.getText());
+
+    }
+
+    @Test
+    public void createInvitationTestFailure() {
+        localUser.setId("owner123");
+        mockRest(buildServerInformationWithTwoMembers());
+        clickOn("#btnEdit");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        when(res.getBody()).thenReturn(new JsonNode(buildInvitationFailure().toString()));
+
+        RadioButton radioBtnTemporal = lookup("#radioBtnTemporal").query();
+        RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
+        TextField tfMaxCountAmountInput = lookup("#tfMaxCountAmountInput").query();
+        TextField tfInvitationLink = lookup("#tfInvitationLink").query();
+
+        clickOn(radioBtnMaxCount);
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+
+        clickOn(radioBtnMaxCount);
+        tfMaxCountAmountInput.setText("b");
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+
+        tfMaxCountAmountInput.setText("0");
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+
+        clickOn(radioBtnMaxCount);
+        tfMaxCountAmountInput.setText("15");
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        verify(restMock).createInvite(anyInt() ,anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("generation failed",tfInvitationLink.getPromptText());
+
+        clickOn(radioBtnTemporal);
+        clickOn("#btnCreateInvitation");
+
+        verify(restMock).createInvite(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("generation failed",tfInvitationLink.getPromptText());
+
+    }
+
+    public JsonObject buildInvitationSuccessful() {
+        return Json.createObjectBuilder().add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("id","invitationId")
+                        .add("link","https://ac.uniks.de/api/...invitationId")
+                        .add("type", "temporal")
+                        .add("max", -1)
+                        .add("current", -1)
+                        .add("server", "serverId")
+                ).build();
+    }
+
+    public JsonObject buildInvitationFailure() {
+        return Json.createObjectBuilder().add("status", "failure")
+                .add("message", "")
+                .add("data",Json.createObjectBuilder()).build();
+    }
+
 
     public JsonObject buildServerInformationWithTwoMembers() {
         return Json.createObjectBuilder().add("status", "success").add("message", "")
