@@ -129,6 +129,7 @@ public class PrivateChatsScreenController implements Controller {
         this.btnOptions.setOnAction(null);
         this.tfPrivateChat.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
+        this.btnEmoji.setOnAction(null);
     }
 
     /**

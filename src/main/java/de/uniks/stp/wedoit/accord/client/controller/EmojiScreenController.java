@@ -5,17 +5,11 @@ import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +22,7 @@ public class EmojiScreenController implements Controller {
     private GridPane pane;
     private TextField tfForEmoji;
 
-    private EmojiButton btnEmoji;
+    private EmojiButton emoji;
     private HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<EmojiButton, String>();
     private List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
 
@@ -46,10 +40,10 @@ public class EmojiScreenController implements Controller {
     public void init() {
 
         this.pane = (GridPane) this.view.lookup("#panelForEmojis");
-        this.pane.setStyle("-fx-background-color: #000000;");
-        this.pane.setHgap(15);
-        this.pane.setVgap(15);
+//        this.pane.setStyle("-fx-background-color: #000000;");
         this.pane.setAlignment(Pos.CENTER);
+        this.pane.setHgap(5);
+        this.pane.setVgap(5);
 
         createEmojiPicker();
 
@@ -63,15 +57,14 @@ public class EmojiScreenController implements Controller {
      */
     private void createEmojiPicker() {
         //how many buttons are to fit in one row
-        int gridWidth = 5;
+        int gridWidth = 7;
 
         for (int i = 0; i < iconsUnicodeList.size(); i++) {
-            btnEmoji = new EmojiButton(iconsUnicodeList.get(i).toString());
-            hashMapForEmojiButtons.put(btnEmoji, btnEmoji.getText());
-            btnEmoji.setOnAction(this::btnEmojiOnClick);
-            this.pane.add(btnEmoji, i % gridWidth, i / gridWidth, 1, 1);
+            emoji = new EmojiButton(iconsUnicodeList.get(i).toString());
+            hashMapForEmojiButtons.put(emoji, emoji.getText());
+            emoji.setOnAction(this::btnEmojiOnClick);
+            this.pane.add(emoji, i % gridWidth, i / gridWidth);
         }
-
 
     }
 
@@ -93,6 +86,6 @@ public class EmojiScreenController implements Controller {
      */
     @Override
     public void stop() {
-        btnEmoji.setOnAction(null);
+        emoji.setOnAction(null);
     }
 }
