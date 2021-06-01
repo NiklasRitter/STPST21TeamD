@@ -343,6 +343,28 @@ public class NetworkController {
         return this;
     }
 
+    public void createInvitation(String type, int max, String serverId, String userKey, EditServerScreenController controller) {
+        if (type.equals(TEMPORAL)) {
+            restClient.createInvite(serverId, userKey, invitationResponse -> {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                } else {
+                    controller.handleInvitation(null);
+                }
+                });
+
+        } else if (type.equals(COUNT)) {
+            restClient.createInvite(max, serverId, userKey, invitationResponse -> {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                } else {
+                    controller.handleInvitation(null);
+                }
+            });
+        }
+    }
+
+
     /**
      * Called to stop this controller
      * <p>
@@ -357,4 +379,6 @@ public class NetworkController {
         }
         return this;
     }
+
+
 }
