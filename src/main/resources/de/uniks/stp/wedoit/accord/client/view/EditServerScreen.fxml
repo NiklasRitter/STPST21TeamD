@@ -75,7 +75,7 @@
                            </font>
                         </Button>
                         <Region prefHeight="20.0" />
-                        <TextField id="tfInvitationLink" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="290.0" promptText="Invitation link">
+                        <TextField id="tfInvitationLink" editable="false" prefHeight="25.0" prefWidth="290.0" promptText="Invitation link">
                            <font>
                               <Font size="14.0" />
                            </font>
