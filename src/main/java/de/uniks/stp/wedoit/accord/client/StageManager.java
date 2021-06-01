@@ -344,6 +344,32 @@ public class StageManager extends Application {
         }
     }
 
+    public static void showAttentionScreen(Object obejctToDelete) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/AttentionScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            AttentionScreenController attentionScreenController = new AttentionScreenController(root, model.getLocalUser(), editor, obejctToDelete);
+            attentionScreenController.init();
+            controllerMap.put("editServerScreenController", attentionScreenController);
+
+            //display
+            popupStage.setTitle("Attention");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing EditServerScreen");
+            e.printStackTrace();
+        }
+    }
+
     private static void cleanup() {
         stopController();
 

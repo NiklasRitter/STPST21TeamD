@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
@@ -135,7 +136,7 @@ public class EditServerScreenController implements Controller {
     }
 
     private void deleteButtonOnClick(ActionEvent actionEvent) {
-
+        StageManager.showAttentionScreen(this.server);
     }
 
     private void createInvitationButtonOnClick(ActionEvent actionEvent) {
