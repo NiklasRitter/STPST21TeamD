@@ -67,7 +67,7 @@ public class NetworkController {
         String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
-            cleanLocalUserName =  newName;
+            cleanLocalUserName = newName;
         } catch (UnsupportedEncodingException e) {
             cleanLocalUserName = this.editor.getLocalUser().getName();
         }
@@ -351,7 +351,7 @@ public class NetworkController {
                 } else {
                     controller.handleInvitation(null);
                 }
-                });
+            });
 
         } else if (type.equals(COUNT)) {
             restClient.createInvite(max, serverId, userKey, invitationResponse -> {

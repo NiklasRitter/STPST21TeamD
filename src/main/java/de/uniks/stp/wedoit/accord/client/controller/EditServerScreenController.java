@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.event.ActionEvent;
@@ -144,7 +143,7 @@ public class EditServerScreenController implements Controller {
 
     private void createInvitationButtonOnClick(ActionEvent actionEvent) {
         if (radioBtnMaxCount.isSelected()) {
-            if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*")){
+            if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*")) {
                 int max = Integer.parseInt(tfMaxCountAmountInput.getText());
                 editor.getNetworkController().createInvitation(COUNT, max, server.getId(), localUser.getUserKey(), this);
             } else {

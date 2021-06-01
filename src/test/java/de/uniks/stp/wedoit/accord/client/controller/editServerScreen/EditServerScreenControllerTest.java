@@ -195,13 +195,13 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         clickOn("#btnCreateInvitation");
         WaitForAsyncUtils.waitForFxEvents();
 
-        verify(restMock).createInvite(anyInt() ,anyString(), anyString(), callbackArgumentCaptor.capture());
+        verify(restMock).createInvite(anyInt(), anyString(), anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK),tfInvitationLink.getText());
+        Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK), tfInvitationLink.getText());
         Assert.assertEquals("Amount", tfMaxCountAmountInput.getPromptText());
 
     }
@@ -228,7 +228,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK),tfInvitationLink.getText());
+        Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK), tfInvitationLink.getText());
 
     }
 
@@ -267,13 +267,13 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         clickOn("#btnCreateInvitation");
         WaitForAsyncUtils.waitForFxEvents();
 
-        verify(restMock).createInvite(anyInt() ,anyString(), anyString(), callbackArgumentCaptor.capture());
+        verify(restMock).createInvite(anyInt(), anyString(), anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("generation failed",tfInvitationLink.getPromptText());
+        Assert.assertEquals("generation failed", tfInvitationLink.getPromptText());
 
         clickOn(radioBtnTemporal);
         clickOn("#btnCreateInvitation");
@@ -284,7 +284,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("generation failed",tfInvitationLink.getPromptText());
+        Assert.assertEquals("generation failed", tfInvitationLink.getPromptText());
 
     }
 
@@ -292,8 +292,8 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         return Json.createObjectBuilder().add("status", "success")
                 .add("message", "")
                 .add("data", Json.createObjectBuilder()
-                        .add("id","invitationId")
-                        .add("link","https://ac.uniks.de/api/...invitationId")
+                        .add("id", "invitationId")
+                        .add("link", "https://ac.uniks.de/api/...invitationId")
                         .add("type", "temporal")
                         .add("max", -1)
                         .add("current", -1)
@@ -304,7 +304,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     public JsonObject buildInvitationFailure() {
         return Json.createObjectBuilder().add("status", "failure")
                 .add("message", "")
-                .add("data",Json.createObjectBuilder()).build();
+                .add("data", Json.createObjectBuilder()).build();
     }
 
 
