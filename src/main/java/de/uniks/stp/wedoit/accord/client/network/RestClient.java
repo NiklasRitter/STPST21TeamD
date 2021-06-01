@@ -152,6 +152,22 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void createInvite(String serverId, String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
+                .header(USER_KEY, userKey)
+                .body(Json.createObjectBuilder().add(TYPE, TEMPORAL).build().toString());
+
+        sendRequest(req, callback);
+    }
+
+    public void createInvite(int max, String serverId, String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
+                .header(USER_KEY, userKey)
+                .body(Json.createObjectBuilder().add(TYPE, COUNT).add(MAX, max).build().toString());
+
+        sendRequest(req, callback);
+    }
+
     /**
      * Send a Request and call the Callback asynchronously.
      *
@@ -161,4 +177,6 @@ public class RestClient {
     private void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         req.asJsonAsync(callback);
     }
+
+
 }
