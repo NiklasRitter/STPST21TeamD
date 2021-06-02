@@ -19,5 +19,7 @@ public class Network {
     public static final String AND_SERVER_ID_URL = "&" + SERVER_ID_URL;
     public static final String CATEGORIES = "/categories";
     public static final String CHANNELS = "/channels";
+    public static final String INVITES = "/invites";
     public static final String PRIVATE_USER_CHAT_PREFIX = WS_SERVER_URL + CHAT_PATH + "?user=";
+
 }

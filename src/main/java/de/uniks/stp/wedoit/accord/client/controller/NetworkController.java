@@ -67,7 +67,7 @@ public class NetworkController {
         String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
-            cleanLocalUserName =  newName;
+            cleanLocalUserName = newName;
         } catch (UnsupportedEncodingException e) {
             cleanLocalUserName = this.editor.getLocalUser().getName();
         }
@@ -372,6 +372,36 @@ public class NetworkController {
     }
 
     /**
+     * This method does a rest request to create a new invitation link
+     * @param type type of the invitation, means temporal or count with a int max
+     * @param max maximum size of users who can use this link, is the type temporal max is ignored
+     * @param serverId id of the server
+     * @param userKey userKey of the logged in local user
+     * @param controller controller which handles the new link
+     */
+    public void createInvitation(String type, int max, String serverId, String userKey, EditServerScreenController controller) {
+        if (type.equals(TEMPORAL)) {
+            restClient.createInvite(serverId, userKey, invitationResponse -> {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                } else {
+                    controller.handleInvitation(null);
+                }
+            });
+
+        } else if (type.equals(COUNT)) {
+            restClient.createInvite(max, serverId, userKey, invitationResponse -> {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                } else {
+                    controller.handleInvitation(null);
+                }
+            });
+        }
+    }
+
+
+    /**
      * Called to stop this controller
      * <p>
      * Stop and remove WebSocketClients
@@ -385,4 +415,6 @@ public class NetworkController {
         }
         return this;
     }
+
+
 }
