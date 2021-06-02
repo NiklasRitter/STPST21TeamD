@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -189,6 +190,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
         TextField tfMaxCountAmountInput = lookup("#tfMaxCountAmountInput").query();
         TextField tfInvitationLink = lookup("#tfInvitationLink").query();
+        Label labelCopy = (Label) lookup("#labelCopy").query();
 
         clickOn(radioBtnMaxCount);
         tfMaxCountAmountInput.setText("15");
@@ -203,6 +205,12 @@ public class EditServerScreenControllerTest extends ApplicationTest {
 
         Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK), tfInvitationLink.getText());
         Assert.assertEquals("Amount", tfMaxCountAmountInput.getPromptText());
+
+        clickOn(tfInvitationLink);
+        Assert.assertEquals("Copied", labelCopy.getText());
+        WaitForAsyncUtils.asyncFx(() -> {
+            Assert.assertEquals(Clipboard.getSystemClipboard().getString(), tfInvitationLink.getText());
+        });
 
     }
 
@@ -286,6 +294,11 @@ public class EditServerScreenControllerTest extends ApplicationTest {
 
         Assert.assertEquals("generation failed", tfInvitationLink.getPromptText());
 
+        Label labelCopy = (Label) lookup("#labelCopy").query();
+
+        clickOn(tfInvitationLink);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("First create invitation", labelCopy.getText());
     }
 
     public JsonObject buildInvitationSuccessful() {
