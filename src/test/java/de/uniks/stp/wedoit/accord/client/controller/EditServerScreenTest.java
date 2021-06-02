@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.editServerScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -39,8 +39,14 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class EditServerScreenControllerTest extends ApplicationTest {
+public class EditServerScreenTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
+    @Mock
+    WebSocketClient webSocketClientMock;
+    @Mock
+    WebSocketClient chatWebSocketClientMock;
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
@@ -49,14 +55,8 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     private RestClient restMock;
     @Mock
     private HttpResponse<JsonNode> res;
-    @Mock
-    WebSocketClient webSocketClientMock;
-    @Mock
-    WebSocketClient chatWebSocketClientMock;
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     @BeforeClass
     public static void before() {
@@ -196,9 +196,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
 
         Label lblError = (Label) lookup("#lblError").query();
 
-        clickOn("#tfNewServernameInput");
-
-        write("TestServerName");
+        ((TextField) lookup("#tfNewServernameInput").query()).setText("TestServerName");
 
         clickOn("#btnSave");
 
@@ -227,9 +225,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
 
         Label lblError = (Label) lookup("#lblError").query();
 
-        clickOn("#tfNewServernameInput");
-
-        write("TestServerName");
+        ((TextField) lookup("#tfNewServernameInput").query()).setText("TestServerName");
 
         clickOn("#btnSave");
 

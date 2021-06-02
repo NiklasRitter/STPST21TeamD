@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.loginScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -27,12 +27,9 @@ import javax.json.Json;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-
-public class RegisterTest extends ApplicationTest {
+public class LoginScreenTest extends ApplicationTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -110,17 +107,154 @@ public class RegisterTest extends ApplicationTest {
     }
 
     @Test
+    public void testBtnOptions() {
+        // testing options button
+        clickOn("#btnOptions");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+    }
+
+    @Test
+    public void testSuccessfulLogin() {
+
+        String returnMessage = Json.createObjectBuilder().add("status", "success").add("message", "").add("data", Json.createObjectBuilder().add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")).build().toString();
+
+        //Mocking of RestClient login function
+        when(res.getBody()).thenReturn(new JsonNode(returnMessage));
+
+        //TestFX
+        String username = "username";
+        String password = "password";
+
+        ((TextField) lookup("#tfUserName").query()).setText(username);
+
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
+
+        clickOn("#btnLogin");
+
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        Assert.assertEquals("success", res.getBody().getObject().getString("status"));
+        Assert.assertEquals("", res.getBody().getObject().getString("message"));
+        Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", res.getBody().getObject().getJSONObject("data").getString("userKey"));
+
+        Assert.assertEquals(username, stageManager.getEditor().getLocalUser().getName());
+        Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", stageManager.getEditor().getLocalUser().getUserKey());
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+    }
+
+
+    @Test
+    public void testLoginInvalidCredentials() {
+        String returnMessage = Json.createObjectBuilder()
+                .add("status", "failure")
+                .add("message", "Invalid credentials")
+                .add("data", Json.createObjectBuilder())
+                .build().toString();
+
+        //Mocking of RestClient login function
+        when(res.getBody()).thenReturn(new JsonNode(returnMessage));
+
+        //TestFX
+        String username = "username";
+        String password = "password";
+
+        ((TextField) lookup("#tfUserName").query()).setText(username);
+
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
+
+        clickOn("#btnLogin");
+
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("failure", res.getBody().getObject().getString("status"));
+        Assert.assertEquals("Invalid credentials", res.getBody().getObject().getString("message"));
+        Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
+
+        TextField tfUserName = lookup("#tfUserName").query();
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+
+        TextField pwUserPw = lookup("#pwUserPw").query();
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+
+        Label errorLabel = lookup("#lblError").query();
+        Assert.assertEquals("Username or password is wrong.", errorLabel.getText());
+
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
+    }
+
+    @Test
+    public void testLoginMissingUsername() {
+        //TestFX
+        String password = "password";
+
+        ((TextField) lookup("#tfUserName").query()).setText("");
+
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
+
+        clickOn("#btnLogin");
+
+        Label errorLabel = lookup("#lblError").query();
+        Assert.assertEquals("Username or password is missing", errorLabel.getText());
+
+        TextField tfUserName = lookup("#tfUserName").query();
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+
+        TextField pwUserPw = lookup("#pwUserPw").query();
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
+    }
+
+
+    @Test
+    public void testLoginMissingPassword() {
+
+        //TestFX
+        String username = "username";
+
+        ((TextField) lookup("#tfUserName").query()).setText(username);
+
+        ((TextField) lookup("#pwUserPw").query()).setText("");
+
+        clickOn("#btnLogin");
+
+        Label errorLabel = lookup("#lblError").query();
+        Assert.assertEquals("Username or password is missing", errorLabel.getText());
+
+        TextField tfUserName = lookup("#tfUserName").query();
+        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+
+        TextField pwUserPw = lookup("#pwUserPw").query();
+        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
+    }
+
+    @Test
     public void testSuccessfulRegister() {
 
         //TestFX
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnRegister");
 
@@ -168,7 +302,7 @@ public class RegisterTest extends ApplicationTest {
     }
 
     @Test
-    public void testUsernameTaken() {
+    public void testRegisterUsernameTaken() {
 
         String returnMessage = Json.createObjectBuilder()
                 .add("status", "failure")
@@ -183,11 +317,9 @@ public class RegisterTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnRegister");
 
@@ -216,15 +348,13 @@ public class RegisterTest extends ApplicationTest {
     }
 
     @Test
-    public void testMissingUsername() {
+    public void testRegisterMissingUsername() {
         //TestFX
         String password = "password";
 
-        clickOn("#tfUserName");
-        write("");
+        ((TextField) lookup("#tfUserName").query()).setText("");
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnRegister");
 
@@ -242,16 +372,14 @@ public class RegisterTest extends ApplicationTest {
     }
 
     @Test
-    public void testMissingPassword() {
+    public void testRegisterMissingPassword() {
 
         //TestFX
         String username = "username";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write("");
+        ((TextField) lookup("#pwUserPw").query()).setText("");
 
         clickOn("#btnRegister");
 
