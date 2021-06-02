@@ -3,15 +3,16 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
@@ -36,6 +37,7 @@ public class EditServerScreenController implements Controller {
 
     private VBox vBoxAdminOnly;
     private VBox mainVBox;
+    private Label labelCopy;
 
 
     /**
@@ -72,6 +74,7 @@ public class EditServerScreenController implements Controller {
         this.tfNewServernameInput = (TextField) view.lookup("#tfNewServernameInput");
         this.tfMaxCountAmountInput = (TextField) view.lookup("#tfMaxCountAmountInput");
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
+        this.labelCopy = (Label) view.lookup("#labelCopy");
 
         this.vBoxAdminOnly = (VBox) view.lookup("#vBoxAdminOnly");
         this.mainVBox = (VBox) view.lookup("#mainVBox");
@@ -92,6 +95,7 @@ public class EditServerScreenController implements Controller {
         this.btnSave.setOnAction(this::saveButtonOnClick);
         this.radioBtnMaxCount.setOnMouseClicked(this::radioBtnMaxCountOnClick);
         this.radioBtnTemporal.setOnMouseClicked(this::radioBtnTemporalOnClick);
+        this.tfInvitationLink.setOnMouseClicked(this::copyInvitationLinkOnClick);
     }
 
     /**
@@ -177,4 +181,31 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    private void copyInvitationLinkOnClick(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 1) {
+
+            if (!tfInvitationLink.getText().equals("")) {
+                final Clipboard clipboard = Clipboard.getSystemClipboard();
+                final ClipboardContent content = new ClipboardContent();
+                content.putString(tfInvitationLink.getText());
+                clipboard.setContent(content);
+                labelCopy.setText("Copied");
+
+            } else {
+                labelCopy.setText("First create invitation");
+            }
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(() -> {
+                    if (((Stage) view.getScene().getWindow()).getTitle().equals("Edit Server")) {
+                        labelCopy.setText("");
+                    }
+                });
+            }).start();
+        }
+    }
 }
