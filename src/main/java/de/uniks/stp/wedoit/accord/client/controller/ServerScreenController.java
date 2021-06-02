@@ -40,6 +40,7 @@ public class ServerScreenController implements Controller {
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
+    private Button btnEmoji;
     private Label lbServerName;
 
     private TreeView<Object> tvServerChannels;
@@ -84,12 +85,15 @@ public class ServerScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
+        this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.lbServerName = (Label) view.lookup("#lbServerName");
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
+
+        btnEmoji.setOnAction(this::btnEmojiOnClick);
 
         this.lbServerName.setText(server.getName());
         // Add server websocket
@@ -112,6 +116,10 @@ public class ServerScreenController implements Controller {
         addActionListener();
 
         initTooltips();
+    }
+
+    private void btnEmojiOnClick(ActionEvent actionEvent) {
+        StageManager.showEmojiScreen(tfInputMessage);
     }
 
     public void addActionListener() {
@@ -152,6 +160,7 @@ public class ServerScreenController implements Controller {
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
+        this.btnEmoji.setOnAction(null);
         this.tfInputMessage.setOnAction(null);
         this.tvServerChannels.setOnMouseReleased(null);
 
@@ -170,7 +179,6 @@ public class ServerScreenController implements Controller {
         editor.setCurrentServer(null);
         deleteCurrentServer();
     }
-
 
     // Additional methods
 
