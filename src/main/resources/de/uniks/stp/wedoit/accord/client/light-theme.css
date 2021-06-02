@@ -57,6 +57,6 @@
 
 .newMessage {
     -fx-text-fill: #000000;
-    -fx-background-color: #ff0000;
-    -fx-border-color: #660000;
+    -fx-background-color: rgba(255, 0, 0, 0.75);
+    -fx-border-color: rgba(127, 0, 0, 0.5);
 }
