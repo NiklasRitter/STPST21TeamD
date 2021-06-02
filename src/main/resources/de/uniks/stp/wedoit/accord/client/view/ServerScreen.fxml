@@ -72,7 +72,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color blue="1.0" green="1.0" red="1.0" />
+                                    <Color red="1.0" green="1.0" blue="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -94,6 +94,11 @@
                            </image>
                         </ImageView>
                      </graphic>
+                  </Button>
+                  <Button id="btnEdit" mnemonicParsing="false" prefHeight="40.0" prefWidth="48.0" styleClass="styleButton" text="Edit" textAlignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                   </Button>
                   <Region VBox.vgrow="ALWAYS" />
                   <Button id="btnLogout" alignment="CENTER" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">

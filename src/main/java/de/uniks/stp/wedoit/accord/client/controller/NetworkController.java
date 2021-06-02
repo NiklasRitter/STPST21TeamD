@@ -26,6 +26,7 @@ public class NetworkController {
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final Editor editor;
     private RestClient restClient = new RestClient();
+    private String cleanLocalUserName;
 
     /**
      * Create a NetworkController.
@@ -34,6 +35,10 @@ public class NetworkController {
      */
     public NetworkController(Editor editor) {
         this.editor = editor;
+    }
+
+    public String getCleanLocalUserName() {
+        return cleanLocalUserName;
     }
 
     public RestClient getRestClient() {
@@ -52,19 +57,21 @@ public class NetworkController {
      * Create default WebSocketClients.
      */
     public NetworkController start() {
+        setClearUsername();
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
-        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername(), this::handlePrivateChatMessage);
+        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + cleanLocalUserName, this::handlePrivateChatMessage);
         return this;
     }
 
-    public String clearUsername() {
+    public String setClearUsername() {
         String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
+            cleanLocalUserName =  newName;
         } catch (UnsupportedEncodingException e) {
-            return this.editor.getLocalUser().getName();
+            cleanLocalUserName = this.editor.getLocalUser().getName();
         }
-        return newName;
+        return cleanLocalUserName;
     }
 
     /**
@@ -173,7 +180,7 @@ public class NetworkController {
      */
     public NetworkController sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername());
+                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + cleanLocalUserName);
         webSocketClient.sendMessage(jsonMsgString);
         return this;
     }
@@ -185,7 +192,7 @@ public class NetworkController {
      */
     public NetworkController sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(CHAT_USER_URL + clearUsername()
+                getOrCreateWebSocket(CHAT_USER_URL + cleanLocalUserName
                         + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
         return this;
@@ -263,6 +270,18 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController changeServerName(LocalUser localUser, Server server, String newServerName, EditServerScreenController controller) {
+        restClient.changeServerName(server.getId(), newServerName, localUser.getUserKey(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                server.setName(newServerName);
+                controller.handleChangeServerName(true);
+            } else {
+                controller.handleChangeServerName(false);
+            }
+        });
+        return this;
+    }
+
     public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
@@ -274,6 +293,24 @@ public class NetworkController {
                 editor.haveUser(id, name);
             }
             controller.handleGetOnlineUsers();
+        });
+        return this;
+    }
+
+    public NetworkController getLocalUserId(LocalUser localUser) {
+        // load online Users
+        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
+            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(DATA);
+
+            for (int index = 0; index < getServersResponse.length(); index++) {
+                String name = getServersResponse.getJSONObject(index).getString(NAME);
+                String id = getServersResponse.getJSONObject(index).getString(ID);
+                if (name.equals(localUser.getName())) {
+                    localUser.setId(id);
+                    return;
+                }
+            }
+
         });
         return this;
     }
@@ -313,6 +350,22 @@ public class NetworkController {
                 controller.handleGetChannels(channelList, categoryItem);
             } else {
                 controller.handleGetChannels(null, categoryItem);
+            }
+        });
+        return this;
+    }
+
+    public NetworkController createCategory(Server server, String categoryNameInput, CreateCategoryScreenController controller) {
+        restClient.createCategory(server.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JSONObject createCategoryAnswer = response.getBody().getObject().getJSONObject(DATA);
+                String categoryId = createCategoryAnswer.getString(ID);
+                String categoryName = createCategoryAnswer.getString(NAME);
+
+                Category category = editor.haveCategory(categoryId, categoryName, server);
+                controller.handleCreateCategory(category);
+            } else {
+                controller.handleCreateCategory(null);
             }
         });
         return this;

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class Editor {
 
@@ -66,6 +67,7 @@ public class Editor {
         }
         localUser.setName(username);
         localUser.setUserKey(userKey);
+        networkController.setClearUsername();
         return localUser;
     }
 
@@ -267,6 +269,11 @@ public class Editor {
      * @param message to add to the model
      */
     public void addNewPrivateMessage(PrivateMessage message) {
+        if(message.getText().equals(GAMEINVITE)){
+            if(message.getFrom().equals(getLocalUser().getName())) getLocalUser().withGameRequests(getUser(message.getTo()));
+            else getLocalUser().withGameInvites(getUser(message.getFrom()));
+            message.setText(message.getText().substring(PREFIX.length()));
+        }
         if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
         } else {
@@ -324,10 +331,22 @@ public class Editor {
      * return null, if user was not in the members list
      */
     public Server userWithoutServer(String id, Server server) {
+        User thisUser = null;
         for (User user : server.getMembers()) {
             if (user.getId().equals(id)) {
-                return server.withoutMembers(user);
+                thisUser = user;
+                server.withoutMembers(user);
             }
+        }
+        if (thisUser != null) {
+            for (Category category : server.getCategories()) {
+                for (Channel channel : category.getChannels()) {
+                    if (channel.getMembers().contains(thisUser)) {
+                        channel.withoutMembers(thisUser);
+                    }
+                }
+            }
+            return server;
         }
         return null;
     }

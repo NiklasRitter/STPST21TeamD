@@ -64,7 +64,7 @@
   roles: 	user_channels 	user_servers 	user_privateChat 	user_localUser
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_name 	localUser_userKey
+  attributes: 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -484,6 +484,35 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- localUser_id: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- localUser_gameInvites: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  collectionType: 	c1
+  id: 	LocalUser_gameInvites
+  modified: 	false
+  name: 	gameInvites
+  propertyStyle: 	Bean
+  type: 	User
+  typeSignature: 	User
+
+- localUser_gameRequests: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  collectionType: 	c1
+  id: 	LocalUser_gameRequests
+  modified: 	false
+  name: 	gameRequests
+  propertyStyle: 	Bean
+  type: 	User
+  typeSignature: 	User
 
 - localUser_servers: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
