@@ -80,6 +80,11 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
+                        <Label id="labelCopy">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </VBox>
                </children>
