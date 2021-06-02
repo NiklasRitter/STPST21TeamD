@@ -145,6 +145,10 @@ public class EditServerScreenController implements Controller {
 
     }
 
+    /**
+     * Call the network controller if the input for a invitation is valid
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void createInvitationButtonOnClick(ActionEvent actionEvent) {
         if (radioBtnMaxCount.isSelected()) {
             if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*")) {
@@ -159,6 +163,10 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    /**
+     * handle a new invitation link in the EditServerScreen and show the link in the screen
+     * @param invitationLink invitation link which is responded by the server
+     */
     public void handleInvitation(String invitationLink) {
         tfMaxCountAmountInput.setText("");
         tfMaxCountAmountInput.setPromptText("Amount");
@@ -181,6 +189,13 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    /**
+     * This method copies the invitation link and put the link in the system clipboard
+     * <p>
+     * shows "Copied" for 1.5 seconds if there is a link
+     * else shows "First create invitation"
+     *
+     */
     private void copyInvitationLinkOnClick(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
 

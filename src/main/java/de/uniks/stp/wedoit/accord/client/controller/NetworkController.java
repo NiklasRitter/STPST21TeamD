@@ -343,6 +343,14 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * This method does a rest request to create a new invitation link
+     * @param type type of the invitation, means temporal or count with a int max
+     * @param max maximum size of users who can use this link, is the type temporal max is ignored
+     * @param serverId id of the server
+     * @param userKey userKey of the logged in local user
+     * @param controller controller which handles the new link
+     */
     public void createInvitation(String type, int max, String serverId, String userKey, EditServerScreenController controller) {
         if (type.equals(TEMPORAL)) {
             restClient.createInvite(serverId, userKey, invitationResponse -> {

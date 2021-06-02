@@ -152,6 +152,12 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * creates a request to get a temporal invitation link
+     * @param serverId id of the server for which the link is
+     * @param userKey userKey of the logged in local user
+     * @param callback callback which have new link
+     */
     public void createInvite(String serverId, String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
                 .header(USER_KEY, userKey)
@@ -160,6 +166,12 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * creates a request to get a invitation link with count type and a maximum count of users who can use the link
+     * @param serverId id of the server for which the link is
+     * @param userKey userKey of the logged in local user
+     * @param callback callback which have new link
+     */
     public void createInvite(int max, String serverId, String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
                 .header(USER_KEY, userKey)
