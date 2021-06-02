@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.editServerScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -35,7 +35,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class EditServerScreenControllerTest extends ApplicationTest {
+public class EditServerScreenTest extends ApplicationTest {
 
     private Stage stage;
     private StageManager stageManager;

@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.mainScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -33,8 +33,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-
-public class MainScreenControllerTest extends ApplicationTest {
+public class MainScreenTest extends ApplicationTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -83,9 +82,11 @@ public class MainScreenControllerTest extends ApplicationTest {
         localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
-        StageManager.showMainScreen();
+        StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -113,6 +114,34 @@ public class MainScreenControllerTest extends ApplicationTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    public void directToMainScreen() {
+        //Mocking of RestClient login function
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
+                ).build();
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+
+        //TestFX
+        String username = "username";
+        String password = "password";
+
+        clickOn("#tfUserName");
+        write(username);
+
+        clickOn("#pwUserPw");
+        write(password);
+
+        clickOn("#btnLogin");
+
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
+        callbackLogin.completed(res);
+    }
+
     /**
      * Mock the rest client's getServers method and create a callback
      *
@@ -128,7 +157,42 @@ public class MainScreenControllerTest extends ApplicationTest {
     }
 
     @Test
+    public void testBtnLogout() {
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "Logged out")
+                .add("data", "{}")
+                .build();
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+
+        directToMainScreen();
+
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
+        // testing logout button
+        clickOn("#btnLogout");
+
+        verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callbackLogout = callbackArgumentCaptor.getValue();
+        callbackLogout.completed(res);
+
+        Assert.assertEquals("success", res.getBody().getObject().getString("status"));
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Login", stage.getTitle());
+    }
+
+
+    @Test
     public void privateChatsButtonTest() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
 
@@ -138,6 +202,11 @@ public class MainScreenControllerTest extends ApplicationTest {
 
     @Test
     public void optionsButtonTest() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
         clickOn("#btnOptions");
         Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
@@ -145,6 +214,11 @@ public class MainScreenControllerTest extends ApplicationTest {
     // Test: list View load servers correct in the list view and sorted alphabetical
     @Test
     public void loadListViewWithTwoServersTest() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         // Mock the rest client getServers method
@@ -168,6 +242,11 @@ public class MainScreenControllerTest extends ApplicationTest {
     // Test: list View load zero servers correct in the list view
     @Test
     public void loadListViewWithZeroServersTest() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
         JsonObject json = buildGetServersSuccessWithZeroServers();
 
         // Mock the rest client getServers method
@@ -182,6 +261,11 @@ public class MainScreenControllerTest extends ApplicationTest {
     // Test: list view change correct with alphabetical order when a new server was created
     @Test
     public void listViewAddPropertyChangeListenerTest() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         mockRestClient(json);
@@ -215,6 +299,11 @@ public class MainScreenControllerTest extends ApplicationTest {
     // Test getServer failure message handling, server show LoginScreen
     @Test
     public void failureMessageTest() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
         JsonObject json = buildGetServersFailureResponse();
 
         mockRestClient(json);
@@ -226,6 +315,10 @@ public class MainScreenControllerTest extends ApplicationTest {
     // Test open server with a double click on this one
     @Test
     public void openServerDoubleClickedTest() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
 
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
@@ -268,6 +361,11 @@ public class MainScreenControllerTest extends ApplicationTest {
 
     @Test
     public void handleServerMessage() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
         ListView<Server> listView = lookup("#lwServerList").queryListView();
         Assert.assertNotNull(listView);
 
