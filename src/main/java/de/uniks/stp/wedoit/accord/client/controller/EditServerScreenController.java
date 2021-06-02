@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -18,6 +19,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 
 public class EditServerScreenController implements Controller {
@@ -216,18 +218,19 @@ public class EditServerScreenController implements Controller {
             } else {
                 labelCopy.setText("First create invitation");
             }
-            new Thread(() -> {
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Platform.runLater(() -> {
-                    if (((Stage) view.getScene().getWindow()).getTitle().equals("Edit Server")) {
-                        labelCopy.setText("");
-                    }
-                });
-            }).start();
+
+            PauseTransition visiblePause = new PauseTransition(
+                    Duration.seconds(2)
+            );
+            visiblePause.setOnFinished(
+                    event -> {
+                        if (((Stage) view.getScene().getWindow()).getTitle().equals("Edit Server")) {
+                            if (!labelCopy.getText().equals("")) {
+                                labelCopy.setText("");
+                            }
+                        }
+                    });
+            visiblePause.play();
         }
     }
 

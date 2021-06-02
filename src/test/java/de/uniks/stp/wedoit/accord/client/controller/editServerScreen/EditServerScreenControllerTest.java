@@ -260,6 +260,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         Label labelCopy = (Label) lookup("#labelCopy").query();
 
         clickOn(radioBtnMaxCount);
+        Assert.assertTrue(tfMaxCountAmountInput.isEditable());
         tfMaxCountAmountInput.setText("15");
         clickOn("#btnCreateInvitation");
         WaitForAsyncUtils.waitForFxEvents();
