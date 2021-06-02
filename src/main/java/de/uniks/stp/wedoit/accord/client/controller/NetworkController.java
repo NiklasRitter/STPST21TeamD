@@ -270,6 +270,18 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController changeServerName(LocalUser localUser, Server server, String newServerName, EditServerScreenController controller) {
+        restClient.changeServerName(server.getId(), newServerName, localUser.getUserKey(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                server.setName(newServerName);
+                controller.handleChangeServerName(true);
+            } else {
+                controller.handleChangeServerName(false);
+            }
+        });
+        return this;
+    }
+
     public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
@@ -338,6 +350,22 @@ public class NetworkController {
                 controller.handleGetChannels(channelList, categoryItem);
             } else {
                 controller.handleGetChannels(null, categoryItem);
+            }
+        });
+        return this;
+    }
+
+    public NetworkController createCategory(Server server, String categoryNameInput, CreateCategoryScreenController controller) {
+        restClient.createCategory(server.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JSONObject createCategoryAnswer = response.getBody().getObject().getJSONObject(DATA);
+                String categoryId = createCategoryAnswer.getString(ID);
+                String categoryName = createCategoryAnswer.getString(NAME);
+
+                Category category = editor.haveCategory(categoryId, categoryName, server);
+                controller.handleCreateCategory(category);
+            } else {
+                controller.handleCreateCategory(null);
             }
         });
         return this;

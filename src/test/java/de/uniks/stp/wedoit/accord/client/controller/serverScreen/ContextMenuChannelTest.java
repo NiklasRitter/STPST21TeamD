@@ -26,6 +26,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -114,24 +116,6 @@ public class ContextMenuChannelTest extends ApplicationTest {
         server = null;
     }
 
-    public void mockRest(JsonObject restClientJson) {
-        // mock rest client
-        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
-
-        verify(restMock).getExplicitServerInformation(anyString(), anyString(), callbackArgumentCaptor.capture());
-
-        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
-        callback.completed(res);
-    }
-
-    public void mockWebSocket(JsonObject webSocketJson) {
-        // mock websocket
-        verify(webSocketClient).setCallback(callbackArgumentCaptorWebSocket.capture());
-        this.wsCallback = callbackArgumentCaptorWebSocket.getValue();
-
-        this.wsCallback.handleMessage(webSocketJson);
-    }
-
     public void mockChannelRest(JsonObject restClientJson) {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
@@ -146,34 +130,57 @@ public class ContextMenuChannelTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).getCategories(anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
+        verify(restMock).createCategory(anyString(), anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
         callback.completed(res);
     }
 
-    public void mockChatWebSocket(JsonObject webSocketJson) {
-        // mock websocket
-        verify(chatWebSocketClient, atLeastOnce()).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
-        WSCallback chatWsCallback = chatCallbackArgumentCaptorWebSocket.getValue();
+    @Test
+    public void createCategoryTest(){
+        Platform.runLater(StageManager::showCreateCategoryScreen);
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = (Button) lookup("#btnCreateCategory").query();
+        Assert.assertEquals(button.getText(), "Create");
 
-        chatWsCallback.handleMessage(webSocketJson);
-    }
+        TextField textField = (TextField) lookup("#tfCategoryName").query();
+        textField.setText("testCategory");
+        clickOn("#btnCreateCategory");
 
-    private void initChannelListView() {
-        JsonObject categoriesRestJson = getServerCategories();
-        mockCategoryRest(categoriesRestJson);
-        JsonObject channelRestJson = getCategoryChannels();
-        mockChannelRest(channelRestJson);
+        JsonObject json = buildCreateCategory("123", "testCategory", this.server.getId());
+        mockCategoryRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Category newCategory = null;
+        for(Category cat : this.server.getCategories()){
+            if(cat.getId().equals("123")){
+                newCategory = cat;
+            }
+        }
+        Assert.assertNotNull(newCategory);
+        Assert.assertEquals(newCategory.getName(), "testCategory");
     }
 
     @Test
-    public void createCategoryScreenControlerTest(){
-        Platform.runLater(() -> {
-            StageManager.showCreateCategoryScreen();
-            Button button = (Button) lookup("#btnCreateCategory").query();
-            Assert.assertEquals(button.getText(), "Create");
-        });
+    public void createCategoryFailureTest(){
+        Platform.runLater(StageManager::showCreateCategoryScreen);
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = (Button) lookup("#btnCreateCategory").query();
+        Assert.assertEquals(button.getText(), "Create");
+
+        clickOn("#btnCreateCategory");
+        Label errorLabel = (Label) lookup("#lblError").query();
+        Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
+
+        TextField textField = (TextField) lookup("#tfCategoryName").query();
+        textField.setText("testCategory");
+        clickOn("#btnCreateCategory");
+
+        JsonObject json = buildCreateCategoryFailure();
+        mockCategoryRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(errorLabel.getText(), "Something went wrong while creating the category");
     }
 
     @Test
@@ -194,74 +201,26 @@ public class ContextMenuChannelTest extends ApplicationTest {
         });
     }
 
-    public JsonObject getCategories() {
-        return Json.createObjectBuilder()
-                .add("status", "success").add("message", "")
-                .add("data", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                                .add("id", "5e2ffbd8770dd077d03df505")
-                                .add("name", "Category1")
-                                .add("server", "123").add("channels", Json.createArrayBuilder())
-                        )).build();
-    }
-
-    public JsonObject getChannels() {
-        return Json.createObjectBuilder()
-                .add("status", "success").add("message", "")
-                .add("data", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                                .add("id", "channel1")
-                                .add("name", "Channel_1")
-                                .add("type", "text")
-                                .add("privileged", false)
-                                .add("category", "123").add("members", Json.createArrayBuilder())
-                        )).build();
-    }
-
-    public JsonObject getServerCategories() {
-        return Json.createObjectBuilder()
-                .add("status", "success")
+    /**
+     * create response when a category created
+     */
+    public JsonObject buildCreateCategory(String categoryId, String categoryName, String serverId) {
+        return Json.createObjectBuilder().add("status", "success")
                 .add("message", "")
-                .add("data", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                                .add("id", "idTest")
-                                .add("name", "categoryName")
-                                .add("server", this.server.getId())
-                                .add("channels", Json.createArrayBuilder().add("idTest")))).build();
+                .add("data", Json.createObjectBuilder()
+                        .add("id", categoryId)
+                        .add("name", categoryName)
+                        .add("server", serverId)
+                ).build();
     }
 
-    public JsonObject getCategoryChannels() {
-        return Json.createObjectBuilder()
-                .add("status", "success")
+    /**
+     * create response when a category can not be created
+     */
+    public JsonObject buildCreateCategoryFailure() {
+        return Json.createObjectBuilder().add("status", "failure")
                 .add("message", "")
-                .add("data", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                                .add("id", "idTest1")
-                                .add("name", "channelName1")
-                                .add("type", "text")
-                                .add("privileged", false)
-                                .add("category", "categoryId1")
-                                .add("members", Json.createArrayBuilder()))
-                        .add(Json.createObjectBuilder()
-                                .add("id", "idTest2")
-                                .add("name", "channelName2")
-                                .add("type", "text")
-                                .add("privileged", false)
-                                .add("category", "categoryId2")
-                                .add("members", Json.createArrayBuilder()))).build();
-    }
-
-    public JsonObject getServerIdSuccessful() {
-        return Json.createObjectBuilder().add("status", "success").add("message", "")
-                .add("data", Json.createObjectBuilder().add("id", server.getId())
-                        .add("name", server.getName()).add("owner", "ow12ner").add("categories",
-                                Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
-                                        .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
-                                        .add("online", false))
-                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
-                                        .add("online", true)))).build();
+                .add("data", Json.createObjectBuilder()).build();
     }
 
 }

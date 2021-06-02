@@ -138,6 +138,25 @@ public class RestClient {
     }
 
     /**
+     * Create a Category with a given Name.
+     *
+     * @param name     The Name of the Category to be created.
+     * @param userKey  The userKey of the currently logged in User.
+     * @param callback The Callback to be called after the Request.
+     */
+    public void createCategory(String serverId, String name, String userKey, Callback<JsonNode> callback) {
+        // Build request Body
+        String body = Json.createObjectBuilder().add(NAME, name).build().toString();
+
+        // Use UniRest to create server
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    /**
      * Get the Channels of a given Category in a given Server.
      *
      * @param serverId   The ID of the Server the Category belongs to.
@@ -176,6 +195,23 @@ public class RestClient {
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
                 .header(USER_KEY, userKey)
                 .body(Json.createObjectBuilder().add(TYPE, COUNT).add(MAX, max).build().toString());
+        sendRequest(req, callback);
+    }
+
+    /**
+     * Updates the name of a server
+     *
+     * @param serverId   The ID of the Server which name should be changed.
+     * @param newServerName The new name of the Server
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
+     */
+    public void changeServerName(String serverId, String newServerName, String userKey, Callback<JsonNode> callback) {
+        String body = Json.createObjectBuilder().add(NAME, newServerName).build().toString();
+
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
+                .header(USER_KEY, userKey)
+                .body(body);
 
         sendRequest(req, callback);
     }

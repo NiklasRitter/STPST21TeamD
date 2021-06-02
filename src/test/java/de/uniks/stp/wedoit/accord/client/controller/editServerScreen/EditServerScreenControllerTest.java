@@ -37,8 +37,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.JSON.LINK;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class EditServerScreenControllerTest extends ApplicationTest {
 
@@ -95,11 +94,21 @@ public class EditServerScreenControllerTest extends ApplicationTest {
      *
      * @param restClientJson JsonObject, which one should return from the rest client as JsonNode
      */
-    public void mockRest(JsonObject restClientJson) {
+    public void mockRestExplicitServer(JsonObject restClientJson) {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).getExplicitServerInformation(anyString(), anyString(), callbackArgumentCaptor.capture());
+        verify(restMock, atLeastOnce()).getExplicitServerInformation(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockRestChangeServerName(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock, atLeastOnce()).changeServerName(anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -108,11 +117,13 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     @Test
     public void editServerScreenOpens() {
         localUser.setId("owner123");
+        JsonObject jsonObject = buildServerInformationWithTwoMembers();
+        mockRestExplicitServer(jsonObject);
         Label labelServerName = lookup("#lbServerName").query();
         Assert.assertEquals(labelServerName.getText(), server.getName());
 
         clickOn("#btnEdit");
-
+        WaitForAsyncUtils.waitForFxEvents();
         // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
     }
@@ -121,7 +132,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     public void editServerScreenOpensAsAdmin() {
         localUser.setId("owner123");
         JsonObject jsonObject = buildServerInformationWithTwoMembers();
-        mockRest(jsonObject);
+        mockRestExplicitServer(jsonObject);
 
         clickOn("#btnEdit");
 
@@ -159,29 +170,85 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void editServerScreenOpensAsMember() {
+    public void editServerScreenNotVisibleForMember() {
         localUser.setId("alice123");
         JsonObject jsonObject = buildServerInformationWithTwoMembers();
-        mockRest(jsonObject);
+        mockRestExplicitServer(jsonObject);
+
+        Button btnEdit = lookup("#btnEdit").query();
+
+        Assert.assertFalse(btnEdit.isVisible());
+    }
+
+    @Test
+    public void changeServerNameSuccessful() {
+        localUser.setId("owner123");
+        JsonObject serverInfoJson = buildServerInformationWithTwoMembers();
+        JsonObject serverChangeNameJson = buildServerNameChangeSuccessful("TestServerName");
+        mockRestExplicitServer(serverInfoJson);
+
+        Assert.assertEquals(server.getName(), "AliceServer");
 
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
 
-        // Assert that Pop-Up Window shows correct widgets and that the vBoxAdmin is deleted
-        VBox mainVBox = lookup("#mainVBox").query();
-        Button btnDelete = lookup("#btnDelete").query();
+        Label lblError = (Label) lookup("#lblError").query();
 
-        Assert.assertEquals(mainVBox.getChildren().size(), 2);
-        Assert.assertTrue(btnDelete.isDisabled());
-        Assert.assertFalse(btnDelete.isVisible());
+        clickOn("#tfNewServernameInput");
+
+        write("TestServerName");
+
+        clickOn("#btnSave");
+
+        mockRestChangeServerName(serverChangeNameJson);
+
+        // needed, so that we can assert that new name is set correctly, and lblError is also set correctly
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(server.getName(), "TestServerName");
+        Assert.assertFalse(lblError.isVisible());
     }
+
+    @Test
+    public void changeServerNameFail() {
+        localUser.setId("owner123");
+        JsonObject serverInfoJson = buildServerInformationWithTwoMembers();
+        JsonObject serverChangeNameJson = buildServerNameChangeFailure();
+        mockRestExplicitServer(serverInfoJson);
+
+        Assert.assertEquals(server.getName(), "AliceServer");
+
+        clickOn("#btnEdit");
+
+        // Assert Pop-Up Window opens
+        Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
+
+        Label lblError = (Label) lookup("#lblError").query();
+
+        clickOn("#tfNewServernameInput");
+
+        write("TestServerName");
+
+        clickOn("#btnSave");
+
+        mockRestChangeServerName(serverChangeNameJson);
+
+        // needed, so that we can assert that new name is set correctly, and lblError is also set correctly
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lblError.getText(), "Error. Change Servername not successful!");
+        Assert.assertTrue(lblError.isVisible());
+        Assert.assertEquals(server.getName(), "AliceServer");
+    }
+
+
 
     @Test
     public void createCountInvitationSuccessful() {
         localUser.setId("owner123");
-        mockRest(buildServerInformationWithTwoMembers());
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
         clickOn("#btnEdit");
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -211,13 +278,13 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         WaitForAsyncUtils.asyncFx(() -> {
             Assert.assertEquals(Clipboard.getSystemClipboard().getString(), tfInvitationLink.getText());
         });
-
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     @Test
     public void createTemporalInvitationSuccessful() {
         localUser.setId("owner123");
-        mockRest(buildServerInformationWithTwoMembers());
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
         clickOn("#btnEdit");
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -237,13 +304,13 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK), tfInvitationLink.getText());
-
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     @Test
     public void createInvitationTestFailure() {
         localUser.setId("owner123");
-        mockRest(buildServerInformationWithTwoMembers());
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
         clickOn("#btnEdit");
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -299,6 +366,16 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         clickOn(tfInvitationLink);
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("First create invitation", labelCopy.getText());
+
+        WaitForAsyncUtils.waitForFxEvents();
+    }
+
+    // helper methods that build jsonObjects in order to mock RestClient answers.
+
+    private JsonObject buildServerNameChangeFailure() {
+        return Json.createObjectBuilder().add("status", "failure").add("message", "Changing server name failed!")
+                .add("data", Json.createObjectBuilder())
+                .build();
     }
 
     public JsonObject buildInvitationSuccessful() {
@@ -333,6 +410,14 @@ public class EditServerScreenControllerTest extends ApplicationTest {
                                         .add("online", true))
                                 .add(Json.createObjectBuilder().add("id", "bob123").add("name", "Bob")
                                         .add("online", true))))
+                .build();
+    }
+
+    public JsonObject buildServerNameChangeSuccessful(String newServerName) {
+        return Json.createObjectBuilder().add("status", "success").add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", server.getId())
+                        .add("name", newServerName))
                 .build();
     }
 
