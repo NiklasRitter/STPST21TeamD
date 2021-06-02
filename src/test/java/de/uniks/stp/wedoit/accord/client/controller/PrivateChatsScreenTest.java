@@ -12,6 +12,7 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -269,8 +270,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
         //send message
-        clickOn("#tfEnterPrivateChat");
-        write("Test Message");
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
 
         JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
@@ -316,8 +316,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
 
         //send message
-        clickOn("#tfEnterPrivateChat");
-        write("Test Message\n");
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message\n");
 
         Assert.assertEquals(0, lwPrivateChat.getItems().size());
     }
@@ -340,7 +339,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfEnterPrivateChat");
-        write("Test Message");
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
 
         JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
@@ -479,11 +478,9 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnLogin");
 

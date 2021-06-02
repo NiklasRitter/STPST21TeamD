@@ -401,8 +401,8 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(channel.getName(), lblChannelName.getText());
 
         //send message
-        clickOn("#tfInputMessage");
-        write("Test Message");
+        TextField tfInputMessage = lookup("#tfInputMessage").query();
+        tfInputMessage.setText("Test Message");
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
@@ -464,8 +464,8 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(channel.getName(), lbChannelName.getText());
 
         //send message
+        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
         clickOn("#tfInputMessage");
-        write("Test Message");
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");

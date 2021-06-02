@@ -37,6 +37,12 @@ import static org.mockito.Mockito.*;
 
 public class EditServerScreenTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
+    @Mock
+    WebSocketClient webSocketClientMock;
+    @Mock
+    WebSocketClient chatWebSocketClientMock;
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
@@ -45,14 +51,8 @@ public class EditServerScreenTest extends ApplicationTest {
     private RestClient restMock;
     @Mock
     private HttpResponse<JsonNode> res;
-    @Mock
-    WebSocketClient webSocketClientMock;
-    @Mock
-    WebSocketClient chatWebSocketClientMock;
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     @BeforeClass
     public static void before() {
@@ -192,9 +192,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Label lblError = (Label) lookup("#lblError").query();
 
-        clickOn("#tfNewServernameInput");
-
-        write("TestServerName");
+        ((TextField) lookup("#tfNewServernameInput").query()).setText("TestServerName");
 
         clickOn("#btnSave");
 
@@ -223,9 +221,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Label lblError = (Label) lookup("#lblError").query();
 
-        clickOn("#tfNewServernameInput");
-
-        write("TestServerName");
+        ((TextField) lookup("#tfNewServernameInput").query()).setText("TestServerName");
 
         clickOn("#btnSave");
 

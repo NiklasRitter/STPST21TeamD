@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -128,11 +129,9 @@ public class MainScreenTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnLogin");
 

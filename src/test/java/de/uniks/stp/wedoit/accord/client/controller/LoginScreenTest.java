@@ -127,11 +127,9 @@ public class LoginScreenTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnLogin");
 
@@ -167,11 +165,9 @@ public class LoginScreenTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnLogin");
 
@@ -204,11 +200,9 @@ public class LoginScreenTest extends ApplicationTest {
         //TestFX
         String password = "password";
 
-        clickOn("#tfUserName");
-        write("");
+        ((TextField) lookup("#tfUserName").query()).setText("");
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnLogin");
 
@@ -232,11 +226,9 @@ public class LoginScreenTest extends ApplicationTest {
         //TestFX
         String username = "username";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write("");
+        ((TextField) lookup("#pwUserPw").query()).setText("");
 
         clickOn("#btnLogin");
 
@@ -252,6 +244,7 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(stageManager.getEditor().getLocalUser().getUserKey());
     }
+
     @Test
     public void testSuccessfulRegister() {
 
@@ -259,11 +252,9 @@ public class LoginScreenTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnRegister");
 
@@ -326,11 +317,9 @@ public class LoginScreenTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnRegister");
 
@@ -363,11 +352,9 @@ public class LoginScreenTest extends ApplicationTest {
         //TestFX
         String password = "password";
 
-        clickOn("#tfUserName");
-        write("");
+        ((TextField) lookup("#tfUserName").query()).setText("");
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnRegister");
 
@@ -390,11 +377,9 @@ public class LoginScreenTest extends ApplicationTest {
         //TestFX
         String username = "username";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write("");
+        ((TextField) lookup("#pwUserPw").query()).setText("");
 
         clickOn("#btnRegister");
 
