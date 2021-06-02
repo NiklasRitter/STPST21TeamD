@@ -40,7 +40,7 @@ public class EmojiScreenController implements Controller {
     public void init() {
 
         this.pane = (GridPane) this.view.lookup("#panelForEmojis");
-//        this.pane.setStyle("-fx-background-color: #000000;");
+
         this.pane.setAlignment(Pos.CENTER);
         this.pane.setHgap(5);
         this.pane.setVgap(5);
