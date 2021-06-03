@@ -15,9 +15,9 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import org.json.JSONArray;
 
 import javax.json.JsonObject;
+import javax.json.JsonArray;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -191,7 +191,7 @@ public class ServerScreenController implements Controller {
         localUser.withoutServers(server);
     }
 
-    public void handleGetExplicitServerInformation(JSONArray members) {
+    public void handleGetExplicitServerInformation(JsonArray members) {
         if (members != null) {
             // create users which are member in the server and load user list view
             createUserListView(members);
@@ -562,12 +562,12 @@ public class ServerScreenController implements Controller {
      *
      * @param members JSONArray with users formatted as JSONObject
      */
-    private void createUserListView(JSONArray members) {
-        for (int index = 0; index < members.length(); index++) {
+    private void createUserListView(JsonArray members) {
+        for (int index = 0; index < members.toArray().length; index++) {
 
-            String name = members.getJSONObject(index).getString(NAME);
-            String id = members.getJSONObject(index).getString(ID);
-            boolean onlineStatus = members.getJSONObject(index).getBoolean(ONLINE);
+            String name = members.getJsonObject(index).getString(NAME);
+            String id = members.getJsonObject(index).getString(ID);
+            boolean onlineStatus = members.getJsonObject(index).getBoolean(ONLINE);
 
             editor.haveUserWithServer(name, id, onlineStatus, server);
         }

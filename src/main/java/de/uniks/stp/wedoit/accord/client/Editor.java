@@ -4,7 +4,6 @@ import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
-import org.json.JSONArray;
 
 import javax.json.JsonArray;
 import java.util.ArrayList;
@@ -194,7 +193,7 @@ public class Editor {
      * @param server                  server which gets the categories
      * @param serversCategoryResponse server answer for categories of the server
      */
-    public List<Category> haveCategories(Server server, JSONArray serversCategoryResponse) {
+    public List<Category> haveCategories(Server server, JsonArray serversCategoryResponse) {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
@@ -202,9 +201,9 @@ public class Editor {
         for (Category category : server.getCategories()) {
             categoryIds.add(category.getId());
         }
-        for (int index = 0; index < serversCategoryResponse.length(); index++) {
-            if (!categoryIds.contains(serversCategoryResponse.getJSONObject(index).getString(ID))) {
-                Category category = JsonUtil.parseCategory(serversCategoryResponse.getJSONObject(index));
+        for (int index = 0; index < serversCategoryResponse.toArray().length; index++) {
+            if (!categoryIds.contains(serversCategoryResponse.getJsonObject(index).getString(ID))) {
+                Category category = JsonUtil.parseCategory(serversCategoryResponse.getJsonObject(index));
                 category.setServer(server);
             }
         }
@@ -217,7 +216,7 @@ public class Editor {
      * @param category                  category which gets the channels
      * @param categoriesChannelResponse server answer for channels of the category
      */
-    public List<Channel> haveChannels(Category category, JSONArray categoriesChannelResponse) {
+    public List<Channel> haveChannels(Category category, JsonArray categoriesChannelResponse) {
         Objects.requireNonNull(category);
         Objects.requireNonNull(categoriesChannelResponse);
 
@@ -225,11 +224,12 @@ public class Editor {
         for (Channel channel : category.getChannels()) {
             channelIds.add(channel.getId());
         }
-        for (int index = 0; index < categoriesChannelResponse.length(); index++) {
-            if (!channelIds.contains(categoriesChannelResponse.getJSONObject(index).getString(ID))) {
-                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJSONObject(index));
+        for (int index = 0; index < categoriesChannelResponse.toArray().length; index++) {
+
+            if (!channelIds.contains(categoriesChannelResponse.getJsonObject(index).getString(ID))) {
+                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJsonObject(index));
                 channel.setCategory(category);
-                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJSONObject(index));
+                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJsonObject(index));
                 for (String memberId : memberIds) {
                     User user = this.getServerUserById(category.getServer(), memberId);
 
