@@ -24,6 +24,7 @@ public class JSON {
     public static final String TO = "to";
     public static final String TEXT = "text";
     public static final String SUCCESS = "success";
+    public static final String FAILURE = "failure";
     public static final String PRIVATE = "private";
 
     // Constants for system messages

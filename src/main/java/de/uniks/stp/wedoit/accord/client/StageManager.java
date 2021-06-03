@@ -344,7 +344,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showAttentionScreen(Object obejctToDelete) {
+    public static void showAttentionScreen(Object objectToDelete) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/AttentionScreen.fxml")));
@@ -353,7 +353,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            AttentionScreenController attentionScreenController = new AttentionScreenController(root, model.getLocalUser(), editor, obejctToDelete);
+            AttentionScreenController attentionScreenController = new AttentionScreenController(root, model.getLocalUser(), editor, objectToDelete);
             attentionScreenController.init();
             controllerMap.put("editServerScreenController", attentionScreenController);
 
@@ -435,6 +435,10 @@ public class StageManager extends Application {
 
     public Stage getPopupStage() {
         return popupStage;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 
     @Override

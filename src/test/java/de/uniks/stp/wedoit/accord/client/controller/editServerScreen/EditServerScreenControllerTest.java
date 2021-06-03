@@ -239,6 +239,27 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals(server.getName(), "AliceServer");
     }
 
+    @Test
+    public void showAttentionScreen() {
+        localUser.setId("owner123");
+        JsonObject serverInfoJson = buildServerInformationWithTwoMembers();
+        JsonObject serverChangeNameJson = buildServerNameChangeFailure();
+        mockRestExplicitServer(serverInfoJson);
+
+        Assert.assertEquals(server.getName(), "AliceServer");
+
+        clickOn("#btnEdit");
+
+        // Assert Pop-Up Window opens
+        Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
+
+        clickOn("#btnDelete");
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(stageManager.getPopupStage().getTitle(), "Attention");
+    }
+
     // helper methods that build jsonObjects in order to mock RestClient answers.
 
     private JsonObject buildServerNameChangeFailure() {

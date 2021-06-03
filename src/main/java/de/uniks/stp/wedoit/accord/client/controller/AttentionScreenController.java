@@ -87,7 +87,10 @@ public class AttentionScreenController implements Controller {
 
     public void handleDeleteServer(boolean status) {
         if (status) {
-            Platform.runLater(StageManager::showMainScreen);
+            localUser.withoutServers((Server) objectToDelete);
+            Platform.runLater(() -> {
+                StageManager.showMainScreen();
+            });
         } else {
             Platform.runLater(() -> {
                 lblError.setText("Error. Delete Server was not successful!");
