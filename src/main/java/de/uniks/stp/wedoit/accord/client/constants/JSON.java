@@ -26,6 +26,12 @@ public class JSON {
     public static final String SUCCESS = "success";
     public static final String FAILURE = "failure";
     public static final String PRIVATE = "private";
+    public static final String COUNT = "count";
+    public static final String MAX = "max";
+    public static final String TEMPORAL = "temporal";
+    public static final String LINK = "link";
+
+
 
     // Constants for system messages
     public static final String USER_JOINED = "userJoined";
@@ -41,5 +47,6 @@ public class JSON {
     public static final String CHANNEL_UPDATED = "channelUpdated";
     public static final String CHANNEL_DELETED = "channelDeleted";
     public static final String INVITE_EXPIRED = "inviteExpired";
+
 
 }

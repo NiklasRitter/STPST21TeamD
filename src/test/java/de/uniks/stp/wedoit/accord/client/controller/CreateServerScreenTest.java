@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.createServerScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CreateServerScreenControllerTest extends ApplicationTest {
+public class CreateServerScreenTest extends ApplicationTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();

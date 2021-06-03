@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.editServerScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -31,12 +32,21 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.DATA;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.LINK;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class EditServerScreenControllerTest extends ApplicationTest {
+public class EditServerScreenTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
+    @Mock
+    WebSocketClient webSocketClientMock;
+    @Mock
+    WebSocketClient chatWebSocketClientMock;
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
@@ -45,14 +55,8 @@ public class EditServerScreenControllerTest extends ApplicationTest {
     private RestClient restMock;
     @Mock
     private HttpResponse<JsonNode> res;
-    @Mock
-    WebSocketClient webSocketClientMock;
-    @Mock
-    WebSocketClient chatWebSocketClientMock;
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     @BeforeClass
     public static void before() {
@@ -119,7 +123,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals(labelServerName.getText(), server.getName());
 
         clickOn("#btnEdit");
-
+        WaitForAsyncUtils.waitForFxEvents();
         // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
     }
@@ -192,9 +196,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
 
         Label lblError = (Label) lookup("#lblError").query();
 
-        clickOn("#tfNewServernameInput");
-
-        write("TestServerName");
+        ((TextField) lookup("#tfNewServernameInput").query()).setText("TestServerName");
 
         clickOn("#btnSave");
 
@@ -223,9 +225,7 @@ public class EditServerScreenControllerTest extends ApplicationTest {
 
         Label lblError = (Label) lookup("#lblError").query();
 
-        clickOn("#tfNewServernameInput");
-
-        write("TestServerName");
+        ((TextField) lookup("#tfNewServernameInput").query()).setText("TestServerName");
 
         clickOn("#btnSave");
 
@@ -239,25 +239,132 @@ public class EditServerScreenControllerTest extends ApplicationTest {
         Assert.assertEquals(server.getName(), "AliceServer");
     }
 
+
+
     @Test
-    public void showAttentionScreen() {
+    public void createCountInvitationSuccessful() {
         localUser.setId("owner123");
-        JsonObject serverInfoJson = buildServerInformationWithTwoMembers();
-        JsonObject serverChangeNameJson = buildServerNameChangeFailure();
-        mockRestExplicitServer(serverInfoJson);
-
-        Assert.assertEquals(server.getName(), "AliceServer");
-
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
         clickOn("#btnEdit");
-
-        // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
-
-        clickOn("#btnDelete");
-
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(stageManager.getPopupStage().getTitle(), "Attention");
+        when(res.getBody()).thenReturn(new JsonNode(buildInvitationSuccessful().toString()));
+
+        RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
+        TextField tfMaxCountAmountInput = lookup("#tfMaxCountAmountInput").query();
+        TextField tfInvitationLink = lookup("#tfInvitationLink").query();
+        Label labelCopy = (Label) lookup("#labelCopy").query();
+
+        clickOn(radioBtnMaxCount);
+        Assert.assertTrue(tfMaxCountAmountInput.isEditable());
+        tfMaxCountAmountInput.setText("15");
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        verify(restMock).createInvite(anyInt(), anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK), tfInvitationLink.getText());
+        Assert.assertEquals("Amount", tfMaxCountAmountInput.getPromptText());
+
+        clickOn(tfInvitationLink);
+        Assert.assertEquals("Copied", labelCopy.getText());
+        WaitForAsyncUtils.asyncFx(() -> {
+            Assert.assertEquals(Clipboard.getSystemClipboard().getString(), tfInvitationLink.getText());
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+    }
+
+    @Test
+    public void createTemporalInvitationSuccessful() {
+        localUser.setId("owner123");
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
+        clickOn("#btnEdit");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        when(res.getBody()).thenReturn(new JsonNode(buildInvitationSuccessful().toString()));
+
+        RadioButton radioBtnTemporal = lookup("#radioBtnTemporal").query();
+        TextField tfInvitationLink = lookup("#tfInvitationLink").query();
+
+        clickOn(radioBtnTemporal);
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        verify(restMock).createInvite(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK), tfInvitationLink.getText());
+        WaitForAsyncUtils.waitForFxEvents();
+    }
+
+    @Test
+    public void createInvitationTestFailure() {
+        localUser.setId("owner123");
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
+        clickOn("#btnEdit");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        when(res.getBody()).thenReturn(new JsonNode(buildInvitationFailure().toString()));
+
+        RadioButton radioBtnTemporal = lookup("#radioBtnTemporal").query();
+        RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
+        TextField tfMaxCountAmountInput = lookup("#tfMaxCountAmountInput").query();
+        TextField tfInvitationLink = lookup("#tfInvitationLink").query();
+
+        clickOn(radioBtnMaxCount);
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+
+        clickOn(radioBtnMaxCount);
+        tfMaxCountAmountInput.setText("b");
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+
+        tfMaxCountAmountInput.setText("0");
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+
+        clickOn(radioBtnMaxCount);
+        tfMaxCountAmountInput.setText("15");
+        clickOn("#btnCreateInvitation");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        verify(restMock).createInvite(anyInt(), anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("generation failed", tfInvitationLink.getPromptText());
+
+        clickOn(radioBtnTemporal);
+        clickOn("#btnCreateInvitation");
+
+        verify(restMock).createInvite(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("generation failed", tfInvitationLink.getPromptText());
+
+        Label labelCopy = (Label) lookup("#labelCopy").query();
+
+        clickOn(tfInvitationLink);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("First create invitation", labelCopy.getText());
+
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     // helper methods that build jsonObjects in order to mock RestClient answers.
@@ -267,6 +374,26 @@ public class EditServerScreenControllerTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder())
                 .build();
     }
+
+    public JsonObject buildInvitationSuccessful() {
+        return Json.createObjectBuilder().add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", "invitationId")
+                        .add("link", "https://ac.uniks.de/api/...invitationId")
+                        .add("type", "temporal")
+                        .add("max", -1)
+                        .add("current", -1)
+                        .add("server", "serverId")
+                ).build();
+    }
+
+    public JsonObject buildInvitationFailure() {
+        return Json.createObjectBuilder().add("status", "failure")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()).build();
+    }
+
 
     public JsonObject buildServerInformationWithTwoMembers() {
         return Json.createObjectBuilder().add("status", "success").add("message", "")
