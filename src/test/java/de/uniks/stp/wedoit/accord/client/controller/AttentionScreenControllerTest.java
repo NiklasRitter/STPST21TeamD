@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.attentionScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
