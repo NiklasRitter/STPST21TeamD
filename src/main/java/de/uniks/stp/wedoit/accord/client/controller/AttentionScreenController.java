@@ -17,9 +17,11 @@ public class AttentionScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Object objectToDelete;
+
     private Label lblObjectToDelete;
     private Button btnDiscard;
     private Button btnDelete;
+    private Label lblError;
 
     /**
      * Create a new Controller
@@ -39,9 +41,11 @@ public class AttentionScreenController implements Controller {
     @Override
     public void init() {
         lblObjectToDelete = (Label) this.view.lookup("#lblObjectToDelete");
+        lblError = (Label) this.view.lookup("#lblError");
         btnDiscard = (Button) this.view.lookup("#btnDiscard");
         btnDelete = (Button) this.view.lookup("#btnDelete");
 
+        this.lblError.setVisible(false);
         loadCorrectLabelText(objectToDelete);
 
         addActionListener();
@@ -72,7 +76,7 @@ public class AttentionScreenController implements Controller {
     }
 
     private void deleteOnClick(ActionEvent actionEvent) {
-
+        this.editor.getNetworkController().deleteObject(this.localUser, this.objectToDelete, this);
     }
 
     private void discardOnClick(ActionEvent actionEvent) {
@@ -81,4 +85,14 @@ public class AttentionScreenController implements Controller {
         }
     }
 
+    public void handleDeleteServer(boolean status) {
+        if (status) {
+            Platform.runLater(StageManager::showMainScreen);
+        } else {
+            Platform.runLater(() -> {
+                lblError.setText("Error. Delete Server was not successful!");
+                lblError.setVisible(true);
+            });
+        }
+    }
 }

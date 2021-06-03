@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="335.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Region prefHeight="15.0" prefWidth="350.0" />
@@ -17,7 +16,11 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Region prefHeight="20.0" prefWidth="350.0" />
+      <Label id="lblError" prefHeight="20.0" styleClass="redLabel" text="Something went wrong!" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
       <HBox alignment="CENTER" prefHeight="20.0" prefWidth="200.0">
          <children>
             <Label text="Are you sure you want to delete the ">
