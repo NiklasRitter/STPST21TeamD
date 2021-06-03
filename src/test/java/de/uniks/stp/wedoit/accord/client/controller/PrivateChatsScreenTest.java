@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.controller.EmojiButton;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -12,6 +13,7 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -48,6 +50,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
+    private Stage popupStage;
     private StageManager stageManager;
     private LocalUser localUser;
     @Mock
@@ -84,6 +87,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
+        this.popupStage = this.stageManager.getPopupStage();
+
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
@@ -101,6 +106,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         localUser = null;
         restMock = null;
         res = null;
+        popupStage = null;
         callbackArgumentCaptor = null;
         systemWebSocketClient = null;
         chatWebSocketClient = null;
@@ -260,6 +266,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
         ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+        Button btnEmoji = lookup("#btnEmoji").query();
 
         lwOnlineUsers.getSelectionModel().select(0);
         User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
@@ -269,10 +276,20 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
+        clickOn("#btnEmoji");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(popupStage.isShowing());
+        Assert.assertEquals("Emoji Picker", popupStage.getTitle());
+
+        GridPane panelForEmojis = (GridPane) popupStage.getScene().getRoot().lookup("#panelForEmojis");
+        EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
+        clickOn(emoji);
+
         //send message
         ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
 
-        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
+        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message" + emoji.getText());
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -280,7 +297,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
+        Assert.assertEquals("Test Message" + emoji.getText(), lwPrivateChat.getItems().get(0).getText());
     }
 
     @Test
@@ -289,7 +306,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
         ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
-
 
         lwOnlineUsers.getSelectionModel().select(0);
         User user = lwOnlineUsers.getSelectionModel().getSelectedItem();

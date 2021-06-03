@@ -9,6 +9,7 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -52,6 +53,7 @@ public class ServerScreenTest extends ApplicationTest {
     WebSocketClient chatWebSocketClient;
 
     private Stage stage;
+    private Stage popupStage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
@@ -94,7 +96,7 @@ public class ServerScreenTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-
+        this.popupStage = this.stageManager.getPopupStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
@@ -116,6 +118,7 @@ public class ServerScreenTest extends ApplicationTest {
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
+        popupStage = null;
         stageManager = null;
         localUser = null;
         server = null;
@@ -388,7 +391,7 @@ public class ServerScreenTest extends ApplicationTest {
         initChannelListView();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
-
+        Button btnEmoji = lookup("#btnEmoji").query();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -400,12 +403,22 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(channel.getName(), lblChannelName.getText());
 
+        clickOn("#btnEmoji");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(popupStage.isShowing());
+        Assert.assertEquals("Emoji Picker", popupStage.getTitle());
+
+        GridPane panelForEmojis = (GridPane) popupStage.getScene().getRoot().lookup("#panelForEmojis");
+        EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
+        clickOn(emoji);
+
         //send message
-        TextField tfInputMessage = lookup("#tfInputMessage").query();
-        tfInputMessage.setText("Test Message");
+        clickOn("#tfInputMessage");
+        write("Test Message");
         press(KeyCode.ENTER);
 
-        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message" + emoji.getText());
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -413,7 +426,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(channel.getMessages().size(), lvTextChat.getItems().size());
         Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
-        Assert.assertEquals("Test Message", lvTextChat.getItems().get(0).getText());
+        Assert.assertEquals("Test Message" + emoji.getText(), lvTextChat.getItems().get(0).getText());
     }
 
     @Test
