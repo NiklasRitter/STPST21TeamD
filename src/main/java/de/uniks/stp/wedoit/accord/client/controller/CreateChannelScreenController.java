@@ -1,10 +1,12 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Category;
+import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
+
+import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -12,6 +14,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class CreateChannelScreenController implements Controller {
 
@@ -74,10 +80,31 @@ public class CreateChannelScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void createChannelButtonOnClick(ActionEvent actionEvent) {
+        if (tfChannelName.getText().length() < 1 || tfChannelName.getText() == null) {
+            tfChannelName.getStyleClass().add("error");
 
+            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
+        } else {
+            if (!checkBoxPrivileged.isSelected()) {
+                editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), null, this);
+            }
+            else{
+                List<String> userList = new LinkedList<>();
+                userList.add(this.localUser.getId());
+                System.out.println(userList);
+                editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
+            }
+        }
     }
 
-    public void handleCreateChannel(Server server) {
-
+    public void handleCreateChannel(Channel channel) {
+        if (channel != null) {
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
+            stop();
+        } else {
+            tfChannelName.getStyleClass().add("error");
+            Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the channel"));
+        }
     }
 }

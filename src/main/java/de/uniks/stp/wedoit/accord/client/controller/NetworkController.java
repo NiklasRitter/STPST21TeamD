@@ -8,9 +8,7 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.TreeItem;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonStructure;
+import javax.json.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -371,19 +369,27 @@ public class NetworkController {
         return this;
     }
 
-    public NetworkController createChannel(Server server, Category category, String channelNameInput, String type, boolean privileged, CreateChannelScreenController controller) {
-        restClient.createChannel(server.getId(), category.getId(), channelNameInput, type, privileged, editor.getLocalUser().getUserKey(), (response) -> {
+    public NetworkController createChannel(Server server, Category category, String channelNameInput, String type, boolean privileged, List<String> members, CreateChannelScreenController controller) {
+        JsonArrayBuilder memberJson = Json.createArrayBuilder();
+        if(members != null) {
+            for (String userId : members){
+                memberJson.add(Json.createValue(userId));
+            }
+        }
+        restClient.createChannel(server.getId(), category.getId(), channelNameInput, type, privileged, memberJson.build(), editor.getLocalUser().getUserKey(), (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                JsonObject createChannelAnswer = JsonUtil.parse(response.getBody().getObject().getString(DATA));
+                JsonObject createChannelAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+                System.out.println(createChannelAnswer);
                 String channelId = createChannelAnswer.getString(ID);
+                System.out.println(channelId);
                 String channelName = createChannelAnswer.getString(NAME);
                 String channelType = createChannelAnswer.getString(TYPE);
                 boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
-                JsonArray members = createChannelAnswer.getJsonArray(MEMBERS);
+                JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
 
                 if(category.getId().equals(channelCategoryId)) {
-                    Channel channel = editor.haveChannel(channelId, channelName, channelType, channelPrivileged, category, members);
+                    Channel channel = editor.haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers);
                     controller.handleCreateChannel(channel);
                 }
                 else {
