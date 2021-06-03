@@ -64,7 +64,7 @@
   roles: 	user_channels 	user_servers 	user_privateChat 	user_localUser
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -466,6 +466,15 @@
   name: 	localUser
   other: 	localUser_users
   propertyStyle: 	Bean
+
+- localUser_password: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_password
+  modified: 	false
+  name: 	password
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
 
 - localUser_name: 	org.fulib.classmodel.Attribute
   clazz: 	localUser

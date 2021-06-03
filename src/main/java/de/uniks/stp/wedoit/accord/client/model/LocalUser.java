@@ -27,6 +27,7 @@ public class LocalUser {
    public static final String PROPERTY_GAME_INVITES = "gameInvites";
    public static final String PROPERTY_GAME_REQUESTS = "gameRequests";
    public static final String PROPERTY_ID = "id";
+   public static final String PROPERTY_PASSWORD = "password";
 
     protected PropertyChangeSupport listeners;
 
@@ -41,6 +42,7 @@ public class LocalUser {
    private List<User> gameInvites;
    private List<User> gameRequests;
    private String id;
+   private String password;
 
     public String getName()
    {
@@ -380,6 +382,24 @@ public class LocalUser {
       this.firePropertyChange(PROPERTY_ID, oldValue, value);
       return this;
    }
+
+   public String getPassword()
+   {
+      return this.password;
+   }
+
+   public LocalUser setPassword(String value)
+   {
+      if (Objects.equals(value, this.password))
+      {
+         return this;
+      }
+
+      final String oldValue = this.password;
+      this.password = value;
+      this.firePropertyChange(PROPERTY_PASSWORD, oldValue, value);
+      return this;
+   }
 
     public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
@@ -404,6 +424,7 @@ public class LocalUser {
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
+      result.append(' ').append(this.getPassword());
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());
       result.append(' ').append(this.getId());
