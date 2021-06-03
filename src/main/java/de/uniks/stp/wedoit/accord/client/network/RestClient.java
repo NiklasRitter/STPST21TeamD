@@ -7,6 +7,7 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.CATEGORIES;
@@ -182,12 +183,12 @@ public class RestClient {
      * @param userKey       The userKey of the currently logged in User.
      * @param callback      The Callback to be called after the Request.
      */
-    public void createChannel(String serverId, String categoryId, String name, String type, boolean privileged, String userKey, Callback<JsonNode> callback) {
+    public void createChannel(String serverId, String categoryId, String name, String type, boolean privileged, JsonArray members, String userKey, Callback<JsonNode> callback) {
         // Build request Body
-        String body = Json.createObjectBuilder().add(NAME, name).add(TYPE, type).add(PRIVILEGED, privileged).build().toString();
+        String body = Json.createObjectBuilder().add(NAME, name).add(TYPE, type).add(PRIVILEGED, privileged).add(MEMBERS, members).build().toString();
 
         // Use UniRest to create server
-        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + SLASH + CHANNEL)
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS)
                 .header(USER_KEY, userKey)
                 .body(body);
 
