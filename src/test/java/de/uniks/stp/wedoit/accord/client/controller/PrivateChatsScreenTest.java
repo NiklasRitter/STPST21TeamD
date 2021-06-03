@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.privateChatsScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -35,15 +36,16 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEINVITE;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.INVITE;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-public class chatTest extends ApplicationTest {
+public class PrivateChatsScreenTest extends ApplicationTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -53,14 +55,16 @@ public class chatTest extends ApplicationTest {
     private LocalUser localUser;
     @Mock
     private RestClient restMock;
+
     @Mock
     private HttpResponse<JsonNode> res;
+
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     @Mock
     private WebSocketClient systemWebSocketClient;
     @Mock
     private WebSocketClient chatWebSocketClient;
-    @Captor
-    private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentSystemCaptorWebSocket;
@@ -82,7 +86,6 @@ public class chatTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        this.editor = stageManager.getEditor();
 
         this.popupStage = this.stageManager.getPopupStage();
 
@@ -104,9 +107,9 @@ public class chatTest extends ApplicationTest {
         restMock = null;
         res = null;
         popupStage = null;
+        callbackArgumentCaptor = null;
         systemWebSocketClient = null;
         chatWebSocketClient = null;
-        callbackArgumentCaptor = null;
         callbackArgumentSystemCaptorWebSocket = null;
         editor = null;
     }
@@ -116,12 +119,148 @@ public class chatTest extends ApplicationTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    @Test
+    public void initUserListView() {
+        directToPrivateChatsScreen();
+
+        JsonObject restJson = getOnlineUsers();
+        mockRest(restJson);
+
+        ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(3, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
+
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
+    }
+
+    @Test
+    public void newUserOnlineListViewUpdated() {
+        directToPrivateChatsScreen();
+
+        JsonObject restJson = getOnlineUsers();
+        mockRest(restJson);
+        JsonObject webSocketJson = webSocketCallbackUserJoined();
+        ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(3, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
+
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
+
+        mockSystemWebSocket(webSocketJson);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(4, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
+
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(3)));
+    }
+
+    @Test
+    public void userLeftListViewUpdated() {
+        directToPrivateChatsScreen();
+
+        JsonObject restJson = getOnlineUsers();
+        mockRest(restJson);
+
+        ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
+
+        JsonObject webSocketJsonUserJoined = webSocketCallbackUserJoined();
+        mockSystemWebSocket(webSocketJsonUserJoined);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(4, userListView.getItems().size());
+        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
+        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
+
+        JsonObject webSocketJsonUserLeft = webSocketCallbackUserLeft();
+        mockSystemWebSocket(webSocketJsonUserLeft);
+        WaitForAsyncUtils.waitForFxEvents();
+
+
+        Assert.assertEquals(3, userListView.getItems().size());
+        Assert.assertEquals(stageManager.getEditor().getOnlineUsers().size(), userListView.getItems().size());
+    }
+
+    @Test
+    public void testGameInvite() {
+        initUserListView();
+
+        Label lblSelectedUser = lookup("#lblSelectedUser").query();
+        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+        Button btnPlay = lookup("#btnPlay").queryButton();
+
+        Assert.assertEquals("Play", btnPlay.getText());
+
+        lwOnlineUsers.getSelectionModel().select(0);
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
+
+        clickOn("#lwOnlineUsers");
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(user.getName(), lblSelectedUser.getText());
+
+        clickOn(btnPlay);
+        WaitForAsyncUtils.waitForFxEvents();
+        //send game invite
+        JsonObject gameInvite = JsonUtil.buildPrivateChatMessage(user.getName(), GAMEINVITE);
+        mockChatWebSocket(getTestMessageServerAnswer(gameInvite));
+        WaitForAsyncUtils.waitForFxEvents();
+
+
+        Assert.assertEquals(1, lwPrivateChat.getItems().size());
+        Assert.assertEquals(1, localUser.getGameRequests().size());
+        Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
+        Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(0).getText());
+
+    }
+
+    @Test
+    public void testGameAccept() {
+        //init user list and select first user
+        initUserListView();
+        Label lblSelectedUser = lookup("#lblSelectedUser").query();
+        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+        Button btnPlay = lookup("#btnPlay").queryButton();
+
+        lwOnlineUsers.getSelectionModel().select(0);
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
+
+        clickOn("#lwOnlineUsers");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(user.getName(), lblSelectedUser.getText());
+
+        //receive invite message
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAMEINVITE));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("Accept", btnPlay.getText());
+        Assert.assertEquals(1, lwPrivateChat.getItems().size());
+        Assert.assertEquals(1, localUser.getGameInvites().size());
+        Assert.assertEquals(0, localUser.getGameRequests().size());
+        Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
+        Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(0).getText());
+
+    }
 
     @Test
     public void testChatSendMessage() {
-
-        directToPrivateChatsScreen();
-
         //init user list and select first user
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
@@ -148,8 +287,7 @@ public class chatTest extends ApplicationTest {
         clickOn(emoji);
 
         //send message
-        clickOn("#tfEnterPrivateChat");
-        write("Test Message");
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
 
         JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message" + emoji.getText());
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
@@ -164,8 +302,6 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatIncomingMessage() {
-        directToPrivateChatsScreen();
-
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
@@ -179,7 +315,7 @@ public class chatTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
         //receive message
-        mockChatWebSocket(getServerMessageUserAnswer(user));
+        mockChatWebSocket(getServerMessageUserAnswer(user, "Hallo"));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(1, lwPrivateChat.getItems().size());
@@ -191,23 +327,18 @@ public class chatTest extends ApplicationTest {
 
     @Test
     public void testChatNoUserSelected() {
-        directToPrivateChatsScreen();
-
         //init user list and select first user
         initUserListView();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
 
         //send message
-        clickOn("#tfEnterPrivateChat");
-        write("Test Message\n");
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message\n");
 
         Assert.assertEquals(0, lwPrivateChat.getItems().size());
     }
 
     @Test
     public void testChatMessagesCachedProperlyAfterChatChange() {
-        directToPrivateChatsScreen();
-
         //init user list and select first user
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();
@@ -224,7 +355,7 @@ public class chatTest extends ApplicationTest {
 
         //send message
         clickOn("#tfEnterPrivateChat");
-        write("Test Message");
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
 
         JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
@@ -264,12 +395,11 @@ public class chatTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).getOnlineUsers(anyString(), callbackArgumentCaptor.capture());
+        verify(restMock, atLeastOnce()).getOnlineUsers(anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
     }
-
 
     public void mockChatWebSocket(JsonObject webSocketJson) {
         // mock websocket
@@ -277,23 +407,6 @@ public class chatTest extends ApplicationTest {
         WSCallback wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
 
         wsSystemCallback.handleMessage(webSocketJson);
-    }
-
-
-    public void initUserListView() {
-        JsonObject restJson = getOnlineUsers();
-        mockRest(restJson);
-
-        WaitForAsyncUtils.waitForFxEvents();
-
-        ListView<User> userListView = lookup("#lwOnlineUsers").queryListView();
-
-        Assert.assertEquals(3, userListView.getItems().size());
-        Assert.assertEquals(localUser.getUsers().size(), userListView.getItems().size());
-
-        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
-        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
-        Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
     }
 
 
@@ -324,18 +437,50 @@ public class chatTest extends ApplicationTest {
                 .build();
     }
 
-    public JsonObject getServerMessageUserAnswer(User user) {
+    public JsonObject getServerMessageUserAnswer(User user, String message) {
         return Json.createObjectBuilder()
                 .add("channel", "private")
                 .add("timestamp", 1614938)
-                .add("message", "Hallo")
+                .add("message", message)
                 .add("from", user.getName())
                 .add("to", localUser.getName())
                 .build();
     }
 
-    public void directToPrivateChatsScreen() {
+    /**
+     * @return Json webSocketCallback that user with id: "123456" and name: "Phil" has joined
+     */
+    public JsonObject webSocketCallbackUserJoined() {
+        return Json.createObjectBuilder()
+                .add("action", "userJoined")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", "123456")
+                        .add("name", "Phil"))
+                .build();
+    }
 
+    /**
+     * @return Json webSocketCallback that user with id: "123456" and name: "Phil" has left
+     */
+    public JsonObject webSocketCallbackUserLeft() {
+        return Json.createObjectBuilder()
+                .add("action", "userLeft")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", "123456")
+                        .add("name", "Phil"))
+                .build();
+    }
+
+
+    public void mockSystemWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(systemWebSocketClient).setCallback(callbackArgumentSystemCaptorWebSocket.capture());
+        WSCallback wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
+
+        wsSystemCallback.handleMessage(webSocketJson);
+    }
+
+    public void directToPrivateChatsScreen() {
         //Mocking of RestClient login function
         JsonObject json = Json.createObjectBuilder()
                 .add("status", "success")
@@ -343,18 +488,15 @@ public class chatTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder()
                         .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
                 ).build();
-
         when(res.getBody()).thenReturn(new JsonNode(json.toString()));
 
         //TestFX
         String username = "username";
         String password = "password";
 
-        clickOn("#tfUserName");
-        write(username);
+        ((TextField) lookup("#tfUserName").query()).setText(username);
 
-        clickOn("#pwUserPw");
-        write(password);
+        ((TextField) lookup("#pwUserPw").query()).setText(password);
 
         clickOn("#btnLogin");
 
@@ -363,9 +505,91 @@ public class chatTest extends ApplicationTest {
         Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
         callbackLogin.completed(res);
 
-        this.localUser = editor.getLocalUser();
+        this.localUser = stageManager.getEditor().getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
         clickOn("#btnPrivateChats");
+    }
+
+    @Test
+    public void testBtnLogout() {
+
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "Logged out")
+                .add("data", "{}")
+                .build();
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+
+        directToPrivateChatsScreen();
+
+        // got to privateChats screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Private Chats", stage.getTitle());
+
+        // testing logout button
+        clickOn("#btnLogout");
+
+        verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callbackLogout = callbackArgumentCaptor.getValue();
+        callbackLogout.completed(res);
+
+        Assert.assertEquals("success", res.getBody().getObject().getString("status"));
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Login", stage.getTitle());
+    }
+
+    @Test
+    public void testBtnOptions() {
+
+        directToPrivateChatsScreen();
+
+        // got to privateChats screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Private Chats", stage.getTitle());
+
+        // testing options button
+        clickOn("#btnOptions");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+    }
+
+    @Test
+    public void testBtnHome() {
+
+        directToPrivateChatsScreen();
+
+        // got to privateChats screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Private Chats", stage.getTitle());
+
+        // testing home button
+        clickOn("#btnHome");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+    }
+
+    @Test
+    public void testOnlineUserListViewInit() {
+
+        directToPrivateChatsScreen();
+
+        String returnMessage = Json.createObjectBuilder()
+                .add("status", "success").add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df505")
+                                .add("name", "Albert")
+                        )
+                        .add(Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03df506")
+                                .add("name", "Clemens"))
+                ).build().toString();
+
+        when(res.getBody()).thenReturn(new JsonNode(returnMessage));
     }
 }

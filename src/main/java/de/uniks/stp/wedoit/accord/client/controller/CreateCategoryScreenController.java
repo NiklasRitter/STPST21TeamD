@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
@@ -11,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class CreateCategoryScreenController implements Controller {
 
@@ -69,10 +71,23 @@ public class CreateCategoryScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void createCategoryButtonOnClick(ActionEvent actionEvent) {
+        if (tfCategoryName.getText().length() < 1 || tfCategoryName.getText() == null) {
+            tfCategoryName.getStyleClass().add("error");
 
+            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
+        } else {
+            editor.getNetworkController().createCategory(editor.getCurrentServer(), tfCategoryName.getText(), this);
+        }
     }
 
-    public void handleCreateCategory(Server server) {
-
+    public void handleCreateCategory(Category category) {
+        if (category != null) {
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
+            stop();
+        } else {
+            tfCategoryName.getStyleClass().add("error");
+            Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the category"));
+        }
     }
 }

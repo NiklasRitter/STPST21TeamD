@@ -138,6 +138,25 @@ public class RestClient {
     }
 
     /**
+     * Create a Category with a given Name.
+     *
+     * @param name     The Name of the Category to be created.
+     * @param userKey  The userKey of the currently logged in User.
+     * @param callback The Callback to be called after the Request.
+     */
+    public void createCategory(String serverId, String name, String userKey, Callback<JsonNode> callback) {
+        // Build request Body
+        String body = Json.createObjectBuilder().add(NAME, name).build().toString();
+
+        // Use UniRest to create server
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    /**
      * Get the Channels of a given Category in a given Server.
      *
      * @param serverId   The ID of the Server the Category belongs to.
@@ -153,6 +172,59 @@ public class RestClient {
     }
 
     /**
+     * creates a request to get a temporal invitation link
+     * @param serverId id of the server for which the link is
+     * @param userKey userKey of the logged in local user
+     * @param callback callback which have new link
+     */
+    public void createInvite(String serverId, String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
+                .header(USER_KEY, userKey)
+                .body(Json.createObjectBuilder().add(TYPE, TEMPORAL).build().toString());
+
+        sendRequest(req, callback);
+    }
+
+    /**
+     * creates a request to get a invitation link with count type and a maximum count of users who can use the link
+     * @param serverId id of the server for which the link is
+     * @param userKey userKey of the logged in local user
+     * @param callback callback which have new link
+     */
+    public void createInvite(int max, String serverId, String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
+                .header(USER_KEY, userKey)
+                .body(Json.createObjectBuilder().add(TYPE, COUNT).add(MAX, max).build().toString());
+        sendRequest(req, callback);
+    }
+
+    /**
+     * Updates the name of a server
+     *
+     * @param serverId   The ID of the Server which name should be changed.
+     * @param newServerName The new name of the Server
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
+     */
+    public void changeServerName(String serverId, String newServerName, String userKey, Callback<JsonNode> callback) {
+        String body = Json.createObjectBuilder().add(NAME, newServerName).build().toString();
+
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    public void deleteServer(String userKey, String serverId, Callback<JsonNode> callback) {
+        // Use UniRest to delete server
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH +SLASH +serverId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
+    /**
      * Send a Request and call the Callback asynchronously.
      *
      * @param req      The Request to be sent.
@@ -161,4 +233,6 @@ public class RestClient {
     private void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         req.asJsonAsync(callback);
     }
+
+
 }

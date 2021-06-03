@@ -120,7 +120,7 @@
             </VBox>
             <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="125.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label prefWidth="200.0" styleClass="styleBorder" text="Online users:" VBox.vgrow="ALWAYS">
+                  <Label minHeight="25.0" prefWidth="200.0" styleClass="styleBorder" text="Online users:" VBox.vgrow="ALWAYS">
                      <font>
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
@@ -133,11 +133,20 @@
             </VBox>
             <VBox alignment="CENTER" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                <children>
-                  <Label id="lblSelectedUser" styleClass="styleBorder" text="No User selected" VBox.vgrow="ALWAYS">
-                     <font>
-                        <Font name="System Bold Italic" size="13.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="TOP_CENTER" prefWidth="200.0">
+                     <children>
+                        <Label id="lblSelectedUser" minHeight="25.0" styleClass="styleBorder" text="No User selected">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <Button id="btnPlay" mnemonicParsing="false" text="Play">
+                           <HBox.margin>
+                              <Insets left="70.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
                   <ListView id="lwPrivateChat" VBox.vgrow="ALWAYS" />
                   <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                      <children>

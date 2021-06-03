@@ -95,6 +95,11 @@
                         </ImageView>
                      </graphic>
                   </Button>
+                  <Button id="btnEdit" mnemonicParsing="false" prefHeight="40.0" prefWidth="48.0" styleClass="styleButton" text="Edit" textAlignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
                   <Region VBox.vgrow="ALWAYS" />
                   <Button id="btnLogout" alignment="CENTER" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                      <graphic>

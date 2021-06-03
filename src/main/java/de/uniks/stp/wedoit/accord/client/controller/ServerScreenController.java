@@ -41,6 +41,8 @@ public class ServerScreenController implements Controller {
     private Button btnHome;
     private Button btnLogout;
     private Button btnEmoji;
+    private Button btnEdit;
+
     private Label lbServerName;
 
     private TreeView<Object> tvServerChannels;
@@ -86,6 +88,8 @@ public class ServerScreenController implements Controller {
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
+        this.btnEdit = (Button) view.lookup("#btnEdit");
+
         this.lbServerName = (Label) view.lookup("#lbServerName");
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
@@ -94,12 +98,13 @@ public class ServerScreenController implements Controller {
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
         btnEmoji.setOnAction(this::btnEmojiOnClick);
+        this.btnEdit.setVisible(false);
 
         this.lbServerName.setText(server.getName());
         // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
-        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().getCleanLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         tvServerChannelsRoot = new TreeItem<>();
@@ -128,6 +133,7 @@ public class ServerScreenController implements Controller {
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
+        this.btnEdit.setOnAction(this::editButtonOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
 
@@ -161,6 +167,8 @@ public class ServerScreenController implements Controller {
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.btnEmoji.setOnAction(null);
+        this.btnEdit.setOnAction(null);
+
         this.tfInputMessage.setOnAction(null);
         this.tvServerChannels.setOnMouseReleased(null);
 
@@ -200,6 +208,9 @@ public class ServerScreenController implements Controller {
         } else {
             Platform.runLater(StageManager::showLoginScreen);
         }
+        if (this.localUser.getId().equals(this.server.getOwner())) {
+            this.btnEdit.setVisible(true);
+        }
     }
 
     /**
@@ -229,6 +240,15 @@ public class ServerScreenController implements Controller {
     private void logoutButtonOnClick(ActionEvent actionEvent) {
         editor.logoutUser(localUser.getUserKey());
 
+    }
+
+    /**
+     * The localUser will be redirected to the EditServerScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
+    private void editButtonOnClick(ActionEvent actionEvent) {
+        StageManager.showEditServerScreen(this.server);
     }
 
 

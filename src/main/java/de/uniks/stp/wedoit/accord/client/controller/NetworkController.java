@@ -26,6 +26,7 @@ public class NetworkController {
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
     private final Editor editor;
     private RestClient restClient = new RestClient();
+    private String cleanLocalUserName;
 
     /**
      * Create a NetworkController.
@@ -34,6 +35,10 @@ public class NetworkController {
      */
     public NetworkController(Editor editor) {
         this.editor = editor;
+    }
+
+    public String getCleanLocalUserName() {
+        return cleanLocalUserName;
     }
 
     public RestClient getRestClient() {
@@ -52,19 +57,21 @@ public class NetworkController {
      * Create default WebSocketClients.
      */
     public NetworkController start() {
+        setClearUsername();
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
-        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername(), this::handlePrivateChatMessage);
+        haveWebSocket(PRIVATE_USER_CHAT_PREFIX + cleanLocalUserName, this::handlePrivateChatMessage);
         return this;
     }
 
-    public String clearUsername() {
+    public String setClearUsername() {
         String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
+            cleanLocalUserName = newName;
         } catch (UnsupportedEncodingException e) {
-            return this.editor.getLocalUser().getName();
+            cleanLocalUserName = this.editor.getLocalUser().getName();
         }
-        return newName;
+        return cleanLocalUserName;
     }
 
     /**
@@ -173,7 +180,7 @@ public class NetworkController {
      */
     public NetworkController sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + clearUsername());
+                getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + cleanLocalUserName);
         webSocketClient.sendMessage(jsonMsgString);
         return this;
     }
@@ -185,7 +192,7 @@ public class NetworkController {
      */
     public NetworkController sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
-                getOrCreateWebSocket(CHAT_USER_URL + clearUsername()
+                getOrCreateWebSocket(CHAT_USER_URL + cleanLocalUserName
                         + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
         return this;
@@ -263,6 +270,18 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController changeServerName(LocalUser localUser, Server server, String newServerName, EditServerScreenController controller) {
+        restClient.changeServerName(server.getId(), newServerName, localUser.getUserKey(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                server.setName(newServerName);
+                controller.handleChangeServerName(true);
+            } else {
+                controller.handleChangeServerName(false);
+            }
+        });
+        return this;
+    }
+
     public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
@@ -274,6 +293,24 @@ public class NetworkController {
                 editor.haveUser(id, name);
             }
             controller.handleGetOnlineUsers();
+        });
+        return this;
+    }
+
+    public NetworkController getLocalUserId(LocalUser localUser) {
+        // load online Users
+        restClient.getOnlineUsers(localUser.getUserKey(), response -> {
+            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(DATA);
+
+            for (int index = 0; index < getServersResponse.length(); index++) {
+                String name = getServersResponse.getJSONObject(index).getString(NAME);
+                String id = getServersResponse.getJSONObject(index).getString(ID);
+                if (name.equals(localUser.getName())) {
+                    localUser.setId(id);
+                    return;
+                }
+            }
+
         });
         return this;
     }
@@ -318,6 +355,72 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController createCategory(Server server, String categoryNameInput, CreateCategoryScreenController controller) {
+        restClient.createCategory(server.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JSONObject createCategoryAnswer = response.getBody().getObject().getJSONObject(DATA);
+                String categoryId = createCategoryAnswer.getString(ID);
+                String categoryName = createCategoryAnswer.getString(NAME);
+
+                Category category = editor.haveCategory(categoryId, categoryName, server);
+                controller.handleCreateCategory(category);
+            } else {
+                controller.handleCreateCategory(null);
+            }
+        });
+        return this;
+    }
+
+    /**
+     * This method does a rest request to create a new invitation link
+     * @param type type of the invitation, means temporal or count with a int max
+     * @param max maximum size of users who can use this link, is the type temporal max is ignored
+     * @param serverId id of the server
+     * @param userKey userKey of the logged in local user
+     * @param controller controller which handles the new link
+     */
+    public void createInvitation(String type, int max, String serverId, String userKey, EditServerScreenController controller) {
+        if (type.equals(TEMPORAL)) {
+            restClient.createInvite(serverId, userKey, invitationResponse -> {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                } else {
+                    controller.handleInvitation(null);
+                }
+            });
+
+        } else if (type.equals(COUNT)) {
+            restClient.createInvite(max, serverId, userKey, invitationResponse -> {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                } else {
+                    controller.handleInvitation(null);
+                }
+            });
+        }
+    }
+
+
+    /**
+     * Should be called if a server, category or channel will be deleted.
+     * It automatically chooses the correct delete method
+     */
+    public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
+        if (objectToDelete.getClass().equals(Server.class)) {
+            deleteServer(localUser, (Server) objectToDelete, controller);
+        } // else if is for other objects like channel or category
+    }
+
+    private void deleteServer(LocalUser localUser, Server server, AttentionScreenController controller) {
+        restClient.deleteServer(localUser.getUserKey(), server.getId(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                controller.handleDeleteServer(true);
+            } else {
+                controller.handleDeleteServer(false);
+            }
+        });
+    }
+
     /**
      * Called to stop this controller
      * <p>
@@ -332,4 +435,5 @@ public class NetworkController {
         }
         return this;
     }
+
 }
