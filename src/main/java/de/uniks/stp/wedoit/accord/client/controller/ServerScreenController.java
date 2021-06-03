@@ -95,7 +95,9 @@ public class ServerScreenController implements Controller {
 
         this.btnEdit.setVisible(false);
 
-        this.lbServerName.setText(server.getName());
+        if (server.getName() != null && !server.getName().equals("")) {
+            this.lbServerName.setText(server.getName());
+        }
         // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
@@ -194,6 +196,11 @@ public class ServerScreenController implements Controller {
     public void handleGetExplicitServerInformation(JSONArray members) {
         if (members != null) {
             // create users which are member in the server and load user list view
+            Platform.runLater(() -> {
+                lbServerName.setText(server.getName());
+            });
+
+
             createUserListView(members);
         } else {
             Platform.runLater(StageManager::showLoginScreen);
