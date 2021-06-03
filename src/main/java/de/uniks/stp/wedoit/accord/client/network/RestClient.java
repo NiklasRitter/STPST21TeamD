@@ -216,6 +216,14 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void deleteServer(String userKey, String serverId, Callback<JsonNode> callback) {
+        // Use UniRest to delete server
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH +SLASH +serverId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
     /**
      * Send a Request and call the Callback asynchronously.
      *
