@@ -221,7 +221,8 @@ public class NetworkController {
             } else {
                 JSONObject loginAnswer = response.getBody().getObject().getJSONObject(DATA);
                 String userKey = loginAnswer.getString(USER_KEY);
-                editor.haveLocalUser(username, userKey);
+                LocalUser localUser = editor.haveLocalUser(username, userKey);
+                localUser.setPassword(password);
                 start();
                 controller.handleLogin(true);
             }
@@ -261,7 +262,7 @@ public class NetworkController {
                 JSONObject data = response.getBody().getObject().getJSONObject(DATA);
                 JSONArray members = data.getJSONArray(MEMBERS);
                 server.setOwner(data.getString(OWNER));
-
+                server.setName(data.getString(NAME));
                 controller.handleGetExplicitServerInformation(members);
             } else {
                 controller.handleGetExplicitServerInformation(null);
@@ -400,6 +401,33 @@ public class NetworkController {
         }
     }
 
+    public void joinServer(LocalUser localUser, String invitationLink, JoinServerScreenController controller) {
+        restClient.joinServer(localUser, invitationLink, invitationResponse -> {
+            if (!invitationResponse.isSuccess()) {
+                if (invitationResponse.getBody() != null) {
+                    controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));
+                } else {
+                controller.handleInvitation(null, "No valid invitation link");
+                }
+            } else {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    String[] splitLink = invitationLink.split("/");
+                    String id = null;
+                    if (splitLink.length > 5) {
+                        id = splitLink[5];
+                    }
+                    if (id != null) {
+                        Server server = editor.haveServer(localUser, id, "");
+                        controller.handleInvitation(server, invitationResponse.getBody().getObject().getString(MESSAGE));
+                    } else
+                        controller.handleInvitation(null, "MainScreen");
+                } else {
+                    controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));
+                }
+            }
+        });
+    }
+
 
     /**
      * Called to stop this controller
@@ -415,6 +443,5 @@ public class NetworkController {
         }
         return this;
     }
-
 
 }
