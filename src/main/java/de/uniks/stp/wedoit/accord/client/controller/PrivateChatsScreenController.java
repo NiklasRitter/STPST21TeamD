@@ -153,6 +153,7 @@ public class PrivateChatsScreenController implements Controller {
         }else if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")){
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+            btnPlay.setText("Play");
             StageManager.showGameScreen(currentChat.getUser());
         }
 
