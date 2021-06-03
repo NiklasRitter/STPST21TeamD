@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import kong.unirest.Callback;
 import kong.unirest.HttpRequest;
@@ -215,6 +216,24 @@ public class RestClient {
 
         sendRequest(req, callback);
     }
+
+    /**
+     * join server
+     *
+     * @param callback The Callback to be called after the Request.
+     */
+    public void joinServer(LocalUser localUser, String invitationLink, Callback<JsonNode> callback) {
+        // Build Request Body
+        String body = JsonUtil.buildLogin(localUser.getName(), localUser.getPassword()).toString();
+
+        // Use UniRest to make login request
+        HttpRequest<?> req = Unirest.post(invitationLink)
+                .header(USER_KEY, localUser.getUserKey())
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
 
     /**
      * Send a Request and call the Callback asynchronously.
