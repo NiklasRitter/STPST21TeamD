@@ -172,6 +172,29 @@ public class RestClient {
     }
 
     /**
+     * Create a Channel with a given Name.
+     *
+     * @param serverId      The ID of the Server the Channel should be created on.
+     * @param categoryId    The ID of the Server the Channel should be created on.
+     * @param name          The Name of the Channel to be created.
+     * @param type          The Type of the Channel to be created, Text or Voice.
+     * @param privileged    Privileged channel or normal channel.
+     * @param userKey       The userKey of the currently logged in User.
+     * @param callback      The Callback to be called after the Request.
+     */
+    public void createChannel(String serverId, String categoryId, String name, String type, boolean privileged, String userKey, Callback<JsonNode> callback) {
+        // Build request Body
+        String body = Json.createObjectBuilder().add(NAME, name).add(TYPE, type).add(PRIVILEGED, privileged).build().toString();
+
+        // Use UniRest to create server
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + SLASH + CHANNEL)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    /**
      * creates a request to get a temporal invitation link
      * @param serverId id of the server for which the link is
      * @param userKey userKey of the logged in local user

@@ -5,10 +5,10 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.TreeItem;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.io.UnsupportedEncodingException;
@@ -201,7 +201,7 @@ public class NetworkController {
     public NetworkController createServer(String serverNameInput, CreateServerScreenController controller) {
         restClient.createServer(serverNameInput, editor.getLocalUser().getUserKey(), (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                JSONObject createServerAnswer = response.getBody().getObject().getJSONObject(DATA);
+                JsonObject createServerAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
                 String serverId = createServerAnswer.getString(ID);
                 String serverName = createServerAnswer.getString(NAME);
 
@@ -219,7 +219,7 @@ public class NetworkController {
             if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 controller.handleLogin(false);
             } else {
-                JSONObject loginAnswer = response.getBody().getObject().getJSONObject(DATA);
+                JsonObject loginAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
                 String userKey = loginAnswer.getString(USER_KEY);
                 editor.haveLocalUser(username, userKey);
                 start();
@@ -239,11 +239,11 @@ public class NetworkController {
     public NetworkController getServers(LocalUser localUser, MainScreenController controller) {
         restClient.getServers(localUser.getUserKey(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                JSONArray getServersResponse = response.getBody().getObject().getJSONArray(DATA);
+                JsonArray getServersResponse = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
 
-                for (int index = 0; index < getServersResponse.length(); index++) {
-                    String name = getServersResponse.getJSONObject(index).getString(NAME);
-                    String id = getServersResponse.getJSONObject(index).getString(ID);
+                for (int index = 0; index < getServersResponse.toArray().length; index++) {
+                    String name = getServersResponse.getJsonObject(index).getString(NAME);
+                    String id = getServersResponse.getJsonObject(index).getString(ID);
                     editor.haveServer(localUser, id, name);
                 }
                 controller.handleGetServers(true);
@@ -258,8 +258,8 @@ public class NetworkController {
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                JSONObject data = response.getBody().getObject().getJSONObject(DATA);
-                JSONArray members = data.getJSONArray(MEMBERS);
+                JsonObject data = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+                JsonArray members = data.getJsonArray(MEMBERS);
                 server.setOwner(data.getString(OWNER));
 
                 controller.handleGetExplicitServerInformation(members);
@@ -285,11 +285,11 @@ public class NetworkController {
     public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
-            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(DATA);
+            JsonArray getServersResponse = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
 
-            for (int index = 0; index < getServersResponse.length(); index++) {
-                String name = getServersResponse.getJSONObject(index).getString(NAME);
-                String id = getServersResponse.getJSONObject(index).getString(ID);
+            for (int index = 0; index < getServersResponse.toArray().length; index++) {
+                String name = getServersResponse.getJsonObject(index).getString(NAME);
+                String id = getServersResponse.getJsonObject(index).getString(ID);
                 editor.haveUser(id, name);
             }
             controller.handleGetOnlineUsers();
@@ -300,11 +300,11 @@ public class NetworkController {
     public NetworkController getLocalUserId(LocalUser localUser) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
-            JSONArray getServersResponse = response.getBody().getObject().getJSONArray(DATA);
+            JsonArray getServersResponse = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
 
-            for (int index = 0; index < getServersResponse.length(); index++) {
-                String name = getServersResponse.getJSONObject(index).getString(NAME);
-                String id = getServersResponse.getJSONObject(index).getString(ID);
+            for (int index = 0; index < getServersResponse.toArray().length; index++) {
+                String name = getServersResponse.getJsonObject(index).getString(NAME);
+                String id = getServersResponse.getJsonObject(index).getString(ID);
                 if (name.equals(localUser.getName())) {
                     localUser.setId(id);
                     return;
@@ -325,7 +325,7 @@ public class NetworkController {
     public NetworkController getCategories(LocalUser localUser, Server server, ServerScreenController controller) {
         restClient.getCategories(server.getId(), localUser.getUserKey(), categoryResponse -> {
             if (categoryResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                JSONArray serversCategoryResponse = categoryResponse.getBody().getObject().getJSONArray(DATA);
+                JsonArray serversCategoryResponse = JsonUtil.parse(String.valueOf(categoryResponse.getBody().getObject())).getJsonArray(DATA);
 
                 editor.haveCategories(server, serversCategoryResponse);
 
@@ -341,7 +341,7 @@ public class NetworkController {
     public NetworkController getChannels(LocalUser localUser, Server server, Category category, TreeItem<Object> categoryItem, ServerScreenController controller) {
         restClient.getChannels(server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
             if (channelsResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                JSONArray categoriesChannelResponse = channelsResponse.getBody().getObject().getJSONArray(DATA);
+                JsonArray categoriesChannelResponse = JsonUtil.parse(String.valueOf(channelsResponse.getBody().getObject())).getJsonArray(DATA);
 
                 editor.haveChannels(category, categoriesChannelResponse);
 
@@ -358,7 +358,7 @@ public class NetworkController {
     public NetworkController createCategory(Server server, String categoryNameInput, CreateCategoryScreenController controller) {
         restClient.createCategory(server.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                JSONObject createCategoryAnswer = response.getBody().getObject().getJSONObject(DATA);
+                JsonObject createCategoryAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
                 String categoryId = createCategoryAnswer.getString(ID);
                 String categoryName = createCategoryAnswer.getString(NAME);
 
@@ -366,6 +366,31 @@ public class NetworkController {
                 controller.handleCreateCategory(category);
             } else {
                 controller.handleCreateCategory(null);
+            }
+        });
+        return this;
+    }
+
+    public NetworkController createChannel(Server server, Category category, String channelNameInput, String type, boolean privileged, CreateChannelScreenController controller) {
+        restClient.createChannel(server.getId(), category.getId(), channelNameInput, type, privileged, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JsonObject createChannelAnswer = JsonUtil.parse(response.getBody().getObject().getString(DATA));
+                String channelId = createChannelAnswer.getString(ID);
+                String channelName = createChannelAnswer.getString(NAME);
+                String channelType = createChannelAnswer.getString(TYPE);
+                boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
+                String channelCategoryId = createChannelAnswer.getString(CATEGORY);
+                JsonArray members = createChannelAnswer.getJsonArray(MEMBERS);
+
+                if(category.getId().equals(channelCategoryId)) {
+                    Channel channel = editor.haveChannel(channelId, channelName, channelType, channelPrivileged, category, members);
+                    controller.handleCreateChannel(channel);
+                }
+                else {
+                    controller.handleCreateChannel(null);
+                }
+            } else {
+                controller.handleCreateChannel(null);
             }
         });
         return this;
