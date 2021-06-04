@@ -279,27 +279,18 @@ public class StageManager extends Application {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
+            popupScene = new Scene(root);
             updateDarkmode();
 
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor, tfForEmoji);
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
 
-            //create Popup to show Emoji Picker
-            Popup popupEmojiPicker = new Popup();
-            popupEmojiPicker.getContent().add(root);
-
-            //Hides emoji picker when clicked outside
-            popupEmojiPicker.setAutoHide(true);
-
-            if (!popupEmojiPicker.isShowing())
-                popupEmojiPicker.show(stage);
-            else
-                popupEmojiPicker.hide();
-
-            //sets emoji picker directly above the emoji button
-            popupEmojiPicker.setX(pos.getMinX() - popupEmojiPicker.getWidth());
-            popupEmojiPicker.setY(pos.getMinY() - popupEmojiPicker.getHeight());
+            popupStage.setTitle("Emoji Picker");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
 
         } catch (Exception e) {
             System.err.println("Error on showing Emoji Picker");
@@ -410,6 +401,33 @@ public class StageManager extends Application {
         }
     }
 
+
+    public static void showAttentionLeaveServerScreen(Server server) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/AttentionLeaveServerScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            AttentionLeaveServerController attentionLeaveServerController = new AttentionLeaveServerController(root, editor, model.getLocalUser(), server);
+            attentionLeaveServerController.init();
+            controllerMap.put("attentionLeaveServerController", attentionLeaveServerController);
+
+            //display
+            popupStage.setTitle("Leaver Server!!!");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing Leave Server Attention");
+            e.printStackTrace();
+        }
+    }
+
     private static void cleanup() {
         stopController();
 
@@ -488,6 +506,7 @@ public class StageManager extends Application {
     public static Stage getPopupStage() {
         return popupStage;
     }
+
 
     @Override
     public void start(Stage primaryStage) {
