@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -97,7 +98,6 @@ public class ServerScreenController implements Controller {
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
-        btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.btnEdit.setVisible(false);
 
         this.lbServerName.setText(server.getName());
@@ -124,7 +124,9 @@ public class ServerScreenController implements Controller {
     }
 
     private void btnEmojiOnClick(ActionEvent actionEvent) {
-        StageManager.showEmojiScreen(tfInputMessage);
+        //get the position of Emoji Button and pass it to showEmojiScreen
+        Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
+        StageManager.showEmojiScreen(tfInputMessage, pos);
     }
 
     public void addActionListener() {
@@ -134,6 +136,7 @@ public class ServerScreenController implements Controller {
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.btnEdit.setOnAction(this::editButtonOnClick);
+        this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
 
