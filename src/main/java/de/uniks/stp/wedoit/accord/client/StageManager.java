@@ -31,6 +31,7 @@ public class StageManager extends Application {
     private static Scene scene;
     private static Stage popupStage;
     private static Scene popupScene;
+    private static Popup popupEmojiPicker;
     private static final Map<String, Controller> controllerMap = new HashMap<>();
 
     /**
@@ -286,7 +287,6 @@ public class StageManager extends Application {
             controllerMap.put("emojiScreenController", emojiScreenController);
 
             //create Popup to show Emoji Picker
-            Popup popupEmojiPicker = new Popup();
             popupEmojiPicker.getContent().add(root);
 
             //Hides emoji picker when clicked outside
@@ -481,6 +481,10 @@ public class StageManager extends Application {
         return stage;
     }
 
+    public Popup getPopupEmojiPicker() {
+        return popupEmojiPicker;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
@@ -490,6 +494,7 @@ public class StageManager extends Application {
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
 
         popupStage.initOwner(stage);
+        popupEmojiPicker = new Popup();
 
         editor = new Editor();
         model = editor.haveAccordClient();
