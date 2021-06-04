@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.controller.EmojiButton;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -13,8 +12,8 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -87,12 +86,12 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
-        this.popupStage = this.stageManager.getPopupStage();
+        this.popupStage = StageManager.getPopupStage();
 
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        StageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        StageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -136,6 +135,9 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
+        Assert.assertFalse(userListView.getItems().get(0).isChatRead());
+        Assert.assertFalse(userListView.getItems().get(1).isChatRead());
+        Assert.assertFalse(userListView.getItems().get(2).isChatRead());
     }
 
     @Test
@@ -164,6 +166,10 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(3)));
+        Assert.assertFalse(userListView.getItems().get(0).isChatRead());
+        Assert.assertFalse(userListView.getItems().get(1).isChatRead());
+        Assert.assertFalse(userListView.getItems().get(2).isChatRead());
+        Assert.assertFalse(userListView.getItems().get(3).isChatRead());
     }
 
     @Test
@@ -189,7 +195,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
 
         Assert.assertEquals(3, userListView.getItems().size());
-        Assert.assertEquals(stageManager.getEditor().getOnlineUsers().size(), userListView.getItems().size());
+        Assert.assertEquals(StageManager.getEditor().getOnlineUsers().size(), userListView.getItems().size());
     }
 
     @Test
@@ -323,6 +329,21 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
         Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(0).getText());
+    }
+
+    @Test
+    public void testChatIncomingMessageNoUserSelected() {
+        initUserListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+
+        User user = lwOnlineUsers.getItems().get(0);
+
+
+        //receive message
+        mockChatWebSocket(getServerMessageUserAnswer(user, "Hallo"));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertFalse(lwOnlineUsers.getItems().get(0).isChatRead());
     }
 
     @Test
@@ -505,7 +526,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
         callbackLogin.completed(res);
 
-        this.localUser = stageManager.getEditor().getLocalUser();
+        this.localUser = StageManager.getEditor().getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
         clickOn("#btnPrivateChats");
@@ -554,7 +575,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", StageManager.getPopupStage().getTitle());
     }
 
     @Test
