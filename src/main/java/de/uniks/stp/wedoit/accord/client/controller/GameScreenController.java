@@ -4,8 +4,8 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -13,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -29,12 +28,14 @@ public class GameScreenController implements Controller {
     private Label lbOpponent;
     private ImageView imgYouPlayed, imgOppPlayed;
     private Button btnRock,btnPaper,btnScissors;
-    private Text textYouPlayed,textOppPlayed;
+    private Text textScore;
     private String gameAction;
     private final PropertyChangeListener opponentGameMove = this::onOpponentGameMove;
     private final Image choosingIMG = new Image(getClass().getResource(CHOOSINGIMG).toString());
 
-    private Timeline timeline;
+    private final SimpleIntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
+
+    //private Timeline timeline;
 
 
     /**
@@ -61,7 +62,7 @@ public class GameScreenController implements Controller {
      * Add action listeners,
      * Init timeline for game flow
      */
-    public void init() {
+    public void init(){
 
         this.lbOpponent = (Label) view.lookup("#lbOpponent");
         this.imgYouPlayed = (ImageView) view.lookup("#imgYouPlayed");
@@ -69,8 +70,7 @@ public class GameScreenController implements Controller {
         this.btnPaper = (Button) view.lookup("#btnPaper");
         this.btnRock = (Button) view.lookup("#btnRock");
         this.btnScissors = (Button) view.lookup("#btnScissors");
-        this.textOppPlayed = (Text) view.lookup("#textYouPlayed");
-        this.textOppPlayed = (Text) view.lookup("#textOppPlayed");
+        this.textScore = (Text) view.lookup("#textScore");
 
         this.lbOpponent.setText(opponent.getName());
 
@@ -85,11 +85,12 @@ public class GameScreenController implements Controller {
 
         this.opponent.listeners().addPropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
 
-        timeline = new Timeline(new KeyFrame(Duration.millis(WAITING_TIME), e -> {
-                    this.imgYouPlayed.setImage(choosingIMG);
-                    this.imgOppPlayed.setImage(choosingIMG);
-                }));
+        this.textScore.textProperty().bind(Bindings.createStringBinding(()-> (ownScore.get() + ":" + oppScore.get()), oppScore,ownScore));
 
+        //timeline = new Timeline(new KeyFrame(Duration.millis(WAITING_TIME), e -> {
+        //            if(gameAction == null) this.imgYouPlayed.setImage(choosingIMG);
+        //            this.imgOppPlayed.setImage(choosingIMG);
+        //        }));
 
     }
 
@@ -104,10 +105,12 @@ public class GameScreenController implements Controller {
         if(opponent.getGameMove() != null){
             imgOppPlayed.setImage(new Image(getClass().getResource(IMGURL + opponent.getGameMove() + ".png").toString()));
 
-            timeline.play();
+            resolveGameOutcome();
 
             opponent.setGameMove(null);
             gameAction = null;
+        }else{
+            imgOppPlayed.setImage(new Image(getClass().getResource(CHOOSINGIMG).toString()));
         }
     }
 
@@ -116,11 +119,18 @@ public class GameScreenController implements Controller {
             imgYouPlayed.setImage(new Image(getClass().getResource(IMGURL + gameAction + ".png").toString()));
             imgOppPlayed.setImage(new Image(getClass().getResource(IMGURL + opponent.getGameMove() + ".png").toString()));
 
-            timeline.play();
+            resolveGameOutcome();
 
             opponent.setGameMove(null);
             gameAction = null;
         }
+    }
+
+    private void resolveGameOutcome(){
+        Boolean outCome = editor.resultOfGame(gameAction, opponent.getGameMove());
+        if(outCome != null && outCome) ownScore.set(ownScore.get() + 1);
+        else if(outCome != null) oppScore.set(oppScore.get() + 1);
+
     }
 
     /**
@@ -134,6 +144,7 @@ public class GameScreenController implements Controller {
         this.btnRock.setOnAction(null);
         this.btnPaper.setOnAction(null);
         this.opponent.listeners().removePropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
+        this.textScore.textProperty().unbind();
 
     }
 }

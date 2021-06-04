@@ -297,6 +297,22 @@ public class Editor {
     }
 
     /**
+     * add message to channel chat
+     *
+     * @param ownAction game action of localUser
+     * @param oppAction game action of opponent user
+     */
+    public Boolean resultOfGame(String ownAction, String oppAction) {
+        if(ownAction.equals(oppAction)) return null;
+
+        if(ownAction.equals(ROCK)) return oppAction.equals(SCISSORS);
+
+        else if(ownAction.equals(PAPER)) return oppAction.equals(ROCK);
+
+        else return oppAction.equals(PAPER);
+    }
+
+    /**
      * the localUser is logged out and will be redirect to the LoginScreen
      *
      * @param userKey userKey of the user who is logged out

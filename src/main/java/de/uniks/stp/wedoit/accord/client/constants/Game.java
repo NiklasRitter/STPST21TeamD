@@ -15,6 +15,4 @@ public class Game {
     public static final String PAPER = "Paper";
     public static final String SCISSORS = "Scissors";
 
-    public static final int WAITING_TIME = 3000;
-
 }

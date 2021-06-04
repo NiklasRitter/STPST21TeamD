@@ -24,7 +24,7 @@
          </font>
       </Text>
       <Region HBox.hgrow="ALWAYS" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="3:3">
+      <Text id="textScore" strokeType="OUTSIDE" strokeWidth="0.0" text="0:0">
          <font>
             <Font size="20.0" />
          </font>
