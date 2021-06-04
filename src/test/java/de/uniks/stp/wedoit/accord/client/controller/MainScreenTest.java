@@ -80,7 +80,7 @@ public class MainScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen
-        localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
+        localUser = stageManager.getEditor().haveLocalUser("username", "testKey123");
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
         stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
