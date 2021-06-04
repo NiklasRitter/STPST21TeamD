@@ -402,6 +402,26 @@ public class NetworkController {
 
 
     /**
+     * Should be called if a server, category or channel will be deleted.
+     * It automatically chooses the correct delete method
+     */
+    public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
+        if (objectToDelete.getClass().equals(Server.class)) {
+            deleteServer(localUser, (Server) objectToDelete, controller);
+        } // else if is for other objects like channel or category
+    }
+
+    private void deleteServer(LocalUser localUser, Server server, AttentionScreenController controller) {
+        restClient.deleteServer(localUser.getUserKey(), server.getId(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                controller.handleDeleteServer(true);
+            } else {
+                controller.handleDeleteServer(false);
+            }
+        });
+    }
+
+    /**
      * Called to stop this controller
      * <p>
      * Stop and remove WebSocketClients
@@ -415,6 +435,5 @@ public class NetworkController {
         }
         return this;
     }
-
 
 }
