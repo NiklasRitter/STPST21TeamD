@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
 import java.util.HashMap;
@@ -280,26 +281,21 @@ public class StageManager extends Application {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
+            popupScene = new Scene(root);
+
             updateDarkmode();
 
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor, tfForEmoji);
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
 
-            //create Popup to show Emoji Picker
-            popupEmojiPicker.getContent().add(root);
-
-            //Hides emoji picker when clicked outside
-            popupEmojiPicker.setAutoHide(true);
-
-            if (!popupEmojiPicker.isShowing())
-                popupEmojiPicker.show(stage);
-            else
-                popupEmojiPicker.hide();
-
-            //sets emoji picker directly above the emoji button
-            popupEmojiPicker.setX(pos.getMinX() - popupEmojiPicker.getWidth());
-            popupEmojiPicker.setY(pos.getMinY() - popupEmojiPicker.getHeight());
+            //display
+            popupStage.setTitle("Emoji Picker");
+            popupStage.setScene(popupScene);
+            popupStage.setResizable(false);
+            popupStage.setX(pos.getMinX() - popupStage.getWidth());
+            popupStage.setY(pos.getMinY() - popupStage.getHeight());
+            popupStage.show();
 
         } catch (Exception e) {
             System.err.println("Error on showing Emoji Picker");
@@ -494,6 +490,11 @@ public class StageManager extends Application {
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
 
         popupStage.initOwner(stage);
+//        stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+//            if (isNowFocused) {
+//                popupStage.hide();
+//            }
+//        });
         popupEmojiPicker = new Popup();
 
         editor = new Editor();
