@@ -41,15 +41,16 @@ public class PrivateChatsScreenController implements Controller {
     private Button btnEmoji;
     private Chat currentChat;
     private ListView<User> lwOnlineUsers;
-    private final PropertyChangeListener usersListListener = this::usersListViewChanged;
-    private final PropertyChangeListener newUsersListener = this::newUser;
+    private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
-    private final PropertyChangeListener chatListener = this::newMessage;
     private PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory;
     private ObservableList<PrivateMessage> privateMessageObservableList;
+    private final PropertyChangeListener chatListener = this::newMessage;
     private ObservableList<User> onlineUserObservableList;
+    private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private List<User> availableUsers = new ArrayList<>();
+    private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser;
 
     /**
@@ -125,10 +126,11 @@ public class PrivateChatsScreenController implements Controller {
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
-        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersListListener);
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersOnlineListListener);
 
         for (User user : availableUsers) {
-            user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
+            user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
+            user.listeners().removePropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
         }
         this.btnHome.setOnAction(null);
         this.btnPlay.setOnAction(null);
@@ -217,7 +219,8 @@ public class PrivateChatsScreenController implements Controller {
         Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
 
         for (User user : availableUsers) {
-            user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
+            user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
+            user.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
         }
     }
 
@@ -226,16 +229,29 @@ public class PrivateChatsScreenController implements Controller {
      *
      * @param propertyChangeEvent event occurs when a users online status changes
      */
-    private void usersListViewChanged(PropertyChangeEvent propertyChangeEvent) {
+    private void usersOnlineListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         User user = (User) propertyChangeEvent.getSource();
         if (!user.isOnlineStatus()) {
-            Platform.runLater(() -> this.onlineUserObservableList.remove(user));
+            Platform.runLater(() -> {
+                this.onlineUserObservableList.remove(user);
+                lwOnlineUsers.refresh();
+            });
         } else {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
+                lwOnlineUsers.refresh();
             });
         }
+    }
+
+    /**
+     * Update listview when user gets new message.
+     *
+     * @param propertyChangeEvent event occurs when a user gets a new message
+     */
+    private void usersMessageListViewChanged(PropertyChangeEvent propertyChangeEvent) {
+        Platform.runLater(() -> lwOnlineUsers.refresh());
     }
 
     /**
@@ -246,7 +262,8 @@ public class PrivateChatsScreenController implements Controller {
     private void newUser(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             User newUser = (User) propertyChangeEvent.getNewValue();
-            newUser.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersListListener);
+            newUser.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
+            newUser.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
             this.availableUsers.add(newUser);
             Platform.runLater(() -> {
                 this.onlineUserObservableList.add(newUser);
@@ -264,7 +281,7 @@ public class PrivateChatsScreenController implements Controller {
      *
      * @param user selected online user in lwOnlineUsers
      */
-    private void initPrivateChat(User user) {
+    public void initPrivateChat(User user) {
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
@@ -273,6 +290,8 @@ public class PrivateChatsScreenController implements Controller {
             user.setPrivateChat(new Chat());
         }
         this.currentChat = user.getPrivateChat();
+        user.setChatRead(true);
+        lwOnlineUsers.refresh();
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
 
         // load list view
@@ -307,6 +326,13 @@ public class PrivateChatsScreenController implements Controller {
 
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
+    }
+
+    /**
+     * @param privateMessage
+     */
+    public void newChatMessage(PrivateMessage privateMessage) {
+        List<User> userCell = lwOnlineUsers.getItems().stream().filter(user1 -> user1.getName().equals(privateMessage.getFrom())).collect(Collectors.toList());
     }
 
     /**

@@ -47,6 +47,7 @@ public class GenModel implements ClassModelDecorator {
     class User {
         String name;
         boolean onlineStatus;
+        boolean chatRead;
 
         String id;
 

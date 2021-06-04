@@ -1,36 +1,37 @@
 package de.uniks.stp.wedoit.accord.client.model;
-
-import java.beans.PropertyChangeSupport;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Collections;
 import java.util.Collection;
+import java.beans.PropertyChangeSupport;
 
-public class User {
-    public static final String PROPERTY_NAME = "name";
-    public static final String PROPERTY_ONLINE_STATUS = "onlineStatus";
-    public static final String PROPERTY_ID = "id";
-    public static final String PROPERTY_CHANNELS = "channels";
-    public static final String PROPERTY_SERVERS = "servers";
-    public static final String PROPERTY_PRIVATE_CHAT = "privateChat";
-    public static final String PROPERTY_LOCAL_USER = "localUser";
-    protected PropertyChangeSupport listeners;
-    private String name;
-    private boolean onlineStatus;
-    private String id;
-    private List<Channel> channels;
-    private List<Server> servers;
-    private Chat privateChat;
-    private LocalUser localUser;
+public class User
+{
+   public static final String PROPERTY_NAME = "name";
+   public static final String PROPERTY_ONLINE_STATUS = "onlineStatus";
+   public static final String PROPERTY_CHAT_READ = "chatRead";
+   public static final String PROPERTY_ID = "id";
+   public static final String PROPERTY_CHANNELS = "channels";
+   public static final String PROPERTY_SERVERS = "servers";
+   public static final String PROPERTY_PRIVATE_CHAT = "privateChat";
+   public static final String PROPERTY_LOCAL_USER = "localUser";
+   private String name;
+   private boolean onlineStatus;
+   private boolean chatRead;
+   private String id;
+   private List<Channel> channels;
+   private List<Server> servers;
+   private Chat privateChat;
+   private LocalUser localUser;
+   protected PropertyChangeSupport listeners;
 
-    public String getName()
+   public String getName()
    {
       return this.name;
    }
 
-    public User setName(String value)
+   public User setName(String value)
    {
       if (Objects.equals(value, this.name))
       {
@@ -43,12 +44,12 @@ public class User {
       return this;
    }
 
-    public boolean isOnlineStatus()
+   public boolean isOnlineStatus()
    {
       return this.onlineStatus;
    }
 
-    public User setOnlineStatus(boolean value)
+   public User setOnlineStatus(boolean value)
    {
       if (value == this.onlineStatus)
       {
@@ -61,12 +62,30 @@ public class User {
       return this;
    }
 
-    public String getId()
+   public boolean isChatRead()
+   {
+      return this.chatRead;
+   }
+
+   public User setChatRead(boolean value)
+   {
+      if (value == this.chatRead)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.chatRead;
+      this.chatRead = value;
+      this.firePropertyChange(PROPERTY_CHAT_READ, oldValue, value);
+      return this;
+   }
+
+   public String getId()
    {
       return this.id;
    }
 
-    public User setId(String value)
+   public User setId(String value)
    {
       if (Objects.equals(value, this.id))
       {
@@ -79,12 +98,12 @@ public class User {
       return this;
    }
 
-    public List<Channel> getChannels()
+   public List<Channel> getChannels()
    {
       return this.channels != null ? Collections.unmodifiableList(this.channels) : Collections.emptyList();
    }
 
-    public User withChannels(Channel value)
+   public User withChannels(Channel value)
    {
       if (this.channels == null)
       {
@@ -99,7 +118,7 @@ public class User {
       return this;
    }
 
-    public User withChannels(Channel... value)
+   public User withChannels(Channel... value)
    {
       for (final Channel item : value)
       {
@@ -108,7 +127,7 @@ public class User {
       return this;
    }
 
-    public User withChannels(Collection<? extends Channel> value)
+   public User withChannels(Collection<? extends Channel> value)
    {
       for (final Channel item : value)
       {
@@ -117,7 +136,7 @@ public class User {
       return this;
    }
 
-    public User withoutChannels(Channel value)
+   public User withoutChannels(Channel value)
    {
       if (this.channels != null && this.channels.remove(value))
       {
@@ -127,7 +146,7 @@ public class User {
       return this;
    }
 
-    public User withoutChannels(Channel... value)
+   public User withoutChannels(Channel... value)
    {
       for (final Channel item : value)
       {
@@ -136,7 +155,7 @@ public class User {
       return this;
    }
 
-    public User withoutChannels(Collection<? extends Channel> value)
+   public User withoutChannels(Collection<? extends Channel> value)
    {
       for (final Channel item : value)
       {
@@ -145,12 +164,12 @@ public class User {
       return this;
    }
 
-    public List<Server> getServers()
+   public List<Server> getServers()
    {
       return this.servers != null ? Collections.unmodifiableList(this.servers) : Collections.emptyList();
    }
 
-    public User withServers(Server value)
+   public User withServers(Server value)
    {
       if (this.servers == null)
       {
@@ -165,7 +184,7 @@ public class User {
       return this;
    }
 
-    public User withServers(Server... value)
+   public User withServers(Server... value)
    {
       for (final Server item : value)
       {
@@ -174,7 +193,7 @@ public class User {
       return this;
    }
 
-    public User withServers(Collection<? extends Server> value)
+   public User withServers(Collection<? extends Server> value)
    {
       for (final Server item : value)
       {
@@ -183,7 +202,7 @@ public class User {
       return this;
    }
 
-    public User withoutServers(Server value)
+   public User withoutServers(Server value)
    {
       if (this.servers != null && this.servers.remove(value))
       {
@@ -193,7 +212,7 @@ public class User {
       return this;
    }
 
-    public User withoutServers(Server... value)
+   public User withoutServers(Server... value)
    {
       for (final Server item : value)
       {
@@ -202,7 +221,7 @@ public class User {
       return this;
    }
 
-    public User withoutServers(Collection<? extends Server> value)
+   public User withoutServers(Collection<? extends Server> value)
    {
       for (final Server item : value)
       {
@@ -211,12 +230,12 @@ public class User {
       return this;
    }
 
-    public Chat getPrivateChat()
+   public Chat getPrivateChat()
    {
       return this.privateChat;
    }
 
-    public User setPrivateChat(Chat value)
+   public User setPrivateChat(Chat value)
    {
       if (this.privateChat == value)
       {
@@ -238,12 +257,12 @@ public class User {
       return this;
    }
 
-    public LocalUser getLocalUser()
+   public LocalUser getLocalUser()
    {
       return this.localUser;
    }
 
-    public User setLocalUser(LocalUser value)
+   public User setLocalUser(LocalUser value)
    {
       if (this.localUser == value)
       {
@@ -265,7 +284,7 @@ public class User {
       return this;
    }
 
-    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
       {
@@ -275,7 +294,7 @@ public class User {
       return false;
    }
 
-    public PropertyChangeSupport listeners()
+   public PropertyChangeSupport listeners()
    {
       if (this.listeners == null)
       {
@@ -284,7 +303,7 @@ public class User {
       return this.listeners;
    }
 
-    @Override
+   @Override
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
@@ -293,7 +312,7 @@ public class User {
       return result.substring(1);
    }
 
-    public void removeYou()
+   public void removeYou()
    {
       this.withoutChannels(new ArrayList<>(this.getChannels()));
       this.withoutServers(new ArrayList<>(this.getServers()));
