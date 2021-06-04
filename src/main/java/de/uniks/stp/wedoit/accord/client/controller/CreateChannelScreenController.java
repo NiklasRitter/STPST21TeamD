@@ -91,7 +91,6 @@ public class CreateChannelScreenController implements Controller {
             else{
                 List<String> userList = new LinkedList<>();
                 userList.add(this.localUser.getId());
-                System.out.println(userList);
                 editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
             }
         }

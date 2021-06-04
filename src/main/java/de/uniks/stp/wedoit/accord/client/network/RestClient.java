@@ -177,7 +177,7 @@ public class RestClient {
      * Create a Channel with a given Name.
      *
      * @param serverId   The ID of the Server the Channel should be created on.
-     * @param categoryId The ID of the Server the Channel should be created on.
+     * @param categoryId The ID of the Category the Channel should be created on.
      * @param name       The Name of the Channel to be created.
      * @param type       The Type of the Channel to be created, Text or Voice.
      * @param privileged Privileged channel or normal channel.
@@ -190,6 +190,29 @@ public class RestClient {
 
         // Use UniRest to create server
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    /**
+     * Update a Channel with a given Name.
+     *
+     * @param serverId   The ID of the Server the Channel is on.
+     * @param categoryId The ID of the Category the Channel belongs to.
+     * @param channelId  The ID of the Channel that is updated.
+     * @param name       The Name the Channel should be changed to.
+     * @param privileged Privileged channel or normal channel.
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
+     */
+    public void updateChannel(String serverId, String categoryId, String channelId, String name, boolean privileged, JsonArray members, String userKey, Callback<JsonNode> callback) {
+        // Build request Body
+        String body = Json.createObjectBuilder().add(NAME, name).add(PRIVILEGED, privileged).add(MEMBERS, members).build().toString();
+
+        // Use UniRest to create server
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS + SLASH + channelId)
                 .header(USER_KEY, userKey)
                 .body(body);
 
