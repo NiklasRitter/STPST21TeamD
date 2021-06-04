@@ -8,22 +8,14 @@ import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
 import java.util.HashMap;
@@ -282,7 +274,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEmojiScreen(TextField tfForEmoji) {
+    public static void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
@@ -297,12 +289,17 @@ public class StageManager extends Application {
             Popup popupEmojiPicker = new Popup();
             popupEmojiPicker.getContent().add(root);
 
+            //Hides emoji picker when clicked outside
             popupEmojiPicker.setAutoHide(true);
 
             if (!popupEmojiPicker.isShowing())
                 popupEmojiPicker.show(stage);
             else
                 popupEmojiPicker.hide();
+
+            //sets emoji picker directly above the emoji button
+            popupEmojiPicker.setX(pos.getMinX() - popupEmojiPicker.getWidth());
+            popupEmojiPicker.setY(pos.getMinY() - popupEmojiPicker.getHeight());
 
         } catch (Exception e) {
             System.err.println("Error on showing Emoji Picker");
