@@ -401,6 +401,38 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController updateChannel(Server server, Category category, Channel channel, String channelNameInput, boolean privileged, List<String> members, EditChannelScreenController controller) {
+        JsonArrayBuilder memberJson = Json.createArrayBuilder();
+        if(members != null) {
+            for (String userId : members){
+                memberJson.add(Json.createValue(userId));
+            }
+        }
+        restClient.updateChannel(server.getId(), category.getId(), channel.getId(), channelNameInput, privileged, memberJson.build(), editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JsonObject createChannelAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+
+                String channelId = createChannelAnswer.getString(ID);
+                String channelName = createChannelAnswer.getString(NAME);
+                String channelType = createChannelAnswer.getString(TYPE);
+                boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
+                String channelCategoryId = createChannelAnswer.getString(CATEGORY);
+                JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
+
+                if(category.getId().equals(channelCategoryId)) {
+                    Channel newChannel = editor.updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
+                    controller.handleEditChannel(newChannel);
+                }
+                else {
+                    controller.handleEditChannel(null);
+                }
+            } else {
+                controller.handleEditChannel(null);
+            }
+        });
+        return this;
+    }
+
     /**
      * This method does a rest request to create a new invitation link
      * @param type type of the invitation, means temporal or count with a int max
@@ -438,7 +470,10 @@ public class NetworkController {
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        } // else if is for other objects like channel or category
+        }
+        else if(objectToDelete.getClass().equals(Channel.class)){
+            deleteChannel(localUser, (Channel) objectToDelete, controller);// else if is for other objects like channel or category
+        }
     }
 
     private void deleteServer(LocalUser localUser, Server server, AttentionScreenController controller) {
@@ -447,6 +482,16 @@ public class NetworkController {
                 controller.handleDeleteServer(true);
             } else {
                 controller.handleDeleteServer(false);
+            }
+        });
+    }
+
+    private void deleteChannel(LocalUser localUser, Channel channel, AttentionScreenController controller) {
+        restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                controller.handleDeleteChannel(true);
+            } else {
+                controller.handleDeleteChannel(false);
             }
         });
     }
