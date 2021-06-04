@@ -6,49 +6,47 @@ import java.util.Collections;
 import java.util.Collection;
 import java.beans.PropertyChangeSupport;
 
-public class LocalUser
+public class LocalUser
 {
+   public static final String PROPERTY_PASSWORD = "password";
    public static final String PROPERTY_NAME = "name";
    public static final String PROPERTY_USER_KEY = "userKey";
    public static final String PROPERTY_ID = "id";
+   public static final String PROPERTY_GAME_INVITES = "gameInvites";
+   public static final String PROPERTY_GAME_REQUESTS = "gameRequests";
    public static final String PROPERTY_SERVERS = "servers";
    public static final String PROPERTY_USERS = "users";
    public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
-   public static final String PROPERTY_GAME_INVITES = "gameInvites";
-   public static final String PROPERTY_GAME_REQUESTS = "gameRequests";
-<<<<<<< HEAD
-   public static final String PROPERTY_ID = "id";
-   public static final String PROPERTY_PASSWORD = "password";
-
-    protected PropertyChangeSupport listeners;
-
-    private String name;
-
-    private String userKey;
-
-    private List<Server> servers;
-
-    private List<User> users;
-   private AccordClient accordClient;
-   private List<User> gameInvites;
-   private List<User> gameRequests;
-   private String id;
    private String password;
-
-    public String getName()
-=======
    private String name;
    private String userKey;
    private String id;
+   private List<User> gameInvites;
+   private List<User> gameRequests;
    private List<Server> servers;
    private List<User> users;
    private AccordClient accordClient;
    protected PropertyChangeSupport listeners;
-   private List<User> gameInvites;
-   private List<User> gameRequests;
+
+   public String getPassword()
+   {
+      return this.password;
+   }
+
+   public LocalUser setPassword(String value)
+   {
+      if (Objects.equals(value, this.password))
+      {
+         return this;
+      }
+
+      final String oldValue = this.password;
+      this.password = value;
+      this.firePropertyChange(PROPERTY_PASSWORD, oldValue, value);
+      return this;
+   }
 
    public String getName()
->>>>>>> master
    {
       return this.name;
    }
@@ -99,6 +97,132 @@ public class LocalUser
       final String oldValue = this.id;
       this.id = value;
       this.firePropertyChange(PROPERTY_ID, oldValue, value);
+      return this;
+   }
+
+   public List<User> getGameInvites()
+   {
+      return this.gameInvites != null ? Collections.unmodifiableList(this.gameInvites) : Collections.emptyList();
+   }
+
+   public LocalUser withGameInvites(User value)
+   {
+      if (this.gameInvites == null)
+      {
+         this.gameInvites = new ArrayList<>();
+      }
+      if (this.gameInvites.add(value))
+      {
+         this.firePropertyChange(PROPERTY_GAME_INVITES, null, value);
+      }
+      return this;
+   }
+
+   public LocalUser withGameInvites(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withGameInvites(item);
+      }
+      return this;
+   }
+
+   public LocalUser withGameInvites(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withGameInvites(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutGameInvites(User value)
+   {
+      if (this.gameInvites != null && this.gameInvites.removeAll(Collections.singleton(value)))
+      {
+         this.firePropertyChange(PROPERTY_GAME_INVITES, value, null);
+      }
+      return this;
+   }
+
+   public LocalUser withoutGameInvites(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withoutGameInvites(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutGameInvites(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withoutGameInvites(item);
+      }
+      return this;
+   }
+
+   public List<User> getGameRequests()
+   {
+      return this.gameRequests != null ? Collections.unmodifiableList(this.gameRequests) : Collections.emptyList();
+   }
+
+   public LocalUser withGameRequests(User value)
+   {
+      if (this.gameRequests == null)
+      {
+         this.gameRequests = new ArrayList<>();
+      }
+      if (this.gameRequests.add(value))
+      {
+         this.firePropertyChange(PROPERTY_GAME_REQUESTS, null, value);
+      }
+      return this;
+   }
+
+   public LocalUser withGameRequests(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withGameRequests(item);
+      }
+      return this;
+   }
+
+   public LocalUser withGameRequests(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withGameRequests(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutGameRequests(User value)
+   {
+      if (this.gameRequests != null && this.gameRequests.removeAll(Collections.singleton(value)))
+      {
+         this.firePropertyChange(PROPERTY_GAME_REQUESTS, value, null);
+      }
+      return this;
+   }
+
+   public LocalUser withoutGameRequests(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withoutGameRequests(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutGameRequests(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withoutGameRequests(item);
+      }
       return this;
    }
 
@@ -261,173 +385,7 @@ public class LocalUser
       return this;
    }
 
-   public List<User> getGameInvites()
-   {
-      return this.gameInvites != null ? Collections.unmodifiableList(this.gameInvites) : Collections.emptyList();
-   }
-
-   public LocalUser withGameInvites(User value)
-   {
-      if (this.gameInvites == null)
-      {
-         this.gameInvites = new ArrayList<>();
-      }
-      if (this.gameInvites.add(value))
-      {
-         this.firePropertyChange(PROPERTY_GAME_INVITES, null, value);
-      }
-      return this;
-   }
-
-   public LocalUser withGameInvites(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withGameInvites(item);
-      }
-      return this;
-   }
-
-   public LocalUser withGameInvites(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withGameInvites(item);
-      }
-      return this;
-   }
-
-   public LocalUser withoutGameInvites(User value)
-   {
-      if (this.gameInvites != null && this.gameInvites.removeAll(Collections.singleton(value)))
-      {
-         this.firePropertyChange(PROPERTY_GAME_INVITES, value, null);
-      }
-      return this;
-   }
-
-   public LocalUser withoutGameInvites(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withoutGameInvites(item);
-      }
-      return this;
-   }
-
-   public LocalUser withoutGameInvites(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withoutGameInvites(item);
-      }
-      return this;
-   }
-
-   public List<User> getGameRequests()
-   {
-      return this.gameRequests != null ? Collections.unmodifiableList(this.gameRequests) : Collections.emptyList();
-   }
-
-   public LocalUser withGameRequests(User value)
-   {
-      if (this.gameRequests == null)
-      {
-         this.gameRequests = new ArrayList<>();
-      }
-      if (this.gameRequests.add(value))
-      {
-         this.firePropertyChange(PROPERTY_GAME_REQUESTS, null, value);
-      }
-      return this;
-   }
-
-   public LocalUser withGameRequests(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withGameRequests(item);
-      }
-      return this;
-   }
-
-   public LocalUser withGameRequests(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withGameRequests(item);
-      }
-      return this;
-   }
-
-   public LocalUser withoutGameRequests(User value)
-   {
-      if (this.gameRequests != null && this.gameRequests.removeAll(Collections.singleton(value)))
-      {
-         this.firePropertyChange(PROPERTY_GAME_REQUESTS, value, null);
-      }
-      return this;
-   }
-
-   public LocalUser withoutGameRequests(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withoutGameRequests(item);
-      }
-      return this;
-   }
-
-   public LocalUser withoutGameRequests(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withoutGameRequests(item);
-      }
-      return this;
-   }
-
-<<<<<<< HEAD
-   public String getId()
-   {
-      return this.id;
-   }
-
-   public LocalUser setId(String value)
-   {
-      if (Objects.equals(value, this.id))
-      {
-         return this;
-      }
-
-      final String oldValue = this.id;
-      this.id = value;
-      this.firePropertyChange(PROPERTY_ID, oldValue, value);
-      return this;
-   }
-
-   public String getPassword()
-   {
-      return this.password;
-   }
-
-   public LocalUser setPassword(String value)
-   {
-      if (Objects.equals(value, this.password))
-      {
-         return this;
-      }
-
-      final String oldValue = this.password;
-      this.password = value;
-      this.firePropertyChange(PROPERTY_PASSWORD, oldValue, value);
-      return this;
-   }
-
-    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
-=======
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
->>>>>>> master
    {
       if (this.listeners != null)
       {
