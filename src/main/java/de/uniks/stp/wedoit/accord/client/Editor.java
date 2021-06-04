@@ -274,10 +274,16 @@ public class Editor {
             else getLocalUser().withGameInvites(getUser(message.getFrom()));
             message.setText(message.getText().substring(PREFIX.length()));
         }
-        if (message.getFrom().equals(getLocalUser().getName())) {
-            getUser(message.getTo()).getPrivateChat().withMessages(message);
-        } else {
-            getUser(message.getFrom()).getPrivateChat().withMessages(message);
+        if(message.getText().startsWith(PREFIX) && !message.getText().endsWith("!")){
+
+            getUser(message.getFrom()).setGameMove(message.getText().substring(PREFIX.length()));
+        }else {
+
+            if (message.getFrom().equals(getLocalUser().getName())) {
+                getUser(message.getTo()).getPrivateChat().withMessages(message);
+            } else {
+                getUser(message.getFrom()).getPrivateChat().withMessages(message);
+            }
         }
     }
 

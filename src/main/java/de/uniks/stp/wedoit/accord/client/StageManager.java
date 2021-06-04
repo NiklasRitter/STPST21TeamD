@@ -187,7 +187,6 @@ public class StageManager extends Application {
     }
 
     public static void showGameScreen(User opponent) {
-        cleanup();
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
             popupScene = new Scene(root);

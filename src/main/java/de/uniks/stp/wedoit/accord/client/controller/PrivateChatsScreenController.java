@@ -290,6 +290,8 @@ public class PrivateChatsScreenController implements Controller {
                 Platform.runLater(() -> StageManager.showGameScreen(editor.getUser(message.getFrom())));
             }
 
+            if(message.getText().startsWith(PREFIX)) message.setText(message.getText().substring(PREFIX.length()));
+
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
     }

@@ -56,7 +56,7 @@
   roles: 	server_categories 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
-  attributes: 	user_name 	user_onlineStatus 	user_id
+  attributes: 	user_name 	user_onlineStatus 	user_gameMove 	user_id
   model: 	c
   modified: 	false
   name: 	User
@@ -413,6 +413,15 @@
   propertyStyle: 	Bean
   type: 	boolean
   typeSignature: 	boolean
+
+- user_gameMove: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_gameMove
+  modified: 	false
+  name: 	gameMove
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
 
 - user_id: 	org.fulib.classmodel.Attribute
   clazz: 	user

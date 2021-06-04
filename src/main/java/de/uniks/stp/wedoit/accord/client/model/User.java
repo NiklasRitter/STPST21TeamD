@@ -16,6 +16,7 @@ public class User {
     public static final String PROPERTY_SERVERS = "servers";
     public static final String PROPERTY_PRIVATE_CHAT = "privateChat";
     public static final String PROPERTY_LOCAL_USER = "localUser";
+   public static final String PROPERTY_GAME_MOVE = "gameMove";
     protected PropertyChangeSupport listeners;
     private String name;
     private boolean onlineStatus;
@@ -24,6 +25,7 @@ public class User {
     private List<Server> servers;
     private Chat privateChat;
     private LocalUser localUser;
+   private String gameMove;
 
     public String getName()
    {
@@ -265,6 +267,24 @@ public class User {
       return this;
    }
 
+   public String getGameMove()
+   {
+      return this.gameMove;
+   }
+
+   public User setGameMove(String value)
+   {
+      if (Objects.equals(value, this.gameMove))
+      {
+         return this;
+      }
+
+      final String oldValue = this.gameMove;
+      this.gameMove = value;
+      this.firePropertyChange(PROPERTY_GAME_MOVE, oldValue, value);
+      return this;
+   }
+
     public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -289,6 +309,7 @@ public class User {
    {
       final StringBuilder result = new StringBuilder();
       result.append(' ').append(this.getName());
+      result.append(' ').append(this.getGameMove());
       result.append(' ').append(this.getId());
       return result.substring(1);
    }
