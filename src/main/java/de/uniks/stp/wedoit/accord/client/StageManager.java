@@ -32,7 +32,9 @@ public class StageManager extends Application {
     private static Scene scene;
     private static Stage popupStage;
     private static Scene popupScene;
-    private static Popup popupEmojiPicker;
+    private static Stage emojiPickerStage;
+    private static Scene emojiPickerScene;
+
     private static final Map<String, Controller> controllerMap = new HashMap<>();
 
     /**
@@ -281,7 +283,7 @@ public class StageManager extends Application {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
-            popupScene = new Scene(root);
+            emojiPickerScene = new Scene(root);
 
             updateDarkmode();
 
@@ -290,12 +292,12 @@ public class StageManager extends Application {
             controllerMap.put("emojiScreenController", emojiScreenController);
 
             //display
-            popupStage.setTitle("Emoji Picker");
-            popupStage.setScene(popupScene);
-            popupStage.setResizable(false);
-            popupStage.setX(pos.getMinX() - popupStage.getWidth());
-            popupStage.setY(pos.getMinY() - popupStage.getHeight());
-            popupStage.show();
+            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
+            emojiPickerStage.setTitle("Emoji Picker");
+            emojiPickerStage.setScene(emojiPickerScene);
+            emojiPickerStage.setResizable(false);
+            emojiPickerStage.show();
 
         } catch (Exception e) {
             System.err.println("Error on showing Emoji Picker");
@@ -412,6 +414,9 @@ public class StageManager extends Application {
         if (popupStage != null) {
             popupStage.hide();
         }
+        if (emojiPickerStage != null) {
+            emojiPickerStage.hide();
+        }
     }
 
     private static void stopController() {
@@ -477,8 +482,8 @@ public class StageManager extends Application {
         return stage;
     }
 
-    public Popup getPopupEmojiPicker() {
-        return popupEmojiPicker;
+    public Stage getEmojiPickerStage() {
+        return emojiPickerStage;
     }
 
     @Override
@@ -488,14 +493,16 @@ public class StageManager extends Application {
 
         popupStage = new Stage();
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
-
         popupStage.initOwner(stage);
-//        stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-//            if (isNowFocused) {
-//                popupStage.hide();
-//            }
-//        });
-        popupEmojiPicker = new Popup();
+
+        emojiPickerStage = new Stage();
+        emojiPickerStage.initOwner(stage);
+        emojiPickerStage.initStyle(StageStyle.UNDECORATED);
+        stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                emojiPickerStage.close();
+            }
+        });
 
         editor = new Editor();
         model = editor.haveAccordClient();

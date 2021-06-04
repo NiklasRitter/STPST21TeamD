@@ -12,9 +12,9 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.TextField;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -36,9 +36,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEINVITE;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.INVITE;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
@@ -53,7 +50,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
-    private Popup popupEmojiPicker;
+    private Stage emojiPickerStage;
     private StageManager stageManager;
     private LocalUser localUser;
     @Mock
@@ -90,7 +87,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
-        this.popupEmojiPicker = this.stageManager.getPopupEmojiPicker();
+        this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
 
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
@@ -109,7 +106,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         localUser = null;
         restMock = null;
         res = null;
-        popupEmojiPicker = null;
+        emojiPickerStage = null;
         callbackArgumentCaptor = null;
         systemWebSocketClient = null;
         chatWebSocketClient = null;
@@ -278,21 +275,23 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
         WaitForAsyncUtils.waitForFxEvents();
-        //send message
-        TextField chatTextField = lookup("#tfEnterPrivateChat").query();
-        chatTextField.setText("Test Message");
-
-//        WaitForAsyncUtils.waitForFxEvents();
-//        Button btnEmoji = lookup("#btnEmoji").query();
-//        clickOn(btnEmoji);
-//
-//        WaitForAsyncUtils.waitForFxEvents();
-//        GridPane panelForEmojis = lookup("#panelForEmojis").query();
-//        EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
-//        clickOn(emoji);
+        clickOn("#btnEmoji");
 
         WaitForAsyncUtils.waitForFxEvents();
-        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
+        Assert.assertTrue(emojiPickerStage.isShowing());
+        Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
+
+        GridPane panelForEmojis = (GridPane) emojiPickerStage.getScene().getRoot().lookup("#panelForEmojis");
+        EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
+        clickOn(emoji);
+
+        //send message
+        clickOn("#tfEnterPrivateChat");
+        write("Test Message");
+        press(KeyCode.ENTER);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message" + emoji.getText());
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -300,7 +299,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
         Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(0).getText());
+        Assert.assertEquals("Test Message" + emoji.getText(), lwPrivateChat.getItems().get(0).getText());
     }
 
     @Test

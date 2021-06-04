@@ -54,7 +54,7 @@ public class ServerScreenTest extends ApplicationTest {
     WebSocketClient chatWebSocketClient;
 
     private Stage stage;
-    private Stage popupStage;
+    private Stage emojiPickerStage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
@@ -97,7 +97,7 @@ public class ServerScreenTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        this.popupStage = this.stageManager.getPopupStage();
+        this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
@@ -119,7 +119,7 @@ public class ServerScreenTest extends ApplicationTest {
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
-        popupStage = null;
+        emojiPickerStage = null;
         stageManager = null;
         localUser = null;
         server = null;
@@ -417,10 +417,10 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("#btnEmoji");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(popupStage.isShowing());
-        Assert.assertEquals("Emoji Picker", popupStage.getTitle());
+        Assert.assertTrue(emojiPickerStage.isShowing());
+        Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
 
-        GridPane panelForEmojis = (GridPane) popupStage.getScene().getRoot().lookup("#panelForEmojis");
+        GridPane panelForEmojis = (GridPane) emojiPickerStage.getScene().getRoot().lookup("#panelForEmojis");
         EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
         clickOn(emoji);
 
