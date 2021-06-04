@@ -12,8 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEINVITE;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class Editor {
 
@@ -270,8 +271,9 @@ public class Editor {
      * @param message to add to the model
      */
     public void addNewPrivateMessage(PrivateMessage message) {
-        if(message.getText().equals(GAMEINVITE)){
-            if(message.getFrom().equals(getLocalUser().getName())) getLocalUser().withGameRequests(getUser(message.getTo()));
+        if (message.getText().equals(GAMEINVITE)) {
+            if (message.getFrom().equals(getLocalUser().getName()))
+                getLocalUser().withGameRequests(getUser(message.getTo()));
             else getLocalUser().withGameInvites(getUser(message.getFrom()));
             message.setText(message.getText().substring(PREFIX.length()));
         }
@@ -284,6 +286,10 @@ public class Editor {
             }
             User user = getUser(message.getFrom());
             Chat privateChat = user.getPrivateChat();
+            if (privateChat == null) {
+                privateChat = new Chat().setName(user.getName()).setUser(user);
+                user.setPrivateChat(privateChat);
+            }
             privateChat.withMessages(message);
             user.setChatRead(false);
         }
