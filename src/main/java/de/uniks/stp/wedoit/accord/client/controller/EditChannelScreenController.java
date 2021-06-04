@@ -12,6 +12,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 
 public class EditChannelScreenController implements Controller {
 
@@ -57,6 +63,11 @@ public class EditChannelScreenController implements Controller {
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::editChannelButtonOnClick);
         this.btnDeleteChannel.setOnAction(this::deleteChannelButtonOnClick);
+
+        if(channel.isPrivileged()){
+            this.checkBoxPrivileged.setSelected(true);
+        }
+        tfChannelName.setText(channel.getName());
     }
 
     /**
@@ -78,11 +89,31 @@ public class EditChannelScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void editChannelButtonOnClick(ActionEvent actionEvent) {
+        if (tfChannelName.getText().length() < 1 || tfChannelName.getText() == null) {
+            tfChannelName.getStyleClass().add("error");
 
+            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
+        } else {
+            if (!checkBoxPrivileged.isSelected()) {
+                editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), null, this);
+            }
+            else{
+                List<String> userList = new LinkedList<>();
+                userList.add(this.localUser.getId());
+                editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
+            }
+        }
     }
 
-    public void handleEditChannel(Server server) {
-
+    public void handleEditChannel(Channel channel) {
+        if (channel != null) {
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
+            stop();
+        } else {
+            tfChannelName.getStyleClass().add("error");
+            Platform.runLater(() -> errorLabel.setText("Something went wrong while updating the channel"));
+        }
     }
 
     /**
