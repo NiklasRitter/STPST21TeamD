@@ -10,6 +10,7 @@ import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,6 +21,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
@@ -285,23 +287,25 @@ public class StageManager extends Application {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
-            popupScene = new Scene(root);
-
             updateDarkmode();
 
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor, tfForEmoji);
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
 
-            popupStage.setTitle("Emoji Picker");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
+            //create Popup to show Emoji Picker
+            Popup popupEmojiPicker = new Popup();
+            popupEmojiPicker.getContent().add(root);
 
-            popupStage.show();
+            popupEmojiPicker.setAutoHide(true);
+
+            if (!popupEmojiPicker.isShowing())
+                popupEmojiPicker.show(stage);
+            else
+                popupEmojiPicker.hide();
 
         } catch (Exception e) {
-            System.err.println("Error on showing EmojiScreen");
+            System.err.println("Error on showing Emoji Picker");
             e.printStackTrace();
         }
     }
@@ -488,14 +492,7 @@ public class StageManager extends Application {
         popupStage = new Stage();
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
 
-        //removes button (close, minimize, maximize from stage)
-        popupStage.initStyle(StageStyle.UNDECORATED);
         popupStage.initOwner(stage);
-        stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (isNowFocused) {
-                popupStage.hide();
-            }
-        });
 
         editor = new Editor();
         model = editor.haveAccordClient();
