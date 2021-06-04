@@ -131,6 +131,31 @@ public class StageManager extends Application {
         }
     }
 
+    public static void showJoinServerScreen() {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/JoinServerScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            JoinServerScreenController joinServerScreenController = new JoinServerScreenController(root, model.getLocalUser(), editor);
+            joinServerScreenController.init();
+            controllerMap.put("joinServerScreenController", joinServerScreenController);
+
+            //display
+            popupStage.setTitle("Join Server");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing JoinServerScreen");
+            e.printStackTrace();
+        }
+    }
+
     public static void showPrivateChatsScreen() {
         cleanup();
 

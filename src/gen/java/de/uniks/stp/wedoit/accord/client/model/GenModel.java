@@ -28,6 +28,7 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class LocalUser {
+        String password;
         String name;
         String userKey;
         String id;

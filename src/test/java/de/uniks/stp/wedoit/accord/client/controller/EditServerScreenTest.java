@@ -339,27 +339,22 @@ public class EditServerScreenTest extends ApplicationTest {
 
         clickOn(radioBtnMaxCount);
         clickOn("#btnCreateInvitation");
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
 
         clickOn(radioBtnMaxCount);
         tfMaxCountAmountInput.setText("b");
         clickOn("#btnCreateInvitation");
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
 
         tfMaxCountAmountInput.setText("0");
         clickOn("#btnCreateInvitation");
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
 
         clickOn(radioBtnMaxCount);
         tfMaxCountAmountInput.setText("15");
         clickOn("#btnCreateInvitation");
-        WaitForAsyncUtils.waitForFxEvents();
 
         verify(restMock).createInvite(anyInt(), anyString(), anyString(), callbackArgumentCaptor.capture());
-
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();

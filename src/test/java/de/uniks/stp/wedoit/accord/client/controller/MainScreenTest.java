@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -397,7 +398,122 @@ public class MainScreenTest extends ApplicationTest {
         Assert.assertEquals(1, listView.getItems().size());
     }
 
+    @Test
+    public void enterServerTestSuccessful() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
+        clickOn("#btnEnterInvitation");
+        Assert.assertEquals("Join Server", stageManager.getPopupStage().getTitle());
+
+        TextField tfInvitationLink = (TextField) lookup("#tfInvitationLink").query();
+        Label lblError = (Label) lookup("#lblError").query();
+
+        tfInvitationLink.setText("https://ac.uniks.de/api/servers/123/invites/in123");
+        clickOn("#btnJoinServer");
+
+        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
+        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+                + AND_SERVER_ID_URL + "123", channelChatWebSocketClient);
+
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getServers().size(), 0);
+
+        when(res.getBody()).thenReturn(new JsonNode(buildJoinedSuccessful().toString()));
+        when(res.isSuccess()).thenReturn(true);
+
+        verify(restMock).joinServer(any(), anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(stage.getTitle(), "Server");
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getServers().size(), 1);
+    }
+
+    @Test
+    public void enterServerTestFailure() {
+        directToMainScreen();
+        // got to main screen
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
+        clickOn("#btnEnterInvitation");
+        Assert.assertEquals("Join Server", stageManager.getPopupStage().getTitle());
+
+        TextField tfInvitationLink = (TextField) lookup("#tfInvitationLink").query();
+        Label lblError = (Label) lookup("#lblError").query();
+
+        tfInvitationLink.setText("blabla");
+        clickOn("#btnJoinServer");
+        Assert.assertEquals("Please insert a valid invitation link", lblError.getText());
+
+        tfInvitationLink.setText("https://ac.uniks.de/api/servers/123/invites/in123");
+        clickOn("#btnJoinServer");
+
+        when(res.getBody()).thenReturn(new JsonNode(buildJoinedFailure().toString()));
+
+        verify(restMock).joinServer(any(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lblError.getText(), buildJoinedFailure().getString(MESSAGE));
+
+        tfInvitationLink.setText("https://ac.uniks.de/api/servers/123/invites/in123");
+        clickOn("#btnJoinServer");
+
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getServers().size(), 0);
+
+
+        when(res.isSuccess()).thenReturn(false);
+        when(res.getBody()).thenReturn(new JsonNode(buildJoinedSuccessful().toString()));
+
+        verify(restMock, atLeastOnce()).joinServer(any(), anyString(), callbackArgumentCaptor.capture());
+        callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getServers().size(), 0);
+        Assert.assertEquals(lblError.getText(), buildJoinedSuccessful().getString(MESSAGE));
+
+
+        tfInvitationLink.setText("https://ac.uniks.de/api/servers/123/invites/in123");
+        clickOn("#btnJoinServer");
+
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getServers().size(), 0);
+
+
+        when(res.isSuccess()).thenReturn(false);
+        when(res.getBody()).thenReturn(null);
+
+        verify(restMock, atLeastOnce()).joinServer(any(), anyString(), callbackArgumentCaptor.capture());
+        callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getServers().size(), 0);
+        Assert.assertEquals(lblError.getText(), "No valid invitation link");
+
+    }
+
     // Help methods to create response for mocked rest client
+
+
+    public JsonObject buildJoinedSuccessful() {
+        return Json.createObjectBuilder().add("status", "success").add("message", "Successfully arrived at server")
+                .add("data", Json.createObjectBuilder()).build();
+    }
+
+    public JsonObject buildJoinedFailure() {
+        return Json.createObjectBuilder().add("status", "failure").add("message", "already joined")
+                .add("data", Json.createObjectBuilder()).build();
+    }
 
     public JsonObject webSocketCallbackServerUpdated() {
         return Json.createObjectBuilder().add("action", "serverUpdated").add("data",
