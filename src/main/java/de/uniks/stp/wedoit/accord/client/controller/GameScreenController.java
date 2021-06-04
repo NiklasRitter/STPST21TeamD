@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
@@ -25,15 +26,14 @@ public class GameScreenController implements Controller {
     private LocalUser localUser;
     private Editor editor;
     private User opponent;
-    private Label lbOpponent;
+    private Label lbOpponent, lbScore;
     private ImageView imgYouPlayed, imgOppPlayed;
     private Button btnRock,btnPaper,btnScissors;
-    private Text textScore;
     private String gameAction;
     private final PropertyChangeListener opponentGameMove = this::onOpponentGameMove;
     private final Image choosingIMG = new Image(getClass().getResource(CHOOSINGIMG).toString());
 
-    private final SimpleIntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
+    private final IntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
 
     //private Timeline timeline;
 
@@ -51,8 +51,8 @@ public class GameScreenController implements Controller {
         this.localUser = model;
         this.opponent = opponent;
         this.editor = editor;
-
     }
+
 
     /**
      * Called to start this controller
@@ -60,9 +60,12 @@ public class GameScreenController implements Controller {
      * <p>
      * Load necessary GUI elements,
      * Add action listeners,
-     * Init timeline for game flow
+     * setup score listener
      */
     public void init(){
+
+        localUser.withoutGameInvites(opponent);
+        localUser.withoutGameRequests(opponent);
 
         this.lbOpponent = (Label) view.lookup("#lbOpponent");
         this.imgYouPlayed = (ImageView) view.lookup("#imgYouPlayed");
@@ -70,7 +73,7 @@ public class GameScreenController implements Controller {
         this.btnPaper = (Button) view.lookup("#btnPaper");
         this.btnRock = (Button) view.lookup("#btnRock");
         this.btnScissors = (Button) view.lookup("#btnScissors");
-        this.textScore = (Text) view.lookup("#textScore");
+        this.lbScore = (Label) view.lookup("#lbScore");
 
         this.lbOpponent.setText(opponent.getName());
 
@@ -85,8 +88,7 @@ public class GameScreenController implements Controller {
 
         this.opponent.listeners().addPropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
 
-        this.textScore.textProperty().bind(Bindings.createStringBinding(()-> (ownScore.get() + ":" + oppScore.get()), oppScore,ownScore));
-
+        this.lbScore.textProperty().bind(Bindings.createStringBinding(()-> (ownScore.get() + ":" + oppScore.get()), oppScore,ownScore));
         //timeline = new Timeline(new KeyFrame(Duration.millis(WAITING_TIME), e -> {
         //            if(gameAction == null) this.imgYouPlayed.setImage(choosingIMG);
         //            this.imgOppPlayed.setImage(choosingIMG);
@@ -94,6 +96,12 @@ public class GameScreenController implements Controller {
 
     }
 
+    /**
+     * send message off corresponding action <br>
+     * resolves game if opponent already choose a action
+     *
+     * @param actionEvent occurs when one of the action button is pressed
+     */
     private void gameActionOnClick(ActionEvent actionEvent) {
         gameAction = ((Button) actionEvent.getSource()).getText();
 
@@ -114,8 +122,13 @@ public class GameScreenController implements Controller {
         }
     }
 
-    private void onOpponentGameMove(PropertyChangeEvent event) {
-        if(event.getNewValue() != null && gameAction != null) {
+    /**
+     * displays actions if both users choose a action and resolves game
+     *
+     * @param propertyChangeEvent event occurs when the opponent choose a action
+     */
+    private void onOpponentGameMove(PropertyChangeEvent propertyChangeEvent) {
+        if(propertyChangeEvent.getNewValue() != null && gameAction != null) {
             imgYouPlayed.setImage(new Image(getClass().getResource(IMGURL + gameAction + ".png").toString()));
             imgOppPlayed.setImage(new Image(getClass().getResource(IMGURL + opponent.getGameMove() + ".png").toString()));
 
@@ -126,10 +139,18 @@ public class GameScreenController implements Controller {
         }
     }
 
+    /**
+     * Called to resolve the game moves
+     * <p>
+     * resolve the game by the action of both players and update score
+     */
     private void resolveGameOutcome(){
         Boolean outCome = editor.resultOfGame(gameAction, opponent.getGameMove());
-        if(outCome != null && outCome) ownScore.set(ownScore.get() + 1);
-        else if(outCome != null) oppScore.set(oppScore.get() + 1);
+        Platform.runLater(()-> {
+            if(outCome != null && outCome) ownScore.set(ownScore.get() + 1);
+            else if(outCome != null) oppScore.set(oppScore.get() + 1);
+        });
+
 
     }
 
@@ -144,7 +165,7 @@ public class GameScreenController implements Controller {
         this.btnRock.setOnAction(null);
         this.btnPaper.setOnAction(null);
         this.opponent.listeners().removePropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
-        this.textScore.textProperty().unbind();
+        this.lbScore.textProperty().unbind();
 
     }
 }
