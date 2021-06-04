@@ -250,7 +250,7 @@ public class RestClient {
     }
 
     /**
-     * join server
+     * Try to join a server with the given invitation link
      *
      * @param callback The Callback to be called after the Request.
      */
