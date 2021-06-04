@@ -433,9 +433,10 @@ public class NetworkController {
 
     /**
      * Try to join a server with the Restclient::joinServer method
-     * @param localUser localUser who is logged in
+     *
+     * @param localUser      localUser who is logged in
      * @param invitationLink invitation which is used to join a server
-     * @param controller controller in which the response is handled
+     * @param controller     controller in which the response is handled
      */
     public void joinServer(LocalUser localUser, String invitationLink, JoinServerScreenController controller) {
         restClient.joinServer(localUser, invitationLink, invitationResponse -> {

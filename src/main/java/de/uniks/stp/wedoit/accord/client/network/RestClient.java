@@ -176,13 +176,13 @@ public class RestClient {
     /**
      * Create a Channel with a given Name.
      *
-     * @param serverId      The ID of the Server the Channel should be created on.
-     * @param categoryId    The ID of the Server the Channel should be created on.
-     * @param name          The Name of the Channel to be created.
-     * @param type          The Type of the Channel to be created, Text or Voice.
-     * @param privileged    Privileged channel or normal channel.
-     * @param userKey       The userKey of the currently logged in User.
-     * @param callback      The Callback to be called after the Request.
+     * @param serverId   The ID of the Server the Channel should be created on.
+     * @param categoryId The ID of the Server the Channel should be created on.
+     * @param name       The Name of the Channel to be created.
+     * @param type       The Type of the Channel to be created, Text or Voice.
+     * @param privileged Privileged channel or normal channel.
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
      */
     public void createChannel(String serverId, String categoryId, String name, String type, boolean privileged, JsonArray members, String userKey, Callback<JsonNode> callback) {
         // Build request Body
@@ -198,8 +198,9 @@ public class RestClient {
 
     /**
      * creates a request to get a temporal invitation link
+     *
      * @param serverId id of the server for which the link is
-     * @param userKey userKey of the logged in local user
+     * @param userKey  userKey of the logged in local user
      * @param callback callback which have new link
      */
     public void createInvite(String serverId, String userKey, Callback<JsonNode> callback) {
@@ -212,8 +213,9 @@ public class RestClient {
 
     /**
      * creates a request to get a invitation link with count type and a maximum count of users who can use the link
+     *
      * @param serverId id of the server for which the link is
-     * @param userKey userKey of the logged in local user
+     * @param userKey  userKey of the logged in local user
      * @param callback callback which have new link
      */
     public void createInvite(int max, String serverId, String userKey, Callback<JsonNode> callback) {
@@ -226,10 +228,10 @@ public class RestClient {
     /**
      * Updates the name of a server
      *
-     * @param serverId   The ID of the Server which name should be changed.
+     * @param serverId      The ID of the Server which name should be changed.
      * @param newServerName The new name of the Server
-     * @param userKey    The userKey of the currently logged in User.
-     * @param callback   The Callback to be called after the Request.
+     * @param userKey       The userKey of the currently logged in User.
+     * @param callback      The Callback to be called after the Request.
      */
     public void changeServerName(String serverId, String newServerName, String userKey, Callback<JsonNode> callback) {
         String body = Json.createObjectBuilder().add(NAME, newServerName).build().toString();
@@ -243,7 +245,7 @@ public class RestClient {
 
     public void deleteServer(String userKey, String serverId, Callback<JsonNode> callback) {
         // Use UniRest to delete server
-        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH +SLASH +serverId)
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
                 .header(USER_KEY, userKey);
 
         sendRequest(req, callback);

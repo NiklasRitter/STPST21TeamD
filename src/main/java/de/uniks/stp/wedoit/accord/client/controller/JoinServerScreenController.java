@@ -81,7 +81,8 @@ public class JoinServerScreenController implements Controller {
 
     /**
      * handles a response of a invitation request
-     * @param server the new server which is entered
+     *
+     * @param server          the new server which is entered
      * @param responseMessage responseMessage of the response
      */
     public void handleInvitation(Server server, String responseMessage) {
