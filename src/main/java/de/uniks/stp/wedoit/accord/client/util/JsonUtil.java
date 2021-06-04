@@ -1,8 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.model.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -153,7 +151,7 @@ public class JsonUtil {
      * @param categoryJson The JsonObject of the Category to be parsed.
      * @return The parsed Category.
      */
-    public static Category parseCategory(JSONObject categoryJson) {
+    public static Category parseCategory(JsonObject categoryJson) {
         return new Category().setId(categoryJson.getString(ID))
                 .setName(categoryJson.getString(NAME));
     }
@@ -166,7 +164,7 @@ public class JsonUtil {
      * @param channelJson The JsonObject of the Channel to be parsed.
      * @return The parsed Channel.
      */
-    public static Channel parseChannel(JSONObject channelJson) {
+    public static Channel parseChannel(JsonObject channelJson) {
         return new Channel().setId(channelJson.getString(ID))
                 .setName(channelJson.getString(NAME))
                 .setType(channelJson.getString(TYPE))
@@ -181,11 +179,11 @@ public class JsonUtil {
      * @param channelJson The JsonObject of the Channel containing the MemberIDs.
      * @return The MemberID List.
      */
-    public static List<String> parseMembers(JSONObject channelJson) {
-        JSONArray members = channelJson.getJSONArray(MEMBERS);
+    public static List<String> parseMembers(JsonObject channelJson) {
+        JsonArray members = channelJson.getJsonArray(MEMBERS);
         List<String> membersIds = new ArrayList<>();
         for (Object memberId : members) {
-            membersIds.add(memberId.toString());
+            membersIds.add(memberId.toString().substring(1,memberId.toString().length()-1));
         }
         return membersIds;
     }

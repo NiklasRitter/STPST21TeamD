@@ -16,8 +16,14 @@ public class PrivateChatsScreenOnlineUsersCellFactory implements javafx.util.Cal
             super.updateItem(item, empty);
             if (!empty && item != null) {
                 this.setText(item.getName());
+                if (!item.isChatRead()) {
+                    this.getStyleClass().add("newMessage");
+                } else {
+                    this.getStyleClass().remove("newMessage");
+                }
             } else {
                 this.setText(null);
+                this.getStyleClass().remove("newMessage");
             }
         }
     }

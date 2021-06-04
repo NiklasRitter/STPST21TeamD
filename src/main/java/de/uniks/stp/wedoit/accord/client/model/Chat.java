@@ -1,28 +1,27 @@
 package de.uniks.stp.wedoit.accord.client.model;
-
-import java.beans.PropertyChangeSupport;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Collections;
 import java.util.Collection;
+import java.beans.PropertyChangeSupport;
 
-public class Chat {
-    public static final String PROPERTY_NAME = "name";
-    public static final String PROPERTY_MESSAGES = "messages";
-    public static final String PROPERTY_USER = "user";
-    protected PropertyChangeSupport listeners;
-    private String name;
-    private List<PrivateMessage> messages;
-    private User user;
+public class Chat
+{
+   public static final String PROPERTY_NAME = "name";
+   public static final String PROPERTY_MESSAGES = "messages";
+   public static final String PROPERTY_USER = "user";
+   private String name;
+   private List<PrivateMessage> messages;
+   private User user;
+   protected PropertyChangeSupport listeners;
 
-    public String getName()
+   public String getName()
    {
       return this.name;
    }
 
-    public Chat setName(String value)
+   public Chat setName(String value)
    {
       if (Objects.equals(value, this.name))
       {
@@ -35,12 +34,12 @@ public class Chat {
       return this;
    }
 
-    public List<PrivateMessage> getMessages()
+   public List<PrivateMessage> getMessages()
    {
       return this.messages != null ? Collections.unmodifiableList(this.messages) : Collections.emptyList();
    }
 
-    public Chat withMessages(PrivateMessage value)
+   public Chat withMessages(PrivateMessage value)
    {
       if (this.messages == null)
       {
@@ -55,7 +54,7 @@ public class Chat {
       return this;
    }
 
-    public Chat withMessages(PrivateMessage... value)
+   public Chat withMessages(PrivateMessage... value)
    {
       for (final PrivateMessage item : value)
       {
@@ -64,7 +63,7 @@ public class Chat {
       return this;
    }
 
-    public Chat withMessages(Collection<? extends PrivateMessage> value)
+   public Chat withMessages(Collection<? extends PrivateMessage> value)
    {
       for (final PrivateMessage item : value)
       {
@@ -73,7 +72,7 @@ public class Chat {
       return this;
    }
 
-    public Chat withoutMessages(PrivateMessage value)
+   public Chat withoutMessages(PrivateMessage value)
    {
       if (this.messages != null && this.messages.remove(value))
       {
@@ -83,7 +82,7 @@ public class Chat {
       return this;
    }
 
-    public Chat withoutMessages(PrivateMessage... value)
+   public Chat withoutMessages(PrivateMessage... value)
    {
       for (final PrivateMessage item : value)
       {
@@ -92,7 +91,7 @@ public class Chat {
       return this;
    }
 
-    public Chat withoutMessages(Collection<? extends PrivateMessage> value)
+   public Chat withoutMessages(Collection<? extends PrivateMessage> value)
    {
       for (final PrivateMessage item : value)
       {
@@ -101,12 +100,12 @@ public class Chat {
       return this;
    }
 
-    public User getUser()
+   public User getUser()
    {
       return this.user;
    }
 
-    public Chat setUser(User value)
+   public Chat setUser(User value)
    {
       if (this.user == value)
       {
@@ -128,7 +127,7 @@ public class Chat {
       return this;
    }
 
-    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
       {
@@ -138,7 +137,7 @@ public class Chat {
       return false;
    }
 
-    public PropertyChangeSupport listeners()
+   public PropertyChangeSupport listeners()
    {
       if (this.listeners == null)
       {
@@ -147,7 +146,7 @@ public class Chat {
       return this.listeners;
    }
 
-    @Override
+   @Override
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
@@ -155,7 +154,7 @@ public class Chat {
       return result.substring(1);
    }
 
-    public void removeYou()
+   public void removeYou()
    {
       this.withoutMessages(new ArrayList<>(this.getMessages()));
       this.setUser(null);

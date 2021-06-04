@@ -15,9 +15,9 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import org.json.JSONArray;
 
 import javax.json.JsonObject;
+import javax.json.JsonArray;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -40,7 +40,9 @@ public class ServerScreenController implements Controller {
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
+    private Button btnEmoji;
     private Button btnEdit;
+
     private Label lbServerName;
 
     private TreeView<Object> tvServerChannels;
@@ -85,7 +87,9 @@ public class ServerScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
+        this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.btnEdit = (Button) view.lookup("#btnEdit");
+
         this.lbServerName = (Label) view.lookup("#lbServerName");
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
@@ -93,6 +97,7 @@ public class ServerScreenController implements Controller {
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
+        btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.btnEdit.setVisible(false);
 
         if (server.getName() != null && !server.getName().equals("")) {
@@ -118,6 +123,10 @@ public class ServerScreenController implements Controller {
         addActionListener();
 
         initTooltips();
+    }
+
+    private void btnEmojiOnClick(ActionEvent actionEvent) {
+        StageManager.showEmojiScreen(tfInputMessage);
     }
 
     public void addActionListener() {
@@ -159,7 +168,9 @@ public class ServerScreenController implements Controller {
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
+        this.btnEmoji.setOnAction(null);
         this.btnEdit.setOnAction(null);
+
         this.tfInputMessage.setOnAction(null);
         this.tvServerChannels.setOnMouseReleased(null);
 
@@ -179,7 +190,6 @@ public class ServerScreenController implements Controller {
         deleteCurrentServer();
     }
 
-
     // Additional methods
 
     public void deleteCurrentServer() {
@@ -193,7 +203,7 @@ public class ServerScreenController implements Controller {
         localUser.withoutServers(server);
     }
 
-    public void handleGetExplicitServerInformation(JSONArray members) {
+    public void handleGetExplicitServerInformation(JsonArray members) {
         if (members != null) {
             // create users which are member in the server and load user list view
             Platform.runLater(() -> {
@@ -569,12 +579,12 @@ public class ServerScreenController implements Controller {
      *
      * @param members JSONArray with users formatted as JSONObject
      */
-    private void createUserListView(JSONArray members) {
-        for (int index = 0; index < members.length(); index++) {
+    private void createUserListView(JsonArray members) {
+        for (int index = 0; index < members.toArray().length; index++) {
 
-            String name = members.getJSONObject(index).getString(NAME);
-            String id = members.getJSONObject(index).getString(ID);
-            boolean onlineStatus = members.getJSONObject(index).getBoolean(ONLINE);
+            String name = members.getJsonObject(index).getString(NAME);
+            String id = members.getJsonObject(index).getString(ID);
+            boolean onlineStatus = members.getJsonObject(index).getBoolean(ONLINE);
 
             editor.haveUserWithServer(name, id, onlineStatus, server);
         }

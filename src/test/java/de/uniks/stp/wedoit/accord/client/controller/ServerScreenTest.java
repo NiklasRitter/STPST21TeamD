@@ -9,6 +9,7 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -28,6 +29,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class ServerScreenTest extends ApplicationTest {
     WebSocketClient chatWebSocketClient;
 
     private Stage stage;
+    private Stage popupStage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
@@ -94,7 +97,7 @@ public class ServerScreenTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-
+        this.popupStage = this.stageManager.getPopupStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
@@ -116,6 +119,7 @@ public class ServerScreenTest extends ApplicationTest {
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
+        popupStage = null;
         stageManager = null;
         localUser = null;
         server = null;
@@ -180,6 +184,16 @@ public class ServerScreenTest extends ApplicationTest {
         verify(restMock).createCategory(anyString(), anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockCreateChannelRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).createChannel(anyString(), anyString(), anyString(), anyString(), anyBoolean(), any(), anyString(), channelsCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
         callback.completed(res);
     }
 
@@ -388,7 +402,7 @@ public class ServerScreenTest extends ApplicationTest {
         initChannelListView();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
-
+        Button btnEmoji = lookup("#btnEmoji").query();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -400,12 +414,22 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(channel.getName(), lblChannelName.getText());
 
+        clickOn("#btnEmoji");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(popupStage.isShowing());
+        Assert.assertEquals("Emoji Picker", popupStage.getTitle());
+
+        GridPane panelForEmojis = (GridPane) popupStage.getScene().getRoot().lookup("#panelForEmojis");
+        EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
+        clickOn(emoji);
+
         //send message
-        TextField tfInputMessage = lookup("#tfInputMessage").query();
-        tfInputMessage.setText("Test Message");
+        clickOn("#tfInputMessage");
+        write("Test Message");
         press(KeyCode.ENTER);
 
-        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message" + emoji.getText());
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -413,7 +437,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(channel.getMessages().size(), lvTextChat.getItems().size());
         Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
-        Assert.assertEquals("Test Message", lvTextChat.getItems().get(0).getText());
+        Assert.assertEquals("Test Message" + emoji.getText(), lvTextChat.getItems().get(0).getText());
     }
 
     @Test
@@ -675,12 +699,100 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void createChannelScreenControlerTest() {
+    public void createChannelTest() {
+
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+
         Platform.runLater(() -> {
-            StageManager.showCreateChannelScreen(new Category());
-            Button button = (Button) lookup("#btnCreateChannel").query();
-            Assert.assertEquals(button.getText(), "Create");
+            StageManager.showCreateChannelScreen(category);
         });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Button button = (Button) lookup("#btnCreateChannel").query();
+        Assert.assertEquals(button.getText(), "Create");
+
+        TextField textField = (TextField) lookup("#tfChannelName").query();
+        textField.setText("testChannel");
+        clickOn("#btnCreateChannel");
+
+        JsonArray members = Json.createArrayBuilder().build();
+        JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "text", false, members);
+        mockCreateChannelRest(json);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Channel newChannel = null;
+        for (Channel channel : category.getChannels()) {
+            if (channel.getId().equals("4321")) {
+                newChannel = channel;
+            }
+        }
+        Assert.assertNotNull(newChannel);
+        Assert.assertEquals(newChannel.getName(), "testChannel");
+    }
+
+    @Test
+    public void createPrivilegedChannelTest() {
+        JsonObject restJson = getServerIdSuccessful();
+        mockRest(restJson);
+
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+
+        Platform.runLater(() -> {
+            StageManager.showCreateChannelScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Button button = (Button) lookup("#btnCreateChannel").query();
+        Assert.assertEquals(button.getText(), "Create");
+
+        TextField textField = (TextField) lookup("#tfChannelName").query();
+        textField.setText("testChannel");
+        clickOn("#btnCreateChannel");
+
+        JsonArray members = Json.createArrayBuilder().add(server.getMembers().get(0).getId()).build();
+        JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "text", true, members);
+        mockCreateChannelRest(json);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Channel newChannel = null;
+        for (Channel channel : category.getChannels()) {
+            if (channel.getId().equals("4321")) {
+                newChannel = channel;
+            }
+        }
+        Assert.assertNotNull(newChannel);
+        Assert.assertEquals(newChannel.getName(), "testChannel");
+        Assert.assertEquals(newChannel.getMembers().get(0).getId(), server.getMembers().get(0).getId());
+    }
+
+    @Test
+    public void createChannelFailureTest() {
+
+        Category category = new Category().setId("12345");
+        Platform.runLater(() -> {
+            StageManager.showCreateChannelScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = (Button) lookup("#btnCreateChannel").query();
+        Assert.assertEquals(button.getText(), "Create");
+
+        clickOn("#btnCreateChannel");
+        Label errorLabel = (Label) lookup("#lblError").query();
+        Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
+
+        TextField textField = (TextField) lookup("#tfChannelName").query();
+        textField.setText("testChannel");
+        clickOn("#btnCreateChannel");
+
+        JsonObject json = buildCreateChannelFailure();
+        mockCreateChannelRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(errorLabel.getText(), "Something went wrong while creating the channel");
     }
 
     @Test
@@ -716,6 +828,30 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder()).build();
     }
 
+    /**
+     * create response when a channel is created
+     */
+    public JsonObject buildCreateChannel(String categoryId, String id, String channelName, String type, boolean privileged, JsonArray members) {
+        return Json.createObjectBuilder().add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", id)
+                        .add("name", channelName)
+                        .add("type", type)
+                        .add("privileged", privileged)
+                        .add("category", categoryId)
+                        .add("members", members)
+                ).build();
+    }
+
+    /**
+     * create response when a channel can not be created
+     */
+    public JsonObject buildCreateChannelFailure() {
+        return Json.createObjectBuilder().add("status", "failure")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()).build();
+    }
 
     // websocket callbacks
 
