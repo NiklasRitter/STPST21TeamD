@@ -1,11 +1,9 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -16,15 +14,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
 import javax.json.JsonObject;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URL;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
@@ -65,8 +57,9 @@ public class GameScreenController implements Controller {
      * Called to start this controller
      * Only call after corresponding fxml is loaded
      * <p>
-     * Load necessary GUI elements
-     * Add action listeners
+     * Load necessary GUI elements,
+     * Add action listeners,
+     * Init timeline for game flow
      */
     public void init() {
 
@@ -95,7 +88,6 @@ public class GameScreenController implements Controller {
         timeline = new Timeline(new KeyFrame(Duration.millis(WAITING_TIME), e -> {
                     this.imgYouPlayed.setImage(choosingIMG);
                     this.imgOppPlayed.setImage(choosingIMG);
-
                 }));
 
 
@@ -141,6 +133,7 @@ public class GameScreenController implements Controller {
         this.btnScissors.setOnAction(null);
         this.btnRock.setOnAction(null);
         this.btnPaper.setOnAction(null);
+        this.opponent.listeners().removePropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
 
     }
 }
