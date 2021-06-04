@@ -476,7 +476,7 @@ public class StageManager extends Application {
         return popupStage;
     }
 
-    public Stage getStage() {
+    public static Stage getStage() {
         return stage;
     }
 

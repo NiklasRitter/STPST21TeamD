@@ -36,7 +36,6 @@ public class MainScreenController implements Controller {
     private Button privateChatsButton;
     private Button optionsButton;
     private Button addServerButton;
-    private Button logoutButton;
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private MainScreenServerListView mainScreenServerListView;
@@ -68,7 +67,6 @@ public class MainScreenController implements Controller {
         this.privateChatsButton = (Button) view.lookup("#btnPrivateChats");
         this.optionsButton = (Button) view.lookup("#btnOptions");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
-        this.logoutButton = (Button) view.lookup("#btnLogout");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
 
         this.initTooltips();
@@ -83,7 +81,6 @@ public class MainScreenController implements Controller {
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
         this.optionsButton.setOnAction(this::optionsButtonOnClick);
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
-        this.logoutButton.setOnAction(this::logoutButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
     }
 
@@ -117,10 +114,6 @@ public class MainScreenController implements Controller {
         privateChatsButton.setText("private chats");
         this.privateChatsButton.setTooltip(privateChatsButton);
 
-        Tooltip logoutButton = new Tooltip();
-        logoutButton.setText("logout");
-        this.logoutButton.setTooltip(logoutButton);
-
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
         this.optionsButton.setTooltip(optionsButton);
@@ -146,7 +139,6 @@ public class MainScreenController implements Controller {
         privateChatsButton.setOnAction(null);
         optionsButton.setOnAction(null);
         addServerButton.setOnAction(null);
-        logoutButton.setOnAction(null);
 
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
         this.serverListListener = null;
@@ -191,15 +183,6 @@ public class MainScreenController implements Controller {
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
         StageManager.showCreateServerScreen();
-    }
-
-    /**
-     * The localUser will be logged out and redirect to the LoginScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void logoutButtonOnClick(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey());
     }
 
     /**

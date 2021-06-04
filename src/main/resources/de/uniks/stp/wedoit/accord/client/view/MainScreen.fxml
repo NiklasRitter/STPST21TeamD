@@ -66,18 +66,6 @@
                      </graphic>
                   </Button>
                   <Region VBox.vgrow="ALWAYS" />
-                  <Button id="btnLogout" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
-                     <graphic>
-                        <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@images/log_out.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                  </Button>
                </children>
                <styleClass>
                   <String fx:value="styleBorder" />
