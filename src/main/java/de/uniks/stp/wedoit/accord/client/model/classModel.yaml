@@ -56,7 +56,7 @@
   roles: 	server_categories 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
-  attributes: 	user_name 	user_onlineStatus 	user_id
+  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_id
   model: 	c
   modified: 	false
   name: 	User
@@ -410,6 +410,15 @@
   id: 	User_onlineStatus
   modified: 	false
   name: 	onlineStatus
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
+- user_chatRead: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_chatRead
+  modified: 	false
+  name: 	chatRead
   propertyStyle: 	Bean
   type: 	boolean
   typeSignature: 	boolean

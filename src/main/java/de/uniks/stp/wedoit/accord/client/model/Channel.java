@@ -1,36 +1,35 @@
 package de.uniks.stp.wedoit.accord.client.model;
-
-import java.beans.PropertyChangeSupport;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Collections;
 import java.util.Collection;
+import java.beans.PropertyChangeSupport;
 
-public class Channel {
-    public static final String PROPERTY_ID = "id";
-    public static final String PROPERTY_NAME = "name";
-    public static final String PROPERTY_TYPE = "type";
-    public static final String PROPERTY_PRIVILEGED = "privileged";
-    public static final String PROPERTY_MESSAGES = "messages";
-    public static final String PROPERTY_MEMBERS = "members";
+public class Channel
+{
+   public static final String PROPERTY_ID = "id";
+   public static final String PROPERTY_NAME = "name";
+   public static final String PROPERTY_TYPE = "type";
+   public static final String PROPERTY_PRIVILEGED = "privileged";
+   public static final String PROPERTY_MESSAGES = "messages";
    public static final String PROPERTY_CATEGORY = "category";
-    protected PropertyChangeSupport listeners;
-    private String id;
-    private String name;
-    private String type;
-    private boolean privileged;
-    private List<Message> messages;
-    private List<User> members;
+   public static final String PROPERTY_MEMBERS = "members";
+   private String id;
+   private String name;
+   private String type;
+   private boolean privileged;
+   private List<Message> messages;
    private Category category;
+   private List<User> members;
+   protected PropertyChangeSupport listeners;
 
-    public String getId()
+   public String getId()
    {
       return this.id;
    }
 
-    public Channel setId(String value)
+   public Channel setId(String value)
    {
       if (Objects.equals(value, this.id))
       {
@@ -43,12 +42,12 @@ public class Channel {
       return this;
    }
 
-    public String getName()
+   public String getName()
    {
       return this.name;
    }
 
-    public Channel setName(String value)
+   public Channel setName(String value)
    {
       if (Objects.equals(value, this.name))
       {
@@ -61,12 +60,12 @@ public class Channel {
       return this;
    }
 
-    public String getType()
+   public String getType()
    {
       return this.type;
    }
 
-    public Channel setType(String value)
+   public Channel setType(String value)
    {
       if (Objects.equals(value, this.type))
       {
@@ -79,12 +78,12 @@ public class Channel {
       return this;
    }
 
-    public boolean isPrivileged()
+   public boolean isPrivileged()
    {
       return this.privileged;
    }
 
-    public Channel setPrivileged(boolean value)
+   public Channel setPrivileged(boolean value)
    {
       if (value == this.privileged)
       {
@@ -97,12 +96,12 @@ public class Channel {
       return this;
    }
 
-    public List<Message> getMessages()
+   public List<Message> getMessages()
    {
       return this.messages != null ? Collections.unmodifiableList(this.messages) : Collections.emptyList();
    }
 
-    public Channel withMessages(Message value)
+   public Channel withMessages(Message value)
    {
       if (this.messages == null)
       {
@@ -117,7 +116,7 @@ public class Channel {
       return this;
    }
 
-    public Channel withMessages(Message... value)
+   public Channel withMessages(Message... value)
    {
       for (final Message item : value)
       {
@@ -126,7 +125,7 @@ public class Channel {
       return this;
    }
 
-    public Channel withMessages(Collection<? extends Message> value)
+   public Channel withMessages(Collection<? extends Message> value)
    {
       for (final Message item : value)
       {
@@ -135,7 +134,7 @@ public class Channel {
       return this;
    }
 
-    public Channel withoutMessages(Message value)
+   public Channel withoutMessages(Message value)
    {
       if (this.messages != null && this.messages.remove(value))
       {
@@ -145,7 +144,7 @@ public class Channel {
       return this;
    }
 
-    public Channel withoutMessages(Message... value)
+   public Channel withoutMessages(Message... value)
    {
       for (final Message item : value)
       {
@@ -154,77 +153,11 @@ public class Channel {
       return this;
    }
 
-    public Channel withoutMessages(Collection<? extends Message> value)
+   public Channel withoutMessages(Collection<? extends Message> value)
    {
       for (final Message item : value)
       {
          this.withoutMessages(item);
-      }
-      return this;
-   }
-
-    public List<User> getMembers()
-   {
-      return this.members != null ? Collections.unmodifiableList(this.members) : Collections.emptyList();
-   }
-
-    public Channel withMembers(User value)
-   {
-      if (this.members == null)
-      {
-         this.members = new ArrayList<>();
-      }
-      if (!this.members.contains(value))
-      {
-         this.members.add(value);
-         value.withChannels(this);
-         this.firePropertyChange(PROPERTY_MEMBERS, null, value);
-      }
-      return this;
-   }
-
-    public Channel withMembers(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withMembers(item);
-      }
-      return this;
-   }
-
-    public Channel withMembers(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withMembers(item);
-      }
-      return this;
-   }
-
-    public Channel withoutMembers(User value)
-   {
-      if (this.members != null && this.members.remove(value))
-      {
-         value.withoutChannels(this);
-         this.firePropertyChange(PROPERTY_MEMBERS, value, null);
-      }
-      return this;
-   }
-
-    public Channel withoutMembers(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withoutMembers(item);
-      }
-      return this;
-   }
-
-    public Channel withoutMembers(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withoutMembers(item);
       }
       return this;
    }
@@ -256,7 +189,73 @@ public class Channel {
       return this;
    }
 
-    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+   public List<User> getMembers()
+   {
+      return this.members != null ? Collections.unmodifiableList(this.members) : Collections.emptyList();
+   }
+
+   public Channel withMembers(User value)
+   {
+      if (this.members == null)
+      {
+         this.members = new ArrayList<>();
+      }
+      if (!this.members.contains(value))
+      {
+         this.members.add(value);
+         value.withChannels(this);
+         this.firePropertyChange(PROPERTY_MEMBERS, null, value);
+      }
+      return this;
+   }
+
+   public Channel withMembers(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withMembers(item);
+      }
+      return this;
+   }
+
+   public Channel withMembers(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withMembers(item);
+      }
+      return this;
+   }
+
+   public Channel withoutMembers(User value)
+   {
+      if (this.members != null && this.members.remove(value))
+      {
+         value.withoutChannels(this);
+         this.firePropertyChange(PROPERTY_MEMBERS, value, null);
+      }
+      return this;
+   }
+
+   public Channel withoutMembers(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withoutMembers(item);
+      }
+      return this;
+   }
+
+   public Channel withoutMembers(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withoutMembers(item);
+      }
+      return this;
+   }
+
+   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
       {
@@ -266,7 +265,7 @@ public class Channel {
       return false;
    }
 
-    public PropertyChangeSupport listeners()
+   public PropertyChangeSupport listeners()
    {
       if (this.listeners == null)
       {
@@ -275,7 +274,7 @@ public class Channel {
       return this.listeners;
    }
 
-    @Override
+   @Override
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
@@ -285,7 +284,7 @@ public class Channel {
       return result.substring(1);
    }
 
-    public void removeYou()
+   public void removeYou()
    {
       this.withoutMessages(new ArrayList<>(this.getMessages()));
       this.setCategory(null);
