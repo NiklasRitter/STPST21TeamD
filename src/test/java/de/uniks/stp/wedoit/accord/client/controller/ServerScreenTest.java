@@ -54,7 +54,7 @@ public class ServerScreenTest extends ApplicationTest {
     WebSocketClient chatWebSocketClient;
 
     private Stage stage;
-    private Stage popupStage;
+    private Stage emojiPickerStage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
@@ -97,7 +97,7 @@ public class ServerScreenTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        this.popupStage = this.stageManager.getPopupStage();
+        this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
@@ -119,7 +119,7 @@ public class ServerScreenTest extends ApplicationTest {
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
-        popupStage = null;
+        emojiPickerStage = null;
         stageManager = null;
         localUser = null;
         server = null;
@@ -202,6 +202,16 @@ public class ServerScreenTest extends ApplicationTest {
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
         verify(restMock).updateChannel(anyString(), anyString(), anyString(), anyString(), anyBoolean(), any(), anyString(), channelsCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockDeleteChannelRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).deleteChannel(anyString(), anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -427,10 +437,10 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("#btnEmoji");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(popupStage.isShowing());
-        Assert.assertEquals("Emoji Picker", popupStage.getTitle());
+        Assert.assertTrue(emojiPickerStage.isShowing());
+        Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
 
-        GridPane panelForEmojis = (GridPane) popupStage.getScene().getRoot().lookup("#panelForEmojis");
+        GridPane panelForEmojis = (GridPane) emojiPickerStage.getScene().getRoot().lookup("#panelForEmojis");
         EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
         clickOn(emoji);
 
@@ -894,6 +904,57 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(errorLabel.getText(), "Something went wrong while updating the channel");
+    }
+
+    @Test
+    public void deleteChannelTest() {
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+        Channel channel = new Channel().setId("54321").setName("testChannel");
+        channel.setCategory(category);
+        Platform.runLater(() -> {
+            StageManager.showEditChannelScreen(channel);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = (Button) lookup("#btnDeleteChannel").query();
+        Assert.assertEquals(button.getText(), "Delete");
+
+        clickOn("#btnDeleteChannel");
+        clickOn("#btnDiscard");
+        Assert.assertEquals(channel.getCategory(), category);
+
+        clickOn("#btnDeleteChannel");
+        clickOn("#btnDelete");
+
+        JsonArray members = Json.createArrayBuilder().build();
+        JsonObject json = buildCreateChannel(category.getId(), channel.getId(), channel.getName(), "text", false, members);
+        mockDeleteChannelRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertNull(channel.getCategory());
+    }
+
+    @Test
+    public void deleteChannelFailureTest() {
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+        Channel channel = new Channel().setId("54321").setName("testChannel");
+        channel.setCategory(category);
+        Platform.runLater(() -> {
+            StageManager.showEditChannelScreen(channel);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = (Button) lookup("#btnDeleteChannel").query();
+        Assert.assertEquals(button.getText(), "Delete");
+
+        clickOn("#btnDeleteChannel");
+        clickOn("#btnDelete");
+
+        JsonObject json = buildFailure();
+        mockDeleteChannelRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertNotNull(channel.getCategory());
     }
 
     // Methods for callbacks

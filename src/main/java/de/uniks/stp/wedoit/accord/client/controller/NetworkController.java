@@ -505,7 +505,10 @@ public class NetworkController {
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        } // else if is for other objects like channel or category
+        }
+        else if(objectToDelete.getClass().equals(Channel.class)){
+            deleteChannel(localUser, (Channel) objectToDelete, controller);// else if is for other objects like channel or category
+        }
     }
 
     private void deleteServer(LocalUser localUser, Server server, AttentionScreenController controller) {
@@ -514,6 +517,16 @@ public class NetworkController {
                 controller.handleDeleteServer(true);
             } else {
                 controller.handleDeleteServer(false);
+            }
+        });
+    }
+
+    private void deleteChannel(LocalUser localUser, Channel channel, AttentionScreenController controller) {
+        restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                controller.handleDeleteChannel(true);
+            } else {
+                controller.handleDeleteChannel(false);
             }
         });
     }

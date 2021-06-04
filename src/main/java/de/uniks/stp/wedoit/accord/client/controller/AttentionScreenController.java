@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
@@ -83,6 +84,9 @@ public class AttentionScreenController implements Controller {
         if (objectToDelete.getClass().equals(Server.class)) {
             StageManager.showEditServerScreen((Server) objectToDelete);
         }
+        else if(objectToDelete.getClass().equals(Channel.class)){
+            StageManager.showEditChannelScreen((Channel) objectToDelete);
+        }
     }
 
     public void handleDeleteServer(boolean status) {
@@ -91,9 +95,23 @@ public class AttentionScreenController implements Controller {
             Platform.runLater(() -> {
                 StageManager.showMainScreen();
             });
+            stop();
         } else {
             Platform.runLater(() -> {
                 lblError.setText("Error. Delete Server was not successful!");
+                lblError.setVisible(true);
+            });
+        }
+    }
+
+    public void handleDeleteChannel(boolean status) {
+        if (status) {
+            Channel channel = (Channel) objectToDelete;
+            channel.setCategory(null);
+            stop();
+        } else {
+            Platform.runLater(() -> {
+                lblError.setText("Error. Delete Channel was not successful!");
                 lblError.setVisible(true);
             });
         }
