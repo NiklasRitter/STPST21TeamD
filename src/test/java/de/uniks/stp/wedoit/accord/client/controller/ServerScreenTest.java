@@ -191,11 +191,7 @@ public class ServerScreenTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-<<<<<<< HEAD
         verify(restMock).createChannel(anyString(), anyString(), anyString(), anyString(), anyBoolean(), any(), anyString(), channelsCallbackArgumentCaptor.capture());
-=======
-        verify(restMock).createChannel(anyString(), anyString(), anyString(), anyString(), anyBoolean(), any(), anyString(), categoriesCallbackArgumentCaptor.capture());
->>>>>>> TD21-58
 
         Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -704,16 +700,12 @@ public class ServerScreenTest extends ApplicationTest {
 
     @Test
     public void createChannelTest() {
-<<<<<<< HEAD
+
         Category category = new Category().setId("12345");
         category.setServer(server);
 
         Platform.runLater(() -> {
             StageManager.showCreateChannelScreen(category);
-=======
-        Platform.runLater(() -> {
-            StageManager.showCreateChannelScreen(new Category());
->>>>>>> TD21-58
         });
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -724,7 +716,6 @@ public class ServerScreenTest extends ApplicationTest {
         textField.setText("testChannel");
         clickOn("#btnCreateChannel");
 
-<<<<<<< HEAD
         JsonArray members = Json.createArrayBuilder().build();
         JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "text", false, members);
         mockCreateChannelRest(json);
@@ -765,13 +756,6 @@ public class ServerScreenTest extends ApplicationTest {
         JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "text", true, members);
         mockCreateChannelRest(json);
 
-
-=======
-        Category category = new Category();
-        category.setId("12345");
-        JsonObject json = buildCreateChannel("12345", "4321", "testChannel", "text");
-        mockCreateChannelRest(json);
->>>>>>> TD21-58
         WaitForAsyncUtils.waitForFxEvents();
 
         Channel newChannel = null;
@@ -782,22 +766,15 @@ public class ServerScreenTest extends ApplicationTest {
         }
         Assert.assertNotNull(newChannel);
         Assert.assertEquals(newChannel.getName(), "testChannel");
-<<<<<<< HEAD
         Assert.assertEquals(newChannel.getMembers().get(0).getId(), server.getMembers().get(0).getId());
-=======
->>>>>>> TD21-58
     }
 
     @Test
     public void createChannelFailureTest() {
-<<<<<<< HEAD
+
         Category category = new Category().setId("12345");
         Platform.runLater(() -> {
             StageManager.showCreateChannelScreen(category);
-=======
-        Platform.runLater(() -> {
-            StageManager.showCreateChannelScreen(new Category());
->>>>>>> TD21-58
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = (Button) lookup("#btnCreateChannel").query();
@@ -815,11 +792,7 @@ public class ServerScreenTest extends ApplicationTest {
         mockCreateChannelRest(json);
         WaitForAsyncUtils.waitForFxEvents();
 
-<<<<<<< HEAD
         Assert.assertEquals(errorLabel.getText(), "Something went wrong while creating the channel");
-=======
-        Assert.assertEquals(errorLabel.getText(), "Something went wrong while creating the category");
->>>>>>> TD21-58
     }
 
     @Test
@@ -858,32 +831,7 @@ public class ServerScreenTest extends ApplicationTest {
     /**
      * create response when a channel is created
      */
-<<<<<<< HEAD
     public JsonObject buildCreateChannel(String categoryId, String id, String channelName, String type, boolean privileged, JsonArray members) {
-=======
-    public JsonObject buildCreateChannel(String categoryId, String id, String channelName, String type) {
->>>>>>> TD21-58
-        return Json.createObjectBuilder().add("status", "success")
-                .add("message", "")
-                .add("data", Json.createObjectBuilder()
-                        .add("id", id)
-                        .add("name", channelName)
-                        .add("type", type)
-<<<<<<< HEAD
-                        .add("privileged", privileged)
-                        .add("category", categoryId)
-                        .add("members", members)
-=======
-                        .add("privileged", false)
-                        .add("category", categoryId)
->>>>>>> TD21-58
-                ).build();
-    }
-
-    /**
-     * create response when a privileged channel is created
-     */
-    public JsonObject buildCreateChannelPrivileged(String categoryId, String id, String channelName, String type, boolean privileged, JsonArray members) {
         return Json.createObjectBuilder().add("status", "success")
                 .add("message", "")
                 .add("data", Json.createObjectBuilder()
