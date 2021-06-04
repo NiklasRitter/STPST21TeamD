@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -189,7 +190,9 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Emoji Button is clicked
      */
     private void btnEmojiOnClicked(ActionEvent actionEvent) {
-        StageManager.showEmojiScreen(tfPrivateChat);
+        //get the position of Emoji Button and pass it to showEmojiScreen
+        Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
+        StageManager.showEmojiScreen(tfPrivateChat, pos);
     }
 
     /**
