@@ -207,6 +207,16 @@ public class ServerScreenTest extends ApplicationTest {
         callback.completed(res);
     }
 
+    public void mockDeleteChannelRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).deleteChannel(anyString(), anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
     public void mockChatWebSocket(JsonObject webSocketJson) {
         // mock websocket
         verify(chatWebSocketClient, atLeastOnce()).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
@@ -894,6 +904,57 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(errorLabel.getText(), "Something went wrong while updating the channel");
+    }
+
+    @Test
+    public void deleteChannelTest() {
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+        Channel channel = new Channel().setId("54321").setName("testChannel");
+        channel.setCategory(category);
+        Platform.runLater(() -> {
+            StageManager.showEditChannelScreen(channel);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = (Button) lookup("#btnDeleteChannel").query();
+        Assert.assertEquals(button.getText(), "Delete");
+
+        clickOn("#btnDeleteChannel");
+        clickOn("#btnDiscard");
+        Assert.assertEquals(channel.getCategory(), category);
+
+        clickOn("#btnDeleteChannel");
+        clickOn("#btnDelete");
+
+        JsonArray members = Json.createArrayBuilder().build();
+        JsonObject json = buildCreateChannel(category.getId(), channel.getId(), channel.getName(), "text", false, members);
+        mockDeleteChannelRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertNull(channel.getCategory());
+    }
+
+    @Test
+    public void deleteChannelFailureTest() {
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+        Channel channel = new Channel().setId("54321").setName("testChannel");
+        channel.setCategory(category);
+        Platform.runLater(() -> {
+            StageManager.showEditChannelScreen(channel);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = (Button) lookup("#btnDeleteChannel").query();
+        Assert.assertEquals(button.getText(), "Delete");
+
+        clickOn("#btnDeleteChannel");
+        clickOn("#btnDelete");
+
+        JsonObject json = buildFailure();
+        mockDeleteChannelRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertNotNull(channel.getCategory());
     }
 
     // Methods for callbacks
