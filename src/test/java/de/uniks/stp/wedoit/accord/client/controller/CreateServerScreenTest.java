@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller.createServerScreen;
+package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CreateServerScreenControllerTest extends ApplicationTest {
+public class CreateServerScreenTest extends ApplicationTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -152,8 +152,7 @@ public class CreateServerScreenControllerTest extends ApplicationTest {
         Assert.assertNotNull(server);
 
         stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
-                + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
-
+                + AND_SERVER_ID_URL + "123", channelChatWebSocketClient);
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("Server", stage.getTitle());

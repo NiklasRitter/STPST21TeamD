@@ -12,17 +12,25 @@
 
 <VBox id="mainVBox" prefHeight="380.0" prefWidth="350.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+      <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Region prefHeight="24.0" prefWidth="30.0" />
-            <Label text="Change Name: ">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <TextField id="tfNewServernameInput" prefHeight="25.0" prefWidth="178.0" promptText="new Servername" />
+            <Region prefHeight="25.0" prefWidth="350.0" />
+            <Label id="lblError" styleClass="redLabel" text="Error. Something went wrong!" />
+            <Region prefHeight="25.0" prefWidth="350.0" />
+            <HBox alignment="TOP_CENTER" prefHeight="75.0" prefWidth="350.0">
+               <children>
+                  <Region prefHeight="61.0" prefWidth="30.0" />
+                  <Label prefWidth="110.0" text="Change Name: ">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField id="tfNewServernameInput" prefHeight="25.0" prefWidth="180.0" promptText="new Servername" />
+                  <Region prefHeight="61.0" prefWidth="30.0" />
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </VBox>
       <VBox id="vBoxAdminOnly" prefHeight="218.0" prefWidth="350.0">
          <children>
             <VBox prefHeight="100.0" prefWidth="350.0">
@@ -55,7 +63,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </RadioButton>
-                                    <TextField id="tfMaxCountAmountInput" prefHeight="25.0" prefWidth="120.0" promptText="Amount" />
+                                    <TextField id="tfMaxCountAmountInput" prefHeight="25.0" prefWidth="130.0" promptText="Amount" />
                                  </children>
                               </HBox>
                            </children>
@@ -75,11 +83,16 @@
                            </font>
                         </Button>
                         <Region prefHeight="20.0" />
-                        <TextField id="tfInvitationLink" alignment="CENTER" editable="false" prefHeight="25.0" prefWidth="290.0" promptText="Invitation link">
+                        <TextField id="tfInvitationLink" editable="false" prefHeight="25.0" prefWidth="290.0" promptText="Invitation link">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
+                        <Label id="labelCopy">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </VBox>
                </children>

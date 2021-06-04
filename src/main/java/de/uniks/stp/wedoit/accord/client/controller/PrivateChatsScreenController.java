@@ -17,22 +17,28 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
+import javafx.scene.text.Font;
+
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class PrivateChatsScreenController implements Controller {
 
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
-    private Button btnOptions;
+    private Button btnOptions,btnPlay;
     private Button btnHome;
     private Button btnLogout;
+    private Button btnEmoji;
     private Chat currentChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
@@ -71,17 +77,21 @@ public class PrivateChatsScreenController implements Controller {
     public void init() {
 
         this.btnOptions = (Button) view.lookup("#btnOptions");
+        this.btnPlay = (Button) view.lookup("#btnPlay");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnLogout = (Button) view.lookup("#btnLogout");
+        this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
-
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
 
+
         this.btnHome.setOnAction(this::btnHomeOnClicked);
+        this.btnPlay.setOnAction(this::btnPlayOnClicked);
         this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
+        this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
@@ -123,10 +133,12 @@ public class PrivateChatsScreenController implements Controller {
             user.listeners().removePropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
         }
         this.btnHome.setOnAction(null);
+        this.btnPlay.setOnAction(null);
         this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.tfPrivateChat.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
+        this.btnEmoji.setOnAction(null);
     }
 
     /**
@@ -136,6 +148,23 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
         StageManager.showMainScreen();
+    }
+
+    /**
+     * Send a game request or accept a pending invite, if invite accepted redirect to GameScreen
+     *
+     * @param actionEvent occurs when Play Button is clicked
+     */
+    private void btnPlayOnClicked(ActionEvent actionEvent){
+        if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play")){
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEINVITE);
+            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+        }else if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")){
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
+            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+            StageManager.showGameScreen(currentChat.getUser());
+        }
+
     }
 
     /**
@@ -154,6 +183,15 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
+    }
+
+    /**
+     * Opens the Emoji Picker
+     *
+     * @param actionEvent occurs when Emoji Button is clicked
+     */
+    private void btnEmojiOnClicked(ActionEvent actionEvent) {
+        StageManager.showEmojiScreen(tfPrivateChat);
     }
 
     /**
@@ -270,12 +308,22 @@ public class PrivateChatsScreenController implements Controller {
 
     /**
      * update the chat when a new message arrived
+     * Filter for messages with ###game### prefix and handle when a game invite is accepted
      *
      * @param propertyChangeEvent event occurs when a new private message arrives
      */
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
+            if(localUser.getGameInvites().contains(editor.getUser(message.getFrom()))){
+                Platform.runLater(() -> btnPlay.setText("Accept"));
+            }
+
+            if(message.getText().equals(GAMEACCEPT) && localUser.getGameRequests().contains(editor.getUser(message.getFrom()))) {
+                message.setText(message.getText().substring(10));
+                Platform.runLater(() -> StageManager.showGameScreen(editor.getUser(message.getFrom())));
+            }
+
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
     }
@@ -304,14 +352,16 @@ public class PrivateChatsScreenController implements Controller {
 
     /**
      * initPrivateChat when item of userList is clicked twice
+     * manages the the Play button
      *
      * @param mouseEvent occurs when a listitem is clicked
      */
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
-            User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
-            if (user != null) {
-                this.initPrivateChat(user);
+            User selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ? "Accept" : "Play");
+                this.initPrivateChat(selectedUser);
             }
         }
     }

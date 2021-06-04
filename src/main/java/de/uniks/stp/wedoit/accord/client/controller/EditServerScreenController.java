@@ -1,17 +1,27 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
 
 public class EditServerScreenController implements Controller {
 
@@ -19,6 +29,7 @@ public class EditServerScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
+    private final Stage stage;
 
     private Button btnCreateInvitation;
     private Button btnDelete;
@@ -33,6 +44,9 @@ public class EditServerScreenController implements Controller {
 
     private VBox vBoxAdminOnly;
     private VBox mainVBox;
+    private Label labelCopy;
+
+    private Label lblError;
 
 
     /**
@@ -43,11 +57,12 @@ public class EditServerScreenController implements Controller {
      * @param editor The editor of the Application
      * @param server The Server this Screen belongs to
      */
-    public EditServerScreenController(Parent view, LocalUser model, Editor editor, Server server) {
+    public EditServerScreenController(Parent view, LocalUser model, Editor editor, Server server, Stage stage) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
         this.server = server;
+        this.stage = stage;
     }
 
     /**
@@ -69,9 +84,12 @@ public class EditServerScreenController implements Controller {
         this.tfNewServernameInput = (TextField) view.lookup("#tfNewServernameInput");
         this.tfMaxCountAmountInput = (TextField) view.lookup("#tfMaxCountAmountInput");
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
+        this.labelCopy = (Label) view.lookup("#labelCopy");
 
         this.vBoxAdminOnly = (VBox) view.lookup("#vBoxAdminOnly");
         this.mainVBox = (VBox) view.lookup("#mainVBox");
+
+        this.lblError = (Label) view.lookup("#lblError");
 
         // Depending on if localUser is admin or not display the correct editMenu
         loadDefaultSettings();
@@ -89,6 +107,7 @@ public class EditServerScreenController implements Controller {
         this.btnSave.setOnAction(this::saveButtonOnClick);
         this.radioBtnMaxCount.setOnMouseClicked(this::radioBtnMaxCountOnClick);
         this.radioBtnTemporal.setOnMouseClicked(this::radioBtnTemporalOnClick);
+        this.tfInvitationLink.setOnMouseClicked(this::copyInvitationLinkOnClick);
     }
 
     /**
@@ -108,38 +127,64 @@ public class EditServerScreenController implements Controller {
      * Called to load the correct EditorScreen depending on whether the localUser is admin of server or not
      */
     private void loadDefaultSettings() {
-        if (!localUser.getId().equals(server.getOwner())) {
-            this.btnDelete.setVisible(false);
-            this.btnDelete.setDisable(true);
-            vBoxAdminOnly.setVisible(false);
-            vBoxAdminOnly.setDisable(true);
-            for (Node child : this.mainVBox.getChildren()) {
-                child.getId();
-                if (child.getId() != null && child.getId().equals("vBoxAdminOnly")) {
-                    this.mainVBox.getChildren().remove(child);
-                    break;
-                }
-            }
-            this.mainVBox.setPrefHeight(150);
-            this.mainVBox.setPrefWidth(350);
+
+        lblError.setVisible(false);
+        ToggleGroup toggleGroup = new ToggleGroup();
+        radioBtnMaxCount.setToggleGroup(toggleGroup);
+        radioBtnTemporal.setToggleGroup(toggleGroup);
+        radioBtnMaxCount.setSelected(true);
+
+    }
+
+    /**
+     * In this method a new servername has to be set if set if the
+     * user types in a new servername and close popup Window
+     *
+     * @param actionEvent
+     */
+    private void saveButtonOnClick(ActionEvent actionEvent) {
+        String newServerName = tfNewServernameInput.getText();
+        if (!newServerName.isEmpty()) {
+            editor.getNetworkController().changeServerName(localUser, server, newServerName, this);
         } else {
-            ToggleGroup toggleGroup = new ToggleGroup();
-            radioBtnMaxCount.setToggleGroup(toggleGroup);
-            radioBtnTemporal.setToggleGroup(toggleGroup);
-            radioBtnMaxCount.setSelected(true);
+            stage.close();
         }
     }
 
-    private void saveButtonOnClick(ActionEvent actionEvent) {
-
-    }
-
     private void deleteButtonOnClick(ActionEvent actionEvent) {
-
+        StageManager.showAttentionScreen(this.server);
     }
 
+    /**
+     * Call the network controller if the input for a invitation is valid
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void createInvitationButtonOnClick(ActionEvent actionEvent) {
+        if (radioBtnMaxCount.isSelected()) {
+            if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*")) {
+                int max = Integer.parseInt(tfMaxCountAmountInput.getText());
+                editor.getNetworkController().createInvitation(COUNT, max, server.getId(), localUser.getUserKey(), this);
+            } else {
+                tfMaxCountAmountInput.setText("");
+                tfMaxCountAmountInput.setPromptText("Insert Amount > 0");
+            }
+        } else if (radioBtnTemporal.isSelected()) {
+            editor.getNetworkController().createInvitation(TEMPORAL, 0, server.getId(), localUser.getUserKey(), this);
+        }
+    }
 
+    /**
+     * handle a new invitation link in the EditServerScreen and show the link in the screen
+     * @param invitationLink invitation link which is responded by the server
+     */
+    public void handleInvitation(String invitationLink) {
+        tfMaxCountAmountInput.setText("");
+        tfMaxCountAmountInput.setPromptText("Amount");
+        if (invitationLink != null) {
+            tfInvitationLink.setText(invitationLink);
+        } else {
+            tfInvitationLink.setPromptText("generation failed");
+        }
     }
 
     private void radioBtnMaxCountOnClick(MouseEvent mouseEvent) {
@@ -151,6 +196,55 @@ public class EditServerScreenController implements Controller {
     private void radioBtnTemporalOnClick(MouseEvent mouseEvent) {
         if (this.radioBtnTemporal.isFocused()) {
             this.tfMaxCountAmountInput.setEditable(false);
+        }
+    }
+
+    /**
+     * This method copies the invitation link and put the link in the system clipboard
+     * <p>
+     * shows "Copied" for 1.5 seconds if there is a link
+     * else shows "First create invitation"
+     *
+     */
+    private void copyInvitationLinkOnClick(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 1) {
+
+            if (!tfInvitationLink.getText().equals("")) {
+                final Clipboard clipboard = Clipboard.getSystemClipboard();
+                final ClipboardContent content = new ClipboardContent();
+                content.putString(tfInvitationLink.getText());
+                clipboard.setContent(content);
+                labelCopy.setText("Copied");
+
+            } else {
+                labelCopy.setText("First create invitation");
+            }
+
+            PauseTransition visiblePause = new PauseTransition(
+                    Duration.seconds(2)
+            );
+            visiblePause.setOnFinished(
+                    event -> {
+                        if (((Stage) view.getScene().getWindow()).getTitle().equals("Edit Server")) {
+                            if (!labelCopy.getText().equals("")) {
+                                labelCopy.setText("");
+                            }
+                        }
+                    });
+            visiblePause.play();
+        }
+    }
+
+    public void handleChangeServerName(boolean status) {
+        if (status) {
+            Platform.runLater(() -> {
+                this.stage.close();
+            });
+        } else {
+            Platform.runLater(() -> {
+                lblError.setText("Error. Change Servername not successful!");
+                lblError.setVisible(true);
+            });
         }
     }
 

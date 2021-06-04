@@ -31,6 +31,8 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String userKey;
         String id;
+        List<User> gameInvites;
+        List<User> gameRequests;
 
         @Link("localUser")
         List<User> users;
@@ -57,6 +59,7 @@ public class GenModel implements ClassModelDecorator {
 
         @Link("members")
         List<Server> servers;
+
         @Link("members")
         List<Channel> channels;
 
