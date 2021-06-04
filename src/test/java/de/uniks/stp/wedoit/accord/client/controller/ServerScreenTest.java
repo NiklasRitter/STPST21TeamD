@@ -191,7 +191,7 @@ public class ServerScreenTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).createChannel(anyString(), anyString(), anyString(), anyString(), anyBoolean(), any(), anyString(), categoriesCallbackArgumentCaptor.capture());
+        verify(restMock).createChannel(anyString(), anyString(), anyString(), anyString(), anyBoolean(), any(), anyString(), channelsCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -700,8 +700,11 @@ public class ServerScreenTest extends ApplicationTest {
 
     @Test
     public void createChannelTest() {
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+
         Platform.runLater(() -> {
-            StageManager.showCreateChannelScreen(new Category());
+            StageManager.showCreateChannelScreen(category);
         });
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -712,10 +715,10 @@ public class ServerScreenTest extends ApplicationTest {
         textField.setText("testChannel");
         clickOn("#btnCreateChannel");
 
-        Category category = new Category();
-        category.setId("12345");
-        JsonObject json = buildCreateChannel("12345", "4321", "testChannel", "text");
+        JsonArray members = Json.createArrayBuilder().build();
+        JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "text", false, members);
         mockCreateChannelRest(json);
+
         WaitForAsyncUtils.waitForFxEvents();
 
         Channel newChannel = null;
@@ -729,9 +732,48 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void createChannelFailureTest() {
+    public void createPrivilegedChannelTest() {
+        JsonObject restJson = getServerIdSuccessful();
+        mockRest(restJson);
+
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+
         Platform.runLater(() -> {
-            StageManager.showCreateChannelScreen(new Category());
+            StageManager.showCreateChannelScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Button button = (Button) lookup("#btnCreateChannel").query();
+        Assert.assertEquals(button.getText(), "Create");
+
+        TextField textField = (TextField) lookup("#tfChannelName").query();
+        textField.setText("testChannel");
+        clickOn("#btnCreateChannel");
+
+        JsonArray members = Json.createArrayBuilder().add(server.getMembers().get(0).getId()).build();
+        JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "text", true, members);
+        mockCreateChannelRest(json);
+
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Channel newChannel = null;
+        for (Channel channel : category.getChannels()) {
+            if (channel.getId().equals("4321")) {
+                newChannel = channel;
+            }
+        }
+        Assert.assertNotNull(newChannel);
+        Assert.assertEquals(newChannel.getName(), "testChannel");
+        Assert.assertEquals(newChannel.getMembers().get(0).getId(), server.getMembers().get(0).getId());
+    }
+
+    @Test
+    public void createChannelFailureTest() {
+        Category category = new Category().setId("12345");
+        Platform.runLater(() -> {
+            StageManager.showCreateChannelScreen(category);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = (Button) lookup("#btnCreateChannel").query();
@@ -749,7 +791,7 @@ public class ServerScreenTest extends ApplicationTest {
         mockCreateChannelRest(json);
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(errorLabel.getText(), "Something went wrong while creating the category");
+        Assert.assertEquals(errorLabel.getText(), "Something went wrong while creating the channel");
     }
 
     @Test
@@ -788,15 +830,16 @@ public class ServerScreenTest extends ApplicationTest {
     /**
      * create response when a channel is created
      */
-    public JsonObject buildCreateChannel(String categoryId, String id, String channelName, String type) {
+    public JsonObject buildCreateChannel(String categoryId, String id, String channelName, String type, boolean privileged, JsonArray members) {
         return Json.createObjectBuilder().add("status", "success")
                 .add("message", "")
                 .add("data", Json.createObjectBuilder()
                         .add("id", id)
                         .add("name", channelName)
                         .add("type", type)
-                        .add("privileged", false)
+                        .add("privileged", privileged)
                         .add("category", categoryId)
+                        .add("members", members)
                 ).build();
     }
 

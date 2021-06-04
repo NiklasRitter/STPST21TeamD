@@ -379,9 +379,7 @@ public class NetworkController {
         restClient.createChannel(server.getId(), category.getId(), channelNameInput, type, privileged, memberJson.build(), editor.getLocalUser().getUserKey(), (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonObject createChannelAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
-                System.out.println(createChannelAnswer);
                 String channelId = createChannelAnswer.getString(ID);
-                System.out.println(channelId);
                 String channelName = createChannelAnswer.getString(NAME);
                 String channelType = createChannelAnswer.getString(TYPE);
                 boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
