@@ -66,7 +66,7 @@ public class StageManager extends Application {
             //display
             stage.setTitle("Login");
             stage.setScene(scene);
-            stage.setHeight(450);
+            stage.setHeight(400);
             stage.setWidth(600);
             stage.centerOnScreen();
             stage.setResizable(false);
@@ -489,7 +489,7 @@ public class StageManager extends Application {
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
 
         //removes button (close, minimize, maximize from stage)
-        popupStage.initStyle(StageStyle.UNDECORATED);
+        //popupStage.initStyle(StageStyle.UNDECORATED);
         popupStage.initOwner(stage);
         stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (isNowFocused) {
@@ -502,7 +502,7 @@ public class StageManager extends Application {
         editor.haveLocalUser();
         model.setOptions(ResourceManager.loadOptions());
 
-        stage.setMinHeight(450);
+        stage.setMinHeight(400);
         stage.setMinWidth(600);
         showLoginScreen();
         stage.show();
