@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -31,6 +32,8 @@ public class StageManager extends Application {
     private static Scene scene;
     private static Stage popupStage;
     private static Scene popupScene;
+    private static Stage emojiPickerStage;
+    private static Scene emojiPickerScene;
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -124,6 +127,31 @@ public class StageManager extends Application {
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing CreateServerScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showJoinServerScreen() {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/JoinServerScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            JoinServerScreenController joinServerScreenController = new JoinServerScreenController(root, model.getLocalUser(), editor);
+            joinServerScreenController.init();
+            controllerMap.put("joinServerScreenController", joinServerScreenController);
+
+            //display
+            popupStage.setTitle("Join Server");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing JoinServerScreen");
             e.printStackTrace();
         }
     }
@@ -273,12 +301,12 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEmojiScreen(TextField tfForEmoji) {
+    public static void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
-            popupScene = new Scene(root);
+            emojiPickerScene = new Scene(root);
 
             updateDarkmode();
 
@@ -286,15 +314,16 @@ public class StageManager extends Application {
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
 
-            popupStage.setTitle("Emoji Picker");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-
-            popupStage.show();
+            //display
+            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
+            emojiPickerStage.setTitle("Emoji Picker");
+            emojiPickerStage.setScene(emojiPickerScene);
+            emojiPickerStage.setResizable(false);
+            emojiPickerStage.show();
 
         } catch (Exception e) {
-            System.err.println("Error on showing EmojiScreen");
+            System.err.println("Error on showing Emoji Picker");
             e.printStackTrace();
         }
     }
@@ -408,6 +437,9 @@ public class StageManager extends Application {
         if (popupStage != null) {
             popupStage.hide();
         }
+        if (emojiPickerStage != null) {
+            emojiPickerStage.hide();
+        }
     }
 
     private static void stopController() {
@@ -481,6 +513,10 @@ public class StageManager extends Application {
         return popupStage;
     }
 
+    public Stage getEmojiPickerStage() {
+        return emojiPickerStage;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
@@ -488,13 +524,14 @@ public class StageManager extends Application {
 
         popupStage = new Stage();
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
-
-        //removes button (close, minimize, maximize from stage)
-        popupStage.initStyle(StageStyle.UNDECORATED);
         popupStage.initOwner(stage);
+
+        emojiPickerStage = new Stage();
+        emojiPickerStage.initOwner(stage);
+        emojiPickerStage.initStyle(StageStyle.UNDECORATED);
         stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (isNowFocused) {
-                popupStage.hide();
+                emojiPickerStage.close();
             }
         });
 

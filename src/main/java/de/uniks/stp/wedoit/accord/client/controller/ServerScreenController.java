@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -97,10 +98,11 @@ public class ServerScreenController implements Controller {
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
-        btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.btnEdit.setVisible(false);
 
-        this.lbServerName.setText(server.getName());
+        if (server.getName() != null && !server.getName().equals("")) {
+            this.lbServerName.setText(server.getName());
+        }
         // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
@@ -124,7 +126,9 @@ public class ServerScreenController implements Controller {
     }
 
     private void btnEmojiOnClick(ActionEvent actionEvent) {
-        StageManager.showEmojiScreen(tfInputMessage);
+        //get the position of Emoji Button and pass it to showEmojiScreen
+        Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
+        StageManager.showEmojiScreen(tfInputMessage, pos);
     }
 
     public void addActionListener() {
@@ -134,6 +138,7 @@ public class ServerScreenController implements Controller {
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.btnEdit.setOnAction(this::editButtonOnClick);
+        this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
 
@@ -204,6 +209,11 @@ public class ServerScreenController implements Controller {
     public void handleGetExplicitServerInformation(JsonArray members) {
         if (members != null) {
             // create users which are member in the server and load user list view
+            Platform.runLater(() -> {
+                lbServerName.setText(server.getName());
+            });
+
+
             createUserListView(members);
         } else {
             Platform.runLater(StageManager::showLoginScreen);
