@@ -40,8 +40,8 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
     private static class ChannelTreeCell extends TreeCell<Object> {
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
-            this.getStyleClass().remove("newMessage");
             if (!empty) {
+                this.getStyleClass().remove("newMessage");
                 if (item instanceof Category) {
                     this.setText("#" + ((Category) item).getName());
                 }
@@ -51,9 +51,10 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                     if (!((Channel) item).isRead()) {
                         this.getStyleClass().add("newMessage");
                     }
-                } else {
-                    this.setText(null);
                 }
+            } else {
+                this.getStyleClass().remove("newMessage");
+                this.setText(null);
             }
         }
     }
