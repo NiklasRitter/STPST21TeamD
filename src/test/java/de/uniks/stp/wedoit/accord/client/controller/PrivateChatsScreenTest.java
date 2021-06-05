@@ -228,11 +228,25 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
         Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(0).getText());
 
+        //receive game accepted message
         mockChatWebSocket(getServerMessageUserAnswer(user, GAMEACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertTrue(popupStage.isShowing());
         Assert.assertEquals("Rock - Paper - Scissors",popupStage.getTitle());
+
+
+        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + ROCK));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#btnPaper");
+        JsonObject gameAction = JsonUtil.buildPrivateChatMessage(user.getName(), PREFIX + PAPER);
+        mockChatWebSocket(getTestMessageServerAnswer(gameAction));
+        WaitForAsyncUtils.waitForFxEvents();
+
+
+
+
 
     }
 
