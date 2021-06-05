@@ -14,5 +14,5 @@ public class Game {
     public static final String ROCK = "Rock";
     public static final String PAPER = "Paper";
     public static final String SCISSORS = "Scissors";
-
+    //public static final String QUIT_GAME = "Quited";
 }

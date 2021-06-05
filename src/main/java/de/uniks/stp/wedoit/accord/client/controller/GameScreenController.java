@@ -1,19 +1,22 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Text;
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -66,6 +69,7 @@ public class GameScreenController implements Controller {
 
         localUser.withoutGameInvites(opponent);
         localUser.withoutGameRequests(opponent);
+        opponent.setGameMove(null);
 
         this.lbOpponent = (Label) view.lookup("#lbOpponent");
         this.imgYouPlayed = (ImageView) view.lookup("#imgYouPlayed");
@@ -76,8 +80,6 @@ public class GameScreenController implements Controller {
         this.lbScore = (Label) view.lookup("#lbScore");
 
         this.lbOpponent.setText(opponent.getName());
-
-
 
         this.imgYouPlayed.setImage(choosingIMG);
         this.imgOppPlayed.setImage(choosingIMG);
@@ -146,13 +148,23 @@ public class GameScreenController implements Controller {
      */
     private void resolveGameOutcome(){
         Boolean outCome = editor.resultOfGame(gameAction, opponent.getGameMove());
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
             if(outCome != null && outCome) ownScore.set(ownScore.get() + 1);
             else if(outCome != null) oppScore.set(oppScore.get() + 1);
         });
 
-
+        handleGameDone();
     }
+
+    private void handleGameDone(){
+        System.out.println("oppScore: " + oppScore.get() + ", ownScore: " + ownScore.get());
+        if(oppScore.get() == 2 || ownScore.get() == 2){
+            System.out.println("game done!!!");
+            stop();
+            Platform.runLater(() -> StageManager.showGameResultScreen(opponent, ownScore.get() == 3));
+        }
+    }
+
 
     /**
      * Called to stop this controller
@@ -160,7 +172,6 @@ public class GameScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-
         this.btnScissors.setOnAction(null);
         this.btnRock.setOnAction(null);
         this.btnPaper.setOnAction(null);

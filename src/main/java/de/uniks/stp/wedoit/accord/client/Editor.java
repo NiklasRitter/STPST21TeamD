@@ -274,11 +274,9 @@ public class Editor {
             else getLocalUser().withGameInvites(getUser(message.getFrom()));
             message.setText(message.getText().substring(PREFIX.length()));
         }
-        if(message.getText().startsWith(PREFIX) && !message.getText().endsWith("!")){
-
-            getUser(message.getFrom()).setGameMove(message.getText().substring(PREFIX.length()));
-        }else {
-
+        if(message.getText().startsWith(PREFIX) && (message.getText().endsWith(ROCK) || message.getText().endsWith(PAPER) || message.getText().endsWith(SCISSORS))){
+            if(!message.getFrom().equals(getLocalUser().getName())) getUser(message.getFrom()).setGameMove(message.getText().substring(PREFIX.length()));
+        }else{
             if (message.getFrom().equals(getLocalUser().getName())) {
                 getUser(message.getTo()).getPrivateChat().withMessages(message);
             } else {
