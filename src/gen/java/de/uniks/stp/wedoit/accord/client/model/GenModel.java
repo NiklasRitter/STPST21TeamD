@@ -97,6 +97,7 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String type;
         boolean privileged;
+        boolean read;
 
         @Link("channels")
         Category category;
