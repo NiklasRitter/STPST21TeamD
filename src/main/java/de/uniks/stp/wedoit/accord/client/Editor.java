@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEINVITE;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.PREFIX;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
 
 public class Editor {
@@ -277,21 +276,27 @@ public class Editor {
             else getLocalUser().withGameInvites(getUser(message.getFrom()));
             message.setText(message.getText().substring(PREFIX.length()));
         }
-        if (message.getFrom().equals(getLocalUser().getName())) {
-            getUser(message.getTo()).getPrivateChat().withMessages(message);
+        if (message.getText().startsWith(PREFIX) && (message.getText().endsWith(ROCK) || message.getText().endsWith(PAPER) || message.getText().endsWith(SCISSORS))) {
+            if (!message.getFrom().equals(getLocalUser().getName()))
+                getUser(message.getFrom()).setGameMove(message.getText().substring(PREFIX.length()));
+
         } else {
-            SystemTrayController systemTrayController = StageManager.getSystemTrayController();
-            if (systemTrayController != null) {
-                systemTrayController.displayPrivateMessageNotification(message);
+            if (message.getFrom().equals(getLocalUser().getName())) {
+                getUser(message.getTo()).getPrivateChat().withMessages(message);
+            } else {
+                SystemTrayController systemTrayController = StageManager.getSystemTrayController();
+                if (systemTrayController != null) {
+                    systemTrayController.displayPrivateMessageNotification(message);
+                }
+                User user = getUser(message.getFrom());
+                Chat privateChat = user.getPrivateChat();
+                if (privateChat == null) {
+                    privateChat = new Chat().setName(user.getName()).setUser(user);
+                    user.setPrivateChat(privateChat);
+                }
+                privateChat.withMessages(message);
+                user.setChatRead(false);
             }
-            User user = getUser(message.getFrom());
-            Chat privateChat = user.getPrivateChat();
-            if (privateChat == null) {
-                privateChat = new Chat().setName(user.getName()).setUser(user);
-                user.setPrivateChat(privateChat);
-            }
-            privateChat.withMessages(message);
-            user.setChatRead(false);
         }
     }
 
@@ -302,6 +307,22 @@ public class Editor {
      */
     public void addNewChannelMessage(Message message) {
         message.getChannel().withMessages(message);
+    }
+
+    /**
+     * add message to channel chat
+     *
+     * @param ownAction game action of localUser
+     * @param oppAction game action of opponent user
+     */
+    public Boolean resultOfGame(String ownAction, String oppAction) {
+        if(ownAction.equals(oppAction)) return null;
+
+        if(ownAction.equals(ROCK)) return oppAction.equals(SCISSORS);
+
+        else if(ownAction.equals(PAPER)) return oppAction.equals(ROCK);
+
+        else return oppAction.equals(PAPER);
     }
 
     /**

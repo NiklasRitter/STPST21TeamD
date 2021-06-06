@@ -17,13 +17,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-
-import javafx.scene.text.Font;
-
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -163,6 +159,7 @@ public class PrivateChatsScreenController implements Controller {
         }else if(currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")){
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+            btnPlay.setText("Play");
             StageManager.showGameScreen(currentChat.getUser());
         }
 
@@ -326,6 +323,8 @@ public class PrivateChatsScreenController implements Controller {
                 message.setText(message.getText().substring(10));
                 Platform.runLater(() -> StageManager.showGameScreen(editor.getUser(message.getFrom())));
             }
+
+            if(message.getText().startsWith(PREFIX)) message.setText(message.getText().substring(PREFIX.length()));
 
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }

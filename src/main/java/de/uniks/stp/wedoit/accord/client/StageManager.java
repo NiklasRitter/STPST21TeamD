@@ -216,14 +216,9 @@ public class StageManager extends Application {
     }
 
     public static void showGameScreen(User opponent) {
-        cleanup();
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
-            if (scene != null) {
-                scene.setRoot(root);
-            } else {
-                scene = new Scene(root);
-            }
+            popupScene = new Scene(root);
 
             //updateDarkmode();
 
@@ -233,17 +228,48 @@ public class StageManager extends Application {
             controllerMap.put("gameScreenController", gameScreenController);
 
             // display
-            stage.setTitle("Rock - Paper - Scissors");
-            stage.setScene(scene);
-            stage.setMinHeight(400);
-            stage.setMinWidth(600);
-            stage.setResizable(true);
-
-
+            popupStage.setTitle("Rock - Paper - Scissors");
+            if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
+            popupStage.setScene(popupScene);
+            popupStage.setMinHeight(400);
+            popupStage.setMinWidth(600);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(true);
+            popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing GameScreen");
             e.printStackTrace();
         }
+    }
+
+    public static void showGameResultScreen(User opponent, Boolean isWinner){
+        if(popupStage.isShowing()) {
+            popupStage.close();
+            try {
+                Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
+                popupScene = new Scene(root);
+
+
+                //init controller
+                GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
+                gameResultScreenController.init();
+                controllerMap.put("GameResultScreenController", gameResultScreenController);
+
+                popupStage.setTitle("Result");
+                if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
+                popupStage.setScene(popupScene);
+                popupStage.setMinHeight(0);
+                popupStage.setMinWidth(0);
+                popupStage.centerOnScreen();
+                popupStage.setResizable(false);
+                popupStage.show();
+
+            }catch (Exception e) {
+                System.err.println("Error on loading GameResultScreen");
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public static void showOptionsScreen() {
