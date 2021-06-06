@@ -28,6 +28,7 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class LocalUser {
+        String password;
         String name;
         String userKey;
         String id;
@@ -47,6 +48,8 @@ public class GenModel implements ClassModelDecorator {
     class User {
         String name;
         boolean onlineStatus;
+        boolean chatRead;
+        String gameMove;
 
         String id;
 
@@ -95,6 +98,7 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String type;
         boolean privileged;
+        boolean read;
 
         @Link("channels")
         Category category;

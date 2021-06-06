@@ -77,7 +77,7 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        this.popupStage = stageManager.getPopupStage();
+        this.popupStage = StageManager.getPopupStage();
 
         //create localUser to skip the login screen
         stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");

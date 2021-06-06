@@ -1,43 +1,39 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.*;
-import de.uniks.stp.wedoit.accord.client.model.AccordClient;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+
 public class StageManager extends Application {
 
+    private static final Map<String, Controller> controllerMap = new HashMap<>();
+    private static SystemTrayController systemTrayController;
     private static Editor editor;
     private static AccordClient model;
     private static Stage stage;
     private static Scene scene;
     private static Stage popupStage;
     private static Scene popupScene;
-    private static final Map<String, Controller> controllerMap = new HashMap<>();
+    private static Stage emojiPickerStage;
+    private static Scene emojiPickerScene;
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -61,7 +57,7 @@ public class StageManager extends Application {
 
             LoginScreenController loginScreenController = new LoginScreenController(root, model.getLocalUser(), editor);
             loginScreenController.init();
-            controllerMap.put("loginScreenController", loginScreenController);
+            controllerMap.put(LOGIN_SCREEN_CONTROLLER, loginScreenController);
 
             //display
             stage.setTitle("Login");
@@ -97,7 +93,7 @@ public class StageManager extends Application {
             //init controller
             MainScreenController mainScreenController = new MainScreenController(root, model.getLocalUser(), editor);
             mainScreenController.init();
-            controllerMap.put("mainScreenController", mainScreenController);
+            controllerMap.put(MAIN_SCREEN_CONTROLLER, mainScreenController);
 
             // display
             stage.setTitle("Main");
@@ -121,7 +117,7 @@ public class StageManager extends Application {
             //init controller
             CreateServerScreenController createServerScreenController = new CreateServerScreenController(root, model.getLocalUser(), editor);
             createServerScreenController.init();
-            controllerMap.put("createServerScreenController", createServerScreenController);
+            controllerMap.put(CREATE_SERVER_SCREEN_CONTROLLER, createServerScreenController);
 
             //display
             popupStage.setTitle("Create Server");
@@ -131,6 +127,31 @@ public class StageManager extends Application {
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing CreateServerScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showJoinServerScreen() {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/JoinServerScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            JoinServerScreenController joinServerScreenController = new JoinServerScreenController(root, model.getLocalUser(), editor);
+            joinServerScreenController.init();
+            controllerMap.put("joinServerScreenController", joinServerScreenController);
+
+            //display
+            popupStage.setTitle("Join Server");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing JoinServerScreen");
             e.printStackTrace();
         }
     }
@@ -150,7 +171,7 @@ public class StageManager extends Application {
 
             PrivateChatsScreenController privateChatsScreenController = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
             privateChatsScreenController.init();
-            controllerMap.put("privateChatsScreenController", privateChatsScreenController);
+            controllerMap.put(PRIVATE_CHATS_SCREEN_CONTROLLER, privateChatsScreenController);
 
             //display
             stage.setTitle("Private Chats");
@@ -180,7 +201,7 @@ public class StageManager extends Application {
             //init controller
             ServerScreenController serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, server);
             serverScreenController.init();
-            controllerMap.put("serverScreenController", serverScreenController);
+            controllerMap.put(SERVER_SCREEN_CONTROLLER, serverScreenController);
 
             //display
             stage.setTitle("Server");
@@ -195,14 +216,9 @@ public class StageManager extends Application {
     }
 
     public static void showGameScreen(User opponent) {
-        cleanup();
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
-            if (scene != null) {
-                scene.setRoot(root);
-            } else {
-                scene = new Scene(root);
-            }
+            popupScene = new Scene(root);
 
             //updateDarkmode();
 
@@ -212,17 +228,48 @@ public class StageManager extends Application {
             controllerMap.put("gameScreenController", gameScreenController);
 
             // display
-            stage.setTitle("Rock - Paper - Scissors");
-            stage.setScene(scene);
-            stage.setMinHeight(400);
-            stage.setMinWidth(600);
-            stage.setResizable(true);
-
-
+            popupStage.setTitle("Rock - Paper - Scissors");
+            if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
+            popupStage.setScene(popupScene);
+            popupStage.setMinHeight(400);
+            popupStage.setMinWidth(600);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(true);
+            popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing GameScreen");
             e.printStackTrace();
         }
+    }
+
+    public static void showGameResultScreen(User opponent, Boolean isWinner){
+        if(popupStage.isShowing()) {
+            popupStage.close();
+            try {
+                Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
+                popupScene = new Scene(root);
+
+
+                //init controller
+                GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
+                gameResultScreenController.init();
+                controllerMap.put("GameResultScreenController", gameResultScreenController);
+
+                popupStage.setTitle("Result");
+                if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
+                popupStage.setScene(popupScene);
+                popupStage.setMinHeight(0);
+                popupStage.setMinWidth(0);
+                popupStage.centerOnScreen();
+                popupStage.setResizable(false);
+                popupStage.show();
+
+            }catch (Exception e) {
+                System.err.println("Error on loading GameResultScreen");
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public static void showOptionsScreen() {
@@ -236,7 +283,7 @@ public class StageManager extends Application {
             //init controller
             OptionsScreenController optionsScreenController = new OptionsScreenController(root, model.getOptions(), editor);
             optionsScreenController.init();
-            controllerMap.put("optionsScreenController", optionsScreenController);
+            controllerMap.put(OPTIONS_SCREEN_CONTROLLER, optionsScreenController);
 
             //display
             popupStage.setTitle("Options");
@@ -280,12 +327,12 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEmojiScreen(TextField tfForEmoji) {
+    public static void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
-            popupScene = new Scene(root);
+            emojiPickerScene = new Scene(root);
 
             updateDarkmode();
 
@@ -293,15 +340,16 @@ public class StageManager extends Application {
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
 
-            popupStage.setTitle("Emoji Picker");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-
-            popupStage.show();
+            //display
+            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
+            emojiPickerStage.setTitle("Emoji Picker");
+            emojiPickerStage.setScene(emojiPickerScene);
+            emojiPickerStage.setResizable(false);
+            emojiPickerStage.show();
 
         } catch (Exception e) {
-            System.err.println("Error on showing EmojiScreen");
+            System.err.println("Error on showing Emoji Picker");
             e.printStackTrace();
         }
     }
@@ -415,6 +463,9 @@ public class StageManager extends Application {
         if (popupStage != null) {
             popupStage.hide();
         }
+        if (emojiPickerStage != null) {
+            emojiPickerStage.hide();
+        }
     }
 
     private static void stopController() {
@@ -460,24 +511,36 @@ public class StageManager extends Application {
         changeDarkmode(model.getOptions().isDarkmode());
     }
 
-    public Editor getEditor() {
+    public static Map<String, Controller> getControllerMap() {
+        return controllerMap;
+    }
+
+    public static SystemTrayController getSystemTrayController() {
+        return systemTrayController;
+    }
+
+    public static Editor getEditor() {
         return editor;
     }
 
-    public Scene getScene() {
+    public static Scene getScene() {
         return scene;
-    }
-
-    public Scene getPopupScene() {
-        return popupScene;
-    }
-
-    public Stage getPopupStage() {
-        return popupStage;
     }
 
     public static Stage getStage() {
         return stage;
+    }
+
+    public static Scene getPopupScene() {
+        return popupScene;
+    }
+
+    public static Stage getPopupStage() {
+        return popupStage;
+    }
+
+    public Stage getEmojiPickerStage() {
+        return emojiPickerStage;
     }
 
     @Override
@@ -487,13 +550,14 @@ public class StageManager extends Application {
 
         popupStage = new Stage();
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
-
-        //removes button (close, minimize, maximize from stage)
-        //popupStage.initStyle(StageStyle.UNDECORATED);
         popupStage.initOwner(stage);
+
+        emojiPickerStage = new Stage();
+        emojiPickerStage.initOwner(stage);
+        emojiPickerStage.initStyle(StageStyle.UNDECORATED);
         stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (isNowFocused) {
-                popupStage.hide();
+                emojiPickerStage.close();
             }
         });
 
@@ -501,6 +565,11 @@ public class StageManager extends Application {
         model = editor.haveAccordClient();
         editor.haveLocalUser();
         model.setOptions(ResourceManager.loadOptions());
+        if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
+        else {
+            systemTrayController = new SystemTrayController(editor);
+            systemTrayController.init();
+        }
 
         stage.setMinHeight(400);
         stage.setMinWidth(600);
@@ -512,6 +581,7 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            if (systemTrayController != null) systemTrayController.stop();
             editor.getNetworkController().stop();
             LocalUser localUser = model.getLocalUser();
             if (localUser != null) {

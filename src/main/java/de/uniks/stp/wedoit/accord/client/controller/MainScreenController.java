@@ -36,11 +36,13 @@ public class MainScreenController implements Controller {
     private Button privateChatsButton;
     private Button optionsButton;
     private Button addServerButton;
+    private Button logoutButton;
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private MainScreenServerListView mainScreenServerListView;
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
+    private Button enterInvitationButton;
 
     /**
      * Create a new Controller
@@ -67,6 +69,7 @@ public class MainScreenController implements Controller {
         this.privateChatsButton = (Button) view.lookup("#btnPrivateChats");
         this.optionsButton = (Button) view.lookup("#btnOptions");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
+        this.enterInvitationButton = (Button) view.lookup("#btnEnterInvitation");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
 
         this.initTooltips();
@@ -81,6 +84,7 @@ public class MainScreenController implements Controller {
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
         this.optionsButton.setOnAction(this::optionsButtonOnClick);
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
+        this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
     }
 
@@ -183,6 +187,15 @@ public class MainScreenController implements Controller {
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
         StageManager.showCreateServerScreen();
+    }
+
+    /**
+     * Opens a pop-up windows, where you can enter a invitation
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
+    private void enterInvitationButtonOnClick(ActionEvent actionEvent) {
+        StageManager.showJoinServerScreen();
     }
 
     /**
