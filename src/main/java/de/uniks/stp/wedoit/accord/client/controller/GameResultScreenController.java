@@ -9,12 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
 import javax.json.JsonObject;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
@@ -33,8 +28,9 @@ public class GameResultScreenController implements Controller{
      *
      * @param view   The view this Controller belongs to
      * @param model  The model this Controller belongs to
-     //* @param editor The editor of the Application
      * @param opponent The Opponent who the localUser is playing against
+     * @param isWinner indicates if the LocalUser is the winner
+     * @param editor The editor of the Application
      */
     public GameResultScreenController(Parent view, LocalUser model, User opponent, Boolean isWinner, Editor editor){
         this.view = view;
@@ -64,6 +60,11 @@ public class GameResultScreenController implements Controller{
 
 
 
+    /**
+     * sends either a game game request or accepts a request if the opponent already requested a game
+     *
+     * @param actionEvent occurs when the Play Again button is pressed
+     */
     private void playAgainOnClick(ActionEvent actionEvent) {
         if(this.localUser.getGameInvites().contains(opponent)){
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAMEACCEPT);
@@ -76,10 +77,21 @@ public class GameResultScreenController implements Controller{
         }
     }
 
+    /**
+     * redirects the user to the PrivateChatScreen
+     *
+     * @param actionEvent occurs when the Quit button ist pressed
+     */
     private void redirectToPrivateChats(ActionEvent actionEvent) {
         StageManager.showPrivateChatsScreen();
     }
 
+
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
     public void stop() {
         btnPlayAgain.setOnAction(null);
         btnQuit.setOnAction(null);

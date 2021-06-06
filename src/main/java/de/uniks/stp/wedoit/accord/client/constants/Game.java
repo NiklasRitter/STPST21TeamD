@@ -7,6 +7,8 @@ public class Game {
     public static final String ACCEPTS = "Accepts!";
     public static final String GAMEINVITE = PREFIX + INVITE;
     public static final String GAMEACCEPT = PREFIX + ACCEPTS;
+    public static final String PLAY_AGAIN = PREFIX + "Play again";
+    public static final String PLAY_AGAIN_ACCEPT = PREFIX + "Play again Accept";
 
     //game actions
     public static final String IMGURL = "/de/uniks/stp/wedoit/accord/client/view/images/game/";
@@ -14,5 +16,5 @@ public class Game {
     public static final String ROCK = "Rock";
     public static final String PAPER = "Paper";
     public static final String SCISSORS = "Scissors";
-    //public static final String QUIT_GAME = "Quited";
+
 }

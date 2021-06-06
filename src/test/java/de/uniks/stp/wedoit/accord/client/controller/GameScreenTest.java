@@ -1,13 +1,12 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -35,6 +34,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -74,6 +75,7 @@ public class GameScreenTest extends ApplicationTest {
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
     }
+
     @Override
     public void start(Stage stage) {
         // start application
@@ -133,7 +135,7 @@ public class GameScreenTest extends ApplicationTest {
         Assert.assertEquals("0:0", score.getText());
         Assert.assertEquals(user.getName(), ((Label) lookup("#lbOpponent").query()).getText());
 
-
+        //play a round until result screen
         //send game action
         clickOn("#btnRock");
         mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + ROCK));
@@ -147,7 +149,6 @@ public class GameScreenTest extends ApplicationTest {
         Assert.assertEquals("0:1", ((Label) lookup("#lbScore").query()).getText());
 
         mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + ROCK));
-        WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#btnPaper");
         mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + PAPER));
@@ -157,12 +158,62 @@ public class GameScreenTest extends ApplicationTest {
 
         clickOn("#btnPaper");
         mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + PAPER));
-        WaitForAsyncUtils.waitForFxEvents();
+
+        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + PAPER));
+        //1:1 Score
+
+
+        clickOn("#btnScissors");
+        mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + SCISSORS));
+
+        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + PAPER));
+        //2:1 Score
+
+        clickOn("#btnScissors");
+        mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + SCISSORS));
 
         mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + PAPER));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("1:1", ((Label) lookup("#lbScore").query()).getText());
+        user.setPrivateChat(new Chat());
+        user.setLocalUser(localUser);
+
+        //got to result screen
+        Assert.assertEquals("Result",popupStage.getTitle());
+
+        clickOn("#btnPlayAgain");
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAMEINVITE));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAMEACCEPT));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Platform.runLater(() -> StageManager.showGameScreen(user));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("Rock - Paper - Scissors",popupStage.getTitle());
+
+        Platform.runLater(() -> StageManager.showGameResultScreen(user,false));
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Result",popupStage.getTitle());
+
+        //accept a replay
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAMEINVITE));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#btnPlayAgain");
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAMEACCEPT));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals("Rock - Paper - Scissors",popupStage.getTitle());
+
+        Platform.runLater(() -> StageManager.showGameResultScreen(user,true));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#btnQuit");
+
+        Assert.assertEquals("Private Chats",stage.getTitle());
+
     }
 
     private void initUserListView() {
@@ -259,6 +310,16 @@ public class GameScreenTest extends ApplicationTest {
                 .add("message", message)
                 .add("from", localUser.getName())
                 .add("to", user.getName())
+                .build();
+    }
+
+    public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
+        return Json.createObjectBuilder()
+                .add("channel", "private")
+                .add("timestamp", 1614938)
+                .add("message", test_message.getString(MESSAGE))
+                .add("from", localUser.getName())
+                .add("to", test_message.getString(TO))
                 .build();
     }
 }

@@ -276,12 +276,15 @@ public class Editor {
         }
         if(message.getText().startsWith(PREFIX) && (message.getText().endsWith(ROCK) || message.getText().endsWith(PAPER) || message.getText().endsWith(SCISSORS))){
             if(!message.getFrom().equals(getLocalUser().getName())) getUser(message.getFrom()).setGameMove(message.getText().substring(PREFIX.length()));
+
         }else{
+
             if (message.getFrom().equals(getLocalUser().getName())) {
                 getUser(message.getTo()).getPrivateChat().withMessages(message);
             } else {
                 getUser(message.getFrom()).getPrivateChat().withMessages(message);
             }
+
         }
     }
 
