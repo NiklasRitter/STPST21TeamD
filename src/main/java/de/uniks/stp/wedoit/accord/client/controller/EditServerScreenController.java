@@ -14,13 +14,10 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 
 
 public class EditServerScreenController implements Controller {
@@ -157,6 +154,7 @@ public class EditServerScreenController implements Controller {
 
     /**
      * Call the network controller if the input for a invitation is valid
+     *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void createInvitationButtonOnClick(ActionEvent actionEvent) {
@@ -175,6 +173,7 @@ public class EditServerScreenController implements Controller {
 
     /**
      * handle a new invitation link in the EditServerScreen and show the link in the screen
+     *
      * @param invitationLink invitation link which is responded by the server
      */
     public void handleInvitation(String invitationLink) {
@@ -204,7 +203,6 @@ public class EditServerScreenController implements Controller {
      * <p>
      * shows "Copied" for 1.5 seconds if there is a link
      * else shows "First create invitation"
-     *
      */
     private void copyInvitationLinkOnClick(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
@@ -227,7 +225,7 @@ public class EditServerScreenController implements Controller {
                     event -> {
                         if (((Stage) view.getScene().getWindow()).getTitle().equals("Edit Server")) {
                             if (!labelCopy.getText().equals("")) {
-                                labelCopy.setText("");
+                                Platform.runLater(() -> labelCopy.setText(""));
                             }
                         }
                     });

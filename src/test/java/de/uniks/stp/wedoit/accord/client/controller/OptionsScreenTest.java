@@ -39,9 +39,9 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.restClient = new RestClient();
         this.stageManager.start(stage);
-        this.popupStage = this.stageManager.getPopupStage();
+        this.popupStage = StageManager.getPopupStage();
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restClient);
+        StageManager.getEditor().getNetworkController().setRestClient(restClient);
         StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -71,7 +71,7 @@ public class OptionsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(popupStage.isShowing());
         Assert.assertEquals("Options", popupStage.getTitle());
-        Assert.assertTrue(stageManager.getScene().getStylesheets()
+        Assert.assertTrue(StageManager.getScene().getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("light-theme.css")).toExternalForm()));
 
         // test darkmode button
@@ -79,7 +79,7 @@ public class OptionsScreenTest extends ApplicationTest {
 
         // check if stylesheets contain dark theme
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(stageManager.getScene().getStylesheets()
+        Assert.assertTrue(StageManager.getScene().getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
     }

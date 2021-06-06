@@ -1,53 +1,57 @@
 package de.uniks.stp.wedoit.accord.client.model;
-
-import java.beans.PropertyChangeSupport;
-
-import java.util.*;
-
 import java.util.ArrayList;
-
 import java.util.List;
-
 import java.util.Objects;
-
 import java.util.Collections;
-
 import java.util.Collection;
-
-public class LocalUser {
-
-    public static final String PROPERTY_NAME = "name";
-
-    public static final String PROPERTY_USER_KEY = "userKey";
-
-    public static final String PROPERTY_SERVERS = "servers";
-
-    public static final String PROPERTY_USERS = "users";
-   public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
+import java.beans.PropertyChangeSupport;
+
+public class LocalUser
+{
+   public static final String PROPERTY_PASSWORD = "password";
+   public static final String PROPERTY_NAME = "name";
+   public static final String PROPERTY_USER_KEY = "userKey";
+   public static final String PROPERTY_ID = "id";
    public static final String PROPERTY_GAME_INVITES = "gameInvites";
    public static final String PROPERTY_GAME_REQUESTS = "gameRequests";
-   public static final String PROPERTY_ID = "id";
-
-    protected PropertyChangeSupport listeners;
-
-    private String name;
-
-    private String userKey;
-
-    private List<Server> servers;
-
-    private List<User> users;
-   private AccordClient accordClient;
+   public static final String PROPERTY_SERVERS = "servers";
+   public static final String PROPERTY_USERS = "users";
+   public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
+   private String password;
+   private String name;
+   private String userKey;
+   private String id;
    private List<User> gameInvites;
    private List<User> gameRequests;
-   private String id;
-
-    public String getName()
+   private List<Server> servers;
+   private List<User> users;
+   private AccordClient accordClient;
+   protected PropertyChangeSupport listeners;
+
+   public String getPassword()
+   {
+      return this.password;
+   }
+
+   public LocalUser setPassword(String value)
+   {
+      if (Objects.equals(value, this.password))
+      {
+         return this;
+      }
+
+      final String oldValue = this.password;
+      this.password = value;
+      this.firePropertyChange(PROPERTY_PASSWORD, oldValue, value);
+      return this;
+   }
+
+   public String getName()
    {
       return this.name;
    }
-
-    public LocalUser setName(String value)
+
+   public LocalUser setName(String value)
    {
       if (Objects.equals(value, this.name))
       {
@@ -59,13 +63,13 @@ public class LocalUser {
       this.firePropertyChange(PROPERTY_NAME, oldValue, value);
       return this;
    }
-
-    public String getUserKey()
+
+   public String getUserKey()
    {
       return this.userKey;
    }
-
-    public LocalUser setUserKey(String value)
+
+   public LocalUser setUserKey(String value)
    {
       if (Objects.equals(value, this.userKey))
       {
@@ -77,163 +81,22 @@ public class LocalUser {
       this.firePropertyChange(PROPERTY_USER_KEY, oldValue, value);
       return this;
    }
-
-    public List<Server> getServers()
+
+   public String getId()
    {
-      return this.servers != null ? Collections.unmodifiableList(this.servers) : Collections.emptyList();
+      return this.id;
    }
-
-    public LocalUser withServers(Server value)
+
+   public LocalUser setId(String value)
    {
-      if (this.servers == null)
-      {
-         this.servers = new ArrayList<>();
-      }
-      if (!this.servers.contains(value))
-      {
-         this.servers.add(value);
-         value.setLocalUser(this);
-         this.firePropertyChange(PROPERTY_SERVERS, null, value);
-      }
-      return this;
-   }
-
-    public LocalUser withServers(Server... value)
-   {
-      for (final Server item : value)
-      {
-         this.withServers(item);
-      }
-      return this;
-   }
-
-    public LocalUser withServers(Collection<? extends Server> value)
-   {
-      for (final Server item : value)
-      {
-         this.withServers(item);
-      }
-      return this;
-   }
-
-    public LocalUser withoutServers(Server value)
-   {
-      if (this.servers != null && this.servers.remove(value))
-      {
-         value.setLocalUser(null);
-         this.firePropertyChange(PROPERTY_SERVERS, value, null);
-      }
-      return this;
-   }
-
-    public LocalUser withoutServers(Server... value)
-   {
-      for (final Server item : value)
-      {
-         this.withoutServers(item);
-      }
-      return this;
-   }
-
-    public LocalUser withoutServers(Collection<? extends Server> value)
-   {
-      for (final Server item : value)
-      {
-         this.withoutServers(item);
-      }
-      return this;
-   }
-
-    public List<User> getUsers()
-   {
-      return this.users != null ? Collections.unmodifiableList(this.users) : Collections.emptyList();
-   }
-
-    public LocalUser withUsers(User value)
-   {
-      if (this.users == null)
-      {
-         this.users = new ArrayList<>();
-      }
-      if (!this.users.contains(value))
-      {
-         this.users.add(value);
-         value.setLocalUser(this);
-         this.firePropertyChange(PROPERTY_USERS, null, value);
-      }
-      return this;
-   }
-
-    public LocalUser withUsers(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withUsers(item);
-      }
-      return this;
-   }
-
-    public LocalUser withUsers(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withUsers(item);
-      }
-      return this;
-   }
-
-    public LocalUser withoutUsers(User value)
-   {
-      if (this.users != null && this.users.remove(value))
-      {
-         value.setLocalUser(null);
-         this.firePropertyChange(PROPERTY_USERS, value, null);
-      }
-      return this;
-   }
-
-    public LocalUser withoutUsers(User... value)
-   {
-      for (final User item : value)
-      {
-         this.withoutUsers(item);
-      }
-      return this;
-   }
-
-    public LocalUser withoutUsers(Collection<? extends User> value)
-   {
-      for (final User item : value)
-      {
-         this.withoutUsers(item);
-      }
-      return this;
-   }
-
-   public AccordClient getAccordClient()
-   {
-      return this.accordClient;
-   }
-
-   public LocalUser setAccordClient(AccordClient value)
-   {
-      if (this.accordClient == value)
+      if (Objects.equals(value, this.id))
       {
          return this;
       }
 
-      final AccordClient oldValue = this.accordClient;
-      if (this.accordClient != null)
-      {
-         this.accordClient = null;
-         oldValue.setLocalUser(null);
-      }
-      this.accordClient = value;
-      if (value != null)
-      {
-         value.setLocalUser(this);
-      }
-      this.firePropertyChange(PROPERTY_ACCORD_CLIENT, oldValue, value);
+      final String oldValue = this.id;
+      this.id = value;
+      this.firePropertyChange(PROPERTY_ID, oldValue, value);
       return this;
    }
 
@@ -363,25 +226,166 @@ public class LocalUser {
       return this;
    }
 
-   public String getId()
+   public List<Server> getServers()
    {
-      return this.id;
+      return this.servers != null ? Collections.unmodifiableList(this.servers) : Collections.emptyList();
    }
 
-   public LocalUser setId(String value)
+   public LocalUser withServers(Server value)
    {
-      if (Objects.equals(value, this.id))
+      if (this.servers == null)
+      {
+         this.servers = new ArrayList<>();
+      }
+      if (!this.servers.contains(value))
+      {
+         this.servers.add(value);
+         value.setLocalUser(this);
+         this.firePropertyChange(PROPERTY_SERVERS, null, value);
+      }
+      return this;
+   }
+
+   public LocalUser withServers(Server... value)
+   {
+      for (final Server item : value)
+      {
+         this.withServers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withServers(Collection<? extends Server> value)
+   {
+      for (final Server item : value)
+      {
+         this.withServers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutServers(Server value)
+   {
+      if (this.servers != null && this.servers.remove(value))
+      {
+         value.setLocalUser(null);
+         this.firePropertyChange(PROPERTY_SERVERS, value, null);
+      }
+      return this;
+   }
+
+   public LocalUser withoutServers(Server... value)
+   {
+      for (final Server item : value)
+      {
+         this.withoutServers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutServers(Collection<? extends Server> value)
+   {
+      for (final Server item : value)
+      {
+         this.withoutServers(item);
+      }
+      return this;
+   }
+
+   public List<User> getUsers()
+   {
+      return this.users != null ? Collections.unmodifiableList(this.users) : Collections.emptyList();
+   }
+
+   public LocalUser withUsers(User value)
+   {
+      if (this.users == null)
+      {
+         this.users = new ArrayList<>();
+      }
+      if (!this.users.contains(value))
+      {
+         this.users.add(value);
+         value.setLocalUser(this);
+         this.firePropertyChange(PROPERTY_USERS, null, value);
+      }
+      return this;
+   }
+
+   public LocalUser withUsers(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withUsers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withUsers(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withUsers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutUsers(User value)
+   {
+      if (this.users != null && this.users.remove(value))
+      {
+         value.setLocalUser(null);
+         this.firePropertyChange(PROPERTY_USERS, value, null);
+      }
+      return this;
+   }
+
+   public LocalUser withoutUsers(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withoutUsers(item);
+      }
+      return this;
+   }
+
+   public LocalUser withoutUsers(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withoutUsers(item);
+      }
+      return this;
+   }
+
+   public AccordClient getAccordClient()
+   {
+      return this.accordClient;
+   }
+
+   public LocalUser setAccordClient(AccordClient value)
+   {
+      if (this.accordClient == value)
       {
          return this;
       }
 
-      final String oldValue = this.id;
-      this.id = value;
-      this.firePropertyChange(PROPERTY_ID, oldValue, value);
+      final AccordClient oldValue = this.accordClient;
+      if (this.accordClient != null)
+      {
+         this.accordClient = null;
+         oldValue.setLocalUser(null);
+      }
+      this.accordClient = value;
+      if (value != null)
+      {
+         value.setLocalUser(this);
+      }
+      this.firePropertyChange(PROPERTY_ACCORD_CLIENT, oldValue, value);
       return this;
    }
-
-    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+
+   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
       {
@@ -390,8 +394,8 @@ public class LocalUser {
       }
       return false;
    }
-
-    public PropertyChangeSupport listeners()
+
+   public PropertyChangeSupport listeners()
    {
       if (this.listeners == null)
       {
@@ -399,23 +403,22 @@ public class LocalUser {
       }
       return this.listeners;
    }
-
-    @Override
+
+   @Override
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
+      result.append(' ').append(this.getPassword());
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());
       result.append(' ').append(this.getId());
       return result.substring(1);
    }
-
-    public void removeYou()
+
+   public void removeYou()
    {
       this.withoutServers(new ArrayList<>(this.getServers()));
       this.withoutUsers(new ArrayList<>(this.getUsers()));
       this.setAccordClient(null);
    }
-
 }
-

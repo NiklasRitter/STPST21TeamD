@@ -32,7 +32,7 @@
   roles: 	message_channel
 
 - channel: 	org.fulib.classmodel.Clazz
-  attributes: 	channel_id 	channel_name 	channel_type 	channel_privileged
+  attributes: 	channel_id 	channel_name 	channel_type 	channel_privileged 	channel_read
   model: 	c
   modified: 	false
   name: 	Channel
@@ -56,7 +56,7 @@
   roles: 	server_categories 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
-  attributes: 	user_name 	user_onlineStatus 	user_gameMove 	user_id
+  attributes: 	user_name 	user_onlineStatus 	user_chatRead  	user_gameMove	user_id
   model: 	c
   modified: 	false
   name: 	User
@@ -64,7 +64,7 @@
   roles: 	user_channels 	user_servers 	user_privateChat 	user_localUser
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -261,6 +261,15 @@
   type: 	boolean
   typeSignature: 	boolean
 
+- channel_read: 	org.fulib.classmodel.Attribute
+  clazz: 	channel
+  id: 	Channel_read
+  modified: 	false
+  name: 	read
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
 - channel_messages: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	42
@@ -423,6 +432,15 @@
   type: 	String
   typeSignature: 	String
 
+- user_chatRead: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_chatRead
+  modified: 	false
+  name: 	chatRead
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
 - user_id: 	org.fulib.classmodel.Attribute
   clazz: 	user
   id: 	User_id
@@ -475,6 +493,15 @@
   name: 	localUser
   other: 	localUser_users
   propertyStyle: 	Bean
+
+- localUser_password: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_password
+  modified: 	false
+  name: 	password
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
 
 - localUser_name: 	org.fulib.classmodel.Attribute
   clazz: 	localUser
