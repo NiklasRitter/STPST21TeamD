@@ -38,7 +38,6 @@ public class ServerScreenController implements Controller {
     private final Map<String, Channel> channelMap = new HashMap<>();
     private Button btnOptions;
     private Button btnHome;
-    private Button btnLogout;
     private Button btnEmoji;
     private Button btnEdit;
     private Label lbServerName;
@@ -83,7 +82,6 @@ public class ServerScreenController implements Controller {
         editor.setCurrentServer(server);
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
-        this.btnLogout = (Button) view.lookup("#btnLogout");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.btnEdit = (Button) view.lookup("#btnEdit");
 
@@ -130,7 +128,6 @@ public class ServerScreenController implements Controller {
     public void addActionListener() {
 
         // Add action listeners
-        this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.btnEdit.setOnAction(this::editButtonOnClick);
@@ -149,10 +146,6 @@ public class ServerScreenController implements Controller {
         homeButton.setText("home");
         btnHome.setTooltip(homeButton);
 
-        Tooltip logoutButton = new Tooltip();
-        logoutButton.setText("logout");
-        btnLogout.setTooltip(logoutButton);
-
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
         btnOptions.setTooltip(optionsButton);
@@ -164,7 +157,6 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.btnEmoji.setOnAction(null);
@@ -239,17 +231,6 @@ public class ServerScreenController implements Controller {
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
-    }
-
-
-    /**
-     * The localUser will be logged out and redirect to the LoginScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void logoutButtonOnClick(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey());
-
     }
 
     /**

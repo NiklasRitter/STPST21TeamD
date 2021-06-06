@@ -172,6 +172,10 @@ public class MainScreenTest extends ApplicationTest {
         Assert.assertEquals("Main", stage.getTitle());
 
         // testing logout button
+        // first have to open optionScreen
+        clickOn("#btnOptions");
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+
         clickOn("#btnLogout");
 
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());

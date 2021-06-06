@@ -34,7 +34,6 @@ public class PrivateChatsScreenController implements Controller {
     private final Editor editor;
     private Button btnOptions,btnPlay;
     private Button btnHome;
-    private Button btnLogout;
     private Button btnEmoji;
     private Chat currentChat;
     private ListView<User> lwOnlineUsers;
@@ -76,7 +75,6 @@ public class PrivateChatsScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnPlay = (Button) view.lookup("#btnPlay");
         this.btnHome = (Button) view.lookup("#btnHome");
-        this.btnLogout = (Button) view.lookup("#btnLogout");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
@@ -86,7 +84,6 @@ public class PrivateChatsScreenController implements Controller {
 
         this.btnHome.setOnAction(this::btnHomeOnClicked);
         this.btnPlay.setOnAction(this::btnPlayOnClicked);
-        this.btnLogout.setOnAction(this::btnLogoutOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
@@ -104,10 +101,6 @@ public class PrivateChatsScreenController implements Controller {
         Tooltip homeButton = new Tooltip();
         homeButton.setText("home");
         btnHome.setTooltip(homeButton);
-
-        Tooltip logoutButton = new Tooltip();
-        logoutButton.setText("logout");
-        btnLogout.setTooltip(logoutButton);
 
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
@@ -131,7 +124,6 @@ public class PrivateChatsScreenController implements Controller {
         }
         this.btnHome.setOnAction(null);
         this.btnPlay.setOnAction(null);
-        this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.tfPrivateChat.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
@@ -163,15 +155,6 @@ public class PrivateChatsScreenController implements Controller {
             StageManager.showGameScreen(currentChat.getUser());
         }
 
-    }
-
-    /**
-     * logout current LocalUser and redirect to the LoginScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fire
-     */
-    private void btnLogoutOnClicked(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey());
     }
 
     /**
