@@ -235,8 +235,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAMEACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(popupStage.isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors",popupStage.getTitle());
+        Assert.assertTrue(StageManager.getPopupStage().isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getPopupStage().getTitle());
 
 
         mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + ROCK));
@@ -246,11 +246,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         JsonObject gameAction = JsonUtil.buildPrivateChatMessage(user.getName(), PREFIX + PAPER);
         mockChatWebSocket(getTestMessageServerAnswer(gameAction));
         WaitForAsyncUtils.waitForFxEvents();
-
-
-
-
-
     }
 
     @Test
@@ -288,8 +283,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(gameAccept));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(popupStage.isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors",popupStage.getTitle());
+        Assert.assertTrue(StageManager.getPopupStage().isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getPopupStage().getTitle());
 
     }
 

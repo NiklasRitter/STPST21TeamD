@@ -46,7 +46,6 @@ public class GameScreenTest extends ApplicationTest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
-    private Stage popupStage;
     private StageManager stageManager;
     private LocalUser localUser;
     @Mock
@@ -83,12 +82,11 @@ public class GameScreenTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
-        this.popupStage = this.stageManager.getPopupStage();
 
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        StageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        StageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -130,7 +128,7 @@ public class GameScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(popupStage.isShowing());
+        Assert.assertTrue(StageManager.getPopupStage().isShowing());
         Label score = lookup("#lbScore").query();
         Assert.assertEquals("0:0", score.getText());
         Assert.assertEquals(user.getName(), ((Label) lookup("#lbOpponent").query()).getText());
@@ -179,11 +177,10 @@ public class GameScreenTest extends ApplicationTest {
         user.setLocalUser(localUser);
 
         //got to result screen
-        Assert.assertEquals("Result",popupStage.getTitle());
+        Assert.assertEquals("Result",StageManager.getPopupStage().getTitle());
 
         clickOn("#btnPlayAgain");
         mockChatWebSocket(getTestMessageServerAnswer(user, GAMEINVITE));
-        WaitForAsyncUtils.waitForFxEvents();
 
         mockChatWebSocket(getServerMessageUserAnswer(user, GAMEACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
@@ -191,21 +188,20 @@ public class GameScreenTest extends ApplicationTest {
         Platform.runLater(() -> StageManager.showGameScreen(user));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",popupStage.getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getPopupStage().getTitle());
 
         Platform.runLater(() -> StageManager.showGameResultScreen(user,false));
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Result",popupStage.getTitle());
+        Assert.assertEquals("Result",StageManager.getPopupStage().getTitle());
 
         //accept a replay
         mockChatWebSocket(getServerMessageUserAnswer(user, GAMEINVITE));
-        WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#btnPlayAgain");
         mockChatWebSocket(getTestMessageServerAnswer(user, GAMEACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",popupStage.getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getPopupStage().getTitle());
 
         Platform.runLater(() -> StageManager.showGameResultScreen(user,true));
         WaitForAsyncUtils.waitForFxEvents();
@@ -251,7 +247,7 @@ public class GameScreenTest extends ApplicationTest {
         Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
         callbackLogin.completed(res);
 
-        this.localUser = stageManager.getEditor().getLocalUser();
+        this.localUser = StageManager.getEditor().getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
         clickOn("#btnPrivateChats");
@@ -313,13 +309,4 @@ public class GameScreenTest extends ApplicationTest {
                 .build();
     }
 
-    public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
-        return Json.createObjectBuilder()
-                .add("channel", "private")
-                .add("timestamp", 1614938)
-                .add("message", test_message.getString(MESSAGE))
-                .add("from", localUser.getName())
-                .add("to", test_message.getString(TO))
-                .build();
-    }
 }
