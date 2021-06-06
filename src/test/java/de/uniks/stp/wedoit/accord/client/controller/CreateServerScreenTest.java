@@ -70,13 +70,13 @@ public class CreateServerScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen
-        localUser = stageManager.getEditor().haveLocalUser("John", "testKey123");
-        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
-        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
+        localUser = StageManager.getEditor().haveLocalUser("John", "testKey123");
+        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
 
-        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
+        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -129,7 +129,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", StageManager.getPopupStage().getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "MySuperServer";
@@ -151,7 +151,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         }
         Assert.assertNotNull(server);
 
-        stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + "123", channelChatWebSocketClient);
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -173,7 +173,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", StageManager.getPopupStage().getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "MySuperServer";
@@ -220,7 +220,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", StageManager.getPopupStage().getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "";

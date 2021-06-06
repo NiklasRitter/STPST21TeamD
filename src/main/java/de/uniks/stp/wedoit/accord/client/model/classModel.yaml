@@ -32,7 +32,7 @@
   roles: 	message_channel
 
 - channel: 	org.fulib.classmodel.Clazz
-  attributes: 	channel_id 	channel_name 	channel_type 	channel_privileged
+  attributes: 	channel_id 	channel_name 	channel_type 	channel_privileged 	channel_read
   model: 	c
   modified: 	false
   name: 	Channel
@@ -257,6 +257,15 @@
   id: 	Channel_privileged
   modified: 	false
   name: 	privileged
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
+- channel_read: 	org.fulib.classmodel.Attribute
+  clazz: 	channel
+  id: 	Channel_read
+  modified: 	false
+  name: 	read
   propertyStyle: 	Bean
   type: 	boolean
   typeSignature: 	boolean

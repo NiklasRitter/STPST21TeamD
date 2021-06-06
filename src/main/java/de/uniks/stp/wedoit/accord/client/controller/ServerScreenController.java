@@ -17,15 +17,12 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
-import javax.json.JsonObject;
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
@@ -38,26 +35,25 @@ public class ServerScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
+    private final Map<String, Channel> channelMap = new HashMap<>();
     private Button btnOptions;
     private Button btnHome;
     private Button btnLogout;
     private Button btnEmoji;
     private Button btnEdit;
-
     private Label lbServerName;
-
     private TreeView<Object> tvServerChannels;
+    private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
     private ListView<User> lvServerUsers;
-
     private TextField tfInputMessage;
-    private WSCallback serverWSCallback = this::handleServerMessage;
     private Channel currentChannel;
-    private WSCallback chatWSCallback = this::handleChatMessage;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private ObservableList<Message> observableMessageList;
     private PropertyChangeListener newMessagesListener = this::newMessage;
     private TreeItem<Object> tvServerChannelsRoot;
+    private WSCallback chatWSCallback = this::handleChatMessage;
+    private WSCallback serverWSCallback = this::handleServerMessage;
 
     /**
      * Create a new Controller
@@ -176,6 +172,10 @@ public class ServerScreenController implements Controller {
 
         this.tfInputMessage.setOnAction(null);
         this.tvServerChannels.setOnMouseReleased(null);
+
+        for (Channel channel : channelMap.values()) {
+            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
+        }
 
         this.editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         this.editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
@@ -297,6 +297,9 @@ public class ServerScreenController implements Controller {
     public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
         if (channelList != null) {
             for (Channel channel : channelList) {
+                channelMap.put(channel.getId(), channel);
+                channel.listeners().addPropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
+
                 TreeItem<Object> channelItem = new TreeItem<>(channel);
                 categoryItem.getChildren().add(channelItem);
             }
@@ -304,6 +307,20 @@ public class ServerScreenController implements Controller {
         } else {
             System.err.println("Error while loading channels from server");
             Platform.runLater(StageManager::showLoginScreen);
+        }
+    }
+
+
+    /**
+     * Listen for changes in channel read for unread message markings.
+     *
+     * @param propertyChangeEvent The event of the property change.
+     */
+    private void handleChannelReadChange(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
+            Platform.runLater(() -> {
+                tvServerChannels.refresh();
+            });
         }
     }
 
@@ -335,6 +352,7 @@ public class ServerScreenController implements Controller {
             this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         }
 
+        channel.setRead(true);
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
 
@@ -392,6 +410,11 @@ public class ServerScreenController implements Controller {
             message.setText(jsonObject.getString(TEXT));
 
             this.editor.addNewChannelMessage(message);
+        } else {
+            Channel channel = channelMap.get(jsonObject.getString(CHANNEL));
+            if (channel != null) {
+                channel.setRead(false);
+            }
         }
     }
 
