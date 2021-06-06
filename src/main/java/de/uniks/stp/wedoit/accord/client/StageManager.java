@@ -62,8 +62,6 @@ public class StageManager extends Application {
             //display
             stage.setTitle("Login");
             stage.setScene(scene);
-            stage.setHeight(400);
-            stage.setWidth(600);
             stage.centerOnScreen();
             stage.setResizable(false);
 
@@ -231,8 +229,6 @@ public class StageManager extends Application {
             popupStage.setTitle("Rock - Paper - Scissors");
             if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
             popupStage.setScene(popupScene);
-            popupStage.setMinHeight(400);
-            popupStage.setMinWidth(600);
             popupStage.centerOnScreen();
             popupStage.setResizable(true);
             popupStage.show();
@@ -571,8 +567,8 @@ public class StageManager extends Application {
             systemTrayController.init();
         }
 
-        stage.setMinHeight(400);
-        stage.setMinWidth(600);
+        stage.setHeight(400);
+        stage.setWidth(600);
         showLoginScreen();
         stage.show();
     }
