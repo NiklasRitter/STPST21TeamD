@@ -20,11 +20,7 @@ public class InvitationListView implements javafx.util.Callback<ListView<Invitat
         protected void updateItem(Invitation item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
-                if (item.getType().equals(COUNT)) {
-                    this.setText(item.getCurrent() + "/" + item.getMax() + ": " + item.getLink());
-                } else {
-                    this.setText(item.getLink());
-                }
+                this.setText(item.getLink());
             } else {
                 this.setText(null);
             }
