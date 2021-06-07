@@ -376,7 +376,12 @@ public class ServerScreenController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             Message newMessage = (Message) propertyChangeEvent.getNewValue();
-            Platform.runLater(() -> this.observableMessageList.add(newMessage));
+            Platform.runLater(() -> {
+                this.observableMessageList.add(newMessage);
+
+                // autoscroll on new messages
+                Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
+            });
         }
     }
 
