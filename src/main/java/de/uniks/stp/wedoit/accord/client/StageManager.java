@@ -227,7 +227,7 @@ public class StageManager extends Application {
 
             // display
             popupStage.setTitle("Rock - Paper - Scissors");
-            if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
+            if (popupStage.getStyle() != StageStyle.DECORATED) popupStage.initStyle(StageStyle.DECORATED);
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
             popupStage.setResizable(true);
@@ -238,8 +238,8 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showGameResultScreen(User opponent, Boolean isWinner){
-        if(popupStage.isShowing()) {
+    public static void showGameResultScreen(User opponent, Boolean isWinner) {
+        if (popupStage.isShowing()) {
             popupStage.close();
             try {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
@@ -252,7 +252,7 @@ public class StageManager extends Application {
                 controllerMap.put("GameResultScreenController", gameResultScreenController);
 
                 popupStage.setTitle("Result");
-                if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
+                if (popupStage.getStyle() != StageStyle.DECORATED) popupStage.initStyle(StageStyle.DECORATED);
                 popupStage.setScene(popupScene);
                 popupStage.setMinHeight(0);
                 popupStage.setMinWidth(0);
@@ -260,7 +260,7 @@ public class StageManager extends Application {
                 popupStage.setResizable(false);
                 popupStage.show();
 
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.err.println("Error on loading GameResultScreen");
                 e.printStackTrace();
             }
@@ -453,7 +453,6 @@ public class StageManager extends Application {
         }
     }
 
-
     public static void showAttentionLeaveServerScreen(Server server) {
         try {
             //load view
@@ -582,8 +581,8 @@ public class StageManager extends Application {
         //Removes title bar of emojiPickerStage including maximize, minimize and close icons.
         emojiPickerStage.initStyle(StageStyle.UNDECORATED);
         //Closes Emoji Picker when clicked outside.
-        stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (isNowFocused) {
+        emojiPickerStage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
                 emojiPickerStage.close();
             }
         });
