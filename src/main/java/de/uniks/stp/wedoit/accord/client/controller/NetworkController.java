@@ -403,8 +403,8 @@ public class NetworkController {
 
     public NetworkController updateChannel(Server server, Category category, Channel channel, String channelNameInput, boolean privileged, List<String> members, EditChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
-        if(members != null) {
-            for (String userId : members){
+        if (members != null) {
+            for (String userId : members) {
                 memberJson.add(Json.createValue(userId));
             }
         }
@@ -419,11 +419,10 @@ public class NetworkController {
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
 
-                if(category.getId().equals(channelCategoryId)) {
+                if (category.getId().equals(channelCategoryId)) {
                     Channel newChannel = editor.updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
                     controller.handleEditChannel(newChannel);
-                }
-                else {
+                } else {
                     controller.handleEditChannel(null);
                 }
             } else {
@@ -505,8 +504,7 @@ public class NetworkController {
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        }
-        else if(objectToDelete.getClass().equals(Channel.class)){
+        } else if (objectToDelete.getClass().equals(Channel.class)) {
             deleteChannel(localUser, (Channel) objectToDelete, controller);// else if is for other objects like channel or category
         }
     }
@@ -527,6 +525,18 @@ public class NetworkController {
                 controller.handleDeleteChannel(true);
             } else {
                 controller.handleDeleteChannel(false);
+            }
+        });
+    }
+
+    public void getChannelMessages(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, ServerScreenController controller) {
+        restClient.getChannelMessages(localUser.getUserKey(), server.getId(), category.getId(), channel.getId(), timestamp, (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JsonArray data = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
+                System.out.println(data);
+                controller.handleGetChannelMessages(channel, data);
+            } else if (response.getBody().getObject().getString(STATUS).equals(FAILURE)) {
+                System.out.println("HÖÖ");
             }
         });
     }

@@ -9,6 +9,8 @@ public class Network {
     public static final String API_PREFIX = "/api";
 
     public static final String SLASH = "/";
+    public static final String QUESTION_MARK = "?";
+    public static final String EQUALS = "=";
     public static final String CHAT_PATH = "/ws/chat";
 
     public static final String WS_SERVER_URL = "wss://ac.uniks.de";
@@ -19,6 +21,7 @@ public class Network {
     public static final String AND_SERVER_ID_URL = "&" + SERVER_ID_URL;
     public static final String CATEGORIES = "/categories";
     public static final String CHANNELS = "/channels";
+    public static final String MESSAGES = "/messages";
     public static final String INVITES = "/invites";
     public static final String SERVERSWITHOUTSLASH = "SERVERS";
     public static final String PRIVATE_USER_CHAT_PREFIX = WS_SERVER_URL + CHAT_PATH + "?user=";
