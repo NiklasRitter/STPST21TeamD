@@ -115,16 +115,17 @@ public class EditServerScreenController implements Controller {
         addActionListener();
     }
 
-
     private void addActionListener() {
         // Add action listeners
         this.btnCreateInvitation.setOnAction(this::createInvitationButtonOnClick);
         this.btnDelete.setOnAction(this::deleteButtonOnClick);
         this.btnSave.setOnAction(this::saveButtonOnClick);
+        this.btnDeleteInvitation.setOnAction(this::deleteInvitationButtonOnClick);
         this.radioBtnMaxCount.setOnMouseClicked(this::radioBtnMaxCountOnClick);
         this.radioBtnTemporal.setOnMouseClicked(this::radioBtnTemporalOnClick);
         this.tfInvitationLink.setOnMouseClicked(this::copyInvitationLinkOnClick);
         this.lvInvitation.setOnMouseClicked(this::copyLvInvitationLinkOnClick);
+
     }
 
     /**
@@ -174,6 +175,14 @@ public class EditServerScreenController implements Controller {
     private void deleteButtonOnClick(ActionEvent actionEvent) {
         StageManager.showAttentionScreen(this.server);
     }
+
+
+    private void deleteInvitationButtonOnClick(ActionEvent actionEvent) {
+        if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
+            editor.getNetworkController().deleteInvite(localUser.getUserKey(), lvInvitation.getSelectionModel().getSelectedItem(), server, this);
+        }
+    }
+
 
     /**
      * Call the network controller if the input for a invitation is valid
@@ -250,7 +259,7 @@ public class EditServerScreenController implements Controller {
      * else shows "First create invitation"
      */
     private void copyLvInvitationLinkOnClick(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 1) {
+        if (mouseEvent.getClickCount() == 2) {
 
             if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
                 editor.copyToSystemClipBoard(lvInvitation.getSelectionModel().getSelectedItem().getLink());
@@ -323,5 +332,6 @@ public class EditServerScreenController implements Controller {
         this.invitationsObservableList = FXCollections.observableList(server.getInvitations());
         Platform.runLater(() ->lvInvitation.setItems(invitationsObservableList));
     }
+
 
 }
