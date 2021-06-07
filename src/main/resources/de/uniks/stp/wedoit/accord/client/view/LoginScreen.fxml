@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -16,40 +15,9 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="600.0" spacing="10.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER" maxHeight="69.0" minHeight="69.0" minWidth="500.0">
-         <children>
-            <Label text="Accord">
-               <font>
-                  <Font name="Comic Sans MS" size="24.0" />
-               </font>
-            </Label>
-            <Region HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Region>
-            <ImageView fitHeight="64.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/Logo.png" />
-               </image>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </ImageView>
-         </children>
-         <opaqueInsets>
-            <Insets right="10.0" />
-         </opaqueInsets>
-         <padding>
-            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-         </padding>
-         <styleClass>
-            <String fx:value="styleBorder" />
-            <String fx:value="styleBackgroundHighlight" />
-         </styleClass>
-      </HBox>
+      <Region minHeight="30.0" prefHeight="30.0" prefWidth="600.0" />
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" prefWidth="359.0">
          <children>
             <Label text="Enter your username:">
@@ -113,7 +81,7 @@
                         </Stop>
                         <Stop offset="1.0">
                            <color>
-                              <Color blue="1.0" green="1.0" red="1.0" />
+                              <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </Stop>
                      </stops>

@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER" minHeight="100.0" minWidth="267.0" prefHeight="100.0" prefWidth="267.0" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label text="Darkmode:">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
-      <CheckBox id="btnDarkmode" mnemonicParsing="false" styleClass="styleButton" />
+      <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0" styleClass="styleBackgroundHighlight">
+         <children>
+            <Label text="Darkmode:">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <CheckBox id="btnDarkmode" mnemonicParsing="false" styleClass="styleButton" />
+         </children>
+      </HBox>
+      <Button id="btnLogout" mnemonicParsing="false" styleClass="styleButton">
+         <graphic>
+            <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/log_out.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
    <styleClass>
       <String fx:value="styleBackgroundHighlight" />
       <String fx:value="styleBorder" />
    </styleClass>
-</HBox>
+</VBox>

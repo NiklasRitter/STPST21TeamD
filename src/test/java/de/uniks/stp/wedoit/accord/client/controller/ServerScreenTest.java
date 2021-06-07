@@ -330,6 +330,11 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         when(res.getBody()).thenReturn(new JsonNode(logoutSuccessful().toString()));
+
+        // first have to open optionScreen
+        clickOn("#btnOptions");
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+
         clickOn("#btnLogout");
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
@@ -347,6 +352,11 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         when(res.getBody()).thenReturn(new JsonNode(logoutFailure().toString()));
+
+        // first have to open optionScreen
+        clickOn("#btnOptions");
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+
         clickOn("#btnLogout");
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
