@@ -97,6 +97,7 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
+        this.lbServerName.setContextMenu(createContextMenu());
         // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
@@ -117,6 +118,22 @@ public class ServerScreenController implements Controller {
         addActionListener();
 
         initTooltips();
+    }
+
+    private ContextMenu createContextMenu() {
+
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
+
+        if (this.localUser.getName().equals(this.server.getOwner())) {
+            contextMenu.getItems().add(menuItemLeaveServer);
+        }
+        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+        return contextMenu;
+    }
+
+    private void leaveServerAttention(ActionEvent actionEvent) {
+        StageManager.showAttentionLeaveServerScreen(this.server);
     }
 
     private void btnEmojiOnClick(ActionEvent actionEvent) {

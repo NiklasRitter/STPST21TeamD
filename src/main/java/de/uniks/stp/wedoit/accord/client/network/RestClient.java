@@ -310,5 +310,13 @@ public class RestClient {
         req.asJsonAsync(callback);
     }
 
+    public void leaveServer(String userKey, String serverID, Callback<JsonNode> callback) {
+
+        // Use UniRest to leave server
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverID + LEAVE_SERVER)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
 
 }
