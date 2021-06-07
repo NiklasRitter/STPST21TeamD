@@ -307,6 +307,12 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void deleteInvitation(String userKey, String inviteId, String serverId, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES + SLASH + inviteId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
 
     /**
      * Send a Request and call the Callback asynchronously.

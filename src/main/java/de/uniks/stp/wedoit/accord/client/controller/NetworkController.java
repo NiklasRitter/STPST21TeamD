@@ -555,6 +555,16 @@ public class NetworkController {
 
     }
 
+    public void deleteInvite(String userKey, Invitation invitation, Server server, EditServerScreenController controller) {
+        restClient.deleteInvitation(userKey, invitation.getId(), server.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+
+                editor.deleteInvite(invitation.getId(), server);
+            }
+        });
+    }
+
+
     /**
      * Called to stop this controller
      * <p>
@@ -582,4 +592,6 @@ public class NetworkController {
         });
         return this;
     }
+
+
 }
