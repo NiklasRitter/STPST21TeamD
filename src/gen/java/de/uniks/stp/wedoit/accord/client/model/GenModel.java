@@ -91,6 +91,19 @@ public class GenModel implements ClassModelDecorator {
         @Link("server")
         List<Category> categories;
 
+        @Link("server")
+        List<Invitation> invitations;
+    }
+
+    class Invitation {
+        String id;
+        String link;
+        String type;
+        int max;
+        int current;
+
+        @Link("invitations")
+        Server server;
     }
 
     class Channel {
