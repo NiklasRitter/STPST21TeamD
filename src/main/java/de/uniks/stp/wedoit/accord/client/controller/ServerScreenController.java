@@ -486,7 +486,7 @@ public class ServerScreenController implements Controller {
 
         // change invitation
         if (action.equals(INVITE_EXPIRED)) {
-            // TODO inviteExpired
+            editor.deleteInvite(data.getString(ID), server);
         }
 
     }
