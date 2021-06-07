@@ -323,6 +323,31 @@ public class StageManager extends Application {
         }
     }
 
+    public static void showEditCategoryScreen(Category category) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditCategoryScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            EditCategoryScreenController editCategoryScreenController = new EditCategoryScreenController(root, model.getLocalUser(), editor, category);
+            editCategoryScreenController.init();
+            controllerMap.put("editCategoryScreenController", editCategoryScreenController);
+
+            //display
+            popupStage.setTitle("Edit Category");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing EditCategoryScreen");
+            e.printStackTrace();
+        }
+    }
+
     public static void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
         try {
             //load view
