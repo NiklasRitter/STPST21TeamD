@@ -546,8 +546,8 @@ public class NetworkController {
         return this;
     }
 
-    public NetworkController leaverServer(String userKey, String id) {
-        restClient.leaveServer(userKey, id, response -> {
+    public NetworkController leaverServer(String userKey, String serverId) {
+        restClient.leaveServer(userKey, serverId, response -> {
             System.out.println("test " + response.getBody().getObject());
             if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 Platform.runLater(StageManager::showMainScreen);
