@@ -94,7 +94,6 @@ public class ServerScreenController implements Controller {
 
         this.btnEdit.setVisible(false);
 
-//        this.lbServerName.setText(server.getName());
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
@@ -122,11 +121,14 @@ public class ServerScreenController implements Controller {
     }
 
     private ContextMenu createContextMenu() {
+
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
-        contextMenu.getItems().add(menuItemLeaveServer);
-        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
 
+        if (this.localUser.getName().equals(this.server.getOwner())) {
+            contextMenu.getItems().add(menuItemLeaveServer);
+        }
+        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
         return contextMenu;
     }
 
