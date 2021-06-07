@@ -1,11 +1,13 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 
 import javax.json.*;
@@ -371,8 +373,8 @@ public class NetworkController {
 
     public NetworkController createChannel(Server server, Category category, String channelNameInput, String type, boolean privileged, List<String> members, CreateChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
-        if(members != null) {
-            for (String userId : members){
+        if (members != null) {
+            for (String userId : members) {
                 memberJson.add(Json.createValue(userId));
             }
         }
@@ -387,11 +389,10 @@ public class NetworkController {
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
 
-                if(category.getId().equals(channelCategoryId)) {
+                if (category.getId().equals(channelCategoryId)) {
                     Channel channel = editor.haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers);
                     controller.handleCreateChannel(channel);
-                }
-                else {
+                } else {
                     controller.handleCreateChannel(null);
                 }
             } else {
@@ -403,8 +404,8 @@ public class NetworkController {
 
     public NetworkController updateChannel(Server server, Category category, Channel channel, String channelNameInput, boolean privileged, List<String> members, EditChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
-        if(members != null) {
-            for (String userId : members){
+        if (members != null) {
+            for (String userId : members) {
                 memberJson.add(Json.createValue(userId));
             }
         }
@@ -419,11 +420,10 @@ public class NetworkController {
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
 
-                if(category.getId().equals(channelCategoryId)) {
+                if (category.getId().equals(channelCategoryId)) {
                     Channel newChannel = editor.updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
                     controller.handleEditChannel(newChannel);
-                }
-                else {
+                } else {
                     controller.handleEditChannel(null);
                 }
             } else {
@@ -435,10 +435,11 @@ public class NetworkController {
 
     /**
      * This method does a rest request to create a new invitation link
-     * @param type type of the invitation, means temporal or count with a int max
-     * @param max maximum size of users who can use this link, is the type temporal max is ignored
-     * @param serverId id of the server
-     * @param userKey userKey of the logged in local user
+     *
+     * @param type       type of the invitation, means temporal or count with a int max
+     * @param max        maximum size of users who can use this link, is the type temporal max is ignored
+     * @param serverId   id of the server
+     * @param userKey    userKey of the logged in local user
      * @param controller controller which handles the new link
      */
     public void createInvitation(String type, int max, String serverId, String userKey, EditServerScreenController controller) {
@@ -470,8 +471,7 @@ public class NetworkController {
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        }
-        else if(objectToDelete.getClass().equals(Channel.class)){
+        } else if (objectToDelete.getClass().equals(Channel.class)) {
             deleteChannel(localUser, (Channel) objectToDelete, controller);// else if is for other objects like channel or category
         }
     }
@@ -511,4 +511,16 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController leaverServer(String userKey, String id) {
+        restClient.leaveServer(userKey, id, response -> {
+            System.out.println("test " + response.getBody().getObject());
+            if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                Platform.runLater(StageManager::showMainScreen);
+            } else {
+                System.err.println("Error while leaving server");
+                Platform.runLater(StageManager::showMainScreen);
+            }
+        });
+        return this;
+    }
 }
