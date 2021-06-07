@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -428,6 +429,30 @@ public class NetworkController {
                 }
             } else {
                 controller.handleEditChannel(null);
+            }
+        });
+        return this;
+    }
+
+    public NetworkController updateCategory(Server server, Category category, String categoryNameInput, EditCategoryScreenController controller) {
+        restClient.updateCategory(server.getId(), category.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JsonObject createCategoryIdAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+
+                String categoryId = createCategoryIdAnswer.getString(ID);
+                String categoryName = createCategoryIdAnswer.getString(NAME);
+                String serverId = createCategoryIdAnswer.getString(SERVER);
+                JsonArray channels = createCategoryIdAnswer.getJsonArray(JSON.CHANNELS);
+
+                if(category.getId().equals(categoryId)) {
+                    Category newCategory = editor.haveCategory(categoryId, categoryName, server);
+                    controller.handleEditCategory(newCategory);
+                }
+                else {
+                    controller.handleEditCategory(null);
+                }
+            } else {
+                controller.handleEditCategory(null);
             }
         });
         return this;
