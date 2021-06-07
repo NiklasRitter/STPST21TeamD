@@ -66,8 +66,6 @@ public class AttentionScreenController implements Controller {
     public void stop() {
         this.btnDiscard.setOnAction(null);
         this.btnDelete.setOnAction(null);
-        Stage stage = (Stage) view.getScene().getWindow();
-        Platform.runLater(stage::close);
     }
 
     private void loadCorrectLabelText(Object objectToDelete) {
@@ -108,6 +106,8 @@ public class AttentionScreenController implements Controller {
         if (status) {
             Channel channel = (Channel) objectToDelete;
             channel.setCategory(null);
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
             stop();
         } else {
             Platform.runLater(() -> {
