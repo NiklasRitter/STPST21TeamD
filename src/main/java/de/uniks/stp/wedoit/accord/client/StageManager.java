@@ -229,10 +229,7 @@ public class StageManager extends Application {
 
             // display
             popupStage.setTitle("Rock - Paper - Scissors");
-            if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
             popupStage.setScene(popupScene);
-            popupStage.setMinHeight(400);
-            popupStage.setMinWidth(600);
             popupStage.centerOnScreen();
             popupStage.setResizable(true);
             popupStage.show();
@@ -258,8 +255,6 @@ public class StageManager extends Application {
                 popupStage.setTitle("Result");
                 if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
                 popupStage.setScene(popupScene);
-                popupStage.setMinHeight(0);
-                popupStage.setMinWidth(0);
                 popupStage.centerOnScreen();
                 popupStage.setResizable(false);
                 popupStage.show();
