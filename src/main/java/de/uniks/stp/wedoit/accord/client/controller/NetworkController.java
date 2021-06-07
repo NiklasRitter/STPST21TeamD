@@ -221,7 +221,8 @@ public class NetworkController {
             } else {
                 JsonObject loginAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
                 String userKey = loginAnswer.getString(USER_KEY);
-                editor.haveLocalUser(username, userKey);
+                LocalUser localUser = editor.haveLocalUser(username, userKey);
+                localUser.setPassword(password);
                 start();
                 controller.handleLogin(true);
             }
@@ -261,7 +262,7 @@ public class NetworkController {
                 JsonObject data = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
                 JsonArray members = data.getJsonArray(MEMBERS);
                 server.setOwner(data.getString(OWNER));
-
+                server.setName(data.getString(NAME));
                 controller.handleGetExplicitServerInformation(members);
             } else {
                 controller.handleGetExplicitServerInformation(null);
@@ -461,6 +462,40 @@ public class NetworkController {
                 }
             });
         }
+    }
+
+    /**
+     * Try to join a server with the Restclient::joinServer method
+     *
+     * @param localUser      localUser who is logged in
+     * @param invitationLink invitation which is used to join a server
+     * @param controller     controller in which the response is handled
+     */
+    public void joinServer(LocalUser localUser, String invitationLink, JoinServerScreenController controller) {
+        restClient.joinServer(localUser, invitationLink, invitationResponse -> {
+            if (!invitationResponse.isSuccess()) {
+                if (invitationResponse.getBody() != null) {
+                    controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));
+                } else {
+                    controller.handleInvitation(null, "No valid invitation link");
+                }
+            } else {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    String[] splitLink = invitationLink.split("/");
+                    String id = null;
+                    if (splitLink.length > 5) {
+                        id = splitLink[5];
+                    }
+                    if (id != null) {
+                        Server server = editor.haveServer(localUser, id, "");
+                        controller.handleInvitation(server, invitationResponse.getBody().getObject().getString(MESSAGE));
+                    } else
+                        controller.handleInvitation(null, "MainScreen");
+                } else {
+                    controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));
+                }
+            }
+        });
     }
 
 

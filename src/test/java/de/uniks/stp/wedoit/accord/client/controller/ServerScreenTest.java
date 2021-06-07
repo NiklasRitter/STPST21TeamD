@@ -99,14 +99,14 @@ public class ServerScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
         this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
+        this.localUser = StageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
-        this.server = stageManager.getEditor().haveServer(localUser, "testId", "TServer");
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().
+        this.server = StageManager.getEditor().haveServer(localUser, "testId", "TServer");
+        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + StageManager.getEditor().
                 getNetworkController().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showServerScreen(server);
 
         this.stage.centerOnScreen();
@@ -330,6 +330,11 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         when(res.getBody()).thenReturn(new JsonNode(logoutSuccessful().toString()));
+
+        // first have to open optionScreen
+        clickOn("#btnOptions");
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+
         clickOn("#btnLogout");
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
@@ -347,6 +352,11 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         when(res.getBody()).thenReturn(new JsonNode(logoutFailure().toString()));
+
+        // first have to open optionScreen
+        clickOn("#btnOptions");
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+
         clickOn("#btnLogout");
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
@@ -366,7 +376,7 @@ public class ServerScreenTest extends ApplicationTest {
     @Test
     public void optionsButtonTest() {
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", StageManager.getPopupStage().getTitle());
     }
 
     @Test
@@ -521,6 +531,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
         Assert.assertEquals("Test Message", lvTextChat.getItems().get(0).getText());
+        Assert.assertTrue(channel.isRead());
 
         tvServerChannels.getSelectionModel().select(2);
         channelItem = tvServerChannels.getRoot().getChildren().get(0).getChildren().get(1);
@@ -589,6 +600,7 @@ public class ServerScreenTest extends ApplicationTest {
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
         Assert.assertEquals(channel.getName(), webSocketCallbackChannelCreated().getJsonObject(DATA).getString(NAME));
         Assert.assertEquals(channel.getId(), webSocketCallbackChannelCreated().getJsonObject(DATA).getString(ID));
+        Assert.assertFalse(channel.isRead());
         Assert.assertEquals(category.getServer().getCategories().size(), 2);
         Assert.assertEquals(category.getChannels().size(), 1);
 
@@ -675,10 +687,10 @@ public class ServerScreenTest extends ApplicationTest {
     public void createCategoryTest() {
         Platform.runLater(StageManager::showCreateCategoryScreen);
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = (Button) lookup("#btnCreateCategory").query();
+        Button button = lookup("#btnCreateCategory").query();
         Assert.assertEquals(button.getText(), "Create");
 
-        TextField textField = (TextField) lookup("#tfCategoryName").query();
+        TextField textField = lookup("#tfCategoryName").query();
         textField.setText("testCategory");
         clickOn("#btnCreateCategory");
 
@@ -700,14 +712,14 @@ public class ServerScreenTest extends ApplicationTest {
     public void createCategoryFailureTest() {
         Platform.runLater(StageManager::showCreateCategoryScreen);
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = (Button) lookup("#btnCreateCategory").query();
+        Button button = lookup("#btnCreateCategory").query();
         Assert.assertEquals(button.getText(), "Create");
 
         clickOn("#btnCreateCategory");
-        Label errorLabel = (Label) lookup("#lblError").query();
+        Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
 
-        TextField textField = (TextField) lookup("#tfCategoryName").query();
+        TextField textField = lookup("#tfCategoryName").query();
         textField.setText("testCategory");
         clickOn("#btnCreateCategory");
 
@@ -729,10 +741,10 @@ public class ServerScreenTest extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        Button button = (Button) lookup("#btnCreateChannel").query();
+        Button button = lookup("#btnCreateChannel").query();
         Assert.assertEquals(button.getText(), "Create");
 
-        TextField textField = (TextField) lookup("#tfChannelName").query();
+        TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
         clickOn("#btnCreateChannel");
 
@@ -750,6 +762,7 @@ public class ServerScreenTest extends ApplicationTest {
         }
         Assert.assertNotNull(newChannel);
         Assert.assertEquals(newChannel.getName(), "testChannel");
+        Assert.assertFalse(newChannel.isRead());
     }
 
     @Test
@@ -765,10 +778,10 @@ public class ServerScreenTest extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        Button button = (Button) lookup("#btnCreateChannel").query();
+        Button button = lookup("#btnCreateChannel").query();
         Assert.assertEquals(button.getText(), "Create");
 
-        TextField textField = (TextField) lookup("#tfChannelName").query();
+        TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
         clickOn("#btnCreateChannel");
 
@@ -787,6 +800,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertNotNull(newChannel);
         Assert.assertEquals(newChannel.getName(), "testChannel");
         Assert.assertEquals(newChannel.getMembers().get(0).getId(), server.getMembers().get(0).getId());
+        Assert.assertFalse(newChannel.isRead());
     }
 
     @Test
@@ -797,14 +811,14 @@ public class ServerScreenTest extends ApplicationTest {
             StageManager.showCreateChannelScreen(category);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = (Button) lookup("#btnCreateChannel").query();
+        Button button = lookup("#btnCreateChannel").query();
         Assert.assertEquals(button.getText(), "Create");
 
         clickOn("#btnCreateChannel");
-        Label errorLabel = (Label) lookup("#lblError").query();
+        Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
 
-        TextField textField = (TextField) lookup("#tfChannelName").query();
+        TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
         clickOn("#btnCreateChannel");
 
@@ -825,11 +839,11 @@ public class ServerScreenTest extends ApplicationTest {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = (Button) lookup("#btnEditChannel").query();
+        Button button = lookup("#btnEditChannel").query();
         Assert.assertEquals(button.getText(), "Save");
 
 
-        TextField textField = (TextField) lookup("#tfChannelName").query();
+        TextField textField = lookup("#tfChannelName").query();
         Assert.assertEquals(textField.getText(), channel.getName());
         textField.setText("channelTest");
         WaitForAsyncUtils.waitForFxEvents();
@@ -856,12 +870,12 @@ public class ServerScreenTest extends ApplicationTest {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = (Button) lookup("#btnEditChannel").query();
+        Button button = lookup("#btnEditChannel").query();
         Assert.assertEquals(button.getText(), "Save");
 
 
-        TextField textField = (TextField) lookup("#tfChannelName").query();
-        CheckBox checkBox = (CheckBox) lookup("#checkBoxPrivileged") .query();
+        TextField textField = lookup("#tfChannelName").query();
+        CheckBox checkBox = lookup("#checkBoxPrivileged").query();
         Assert.assertEquals(textField.getText(), channel.getName());
         textField.setText("channelTest");
         checkBox.setSelected(true);
@@ -888,13 +902,13 @@ public class ServerScreenTest extends ApplicationTest {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = (Button) lookup("#btnEditChannel").query();
+        Button button = lookup("#btnEditChannel").query();
         Assert.assertEquals(button.getText(), "Save");
 
-        TextField textField = (TextField) lookup("#tfChannelName").query();
+        TextField textField = lookup("#tfChannelName").query();
         textField.setText("");
         clickOn("#btnEditChannel");
-        Label errorLabel = (Label) lookup("#lblError").query();
+        Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
 
         textField.setText("testChannel");
@@ -916,7 +930,7 @@ public class ServerScreenTest extends ApplicationTest {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = (Button) lookup("#btnDeleteChannel").query();
+        Button button = lookup("#btnDeleteChannel").query();
         Assert.assertEquals(button.getText(), "Delete");
 
         clickOn("#btnDeleteChannel");
@@ -944,7 +958,7 @@ public class ServerScreenTest extends ApplicationTest {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = (Button) lookup("#btnDeleteChannel").query();
+        Button button = lookup("#btnDeleteChannel").query();
         Assert.assertEquals(button.getText(), "Delete");
 
         clickOn("#btnDeleteChannel");
