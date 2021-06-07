@@ -1,11 +1,13 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 
 import javax.json.*;
@@ -403,8 +405,8 @@ public class NetworkController {
 
     public NetworkController updateChannel(Server server, Category category, Channel channel, String channelNameInput, boolean privileged, List<String> members, EditChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
-        if(members != null) {
-            for (String userId : members){
+        if (members != null) {
+            for (String userId : members) {
                 memberJson.add(Json.createValue(userId));
             }
         }
@@ -419,11 +421,10 @@ public class NetworkController {
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
 
-                if(category.getId().equals(channelCategoryId)) {
+                if (category.getId().equals(channelCategoryId)) {
                     Channel newChannel = editor.updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
                     controller.handleEditChannel(newChannel);
-                }
-                else {
+                } else {
                     controller.handleEditChannel(null);
                 }
             } else {
@@ -505,8 +506,7 @@ public class NetworkController {
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        }
-        else if(objectToDelete.getClass().equals(Channel.class)){
+        } else if (objectToDelete.getClass().equals(Channel.class)) {
             deleteChannel(localUser, (Channel) objectToDelete, controller);// else if is for other objects like channel or category
         }
     }
@@ -546,4 +546,16 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController leaveServer(String userKey, String serverId) {
+        restClient.leaveServer(userKey, serverId, response -> {
+            System.out.println("test " + response.getBody().getObject());
+            if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                Platform.runLater(StageManager::showMainScreen);
+            } else {
+                System.err.println("Error while leaving server");
+                Platform.runLater(StageManager::showMainScreen);
+            }
+        });
+        return this;
+    }
 }

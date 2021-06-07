@@ -921,6 +921,59 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     @Test
+    public void leaveServerTest() {
+
+        openAttentionScreen();
+        testBtnCancel();
+        openAttentionScreen();
+        testBtnLeave();
+
+    }
+
+    private void testBtnLeave() {
+
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "Successfully exited")
+                .add("data", "{}")
+                .build();
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+
+
+        Assert.assertEquals("success", res.getBody().getObject().getString("status"));
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Button btnLeave = lookup("#btnLeave").query();
+        Assert.assertEquals(btnLeave.getText(), "Leave");
+
+        clickOn(btnLeave);
+
+        verify(restMock).leaveServer(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callbackLeaveServer = callbackArgumentCaptor.getValue();
+        callbackLeaveServer.completed(res);
+
+        Assert.assertEquals(StageManager.getStage().getTitle(), "Main");
+
+    }
+
+    private void testBtnCancel() {
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Button btnCancel = lookup("#btnCancel").query();
+        Assert.assertEquals(btnCancel.getText(), "Cancel");
+        clickOn(btnCancel);
+        Assert.assertEquals(StageManager.getStage().getTitle(), "Server");
+
+    }
+
+    private void openAttentionScreen() {
+        Platform.runLater(() -> {
+            StageManager.showAttentionLeaveServerScreen(this.server);
+        });
+    }
+
+    @Test
     public void deleteChannelTest() {
         Category category = new Category().setId("12345");
         category.setServer(server);
@@ -1082,7 +1135,6 @@ public class ServerScreenTest extends ApplicationTest {
         return Json.createObjectBuilder().add("action", "categoryDeleted").add("data",
                 Json.createObjectBuilder().add("id", "cat1").add("name", "CatUpdated")).build();
     }
-
 
     // rest callbacks
 
