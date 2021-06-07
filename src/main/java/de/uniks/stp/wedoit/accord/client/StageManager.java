@@ -463,7 +463,7 @@ public class StageManager extends Application {
             //init controller
             AttentionScreenController attentionScreenController = new AttentionScreenController(root, model.getLocalUser(), editor, objectToDelete);
             attentionScreenController.init();
-            controllerMap.put("editServerScreenController", attentionScreenController);
+            controllerMap.put("attentionScreenController", attentionScreenController);
 
             //display
             popupStage.setTitle("Attention");
