@@ -489,7 +489,7 @@ public class Editor {
 
     public void leaveServer(String userKey, String id) {
         if (id != null && !id.isEmpty()) {
-            networkController.leaverServer(userKey, id);
+            networkController.leaveServer(userKey, id);
         }
     }
 
