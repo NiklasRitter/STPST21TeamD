@@ -126,9 +126,14 @@ public class ServerScreenController implements Controller {
 
     private ContextMenu createContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
-        contextMenu.getItems().add(menuItemLeaveServer);
-        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+        if (this.localUser.getId().equals(this.server.getOwner())) {
+            MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
+            contextMenu.getItems().add(menuItemLeaveServer);
+            menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+        } else {
+            contextMenu.getItems().removeAll();
+        }
+
         return contextMenu;
     }
 

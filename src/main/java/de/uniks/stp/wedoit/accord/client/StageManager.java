@@ -421,7 +421,7 @@ public class StageManager extends Application {
             controllerMap.put("attentionLeaveServerController", attentionLeaveServerController);
 
             //display
-            popupStage.setTitle("Leaver Server!!!");
+            popupStage.setTitle("Attention");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
             popupStage.setResizable(false);
@@ -531,7 +531,10 @@ public class StageManager extends Application {
 
         emojiPickerStage = new Stage();
         emojiPickerStage.initOwner(stage);
+
+        //Removes title bar of emojiPickerStage including maximize, minimize and close icons.
         emojiPickerStage.initStyle(StageStyle.UNDECORATED);
+        //Closes Emoji Picker when clicked outside.
         stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (isNowFocused) {
                 emojiPickerStage.close();
