@@ -2,10 +2,15 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.view.InvitationListView;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -15,6 +20,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
@@ -44,6 +54,10 @@ public class EditServerScreenController implements Controller {
     private Label labelCopy;
 
     private Label lblError;
+    private ListView<Invitation> lvInvitation;
+    private Button btnDeleteInvitation;
+    private ObservableList<Invitation> invitationsObservableList;
+    private PropertyChangeListener invitationsListener = this::invitationsChanged;
 
 
     /**
@@ -85,17 +99,22 @@ public class EditServerScreenController implements Controller {
 
         this.vBoxAdminOnly = (VBox) view.lookup("#vBoxAdminOnly");
         this.mainVBox = (VBox) view.lookup("#mainVBox");
-
         this.lblError = (Label) view.lookup("#lblError");
+
+        this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
+        this.btnDeleteInvitation = (Button) view.lookup("#btnDeleteInvitation");
 
         // Depending on if localUser is admin or not display the correct editMenu
         loadDefaultSettings();
 
+        // load old invitations and initialize lvInvitation
+        loadOldInvitations();
         // TODO: implement function of buttons and so on
 
 
         addActionListener();
     }
+
 
     private void addActionListener() {
         // Add action listeners
@@ -105,6 +124,7 @@ public class EditServerScreenController implements Controller {
         this.radioBtnMaxCount.setOnMouseClicked(this::radioBtnMaxCountOnClick);
         this.radioBtnTemporal.setOnMouseClicked(this::radioBtnTemporalOnClick);
         this.tfInvitationLink.setOnMouseClicked(this::copyInvitationLinkOnClick);
+        this.lvInvitation.setOnMouseClicked(this::copyLvInvitationLinkOnClick);
     }
 
     /**
@@ -118,6 +138,9 @@ public class EditServerScreenController implements Controller {
         this.btnSave.setOnAction(null);
         this.radioBtnMaxCount.setOnMouseClicked(null);
         this.radioBtnTemporal.setOnMouseClicked(null);
+        server.listeners().removePropertyChangeListener(Server.PROPERTY_INVITATIONS, this.invitationsListener);
+        this.invitationsListener = null;
+
     }
 
     /**
@@ -161,13 +184,13 @@ public class EditServerScreenController implements Controller {
         if (radioBtnMaxCount.isSelected()) {
             if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*")) {
                 int max = Integer.parseInt(tfMaxCountAmountInput.getText());
-                editor.getNetworkController().createInvitation(COUNT, max, server.getId(), localUser.getUserKey(), this);
+                editor.getNetworkController().createInvitation(COUNT, max, server, localUser.getUserKey(), this);
             } else {
                 tfMaxCountAmountInput.setText("");
                 tfMaxCountAmountInput.setPromptText("Insert Amount > 0");
             }
         } else if (radioBtnTemporal.isSelected()) {
-            editor.getNetworkController().createInvitation(TEMPORAL, 0, server.getId(), localUser.getUserKey(), this);
+            editor.getNetworkController().createInvitation(TEMPORAL, 0, server, localUser.getUserKey(), this);
         }
     }
 
@@ -244,6 +267,36 @@ public class EditServerScreenController implements Controller {
                 lblError.setVisible(true);
             });
         }
+    }
+
+    private void loadOldInvitations() {
+        this.editor.getNetworkController().loadInvitations(server, localUser.getUserKey(), this);
+    }
+
+    public void handleOldInvitations(List<Invitation> invitations) {
+        if (invitations != null) {
+            createLvInvitations(invitations);
+        } else {
+            Platform.runLater(() -> {
+                lblError.setText("Error while loading invitations");
+                lblError.setVisible(true);
+            });
+
+        }
+    }
+
+    private void createLvInvitations(List<Invitation> invitations) {
+        this.invitationsObservableList = FXCollections.observableList(server.getInvitations());
+
+        lvInvitation.setCellFactory(new InvitationListView());
+        Platform.runLater(() ->lvInvitation.setItems(invitationsObservableList));
+
+        server.listeners().addPropertyChangeListener(Server.PROPERTY_INVITATIONS, this.invitationsListener);
+    }
+
+    private void invitationsChanged(PropertyChangeEvent propertyChangeEvent) {
+        this.invitationsObservableList = FXCollections.observableList(server.getInvitations());
+        Platform.runLater(() ->lvInvitation.setItems(invitationsObservableList));
     }
 
 }
