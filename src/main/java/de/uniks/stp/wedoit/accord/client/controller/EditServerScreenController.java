@@ -231,30 +231,55 @@ public class EditServerScreenController implements Controller {
         if (mouseEvent.getClickCount() == 1) {
 
             if (!tfInvitationLink.getText().equals("")) {
-                final Clipboard clipboard = Clipboard.getSystemClipboard();
-                final ClipboardContent content = new ClipboardContent();
-                content.putString(tfInvitationLink.getText());
-                clipboard.setContent(content);
+                editor.copyToSystemClipBoard(tfInvitationLink.getText());
+
                 labelCopy.setText("Copied");
 
             } else {
                 labelCopy.setText("First create invitation");
             }
 
-            PauseTransition visiblePause = new PauseTransition(
-                    Duration.seconds(2)
-            );
-            visiblePause.setOnFinished(
-                    event -> {
-                        if (((Stage) view.getScene().getWindow()).getTitle().equals("Edit Server")) {
-                            if (!labelCopy.getText().equals("")) {
-                                Platform.runLater(() -> labelCopy.setText(""));
-                            }
-                        }
-                    });
-            visiblePause.play();
+            resetLabelCopy();
         }
     }
+
+    /**
+     * This method copies the invitation link and put the link in the system clipboard
+     * <p>
+     * shows "Copied" for 1.5 seconds if there is a link
+     * else shows "First create invitation"
+     */
+    private void copyLvInvitationLinkOnClick(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 1) {
+
+            if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
+                editor.copyToSystemClipBoard(lvInvitation.getSelectionModel().getSelectedItem().getLink());
+
+                labelCopy.setText("Copied");
+
+            } else {
+                labelCopy.setText("Select invitation to copy");
+            }
+
+            resetLabelCopy();
+        }
+    }
+
+    private void resetLabelCopy() {
+        PauseTransition visiblePause = new PauseTransition(
+                Duration.seconds(2)
+        );
+        visiblePause.setOnFinished(
+                event -> {
+                    if (((Stage) view.getScene().getWindow()).getTitle().equals("Edit Server")) {
+                        if (!labelCopy.getText().equals("")) {
+                            Platform.runLater(() -> labelCopy.setText(""));
+                        }
+                    }
+                });
+        visiblePause.play();
+    }
+
 
     public void handleChangeServerName(boolean status) {
         if (status) {
