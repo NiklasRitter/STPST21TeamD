@@ -42,6 +42,7 @@ public class MainScreenController implements Controller {
     private MainScreenServerListView mainScreenServerListView;
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
+    private Button enterInvitationButton;
 
     /**
      * Create a new Controller
@@ -68,7 +69,7 @@ public class MainScreenController implements Controller {
         this.privateChatsButton = (Button) view.lookup("#btnPrivateChats");
         this.optionsButton = (Button) view.lookup("#btnOptions");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
-        this.logoutButton = (Button) view.lookup("#btnLogout");
+        this.enterInvitationButton = (Button) view.lookup("#btnEnterInvitation");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
 
         this.initTooltips();
@@ -83,7 +84,7 @@ public class MainScreenController implements Controller {
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
         this.optionsButton.setOnAction(this::optionsButtonOnClick);
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
-        this.logoutButton.setOnAction(this::logoutButtonOnClick);
+        this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
     }
 
@@ -117,10 +118,6 @@ public class MainScreenController implements Controller {
         privateChatsButton.setText("private chats");
         this.privateChatsButton.setTooltip(privateChatsButton);
 
-        Tooltip logoutButton = new Tooltip();
-        logoutButton.setText("logout");
-        this.logoutButton.setTooltip(logoutButton);
-
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
         this.optionsButton.setTooltip(optionsButton);
@@ -146,7 +143,6 @@ public class MainScreenController implements Controller {
         privateChatsButton.setOnAction(null);
         optionsButton.setOnAction(null);
         addServerButton.setOnAction(null);
-        logoutButton.setOnAction(null);
 
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
         this.serverListListener = null;
@@ -194,12 +190,12 @@ public class MainScreenController implements Controller {
     }
 
     /**
-     * The localUser will be logged out and redirect to the LoginScreen
+     * Opens a pop-up windows, where you can enter a invitation
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
-    private void logoutButtonOnClick(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey());
+    private void enterInvitationButtonOnClick(ActionEvent actionEvent) {
+        StageManager.showJoinServerScreen();
     }
 
     /**

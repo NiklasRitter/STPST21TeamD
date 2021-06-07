@@ -15,6 +15,7 @@ public class Channel
    public static final String PROPERTY_MESSAGES = "messages";
    public static final String PROPERTY_CATEGORY = "category";
    public static final String PROPERTY_MEMBERS = "members";
+   public static final String PROPERTY_READ = "read";
    private String id;
    private String name;
    private String type;
@@ -23,6 +24,7 @@ public class Channel
    private Category category;
    private List<User> members;
    protected PropertyChangeSupport listeners;
+   private boolean read;
 
    public String getId()
    {
@@ -252,6 +254,24 @@ public class Channel
       {
          this.withoutMembers(item);
       }
+      return this;
+   }
+
+   public boolean isRead()
+   {
+      return this.read;
+   }
+
+   public Channel setRead(boolean value)
+   {
+      if (value == this.read)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.read;
+      this.read = value;
+      this.firePropertyChange(PROPERTY_READ, oldValue, value);
       return this;
    }
 

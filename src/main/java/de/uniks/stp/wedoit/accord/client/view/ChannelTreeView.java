@@ -10,29 +10,6 @@ import javafx.scene.control.TreeView;
 
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
 
-    @Override
-    public TreeCell<Object> call(TreeView<Object> param) {
-        return new ChannelTreeCell();
-    }
-
-
-    private static class ChannelTreeCell extends TreeCell<Object> {
-        protected void updateItem(Object item, boolean empty) {
-            super.updateItem(item, empty);
-            if (!empty) {
-                if (item instanceof Category) {
-                    this.setText("#" + ((Category) item).getName());
-                }
-                if (item instanceof Channel) {
-                    this.setText(((Channel) item).getName());
-                    this.setContextMenu(addContextMenuChannel((Channel)item));
-                }
-            } else {
-                this.setText(null);
-            }
-        }
-    }
-
     private static ContextMenu addContextMenuChannel(Channel item) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("- add category");
@@ -55,4 +32,30 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         return contextMenu;
     }
 
+    @Override
+    public TreeCell<Object> call(TreeView<Object> param) {
+        return new ChannelTreeCell();
+    }
+
+    private static class ChannelTreeCell extends TreeCell<Object> {
+        protected void updateItem(Object item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty) {
+                this.getStyleClass().remove("newMessage");
+                if (item instanceof Category) {
+                    this.setText("#" + ((Category) item).getName());
+                }
+                if (item instanceof Channel) {
+                    this.setText(((Channel) item).getName());
+                    this.setContextMenu(addContextMenuChannel((Channel) item));
+                    if (!((Channel) item).isRead()) {
+                        this.getStyleClass().add("newMessage");
+                    }
+                }
+            } else {
+                this.getStyleClass().remove("newMessage");
+                this.setText(null);
+            }
+        }
+    }
 }

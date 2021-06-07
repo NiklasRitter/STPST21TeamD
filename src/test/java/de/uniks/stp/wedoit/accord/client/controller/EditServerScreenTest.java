@@ -74,13 +74,13 @@ public class EditServerScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = stageManager.getEditor().haveLocalUser("Alice", "userKey123");
-        this.server = stageManager.getEditor().haveServer(localUser, "id456", "AliceServer");
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + stageManager.getEditor().getNetworkController().getCleanLocalUserName()
+        this.localUser = StageManager.getEditor().haveLocalUser("Alice", "userKey123");
+        this.server = StageManager.getEditor().haveServer(localUser, "id456", "AliceServer");
+        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
+        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + StageManager.getEditor().getNetworkController().getCleanLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClientMock);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.getEditor().getNetworkController().setRestClient(restMock);
         StageManager.showServerScreen(server);
     }
 
@@ -125,7 +125,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
         WaitForAsyncUtils.waitForFxEvents();
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
 
         // Assert that Pop-Up Window shows correct widgets
         VBox vBoxAdminOnly = lookup("#vBoxAdminOnly").query();
@@ -192,9 +192,9 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
 
-        Label lblError = (Label) lookup("#lblError").query();
+        Label lblError = lookup("#lblError").query();
 
         ((TextField) lookup("#tfNewServernameInput").query()).setText("TestServerName");
 
@@ -221,9 +221,9 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
 
-        Label lblError = (Label) lookup("#lblError").query();
+        Label lblError = lookup("#lblError").query();
 
         ((TextField) lookup("#tfNewServernameInput").query()).setText("TestServerName");
 
@@ -251,13 +251,13 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
 
         clickOn("#btnDelete");
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(stageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(StageManager.getPopupStage().getTitle(), "Attention");
     }
 
     @Test
@@ -272,7 +272,7 @@ public class EditServerScreenTest extends ApplicationTest {
         RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
         TextField tfMaxCountAmountInput = lookup("#tfMaxCountAmountInput").query();
         TextField tfInvitationLink = lookup("#tfInvitationLink").query();
-        Label labelCopy = (Label) lookup("#labelCopy").query();
+        Label labelCopy = lookup("#labelCopy").query();
 
         clickOn(radioBtnMaxCount);
         Assert.assertTrue(tfMaxCountAmountInput.isEditable());
@@ -339,27 +339,22 @@ public class EditServerScreenTest extends ApplicationTest {
 
         clickOn(radioBtnMaxCount);
         clickOn("#btnCreateInvitation");
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
 
         clickOn(radioBtnMaxCount);
         tfMaxCountAmountInput.setText("b");
         clickOn("#btnCreateInvitation");
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
 
         tfMaxCountAmountInput.setText("0");
         clickOn("#btnCreateInvitation");
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
 
         clickOn(radioBtnMaxCount);
         tfMaxCountAmountInput.setText("15");
         clickOn("#btnCreateInvitation");
-        WaitForAsyncUtils.waitForFxEvents();
 
         verify(restMock).createInvite(anyInt(), anyString(), anyString(), callbackArgumentCaptor.capture());
-
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();
@@ -377,7 +372,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals("generation failed", tfInvitationLink.getPromptText());
 
-        Label labelCopy = (Label) lookup("#labelCopy").query();
+        Label labelCopy = lookup("#labelCopy").query();
 
         clickOn(tfInvitationLink);
         WaitForAsyncUtils.waitForFxEvents();

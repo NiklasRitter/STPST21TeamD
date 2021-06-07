@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import kong.unirest.Callback;
 import kong.unirest.HttpRequest;
@@ -175,13 +176,13 @@ public class RestClient {
     /**
      * Create a Channel with a given Name.
      *
-     * @param serverId      The ID of the Server the Channel should be created on.
-     * @param categoryId    The ID of the Server the Channel should be created on.
-     * @param name          The Name of the Channel to be created.
-     * @param type          The Type of the Channel to be created, Text or Voice.
-     * @param privileged    Privileged channel or normal channel.
-     * @param userKey       The userKey of the currently logged in User.
-     * @param callback      The Callback to be called after the Request.
+     * @param serverId   The ID of the Server the Channel should be created on.
+     * @param categoryId The ID of the Category the Channel should be created on.
+     * @param name       The Name of the Channel to be created.
+     * @param type       The Type of the Channel to be created, Text or Voice.
+     * @param privileged Privileged channel or normal channel.
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
      */
     public void createChannel(String serverId, String categoryId, String name, String type, boolean privileged, JsonArray members, String userKey, Callback<JsonNode> callback) {
         // Build request Body
@@ -196,9 +197,33 @@ public class RestClient {
     }
 
     /**
+     * Update a Channel with a given Name.
+     *
+     * @param serverId   The ID of the Server the Channel is on.
+     * @param categoryId The ID of the Category the Channel belongs to.
+     * @param channelId  The ID of the Channel that is updated.
+     * @param name       The Name the Channel should be changed to.
+     * @param privileged Privileged channel or normal channel.
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
+     */
+    public void updateChannel(String serverId, String categoryId, String channelId, String name, boolean privileged, JsonArray members, String userKey, Callback<JsonNode> callback) {
+        // Build request Body
+        String body = Json.createObjectBuilder().add(NAME, name).add(PRIVILEGED, privileged).add(MEMBERS, members).build().toString();
+
+        // Use UniRest to create server
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS + SLASH + channelId)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    /**
      * creates a request to get a temporal invitation link
+     *
      * @param serverId id of the server for which the link is
-     * @param userKey userKey of the logged in local user
+     * @param userKey  userKey of the logged in local user
      * @param callback callback which have new link
      */
     public void createInvite(String serverId, String userKey, Callback<JsonNode> callback) {
@@ -211,8 +236,9 @@ public class RestClient {
 
     /**
      * creates a request to get a invitation link with count type and a maximum count of users who can use the link
+     *
      * @param serverId id of the server for which the link is
-     * @param userKey userKey of the logged in local user
+     * @param userKey  userKey of the logged in local user
      * @param callback callback which have new link
      */
     public void createInvite(int max, String serverId, String userKey, Callback<JsonNode> callback) {
@@ -225,10 +251,10 @@ public class RestClient {
     /**
      * Updates the name of a server
      *
-     * @param serverId   The ID of the Server which name should be changed.
+     * @param serverId      The ID of the Server which name should be changed.
      * @param newServerName The new name of the Server
-     * @param userKey    The userKey of the currently logged in User.
-     * @param callback   The Callback to be called after the Request.
+     * @param userKey       The userKey of the currently logged in User.
+     * @param callback      The Callback to be called after the Request.
      */
     public void changeServerName(String serverId, String newServerName, String userKey, Callback<JsonNode> callback) {
         String body = Json.createObjectBuilder().add(NAME, newServerName).build().toString();
@@ -242,11 +268,37 @@ public class RestClient {
 
     public void deleteServer(String userKey, String serverId, Callback<JsonNode> callback) {
         // Use UniRest to delete server
-        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH +SLASH +serverId)
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
                 .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
     }
+
+    public void deleteChannel(String userKey, String channelId, String categoryId, String serverId, Callback<JsonNode> callback) {
+        // Use UniRest to delete channel
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS + SLASH + channelId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
+    /**
+     * Try to join a server with the given invitation link
+     *
+     * @param callback The Callback to be called after the Request.
+     */
+    public void joinServer(LocalUser localUser, String invitationLink, Callback<JsonNode> callback) {
+        // Build Request Body
+        String body = JsonUtil.buildLogin(localUser.getName(), localUser.getPassword()).toString();
+
+        // Use UniRest to make login request
+        HttpRequest<?> req = Unirest.post(invitationLink)
+                .header(USER_KEY, localUser.getUserKey())
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
 
     /**
      * Send a Request and call the Callback asynchronously.
