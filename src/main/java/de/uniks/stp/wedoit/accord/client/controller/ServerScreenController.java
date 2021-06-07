@@ -94,11 +94,11 @@ public class ServerScreenController implements Controller {
 
         this.btnEdit.setVisible(false);
 
-        this.lbServerName.setText(server.getName());
-        this.lbServerName.setContextMenu(createContextMenu());
+//        this.lbServerName.setText(server.getName());
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
+        this.lbServerName.setContextMenu(createContextMenu());
         // Add server websocket
         editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
@@ -123,13 +123,9 @@ public class ServerScreenController implements Controller {
 
     private ContextMenu createContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        if (this.localUser.getId().equals(this.server.getOwner())) {
-            MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
-            contextMenu.getItems().add(menuItemLeaveServer);
-            menuItemLeaveServer.setOnAction(this::leaveServerAttention);
-        } else {
-            contextMenu.getItems().removeAll();
-        }
+        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
+        contextMenu.getItems().add(menuItemLeaveServer);
+        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
 
         return contextMenu;
     }
