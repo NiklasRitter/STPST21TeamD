@@ -195,7 +195,6 @@ public class JsonUtil {
             Message message = new Message();
             message.setId(jsonMessage.asJsonObject().getString(ID));
             message.setText(jsonMessage.asJsonObject().getString(TEXT));
-            System.out.println(jsonMessage.asJsonObject().get(TEXT));
             message.setFrom(jsonMessage.asJsonObject().getString(FROM));
             String timestamp = jsonMessage.asJsonObject().get(TIMESTAMP).toString();
             message.setTimestamp(Long.parseLong(timestamp));

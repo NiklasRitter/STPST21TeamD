@@ -364,8 +364,13 @@ public class ServerScreenController implements Controller {
     }
 
     public void handleGetChannelMessages(Channel channel, JsonArray data) {
-        List<Message> messages = JsonUtil.parseMessageArray(data);
-        this.editor.updateChannelMessages(channel, messages);
+        if (channel != null) {
+            List<Message> messages = JsonUtil.parseMessageArray(data);
+            this.editor.updateChannelMessages(channel, messages);
+        } else {
+            Platform.runLater(StageManager::showMainScreen);
+        }
+
     }
 
     /**
