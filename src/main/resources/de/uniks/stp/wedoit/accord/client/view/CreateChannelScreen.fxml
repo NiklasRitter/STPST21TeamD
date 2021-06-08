@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="hBoxMain" alignment="CENTER" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox>
          <children>
@@ -47,6 +47,27 @@
                   <Insets />
                </HBox.margin>
             </CheckBox>
+         </children>
+      </HBox>
+      <HBox id="hBoxLblMembers" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Label id="lblMembers" text="Members:">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <HBox id="hBoxMemberNameAndCheckBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox id="vBoxMemberName" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label id="lblMemberName" text="Member name" />
+               </children></VBox>
+            <VBox id="vBoxCheckBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <CheckBox id="chkBoxMember" mnemonicParsing="false" />
+               </children></VBox>
          </children>
       </HBox>
       <Label id="lblError" textFill="RED" />
