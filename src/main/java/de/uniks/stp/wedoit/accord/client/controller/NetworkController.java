@@ -582,8 +582,7 @@ public class NetworkController {
 
     public NetworkController leaveServer(String userKey, String serverId) {
         restClient.leaveServer(userKey, serverId, response -> {
-            System.out.println("test " + response.getBody().getObject());
-            if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 Platform.runLater(StageManager::showMainScreen);
             } else {
                 System.err.println("Error while leaving server");

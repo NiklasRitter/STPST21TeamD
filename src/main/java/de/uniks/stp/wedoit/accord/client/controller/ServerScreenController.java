@@ -53,6 +53,8 @@ public class ServerScreenController implements Controller {
     private TreeItem<Object> tvServerChannelsRoot;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
+    private ContextMenu contextMenu;
+    private MenuItem menuItemLeaveServer;
 
     /**
      * Create a new Controller
@@ -98,11 +100,18 @@ public class ServerScreenController implements Controller {
             this.lbServerName.setText(server.getName());
         }
         this.lbServerName.setContextMenu(createContextMenu());
+
         // Add server websocket
-        editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        editor.getNetworkController().
+
+                haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
-        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().getCleanLocalUserName()
-                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+        editor.getNetworkController().
+
+                haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().
+
+                        getCleanLocalUserName()
+                        + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         tvServerChannelsRoot = new TreeItem<>();
         ChannelTreeView channelTreeView = new ChannelTreeView();
@@ -115,19 +124,17 @@ public class ServerScreenController implements Controller {
         // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
+
         addActionListener();
 
         initTooltips();
+
     }
 
     private ContextMenu createContextMenu() {
-
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
-
-        if (this.localUser.getName().equals(this.server.getOwner())) {
-            contextMenu.getItems().add(menuItemLeaveServer);
-        }
+        contextMenu = new ContextMenu();
+        menuItemLeaveServer = new MenuItem("Leave Server");
+        contextMenu.getItems().add(menuItemLeaveServer);
         menuItemLeaveServer.setOnAction(this::leaveServerAttention);
         return contextMenu;
     }
@@ -222,14 +229,15 @@ public class ServerScreenController implements Controller {
                 lbServerName.setText(server.getName());
             });
 
-
             createUserListView(members);
         } else {
             Platform.runLater(StageManager::showLoginScreen);
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
+            this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
             this.btnEdit.setVisible(true);
         }
+
     }
 
     /**
