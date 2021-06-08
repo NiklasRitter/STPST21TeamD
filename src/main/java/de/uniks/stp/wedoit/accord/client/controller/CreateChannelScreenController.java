@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.LinkedList;
@@ -27,8 +29,10 @@ public class CreateChannelScreenController implements Controller {
     private final Category category;
     private TextField tfChannelName;
     private Button btnCreateChannel;
-    private CheckBox checkBoxPrivileged;
-    private Label errorLabel;
+    private CheckBox checkBoxPrivileged, chkBoxMember;
+    private Label errorLabel, lblMembers, lblMemberName;
+    private HBox hBoxLblMembers;
+    private VBox vBoxMain, vBoxMemberName, vBoxCheckBox;
 
     /**
      * Create a new Controller
@@ -56,7 +60,15 @@ public class CreateChannelScreenController implements Controller {
         this.btnCreateChannel = (Button) view.lookup("#btnCreateChannel");
         this.tfChannelName = (TextField) view.lookup("#tfChannelName");
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
+        this.chkBoxMember = (CheckBox) view.lookup("#chkBoxMember");
         this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblMembers = (Label) view.lookup("#lblMembers");
+        this.lblMemberName = (Label) view.lookup("#lblMemberName");
+        this.vBoxMain = (VBox) view.lookup("#hBoxMain");
+        this.hBoxLblMembers = (HBox) view.lookup("#hBoxLblMembers");
+
+
+//        vBoxMain.getChildren().remove(hBoxLblMembers);
 
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::createChannelButtonOnClick);
