@@ -199,7 +199,7 @@ public class EditServerScreenController implements Controller {
      */
     private void createInvitationButtonOnClick(ActionEvent actionEvent) {
         if (radioBtnMaxCount.isSelected()) {
-            if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*")) {
+            if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*") && tfMaxCountAmountInput.getText().length() < 10) {
                 int max = Integer.parseInt(tfMaxCountAmountInput.getText());
                 editor.getNetworkController().createInvitation(COUNT, max, server, localUser.getUserKey(), this);
             } else {
