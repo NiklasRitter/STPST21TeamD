@@ -314,7 +314,6 @@ public class RestClient {
         // Use UniRest to leave server
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverID + LEAVE_SERVER)
                 .header(USER_KEY, userKey);
-        System.out.println("hier bin ich auch " + req.getUrl().toString());
 
         sendRequest(req, callback);
     }

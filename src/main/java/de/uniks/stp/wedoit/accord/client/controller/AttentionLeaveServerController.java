@@ -38,7 +38,7 @@ public class AttentionLeaveServerController implements Controller {
         this.editor.leaveServer(this.editor.getLocalUser().getUserKey(), this.server.getId());
         this.editor.getLocalUser().withoutServers(this.server);
         this.server.setLocalUser(null);
-        StageManager.showMainScreen();
+//        StageManager.showMainScreen();
     }
 
     private void btnCancelOnClick(ActionEvent actionEvent) {
