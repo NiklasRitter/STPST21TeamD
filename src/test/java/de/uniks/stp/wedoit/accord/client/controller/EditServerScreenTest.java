@@ -1,14 +1,13 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.application.Platform;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -32,8 +31,11 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.DATA;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.LINK;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
+
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -291,9 +293,10 @@ public class EditServerScreenTest extends ApplicationTest {
 
         clickOn(tfInvitationLink);
         Assert.assertEquals("Copied", labelCopy.getText());
-        WaitForAsyncUtils.asyncFx(() -> {
-            Assert.assertEquals(Clipboard.getSystemClipboard().getString(), tfInvitationLink.getText());
+        Platform.runLater(() ->{
+        Assert.assertEquals(Clipboard.getSystemClipboard().getString(), tfInvitationLink.getText());
         });
+
         WaitForAsyncUtils.waitForFxEvents();
     }
 
@@ -319,8 +322,17 @@ public class EditServerScreenTest extends ApplicationTest {
         callback.completed(res);
         WaitForAsyncUtils.waitForFxEvents();
 
+        ListView<Invitation> lvInvite = lookup("#lvInvitation").query();
+
         Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK), tfInvitationLink.getText());
-        WaitForAsyncUtils.waitForFxEvents();
+        Invitation invitation = null;
+        for (Invitation invite: server.getInvitations()) {
+            if (invite.getId().equals(buildInvitationSuccessful().getJsonObject(DATA).getString(ID))) {
+                invitation = invite;
+            }
+        }
+
+        Assert.assertNotNull(invitation);
     }
 
     @Test
@@ -328,7 +340,6 @@ public class EditServerScreenTest extends ApplicationTest {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
         clickOn("#btnEdit");
-        WaitForAsyncUtils.waitForFxEvents();
 
         when(res.getBody()).thenReturn(new JsonNode(buildInvitationFailure().toString()));
 
@@ -381,7 +392,202 @@ public class EditServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
     }
 
-    // helper methods that build jsonObjects in order to mock RestClient answers.
+    @Test
+    public void loadInvitationsFailureTest() {
+        localUser.setId("owner123");
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
+        clickOn("#btnEdit");
+
+        ListView<Invitation> lvInvite = lookup("#lvInvitation").query();
+
+        when(res.getBody()).thenReturn(new JsonNode(loadInvitationFailure().toString()));
+        verify(restMock).loadInvitations(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Label labelCopy = lookup("#labelCopy").query();
+
+        doubleClickOn(lvInvite);
+        Assert.assertEquals("Select invitation", labelCopy.getText());
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lvInvite.getItems().size(), 0);
+        List<String> list = new ArrayList<>();
+        for (Invitation invite: server.getInvitations()) {
+            list.add(invite.getId());
+        }
+        Assert.assertEquals(list.size(), 0);
+        Assert.assertFalse(list.contains("invitationId3"));
+        Assert.assertEquals("Error while loading invitations", ((Label) lookup("#lblError").query()).getText());
+    }
+
+    @Test
+    public void loadAndDeleteInvitationsSuccessfulTest() {
+        localUser.setId("owner123");
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
+        clickOn("#btnEdit");
+
+        ListView<Invitation> lvInvite = lookup("#lvInvitation").query();
+
+        when(res.getBody()).thenReturn(new JsonNode(loadInvitationSuccessful().toString()));
+        verify(restMock).loadInvitations(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lvInvite.getItems().size(), 2);
+        List<String> list = new ArrayList<>();
+        for (Invitation invite: server.getInvitations()) {
+            list.add(invite.getId());
+        }
+        Assert.assertEquals(list.size(), 2);
+        Assert.assertTrue(list.contains("invitationId1"));
+        Assert.assertTrue(list.contains("invitationId2"));
+        Assert.assertFalse(list.contains("invitationId3"));
+
+        Label labelCopy = lookup("#labelCopy").query();
+
+        lvInvite.getSelectionModel().select(0);
+        doubleClickOn(lvInvite);
+        Assert.assertEquals("Copied", labelCopy.getText());
+        Platform.runLater(() ->{
+            Assert.assertEquals(Clipboard.getSystemClipboard().getString(), lvInvite.getItems().get(0).getLink());
+        });
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+
+        when(res.getBody()).thenReturn(new JsonNode(deleteInvitationSuccessful().toString()));
+        lvInvite.getSelectionModel().select(0);
+        clickOn("#btnDeleteInvitation");
+
+        verify(restMock).deleteInvitation(anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lvInvite.getItems().size(), 1);
+        list = new ArrayList<>();
+        for (Invitation invite: server.getInvitations()) {
+            list.add(invite.getId());
+        }
+        Assert.assertEquals(list.size(), 1);
+        Assert.assertFalse(list.contains("invitationId1"));
+        Assert.assertTrue(list.contains("invitationId2"));
+        Assert.assertFalse(list.contains("invitationId3"));
+
+    }
+
+    @Test
+    public void deleteInvitationsFailureTest() {
+        localUser.setId("owner123");
+        mockRestExplicitServer(buildServerInformationWithTwoMembers());
+        clickOn("#btnEdit");
+
+        ListView<Invitation> lvInvite = lookup("#lvInvitation").query();
+
+        when(res.getBody()).thenReturn(new JsonNode(loadInvitationSuccessful().toString()));
+        verify(restMock).loadInvitations(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lvInvite.getItems().size(), 2);
+        List<String> list = new ArrayList<>();
+        for (Invitation invite: server.getInvitations()) {
+            list.add(invite.getId());
+        }
+        Assert.assertEquals(list.size(), 2);
+        Assert.assertTrue(list.contains("invitationId1"));
+        Assert.assertTrue(list.contains("invitationId2"));
+        Assert.assertFalse(list.contains("invitationId3"));
+
+        when(res.getBody()).thenReturn(new JsonNode(deleteInvitationFailure().toString()));
+        lvInvite.getSelectionModel().select(0);
+        clickOn("#btnDeleteInvitation");
+
+        verify(restMock).deleteInvitation(anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lvInvite.getItems().size(), 2);
+        list = new ArrayList<>();
+        for (Invitation invite: server.getInvitations()) {
+            list.add(invite.getId());
+        }
+        Assert.assertEquals(list.size(), 2);
+        Assert.assertTrue(list.contains("invitationId1"));
+        Assert.assertTrue(list.contains("invitationId2"));
+        Assert.assertFalse(list.contains("invitationId3"));
+    }
+
+
+    // help methods that build jsonObjects in order to mock RestClient answers.
+
+    private JsonObject loadInvitationSuccessful() {
+        return Json.createObjectBuilder().add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(
+                                Json.createObjectBuilder()
+                                        .add("id", "invitationId1")
+                                        .add("link", "https://ac.uniks.de/api/...invitationId1")
+                                        .add("type", "count")
+                                        .add("max", 29)
+                                        .add("current", 2)
+                                        .add("server", "serverId")
+
+                        )
+                        .add(
+                                Json.createObjectBuilder()
+                                        .add("id", "invitationId2")
+                                        .add("link", "https://ac.uniks.de/api/...invitationId2")
+                                        .add("type", "temporal")
+                                        .add("max", -1)
+                                        .add("current", -1)
+                                        .add("server", "serverId")
+                        )
+                ).build();
+    }
+
+    private JsonObject loadInvitationFailure() {
+        return Json.createObjectBuilder().add("status", "failure")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                ).build();
+    }
+
+    public JsonObject deleteInvitationSuccessful() {
+        return Json.createObjectBuilder().add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", "invitationId1")
+                        .add("link", "https://ac.uniks.de/api/...invitationId1")
+                        .add("type", "count")
+                        .add("max", 29)
+                        .add("current", 2)
+                        .add("server", "serverId")
+                ).build();
+    }
+
+    public JsonObject deleteInvitationFailure() {
+        return Json.createObjectBuilder().add("status", "failure")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                ).build();
+    }
 
     private JsonObject buildServerNameChangeFailure() {
         return Json.createObjectBuilder().add("status", "failure").add("message", "Changing server name failed!")
