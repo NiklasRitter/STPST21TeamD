@@ -54,7 +54,7 @@ public class ServerScreenController implements Controller {
     private WSCallback chatWSCallback = this::handleChatMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
     private ContextMenu contextMenu;
-    private  MenuItem menuItemLeaveServer;
+    private MenuItem menuItemLeaveServer;
 
     /**
      * Create a new Controller
@@ -122,9 +122,7 @@ public class ServerScreenController implements Controller {
         // get members of this server
         // load categories after get users of a server
         // finally add PropertyChangeListener
-        editor.getNetworkController().
-
-                getExplicitServerInformation(localUser, server, this);
+        editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
 
 
         addActionListener();
@@ -134,14 +132,11 @@ public class ServerScreenController implements Controller {
     }
 
     private ContextMenu createContextMenu() {
+        System.out.println("asdasdasd");
         contextMenu = new ContextMenu();
         menuItemLeaveServer = new MenuItem("Leave Server");
-        Platform.runLater(() -> {
-            if (!this.localUser.getId().equals(this.server.getOwner())) {
-                contextMenu.getItems().add(menuItemLeaveServer);
-                menuItemLeaveServer.setOnAction(this::leaveServerAttention);
-            }
-        });
+        contextMenu.getItems().add(menuItemLeaveServer);
+        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
         return contextMenu;
     }
 
@@ -191,7 +186,6 @@ public class ServerScreenController implements Controller {
         this.btnHome.setOnAction(null);
         this.btnEmoji.setOnAction(null);
         this.btnEdit.setOnAction(null);
-        this.menuItemLeaveServer.setOnAction(null);
 
         this.tfInputMessage.setOnAction(null);
         this.tvServerChannels.setOnMouseReleased(null);
@@ -236,14 +230,15 @@ public class ServerScreenController implements Controller {
                 lbServerName.setText(server.getName());
             });
 
-
             createUserListView(members);
         } else {
             Platform.runLater(StageManager::showLoginScreen);
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
+            this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
             this.btnEdit.setVisible(true);
         }
+
     }
 
     /**
