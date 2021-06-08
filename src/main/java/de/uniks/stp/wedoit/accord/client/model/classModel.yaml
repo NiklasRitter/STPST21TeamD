@@ -1,5 +1,5 @@
 - c: 	org.fulib.classmodel.ClassModel
-  classes: 	privateMessage 	chat 	message 	channel 	category 	server 	user 	localUser 	accordClient 	options
+  classes: 	privateMessage 	chat 	message 	channel 	category 	server 	user 	invitation 	localUser 	accordClient 	options
   defaultCollectionType: 	c1
   defaultPropertyStyle: 	Bean
   defaultRoleType: 	"java.util.ArrayList<%s>"
@@ -53,7 +53,7 @@
   modified: 	false
   name: 	Server
   propertyStyle: 	Bean
-  roles: 	server_categories 	server_members 	server_localUser
+  roles: 	server_categories 	server_invitations 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
   attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_gameMove 	user_id
@@ -62,6 +62,14 @@
   name: 	User
   propertyStyle: 	Bean
   roles: 	user_channels 	user_servers 	user_privateChat 	user_localUser
+
+- invitation: 	org.fulib.classmodel.Clazz
+  attributes: 	invitation_id 	invitation_link 	invitation_type 	invitation_max 	invitation_current
+  model: 	c
+  modified: 	false
+  name: 	Invitation
+  propertyStyle: 	Bean
+  roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
   attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests
@@ -383,6 +391,18 @@
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
 
+- server_invitations: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	server
+  collectionType: 	c1
+  id: 	Server_invitations
+  modified: 	false
+  name: 	invitations
+  other: 	invitation_server
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
 - server_members: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	42
@@ -492,6 +512,61 @@
   modified: 	false
   name: 	localUser
   other: 	localUser_users
+  propertyStyle: 	Bean
+
+- invitation_id: 	org.fulib.classmodel.Attribute
+  clazz: 	invitation
+  id: 	Invitation_id
+  modified: 	false
+  name: 	id
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- invitation_link: 	org.fulib.classmodel.Attribute
+  clazz: 	invitation
+  id: 	Invitation_link
+  modified: 	false
+  name: 	link
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- invitation_type: 	org.fulib.classmodel.Attribute
+  clazz: 	invitation
+  id: 	Invitation_type
+  modified: 	false
+  name: 	type
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- invitation_max: 	org.fulib.classmodel.Attribute
+  clazz: 	invitation
+  id: 	Invitation_max
+  modified: 	false
+  name: 	max
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
+
+- invitation_current: 	org.fulib.classmodel.Attribute
+  clazz: 	invitation
+  id: 	Invitation_current
+  modified: 	false
+  name: 	current
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
+
+- invitation_server: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	invitation
+  id: 	Invitation_server
+  modified: 	false
+  name: 	server
+  other: 	server_invitations
   propertyStyle: 	Bean
 
 - localUser_password: 	org.fulib.classmodel.Attribute

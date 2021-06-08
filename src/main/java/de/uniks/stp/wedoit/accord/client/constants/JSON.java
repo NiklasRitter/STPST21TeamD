@@ -31,6 +31,8 @@ public class JSON {
     public static final String MAX = "max";
     public static final String TEMPORAL = "temporal";
     public static final String LINK = "link";
+    public static final String CURRENT = "current";
+
 
 
 

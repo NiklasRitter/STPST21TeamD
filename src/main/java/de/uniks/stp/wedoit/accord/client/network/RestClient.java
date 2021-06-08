@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import kong.unirest.Callback;
 import kong.unirest.HttpRequest;
@@ -299,6 +300,19 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void loadInvitations(String serverId, String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
+    public void deleteInvitation(String userKey, String inviteId, String serverId, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES + SLASH + inviteId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
 
     /**
      * Send a Request and call the Callback asynchronously.
