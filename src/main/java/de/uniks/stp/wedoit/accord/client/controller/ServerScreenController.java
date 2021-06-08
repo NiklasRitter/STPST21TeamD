@@ -424,6 +424,7 @@ public class ServerScreenController implements Controller {
      * @param msg response of the websocket server
      */
     private void handleServerMessage(JsonStructure msg) {
+
         JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
         String action = ((JsonObject) msg).getString(ACTION);
 
@@ -486,7 +487,7 @@ public class ServerScreenController implements Controller {
 
         // change invitation
         if (action.equals(INVITE_EXPIRED)) {
-            // TODO inviteExpired
+            editor.deleteInvite(data.getString(ID), server);
         }
 
     }
