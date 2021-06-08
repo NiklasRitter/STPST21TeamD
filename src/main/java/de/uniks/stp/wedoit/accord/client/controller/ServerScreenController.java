@@ -53,6 +53,8 @@ public class ServerScreenController implements Controller {
     private TreeItem<Object> tvServerChannelsRoot;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
+    private ContextMenu contextMenu;
+    private  MenuItem menuItemLeaveServer;
 
     /**
      * Create a new Controller
@@ -97,11 +99,19 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
+        this.lbServerName.setContextMenu(createContextMenu());
+
         // Add server websocket
-        editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        editor.getNetworkController().
+
+                haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
-        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().getCleanLocalUserName()
-                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+        editor.getNetworkController().
+
+                haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().
+
+                        getCleanLocalUserName()
+                        + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         tvServerChannelsRoot = new TreeItem<>();
         ChannelTreeView channelTreeView = new ChannelTreeView();
@@ -112,20 +122,26 @@ public class ServerScreenController implements Controller {
         // get members of this server
         // load categories after get users of a server
         // finally add PropertyChangeListener
-        editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
+        editor.getNetworkController().
+
+                getExplicitServerInformation(localUser, server, this);
 
 
         addActionListener();
 
         initTooltips();
+
     }
 
     private ContextMenu createContextMenu() {
-
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
-        contextMenu.getItems().add(menuItemLeaveServer);
-        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+        contextMenu = new ContextMenu();
+        menuItemLeaveServer = new MenuItem("Leave Server");
+        Platform.runLater(() -> {
+            if (!this.localUser.getId().equals(this.server.getOwner())) {
+                contextMenu.getItems().add(menuItemLeaveServer);
+                menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+            }
+        });
         return contextMenu;
     }
 
@@ -148,10 +164,6 @@ public class ServerScreenController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
-        
-        if (this.localUser.getId().equals(this.server.getOwner())) {
-            this.lbServerName.setContextMenu(createContextMenu());
-        }
 
     }
 
@@ -179,6 +191,7 @@ public class ServerScreenController implements Controller {
         this.btnHome.setOnAction(null);
         this.btnEmoji.setOnAction(null);
         this.btnEdit.setOnAction(null);
+        this.menuItemLeaveServer.setOnAction(null);
 
         this.tfInputMessage.setOnAction(null);
         this.tvServerChannels.setOnMouseReleased(null);
