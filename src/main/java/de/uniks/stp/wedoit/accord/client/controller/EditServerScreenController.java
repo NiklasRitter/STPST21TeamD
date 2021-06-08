@@ -197,6 +197,7 @@ public class EditServerScreenController implements Controller {
             } else {
                 tfMaxCountAmountInput.setText("");
                 tfMaxCountAmountInput.setPromptText("Insert Amount > 0");
+                tfMaxCountAmountInput.getStyleClass().add("redPromptText");
             }
         } else if (radioBtnTemporal.isSelected()) {
             editor.getNetworkController().createInvitation(TEMPORAL, 0, server, localUser.getUserKey(), this);
@@ -211,6 +212,7 @@ public class EditServerScreenController implements Controller {
     public void handleInvitation(String invitationLink) {
         tfMaxCountAmountInput.setText("");
         tfMaxCountAmountInput.setPromptText("Amount");
+        tfMaxCountAmountInput.getStyleClass().removeAll("redPromptText");
         if (invitationLink != null) {
             tfInvitationLink.setText(invitationLink);
         } else {
@@ -267,7 +269,7 @@ public class EditServerScreenController implements Controller {
                 labelCopy.setText("Copied");
 
             } else {
-                labelCopy.setText("Select invitation to copy");
+                labelCopy.setText("Select first invitation");
             }
 
             resetLabelCopy();
