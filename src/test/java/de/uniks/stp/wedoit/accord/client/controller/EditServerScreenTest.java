@@ -449,8 +449,15 @@ public class EditServerScreenTest extends ApplicationTest {
         Assert.assertFalse(list.contains("invitationId3"));
 
         Label labelCopy = lookup("#labelCopy").query();
+        Label labelStatus = lookup("#lblInvitationStatus").query();
+        Label labelStatusText = lookup("#lblInvitationStatusText").query();
 
         lvInvite.getSelectionModel().select(0);
+        clickOn(lvInvite);
+        Assert.assertTrue(labelStatus.getText().contains("" +
+                (lvInvite.getSelectionModel().getSelectedItem().getMax() - lvInvite.getSelectionModel().getSelectedItem().getCurrent() + 1)));
+        Assert.assertEquals(labelStatusText.getText(), "invitation status:");
+
         doubleClickOn(lvInvite);
         Assert.assertEquals("Copied", labelCopy.getText());
         Platform.runLater(() -> {
@@ -471,6 +478,8 @@ public class EditServerScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
+        Assert.assertEquals(labelStatus.getText(), "");
+        Assert.assertEquals(labelStatusText.getText(), "");
         Assert.assertEquals(lvInvite.getItems().size(), 1);
         list = new ArrayList<>();
         for (Invitation invite : server.getInvitations()) {

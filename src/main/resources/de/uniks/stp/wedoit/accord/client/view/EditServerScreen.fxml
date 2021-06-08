@@ -138,11 +138,44 @@
                         <Insets bottom="10.0" top="5.0" />
                      </VBox.margin>
                   </ListView>
-                  <Button id="btnDeleteInvitation" minWidth="120.0" mnemonicParsing="false" styleClass="styleButton" text="Delete invitation">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Button id="btnDeleteInvitation" minWidth="75.0" mnemonicParsing="false" styleClass="styleButton">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                           <graphic>
+                              <VBox alignment="CENTER">
+                                 <children>
+                                    <Label text="Delete">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="invitation">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </graphic>
+                        </Button>
+                        <VBox>
+                           <children>
+                              <Label id="lblInvitationStatusText">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label id="lblInvitationStatus" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>

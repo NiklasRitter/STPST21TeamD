@@ -54,6 +54,8 @@ public class EditServerScreenController implements Controller {
     private Button btnDeleteInvitation;
     private ObservableList<Invitation> invitationsObservableList;
     private PropertyChangeListener invitationsListener = this::invitationsChanged;
+    private Label lblInvitationStatus;
+    private Label lblInvitationStatusText;
 
 
     /**
@@ -96,6 +98,9 @@ public class EditServerScreenController implements Controller {
         this.vBoxAdminOnly = (VBox) view.lookup("#vBoxAdminOnly");
         this.mainVBox = (VBox) view.lookup("#mainVBox");
         this.lblError = (Label) view.lookup("#lblError");
+        this.lblInvitationStatus = (Label) view.lookup("#lblInvitationStatus");
+        this.lblInvitationStatusText = (Label) view.lookup("#lblInvitationStatusText");
+
 
         this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
         this.btnDeleteInvitation = (Button) view.lookup("#btnDeleteInvitation");
@@ -137,6 +142,9 @@ public class EditServerScreenController implements Controller {
         this.btnSave.setOnAction(null);
         this.radioBtnMaxCount.setOnMouseClicked(null);
         this.radioBtnTemporal.setOnMouseClicked(null);
+        this.tfInvitationLink.setOnMouseClicked(null);
+        this.lvInvitation.setOnMouseClicked(null);
+        this.btnDeleteInvitation.setOnAction(null);
         server.listeners().removePropertyChangeListener(Server.PROPERTY_INVITATIONS, this.invitationsListener);
         this.invitationsListener = null;
 
@@ -176,6 +184,8 @@ public class EditServerScreenController implements Controller {
 
 
     private void deleteInvitationButtonOnClick(ActionEvent actionEvent) {
+        lblInvitationStatusText.setText("");
+        lblInvitationStatus.setText("");
         if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
             editor.getNetworkController().deleteInvite(localUser.getUserKey(), lvInvitation.getSelectionModel().getSelectedItem(), server, this);
         }
@@ -259,6 +269,22 @@ public class EditServerScreenController implements Controller {
      * else shows "First create invitation"
      */
     private void copyLvInvitationLinkOnClick(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 1 || mouseEvent.getClickCount() == 2) {
+
+            if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
+                lblInvitationStatusText.setText("invitation status:");
+                Invitation invitation = lvInvitation.getSelectionModel().getSelectedItem();
+                if (invitation.getType().equals(COUNT)) {
+                    lblInvitationStatus.setText("valid for less than " + (invitation.getMax() - invitation.getCurrent() + 1) + " users");
+                }
+                if (invitation.getType().equals(TEMPORAL)) {
+                    lblInvitationStatus.setText("valid for less than 24 hours");
+                }
+
+            }
+
+        }
+
         if (mouseEvent.getClickCount() == 2) {
 
             if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
