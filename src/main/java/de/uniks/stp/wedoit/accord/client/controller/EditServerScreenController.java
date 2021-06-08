@@ -5,7 +5,6 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.view.InvitationListView;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -14,8 +13,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -24,7 +21,6 @@ import javafx.util.Duration;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
@@ -327,14 +323,14 @@ public class EditServerScreenController implements Controller {
         this.invitationsObservableList = FXCollections.observableList(server.getInvitations());
 
         lvInvitation.setCellFactory(new InvitationListView());
-        Platform.runLater(() ->lvInvitation.setItems(invitationsObservableList));
+        Platform.runLater(() -> lvInvitation.setItems(invitationsObservableList));
 
         server.listeners().addPropertyChangeListener(Server.PROPERTY_INVITATIONS, this.invitationsListener);
     }
 
     private void invitationsChanged(PropertyChangeEvent propertyChangeEvent) {
         this.invitationsObservableList = FXCollections.observableList(server.getInvitations());
-        Platform.runLater(() ->lvInvitation.setItems(invitationsObservableList));
+        Platform.runLater(() -> lvInvitation.setItems(invitationsObservableList));
     }
 
 

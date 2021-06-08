@@ -30,10 +30,8 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -293,8 +291,8 @@ public class EditServerScreenTest extends ApplicationTest {
 
         clickOn(tfInvitationLink);
         Assert.assertEquals("Copied", labelCopy.getText());
-        Platform.runLater(() ->{
-        Assert.assertEquals(Clipboard.getSystemClipboard().getString(), tfInvitationLink.getText());
+        Platform.runLater(() -> {
+            Assert.assertEquals(Clipboard.getSystemClipboard().getString(), tfInvitationLink.getText());
         });
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -326,7 +324,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(buildInvitationSuccessful().getJsonObject(DATA).getString(LINK), tfInvitationLink.getText());
         Invitation invitation = null;
-        for (Invitation invite: server.getInvitations()) {
+        for (Invitation invite : server.getInvitations()) {
             if (invite.getId().equals(buildInvitationSuccessful().getJsonObject(DATA).getString(ID))) {
                 invitation = invite;
             }
@@ -416,7 +414,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lvInvite.getItems().size(), 0);
         List<String> list = new ArrayList<>();
-        for (Invitation invite: server.getInvitations()) {
+        for (Invitation invite : server.getInvitations()) {
             list.add(invite.getId());
         }
         Assert.assertEquals(list.size(), 0);
@@ -442,7 +440,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lvInvite.getItems().size(), 2);
         List<String> list = new ArrayList<>();
-        for (Invitation invite: server.getInvitations()) {
+        for (Invitation invite : server.getInvitations()) {
             list.add(invite.getId());
         }
         Assert.assertEquals(list.size(), 2);
@@ -455,7 +453,7 @@ public class EditServerScreenTest extends ApplicationTest {
         lvInvite.getSelectionModel().select(0);
         doubleClickOn(lvInvite);
         Assert.assertEquals("Copied", labelCopy.getText());
-        Platform.runLater(() ->{
+        Platform.runLater(() -> {
             Assert.assertEquals(Clipboard.getSystemClipboard().getString(), lvInvite.getItems().get(0).getLink());
         });
 
@@ -475,7 +473,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lvInvite.getItems().size(), 1);
         list = new ArrayList<>();
-        for (Invitation invite: server.getInvitations()) {
+        for (Invitation invite : server.getInvitations()) {
             list.add(invite.getId());
         }
         Assert.assertEquals(list.size(), 1);
@@ -503,7 +501,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lvInvite.getItems().size(), 2);
         List<String> list = new ArrayList<>();
-        for (Invitation invite: server.getInvitations()) {
+        for (Invitation invite : server.getInvitations()) {
             list.add(invite.getId());
         }
         Assert.assertEquals(list.size(), 2);
@@ -524,7 +522,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lvInvite.getItems().size(), 2);
         list = new ArrayList<>();
-        for (Invitation invite: server.getInvitations()) {
+        for (Invitation invite : server.getInvitations()) {
             list.add(invite.getId());
         }
         Assert.assertEquals(list.size(), 2);
