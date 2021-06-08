@@ -132,7 +132,6 @@ public class ServerScreenController implements Controller {
     }
 
     private ContextMenu createContextMenu() {
-        System.out.println("asdasdasd");
         contextMenu = new ContextMenu();
         menuItemLeaveServer = new MenuItem("Leave Server");
         contextMenu.getItems().add(menuItemLeaveServer);

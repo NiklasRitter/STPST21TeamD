@@ -953,6 +953,7 @@ public class ServerScreenTest extends ApplicationTest {
         Callback<JsonNode> callbackLeaveServer = callbackArgumentCaptor.getValue();
         callbackLeaveServer.completed(res);
 
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(StageManager.getStage().getTitle(), "Main");
 
     }
