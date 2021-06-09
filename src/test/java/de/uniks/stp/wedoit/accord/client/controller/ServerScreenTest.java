@@ -191,9 +191,19 @@ public class ServerScreenTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).updateCategory(anyString(), anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
+        verify(restMock).updateCategory(anyString(), anyString(), anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
 
-        Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
+        Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockDeleteCategoryRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).deleteCategory(anyString(), anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
         callback.completed(res);
     }
 
@@ -789,6 +799,52 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(errorLabel.getText(), "Something went wrong while updating the category");
+    }
+
+    @Test
+    public void deleteCategoryTest() {
+        Category category = new Category().setId("12345").setName("someCategory");
+        category.setServer(server);
+        Platform.runLater(() -> {
+            StageManager.showEditCategoryScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = lookup("#btnDeleteCategory").query();
+        Assert.assertEquals(button.getText(), "Delete");
+
+        clickOn("#btnDeleteCategory");
+        clickOn("#btnDiscard");
+        Assert.assertEquals(category.getServer(), server);
+
+        clickOn("#btnDeleteCategory");
+        clickOn("#btnDelete");
+
+        JsonObject json = buildCreateCategory(category.getId(), category.getId(), server.getId());
+        mockDeleteCategoryRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertNull(category.getServer());
+    }
+
+    @Test
+    public void deleteCategoryFailureTest() {
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+        Platform.runLater(() -> {
+            StageManager.showEditCategoryScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = lookup("#btnDeleteCategory").query();
+        Assert.assertEquals(button.getText(), "Delete");
+
+        clickOn("#btnDeleteCategory");
+        clickOn("#btnDelete");
+
+        JsonObject json = buildFailure();
+        mockDeleteCategoryRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertNotNull(category.getServer());
     }
 
     @Test
