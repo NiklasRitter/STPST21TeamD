@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="hBoxMain" alignment="CENTER" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="vBoxMain" alignment="CENTER" minHeight="202.0" spacing="10.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox>
+      <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label prefWidth="160.0" text="Channel Name:">
+            <Label prefWidth="160.0" text="Channel Name:" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -22,7 +22,7 @@
                   <Insets top="2.0" />
                </HBox.margin>
             </Label>
-            <TextField id="tfChannelName" prefWidth="200.0">
+            <TextField id="tfChannelName" prefWidth="200.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -32,9 +32,9 @@
             <Insets />
          </VBox.margin>
       </HBox>
-      <HBox>
+      <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label prefWidth="140.0" text="Privileged:">
+            <Label prefWidth="140.0" text="Privileged:" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -42,36 +42,28 @@
                   <Insets />
                </HBox.margin>
             </Label>
-            <CheckBox id="checkBoxPrivileged" mnemonicParsing="false">
+            <CheckBox id="checkBoxPrivileged" mnemonicParsing="false" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </CheckBox>
          </children>
       </HBox>
-      <HBox id="hBoxLblMembers" prefHeight="100.0" prefWidth="200.0">
+      <HBox id="hBoxLblMembers" VBox.vgrow="ALWAYS">
          <children>
-            <Label id="lblMembers" text="Members:">
+            <Label id="lblMembers" text="Members:" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
          </children>
       </HBox>
-      <HBox id="hBoxMemberNameAndCheckBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" VBox.vgrow="ALWAYS">
+      <VBox id="vBoxMemberNameAndCheckBox" alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox id="vBoxMemberName" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label id="lblMemberName" text="Member name" />
-               </children></VBox>
-            <VBox id="vBoxCheckBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <CheckBox id="chkBoxMember" mnemonicParsing="false" />
-               </children></VBox>
-         </children>
-      </HBox>
-      <Label id="lblError" textFill="RED" />
-      <Button id="btnCreateChannel" defaultButton="true" mnemonicParsing="false" prefWidth="150.0" styleClass="styleButton" text="Create">
+            <fx:include source="subview/MemberListSubView.fxml" VBox.vgrow="ALWAYS" />
+         </children></VBox>
+      <Label id="lblError" textFill="RED" VBox.vgrow="ALWAYS" />
+      <Button id="btnCreateChannel" defaultButton="true" mnemonicParsing="false" prefWidth="150.0" styleClass="styleButton" text="Create" VBox.vgrow="ALWAYS">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
