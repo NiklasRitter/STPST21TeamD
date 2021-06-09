@@ -88,7 +88,7 @@ public class EditCategoryScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
-            //editor.getNetworkController().updateCategory(editor.getCurrentServer(), category, tfCategoryName.getText(), this);
+            editor.getNetworkController().updateCategory(editor.getCurrentServer(), category, tfCategoryName.getText(), this);
         }
     }
 
