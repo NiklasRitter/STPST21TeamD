@@ -304,6 +304,13 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void deleteCategory(String userKey, String categoryId, String serverId, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
     /**
      * Try to join a server with the given invitation link
      *
