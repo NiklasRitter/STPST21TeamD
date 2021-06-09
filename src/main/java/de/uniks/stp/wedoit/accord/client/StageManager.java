@@ -393,7 +393,7 @@ public class StageManager extends Application {
             popupStage.setTitle("Create Channel");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
-//            popupStage.setResizable(false);
+            popupStage.setResizable(true);
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing CreateChannelScreen");
@@ -418,7 +418,7 @@ public class StageManager extends Application {
             popupStage.setTitle("Edit Channel");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
-            popupStage.setResizable(false);
+            popupStage.setResizable(true);
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing EditChannelScreen");

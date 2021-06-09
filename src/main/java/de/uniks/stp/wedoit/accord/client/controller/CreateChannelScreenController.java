@@ -89,7 +89,7 @@ public class CreateChannelScreenController implements Controller {
         for (User user : this.editor.getCurrentServer().getMembers()) {
             try {
                 Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
-                MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this.editor, this.category);
+                MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this.editor);
                 memberListSubViewController.init();
 
                 this.vBoxMemberNameAndCheckBox.getChildren().add(view);

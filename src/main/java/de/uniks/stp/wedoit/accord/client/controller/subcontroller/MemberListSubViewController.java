@@ -17,16 +17,14 @@ public class MemberListSubViewController implements Controller {
     private final User user;
     private final Parent view;
     private final Editor editor;
-    private final Category category;
     private HBox hBoxPlaceHolder;
     private VBox vBoxMemberName, vBoxCheckBox;
     private CheckBox checkBox;
 
-    public MemberListSubViewController(User user, Parent view, Editor editor, Category category) {
+    public MemberListSubViewController(User user, Parent view, Editor editor) {
         this.user = user;
         this.view = view;
         this.editor = editor;
-        this.category = category;
     }
 
     @Override

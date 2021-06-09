@@ -2,15 +2,21 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +32,10 @@ public class EditChannelScreenController implements Controller {
     private Button btnCreateChannel;
     private CheckBox checkBoxPrivileged;
     private Button btnDeleteChannel;
-    private Label errorLabel;
+    private Label errorLabel, lblMembers;
+    private HBox hBoxLblMembers;
+    private VBox vBoxMain, vBoxMemberNameAndCheckBox;
+    private ArrayList<MemberListSubViewController> memberListSubViewControllers;
 
     /**
      * Create a new Controller
@@ -40,6 +49,7 @@ public class EditChannelScreenController implements Controller {
         this.localUser = model;
         this.editor = editor;
         this.channel = channel;
+        this.memberListSubViewControllers = new ArrayList<>();
     }
 
     /**
@@ -57,14 +67,53 @@ public class EditChannelScreenController implements Controller {
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
 
+        this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
+        this.hBoxLblMembers = (HBox) view.lookup("#hBoxLblMembers");
+        this.lblMembers = (Label) view.lookup("#lblMembers");
+
+        if (channel.isPrivileged()) {
+            this.checkBoxPrivileged.setSelected(true);
+        }
+
+        checkIfIsPrivileged();
+
+        tfChannelName.setText(channel.getName());
+
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::editChannelButtonOnClick);
         this.btnDeleteChannel.setOnAction(this::deleteChannelButtonOnClick);
+        this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
 
-        if(channel.isPrivileged()){
-            this.checkBoxPrivileged.setSelected(true);
+    }
+
+
+    private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
+        checkIfIsPrivileged();
+    }
+
+    private void checkIfIsPrivileged() {
+        if (this.checkBoxPrivileged.isSelected()) {
+            initSubViewMemberList();
+        } else {
+            this.vBoxMemberNameAndCheckBox.getChildren().clear();
         }
-        tfChannelName.setText(channel.getName());
+    }
+
+    private void initSubViewMemberList() {
+        this.vBoxMemberNameAndCheckBox.getChildren().clear();
+        for (User user : this.editor.getCurrentServer().getMembers()) {
+            try {
+                Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
+                MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this.editor);
+                memberListSubViewController.init();
+
+                this.vBoxMemberNameAndCheckBox.getChildren().add(view);
+                this.memberListSubViewControllers.add(memberListSubViewController);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -93,8 +142,7 @@ public class EditChannelScreenController implements Controller {
         } else {
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), null, this);
-            }
-            else{
+            } else {
                 List<String> userList = new LinkedList<>();
                 userList.add(this.localUser.getId());
                 editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);

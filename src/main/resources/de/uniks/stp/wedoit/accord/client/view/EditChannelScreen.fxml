@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox>
          <children>
@@ -49,6 +49,20 @@
             </CheckBox>
          </children>
       </HBox>
+      <HBox id="hBoxLblMembers">
+         <children>
+            <Label id="lblMembers" text="Members:" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <VBox id="vBoxMemberNameAndCheckBox" alignment="CENTER" spacing="10.0">
+         <children>
+            <fx:include source="subview/MemberListSubView.fxml" />
+         </children>
+      </VBox>
       <Label id="lblError" textFill="RED" />
       <HBox>
          <children>
