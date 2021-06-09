@@ -2,11 +2,13 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.JSON;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 
 import javax.json.*;
@@ -404,8 +406,8 @@ public class NetworkController {
 
     public NetworkController updateChannel(Server server, Category category, Channel channel, String channelNameInput, boolean privileged, List<String> members, EditChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
-        if(members != null) {
-            for (String userId : members){
+        if (members != null) {
+            for (String userId : members) {
                 memberJson.add(Json.createValue(userId));
             }
         }
@@ -420,11 +422,10 @@ public class NetworkController {
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
 
-                if(category.getId().equals(channelCategoryId)) {
+                if (category.getId().equals(channelCategoryId)) {
                     Channel newChannel = editor.updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
                     controller.handleEditChannel(newChannel);
-                }
-                else {
+                } else {
                     controller.handleEditChannel(null);
                 }
             } else {
@@ -463,15 +464,18 @@ public class NetworkController {
      *
      * @param type       type of the invitation, means temporal or count with a int max
      * @param max        maximum size of users who can use this link, is the type temporal max is ignored
-     * @param serverId   id of the server
+     * @param server     server
      * @param userKey    userKey of the logged in local user
      * @param controller controller which handles the new link
      */
-    public void createInvitation(String type, int max, String serverId, String userKey, EditServerScreenController controller) {
+    public void createInvitation(String type, int max, Server server, String userKey, EditServerScreenController controller) {
+        String serverId = server.getId();
         if (type.equals(TEMPORAL)) {
             restClient.createInvite(serverId, userKey, invitationResponse -> {
                 if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                    JsonObject response = JsonUtil.parse(String.valueOf(invitationResponse.getBody().getObject())).getJsonObject(DATA);
+                    Invitation invitation = JsonUtil.parseInvitation(response, server);
+                    controller.handleInvitation(invitation.getLink());
                 } else {
                     controller.handleInvitation(null);
                 }
@@ -480,7 +484,9 @@ public class NetworkController {
         } else if (type.equals(COUNT)) {
             restClient.createInvite(max, serverId, userKey, invitationResponse -> {
                 if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                    JsonObject response = JsonUtil.parse(String.valueOf(invitationResponse.getBody().getObject())).getJsonObject(DATA);
+                    Invitation invitation = JsonUtil.parseInvitation(response, server);
+                    controller.handleInvitation(invitation.getLink());
                 } else {
                     controller.handleInvitation(null);
                 }
@@ -569,6 +575,35 @@ public class NetworkController {
         });
     }
 
+    public void loadInvitations(Server server, String userKey, EditServerScreenController controller) {
+
+        restClient.loadInvitations(server.getId(), userKey, response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+
+                JsonArray invitationResponse = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
+
+                List<Invitation> allInvitations = JsonUtil.parseInvitations(invitationResponse, server);
+                server.withoutInvitations(new ArrayList<>(server.getInvitations()));
+                server.withInvitations(allInvitations);
+
+                controller.handleOldInvitations(server.getInvitations());
+            } else {
+                controller.handleOldInvitations(null);
+            }
+        });
+
+    }
+
+    public void deleteInvite(String userKey, Invitation invitation, Server server, EditServerScreenController controller) {
+        restClient.deleteInvitation(userKey, invitation.getId(), server.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+
+                editor.deleteInvite(invitation.getId(), server);
+            }
+        });
+    }
+
+
     /**
      * Called to stop this controller
      * <p>
@@ -583,5 +618,18 @@ public class NetworkController {
         }
         return this;
     }
+
+    public NetworkController leaveServer(String userKey, String serverId) {
+        restClient.leaveServer(userKey, serverId, response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                Platform.runLater(StageManager::showMainScreen);
+            } else {
+                System.err.println("Error while leaving server");
+                Platform.runLater(StageManager::showMainScreen);
+            }
+        });
+        return this;
+    }
+
 
 }

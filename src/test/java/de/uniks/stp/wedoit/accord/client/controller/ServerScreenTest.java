@@ -187,6 +187,16 @@ public class ServerScreenTest extends ApplicationTest {
         callback.completed(res);
     }
 
+    public void mockUpdateCategoryRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).updateCategory(anyString(), anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
     public void mockCreateChannelRest(JsonObject restClientJson) {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
@@ -731,6 +741,57 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     @Test
+    public void editCategoryTest() {
+        Category category = new Category().setId("12345").setName("someCategory");
+        server.withCategories(category);
+        Platform.runLater(() -> {
+            StageManager.showEditCategoryScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = lookup("#btnEditCategory").query();
+        Assert.assertEquals(button.getText(), "Save");
+
+
+        TextField textField = lookup("#tfCategoryName").query();
+        Assert.assertEquals(textField.getText(), category.getName());
+        textField.setText("categoryTest");
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn("#btnEditCategory");
+
+        JsonObject json = buildCreateCategory(category.getId(), textField.getText(), server.getId());
+        mockUpdateCategoryRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(category.getName(), "categoryTest");
+    }
+
+    @Test
+    public void editCategoryFailureTest() {
+        Category category = new Category().setId("12345").setName("someCategory");
+        category.setServer(server);
+        Platform.runLater(() -> {
+            StageManager.showEditCategoryScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = lookup("#btnEditCategory").query();
+        Assert.assertEquals(button.getText(), "Save");
+
+        TextField textField = lookup("#tfCategoryName").query();
+        textField.setText("");
+        clickOn("#btnEditCategory");
+        Label errorLabel = lookup("#lblError").query();
+        Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
+
+        textField.setText("testCategory");
+        clickOn("#btnEditCategory");
+        JsonObject json = buildFailure();
+        mockUpdateCategoryRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(errorLabel.getText(), "Something went wrong while updating the category");
+    }
+
+    @Test
     public void createChannelTest() {
 
         Category category = new Category().setId("12345");
@@ -921,6 +982,60 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     @Test
+    public void leaveServerTest() {
+
+        openAttentionScreen();
+        testBtnCancel();
+        openAttentionScreen();
+        testBtnLeave();
+
+    }
+
+    private void testBtnLeave() {
+
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "Successfully exited")
+                .add("data", "{}")
+                .build();
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+
+
+        Assert.assertEquals("success", res.getBody().getObject().getString("status"));
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Button btnLeave = lookup("#btnLeave").query();
+        Assert.assertEquals(btnLeave.getText(), "Leave");
+
+        clickOn(btnLeave);
+
+        verify(restMock).leaveServer(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callbackLeaveServer = callbackArgumentCaptor.getValue();
+        callbackLeaveServer.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(StageManager.getStage().getTitle(), "Main");
+
+    }
+
+    private void testBtnCancel() {
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Button btnCancel = lookup("#btnCancel").query();
+        Assert.assertEquals(btnCancel.getText(), "Cancel");
+        clickOn(btnCancel);
+        Assert.assertEquals(StageManager.getStage().getTitle(), "Server");
+
+    }
+
+    private void openAttentionScreen() {
+        Platform.runLater(() -> {
+            StageManager.showAttentionLeaveServerScreen(this.server);
+        });
+    }
+
+    @Test
     public void deleteChannelTest() {
         Category category = new Category().setId("12345");
         category.setServer(server);
@@ -1082,7 +1197,6 @@ public class ServerScreenTest extends ApplicationTest {
         return Json.createObjectBuilder().add("action", "categoryDeleted").add("data",
                 Json.createObjectBuilder().add("id", "cat1").add("name", "CatUpdated")).build();
     }
-
 
     // rest callbacks
 
