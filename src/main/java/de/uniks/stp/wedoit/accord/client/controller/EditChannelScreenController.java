@@ -61,7 +61,7 @@ public class EditChannelScreenController implements Controller {
         this.btnCreateChannel.setOnAction(this::editChannelButtonOnClick);
         this.btnDeleteChannel.setOnAction(this::deleteChannelButtonOnClick);
 
-        if(channel.isPrivileged()){
+        if (channel.isPrivileged()) {
             this.checkBoxPrivileged.setSelected(true);
         }
         tfChannelName.setText(channel.getName());
@@ -93,8 +93,7 @@ public class EditChannelScreenController implements Controller {
         } else {
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), null, this);
-            }
-            else{
+            } else {
                 List<String> userList = new LinkedList<>();
                 userList.add(this.localUser.getId());
                 editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
