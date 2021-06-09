@@ -24,12 +24,15 @@ public class JSON {
     public static final String TO = "to";
     public static final String TEXT = "text";
     public static final String SUCCESS = "success";
+    public static final String SUCCESSFULLY_EXITED = "Successfully exited";
     public static final String FAILURE = "failure";
     public static final String PRIVATE = "private";
     public static final String COUNT = "count";
     public static final String MAX = "max";
     public static final String TEMPORAL = "temporal";
     public static final String LINK = "link";
+    public static final String CURRENT = "current";
+
 
 
 

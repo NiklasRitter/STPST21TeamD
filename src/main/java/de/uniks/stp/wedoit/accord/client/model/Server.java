@@ -14,6 +14,7 @@ public class Server
    public static final String PROPERTY_CATEGORIES = "categories";
    public static final String PROPERTY_MEMBERS = "members";
    public static final String PROPERTY_LOCAL_USER = "localUser";
+   public static final String PROPERTY_INVITATIONS = "invitations";
    private String name;
    private String id;
    private String owner;
@@ -21,6 +22,7 @@ public class Server
    private List<User> members;
    private LocalUser localUser;
    protected PropertyChangeSupport listeners;
+   private List<Invitation> invitations;
 
    public String getName()
    {
@@ -235,6 +237,72 @@ public class Server
       return this;
    }
 
+   public List<Invitation> getInvitations()
+   {
+      return this.invitations != null ? Collections.unmodifiableList(this.invitations) : Collections.emptyList();
+   }
+
+   public Server withInvitations(Invitation value)
+   {
+      if (this.invitations == null)
+      {
+         this.invitations = new ArrayList<>();
+      }
+      if (!this.invitations.contains(value))
+      {
+         this.invitations.add(value);
+         value.setServer(this);
+         this.firePropertyChange(PROPERTY_INVITATIONS, null, value);
+      }
+      return this;
+   }
+
+   public Server withInvitations(Invitation... value)
+   {
+      for (final Invitation item : value)
+      {
+         this.withInvitations(item);
+      }
+      return this;
+   }
+
+   public Server withInvitations(Collection<? extends Invitation> value)
+   {
+      for (final Invitation item : value)
+      {
+         this.withInvitations(item);
+      }
+      return this;
+   }
+
+   public Server withoutInvitations(Invitation value)
+   {
+      if (this.invitations != null && this.invitations.remove(value))
+      {
+         value.setServer(null);
+         this.firePropertyChange(PROPERTY_INVITATIONS, value, null);
+      }
+      return this;
+   }
+
+   public Server withoutInvitations(Invitation... value)
+   {
+      for (final Invitation item : value)
+      {
+         this.withoutInvitations(item);
+      }
+      return this;
+   }
+
+   public Server withoutInvitations(Collection<? extends Invitation> value)
+   {
+      for (final Invitation item : value)
+      {
+         this.withoutInvitations(item);
+      }
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -267,6 +335,7 @@ public class Server
    public void removeYou()
    {
       this.withoutCategories(new ArrayList<>(this.getCategories()));
+      this.withoutInvitations(new ArrayList<>(this.getInvitations()));
       this.withoutMembers(new ArrayList<>(this.getMembers()));
       this.setLocalUser(null);
    }

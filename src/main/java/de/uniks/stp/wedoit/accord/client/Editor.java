@@ -5,6 +5,8 @@ import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 import javax.json.JsonArray;
 import java.util.ArrayList;
@@ -487,4 +489,27 @@ public class Editor {
         return null;
     }
 
+    public void leaveServer(String userKey, String id) {
+        if (id != null && !id.isEmpty()) {
+            networkController.leaveServer(userKey, id);
+        }
+    }
+
+
+    public Invitation deleteInvite(String id, Server server) {
+        for (Invitation invite: server.getInvitations()) {
+            if (invite.getId().equals(id)) {
+                invite.removeYou();
+                return invite;
+            }
+        }
+        return null;
+    }
+
+    public Boolean copyToSystemClipBoard(String text) {
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        final ClipboardContent content = new ClipboardContent();
+        content.putString(text);
+        return clipboard.setContent(content);
+    }
 }
