@@ -362,10 +362,10 @@ public class StageManager extends Application {
             controllerMap.put("emojiScreenController", emojiScreenController);
 
             //display
-            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
-            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
             emojiPickerStage.setTitle("Emoji Picker");
             emojiPickerStage.setScene(emojiPickerScene);
+            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
             emojiPickerStage.setResizable(false);
             emojiPickerStage.show();
 
@@ -393,7 +393,7 @@ public class StageManager extends Application {
             popupStage.setTitle("Create Channel");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
-            popupStage.setResizable(false);
+//            popupStage.setResizable(false);
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing CreateChannelScreen");
