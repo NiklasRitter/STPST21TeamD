@@ -70,8 +70,8 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        this.oldOptions = ResourceManager.loadOptions();
-        ResourceManager.saveOptions(new Options().setDarkmode(false));
+        this.oldOptions = stageManager.getResourceManager().loadOptions();
+        stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false));
 
         // start application
         this.stage = stage;
@@ -93,7 +93,7 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Override
     public void stop() throws Exception {
-        ResourceManager.saveOptions(this.oldOptions);
+        stageManager.getResourceManager().saveOptions(this.oldOptions);
         super.stop();
         stage = null;
         popupStage = null;

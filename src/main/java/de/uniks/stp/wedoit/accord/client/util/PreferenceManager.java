@@ -9,14 +9,14 @@ import java.util.prefs.Preferences;
 import static de.uniks.stp.wedoit.accord.client.constants.Preferences.DARKMODE;
 
 public class PreferenceManager {
-    public static PropertyChangeListener darkmodeListener = PreferenceManager::onDarkmodeChanged;
+    public PropertyChangeListener darkmodeListener = this::onDarkmodeChanged;
 
     /**
      * Loads the darkmode preference from the Registry.
      *
      * @return The value of the darkmode preference.
      */
-    public static boolean loadDarkmode() {
+    public boolean loadDarkmode() {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
         return preferences.getBoolean(DARKMODE, false);
     }
@@ -26,7 +26,7 @@ public class PreferenceManager {
      *
      * @param darkmode The value of the darkmode preference.
      */
-    public static void saveDarkmode(boolean darkmode) {
+    public void saveDarkmode(boolean darkmode) {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
         preferences.putBoolean(DARKMODE, darkmode);
     }

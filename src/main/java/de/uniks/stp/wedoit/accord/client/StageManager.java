@@ -34,6 +34,7 @@ public class StageManager extends Application {
     private static Scene popupScene;
     private static Stage emojiPickerStage;
     private static Scene emojiPickerScene;
+    private ResourceManager resourceManager = new ResourceManager();
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -590,6 +591,10 @@ public class StageManager extends Application {
         return emojiPickerStage;
     }
 
+    public ResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -615,7 +620,7 @@ public class StageManager extends Application {
         editor = new Editor();
         model = editor.haveAccordClient();
         editor.haveLocalUser();
-        model.setOptions(ResourceManager.loadOptions());
+        model.setOptions(resourceManager.loadOptions());
         if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
         else {
             systemTrayController = new SystemTrayController(editor);
@@ -635,6 +640,7 @@ public class StageManager extends Application {
             if (systemTrayController != null) systemTrayController.stop();
             editor.getNetworkController().stop();
             LocalUser localUser = model.getLocalUser();
+            resourceManager.stop(model.getOptions());
             if (localUser != null) {
                 String userKey = localUser.getUserKey();
                 if (userKey != null && !userKey.isEmpty()) {
