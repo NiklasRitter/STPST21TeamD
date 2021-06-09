@@ -1,11 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-<<<<<<< HEAD
 import de.uniks.stp.wedoit.accord.client.constants.JSON;
-=======
 import de.uniks.stp.wedoit.accord.client.StageManager;
->>>>>>> master
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;

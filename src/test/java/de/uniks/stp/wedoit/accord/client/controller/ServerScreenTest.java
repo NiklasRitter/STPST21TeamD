@@ -187,6 +187,16 @@ public class ServerScreenTest extends ApplicationTest {
         callback.completed(res);
     }
 
+    public void mockUpdateCategoryRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).updateCategory(anyString(), anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = channelsCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
     public void mockCreateChannelRest(JsonObject restClientJson) {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
@@ -728,6 +738,57 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(errorLabel.getText(), "Something went wrong while creating the category");
+    }
+
+    @Test
+    public void editCategoryTest() {
+        Category category = new Category().setId("12345").setName("someCategory");
+        server.withCategories(category);
+        Platform.runLater(() -> {
+            StageManager.showEditCategoryScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = lookup("#btnEditCategory").query();
+        Assert.assertEquals(button.getText(), "Save");
+
+
+        TextField textField = lookup("#tfCategoryName").query();
+        Assert.assertEquals(textField.getText(), category.getName());
+        textField.setText("categoryTest");
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn("#btnEditCategory");
+
+        JsonObject json = buildCreateCategory(category.getId(), textField.getText(), server.getId());
+        mockUpdateCategoryRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(category.getName(), "categoryTest");
+    }
+
+    @Test
+    public void editCategoryFailureTest() {
+        Category category = new Category().setId("12345").setName("someCategory");
+        category.setServer(server);
+        Platform.runLater(() -> {
+            StageManager.showEditCategoryScreen(category);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+        Button button = lookup("#btnEditCategory").query();
+        Assert.assertEquals(button.getText(), "Save");
+
+        TextField textField = lookup("#tfCategoryName").query();
+        textField.setText("");
+        clickOn("#btnEditCategory");
+        Label errorLabel = lookup("#lblError").query();
+        Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
+
+        textField.setText("testCategory");
+        clickOn("#btnEditCategory");
+        JsonObject json = buildFailure();
+        mockUpdateCategoryRest(json);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(errorLabel.getText(), "Something went wrong while updating the category");
     }
 
     @Test
