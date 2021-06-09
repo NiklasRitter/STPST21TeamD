@@ -26,10 +26,18 @@ public class ResourceManager {
         Options options = new Options();
         options.setDarkmode(preferenceManager.loadDarkmode());
         options.listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+        options.setRememberMe(preferenceManager.loadRememberMe());
+        options.listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.rememberMeListener);
         return options;
     }
 
+    /**
+     * Remove all propertyChangeListeners from options.
+     *
+     * @param options The options of the Client.
+     */
     public void stop(Options options) {
-        options.listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+        options.listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+        options.listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.rememberMeListener);
     }
 }
