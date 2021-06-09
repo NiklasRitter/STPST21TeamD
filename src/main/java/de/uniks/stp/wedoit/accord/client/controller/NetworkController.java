@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -434,6 +435,30 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController updateCategory(Server server, Category category, String categoryNameInput, EditCategoryScreenController controller) {
+        restClient.updateCategory(server.getId(), category.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JsonObject createCategoryIdAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+
+                String categoryId = createCategoryIdAnswer.getString(ID);
+                String categoryName = createCategoryIdAnswer.getString(NAME);
+                String serverId = createCategoryIdAnswer.getString(SERVER);
+                JsonArray channels = createCategoryIdAnswer.getJsonArray(JSON.CHANNELS);
+
+                if(category.getId().equals(categoryId)) {
+                    Category newCategory = editor.haveCategory(categoryId, categoryName, server);
+                    controller.handleEditCategory(newCategory);
+                }
+                else {
+                    controller.handleEditCategory(null);
+                }
+            } else {
+                controller.handleEditCategory(null);
+            }
+        });
+        return this;
+    }
+
     /**
      * This method does a rest request to create a new invitation link
      *
@@ -511,8 +536,12 @@ public class NetworkController {
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        } else if (objectToDelete.getClass().equals(Channel.class)) {
-            deleteChannel(localUser, (Channel) objectToDelete, controller);// else if is for other objects like channel or category
+        }
+        else if(objectToDelete.getClass().equals(Channel.class)){
+            deleteChannel(localUser, (Channel) objectToDelete, controller);
+        }
+        else if(objectToDelete.getClass().equals(Category.class)){
+            deleteCategory(localUser, (Category) objectToDelete, controller);
         }
     }
 
@@ -532,6 +561,16 @@ public class NetworkController {
                 controller.handleDeleteChannel(true);
             } else {
                 controller.handleDeleteChannel(false);
+            }
+        });
+    }
+
+    private void deleteCategory(LocalUser localUser, Category category, AttentionScreenController controller) {
+        restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                controller.handleDeleteCategory(true);
+            } else {
+                controller.handleDeleteCategory(false);
             }
         });
     }

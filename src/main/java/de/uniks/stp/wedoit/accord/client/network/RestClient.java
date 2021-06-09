@@ -160,6 +160,27 @@ public class RestClient {
     }
 
     /**
+     * Update a Category with a given Name.
+     *
+     * @param serverId   The ID of the Server the Channel is on.
+     * @param categoryId The ID of the Category the Channel belongs to.
+     * @param name       The Name the Channel should be changed to.
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
+     */
+    public void updateCategory(String serverId, String categoryId, String name, String userKey, Callback<JsonNode> callback) {
+        // Build request Body
+        String body = Json.createObjectBuilder().add(NAME, name).build().toString();
+
+        // Use UniRest to create server
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    /**
      * Get the Channels of a given Category in a given Server.
      *
      * @param serverId   The ID of the Server the Category belongs to.
@@ -278,6 +299,13 @@ public class RestClient {
     public void deleteChannel(String userKey, String channelId, String categoryId, String serverId, Callback<JsonNode> callback) {
         // Use UniRest to delete channel
         HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS + SLASH + channelId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
+    public void deleteCategory(String userKey, String categoryId, String serverId, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId)
                 .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
