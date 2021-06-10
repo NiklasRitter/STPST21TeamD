@@ -22,6 +22,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -173,6 +174,10 @@ public class ServerScreenController implements Controller {
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
         btnOptions.setTooltip(optionsButton);
+
+        Tooltip editButton = new Tooltip();
+        editButton.setText("edit Server");
+        btnEdit.setTooltip(editButton);
     }
 
     /**
@@ -369,8 +374,29 @@ public class ServerScreenController implements Controller {
 
         this.lvTextChat.setItems(observableMessageList);
 
+        // display last 50 messages
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        displayLastMessages(timestamp, channel);
+
+
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
+    }
+
+    public void displayLastMessages(Timestamp timestamp, Channel channel) {
+        String time = String.valueOf(timestamp.getTime());
+        this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, time, this);
+    }
+
+    public void handleGetChannelMessages(Channel channel, JsonArray data) {
+        if (channel != null) {
+            List<Message> messages = JsonUtil.parseMessageArray(data);
+            this.editor.updateChannelMessages(channel, messages);
+        } else {
+            Platform.runLater(StageManager::showMainScreen);
+        }
+
     }
 
     /**
