@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -188,6 +189,19 @@ public class JsonUtil {
         return membersIds;
     }
 
+    public static List<Message> parseMessageArray(JsonArray jsonMessages) {
+        ArrayList<Message> messages = new ArrayList<>();
+        for (JsonValue jsonMessage : jsonMessages) {
+            Message message = new Message();
+            message.setId(jsonMessage.asJsonObject().getString(ID));
+            message.setText(jsonMessage.asJsonObject().getString(TEXT));
+            message.setFrom(jsonMessage.asJsonObject().getString(FROM));
+            String timestamp = jsonMessage.asJsonObject().get(TIMESTAMP).toString();
+            message.setTimestamp(Long.parseLong(timestamp));
+            messages.add(message);
+        }
+        return messages;
+    }
 
     /**
      * Parse a given JsonObject to a invitation.

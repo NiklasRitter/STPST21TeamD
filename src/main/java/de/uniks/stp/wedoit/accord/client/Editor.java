@@ -489,6 +489,21 @@ public class Editor {
         return null;
     }
 
+    public void updateChannelMessages(Channel channel, List<Message> messages) {
+        List<Message> channelMessages = channel.getMessages();
+        for (Message message : messages) {
+            boolean msgExists = false;
+            for (Message channelMessage : channelMessages) {
+                if (channelMessage.getId().equals(message.getId())) {
+                    msgExists = true;
+                    break;
+                }
+            }
+            if (!msgExists) {
+                channel.withMessages(message);
+            }
+        }
+    }
     public void leaveServer(String userKey, String id) {
         if (id != null && !id.isEmpty()) {
             networkController.leaveServer(userKey, id);
