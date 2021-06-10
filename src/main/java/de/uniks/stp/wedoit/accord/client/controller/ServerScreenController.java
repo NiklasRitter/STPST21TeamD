@@ -384,7 +384,7 @@ public class ServerScreenController implements Controller {
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
     }
 
-    public void displayLastMessages(Timestamp timestamp, Channel channel) {
+    private void displayLastMessages(Timestamp timestamp, Channel channel) {
         String time = String.valueOf(timestamp.getTime());
         this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, time, this);
     }
@@ -393,10 +393,19 @@ public class ServerScreenController implements Controller {
         if (channel != null) {
             List<Message> messages = JsonUtil.parseMessageArray(data);
             this.editor.updateChannelMessages(channel, messages);
+            Platform.runLater(this::displayLoadMore);
         } else {
             Platform.runLater(StageManager::showMainScreen);
         }
 
+    }
+
+    private void displayLoadMore() {
+        System.out.println(this.observableMessageList.size());
+        if (observableMessageList.size() >= 50) {
+            Message topMessage = new Message().setText("Load more...").setId("idLoadMore");
+            observableMessageList.add(0, topMessage);
+        }
     }
 
     /**
