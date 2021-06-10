@@ -1,8 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
-import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.model.Category;
+import de.uniks.stp.wedoit.accord.client.controller.CreateChannelScreenController;
+import de.uniks.stp.wedoit.accord.client.controller.EditChannelScreenController;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -16,15 +16,17 @@ public class MemberListSubViewController implements Controller {
 
     private final User user;
     private final Parent view;
-    private final Editor editor;
+    private final Controller controller;
     private HBox hBoxPlaceHolder;
     private VBox vBoxMemberName, vBoxCheckBox;
     private CheckBox checkBox;
+    private Boolean isPrivilegedUser;
 
-    public MemberListSubViewController(User user, Parent view, Editor editor) {
+    public MemberListSubViewController(User user, Parent view, Controller controller, Boolean isPrivilegedUser) {
         this.user = user;
         this.view = view;
-        this.editor = editor;
+        this.controller = controller;
+        this.isPrivilegedUser = isPrivilegedUser;
     }
 
     @Override
@@ -34,14 +36,27 @@ public class MemberListSubViewController implements Controller {
         this.vBoxCheckBox = (VBox) this.view.lookup("#vBoxCheckBox");
 
         this.checkBox = new CheckBox();
+        this.checkBox.setSelected(isPrivilegedUser);
         this.checkBox.setOnAction(this::checkBoxOnClick);
         this.vBoxMemberName.getChildren().add(new Label(user.getName()));
         this.vBoxCheckBox.getChildren().add(checkBox);
     }
 
     private void checkBoxOnClick(ActionEvent actionEvent) {
-        if (checkBox.isSelected()) {
-
+        if (controller.getClass().equals(CreateChannelScreenController.class)) {
+            CreateChannelScreenController createChannelScreenController = (CreateChannelScreenController) controller;
+            if (checkBox.isSelected()) {
+                createChannelScreenController.addToUserList(user);
+            } else if (!checkBox.isSelected()) {
+                createChannelScreenController.removeFromUserList(user);
+            }
+        } else if (controller.getClass().equals(EditChannelScreenController.class)) {
+            EditChannelScreenController createChannelScreenController = (EditChannelScreenController) controller;
+            if (checkBox.isSelected()) {
+                createChannelScreenController.addToUserList(user);
+            } else if (!checkBox.isSelected()) {
+                createChannelScreenController.removeFromUserList(user);
+            }
         }
     }
 
