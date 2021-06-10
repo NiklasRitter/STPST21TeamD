@@ -1,11 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.JSON;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 
 import javax.json.*;
@@ -432,20 +435,47 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController updateCategory(Server server, Category category, String categoryNameInput, EditCategoryScreenController controller) {
+        restClient.updateCategory(server.getId(), category.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JsonObject createCategoryIdAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+
+                String categoryId = createCategoryIdAnswer.getString(ID);
+                String categoryName = createCategoryIdAnswer.getString(NAME);
+                String serverId = createCategoryIdAnswer.getString(SERVER);
+                JsonArray channels = createCategoryIdAnswer.getJsonArray(JSON.CHANNELS);
+
+                if(category.getId().equals(categoryId)) {
+                    Category newCategory = editor.haveCategory(categoryId, categoryName, server);
+                    controller.handleEditCategory(newCategory);
+                }
+                else {
+                    controller.handleEditCategory(null);
+                }
+            } else {
+                controller.handleEditCategory(null);
+            }
+        });
+        return this;
+    }
+
     /**
      * This method does a rest request to create a new invitation link
      *
      * @param type       type of the invitation, means temporal or count with a int max
      * @param max        maximum size of users who can use this link, is the type temporal max is ignored
-     * @param serverId   id of the server
+     * @param server     server
      * @param userKey    userKey of the logged in local user
      * @param controller controller which handles the new link
      */
-    public void createInvitation(String type, int max, String serverId, String userKey, EditServerScreenController controller) {
+    public void createInvitation(String type, int max, Server server, String userKey, EditServerScreenController controller) {
+        String serverId = server.getId();
         if (type.equals(TEMPORAL)) {
             restClient.createInvite(serverId, userKey, invitationResponse -> {
                 if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                    JsonObject response = JsonUtil.parse(String.valueOf(invitationResponse.getBody().getObject())).getJsonObject(DATA);
+                    Invitation invitation = JsonUtil.parseInvitation(response, server);
+                    controller.handleInvitation(invitation.getLink());
                 } else {
                     controller.handleInvitation(null);
                 }
@@ -454,7 +484,9 @@ public class NetworkController {
         } else if (type.equals(COUNT)) {
             restClient.createInvite(max, serverId, userKey, invitationResponse -> {
                 if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                    controller.handleInvitation(invitationResponse.getBody().getObject().getJSONObject(DATA).getString(LINK));
+                    JsonObject response = JsonUtil.parse(String.valueOf(invitationResponse.getBody().getObject())).getJsonObject(DATA);
+                    Invitation invitation = JsonUtil.parseInvitation(response, server);
+                    controller.handleInvitation(invitation.getLink());
                 } else {
                     controller.handleInvitation(null);
                 }
@@ -504,8 +536,12 @@ public class NetworkController {
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        } else if (objectToDelete.getClass().equals(Channel.class)) {
-            deleteChannel(localUser, (Channel) objectToDelete, controller);// else if is for other objects like channel or category
+        }
+        else if(objectToDelete.getClass().equals(Channel.class)){
+            deleteChannel(localUser, (Channel) objectToDelete, controller);
+        }
+        else if(objectToDelete.getClass().equals(Category.class)){
+            deleteCategory(localUser, (Category) objectToDelete, controller);
         }
     }
 
@@ -550,6 +586,45 @@ public class NetworkController {
         });
     }
 
+    private void deleteCategory(LocalUser localUser, Category category, AttentionScreenController controller) {
+        restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                controller.handleDeleteCategory(true);
+            } else {
+                controller.handleDeleteCategory(false);
+            }
+        });
+    }
+
+    public void loadInvitations(Server server, String userKey, EditServerScreenController controller) {
+
+        restClient.loadInvitations(server.getId(), userKey, response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+
+                JsonArray invitationResponse = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
+
+                List<Invitation> allInvitations = JsonUtil.parseInvitations(invitationResponse, server);
+                server.withoutInvitations(new ArrayList<>(server.getInvitations()));
+                server.withInvitations(allInvitations);
+
+                controller.handleOldInvitations(server.getInvitations());
+            } else {
+                controller.handleOldInvitations(null);
+            }
+        });
+
+    }
+
+    public void deleteInvite(String userKey, Invitation invitation, Server server, EditServerScreenController controller) {
+        restClient.deleteInvitation(userKey, invitation.getId(), server.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+
+                editor.deleteInvite(invitation.getId(), server);
+            }
+        });
+    }
+
+
     /**
      * Called to stop this controller
      * <p>
@@ -564,5 +639,18 @@ public class NetworkController {
         }
         return this;
     }
+
+    public NetworkController leaveServer(String userKey, String serverId) {
+        restClient.leaveServer(userKey, serverId, response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                Platform.runLater(StageManager::showMainScreen);
+            } else {
+                System.err.println("Error while leaving server");
+                Platform.runLater(StageManager::showMainScreen);
+            }
+        });
+        return this;
+    }
+
 
 }

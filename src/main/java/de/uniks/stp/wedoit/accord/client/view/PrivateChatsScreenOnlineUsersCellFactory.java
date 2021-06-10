@@ -14,16 +14,14 @@ public class PrivateChatsScreenOnlineUsersCellFactory implements javafx.util.Cal
     private static class OnlineUserListCell extends ListCell<User> {
         protected void updateItem(User item, boolean empty) {
             super.updateItem(item, empty);
+            this.getStyleClass().remove("newMessage");
             if (!empty && item != null) {
                 this.setText(item.getName());
                 if (!item.isChatRead()) {
                     this.getStyleClass().add("newMessage");
-                } else {
-                    this.getStyleClass().remove("newMessage");
                 }
             } else {
                 this.setText(null);
-                this.getStyleClass().remove("newMessage");
             }
         }
     }

@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import kong.unirest.Callback;
 import kong.unirest.HttpRequest;
@@ -159,6 +160,27 @@ public class RestClient {
     }
 
     /**
+     * Update a Category with a given Name.
+     *
+     * @param serverId   The ID of the Server the Channel is on.
+     * @param categoryId The ID of the Category the Channel belongs to.
+     * @param name       The Name the Channel should be changed to.
+     * @param userKey    The userKey of the currently logged in User.
+     * @param callback   The Callback to be called after the Request.
+     */
+    public void updateCategory(String serverId, String categoryId, String name, String userKey, Callback<JsonNode> callback) {
+        // Build request Body
+        String body = Json.createObjectBuilder().add(NAME, name).build().toString();
+
+        // Use UniRest to create server
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId)
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    /**
      * Get the Channels of a given Category in a given Server.
      *
      * @param serverId   The ID of the Server the Category belongs to.
@@ -282,6 +304,13 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void deleteCategory(String userKey, String categoryId, String serverId, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
     /**
      * Try to join a server with the given invitation link
      *
@@ -320,6 +349,20 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void loadInvitations(String serverId, String userKey, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
+    public void deleteInvitation(String userKey, String inviteId, String serverId, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES + SLASH + inviteId)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
     /**
      * Send a Request and call the Callback asynchronously.
      *
@@ -328,6 +371,14 @@ public class RestClient {
      */
     private void sendRequest(HttpRequest<?> req, Callback<JsonNode> callback) {
         req.asJsonAsync(callback);
+    }
+
+    public void leaveServer(String userKey, String serverID, Callback<JsonNode> callback) {
+        // Use UniRest to leave server
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverID + LEAVE_SERVER)
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
     }
 
 }

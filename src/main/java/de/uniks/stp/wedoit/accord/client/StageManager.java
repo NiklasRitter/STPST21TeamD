@@ -227,7 +227,7 @@ public class StageManager extends Application {
 
             // display
             popupStage.setTitle("Rock - Paper - Scissors");
-            if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
+            if (popupStage.getStyle() != StageStyle.DECORATED) popupStage.initStyle(StageStyle.DECORATED);
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
             popupStage.setResizable(true);
@@ -238,8 +238,8 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showGameResultScreen(User opponent, Boolean isWinner){
-        if(popupStage.isShowing()) {
+    public static void showGameResultScreen(User opponent, Boolean isWinner) {
+        if (popupStage.isShowing()) {
             popupStage.close();
             try {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
@@ -252,7 +252,7 @@ public class StageManager extends Application {
                 controllerMap.put("GameResultScreenController", gameResultScreenController);
 
                 popupStage.setTitle("Result");
-                if(popupStage.getStyle() != StageStyle.DECORATED)popupStage.initStyle(StageStyle.DECORATED);
+                if (popupStage.getStyle() != StageStyle.DECORATED) popupStage.initStyle(StageStyle.DECORATED);
                 popupStage.setScene(popupScene);
                 popupStage.setMinHeight(0);
                 popupStage.setMinWidth(0);
@@ -260,7 +260,7 @@ public class StageManager extends Application {
                 popupStage.setResizable(false);
                 popupStage.show();
 
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.err.println("Error on loading GameResultScreen");
                 e.printStackTrace();
             }
@@ -319,6 +319,31 @@ public class StageManager extends Application {
 
         } catch (Exception e) {
             System.err.println("Error on showing CreateCategoryScreen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void showEditCategoryScreen(Category category) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditCategoryScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            EditCategoryScreenController editCategoryScreenController = new EditCategoryScreenController(root, model.getLocalUser(), editor, category);
+            editCategoryScreenController.init();
+            controllerMap.put("editCategoryScreenController", editCategoryScreenController);
+
+            //display
+            popupStage.setTitle("Edit Category");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing EditCategoryScreen");
             e.printStackTrace();
         }
     }
@@ -453,6 +478,32 @@ public class StageManager extends Application {
         }
     }
 
+    public static void showAttentionLeaveServerScreen(Server server) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/AttentionLeaveServerScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            AttentionLeaveServerController attentionLeaveServerController = new AttentionLeaveServerController(root, editor, model.getLocalUser(), server);
+            attentionLeaveServerController.init();
+            controllerMap.put("attentionLeaveServerController", attentionLeaveServerController);
+
+            //display
+            popupStage.setTitle("Attention");
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing Leave Server Attention");
+            e.printStackTrace();
+        }
+    }
+
     private static void cleanup() {
         stopController();
 
@@ -539,6 +590,7 @@ public class StageManager extends Application {
         return emojiPickerStage;
     }
 
+
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
@@ -550,9 +602,12 @@ public class StageManager extends Application {
 
         emojiPickerStage = new Stage();
         emojiPickerStage.initOwner(stage);
+
+        //Removes title bar of emojiPickerStage including maximize, minimize and close icons.
         emojiPickerStage.initStyle(StageStyle.UNDECORATED);
-        stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-            if (isNowFocused) {
+        //Closes Emoji Picker when clicked outside.
+        emojiPickerStage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
                 emojiPickerStage.close();
             }
         });

@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -66,8 +67,6 @@ public class AttentionScreenController implements Controller {
     public void stop() {
         this.btnDiscard.setOnAction(null);
         this.btnDelete.setOnAction(null);
-        Stage stage = (Stage) view.getScene().getWindow();
-        Platform.runLater(stage::close);
     }
 
     private void loadCorrectLabelText(Object objectToDelete) {
@@ -80,12 +79,22 @@ public class AttentionScreenController implements Controller {
         this.editor.getNetworkController().deleteObject(this.localUser, this.objectToDelete, this);
     }
 
+    private void showError(){
+        Platform.runLater(() -> {
+            lblError.setText("Error. Delete Server was not successful!");
+            lblError.setVisible(true);
+        });
+    }
+
     private void discardOnClick(ActionEvent actionEvent) {
         if (objectToDelete.getClass().equals(Server.class)) {
             StageManager.showEditServerScreen((Server) objectToDelete);
         }
         else if(objectToDelete.getClass().equals(Channel.class)){
             StageManager.showEditChannelScreen((Channel) objectToDelete);
+        }
+        else if(objectToDelete.getClass().equals(Category.class)){
+            StageManager.showEditCategoryScreen((Category) objectToDelete);
         }
     }
 
@@ -97,10 +106,7 @@ public class AttentionScreenController implements Controller {
             });
             stop();
         } else {
-            Platform.runLater(() -> {
-                lblError.setText("Error. Delete Server was not successful!");
-                lblError.setVisible(true);
-            });
+            showError();
         }
     }
 
@@ -108,12 +114,21 @@ public class AttentionScreenController implements Controller {
         if (status) {
             Channel channel = (Channel) objectToDelete;
             channel.setCategory(null);
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
             stop();
         } else {
-            Platform.runLater(() -> {
-                lblError.setText("Error. Delete Channel was not successful!");
-                lblError.setVisible(true);
-            });
+            showError();
+        }
+    }
+
+    public void handleDeleteCategory(boolean status) {
+        if (status) {
+            Category category = (Category) objectToDelete;
+            category.setServer(null);
+            stop();
+        } else {
+            showError();
         }
     }
 }

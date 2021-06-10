@@ -204,6 +204,37 @@ public class JsonUtil {
     }
 
     /**
+     * Parse a given JsonObject to a invitation.
+     * <p>
+     * Used for the invitations returned when getting all invitations.
+     *
+     * @param invitationJson The JsonObject of the invitation to be parsed.
+     * @return The parsed invitation.
+     */
+    public static Invitation parseInvitation(JsonObject invitationJson, Server server) {
+        return new Invitation().setId(invitationJson.getString(ID))
+                .setCurrent(invitationJson.getInt(CURRENT))
+                .setType(invitationJson.getString(TYPE))
+                .setLink(invitationJson.getString(LINK))
+                .setMax(invitationJson.getInt(MAX))
+                .setServer(server);
+    }
+
+    /**
+     * Parse a given JsonArray to a invitation List.
+     * <p>
+     * Used for the invitations returned when getting all invitations.
+     *
+     * @param invitationsJsonArray The JsonArray of the invitations to be parsed.
+     * @return The parsed invitations List.
+     */
+    public static List<Invitation> parseInvitations(JsonArray invitationsJsonArray, Server server) {
+        List<Invitation> invitations = new ArrayList<>();
+        invitationsJsonArray.forEach((jsonValue) -> invitations.add(parseInvitation(jsonValue.asJsonObject(), server)));
+        return invitations;
+    }
+
+    /**
      * Build the Server Chat Message JSONObject.
      *
      * @param channelId The ID of the Channel this Message is send in.
