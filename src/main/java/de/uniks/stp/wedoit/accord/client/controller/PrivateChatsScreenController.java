@@ -309,12 +309,7 @@ public class PrivateChatsScreenController implements Controller {
 
             if(message.getText().startsWith(PREFIX)) message.setText(message.getText().substring(PREFIX.length()));
 
-            Platform.runLater(() -> {
-                this.privateMessageObservableList.add(message);
-
-                // autoscroll on new messages
-                this.lwPrivateChat.scrollTo(this.privateMessageObservableList.size());
-            });
+            Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
     }
 
