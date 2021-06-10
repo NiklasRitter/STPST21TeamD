@@ -7,6 +7,8 @@ import javafx.scene.control.ListView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+
 public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<PrivateMessage>, ListCell<PrivateMessage>> {
 
     @Override
@@ -35,9 +37,23 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
                 setWrapText(true);
 
                 String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
-                this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+
+                // handle quotes
+                if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
+                        && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+                        && (item.getText()).startsWith(QUOTE_PREFIX)) {
+                    String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
+
+                    String[] messages = quoteMessage.split(QUOTE_ID);
+
+                    this.getStyleClass().add("font_size");
+                    this.setText(">>>" + messages[0] + "\n");
+                } else {
+                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                }
             } else {
                 this.setText("");
+                this.getStyleClass().removeAll("font_size");
             }
         }
     }
