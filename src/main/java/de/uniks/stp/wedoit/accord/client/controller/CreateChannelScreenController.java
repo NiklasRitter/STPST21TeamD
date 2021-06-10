@@ -36,6 +36,7 @@ public class CreateChannelScreenController implements Controller {
     private HBox hBoxLblMembers;
     private VBox vBoxMain, vBoxMemberNameAndCheckBox;
     private ArrayList<MemberListSubViewController> memberListSubViewControllers;
+    private List<String> userList = new LinkedList<>();
 
     /**
      * Create a new Controller
@@ -88,13 +89,14 @@ public class CreateChannelScreenController implements Controller {
         this.vBoxMemberNameAndCheckBox.getChildren().clear();
         for (User user : this.editor.getCurrentServer().getMembers()) {
             try {
-                Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
-                MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this.editor);
-                memberListSubViewController.init();
+                if (!user.getId().equals(this.editor.getCurrentServer().getOwner())) {
+                    Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
+                    MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this, false);
+                    memberListSubViewController.init();
 
-                this.vBoxMemberNameAndCheckBox.getChildren().add(view);
-                this.memberListSubViewControllers.add(memberListSubViewController);
-
+                    this.vBoxMemberNameAndCheckBox.getChildren().add(view);
+                    this.memberListSubViewControllers.add(memberListSubViewController);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -132,8 +134,6 @@ public class CreateChannelScreenController implements Controller {
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), null, this);
             } else {
-                List<String> userList = new LinkedList<>();
-                userList.add(this.localUser.getId());
                 editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
             }
         }
@@ -148,5 +148,13 @@ public class CreateChannelScreenController implements Controller {
             tfChannelName.getStyleClass().add("error");
             Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the channel"));
         }
+    }
+
+    public void addToUserList(User user) {
+        userList.add(user.getId());
+    }
+
+    public void removeFromUserList(User user) {
+        userList.remove(user.getId());
     }
 }
