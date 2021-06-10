@@ -27,13 +27,15 @@ public class EditChannelScreenController implements Controller {
     private final Parent view;
     private final Channel channel;
     private TextField tfChannelName;
-    private Button btnCreateChannel;
+    private Button btnEditChannel;
     private CheckBox checkBoxPrivileged;
     private Button btnDeleteChannel;
     private Label errorLabel, lblMembers;
     private HBox hBoxLblMembers;
     private VBox vBoxMain, vBoxMemberNameAndCheckBox;
     private ArrayList<MemberListSubViewController> memberListSubViewControllers;
+    private List<String> userList;
+    private Boolean isPrivilegedUser = false;
 
     /**
      * Create a new Controller
@@ -48,6 +50,7 @@ public class EditChannelScreenController implements Controller {
         this.editor = editor;
         this.channel = channel;
         this.memberListSubViewControllers = new ArrayList<>();
+        this.userList = new LinkedList<>();
     }
 
     /**
@@ -59,7 +62,7 @@ public class EditChannelScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        this.btnCreateChannel = (Button) view.lookup("#btnEditChannel");
+        this.btnEditChannel = (Button) view.lookup("#btnEditChannel");
         this.btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
         this.tfChannelName = (TextField) view.lookup("#tfChannelName");
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
@@ -71,6 +74,10 @@ public class EditChannelScreenController implements Controller {
 
         if (channel.isPrivileged()) {
             this.checkBoxPrivileged.setSelected(true);
+            for (User user : channel.getMembers()) {
+                userList.add(user.getId());
+            }
+            System.out.println("Size " + userList.size());
         }
 
         checkIfIsPrivileged();
@@ -78,7 +85,7 @@ public class EditChannelScreenController implements Controller {
         tfChannelName.setText(channel.getName());
 
         // Add action listeners
-        this.btnCreateChannel.setOnAction(this::editChannelButtonOnClick);
+        this.btnEditChannel.setOnAction(this::editChannelButtonOnClick);
         this.btnDeleteChannel.setOnAction(this::deleteChannelButtonOnClick);
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
 
@@ -91,9 +98,11 @@ public class EditChannelScreenController implements Controller {
 
     private void checkIfIsPrivileged() {
         if (this.checkBoxPrivileged.isSelected()) {
+            channel.setPrivileged(true);
             initSubViewMemberList();
         } else {
             this.vBoxMemberNameAndCheckBox.getChildren().clear();
+            channel.setPrivileged(false);
         }
     }
 
@@ -101,13 +110,19 @@ public class EditChannelScreenController implements Controller {
         this.vBoxMemberNameAndCheckBox.getChildren().clear();
         for (User user : this.editor.getCurrentServer().getMembers()) {
             try {
-                Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
-                MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this.editor);
-                memberListSubViewController.init();
+                if (!user.getId().equals(this.editor.getCurrentServer().getOwner())) {
+                    if (this.channel.isPrivileged() && userList.contains(user.getId())) {
+                        isPrivilegedUser = true;
+                    } else {
+                        isPrivilegedUser = false;
+                    }
+                    Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
+                    MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this, isPrivilegedUser);
+                    memberListSubViewController.init();
 
-                this.vBoxMemberNameAndCheckBox.getChildren().add(view);
-                this.memberListSubViewControllers.add(memberListSubViewController);
-
+                    this.vBoxMemberNameAndCheckBox.getChildren().add(view);
+                    this.memberListSubViewControllers.add(memberListSubViewController);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -121,7 +136,7 @@ public class EditChannelScreenController implements Controller {
      */
     public void stop() {
         // Remove all action listeners
-        btnCreateChannel.setOnAction(null);
+        btnEditChannel.setOnAction(null);
         btnDeleteChannel.setOnAction(null);
     }
 
@@ -140,9 +155,7 @@ public class EditChannelScreenController implements Controller {
         } else {
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), null, this);
-            } else {
-                List<String> userList = new LinkedList<>();
-                userList.add(this.localUser.getId());
+            } else if (checkBoxPrivileged.isSelected()) {
                 editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
             }
         }
@@ -166,5 +179,17 @@ public class EditChannelScreenController implements Controller {
      */
     private void deleteChannelButtonOnClick(ActionEvent actionEvent) {
         StageManager.showAttentionScreen(channel);
+    }
+
+    public void addToUserList(User user) {
+        if (!userList.contains(user.getId())) {
+            userList.add(user.getId());
+        }
+    }
+
+    public void removeFromUserList(User user) {
+        if (userList.contains(user.getId())) {
+            userList.remove(user.getId());
+        }
     }
 }
