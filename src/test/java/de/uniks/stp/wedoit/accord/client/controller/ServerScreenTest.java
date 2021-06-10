@@ -444,6 +444,44 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     @Test
+    public void getChannelMessageFailure() {
+        JsonObject restJson = getServerIdSuccessful();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
+        mockRest(restJson);
+
+        when(res.getBody()).thenReturn(new JsonNode(getCategories().toString()));
+        verify(restMock).getCategories(anyString(), anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> catCallback = callbackArgumentCaptor.getValue();
+        catCallback.completed(res);
+
+        when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
+
+        verify(restMock, atLeastOnce()).getChannels(anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
+        List<Callback<JsonNode>> channelCallbacks = channelsCallbackArgumentCaptor.getAllValues();
+
+        for (Callback<JsonNode> callback : channelCallbacks
+        ) {
+            callback.completed(res);
+        }
+
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#tvServerChannels");
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        when(res.getBody()).thenReturn(new JsonNode(getChannelMessagesFailure().toString()));
+        verify(restMock).getChannelMessages(anyString(), anyString(), anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> channelMessageCallback = callbackArgumentCaptor.getValue();
+        channelMessageCallback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(stage.getTitle(), "Main");
+    }
+
+
+    @Test
     public void sendChatMessageTest() {
         //init channel list and select first channel
         initUserListView();
@@ -1203,6 +1241,14 @@ public class ServerScreenTest extends ApplicationTest {
                                 .add(TIMESTAMP, 1616935884)
                                 .add(FROM, "Bob")
                                 .add(TEXT, "I am Bob")))
+                .build();
+    }
+
+    public JsonObject getChannelMessagesFailure() {
+        return Json.createObjectBuilder()
+                .add(STATUS, FAILURE)
+                .add(MESSAGES, "Error")
+                .add(DATA, Json.createArrayBuilder())
                 .build();
     }
 

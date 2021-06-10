@@ -356,6 +356,7 @@ public class ServerScreenController implements Controller {
 
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
     }
 
     public void displayLastMessages(Timestamp timestamp, Channel channel) {
@@ -385,7 +386,7 @@ public class ServerScreenController implements Controller {
                 this.observableMessageList.add(newMessage);
 
                 // autoscroll on new messages
-                Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
+                this.lvTextChat.scrollTo(this.observableMessageList.size());
             });
         }
     }

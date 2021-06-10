@@ -313,7 +313,7 @@ public class PrivateChatsScreenController implements Controller {
                 this.privateMessageObservableList.add(message);
 
                 // autoscroll on new messages
-                Platform.runLater(() -> this.lwPrivateChat.scrollTo(this.privateMessageObservableList.size()));
+                this.lwPrivateChat.scrollTo(this.privateMessageObservableList.size());
             });
         }
     }
