@@ -16,7 +16,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
          <children>
@@ -33,7 +33,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color red="1.0" green="1.0" blue="1.0" />
+                                    <Color blue="1.0" green="1.0" red="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -99,6 +99,23 @@
                      </children>
                   </HBox>
                   <ListView id="lwPrivateChat" VBox.vgrow="ALWAYS" />
+                  <HBox id="quoteVisible" alignment="CENTER_LEFT">
+                     <children>
+                        <Label id="lblQuote">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
+                           <font>
+                              <Font size="8.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
                   <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                      <children>
                         <TextField id="tfEnterPrivateChat" prefHeight="27.0" promptText="your message" style="-fx-border-color: #3c3f41;" HBox.hgrow="ALWAYS" />
