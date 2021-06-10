@@ -457,6 +457,37 @@ public class PrivateChatsScreenTest extends ApplicationTest {
     }
 
 
+    @Test
+    public void testQuote() {
+        //init user list and select first user
+        initUserListView();
+        Label lblSelectedUser = lookup("#lblSelectedUser").query();
+        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+
+        lwOnlineUsers.getSelectionModel().select(0);
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
+
+        clickOn("#lwOnlineUsers");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(user.getName(), lblSelectedUser.getText());
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        //send message
+        clickOn("#tfEnterPrivateChat");
+        write("Test Message");
+        press(KeyCode.ENTER);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+
+    }
+
+
+
     public JsonObject getOnlineUsers() {
         return Json.createObjectBuilder()
                 .add("status", "success")
