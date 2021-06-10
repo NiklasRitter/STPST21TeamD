@@ -46,7 +46,7 @@ public class ServerScreenController implements Controller {
     private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
     private ListView<User> lvServerUsers;
     private TextField tfInputMessage;
-    private Channel currentChannel;
+    private Channel channel, currentChannel;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private ObservableList<Message> observableMessageList;
@@ -56,6 +56,7 @@ public class ServerScreenController implements Controller {
     private WSCallback serverWSCallback = this::handleServerMessage;
     private ContextMenu contextMenu;
     private MenuItem menuItemLeaveServer;
+    private List<User> users;
 
     /**
      * Create a new Controller
@@ -70,6 +71,7 @@ public class ServerScreenController implements Controller {
         this.localUser = model;
         this.editor = editor;
         this.server = server;
+        this.channel = new Channel();
     }
 
     /**
@@ -119,6 +121,7 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
+        Platform.runLater(this::refreshLvUsers);
 
         // get members of this server
         // load categories after get users of a server
@@ -130,6 +133,20 @@ public class ServerScreenController implements Controller {
 
         initTooltips();
 
+    }
+
+    private void refreshLvUsers() {
+        if (channel.isPrivileged()) {
+            users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+                    .collect(Collectors.toList());
+        } else if (!channel.isPrivileged()) {
+            users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+                    .collect(Collectors.toList());
+        }
+        Collections.reverse(users);
+        this.lvServerUsers.getItems().removeAll();
+        this.lvServerUsers.setItems(FXCollections.observableList(users));
+        this.lvServerUsers.refresh();
     }
 
     private ContextMenu createContextMenu() {
@@ -346,8 +363,9 @@ public class ServerScreenController implements Controller {
             if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
                 if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
 
-                    Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
+                    channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
                     this.initChannelChat(channel);
+                    Platform.runLater(this::refreshLvUsers);
                 }
             }
         }
@@ -483,7 +501,8 @@ public class ServerScreenController implements Controller {
                     user.setOnlineStatus(data.getBoolean(ONLINE));
                 }
             }
-            Platform.runLater(this::updateUserListView);
+//            Platform.runLater(this::updateUserListView);
+            Platform.runLater(this::refreshLvUsers);
         }
 
         // change data of the server
@@ -654,7 +673,7 @@ public class ServerScreenController implements Controller {
         // load list view
         ServerUserListView serverUserListView = new ServerUserListView();
         lvServerUsers.setCellFactory(serverUserListView);
-        List<User> users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+        users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
                 .collect(Collectors.toList());
         Collections.reverse(users);
         this.lvServerUsers.setItems(FXCollections.observableList(users));
