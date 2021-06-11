@@ -69,6 +69,7 @@ public class EditChannelScreenController implements Controller {
         this.errorLabel = (Label) view.lookup("#lblError");
 
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
+        this.vBoxMain = (VBox) view.lookup("#vBoxMain");
         this.hBoxLblMembers = (HBox) view.lookup("#hBoxLblMembers");
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
@@ -77,7 +78,6 @@ public class EditChannelScreenController implements Controller {
             for (User user : channel.getMembers()) {
                 userList.add(user.getId());
             }
-            System.out.println("Size " + userList.size());
         }
 
         checkIfIsPrivileged();
@@ -94,15 +94,18 @@ public class EditChannelScreenController implements Controller {
 
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
+        StageManager.getPopupStage().sizeToScene();
     }
 
     private void checkIfIsPrivileged() {
         if (this.checkBoxPrivileged.isSelected()) {
             channel.setPrivileged(true);
             initSubViewMemberList();
+            lblMembers.setVisible(true);
         } else {
             this.vBoxMemberNameAndCheckBox.getChildren().clear();
             channel.setPrivileged(false);
+            lblMembers.setVisible(false);
         }
     }
 
