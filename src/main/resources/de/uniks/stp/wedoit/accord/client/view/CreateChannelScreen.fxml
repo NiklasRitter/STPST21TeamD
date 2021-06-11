@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="vBoxMain" alignment="CENTER" minHeight="202.0" spacing="10.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="vBoxMain" alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox VBox.vgrow="ALWAYS">
          <children>
@@ -60,7 +60,7 @@
       </HBox>
       <VBox id="vBoxMemberNameAndCheckBox" alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <fx:include source="subview/MemberListSubView.fxml" VBox.vgrow="ALWAYS" />
+            <fx:include source="subview/MemberListSubView.fxml" />
          </children></VBox>
       <Label id="lblError" textFill="RED" VBox.vgrow="ALWAYS" />
       <Button id="btnCreateChannel" defaultButton="true" mnemonicParsing="false" prefWidth="150.0" styleClass="styleButton" text="Create" VBox.vgrow="ALWAYS">
