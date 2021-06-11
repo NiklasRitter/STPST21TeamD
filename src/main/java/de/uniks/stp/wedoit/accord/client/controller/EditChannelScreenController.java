@@ -27,7 +27,7 @@ public class EditChannelScreenController implements Controller {
     private final Parent view;
     private final Channel channel;
     private TextField tfChannelName;
-    private Button btnEditChannel;
+    private Button btnSave;
     private CheckBox checkBoxPrivileged;
     private Button btnDeleteChannel;
     private Label errorLabel, lblMembers;
@@ -62,7 +62,7 @@ public class EditChannelScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        this.btnEditChannel = (Button) view.lookup("#btnEditChannel");
+        this.btnSave = (Button) view.lookup("#btnSave");
         this.btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
         this.tfChannelName = (TextField) view.lookup("#tfChannelName");
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
@@ -85,7 +85,7 @@ public class EditChannelScreenController implements Controller {
         tfChannelName.setText(channel.getName());
 
         // Add action listeners
-        this.btnEditChannel.setOnAction(this::editChannelButtonOnClick);
+        this.btnSave.setOnAction(this::btnSaveOnClick);
         this.btnDeleteChannel.setOnAction(this::deleteChannelButtonOnClick);
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
 
@@ -139,7 +139,7 @@ public class EditChannelScreenController implements Controller {
      */
     public void stop() {
         // Remove all action listeners
-        btnEditChannel.setOnAction(null);
+        btnSave.setOnAction(null);
         btnDeleteChannel.setOnAction(null);
     }
 
@@ -150,7 +150,7 @@ public class EditChannelScreenController implements Controller {
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
-    private void editChannelButtonOnClick(ActionEvent actionEvent) {
+    private void btnSaveOnClick(ActionEvent actionEvent) {
         if (tfChannelName.getText().length() < 1 || tfChannelName.getText() == null) {
             tfChannelName.getStyleClass().add("error");
 
@@ -159,9 +159,15 @@ public class EditChannelScreenController implements Controller {
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), null, this);
             } else if (checkBoxPrivileged.isSelected()) {
-                editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
+                if (userList.size() <= 0) {
+                    userList.add(editor.getCurrentServer().getOwner());
+                    editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
+                } else {
+                    editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
+                }
             }
         }
+
     }
 
     public void handleEditChannel(Channel channel) {

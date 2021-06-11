@@ -142,8 +142,13 @@ public class CreateChannelScreenController implements Controller {
         } else {
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), null, this);
-            } else {
-                editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
+            } else if (checkBoxPrivileged.isSelected()) {
+                if (userList.size() <= 0) {
+                    userList.add(editor.getCurrentServer().getOwner());
+                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
+                } else {
+                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
+                }
             }
         }
     }

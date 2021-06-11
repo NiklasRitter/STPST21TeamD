@@ -121,13 +121,11 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
-        Platform.runLater(this::refreshLvUsers);
 
         // get members of this server
         // load categories after get users of a server
         // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
-
 
         addActionListener();
 
@@ -135,7 +133,7 @@ public class ServerScreenController implements Controller {
 
     }
 
-    private void refreshLvUsers() {
+    public void refreshLvUsers() {
         if (channel.isPrivileged()) {
             users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
                     .collect(Collectors.toList());
@@ -673,10 +671,7 @@ public class ServerScreenController implements Controller {
         // load list view
         ServerUserListView serverUserListView = new ServerUserListView();
         lvServerUsers.setCellFactory(serverUserListView);
-        users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
-                .collect(Collectors.toList());
-        Collections.reverse(users);
-        this.lvServerUsers.setItems(FXCollections.observableList(users));
+        Platform.runLater(this::refreshLvUsers);
     }
 
     /**

@@ -70,7 +70,7 @@
                   <Insets right="70.0" />
                </HBox.margin>
             </Button>
-            <Button id="btnEditChannel" defaultButton="true" mnemonicParsing="false" prefWidth="150.0" styleClass="styleButton" text="Save" HBox.hgrow="ALWAYS">
+            <Button id="btnSave" defaultButton="true" mnemonicParsing="false" prefWidth="150.0" styleClass="styleButton" text="Save" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
