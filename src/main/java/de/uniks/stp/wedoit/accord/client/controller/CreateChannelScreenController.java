@@ -72,16 +72,25 @@ public class CreateChannelScreenController implements Controller {
         this.hBoxLblMembers = (HBox) view.lookup("#hBoxLblMembers");
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
+        checkIfIsPrivileged();
+
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::createChannelButtonOnClick);
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
     }
 
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
+        checkIfIsPrivileged();
+        StageManager.getPopupStage().sizeToScene();
+    }
+
+    private void checkIfIsPrivileged() {
         if (this.checkBoxPrivileged.isSelected()) {
             initSubViewMemberList();
+            lblMembers.setVisible(true);
         } else {
             this.vBoxMemberNameAndCheckBox.getChildren().clear();
+            lblMembers.setVisible(false);
         }
     }
 
