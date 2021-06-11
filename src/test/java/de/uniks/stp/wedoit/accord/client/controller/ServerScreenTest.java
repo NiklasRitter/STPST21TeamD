@@ -27,8 +27,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.service.query.NodeQuery;
-import org.testfx.service.query.PointQuery;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
@@ -195,6 +193,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(3, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
@@ -232,13 +231,13 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(3, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(1)));
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(2)));
         Assert.assertFalse(listView.getItems().contains(new Server()));
-
 
         mockWebSocket(webSocketJson);
         WaitForAsyncUtils.waitForFxEvents();
@@ -348,6 +347,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(3, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));

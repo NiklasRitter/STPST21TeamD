@@ -121,6 +121,7 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
+        refreshLvUsers();
 
         // get members of this server
         // load categories after get users of a server

@@ -440,7 +440,7 @@ public class ServerContextMenuTest extends ApplicationTest {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = lookup("#btnEditChannel").query();
+        Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Save");
 
 
@@ -448,7 +448,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Assert.assertEquals(textField.getText(), channel.getName());
         textField.setText("channelTest");
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnEditChannel");
+        clickOn("#btnSave");
 
         JsonArray members = Json.createArrayBuilder().build();
         JsonObject json = buildCreateChannel(category.getId(), channel.getId(), textField.getText(), "text", false, members);
@@ -471,9 +471,8 @@ public class ServerContextMenuTest extends ApplicationTest {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = lookup("#btnEditChannel").query();
+        Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Save");
-
 
         TextField textField = lookup("#tfChannelName").query();
         CheckBox checkBox = lookup("#checkBoxPrivileged").query();
@@ -481,7 +480,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         textField.setText("channelTest");
         checkBox.setSelected(true);
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnEditChannel");
+        clickOn("#btnSave");
 
         JsonArray members = Json.createArrayBuilder().add(server.getMembers().get(0).getId()).build();
         JsonObject json = buildCreateChannel(category.getId(), channel.getId(), textField.getText(), "text", true, members);
@@ -503,17 +502,17 @@ public class ServerContextMenuTest extends ApplicationTest {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = lookup("#btnEditChannel").query();
+        Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Save");
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("");
-        clickOn("#btnEditChannel");
+        clickOn("#btnSave");
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
 
         textField.setText("testChannel");
-        clickOn("#btnEditChannel");
+        clickOn("#btnSave");
         JsonObject json = buildFailure();
         mockUpdateChannelRest(json);
         WaitForAsyncUtils.waitForFxEvents();
