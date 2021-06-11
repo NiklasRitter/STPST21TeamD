@@ -98,7 +98,7 @@ public class CreateChannelScreenController implements Controller {
         this.vBoxMemberNameAndCheckBox.getChildren().clear();
         for (User user : this.editor.getCurrentServer().getMembers()) {
             try {
-                if (!user.getId().equals(this.editor.getCurrentServer().getOwner())) {
+                if (!user.getId().equals(this.localUser.getId())) {
                     Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
                     MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this, false);
                     memberListSubViewController.init();
@@ -144,7 +144,7 @@ public class CreateChannelScreenController implements Controller {
                 editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), null, this);
             } else if (checkBoxPrivileged.isSelected()) {
                 if (userList.size() <= 0) {
-                    userList.add(editor.getCurrentServer().getOwner());
+                    userList.add(this.localUser.getId());
                     editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
                 } else {
                     editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
