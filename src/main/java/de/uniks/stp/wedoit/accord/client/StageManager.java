@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.*;
+import de.uniks.stp.wedoit.accord.client.db.dao.ChatRepository;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
@@ -13,6 +14,10 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -22,6 +27,8 @@ import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 
+@SpringBootApplication
+//@EnableJpaRepositories(basePackages = {"de.uniks.stp.wedoit.accord.client"})
 public class StageManager extends Application {
 
     private static final Map<String, Controller> controllerMap = new HashMap<>();
@@ -34,6 +41,16 @@ public class StageManager extends Application {
     private static Scene popupScene;
     private static Stage emojiPickerStage;
     private static Scene emojiPickerScene;
+    private static ConfigurableApplicationContext context;
+
+    @Override
+    public void init() throws Exception{
+        context = SpringApplication.run(StageManager.class);
+    }
+
+
+
+
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -556,7 +573,7 @@ public class StageManager extends Application {
             }
         });
 
-        editor = new Editor();
+        editor = new Editor(context);
         model = editor.haveAccordClient();
         editor.haveLocalUser();
         model.setOptions(ResourceManager.loadOptions());
@@ -576,6 +593,7 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            context.stop();
             if (systemTrayController != null) systemTrayController.stop();
             editor.getNetworkController().stop();
             LocalUser localUser = model.getLocalUser();

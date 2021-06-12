@@ -1,22 +1,21 @@
 package de.uniks.stp.wedoit.accord.client.db.entity;
 
+
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "CHATS")
 public class ChatEntity {
 
-
-
     @Id
-    @GeneratedValue
-    @Column(name = "id")
-    private Long id;
-
     @Column(name = "user")
     private String user;
+
+    @Column(name = "name")
+    private String name;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = PrivateMessageEntity.class)
     private List<PrivateMessageEntity> messages;
@@ -30,14 +29,6 @@ public class ChatEntity {
         this.user = user;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUser() {
         return user;
     }
@@ -47,12 +38,26 @@ public class ChatEntity {
         return messages;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
     public void setMessages(List<PrivateMessageEntity> messages) {
         this.messages = messages;
     }
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+
+    public void addMessage(PrivateMessageEntity message){
+        getMessages().add(message);
+        message.setChat(this);
     }
 
 }

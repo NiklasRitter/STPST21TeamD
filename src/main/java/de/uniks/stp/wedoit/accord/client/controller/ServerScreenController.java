@@ -406,6 +406,7 @@ public class ServerScreenController implements Controller {
             Message message = new Message();
             message.setChannel(currentChannel);
             message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
+            message.setId(jsonObject.getString(ID));
             message.setFrom(jsonObject.getString(FROM));
             message.setText(jsonObject.getString(TEXT));
 

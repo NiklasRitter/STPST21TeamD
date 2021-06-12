@@ -160,13 +160,13 @@ public class NetworkController {
      */
     public NetworkController handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
+        System.out.println(msg.toString());
 
         PrivateMessage message = new PrivateMessage();
         message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
         message.setText(jsonObject.getString(MESSAGE));
         message.setFrom(jsonObject.getString(FROM));
         message.setTo(jsonObject.getString(TO));
-
         editor.addNewPrivateMessage(message);
         return this;
     }

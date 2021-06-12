@@ -1,16 +1,19 @@
 package de.uniks.stp.wedoit.accord.client.db.entity;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 @Entity
 public class PrivateMessageEntity {
 
     @Id
+    @GeneratedValue
     @Column(name = "id")
-    String id;
+    private long id;
 
     @Column(name = "timestamp")
-    long timestamp;
+    private Long timestamp;
 
     @Column(name = "text")
     private String text;
@@ -29,19 +32,27 @@ public class PrivateMessageEntity {
         super();
     }
 
-    public PrivateMessageEntity(String id, long timestamp,String text,String sender, String to){
-        this.id = id;
+    public PrivateMessageEntity(long timestamp, String text, String sender, String to,ChatEntity chat){
         this.timestamp = timestamp;
         this.text = text;
         this.sender = sender;
         this.to = to;
+        this.chat = chat;
     }
 
 
-
-    public String getId() {
-        return id;
+    public long getId(){
+        return this.id;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
 
     public long getTimestamp() {
         return timestamp;
@@ -59,14 +70,6 @@ public class PrivateMessageEntity {
         return to;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public void setText(String text) {
         this.text = text;
     }
@@ -81,6 +84,7 @@ public class PrivateMessageEntity {
 
     public void setChat(ChatEntity chatEntity) {
         this.chat = chatEntity;
+        chatEntity.addMessage(this);
     }
 
     public ChatEntity getChat() {
