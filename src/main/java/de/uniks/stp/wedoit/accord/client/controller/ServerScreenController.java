@@ -159,7 +159,6 @@ public class ServerScreenController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
-        //this.lvTextChat.setOnMouseClicked(this::lvTextChatOnClick);
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
 
     }
@@ -390,21 +389,17 @@ public class ServerScreenController implements Controller {
         if (channel != null) {
             List<Message> messages = JsonUtil.parseMessageArray(data);
             Collections.reverse(messages);
-            System.out.println(messages);
             this.editor.updateChannelMessages(channel, messages);
             Platform.runLater(() -> this.lvTextChat.refresh());
             if (messages.size() == 50) {
                 Platform.runLater(this::displayLoadMore);
-                Platform.runLater(() -> this.lvTextChat.refresh());
             }
-            Platform.runLater(() -> this.lvTextChat.refresh());
         } else {
             Platform.runLater(StageManager::showMainScreen);
         }
     }
 
     private void displayLoadMore() {
-        System.out.println(this.observableMessageList.size());
         if (observableMessageList.size() >= 50) {
             Message topMessage = new Message().setText("Load more...").setId("idLoadMore");
             this.observableMessageList.add(0, topMessage);
@@ -413,15 +408,12 @@ public class ServerScreenController implements Controller {
 
     private void lvTextChatOnClick(MouseEvent mouseEvent) {
         Message selectedMessage = lvTextChat.getSelectionModel().getSelectedItem();
-        if (selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
+        if (selectedMessage != null && selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
             this.observableMessageList.remove(0);
             Message oldestMessage = this.observableMessageList.get(0);
             Channel channel = oldestMessage.getChannel();
             String timestamp = String.valueOf(oldestMessage.getTimestamp());
             this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
-            Platform.runLater(() -> {
-                lvTextChat.refresh();
-            });
         }
     }
 
@@ -435,13 +427,10 @@ public class ServerScreenController implements Controller {
             Message newMessage = (Message) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> {
                 if (this.observableMessageList.isEmpty()) {
-                    //System.out.println("empty: " +newMessage + ", " +newMessage.getTimestamp());
                     this.observableMessageList.add(newMessage);
                 } else if(newMessage.getTimestamp() <= this.observableMessageList.get(observableMessageList.size()-1).getTimestamp()) {
-                    //System.out.println("younger: " +newMessage+ ", " +newMessage.getTimestamp());
                     this.observableMessageList.add(0, newMessage);
                 } else {
-                    //System.out.println("older: " +newMessage+ ", " +newMessage.getTimestamp());
                     this.observableMessageList.add(newMessage);
                 }
             });
