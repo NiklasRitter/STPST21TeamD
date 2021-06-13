@@ -11,6 +11,8 @@ import static de.uniks.stp.wedoit.accord.client.constants.Preferences.*;
 public class PreferenceManager {
     public PropertyChangeListener darkmodeListener = this::onDarkmodeChanged;
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
+    public PropertyChangeListener passwordListener = this::onPasswordChanged;
+    public PropertyChangeListener usernameListener = this::onUsernameChanged;
 
     /**
      * Loads the darkmode preference from the Registry.
@@ -68,8 +70,10 @@ public class PreferenceManager {
      * @param username The value of the darkmode preference.
      */
     public void saveUsername(String username) {
-        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-        preferences.put(USERNAME, username);
+        if (username != null && !username.isEmpty()) {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            preferences.put(USERNAME, username);
+        }
     }
 
     /**
@@ -88,8 +92,10 @@ public class PreferenceManager {
      * @param password The value of the darkmode preference.
      */
     public void savePassword(String password) {
-        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-        preferences.put(PASSWORD, password);
+        if (password != null && !password.isEmpty()) {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            preferences.put(PASSWORD, password);
+        }
     }
 
     /**
@@ -110,9 +116,9 @@ public class PreferenceManager {
     }
 
     /**
-     * Called when the darkmode preference of the Options change.
+     * Called when the rememberMe preference of the Options change.
      * <p>
-     * Sets the darkmode in the StageManager and saves it using saveDarkmode.
+     * Saves the rememberMe using saveRememberMe.
      *
      * @param propertyChangeEvent The called event.
      */
@@ -121,6 +127,36 @@ public class PreferenceManager {
             boolean rememberMe = (boolean) propertyChangeEvent.getNewValue();
 
             saveRememberMe(rememberMe);
+        }
+    }
+
+    /**
+     * Called when the password of the LocalUser change.
+     * <p>
+     * Saves the password using savePassword.
+     *
+     * @param propertyChangeEvent The called event.
+     */
+    public void onPasswordChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof String) {
+            String password = (String) propertyChangeEvent.getNewValue();
+
+            savePassword(password);
+        }
+    }
+
+    /**
+     * Called when the username of the LocalUser change.
+     * <p>
+     * Saves the username using saveUsername.
+     *
+     * @param propertyChangeEvent The called event.
+     */
+    public void onUsernameChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof String) {
+            String username = (String) propertyChangeEvent.getNewValue();
+
+            saveUsername(username);
         }
     }
 }
