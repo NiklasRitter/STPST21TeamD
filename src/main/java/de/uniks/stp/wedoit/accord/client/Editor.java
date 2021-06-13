@@ -45,6 +45,7 @@ public class Editor {
     public LocalUser haveLocalUser() {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
+        StageManager.getResourceManager();
         return localUser;
     }
 
@@ -56,7 +57,7 @@ public class Editor {
     /**
      * create localUser with the given arguments and set localUser in Editor
      * <p>
-     * if localUser already exists set username and userkey to current localUser
+     * if localUser already exists set username and userKey to current localUser
      *
      * @param username id of the localUser
      * @param userKey  name of the localUser
@@ -318,11 +319,11 @@ public class Editor {
      * @param oppAction game action of opponent user
      */
     public Boolean resultOfGame(String ownAction, String oppAction) {
-        if(ownAction.equals(oppAction)) return null;
+        if (ownAction.equals(oppAction)) return null;
 
-        if(ownAction.equals(ROCK)) return oppAction.equals(SCISSORS);
+        if (ownAction.equals(ROCK)) return oppAction.equals(SCISSORS);
 
-        else if(ownAction.equals(PAPER)) return oppAction.equals(ROCK);
+        else if (ownAction.equals(PAPER)) return oppAction.equals(ROCK);
 
         else return oppAction.equals(PAPER);
     }
@@ -497,7 +498,7 @@ public class Editor {
 
 
     public Invitation deleteInvite(String id, Server server) {
-        for (Invitation invite: server.getInvitations()) {
+        for (Invitation invite : server.getInvitations()) {
             if (invite.getId().equals(id)) {
                 invite.removeYou();
                 return invite;
@@ -511,5 +512,24 @@ public class Editor {
         final ClipboardContent content = new ClipboardContent();
         content.putString(text);
         return clipboard.setContent(content);
+    }
+
+    public void automaticLogin(AccordClient accordClient) {
+        if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
+            networkController.automaticLoginUser(accordClient.getLocalUser().getName(),
+                    accordClient.getLocalUser().getPassword(), this);
+        } else {
+            StageManager.getStage().show();
+            StageManager.showLoginScreen();
+        }
+    }
+
+    public void handleAutomaticLogin(boolean success) {
+        StageManager.getStage().show();
+        if (success) {
+            StageManager.showMainScreen();
+        } else {
+            StageManager.showLoginScreen();
+        }
     }
 }
