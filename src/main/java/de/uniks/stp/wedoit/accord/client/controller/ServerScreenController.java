@@ -54,8 +54,6 @@ public class ServerScreenController implements Controller {
     private TreeItem<Object> tvServerChannelsRoot;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
-    private ContextMenu contextMenu;
-    private MenuItem menuItemLeaveServer;
 
     /**
      * Create a new Controller
@@ -100,7 +98,7 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
-        this.lbServerName.setContextMenu(createContextMenu());
+        this.lbServerName.setContextMenu(createContextMenuLeaveServer());
 
         // Add server websocket
         editor.getNetworkController().
@@ -119,12 +117,12 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
+        tvServerChannels.setContextMenu(createContextMenuCategory());
 
         // get members of this server
         // load categories after get users of a server
         // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
-
 
         addActionListener();
 
@@ -132,11 +130,19 @@ public class ServerScreenController implements Controller {
 
     }
 
-    private ContextMenu createContextMenu() {
-        contextMenu = new ContextMenu();
-        menuItemLeaveServer = new MenuItem("Leave Server");
+    private ContextMenu createContextMenuLeaveServer() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
         contextMenu.getItems().add(menuItemLeaveServer);
         menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+        return contextMenu;
+    }
+
+    private ContextMenu createContextMenuCategory() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem addCategory = new MenuItem("- add category");
+        contextMenu.getItems().add(addCategory);
+        addCategory.setOnAction((event) -> StageManager.showCreateCategoryScreen());
         return contextMenu;
     }
 
@@ -162,7 +168,6 @@ public class ServerScreenController implements Controller {
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
 
     }
-
 
     /**
      * Initializes the Tooltips for the Buttons
