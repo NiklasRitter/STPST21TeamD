@@ -159,6 +159,8 @@ public class ServerScreenController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
+        //this.lvTextChat.setOnMouseClicked(this::lvTextChatOnClick);
+        this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
 
     }
 
@@ -375,8 +377,8 @@ public class ServerScreenController implements Controller {
         this.lvTextChat.setItems(observableMessageList);
 
         // display last 50 messages
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        displayLastMessages(timestamp, channel);
+        String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
+        this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
 
 
         // Add listener for the loaded listView
@@ -384,27 +386,42 @@ public class ServerScreenController implements Controller {
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
     }
 
-    private void displayLastMessages(Timestamp timestamp, Channel channel) {
-        String time = String.valueOf(timestamp.getTime());
-        this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, time, this);
-    }
-
     public void handleGetChannelMessages(Channel channel, JsonArray data) {
         if (channel != null) {
             List<Message> messages = JsonUtil.parseMessageArray(data);
+            Collections.reverse(messages);
+            System.out.println(messages);
             this.editor.updateChannelMessages(channel, messages);
-            Platform.runLater(this::displayLoadMore);
+            Platform.runLater(() -> this.lvTextChat.refresh());
+            if (messages.size() == 50) {
+                Platform.runLater(this::displayLoadMore);
+                Platform.runLater(() -> this.lvTextChat.refresh());
+            }
+            Platform.runLater(() -> this.lvTextChat.refresh());
         } else {
             Platform.runLater(StageManager::showMainScreen);
         }
-
     }
 
     private void displayLoadMore() {
         System.out.println(this.observableMessageList.size());
         if (observableMessageList.size() >= 50) {
             Message topMessage = new Message().setText("Load more...").setId("idLoadMore");
-            observableMessageList.add(0, topMessage);
+            this.observableMessageList.add(0, topMessage);
+        }
+    }
+
+    private void lvTextChatOnClick(MouseEvent mouseEvent) {
+        Message selectedMessage = lvTextChat.getSelectionModel().getSelectedItem();
+        if (selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
+            this.observableMessageList.remove(0);
+            Message oldestMessage = this.observableMessageList.get(0);
+            Channel channel = oldestMessage.getChannel();
+            String timestamp = String.valueOf(oldestMessage.getTimestamp());
+            this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
+            Platform.runLater(() -> {
+                lvTextChat.refresh();
+            });
         }
     }
 
@@ -416,7 +433,18 @@ public class ServerScreenController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             Message newMessage = (Message) propertyChangeEvent.getNewValue();
-            Platform.runLater(() -> this.observableMessageList.add(newMessage));
+            Platform.runLater(() -> {
+                if (this.observableMessageList.isEmpty()) {
+                    //System.out.println("empty: " +newMessage + ", " +newMessage.getTimestamp());
+                    this.observableMessageList.add(newMessage);
+                } else if(newMessage.getTimestamp() <= this.observableMessageList.get(observableMessageList.size()-1).getTimestamp()) {
+                    //System.out.println("younger: " +newMessage+ ", " +newMessage.getTimestamp());
+                    this.observableMessageList.add(0, newMessage);
+                } else {
+                    //System.out.println("older: " +newMessage+ ", " +newMessage.getTimestamp());
+                    this.observableMessageList.add(newMessage);
+                }
+            });
         }
     }
 
