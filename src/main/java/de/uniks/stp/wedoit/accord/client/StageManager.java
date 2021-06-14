@@ -594,10 +594,10 @@ public class StageManager extends Application {
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
-        stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
 
         popupStage = new Stage();
-        popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         popupStage.initOwner(stage);
 
         emojiPickerStage = new Stage();
