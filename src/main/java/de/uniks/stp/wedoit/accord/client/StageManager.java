@@ -218,7 +218,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
             popupScene = new Scene(root);
 
-            //updateDarkmode();
+            updateDarkmode();
 
             //init controller
             GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), opponent, editor);
@@ -244,6 +244,8 @@ public class StageManager extends Application {
             try {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
                 popupScene = new Scene(root);
+
+                updateDarkmode();
 
 
                 //init controller

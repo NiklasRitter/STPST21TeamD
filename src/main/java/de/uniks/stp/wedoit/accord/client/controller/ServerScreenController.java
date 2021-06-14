@@ -22,6 +22,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,8 +54,6 @@ public class ServerScreenController implements Controller {
     private TreeItem<Object> tvServerChannelsRoot;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
-    private ContextMenu contextMenu;
-    private MenuItem menuItemLeaveServer;
 
     /**
      * Create a new Controller
@@ -99,7 +98,7 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
-        this.lbServerName.setContextMenu(createContextMenu());
+        this.lbServerName.setContextMenu(createContextMenuLeaveServer());
 
         // Add server websocket
         editor.getNetworkController().
@@ -118,12 +117,12 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
+        tvServerChannels.setContextMenu(createContextMenuCategory());
 
         // get members of this server
         // load categories after get users of a server
         // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
-
 
         addActionListener();
 
@@ -131,11 +130,19 @@ public class ServerScreenController implements Controller {
 
     }
 
-    private ContextMenu createContextMenu() {
-        contextMenu = new ContextMenu();
-        menuItemLeaveServer = new MenuItem("Leave Server");
+    private ContextMenu createContextMenuLeaveServer() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
         contextMenu.getItems().add(menuItemLeaveServer);
         menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+        return contextMenu;
+    }
+
+    private ContextMenu createContextMenuCategory() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem addCategory = new MenuItem("- add category");
+        contextMenu.getItems().add(addCategory);
+        addCategory.setOnAction((event) -> StageManager.showCreateCategoryScreen());
         return contextMenu;
     }
 
@@ -158,9 +165,9 @@ public class ServerScreenController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
+        this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
 
     }
-
 
     /**
      * Initializes the Tooltips for the Buttons
@@ -173,6 +180,10 @@ public class ServerScreenController implements Controller {
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
         btnOptions.setTooltip(optionsButton);
+
+        Tooltip editButton = new Tooltip();
+        editButton.setText("edit Server");
+        btnEdit.setTooltip(editButton);
     }
 
     /**
@@ -369,8 +380,53 @@ public class ServerScreenController implements Controller {
 
         this.lvTextChat.setItems(observableMessageList);
 
+        // display last 50 messages
+        String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
+        this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
+
+
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
+    }
+
+    public void handleGetChannelMessages(Channel channel, JsonArray data) {
+        if (channel != null) {
+            List<Message> messages = JsonUtil.parseMessageArray(data);
+            Collections.reverse(messages);
+            this.editor.updateChannelMessages(channel, messages);
+            if (messages.size() == 50) {
+                Platform.runLater(this::displayLoadMore);
+            }
+        } else {
+            Platform.runLater(StageManager::showMainScreen);
+        }
+    }
+
+    /**
+     * Displays load more on first position of ListView of the Chat
+     */
+    private void displayLoadMore() {
+        if (observableMessageList.size() >= 50) {
+            Message topMessage = new Message().setText("Load more...").setId("idLoadMore");
+            this.observableMessageList.add(0, topMessage);
+        }
+    }
+
+    /**
+     * Checks if "Load more..." is clicked and if yes, then it loads new messages
+     *
+     * @param mouseEvent
+     */
+    private void lvTextChatOnClick(MouseEvent mouseEvent) {
+        Message selectedMessage = lvTextChat.getSelectionModel().getSelectedItem();
+        if (selectedMessage != null && selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
+            this.observableMessageList.remove(0);
+            Message oldestMessage = this.observableMessageList.get(0);
+            Channel channel = oldestMessage.getChannel();
+            String timestamp = String.valueOf(oldestMessage.getTimestamp());
+            this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
+        }
     }
 
     /**
@@ -381,7 +437,15 @@ public class ServerScreenController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             Message newMessage = (Message) propertyChangeEvent.getNewValue();
-            Platform.runLater(() -> this.observableMessageList.add(newMessage));
+            Platform.runLater(() -> {
+                if (this.observableMessageList.isEmpty()) {
+                    this.observableMessageList.add(newMessage);
+                } else if(newMessage.getTimestamp() <= this.observableMessageList.get(observableMessageList.size()-1).getTimestamp()) {
+                    this.observableMessageList.add(0, newMessage);
+                } else {
+                    this.observableMessageList.add(newMessage);
+                }
+            });
         }
     }
 

@@ -17,13 +17,13 @@
    </HBox>
    <HBox prefHeight="53.0" prefWidth="200.0">
       <Region HBox.hgrow="ALWAYS" />
-      <Button id="btnQuit" mnemonicParsing="false" text="Quit">
+      <Button id="btnQuit" mnemonicParsing="false" styleClass="styleButton" text="Quit">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
       <Region HBox.hgrow="ALWAYS" />
-      <Button id="btnPlayAgain" mnemonicParsing="false" text="Play Again">
+      <Button id="btnPlayAgain" mnemonicParsing="false" styleClass="styleButton" text="Play Again">
          <font>
             <Font size="15.0" />
          </font>
