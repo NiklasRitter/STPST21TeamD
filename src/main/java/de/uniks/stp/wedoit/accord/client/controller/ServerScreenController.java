@@ -395,7 +395,6 @@ public class ServerScreenController implements Controller {
             List<Message> messages = JsonUtil.parseMessageArray(data);
             Collections.reverse(messages);
             this.editor.updateChannelMessages(channel, messages);
-            Platform.runLater(() -> this.lvTextChat.refresh());
             if (messages.size() == 50) {
                 Platform.runLater(this::displayLoadMore);
             }
@@ -404,6 +403,9 @@ public class ServerScreenController implements Controller {
         }
     }
 
+    /**
+     * Displays load more on first position of ListView of the Chat
+     */
     private void displayLoadMore() {
         if (observableMessageList.size() >= 50) {
             Message topMessage = new Message().setText("Load more...").setId("idLoadMore");
@@ -411,6 +413,11 @@ public class ServerScreenController implements Controller {
         }
     }
 
+    /**
+     * Checks if "Load more..." is clicked and if yes, then it loads new messages
+     *
+     * @param mouseEvent
+     */
     private void lvTextChatOnClick(MouseEvent mouseEvent) {
         Message selectedMessage = lvTextChat.getSelectionModel().getSelectedItem();
         if (selectedMessage != null && selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
