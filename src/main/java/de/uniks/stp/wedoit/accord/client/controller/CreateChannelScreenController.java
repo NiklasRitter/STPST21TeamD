@@ -81,6 +81,7 @@ public class CreateChannelScreenController implements Controller {
 
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
+        //Adjusts the size of the stage to its dynamically added content
         StageManager.getPopupStage().sizeToScene();
     }
 
@@ -94,6 +95,11 @@ public class CreateChannelScreenController implements Controller {
         }
     }
 
+    /**
+     *If channel is privileged, then the lister of all users is dynamically added to CreateChannelScreen.
+     * then calls MemberListSubViewController:
+     * You can then add users (except the local user) to the privileged channel.
+     */
     private void initSubViewMemberList() {
         this.vBoxMemberNameAndCheckBox.getChildren().clear();
         for (User user : this.editor.getCurrentServer().getMembers()) {
@@ -141,13 +147,16 @@ public class CreateChannelScreenController implements Controller {
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
             if (!checkBoxPrivileged.isSelected()) {
-                editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), null, this);
+                editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                        TEXT, checkBoxPrivileged.isSelected(), null, this);
             } else if (checkBoxPrivileged.isSelected()) {
                 if (userList.size() <= 0) {
                     userList.add(this.localUser.getId());
-                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
+                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                            TEXT, checkBoxPrivileged.isSelected(), userList, this);
                 } else {
-                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(), TEXT, checkBoxPrivileged.isSelected(), userList, this);
+                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                            TEXT, checkBoxPrivileged.isSelected(), userList, this);
                 }
             }
         }
