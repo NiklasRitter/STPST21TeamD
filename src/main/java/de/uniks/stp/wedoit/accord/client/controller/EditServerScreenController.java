@@ -218,9 +218,7 @@ public class EditServerScreenController implements Controller {
      * @param invitationLink invitation link which is responded by the server
      */
     public void handleInvitation(String invitationLink) {
-        tfMaxCountAmountInput.setText("");
-        tfMaxCountAmountInput.setPromptText("Amount");
-        tfMaxCountAmountInput.getStyleClass().removeAll("redPromptText");
+        resetAmountPromptText();
         if (invitationLink != null) {
             tfInvitationLink.setText(invitationLink);
         } else {
@@ -229,15 +227,23 @@ public class EditServerScreenController implements Controller {
     }
 
     private void radioBtnMaxCountOnClick(MouseEvent mouseEvent) {
+        resetAmountPromptText();
         if (this.radioBtnMaxCount.isFocused()) {
             this.tfMaxCountAmountInput.setEditable(true);
         }
     }
 
     private void radioBtnTemporalOnClick(MouseEvent mouseEvent) {
+        resetAmountPromptText();
+
         if (this.radioBtnTemporal.isFocused()) {
             this.tfMaxCountAmountInput.setEditable(false);
         }
+    }
+    private void resetAmountPromptText() {
+        tfMaxCountAmountInput.setText("");
+        tfMaxCountAmountInput.setPromptText("Amount");
+        tfMaxCountAmountInput.getStyleClass().removeAll("redPromptText");
     }
 
     /**
