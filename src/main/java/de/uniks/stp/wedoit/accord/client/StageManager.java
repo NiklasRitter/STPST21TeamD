@@ -28,7 +28,6 @@ import java.util.Objects;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 
 @SpringBootApplication
-//@EnableJpaRepositories(basePackages = {"de.uniks.stp.wedoit.accord.client"})
 public class StageManager extends Application {
 
     private static final Map<String, Controller> controllerMap = new HashMap<>();
@@ -47,10 +46,6 @@ public class StageManager extends Application {
     public void init() throws Exception{
         context = SpringApplication.run(StageManager.class);
     }
-
-
-
-
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
