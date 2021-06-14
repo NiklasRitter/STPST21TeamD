@@ -529,7 +529,9 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
         Assert.assertEquals(lwPrivateChat.getItems().get(2).getText(), "quote");
 
-
+        lwPrivateChat.getSelectionModel().select(1);
+        clickOn(lwPrivateChat);
+        Assert.assertEquals(lwPrivateChat.getSelectionModel().getSelectedItem(),lwPrivateChat.getItems().get(0));
     }
 
 
