@@ -44,6 +44,8 @@ public class ServerScreenController implements Controller {
     private Label lbServerName;
     private TreeView<Object> tvServerChannels;
     private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
+    private PropertyChangeListener userListViewListener = this::changeUserList;
+
     private ListView<User> lvServerUsers;
     private TextField tfInputMessage;
     private Channel channel, currentChannel;
@@ -121,12 +123,12 @@ public class ServerScreenController implements Controller {
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
-        refreshLvUsers();
 
         // get members of this server
         // load categories after get users of a server
         // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
+
 
         addActionListener();
 
@@ -134,6 +136,20 @@ public class ServerScreenController implements Controller {
 
     }
 
+    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
+            Platform.runLater(() -> {
+                this.refreshLvUsers();
+            });
+        }
+    }
+
+    /**
+     * Updates ServerListView (list of displayed members).
+     * Queries whether a channel is privileged:
+     * If yes, it shows only members assigned to this channel.
+     * If no, it shows all users of the server
+     */
     public void refreshLvUsers() {
         if (channel.isPrivileged()) {
             users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
@@ -219,9 +235,9 @@ public class ServerScreenController implements Controller {
                 + AND_SERVER_ID_URL + this.server.getId());
 
         if (this.currentChannel != null) {
-            this.currentChannel.listeners()
-                    .removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+            this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         }
+        this.channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         this.chatWSCallback = null;
         this.serverWSCallback = null;
         this.newMessagesListener = null;
@@ -379,6 +395,7 @@ public class ServerScreenController implements Controller {
         if (this.currentChannel != null) {
             this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         }
+        this.channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.userListViewListener);
 
         channel.setRead(true);
         this.currentChannel = channel;
@@ -398,6 +415,7 @@ public class ServerScreenController implements Controller {
 
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.userListViewListener);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
     }
 
