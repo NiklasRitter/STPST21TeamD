@@ -126,6 +126,8 @@ public class AttentionScreenController implements Controller {
         if (status) {
             Category category = (Category) objectToDelete;
             category.setServer(null);
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
             stop();
         } else {
             showError();
