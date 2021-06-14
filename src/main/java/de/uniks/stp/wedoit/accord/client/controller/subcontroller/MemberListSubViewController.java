@@ -42,6 +42,11 @@ public class MemberListSubViewController implements Controller {
         this.vBoxCheckBox.getChildren().add(checkBox);
     }
 
+    /**
+     *Checks which controller calls the class.
+     *Adds the selected user to the user list of the corresponding controller.
+     *If you deselect a user, he will be removed from the list.
+     */
     private void checkBoxOnClick(ActionEvent actionEvent) {
         if (controller.getClass().equals(CreateChannelScreenController.class)) {
             CreateChannelScreenController createChannelScreenController = (CreateChannelScreenController) controller;
@@ -51,11 +56,11 @@ public class MemberListSubViewController implements Controller {
                 createChannelScreenController.removeFromUserList(user);
             }
         } else if (controller.getClass().equals(EditChannelScreenController.class)) {
-            EditChannelScreenController createChannelScreenController = (EditChannelScreenController) controller;
+            EditChannelScreenController editChannelScreenController = (EditChannelScreenController) controller;
             if (checkBox.isSelected()) {
-                createChannelScreenController.addToUserList(user);
+                editChannelScreenController.addToUserList(user);
             } else if (!checkBox.isSelected()) {
-                createChannelScreenController.removeFromUserList(user);
+                editChannelScreenController.removeFromUserList(user);
             }
         }
     }
