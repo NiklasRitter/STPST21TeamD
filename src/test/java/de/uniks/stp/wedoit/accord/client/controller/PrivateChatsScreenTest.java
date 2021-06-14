@@ -9,6 +9,7 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -32,12 +33,14 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -236,7 +239,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertTrue(StageManager.getPopupStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors", StageManager.getPopupStage().getTitle());
 
 
         mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + ROCK));
@@ -284,7 +287,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertTrue(StageManager.getPopupStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors", StageManager.getPopupStage().getTitle());
 
     }
 
@@ -465,6 +468,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
         ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
 
+
         lwOnlineUsers.getSelectionModel().select(0);
         User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
 
@@ -483,9 +487,50 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        lwPrivateChat.getSelectionModel().select(0);
+        rightClickOn(lwPrivateChat);
+        Bounds boundsInLocal = (lookup("#messageContextMenu").query()).localToScreen((lookup("#messageContextMenu").query().getBoundsInLocal()));
+        clickOn(boundsInLocal.getCenterX(), boundsInLocal.getCenterY());
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblQuote = (Label) lookup("#lblQuote").query();
+        Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
+
+        String formatted = StageManager.getEditor().getMessageFormatted(lwPrivateChat.getItems().get(0));
+        Assert.assertEquals(lblQuote.getText(), formatted);
+        clickOn(btnCancelQuote);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(lblQuote.getText(), "");
+
+
+        lwPrivateChat.getSelectionModel().select(0);
+        rightClickOn(lwPrivateChat);
+        boundsInLocal = (lookup("#messageContextMenu").query()).localToScreen((lookup("#messageContextMenu").query().getBoundsInLocal()));
+        clickOn(boundsInLocal.getCenterX(), boundsInLocal.getCenterY());
+        WaitForAsyncUtils.waitForFxEvents();
+        lblQuote = (Label) lookup("#lblQuote").query();
+        btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
+
+        formatted = StageManager.getEditor().getMessageFormatted(lwPrivateChat.getItems().get(0));
+        Assert.assertEquals(lblQuote.getText(), formatted);
+
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("quote");
+        clickOn("#tfEnterPrivateChat");
+        write("\n");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject quote = JsonUtil.buildPrivateChatMessage(user.getName(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        JsonObject quote_message = JsonUtil.buildPrivateChatMessage(user.getName(), "quote");
+        mockChatWebSocket(getTestMessageServerAnswer(quote));
+        mockChatWebSocket(getTestMessageServerAnswer(quote_message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lwPrivateChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        Assert.assertEquals(lwPrivateChat.getItems().get(2).getText(), "quote");
+
 
     }
-
 
 
     public JsonObject getOnlineUsers() {

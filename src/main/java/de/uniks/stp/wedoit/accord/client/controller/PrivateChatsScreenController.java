@@ -115,6 +115,7 @@ public class PrivateChatsScreenController implements Controller {
     private void addMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
         messageContextMenu = new ContextMenu();
+        messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
         quote.setOnAction((event) -> {
             handleContextMenuClicked(QUOTE, lwPrivateChat.getSelectionModel().getSelectedItem());
@@ -367,7 +368,7 @@ public class PrivateChatsScreenController implements Controller {
             JsonObject jsonMsg;
 
             if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getId() + QUOTE_SUFFIX);
+                JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
                 JsonObject jsonMessage = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 removeQuote();
                 editor.getNetworkController().sendPrivateChatMessage(quoteMsg.toString());
@@ -407,7 +408,7 @@ public class PrivateChatsScreenController implements Controller {
                 String formatted = editor.getMessageFormatted(message);
                 removeQuote();
                 lblQuote.setText(formatted);
-                lblQuote.setId(message.getTimestamp() + "");
+                lblQuote.setAccessibleHelp(message.getTimestamp() + "");
                 quoteVisible.getChildren().add(lblQuote);
                 quoteVisible.getChildren().add(btnCancelQuote);
             }
@@ -432,15 +433,13 @@ public class PrivateChatsScreenController implements Controller {
             }
         }
         if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-            if (lwPrivateChat.getSelectionModel().getSelectedItem() != null){
-                if (editor.isQuote(lwPrivateChat.getSelectionModel().getSelectedItem())) {
-                    PrivateMessage message = lwPrivateChat.getSelectionModel().getSelectedItem();
-                    String cleanMessage = editor.cleanMessage(message);
-                    for (PrivateMessage msg : privateMessageObservableList) {
-                        if (editor.getMessageFormatted(msg).equals(cleanMessage)) {
-                            lwPrivateChat.scrollTo(msg);
-                            lwPrivateChat.getSelectionModel().select(msg);
-                        }
+            if (lwPrivateChat.getSelectionModel().getSelectedItem() != null && editor.isQuote(lwPrivateChat.getSelectionModel().getSelectedItem())) {
+                PrivateMessage message = lwPrivateChat.getSelectionModel().getSelectedItem();
+                String cleanMessage = editor.cleanMessage(message);
+                for (PrivateMessage msg : privateMessageObservableList) {
+                    if (editor.getMessageFormatted(msg).equals(cleanMessage)) {
+                        lwPrivateChat.scrollTo(msg);
+                        lwPrivateChat.getSelectionModel().select(msg);
                     }
                 }
             }
