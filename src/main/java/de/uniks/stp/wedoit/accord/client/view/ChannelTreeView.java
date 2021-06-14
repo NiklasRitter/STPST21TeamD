@@ -33,6 +33,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                 }
             } else {
                 this.setText(null);
+                this.setContextMenu(null);
             }
         }
     }

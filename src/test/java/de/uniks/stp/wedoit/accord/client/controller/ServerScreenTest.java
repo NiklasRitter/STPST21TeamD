@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
@@ -30,7 +31,9 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
@@ -439,6 +442,62 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(stage.getTitle(), "Main");
     }
 
+    @Test
+    public void loadMoreMessagesTest() {
+        JsonObject restJson = getServerIdSuccessful();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
+        mockRest(restJson);
+
+        when(res.getBody()).thenReturn(new JsonNode(getCategories().toString()));
+        verify(restMock).getCategories(anyString(), anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> catCallback = callbackArgumentCaptor.getValue();
+        catCallback.completed(res);
+
+        when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
+
+        verify(restMock, atLeastOnce()).getChannels(anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
+        List<Callback<JsonNode>> channelCallbacks = channelsCallbackArgumentCaptor.getAllValues();
+
+        for (Callback<JsonNode> callback : channelCallbacks
+        ) {
+            callback.completed(res);
+        }
+
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#tvServerChannels");
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        when(res.getBody()).thenReturn(new JsonNode(build50Messages(channel).toString()));
+        verify(restMock).getChannelMessages(anyString(), anyString(), anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> channelMessageCallback = callbackArgumentCaptor.getValue();
+        channelMessageCallback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        ObservableList<Message> items = lvTextChat.getItems();
+        Assert.assertEquals(items.size(), 51);
+        Assert.assertEquals(items.get(0).getText(), "Load more...");
+
+        lvTextChat.scrollTo(0);
+        lvTextChat.getSelectionModel().select(0);
+        Bounds bounds = lvTextChat.localToScreen(lvTextChat.getBoundsInLocal());
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn(bounds.getMinX() + 1, bounds.getMinY() + 1);
+
+        when(res.getBody()).thenReturn(new JsonNode(getChannelMessage(channel).toString()));
+        verify(restMock, atLeastOnce()).getChannelMessages(anyString(), anyString(), anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
+        channelMessageCallback = callbackArgumentCaptor.getValue();
+        channelMessageCallback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        items = lvTextChat.getItems();
+        Assert.assertEquals(items.get(0).getText(), "Hello there!");
+        Assert.assertEquals(items.get(1).getText(), "I am Bob");
+    }
 
     @Test
     public void sendChatMessageTest() {
@@ -933,6 +992,22 @@ public class ServerScreenTest extends ApplicationTest {
                 .add(MESSAGES, "Error")
                 .add(DATA, Json.createArrayBuilder())
                 .build();
+    }
+
+    private JsonObject build50Messages(Channel channel) {
+        JsonObjectBuilder json = Json.createObjectBuilder()
+                .add(STATUS, SUCCESS)
+                .add(MESSAGES, "");
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+        for (int i = 1; i < 51; i++) {
+            jsonArray.add(Json.createObjectBuilder()
+                    .add(ID, "m_i_" + i)
+                    .add(CHANNEL, channel.getId())
+                    .add(TIMESTAMP, 1616936874 + i * 10)
+                    .add(FROM, "Bob")
+                    .add(TEXT, String.valueOf(i)));
+        }
+        return json.add(DATA, jsonArray).build();
     }
 
     public JsonObject getTestMessageServerAnswer(JsonObject test_message) {
