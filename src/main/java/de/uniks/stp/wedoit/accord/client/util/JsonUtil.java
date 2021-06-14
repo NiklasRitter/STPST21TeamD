@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -188,6 +189,50 @@ public class JsonUtil {
         return membersIds;
     }
 
+    public static List<Message> parseMessageArray(JsonArray jsonMessages) {
+        ArrayList<Message> messages = new ArrayList<>();
+        for (JsonValue jsonMessage : jsonMessages) {
+            Message message = new Message();
+            message.setId(jsonMessage.asJsonObject().getString(ID));
+            message.setText(jsonMessage.asJsonObject().getString(TEXT));
+            message.setFrom(jsonMessage.asJsonObject().getString(FROM));
+            String timestamp = jsonMessage.asJsonObject().get(TIMESTAMP).toString();
+            message.setTimestamp(Long.parseLong(timestamp));
+            messages.add(message);
+        }
+        return messages;
+    }
+
+    /**
+     * Parse a given JsonObject to a invitation.
+     * <p>
+     * Used for the invitations returned when getting all invitations.
+     *
+     * @param invitationJson The JsonObject of the invitation to be parsed.
+     * @return The parsed invitation.
+     */
+    public static Invitation parseInvitation(JsonObject invitationJson, Server server) {
+        return new Invitation().setId(invitationJson.getString(ID))
+                .setCurrent(invitationJson.getInt(CURRENT))
+                .setType(invitationJson.getString(TYPE))
+                .setLink(invitationJson.getString(LINK))
+                .setMax(invitationJson.getInt(MAX))
+                .setServer(server);
+    }
+
+    /**
+     * Parse a given JsonArray to a invitation List.
+     * <p>
+     * Used for the invitations returned when getting all invitations.
+     *
+     * @param invitationsJsonArray The JsonArray of the invitations to be parsed.
+     * @return The parsed invitations List.
+     */
+    public static List<Invitation> parseInvitations(JsonArray invitationsJsonArray, Server server) {
+        List<Invitation> invitations = new ArrayList<>();
+        invitationsJsonArray.forEach((jsonValue) -> invitations.add(parseInvitation(jsonValue.asJsonObject(), server)));
+        return invitations;
+    }
 
     /**
      * Build the Server Chat Message JSONObject.

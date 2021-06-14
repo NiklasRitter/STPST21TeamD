@@ -22,6 +22,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,6 @@ public class ServerScreenController implements Controller {
     private final Map<String, Channel> channelMap = new HashMap<>();
     private Button btnOptions;
     private Button btnHome;
-    private Button btnLogout;
     private Button btnEmoji;
     private Button btnEdit;
     private Label lbServerName;
@@ -83,7 +83,6 @@ public class ServerScreenController implements Controller {
         editor.setCurrentServer(server);
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
-        this.btnLogout = (Button) view.lookup("#btnLogout");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.btnEdit = (Button) view.lookup("#btnEdit");
 
@@ -99,17 +98,26 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
+        this.lbServerName.setContextMenu(createContextMenuLeaveServer());
+
         // Add server websocket
-        editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        editor.getNetworkController().
+
+                haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
-        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().getCleanLocalUserName()
-                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+        editor.getNetworkController().
+
+                haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().
+
+                        getCleanLocalUserName()
+                        + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         tvServerChannelsRoot = new TreeItem<>();
         ChannelTreeView channelTreeView = new ChannelTreeView();
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
+        tvServerChannels.setContextMenu(createContextMenuCategory());
 
         // get members of this server
         // load categories after get users of a server
@@ -119,6 +127,27 @@ public class ServerScreenController implements Controller {
         addActionListener();
 
         initTooltips();
+
+    }
+
+    private ContextMenu createContextMenuLeaveServer() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
+        contextMenu.getItems().add(menuItemLeaveServer);
+        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+        return contextMenu;
+    }
+
+    private ContextMenu createContextMenuCategory() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem addCategory = new MenuItem("- add category");
+        contextMenu.getItems().add(addCategory);
+        addCategory.setOnAction((event) -> StageManager.showCreateCategoryScreen());
+        return contextMenu;
+    }
+
+    private void leaveServerAttention(ActionEvent actionEvent) {
+        StageManager.showAttentionLeaveServerScreen(this.server);
     }
 
     private void btnEmojiOnClick(ActionEvent actionEvent) {
@@ -130,7 +159,6 @@ public class ServerScreenController implements Controller {
     public void addActionListener() {
 
         // Add action listeners
-        this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.btnEdit.setOnAction(this::editButtonOnClick);
@@ -140,7 +168,6 @@ public class ServerScreenController implements Controller {
 
     }
 
-
     /**
      * Initializes the Tooltips for the Buttons
      */
@@ -149,13 +176,13 @@ public class ServerScreenController implements Controller {
         homeButton.setText("home");
         btnHome.setTooltip(homeButton);
 
-        Tooltip logoutButton = new Tooltip();
-        logoutButton.setText("logout");
-        btnLogout.setTooltip(logoutButton);
-
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
         btnOptions.setTooltip(optionsButton);
+
+        Tooltip editButton = new Tooltip();
+        editButton.setText("edit Server");
+        btnEdit.setTooltip(editButton);
     }
 
     /**
@@ -164,7 +191,6 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        this.btnLogout.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.btnEmoji.setOnAction(null);
@@ -213,14 +239,15 @@ public class ServerScreenController implements Controller {
                 lbServerName.setText(server.getName());
             });
 
-
             createUserListView(members);
         } else {
             Platform.runLater(StageManager::showLoginScreen);
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
+            this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
             this.btnEdit.setVisible(true);
         }
+
     }
 
     /**
@@ -239,17 +266,6 @@ public class ServerScreenController implements Controller {
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
         StageManager.showOptionsScreen();
-    }
-
-
-    /**
-     * The localUser will be logged out and redirect to the LoginScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void logoutButtonOnClick(ActionEvent actionEvent) {
-        editor.logoutUser(localUser.getUserKey());
-
     }
 
     /**
@@ -363,8 +379,29 @@ public class ServerScreenController implements Controller {
 
         this.lvTextChat.setItems(observableMessageList);
 
+        // display last 50 messages
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        displayLastMessages(timestamp, channel);
+
+
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
+    }
+
+    public void displayLastMessages(Timestamp timestamp, Channel channel) {
+        String time = String.valueOf(timestamp.getTime());
+        this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, time, this);
+    }
+
+    public void handleGetChannelMessages(Channel channel, JsonArray data) {
+        if (channel != null) {
+            List<Message> messages = JsonUtil.parseMessageArray(data);
+            this.editor.updateChannelMessages(channel, messages);
+        } else {
+            Platform.runLater(StageManager::showMainScreen);
+        }
+
     }
 
     /**
@@ -427,6 +464,7 @@ public class ServerScreenController implements Controller {
      * @param msg response of the websocket server
      */
     private void handleServerMessage(JsonStructure msg) {
+
         JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
         String action = ((JsonObject) msg).getString(ACTION);
 
@@ -489,7 +527,7 @@ public class ServerScreenController implements Controller {
 
         // change invitation
         if (action.equals(INVITE_EXPIRED)) {
-            // TODO inviteExpired
+            editor.deleteInvite(data.getString(ID), server);
         }
 
     }

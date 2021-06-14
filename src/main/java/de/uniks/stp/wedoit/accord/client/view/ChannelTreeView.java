@@ -32,6 +32,28 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         return contextMenu;
     }
 
+    private static ContextMenu addContextMenuCategory(Category item) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItem1 = new MenuItem("- add category");
+        MenuItem menuItem2 = new MenuItem("- edit category");
+        MenuItem menuItem3 = new MenuItem("- add channel");
+        contextMenu.getItems().add(menuItem1);
+        contextMenu.getItems().add(menuItem2);
+        contextMenu.getItems().add(menuItem3);
+
+        menuItem1.setOnAction((event) -> {
+            StageManager.showCreateCategoryScreen();
+        });
+        menuItem2.setOnAction((event) -> {
+            StageManager.showEditCategoryScreen(item);
+        });
+        menuItem3.setOnAction((event) -> {
+            StageManager.showCreateChannelScreen(item);
+        });
+
+        return contextMenu;
+    }
+
     @Override
     public TreeCell<Object> call(TreeView<Object> param) {
         return new ChannelTreeCell();
@@ -40,10 +62,11 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
     private static class ChannelTreeCell extends TreeCell<Object> {
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
+            this.getStyleClass().remove("newMessage");
             if (!empty) {
-                this.getStyleClass().remove("newMessage");
                 if (item instanceof Category) {
                     this.setText("#" + ((Category) item).getName());
+                    this.setContextMenu(addContextMenuCategory((Category) item));
                 }
                 if (item instanceof Channel) {
                     this.setText(((Channel) item).getName());
@@ -53,8 +76,8 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                     }
                 }
             } else {
-                this.getStyleClass().remove("newMessage");
                 this.setText(null);
+                this.setContextMenu(null);
             }
         }
     }
