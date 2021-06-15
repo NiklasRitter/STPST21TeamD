@@ -12,6 +12,8 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -30,10 +32,7 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
@@ -87,11 +86,11 @@ public class ServerScreenTest extends ApplicationTest {
 
     @BeforeClass
     public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
+//        System.setProperty("testfx.robot", "glass");
+//        System.setProperty("testfx.headless", "true");
+//        System.setProperty("prism.order", "sw");
+//        System.setProperty("prism.text", "t2k");
+//        System.setProperty("java.awt.headless", "true");
     }
 
     @Override
@@ -543,6 +542,58 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
         Assert.assertEquals("Test Message" + emoji.getText(), lvTextChat.getItems().get(0).getText());
     }
+
+    @Test
+    public void createPrivilegedChannelTest() {
+
+        initUserListView();
+        initChannelListView();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        WaitForAsyncUtils.waitForFxEvents();
+        TreeItem<Object> treeRoot = tvServerChannels.getRoot();
+        Category categoryOne = (Category) treeRoot.getChildren().get(0).getValue();
+
+        Platform.runLater(() -> {
+            StageManager.showCreateChannelScreen(categoryOne);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TextField textField = lookup("#tfChannelName").query();
+        textField.setText("testChannel");
+        Assert.assertEquals(textField.getText(), "testChannel");
+
+        CheckBox checkBoxPrivileged = lookup("#checkBoxPrivileged").query();
+        clickOn(checkBoxPrivileged);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        VBox vBoxMemberNameAndCheckBox = lookup("#vBoxMemberNameAndCheckBox").query();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        HBox hBoxPlaceHolder = (HBox) vBoxMemberNameAndCheckBox.getChildren().get(0);
+        VBox vBoxCheckBox = (VBox) hBoxPlaceHolder.getChildren().get(1);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        CheckBox checkBoxPrivilegedMember = (CheckBox) vBoxCheckBox.getChildren().get(0);
+        clickOn(checkBoxPrivilegedMember);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Button btnCreate = lookup("#btnCreateChannel").query();
+        Assert.assertEquals(btnCreate.getText(), "Create");
+        clickOn(btnCreate);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(stage.getTitle(), "Server");
+        
+        clickOn(tvServerChannels);
+        for (int i = 0; i < categoryOne.getChannels().size(); i++) {
+            System.out.println("Channel names: " + categoryOne.getChannels().get(i).getName());
+        }
+
+    }
+
 
     @Test
     public void getCategoryChannelsFailureTest() {

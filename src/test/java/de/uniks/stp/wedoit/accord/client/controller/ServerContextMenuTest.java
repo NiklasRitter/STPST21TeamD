@@ -8,10 +8,9 @@ import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -384,6 +383,7 @@ public class ServerContextMenuTest extends ApplicationTest {
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
+
         clickOn("#btnCreateChannel");
 
         JsonArray members = Json.createArrayBuilder().add(server.getMembers().get(0).getId()).build();
@@ -398,10 +398,14 @@ public class ServerContextMenuTest extends ApplicationTest {
                 newChannel = channel;
             }
         }
+
+        WaitForAsyncUtils.waitForFxEvents();
+
         Assert.assertNotNull(newChannel);
         Assert.assertEquals(newChannel.getName(), "testChannel");
         Assert.assertEquals(newChannel.getMembers().get(0).getId(), server.getMembers().get(0).getId());
         Assert.assertFalse(newChannel.isRead());
+
     }
 
     @Test

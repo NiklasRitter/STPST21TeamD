@@ -19,7 +19,7 @@ public class MemberListSubViewController implements Controller {
     private final Controller controller;
     private HBox hBoxPlaceHolder;
     private VBox vBoxMemberName, vBoxCheckBox;
-    private CheckBox checkBox;
+    private CheckBox checkBoxPrivilegedMember;
     private Boolean isPrivilegedUser;
 
     public MemberListSubViewController(User user, Parent view, Controller controller, Boolean isPrivilegedUser) {
@@ -35,11 +35,11 @@ public class MemberListSubViewController implements Controller {
         this.vBoxMemberName = (VBox) this.view.lookup("#vBoxMemberName");
         this.vBoxCheckBox = (VBox) this.view.lookup("#vBoxCheckBox");
 
-        this.checkBox = new CheckBox();
-        this.checkBox.setSelected(isPrivilegedUser);
-        this.checkBox.setOnAction(this::checkBoxOnClick);
+        this.checkBoxPrivilegedMember = new CheckBox();
+        this.checkBoxPrivilegedMember.setSelected(isPrivilegedUser);
+        this.checkBoxPrivilegedMember.setOnAction(this::checkBoxOnClick);
         this.vBoxMemberName.getChildren().add(new Label(user.getName()));
-        this.vBoxCheckBox.getChildren().add(checkBox);
+        this.vBoxCheckBox.getChildren().add(checkBoxPrivilegedMember);
     }
 
     /**
@@ -50,16 +50,16 @@ public class MemberListSubViewController implements Controller {
     private void checkBoxOnClick(ActionEvent actionEvent) {
         if (controller.getClass().equals(CreateChannelScreenController.class)) {
             CreateChannelScreenController createChannelScreenController = (CreateChannelScreenController) controller;
-            if (checkBox.isSelected()) {
+            if (checkBoxPrivilegedMember.isSelected()) {
                 createChannelScreenController.addToUserList(user);
-            } else if (!checkBox.isSelected()) {
+            } else if (!checkBoxPrivilegedMember.isSelected()) {
                 createChannelScreenController.removeFromUserList(user);
             }
         } else if (controller.getClass().equals(EditChannelScreenController.class)) {
             EditChannelScreenController editChannelScreenController = (EditChannelScreenController) controller;
-            if (checkBox.isSelected()) {
+            if (checkBoxPrivilegedMember.isSelected()) {
                 editChannelScreenController.addToUserList(user);
-            } else if (!checkBox.isSelected()) {
+            } else if (!checkBoxPrivilegedMember.isSelected()) {
                 editChannelScreenController.removeFromUserList(user);
             }
         }
@@ -67,6 +67,6 @@ public class MemberListSubViewController implements Controller {
 
     @Override
     public void stop() {
-        this.checkBox.setOnAction(null);
+        this.checkBoxPrivilegedMember.setOnAction(null);
     }
 }
