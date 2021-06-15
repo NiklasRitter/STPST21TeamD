@@ -1,10 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Platform;
@@ -384,9 +381,41 @@ public class ServerContextMenuTest extends ApplicationTest {
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
 
-        clickOn("#btnCreateChannel");
+        CheckBox checkBoxPrivileged = lookup("#checkBoxPrivileged").query();
+        clickOn(checkBoxPrivileged);
+        WaitForAsyncUtils.waitForFxEvents();
 
-        JsonArray members = Json.createArrayBuilder().add(server.getMembers().get(0).getId()).build();
+        VBox vBoxMemberNameAndCheckBox = lookup("#vBoxMemberNameAndCheckBox").query();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        HBox hBoxPlaceHolder = (HBox) vBoxMemberNameAndCheckBox.getChildren().get(0);
+        VBox vBoxLblMemberNames = (VBox) hBoxPlaceHolder.getChildren().get(0);
+        VBox vBoxCheckBox = (VBox) hBoxPlaceHolder.getChildren().get(1);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblMemberName = (Label) vBoxLblMemberNames.getChildren().get(0);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        CheckBox checkBoxPrivilegedMember = (CheckBox) vBoxCheckBox.getChildren().get(0);
+        clickOn(checkBoxPrivilegedMember);
+
+        String memberId = "";
+        for (User member : server.getMembers()) {
+            if (member.getName().equals(lblMemberName.getText())) {
+                memberId = member.getId();
+            }
+        }
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Button btnCreate = lookup("#btnCreateChannel").query();
+        Assert.assertEquals(btnCreate.getText(), "Create");
+        clickOn(btnCreate);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(stage.getTitle(), "Server");
+
+        JsonArray members = Json.createArrayBuilder().add(memberId).build();
         JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "text", true, members);
         mockCreateChannelRest(json);
 
@@ -404,6 +433,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Assert.assertNotNull(newChannel);
         Assert.assertEquals(newChannel.getName(), "testChannel");
         Assert.assertEquals(newChannel.getMembers().get(0).getId(), server.getMembers().get(0).getId());
+        Assert.assertEquals(newChannel.getMembers().get(0).getName(), lblMemberName.getText());
         Assert.assertFalse(newChannel.isRead());
 
     }
@@ -447,7 +477,6 @@ public class ServerContextMenuTest extends ApplicationTest {
         Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Save");
 
-
         TextField textField = lookup("#tfChannelName").query();
         Assert.assertEquals(textField.getText(), channel.getName());
         textField.setText("channelTest");
@@ -471,29 +500,55 @@ public class ServerContextMenuTest extends ApplicationTest {
         Channel channel = new Channel().setId("54321").setName("test");
         channel.setCategory(category);
         server.withCategories(category);
+
         Platform.runLater(() -> {
             StageManager.showEditChannelScreen(channel);
         });
         WaitForAsyncUtils.waitForFxEvents();
+
         Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Save");
 
         TextField textField = lookup("#tfChannelName").query();
-        CheckBox checkBox = lookup("#checkBoxPrivileged").query();
         Assert.assertEquals(textField.getText(), channel.getName());
         textField.setText("channelTest");
-        checkBox.setSelected(true);
+
+        CheckBox checkBoxPrivileged = lookup("#checkBoxPrivileged").query();
+        clickOn(checkBoxPrivileged);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        VBox vBoxMemberNameAndCheckBox = lookup("#vBoxMemberNameAndCheckBox").query();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        HBox hBoxPlaceHolder = (HBox) vBoxMemberNameAndCheckBox.getChildren().get(0);
+        VBox vBoxLblMemberNames = (VBox) hBoxPlaceHolder.getChildren().get(0);
+        VBox vBoxCheckBox = (VBox) hBoxPlaceHolder.getChildren().get(1);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblMemberName = (Label) vBoxLblMemberNames.getChildren().get(0);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        CheckBox checkBoxPrivilegedMember = (CheckBox) vBoxCheckBox.getChildren().get(0);
+        clickOn(checkBoxPrivilegedMember);
+
+        String memberId = "";
+        for (User member : server.getMembers()) {
+            if (member.getName().equals(lblMemberName.getText())) {
+                memberId = member.getId();
+            }
+        }
+
         WaitForAsyncUtils.waitForFxEvents();
         clickOn("#btnSave");
 
-        JsonArray members = Json.createArrayBuilder().add(server.getMembers().get(0).getId()).build();
+        JsonArray members = Json.createArrayBuilder().add(memberId).build();
         JsonObject json = buildCreateChannel(category.getId(), channel.getId(), textField.getText(), "text", true, members);
         mockUpdateChannelRest(json);
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(channel.getName(), "channelTest");
         Assert.assertTrue(channel.isPrivileged());
-        Assert.assertEquals(channel.getMembers().get(0).getId(), server.getMembers().get(0).getId());
+        Assert.assertEquals(channel.getMembers().get(0).getId(), memberId);
 
     }
 

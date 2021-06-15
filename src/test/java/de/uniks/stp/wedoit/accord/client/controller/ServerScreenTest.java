@@ -86,11 +86,11 @@ public class ServerScreenTest extends ApplicationTest {
 
     @BeforeClass
     public static void before() {
-//        System.setProperty("testfx.robot", "glass");
-//        System.setProperty("testfx.headless", "true");
-//        System.setProperty("prism.order", "sw");
-//        System.setProperty("prism.text", "t2k");
-//        System.setProperty("java.awt.headless", "true");
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
     }
 
     @Override
@@ -544,58 +544,6 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void createPrivilegedChannelTest() {
-
-        initUserListView();
-        initChannelListView();
-
-        WaitForAsyncUtils.waitForFxEvents();
-        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
-        WaitForAsyncUtils.waitForFxEvents();
-        TreeItem<Object> treeRoot = tvServerChannels.getRoot();
-        Category categoryOne = (Category) treeRoot.getChildren().get(0).getValue();
-
-        Platform.runLater(() -> {
-            StageManager.showCreateChannelScreen(categoryOne);
-        });
-        WaitForAsyncUtils.waitForFxEvents();
-
-        TextField textField = lookup("#tfChannelName").query();
-        textField.setText("testChannel");
-        Assert.assertEquals(textField.getText(), "testChannel");
-
-        CheckBox checkBoxPrivileged = lookup("#checkBoxPrivileged").query();
-        clickOn(checkBoxPrivileged);
-        WaitForAsyncUtils.waitForFxEvents();
-
-        VBox vBoxMemberNameAndCheckBox = lookup("#vBoxMemberNameAndCheckBox").query();
-        WaitForAsyncUtils.waitForFxEvents();
-
-        WaitForAsyncUtils.waitForFxEvents();
-        HBox hBoxPlaceHolder = (HBox) vBoxMemberNameAndCheckBox.getChildren().get(0);
-        VBox vBoxCheckBox = (VBox) hBoxPlaceHolder.getChildren().get(1);
-
-        WaitForAsyncUtils.waitForFxEvents();
-        CheckBox checkBoxPrivilegedMember = (CheckBox) vBoxCheckBox.getChildren().get(0);
-        clickOn(checkBoxPrivilegedMember);
-
-        WaitForAsyncUtils.waitForFxEvents();
-        Button btnCreate = lookup("#btnCreateChannel").query();
-        Assert.assertEquals(btnCreate.getText(), "Create");
-        clickOn(btnCreate);
-
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(stage.getTitle(), "Server");
-
-        clickOn(tvServerChannels);
-        for (int i = 0; i < categoryOne.getChannels().size(); i++) {
-            System.out.println("Channel names: " + categoryOne.getChannels().get(i).getName());
-        }
-
-    }
-
-
-    @Test
     public void getCategoryChannelsFailureTest() {
         //init channel list and select first channel
         initUserListView();
@@ -904,6 +852,12 @@ public class ServerScreenTest extends ApplicationTest {
         return Json.createObjectBuilder().add("action", "channelCreated").add("data",
                 Json.createObjectBuilder().add("id", "ch1").add("name", "TestChannel").
                         add("type", "text").add("privileged", false).add("category", "cat1").add("members", Json.createArrayBuilder())).build();
+    }
+
+    public JsonObject webSocketCallbackPrivilegedChannelCreated() {
+        return Json.createObjectBuilder().add("action", "channelCreated").add("data",
+                Json.createObjectBuilder().add("id", "ch1").add("name", "TestChannel").
+                        add("type", "text").add("privileged", true).add("category", "categoryOne").add("members", Json.createArrayBuilder())).build();
     }
 
     public JsonObject webSocketCallbackChannelUpdated() {
