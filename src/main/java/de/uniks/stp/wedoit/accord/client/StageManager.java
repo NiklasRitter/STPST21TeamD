@@ -248,7 +248,6 @@ public class StageManager extends Application {
 
                 updateDarkmode();
 
-
                 //init controller
                 GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
                 gameResultScreenController.init();
@@ -306,7 +305,6 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
-
 
             CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, model.getLocalUser(), editor);
             createCategoryScreenController.init();
@@ -544,6 +542,12 @@ public class StageManager extends Application {
                 popupScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
+            if (gameScene != null) {
+                gameScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
+                gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
+            }
         } else {
             if (scene != null) {
                 scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
@@ -555,6 +559,12 @@ public class StageManager extends Application {
                 popupScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
                 popupScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
+            }
+            if (gameScene != null) {
+                gameScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
+                gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
         }
