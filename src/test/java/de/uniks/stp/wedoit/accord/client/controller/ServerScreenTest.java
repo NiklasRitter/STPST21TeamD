@@ -584,15 +584,42 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(btnCreate.getText(), "Create");
         clickOn(btnCreate);
 
+        JsonObject json = buildCreateCategory(categoryOne.getId(), categoryOne.getName(), this.server.getId());
+        mockCreateCategoryRest(json);
+
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(stage.getTitle(), "Server");
-        
+
+
         clickOn(tvServerChannels);
         for (int i = 0; i < categoryOne.getChannels().size(); i++) {
             System.out.println("Channel names: " + categoryOne.getChannels().get(i).getName());
         }
 
     }
+
+    public JsonObject buildCreateCategory(String categoryId, String categoryName, String serverId) {
+        return Json.createObjectBuilder().add("status", "success")
+                .add("message", "")
+                .add("data", Json.createObjectBuilder()
+                        .add("id", categoryId)
+                        .add("name", categoryName)
+                        .add("server", serverId)
+                ).build();
+    }
+
+    public void mockCreateCategoryRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).createCategory(anyString(), anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+
+    }
+
+
 
 
     @Test
