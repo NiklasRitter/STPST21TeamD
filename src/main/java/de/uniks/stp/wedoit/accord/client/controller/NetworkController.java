@@ -1,8 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -163,13 +163,11 @@ public class NetworkController {
      */
     public NetworkController handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
-
         PrivateMessage message = new PrivateMessage();
         message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
         message.setText(jsonObject.getString(MESSAGE));
         message.setFrom(jsonObject.getString(FROM));
         message.setTo(jsonObject.getString(TO));
-
         editor.addNewPrivateMessage(message);
         return this;
     }
@@ -445,11 +443,10 @@ public class NetworkController {
                 String serverId = createCategoryIdAnswer.getString(SERVER);
                 JsonArray channels = createCategoryIdAnswer.getJsonArray(JSON.CHANNELS);
 
-                if(category.getId().equals(categoryId)) {
+                if (category.getId().equals(categoryId)) {
                     Category newCategory = editor.haveCategory(categoryId, categoryName, server);
                     controller.handleEditCategory(newCategory);
-                }
-                else {
+                } else {
                     controller.handleEditCategory(null);
                 }
             } else {
