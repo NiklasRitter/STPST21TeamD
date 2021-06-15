@@ -238,8 +238,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAMEACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(StageManager.getPopupStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors", StageManager.getPopupStage().getTitle());
+        Assert.assertTrue(StageManager.getGameStage().isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", StageManager.getGameStage().getTitle());
 
 
         mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + ROCK));
@@ -286,8 +286,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(gameAccept));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(StageManager.getPopupStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors", StageManager.getPopupStage().getTitle());
+        Assert.assertTrue(StageManager.getGameStage().isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", StageManager.getGameStage().getTitle());
 
     }
 
