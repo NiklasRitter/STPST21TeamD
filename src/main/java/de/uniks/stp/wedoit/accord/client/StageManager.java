@@ -363,10 +363,10 @@ public class StageManager extends Application {
             controllerMap.put("emojiScreenController", emojiScreenController);
 
             //display
-            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
-            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
             emojiPickerStage.setTitle("Emoji Picker");
             emojiPickerStage.setScene(emojiPickerScene);
+            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
             emojiPickerStage.setResizable(false);
             emojiPickerStage.show();
 
@@ -394,7 +394,7 @@ public class StageManager extends Application {
             popupStage.setTitle("Create Channel");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
-            popupStage.setResizable(false);
+            popupStage.setResizable(true);
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing CreateChannelScreen");
@@ -419,7 +419,7 @@ public class StageManager extends Application {
             popupStage.setTitle("Edit Channel");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
-            popupStage.setResizable(false);
+            popupStage.setResizable(true);
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing EditChannelScreen");
@@ -614,10 +614,10 @@ public class StageManager extends Application {
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
-        stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
 
         popupStage = new Stage();
-        popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         popupStage.initOwner(stage);
 
         gameStage = new Stage();
