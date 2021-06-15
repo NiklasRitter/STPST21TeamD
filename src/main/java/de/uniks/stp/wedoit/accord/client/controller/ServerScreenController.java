@@ -9,7 +9,9 @@ import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
@@ -129,7 +131,7 @@ public class ServerScreenController implements Controller {
         // load categories after get users of a server
         // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
-
+        this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         addActionListener();
 
         initTooltips();
@@ -351,6 +353,7 @@ public class ServerScreenController implements Controller {
             for (Channel channel : channelList) {
                 channelMap.put(channel.getId(), channel);
                 channel.listeners().addPropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
+                channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
 
                 TreeItem<Object> channelItem = new TreeItem<>(channel);
                 categoryItem.getChildren().add(channelItem);
@@ -424,7 +427,7 @@ public class ServerScreenController implements Controller {
 
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
-        this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.userListViewListener);
+        this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.userListViewListener);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
     }
 
