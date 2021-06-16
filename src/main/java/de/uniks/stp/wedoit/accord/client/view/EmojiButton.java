@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.controller;
+package de.uniks.stp.wedoit.accord.client.view;
 
 import javafx.scene.control.Button;
 
