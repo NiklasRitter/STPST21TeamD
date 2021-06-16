@@ -633,7 +633,7 @@ public class StageManager extends Application {
         popupStage.initOwner(stage);
 
         gameStage = new Stage();
-        gameStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        gameStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         gameStage.initOwner(stage);
 
         emojiPickerStage = new Stage();
