@@ -532,12 +532,26 @@ public class Editor {
         return clipboard.setContent(content);
     }
 
+    /**
+     * formats a message with the correct date in the format
+     * <p>
+     * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     * @param message message which should formatted
+     * @return the formatted message as string
+     */
     public String getMessageFormatted(PrivateMessage message) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
 
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 
+    /**
+     * formats a message with the correct date in the format
+     * <p>
+     * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     * @param message message which should formatted
+     * @return the formatted message as string
+     */
     public String getMessageFormatted(Message message) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
 
@@ -553,12 +567,22 @@ public class Editor {
         } else return item.getText();
     }
 
+    /**
+     * checks whether a message is a quote
+     * @param item item as message
+     * @return boolean whether a item is a quote
+     */
     public boolean isQuote(PrivateMessage item) {
         return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
                 && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
                 && (item.getText()).startsWith(QUOTE_PREFIX);
     }
 
+    /**
+     * checks whether a message is a quote
+     * @param item item as message
+     * @return boolean whether a item is a quote
+     */
     public boolean isQuote(Message item) {
         return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
                 && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())

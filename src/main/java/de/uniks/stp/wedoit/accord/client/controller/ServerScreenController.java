@@ -262,13 +262,20 @@ public class ServerScreenController implements Controller {
         this.chatWSCallback = null;
         this.serverWSCallback = null;
         this.newMessagesListener = null;
+        for (MenuItem item: messageContextMenu.getItems()) {
+            item.setOnAction(null);
+        }
 
         editor.setCurrentServer(null);
         deleteCurrentServer();
+
     }
 
     // Additional methods
 
+    /**
+     * adds a context menu for a message
+     */
     private void addMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
         messageContextMenu = new ContextMenu();
@@ -279,6 +286,11 @@ public class ServerScreenController implements Controller {
         });
     }
 
+    /**
+     * handles when the context menu of the text chat is clicked
+     * @param menu the menu which is clicked like "quote"
+     * @param message message which is selected in the text chat
+     */
     public void handleContextMenuClicked(String menu, Message message) {
         lvTextChat.setContextMenu(null);
         lvTextChat.getSelectionModel().select(null);
@@ -294,10 +306,17 @@ public class ServerScreenController implements Controller {
         }
     }
 
+    /**
+     * This method cancels a quote
+     * @param actionEvent such as when a button is fired
+     */
     private void cancelQuote(ActionEvent actionEvent) {
         removeQuote();
     }
 
+    /**
+     * removes a quote from the view
+     */
     public void removeQuote() {
         lblQuote.setText("");
         quoteVisible.getChildren().clear();
@@ -501,6 +520,8 @@ public class ServerScreenController implements Controller {
 
     /**
      * Checks if "Load more..." is clicked and if yes, then it loads new messages
+     *
+     * shows a context menu for a message if the message is not a quote and is clicked with primary mouse button
      *
      * @param mouseEvent
      */
