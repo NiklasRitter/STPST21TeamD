@@ -108,6 +108,9 @@ public class PrivateChatsScreenController implements Controller {
 
         this.initOnlineUsersList();
 
+        this.tfPrivateChat.setPromptText("select a User");
+        this.tfPrivateChat.setEditable(false);
+        this.btnPlay.setVisible(false);
     }
 
 
@@ -251,12 +254,20 @@ public class PrivateChatsScreenController implements Controller {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.remove(user);
                 lwOnlineUsers.refresh();
+                if (user.getName().equals(this.lblSelectedUser.getText())) {
+                    this.tfPrivateChat.setPromptText(user.getName() + " is offline");
+                    this.tfPrivateChat.setEditable(false);
+                }
             });
         } else {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
                 lwOnlineUsers.refresh();
+                if (user.getName().equals(this.lblSelectedUser.getText())) {
+                    this.tfPrivateChat.setPromptText("your message");
+                    this.tfPrivateChat.setEditable(true);
+                }
             });
         }
     }
@@ -310,6 +321,9 @@ public class PrivateChatsScreenController implements Controller {
         user.setChatRead(true);
         lwOnlineUsers.refresh();
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
+        this.tfPrivateChat.setPromptText("your message");
+        this.tfPrivateChat.setEditable(true);
+        this.btnPlay.setVisible(true);
 
         // load list view
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
