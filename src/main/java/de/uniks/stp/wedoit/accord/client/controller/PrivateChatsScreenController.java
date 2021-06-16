@@ -293,6 +293,7 @@ public class PrivateChatsScreenController implements Controller {
             newUser.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
             newUser.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
             this.availableUsers.add(newUser);
+            if(newUser.getPrivateChat() == null) newUser.setChatRead(true);
             Platform.runLater(() -> {
                 this.onlineUserObservableList.add(newUser);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
