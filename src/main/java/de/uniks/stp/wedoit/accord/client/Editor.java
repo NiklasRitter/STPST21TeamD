@@ -334,6 +334,9 @@ public class Editor {
      * @param userKey userKey of the user who is logged out
      */
     public void logoutUser(String userKey) {
+        accordClient.getOptions().setRememberMe(false);
+        accordClient.getLocalUser().setPassword("");
+        accordClient.getLocalUser().setName("");
         if (userKey != null && !userKey.isEmpty()) {
             networkController.stop();
             networkController.logoutUser(userKey);
@@ -516,8 +519,7 @@ public class Editor {
 
     public void automaticLogin(AccordClient accordClient) {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
-            networkController.automaticLoginUser(accordClient.getLocalUser().getName(),
-                    accordClient.getLocalUser().getPassword(), this);
+            networkController.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
             StageManager.getStage().show();
             StageManager.showLoginScreen();
@@ -525,11 +527,40 @@ public class Editor {
     }
 
     public void handleAutomaticLogin(boolean success) {
-        StageManager.getStage().show();
         if (success) {
-            StageManager.showMainScreen();
+            Platform.runLater(StageManager::showMainScreen);
         } else {
-            StageManager.showLoginScreen();
+            Platform.runLater(StageManager::showLoginScreen);
         }
+        Platform.runLater(() -> {
+            StageManager.getStage().show();
+        });
     }
+
+    /*
+    TODO: Add encryption for saved password and username
+    public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        KeySpec spec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
+                Base64.getDecoder().decode(StageManager.getResourceManager().getOrCreateInitializationVector()), 65536, 256);
+        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
+    }
+
+    public IvParameterSpec getOrCreateIvParameterSpec() throws NoSuchAlgorithmException {
+        return new IvParameterSpec(Base64.getDecoder().decode(StageManager.getResourceManager().getOrCreateInitializationVector()));
+    }
+
+    public String encryptData(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, createEncryptionKey(), getOrCreateIvParameterSpec());
+        byte[] cipherText = cipher.doFinal(Base64.getDecoder().decode(data));
+        return Base64.getEncoder().encodeToString(cipherText);
+    }
+
+    public String decryptData(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, createEncryptionKey(), getOrCreateIvParameterSpec());
+        byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(data));
+        return Base64.getEncoder().encodeToString(plainText);
+    }*/
 }
