@@ -8,7 +8,9 @@ import org.junit.Test;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class EditorTest {
     private Channel channel;
     private List<String> userList;
     private Message message;
+    private PrivateMessage privateMessage;
     private Invitation invitation;
 
     @Before
@@ -35,7 +38,8 @@ public class EditorTest {
         channel = new Channel();
         category = new Category();
         userList = new LinkedList<>();
-        message = new Message();
+        message = new Message().setId("009821").setText("Hello World!").setFrom(user.getName());
+        privateMessage = new PrivateMessage().setId("10203040").setText("This is a private message!").setFrom(user.getName());
         invitation = new Invitation();
     }
 
@@ -162,7 +166,6 @@ public class EditorTest {
 
     @Test
     public void testUpdateChannelMessages() {
-        message = new Message().setId("009821").setText("Hello World!").setFrom(user.getName());
         List<Message> messages = new ArrayList<>();
         messages.add(message);
 
@@ -206,6 +209,13 @@ public class EditorTest {
 
         Assert.assertNotEquals(invitation.getServer(), server);
         Assert.assertFalse(server.getInvitations().contains(invitation));
+    }
+
+    @Test
+    public void testGetMessageFormatted() {
+        String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(privateMessage.getTimestamp()));
+        Assert.assertEquals(editor.getMessageFormatted(privateMessage), ("[" + time + "] " + privateMessage.getFrom() + ": " + privateMessage.getText()));
+        Assert.assertNotNull(editor.getMessageFormatted(privateMessage));
     }
 
 }

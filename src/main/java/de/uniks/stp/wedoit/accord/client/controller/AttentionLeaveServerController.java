@@ -36,6 +36,7 @@ public class AttentionLeaveServerController implements Controller {
 
     private void btnLeaveOnClick(ActionEvent actionEvent) {
         this.editor.leaveServer(this.editor.getLocalUser().getUserKey(), this.server);
+        this.editor.getLocalUser().withoutServers(this.server);
         this.server.setLocalUser(null);
     }
 
