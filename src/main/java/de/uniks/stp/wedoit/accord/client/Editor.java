@@ -321,12 +321,19 @@ public class Editor {
         db.save(message);
     }
 
-    public List<User> getOpenChats(){
-        return new ArrayList<>();
+    public List<User> loadOldChats(){
+        List<User> offlineUser = new ArrayList<>();
+        for(String s: db.getOpenChats(getLocalUser().getName())){
+            if(getOnlineUsers().stream().noneMatch((u)-> u.getName().equals(s))){
+                offlineUser.add(new User().setName(s).setChatRead(true));
+            }
+        }
+
+        return offlineUser;
     }
 
-    public void loadOldMessages(){
-
+    public List<PrivateMessage> loadOldMessages(String user){
+        return db.getMessagesBetweenUsers(getLocalUser().getName(),user);
     }
 
 

@@ -25,6 +25,7 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -226,13 +227,20 @@ public class PrivateChatsScreenController implements Controller {
         // load list view
         usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
         lwOnlineUsers.setCellFactory(usersListViewCellFactory);
-        availableUsers = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
+        availableUsers = localUser.getUsers().stream().sorted((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed())
                 .collect(Collectors.toList());
 
         // Add listener for the loaded listView
+        availableUsers.forEach(u -> {
+            if(u.getPrivateChat() == null){
+                u.setChatRead(true);
+            }
+
+        });
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
         this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
 
+        this.onlineUserObservableList.addAll(editor.loadOldChats());
         Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
 
         for (User user : availableUsers) {
@@ -251,12 +259,15 @@ public class PrivateChatsScreenController implements Controller {
         if (!user.isOnlineStatus()) {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.remove(user);
+                if(editor.loadOldChats().stream().anyMatch((u)->u.getName().equals(user.getName()))) this.onlineUserObservableList.add(user);
+                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
             });
-        } else {
+        } else if(user.isOnlineStatus()) {
             Platform.runLater(() -> {
+                this.onlineUserObservableList.remove(user);
                 this.onlineUserObservableList.add(user);
-                this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
+                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
             });
         }
@@ -284,8 +295,7 @@ public class PrivateChatsScreenController implements Controller {
             this.availableUsers.add(newUser);
             Platform.runLater(() -> {
                 this.onlineUserObservableList.add(newUser);
-                this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
-                this.lwOnlineUsers.refresh();
+                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
             });
         }
     }
@@ -315,9 +325,7 @@ public class PrivateChatsScreenController implements Controller {
         // load list view
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
-        editor.loadOldMessages();
-        this.privateMessageObservableList = FXCollections.observableList(currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
-                .collect(Collectors.toList()));
+        this.privateMessageObservableList = FXCollections.observableList(editor.loadOldMessages(user.getName()));
 
         this.lwPrivateChat.setItems(privateMessageObservableList);
 

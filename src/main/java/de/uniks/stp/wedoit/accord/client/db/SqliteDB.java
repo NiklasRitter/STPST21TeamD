@@ -1,10 +1,13 @@
 package de.uniks.stp.wedoit.accord.client.db;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import de.uniks.stp.wedoit.accord.client.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SqliteDB {
 
@@ -23,10 +26,10 @@ public class SqliteDB {
                     + "	text varchar(255) NOT NULL,\n"
                     + " times long NOT NULL,\n"
                     + "	sender varchar(255) NOT NULL,\n"
-                    + " reciever varchar(255) NOT NULL "
+                    + " receiver varchar(255) NOT NULL "
                     + ");"
             );
-
+            //reciever
             c.close();
 
 
@@ -40,10 +43,12 @@ public class SqliteDB {
         try(Connection conn = DriverManager.getConnection(url + username + ".sqlite");
             PreparedStatement prep = conn.prepareStatement("INSERT INTO messages VALUES(NULL,?,?,?,?);")){
 
-            prep.setLong(1, message.getTimestamp());
-            prep.setString(2, message.getText());
+            prep.setString(1, message.getText());
+            prep.setLong(2, message.getTimestamp());
             prep.setString(3, message.getFrom());
             prep.setString(4, message.getTo());
+
+
             prep.execute();
 
         }catch (Exception e){
@@ -54,7 +59,7 @@ public class SqliteDB {
     public List<PrivateMessage> getMessagesBetweenUsers(String user1, String user2){
         List<PrivateMessage> messages = new ArrayList<>();
         try(Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-        PreparedStatement prep = conn.prepareStatement("SELECT * FROM " + username + " WHERE (sender = ? AND reciever = ?) OR (sender = ? AND reciever = ?) ORDER BY times DESC")){
+        PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY times")){
             prep.setString(1,user1);
             prep.setString(2,user2);
             prep.setString(3,user2);
@@ -64,10 +69,11 @@ public class SqliteDB {
 
             while(rs.next()){
                 PrivateMessage msg = new PrivateMessage();
+                msg.setText(rs.getString("text"));
                 msg.setTimestamp(rs.getLong("times"));
                 msg.setTo(rs.getString("receiver"));
                 msg.setFrom(rs.getString("sender"));
-                msg.setText(rs.getString("text"));
+
                 messages.add(msg);
             }
 
@@ -75,7 +81,26 @@ public class SqliteDB {
             e.printStackTrace();
         }
         return messages;
+    }
 
+    public List<String> getOpenChats(String username){
+        Set<String> users = new HashSet<>();
+        try(Connection conn = DriverManager.getConnection(url + username + ".sqlite")){
+            PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE sender = ? OR receiver = ? ORDER BY id;");
+
+            prep.setString(1,username);
+            prep.setString(2,username);
+            ResultSet rs = prep.executeQuery();
+
+            while(rs.next()){
+                if(rs.getString("sender").equals(username)) users.add(rs.getString("receiver"));
+                else users.add(rs.getString("sender"));
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ArrayList<>(users);
     }
 
 }
