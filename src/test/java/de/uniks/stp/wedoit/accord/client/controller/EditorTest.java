@@ -1,12 +1,12 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-
-import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class EditorTest {
 
@@ -20,15 +20,15 @@ public class EditorTest {
         editor = new Editor();
         editor.haveAccordClient();
         editor.haveLocalUser();
-        localUser = new LocalUser();
         server = new Server();
-        user = new User();
+        localUser = new LocalUser().setName("Amir").setId("testKey123");
+        user = new User().setName("Gelareh").setId("021");
     }
 
     @Test
     public void testHaveLocalUser() {
 
-        localUser = editor.haveLocalUser("Amir", "testKey123");
+        localUser = editor.haveLocalUser(localUser.getName(), localUser.getId());
 
         Assert.assertEquals(editor.getLocalUser().getId(), localUser.getId());
         Assert.assertEquals(editor.getLocalUser().getUserKey(), "testKey123");
@@ -43,17 +43,28 @@ public class EditorTest {
         Assert.assertNotNull(editor.getCurrentServer());
         Assert.assertEquals(server.getName(), "Accord");
         Assert.assertEquals(server, editor.getCurrentServer());
+        Assert.assertTrue(localUser.getServers().contains(server));
     }
 
     @Test
     public void testHaveUserWithServer() {
-        user = editor.haveUserWithServer("Gelareh", "021", true, server);
+        user = editor.haveUserWithServer(user.getName(), user.getId(), true, server);
 
         Assert.assertEquals(server.getName(), user.getServers().get(0).getName());
         Assert.assertEquals(server.getMembers().get(0).getName(), user.getName());
         Assert.assertTrue(server.getMembers().contains(user));
         Assert.assertTrue(server.getMembers().get(0).isOnlineStatus());
 
+    }
+
+    @Test
+    public void testHaveUser() {
+        localUser = editor.haveUser(user.getId(), user.getName());
+        localUser.withUsers(user);
+
+        Assert.assertEquals(localUser.getUsers().get(0).getName(), user.getName());
+        Assert.assertEquals(localUser.getUsers().get(0).getName(), "Gelareh");
+        Assert.assertTrue(localUser.getUsers().contains(user));
     }
 
 }
