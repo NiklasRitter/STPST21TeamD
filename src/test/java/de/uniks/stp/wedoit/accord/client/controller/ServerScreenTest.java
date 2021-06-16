@@ -8,9 +8,12 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -27,12 +30,9 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.service.query.NodeQuery;
-import org.testfx.service.query.PointQuery;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javax.json.Json;
-import javax.json.JsonObject;
+import javax.json.*;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
@@ -195,6 +195,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(3, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
@@ -232,13 +233,13 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(3, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(1)));
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(2)));
         Assert.assertFalse(listView.getItems().contains(new Server()));
-
 
         mockWebSocket(webSocketJson);
         WaitForAsyncUtils.waitForFxEvents();
@@ -348,6 +349,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(3, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
@@ -439,6 +441,62 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(stage.getTitle(), "Main");
     }
 
+    @Test
+    public void loadMoreMessagesTest() {
+        JsonObject restJson = getServerIdSuccessful();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
+        mockRest(restJson);
+
+        when(res.getBody()).thenReturn(new JsonNode(getCategories().toString()));
+        verify(restMock).getCategories(anyString(), anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> catCallback = callbackArgumentCaptor.getValue();
+        catCallback.completed(res);
+
+        when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
+
+        verify(restMock, atLeastOnce()).getChannels(anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
+        List<Callback<JsonNode>> channelCallbacks = channelsCallbackArgumentCaptor.getAllValues();
+
+        for (Callback<JsonNode> callback : channelCallbacks
+        ) {
+            callback.completed(res);
+        }
+
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#tvServerChannels");
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        when(res.getBody()).thenReturn(new JsonNode(build50Messages(channel).toString()));
+        verify(restMock).getChannelMessages(anyString(), anyString(), anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
+        Callback<JsonNode> channelMessageCallback = callbackArgumentCaptor.getValue();
+        channelMessageCallback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        ObservableList<Message> items = lvTextChat.getItems();
+        Assert.assertEquals(items.size(), 51);
+        Assert.assertEquals(items.get(0).getText(), "Load more...");
+
+        lvTextChat.scrollTo(0);
+        lvTextChat.getSelectionModel().select(0);
+        Bounds bounds = lvTextChat.localToScreen(lvTextChat.getBoundsInLocal());
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn(bounds.getMinX() + 1, bounds.getMinY() + 1);
+
+        when(res.getBody()).thenReturn(new JsonNode(getChannelMessage(channel).toString()));
+        verify(restMock, atLeastOnce()).getChannelMessages(anyString(), anyString(), anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
+        channelMessageCallback = callbackArgumentCaptor.getValue();
+        channelMessageCallback.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        items = lvTextChat.getItems();
+        Assert.assertEquals(items.get(0).getText(), "Hello there!");
+        Assert.assertEquals(items.get(1).getText(), "I am Bob");
+    }
 
     @Test
     public void sendChatMessageTest() {
@@ -796,6 +854,12 @@ public class ServerScreenTest extends ApplicationTest {
                         add("type", "text").add("privileged", false).add("category", "cat1").add("members", Json.createArrayBuilder())).build();
     }
 
+    public JsonObject webSocketCallbackPrivilegedChannelCreated() {
+        return Json.createObjectBuilder().add("action", "channelCreated").add("data",
+                Json.createObjectBuilder().add("id", "ch1").add("name", "TestChannel").
+                        add("type", "text").add("privileged", true).add("category", "categoryOne").add("members", Json.createArrayBuilder())).build();
+    }
+
     public JsonObject webSocketCallbackChannelUpdated() {
         return Json.createObjectBuilder().add("action", "channelUpdated").add("data",
                 Json.createObjectBuilder().add("id", "ch1").add("name", "channelUpdated").
@@ -933,6 +997,22 @@ public class ServerScreenTest extends ApplicationTest {
                 .add(MESSAGES, "Error")
                 .add(DATA, Json.createArrayBuilder())
                 .build();
+    }
+
+    private JsonObject build50Messages(Channel channel) {
+        JsonObjectBuilder json = Json.createObjectBuilder()
+                .add(STATUS, SUCCESS)
+                .add(MESSAGES, "");
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+        for (int i = 1; i < 51; i++) {
+            jsonArray.add(Json.createObjectBuilder()
+                    .add(ID, "m_i_" + i)
+                    .add(CHANNEL, channel.getId())
+                    .add(TIMESTAMP, 1616936874 + i * 10)
+                    .add(FROM, "Bob")
+                    .add(TEXT, String.valueOf(i)));
+        }
+        return json.add(DATA, jsonArray).build();
     }
 
     public JsonObject getTestMessageServerAnswer(JsonObject test_message) {

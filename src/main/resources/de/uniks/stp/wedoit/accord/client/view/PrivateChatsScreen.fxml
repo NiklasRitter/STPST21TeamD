@@ -33,7 +33,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color red="1.0" green="1.0" blue="1.0" />
+                                    <Color blue="1.0" green="1.0" red="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -91,7 +91,7 @@
                               <Font name="System Bold Italic" size="13.0" />
                            </font>
                         </Label>
-                        <Button id="btnPlay" mnemonicParsing="false" text="Play">
+                        <Button id="btnPlay" mnemonicParsing="false" styleClass="styleButton" text="Play">
                            <HBox.margin>
                               <Insets left="70.0" />
                            </HBox.margin>
@@ -99,6 +99,23 @@
                      </children>
                   </HBox>
                   <ListView id="lwPrivateChat" VBox.vgrow="ALWAYS" />
+                  <HBox id="quoteVisible" alignment="CENTER_LEFT">
+                     <children>
+                        <Label id="lblQuote">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
+                           <font>
+                              <Font size="8.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
                   <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                      <children>
                         <TextField id="tfEnterPrivateChat" prefHeight="27.0" promptText="your message" style="-fx-border-color: #3c3f41;" HBox.hgrow="ALWAYS" />

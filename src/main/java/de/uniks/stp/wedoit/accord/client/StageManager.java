@@ -34,7 +34,8 @@ public class StageManager extends Application {
     private static Scene popupScene;
     private static Stage emojiPickerStage;
     private static Scene emojiPickerScene;
-
+    private static Stage gameStage;
+    private static Scene gameScene;
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
      */
@@ -216,9 +217,9 @@ public class StageManager extends Application {
     public static void showGameScreen(User opponent) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
-            popupScene = new Scene(root);
+            gameScene = new Scene(root);
 
-            //updateDarkmode();
+            updateDarkmode();
 
             //init controller
             GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), opponent, editor);
@@ -226,11 +227,12 @@ public class StageManager extends Application {
             controllerMap.put("gameScreenController", gameScreenController);
 
             // display
-            popupStage.setTitle("Rock - Paper - Scissors");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(true);
-            popupStage.show();
+            gameStage.setTitle("Rock - Paper - Scissors");
+            if (gameStage.getStyle() != StageStyle.DECORATED) gameStage.initStyle(StageStyle.DECORATED);
+            gameStage.setScene(gameScene);
+            gameStage.centerOnScreen();
+            gameStage.setResizable(true);
+            gameStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing GameScreen");
             e.printStackTrace();
@@ -238,24 +240,27 @@ public class StageManager extends Application {
     }
 
     public static void showGameResultScreen(User opponent, Boolean isWinner) {
-        if (popupStage.isShowing()) {
-            popupStage.close();
+        if (gameStage.isShowing()) {
+            gameStage.close();
             try {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
-                popupScene = new Scene(root);
+                gameScene = new Scene(root);
 
+                updateDarkmode();
 
                 //init controller
                 GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
                 gameResultScreenController.init();
                 controllerMap.put("GameResultScreenController", gameResultScreenController);
 
-                popupStage.setTitle("Result");
-                if (popupStage.getStyle() != StageStyle.DECORATED) popupStage.initStyle(StageStyle.DECORATED);
-                popupStage.setScene(popupScene);
-                popupStage.centerOnScreen();
-                popupStage.setResizable(false);
-                popupStage.show();
+                gameStage.setTitle("Result");
+                if (gameStage.getStyle() != StageStyle.DECORATED) gameStage.initStyle(StageStyle.DECORATED);
+                gameStage.setScene(gameScene);
+                gameStage.setMinHeight(0);
+                gameStage.setMinWidth(0);
+                gameStage.centerOnScreen();
+                gameStage.setResizable(false);
+                gameStage.show();
 
             } catch (Exception e) {
                 System.err.println("Error on loading GameResultScreen");
@@ -300,7 +305,6 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
-
 
             CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, model.getLocalUser(), editor);
             createCategoryScreenController.init();
@@ -359,10 +363,10 @@ public class StageManager extends Application {
             controllerMap.put("emojiScreenController", emojiScreenController);
 
             //display
-            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
-            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
             emojiPickerStage.setTitle("Emoji Picker");
             emojiPickerStage.setScene(emojiPickerScene);
+            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
             emojiPickerStage.setResizable(false);
             emojiPickerStage.show();
 
@@ -390,7 +394,7 @@ public class StageManager extends Application {
             popupStage.setTitle("Create Channel");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
-            popupStage.setResizable(false);
+            popupStage.setResizable(true);
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing CreateChannelScreen");
@@ -415,7 +419,7 @@ public class StageManager extends Application {
             popupStage.setTitle("Edit Channel");
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
-            popupStage.setResizable(false);
+            popupStage.setResizable(true);
             popupStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing EditChannelScreen");
@@ -510,6 +514,9 @@ public class StageManager extends Application {
         if (emojiPickerStage != null) {
             emojiPickerStage.hide();
         }
+        if (gameStage != null) {
+            gameStage.hide();
+        }
     }
 
     private static void stopController() {
@@ -535,6 +542,12 @@ public class StageManager extends Application {
                 popupScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
+            if (gameScene != null) {
+                gameScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
+                gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
+            }
         } else {
             if (scene != null) {
                 scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
@@ -546,6 +559,12 @@ public class StageManager extends Application {
                 popupScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
                 popupScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
+            }
+            if (gameScene != null) {
+                gameScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
+                gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
         }
@@ -587,15 +606,23 @@ public class StageManager extends Application {
         return emojiPickerStage;
     }
 
+    public static Stage getGameStage() {
+        return gameStage;
+    }
+
 
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
-        stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
 
         popupStage = new Stage();
-        popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         popupStage.initOwner(stage);
+
+        gameStage = new Stage();
+        gameStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        gameStage.initOwner(stage);
 
         emojiPickerStage = new Stage();
         emojiPickerStage.initOwner(stage);

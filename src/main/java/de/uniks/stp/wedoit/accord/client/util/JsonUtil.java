@@ -189,6 +189,12 @@ public class JsonUtil {
         return membersIds;
     }
 
+    /**
+     * Parse given JsonArray to a List of Messages
+     *
+     * @param jsonMessages The JsonArray to parse
+     * @return List of Messages
+     */
     public static List<Message> parseMessageArray(JsonArray jsonMessages) {
         ArrayList<Message> messages = new ArrayList<>();
         for (JsonValue jsonMessage : jsonMessages) {

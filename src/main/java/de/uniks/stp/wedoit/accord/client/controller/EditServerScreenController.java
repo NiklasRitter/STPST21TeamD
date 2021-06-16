@@ -218,9 +218,7 @@ public class EditServerScreenController implements Controller {
      * @param invitationLink invitation link which is responded by the server
      */
     public void handleInvitation(String invitationLink) {
-        tfMaxCountAmountInput.setText("");
-        tfMaxCountAmountInput.setPromptText("Amount");
-        tfMaxCountAmountInput.getStyleClass().removeAll("redPromptText");
+        resetAmountPromptText();
         if (invitationLink != null) {
             tfInvitationLink.setText(invitationLink);
         } else {
@@ -229,15 +227,23 @@ public class EditServerScreenController implements Controller {
     }
 
     private void radioBtnMaxCountOnClick(MouseEvent mouseEvent) {
+        resetAmountPromptText();
         if (this.radioBtnMaxCount.isFocused()) {
             this.tfMaxCountAmountInput.setEditable(true);
         }
     }
 
     private void radioBtnTemporalOnClick(MouseEvent mouseEvent) {
+        resetAmountPromptText();
+
         if (this.radioBtnTemporal.isFocused()) {
             this.tfMaxCountAmountInput.setEditable(false);
         }
+    }
+    private void resetAmountPromptText() {
+        tfMaxCountAmountInput.setText("");
+        tfMaxCountAmountInput.setPromptText("Amount");
+        tfMaxCountAmountInput.getStyleClass().removeAll("redPromptText");
     }
 
     /**
@@ -275,7 +281,7 @@ public class EditServerScreenController implements Controller {
                 lblInvitationStatusText.setText("invitation status:");
                 Invitation invitation = lvInvitation.getSelectionModel().getSelectedItem();
                 if (invitation.getType().equals(COUNT)) {
-                    lblInvitationStatus.setText("valid for less than " + (invitation.getMax() - invitation.getCurrent() + 1) + " users");
+                    lblInvitationStatus.setText("usable " + (invitation.getMax() - invitation.getCurrent() + 1) + " more times");
                 }
                 if (invitation.getType().equals(TEMPORAL)) {
                     lblInvitationStatus.setText("valid for less than 24 hours");
