@@ -355,8 +355,6 @@ public class StageManager extends Application {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
-            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
-            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
             emojiPickerScene = new Scene(root);
             updateDarkmode();
 
@@ -366,9 +364,10 @@ public class StageManager extends Application {
             //display
             emojiPickerStage.setTitle("Emoji Picker");
             emojiPickerStage.setScene(emojiPickerScene);
-            emojiPickerStage.sizeToScene();
             emojiPickerStage.setResizable(false);
             emojiPickerStage.show();
+            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
 
         } catch (Exception e) {
             System.err.println("Error on showing Emoji Picker");
