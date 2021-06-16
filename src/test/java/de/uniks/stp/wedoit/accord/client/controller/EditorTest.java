@@ -1,14 +1,16 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
-import javafx.application.Platform;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class EditorTest {
 
@@ -17,6 +19,7 @@ public class EditorTest {
     private Server server;
     private User user;
     private Category category;
+    private Channel channel;
 
     @Before
     public void initEditor() {
@@ -26,6 +29,7 @@ public class EditorTest {
         server = new Server();
         localUser = new LocalUser().setName("Amir").setId("testKey123");
         user = new User().setName("Gelareh").setId("021");
+        channel = new Channel();
         category = new Category();
     }
 
@@ -114,6 +118,32 @@ public class EditorTest {
         Assert.assertTrue(server.getCategories().contains(category));
         Assert.assertEquals(editor.getCurrentServer().getCategories().size(), server.getCategories().size());
         Assert.assertEquals(server.getCategories().get(0).getName(), "Conversation");
+    }
+
+    @Test
+    public void testHaveChannel() {
+        server = editor.haveServer(localUser, "0098", "Accord");
+        user = editor.haveUserWithServer(user.getName(), user.getId(), true, server);
+        category = editor.haveCategory("123", "Conversation", server);
+        editor.setCurrentServer(server);
+
+        List<String> userList = new LinkedList<>();
+        userList.add(user.getId());
+
+        JsonArrayBuilder memberJson = Json.createArrayBuilder();
+        if (userList != null) {
+            for (String userId : userList) {
+                memberJson.add(Json.createValue(userId));
+            }
+        }
+
+        channel = editor.haveChannel("ch01", "tasks", "text", false, category, memberJson.build());
+        user.withChannels(channel);
+
+        Assert.assertTrue(category.getChannels().contains(channel));
+        Assert.assertTrue(server.getCategories().contains(channel.getCategory()));
+        Assert.assertTrue(channel.getMembers().contains(user));
+        Assert.assertEquals(channel.getName(), "tasks");
     }
 
 
