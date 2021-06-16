@@ -67,4 +67,16 @@ public class EditorTest {
         Assert.assertTrue(localUser.getUsers().contains(user));
     }
 
+    @Test
+    public void testGetServerUserById() {
+        Assert.assertNull(editor.getServerUserById(server, "021"));
+
+        user.withServers(server);
+        localUser.withUsers(user);
+
+        Assert.assertEquals(user, editor.getServerUserById(server, "021"));
+        Assert.assertTrue(localUser.getUsers().contains(editor.getServerUserById(server, "021")));
+        Assert.assertEquals(user.getChannels(), editor.getServerUserById(server, "021").getChannels());
+    }
+
 }
