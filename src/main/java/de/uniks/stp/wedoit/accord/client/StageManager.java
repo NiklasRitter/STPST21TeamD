@@ -363,7 +363,6 @@ public class StageManager extends Application {
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, tfForEmoji);
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
-            System.out.println("Do Ta Chalam");
             //display
             emojiPickerStage.setTitle("Emoji Picker");
             emojiPickerStage.setScene(emojiPickerScene);
