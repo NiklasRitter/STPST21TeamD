@@ -46,4 +46,4 @@ local.properties
 /src/*/scenarios/**/*.txt
 /src/*/scenarios/**/*.yaml
 
-/src/main/resources/data/*.db
+/src/main/resources/data/*.sqlite
