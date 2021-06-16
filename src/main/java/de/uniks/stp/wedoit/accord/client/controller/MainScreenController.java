@@ -155,7 +155,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void privateChatsButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showPrivateChatsScreen();
+        Platform.runLater(StageManager::showPrivateChatsScreen);
     }
 
     /**
