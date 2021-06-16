@@ -108,7 +108,9 @@ public class PrivateChatsScreenController implements Controller {
 
         this.initOnlineUsersList();
 
-
+        this.tfPrivateChat.setPromptText("select a User");
+        this.tfPrivateChat.setEditable(false);
+        this.btnPlay.setVisible(false);
     }
 
 
@@ -319,6 +321,9 @@ public class PrivateChatsScreenController implements Controller {
         user.setChatRead(true);
         lwOnlineUsers.refresh();
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
+        this.tfPrivateChat.setPromptText("your message");
+        this.tfPrivateChat.setEditable(true);
+        this.btnPlay.setVisible(true);
 
         // load list view
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
