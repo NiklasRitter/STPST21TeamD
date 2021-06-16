@@ -1,8 +1,10 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.model.Message;
+import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.text.TextAlignment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,12 +31,18 @@ public class MessageCellFactory implements javafx.util.Callback<ListView<Message
                 setMinWidth(param.getWidth() - 20);
                 setMaxWidth(param.getWidth() - 20);
                 setPrefWidth(param.getWidth() - 20);
+                setAlignment(Pos.CENTER_LEFT);
 
                 // allow wrapping
                 setWrapText(true);
 
-                String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
-                this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                    setAlignment(Pos.CENTER);
+                    this.setText(item.getText());
+                } else {
+                    String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
+                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                }
             } else {
                 this.setText("");
             }

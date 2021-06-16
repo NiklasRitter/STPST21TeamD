@@ -1,9 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
-import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.Icons;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
@@ -18,8 +16,6 @@ import java.util.List;
 public class EmojiScreenController implements Controller {
 
     private final Parent view;
-    private final LocalUser localUser;
-    private final Editor editor;
     private GridPane pane;
     private TextField tfForEmoji;
 
@@ -27,10 +23,8 @@ public class EmojiScreenController implements Controller {
     private HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<EmojiButton, String>();
     private List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
 
-    public EmojiScreenController(Parent view, LocalUser localUser, Editor editor, TextField tfForEmoji) {
+    public EmojiScreenController(Parent view, TextField tfForEmoji) {
         this.view = view;
-        this.localUser = localUser;
-        this.editor = editor;
         this.tfForEmoji = tfForEmoji;
     }
 
