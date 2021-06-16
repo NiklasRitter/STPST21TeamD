@@ -2,12 +2,15 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,6 +23,7 @@ public class EditorTest {
     private Category category;
     private Channel channel;
     private List<String> userList;
+    private Message message;
 
     @Before
     public void initEditor() {
@@ -32,6 +36,7 @@ public class EditorTest {
         channel = new Channel();
         category = new Category();
         userList = new LinkedList<>();
+        message = new Message();
     }
 
     @Test
@@ -154,6 +159,21 @@ public class EditorTest {
         Assert.assertEquals(category.getChannels().get(0).isPrivileged(), true);
         Assert.assertTrue(category.getChannels().contains(channel));
         Assert.assertTrue(server.getCategories().contains(channel.getCategory()));
+    }
+
+    @Test
+    public void testUpdateChannelMessages() {
+        message = new Message().setId("009821").setText("Hello World!").setFrom(user.getName());
+        List<Message> messages = new ArrayList<>();
+        messages.add(message);
+
+        Assert.assertTrue(!channel.getMessages().contains(message));
+
+        editor.updateChannelMessages(channel, messages);
+
+        Assert.assertTrue(channel.getMessages().contains(message));
+        Assert.assertEquals(channel.getMessages().get(0).getFrom(), "Gelareh");
+        Assert.assertEquals(message.getChannel(), channel);
     }
 
 }
