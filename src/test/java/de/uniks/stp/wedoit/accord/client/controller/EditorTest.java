@@ -22,6 +22,7 @@ public class EditorTest {
     private Channel channel;
     private List<String> userList;
     private Message message;
+    private Invitation invitation;
 
     @Before
     public void initEditor() {
@@ -35,6 +36,7 @@ public class EditorTest {
         category = new Category();
         userList = new LinkedList<>();
         message = new Message();
+        invitation = new Invitation();
     }
 
     @Test
@@ -186,6 +188,24 @@ public class EditorTest {
 
         Assert.assertEquals(server.getLocalUser(), null);
         Assert.assertFalse(localUser.getServers().contains(server));
+    }
+
+    @Test
+    public void testDeleteInvite() {
+        String invitationLink = "https://ac.uniks.de/api/servers/60b0d03e026b3534ca54acf8/invites/60ca7f694445370200a52209";
+        invitation.setLink(invitationLink).setId("3006");
+        server.withInvitations(invitation);
+        channel.setId("3006");
+
+        Assert.assertEquals(server.getInvitations().get(0), invitation);
+        Assert.assertTrue(server.getInvitations().contains(invitation));
+        Assert.assertEquals(invitation.getLink(), invitationLink);
+        Assert.assertEquals(invitation.getServer(), server);
+
+        invitation = editor.deleteInvite(channel.getId(), server);
+
+        Assert.assertNotEquals(invitation.getServer(), server);
+        Assert.assertFalse(server.getInvitations().contains(invitation));
     }
 
 }
