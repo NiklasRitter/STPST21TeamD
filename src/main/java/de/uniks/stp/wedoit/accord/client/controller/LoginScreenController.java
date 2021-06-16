@@ -11,12 +11,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.Objects;
 
 public class LoginScreenController implements Controller {
@@ -84,28 +78,6 @@ public class LoginScreenController implements Controller {
         btnRememberMe.setOnAction(null);
     }
 
-    /**
-     * Hash the given Password using SHA-512
-     *
-     * @param clearPassword The password in clear text.
-     * @return The SHA-512 hashed password.
-     * @throws NoSuchAlgorithmException When SHA-512 is not available. If this is thrown something really went wrong!
-     */
-    private String hashPassword(String clearPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
-//        byte[] salt = "salt".getBytes();
-        char[] chars = clearPassword.toCharArray();
-        byte[] salt = clearPassword.getBytes();
-
-        PBEKeySpec spec = new PBEKeySpec(chars, salt, 65536, 512);
-
-        Arrays.fill(chars, Character.MIN_VALUE);
-
-        SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-        byte[] securePassword = secretKeyFactory.generateSecret(spec).getEncoded();
-        String hashedPassword = Base64.getEncoder().encodeToString(securePassword);
-        System.out.println(hashedPassword);
-        return hashedPassword;
-    }
 
     /**
      * login user to server and redirect to MainScreen
@@ -126,8 +98,7 @@ public class LoginScreenController implements Controller {
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
                 errorLabel.setText("Username or password is missing");
             } else {
-                String hashedPassword = hashPassword(password);
-                editor.getNetworkController().loginUser(name, hashedPassword, this);
+                editor.getNetworkController().loginUser(name, password, this);
             }
         } catch (Exception e) {
             errorLabel.setText("An error has been encountered while logging in. Please try again.");
@@ -163,8 +134,7 @@ public class LoginScreenController implements Controller {
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
                 errorLabel.setText("Please type in username and password.");
             } else {
-                String hashedPassword = hashPassword(password);
-                editor.getNetworkController().registerUser(name, hashedPassword, this);
+                editor.getNetworkController().registerUser(name, password, this);
             }
         } catch (Exception e) {
             errorLabel.setText("An error has been encountered while registering. Please try again.");
