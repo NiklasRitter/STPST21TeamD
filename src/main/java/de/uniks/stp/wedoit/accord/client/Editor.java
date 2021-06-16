@@ -26,6 +26,7 @@ public class Editor {
     private final NetworkController networkController = new NetworkController(this);
     private AccordClient accordClient;
     private Server currentServer;
+    private SqliteDB db;
 
 
     /**
@@ -312,22 +313,23 @@ public class Editor {
         }
     }
 
-    private void savePrivateMessage(PrivateMessage message){
-        SqliteDB db = new SqliteDB();
-
-        /*
-        try {
-            db.save(message);
-        } catch (SQLException e) {
-            System.out.println("Couldnt save");
-            e.printStackTrace();
-        }
-
-
-         */
-
-        //TODO
+    public void setUpDB(){
+        db = new SqliteDB(getLocalUser().getName());
     }
+
+    private void savePrivateMessage(PrivateMessage message){
+        db.save(message);
+    }
+
+    public List<User> getOpenChats(){
+        return new ArrayList<>();
+    }
+
+    public void loadOldMessages(){
+
+    }
+
+
 
     /**
      * add message to channel chat

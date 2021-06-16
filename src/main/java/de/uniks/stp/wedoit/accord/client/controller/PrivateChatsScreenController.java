@@ -315,6 +315,7 @@ public class PrivateChatsScreenController implements Controller {
         // load list view
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
+        editor.loadOldMessages();
         this.privateMessageObservableList = FXCollections.observableList(currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
                 .collect(Collectors.toList()));
 

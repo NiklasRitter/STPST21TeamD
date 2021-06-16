@@ -3,95 +3,79 @@ package de.uniks.stp.wedoit.accord.client.db;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SqliteDB {
 
-    Connection c;
-    Statement stmt;
-    Boolean hasData = false;
+    private String username;
+    private String url = "jdbc:sqlite:./src/main/resources/data/";
 
-    public SqliteDB(){
+    public SqliteDB(String username){
+        this.username = username;
         try{
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:./src/main/resources/data/chats.sqlite");
+            Connection c = DriverManager.getConnection(url + username + ".sqlite");
 
-            initialize();
+            Statement stmt = c.createStatement();
+            stmt.execute("CREATE TABLE IF NOT EXISTS messages (\n"
+                    + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
+                    + "	text varchar(255) NOT NULL,\n"
+                    + " times long NOT NULL,\n"
+                    + "	sender varchar(255) NOT NULL,\n"
+                    + " reciever varchar(255) NOT NULL "
+                    + ");"
+            );
+
+            c.close();
 
 
         }catch (Exception e){
-            System.out.println("Couldnt init db");
-            System.err.println(e.getMessage());
+            System.err.println("Couldnt init db");
+            e.printStackTrace();
         }
     }
 
-    private void initialize() throws SQLException {
-        System.out.println("initing...");
-        if(!hasData){
-            hasData = true;
+    public void save(PrivateMessage message) {
+        try(Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+            PreparedStatement prep = conn.prepareStatement("INSERT INTO messages VALUES(NULL,?,?,?,?);")){
 
-            this.stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='messages'");
-            System.out.println("first query done");
+            prep.setLong(1, message.getTimestamp());
+            prep.setString(2, message.getText());
+            prep.setString(3, message.getFrom());
+            prep.setString(4, message.getTo());
+            prep.execute();
 
-            while(!rs.next()){
-                System.out.println("creating...");
-                this.stmt = c.createStatement();
-                stmt.execute("CREATE TABLE messages(" +
-                        "id integer PRIMARY KEY AUTOINCREMENT, " +
-                        "timestamp integer NOT NULL, " +
-                        "text varchar(255), " +
-                        "sender varchar(255) NOT NULL, " +
-                        "receiver varchar(255) NOT NULL"
-                       );
-
-                System.out.println("created table :)");
-            }
-
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
-    //        String id;
-    //        long timestamp;
-    //        String text;
-    //        String from;
-    //        String to;
 
-    public void save(PrivateMessage message) throws SQLException {
+    public List<PrivateMessage> getMessagesBetweenUsers(String user1, String user2){
+        List<PrivateMessage> messages = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+        PreparedStatement prep = conn.prepareStatement("SELECT * FROM " + username + " WHERE (sender = ? AND reciever = ?) OR (sender = ? AND reciever = ?) ORDER BY times DESC")){
+            prep.setString(1,user1);
+            prep.setString(2,user2);
+            prep.setString(3,user2);
+            prep.setString(4,user1);
 
-        PreparedStatement prep = c.prepareStatement("INSERT INTO messages VALUES(?,?,?,?)");
-        prep.setLong(1,message.getTimestamp());
-        prep.setString(2,message.getText());
-        prep.setString(3,message.getFrom());
-        prep.setString(4,message.getTo());
-        prep.execute();
-    }
-
-    public void getChats(){
-        try{
-            this.stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Chats");
-
-
+            ResultSet rs = prep.executeQuery();
 
             while(rs.next()){
-                int id = rs.getInt("id");
-                String from = rs.getString("from");
-                //TODO
+                PrivateMessage msg = new PrivateMessage();
+                msg.setTimestamp(rs.getLong("times"));
+                msg.setTo(rs.getString("receiver"));
+                msg.setFrom(rs.getString("sender"));
+                msg.setText(rs.getString("text"));
+                messages.add(msg);
             }
 
-
-
-        }catch(Exception e){
-            System.err.println(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
         }
-    }
+        return messages;
 
-    public void close(){
-        try{
-            c.close();
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-        }
     }
 
 }
