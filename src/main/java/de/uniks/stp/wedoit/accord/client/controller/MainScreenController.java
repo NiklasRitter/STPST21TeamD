@@ -126,8 +126,9 @@ public class MainScreenController implements Controller {
         addServerButton.setText("create new server");
         this.addServerButton.setTooltip(addServerButton);
 
-        Tooltip serverButton = new Tooltip();
-        serverButton.setText("Enter selected server");
+        Tooltip joinServerButton = new Tooltip();
+        joinServerButton.setText("Join server");
+        this.enterInvitationButton.setTooltip(joinServerButton);
     }
 
     /**
@@ -154,7 +155,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void privateChatsButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showPrivateChatsScreen();
+        Platform.runLater(StageManager::showPrivateChatsScreen);
     }
 
     /**

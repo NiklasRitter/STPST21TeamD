@@ -5,14 +5,19 @@ import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 import javax.json.JsonArray;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class Editor {
 
@@ -316,11 +321,11 @@ public class Editor {
      * @param oppAction game action of opponent user
      */
     public Boolean resultOfGame(String ownAction, String oppAction) {
-        if(ownAction.equals(oppAction)) return null;
+        if (ownAction.equals(oppAction)) return null;
 
-        if(ownAction.equals(ROCK)) return oppAction.equals(SCISSORS);
+        if (ownAction.equals(ROCK)) return oppAction.equals(SCISSORS);
 
-        else if(ownAction.equals(PAPER)) return oppAction.equals(ROCK);
+        else if (ownAction.equals(PAPER)) return oppAction.equals(ROCK);
 
         else return oppAction.equals(PAPER);
     }
@@ -487,4 +492,62 @@ public class Editor {
         return null;
     }
 
+    public void updateChannelMessages(Channel channel, List<Message> messages) {
+        List<Message> channelMessages = channel.getMessages();
+        for (Message message : messages) {
+            boolean msgExists = false;
+            for (Message channelMessage : channelMessages) {
+                if (channelMessage.getId().equals(message.getId())) {
+                    msgExists = true;
+                    break;
+                }
+            }
+            if (!msgExists) {
+                channel.withMessages(message);
+            }
+        }
+    }
+    public void leaveServer(String userKey, String id) {
+        if (id != null && !id.isEmpty()) {
+            networkController.leaveServer(userKey, id);
+        }
+    }
+
+
+    public Invitation deleteInvite(String id, Server server) {
+        for (Invitation invite : server.getInvitations()) {
+            if (invite.getId().equals(id)) {
+                invite.removeYou();
+                return invite;
+            }
+        }
+        return null;
+    }
+
+    public Boolean copyToSystemClipBoard(String text) {
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        final ClipboardContent content = new ClipboardContent();
+        content.putString(text);
+        return clipboard.setContent(content);
+    }
+
+    public String getMessageFormatted(PrivateMessage message) {
+        String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
+
+        return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
+    }
+
+    public String cleanMessage(PrivateMessage item) {
+        if (isQuote(item)) {
+            String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
+            String[] messages = quoteMessage.split(QUOTE_ID);
+            return messages[0];
+        } else return item.getText();
+    }
+
+    public boolean isQuote(PrivateMessage item) {
+        return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
+                && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+                && (item.getText()).startsWith(QUOTE_PREFIX);
+    }
 }

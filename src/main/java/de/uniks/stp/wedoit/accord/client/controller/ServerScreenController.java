@@ -22,6 +22,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,9 +44,11 @@ public class ServerScreenController implements Controller {
     private Label lbServerName;
     private TreeView<Object> tvServerChannels;
     private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
+    private PropertyChangeListener userListViewListener = this::changeUserList;
+
     private ListView<User> lvServerUsers;
     private TextField tfInputMessage;
-    private Channel currentChannel;
+    private Channel channel, currentChannel;
     private ListView<Message> lvTextChat;
     private Label lbChannelName;
     private ObservableList<Message> observableMessageList;
@@ -53,6 +56,7 @@ public class ServerScreenController implements Controller {
     private TreeItem<Object> tvServerChannelsRoot;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
+    private List<User> users;
 
     /**
      * Create a new Controller
@@ -67,6 +71,7 @@ public class ServerScreenController implements Controller {
         this.localUser = model;
         this.editor = editor;
         this.server = server;
+        this.channel = new Channel();
     }
 
     /**
@@ -79,7 +84,7 @@ public class ServerScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        editor.setCurrentServer(server);
+        this.editor.setCurrentServer(server);
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
@@ -97,26 +102,85 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
+        this.lbServerName.setContextMenu(createContextMenuLeaveServer());
+
         // Add server websocket
-        editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        editor.getNetworkController().
+
+                haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
-        editor.getNetworkController().haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().getCleanLocalUserName()
-                + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
+        editor.getNetworkController().
+
+                haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().
+
+                        getCleanLocalUserName()
+                        + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         tvServerChannelsRoot = new TreeItem<>();
         ChannelTreeView channelTreeView = new ChannelTreeView();
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
+        tvServerChannels.setContextMenu(createContextMenuCategory());
 
         // get members of this server
         // load categories after get users of a server
         // finally add PropertyChangeListener
         editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
-
+        this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         addActionListener();
 
         initTooltips();
+
+    }
+
+    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
+            Platform.runLater(() -> {
+                this.refreshLvUsers();
+            });
+        }
+    }
+
+    /**
+     * Updates ServerListView (list of displayed members).
+     * Queries whether a channel is privileged:
+     * If yes, it shows only members assigned to this channel.
+     * If no, it shows all users of the server
+     */
+    public void refreshLvUsers() {
+        if (channel.isPrivileged()) {
+            users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+                    .collect(Collectors.toList());
+        } else if (!channel.isPrivileged()) {
+            users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+                    .collect(Collectors.toList());
+        }
+        Collections.reverse(users);
+        this.lvServerUsers.getItems().removeAll();
+        this.lvServerUsers.setItems(FXCollections.observableList(users));
+        this.lvServerUsers.refresh();
+    }
+
+
+    private ContextMenu createContextMenuLeaveServer() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
+        contextMenu.getItems().add(menuItemLeaveServer);
+        menuItemLeaveServer.setOnAction(this::leaveServerAttention);
+        return contextMenu;
+    }
+
+    private ContextMenu createContextMenuCategory() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem addCategory = new MenuItem("- add category");
+        contextMenu.getItems().add(addCategory);
+        addCategory.setOnAction((event) -> StageManager.showCreateCategoryScreen());
+        return contextMenu;
+    }
+
+    private void leaveServerAttention(ActionEvent actionEvent) {
+        StageManager.showAttentionLeaveServerScreen(this.server);
     }
 
     private void btnEmojiOnClick(ActionEvent actionEvent) {
@@ -134,9 +198,9 @@ public class ServerScreenController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
+        this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
 
     }
-
 
     /**
      * Initializes the Tooltips for the Buttons
@@ -149,6 +213,10 @@ public class ServerScreenController implements Controller {
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText("options");
         btnOptions.setTooltip(optionsButton);
+
+        Tooltip editButton = new Tooltip();
+        editButton.setText("edit Server");
+        btnEdit.setTooltip(editButton);
     }
 
     /**
@@ -174,9 +242,9 @@ public class ServerScreenController implements Controller {
                 + AND_SERVER_ID_URL + this.server.getId());
 
         if (this.currentChannel != null) {
-            this.currentChannel.listeners()
-                    .removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+            this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         }
+        this.channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         this.chatWSCallback = null;
         this.serverWSCallback = null;
         this.newMessagesListener = null;
@@ -205,14 +273,15 @@ public class ServerScreenController implements Controller {
                 lbServerName.setText(server.getName());
             });
 
-
             createUserListView(members);
         } else {
             Platform.runLater(StageManager::showLoginScreen);
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
+            this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
             this.btnEdit.setVisible(true);
         }
+
     }
 
     /**
@@ -280,6 +349,7 @@ public class ServerScreenController implements Controller {
             for (Channel channel : channelList) {
                 channelMap.put(channel.getId(), channel);
                 channel.listeners().addPropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
+                channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
 
                 TreeItem<Object> channelItem = new TreeItem<>(channel);
                 categoryItem.getChildren().add(channelItem);
@@ -305,6 +375,7 @@ public class ServerScreenController implements Controller {
         }
     }
 
+
     /**
      * initChannelChat when channel is clicked twice
      *
@@ -316,8 +387,9 @@ public class ServerScreenController implements Controller {
             if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
                 if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
 
-                    Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
+                    channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
                     this.initChannelChat(channel);
+                    Platform.runLater(this::refreshLvUsers);
                 }
             }
         }
@@ -332,6 +404,7 @@ public class ServerScreenController implements Controller {
         if (this.currentChannel != null) {
             this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         }
+        this.channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.userListViewListener);
 
         channel.setRead(true);
         this.currentChannel = channel;
@@ -344,8 +417,54 @@ public class ServerScreenController implements Controller {
 
         this.lvTextChat.setItems(observableMessageList);
 
+        // display last 50 messages
+        String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
+        this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
+
+
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.userListViewListener);
+        Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
+    }
+
+    public void handleGetChannelMessages(Channel channel, JsonArray data) {
+        if (channel != null) {
+            List<Message> messages = JsonUtil.parseMessageArray(data);
+            Collections.reverse(messages);
+            this.editor.updateChannelMessages(channel, messages);
+            if (messages.size() == 50) {
+                Platform.runLater(this::displayLoadMore);
+            }
+        } else {
+            Platform.runLater(StageManager::showMainScreen);
+        }
+    }
+
+    /**
+     * Displays load more on first position of ListView of the Chat
+     */
+    private void displayLoadMore() {
+        if (observableMessageList.size() >= 50) {
+            Message topMessage = new Message().setText("Load more...").setId("idLoadMore");
+            this.observableMessageList.add(0, topMessage);
+        }
+    }
+
+    /**
+     * Checks if "Load more..." is clicked and if yes, then it loads new messages
+     *
+     * @param mouseEvent
+     */
+    private void lvTextChatOnClick(MouseEvent mouseEvent) {
+        Message selectedMessage = lvTextChat.getSelectionModel().getSelectedItem();
+        if (selectedMessage != null && selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
+            this.observableMessageList.remove(0);
+            Message oldestMessage = this.observableMessageList.get(0);
+            Channel channel = oldestMessage.getChannel();
+            String timestamp = String.valueOf(oldestMessage.getTimestamp());
+            this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
+        }
     }
 
     /**
@@ -356,7 +475,15 @@ public class ServerScreenController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             Message newMessage = (Message) propertyChangeEvent.getNewValue();
-            Platform.runLater(() -> this.observableMessageList.add(newMessage));
+            Platform.runLater(() -> {
+                if (this.observableMessageList.isEmpty()) {
+                    this.observableMessageList.add(newMessage);
+                } else if (newMessage.getTimestamp() <= this.observableMessageList.get(observableMessageList.size() - 1).getTimestamp()) {
+                    this.observableMessageList.add(0, newMessage);
+                } else {
+                    this.observableMessageList.add(newMessage);
+                }
+            });
         }
     }
 
@@ -407,6 +534,7 @@ public class ServerScreenController implements Controller {
      * @param msg response of the websocket server
      */
     private void handleServerMessage(JsonStructure msg) {
+
         JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
         String action = ((JsonObject) msg).getString(ACTION);
 
@@ -431,7 +559,8 @@ public class ServerScreenController implements Controller {
                     user.setOnlineStatus(data.getBoolean(ONLINE));
                 }
             }
-            Platform.runLater(this::updateUserListView);
+//            Platform.runLater(this::updateUserListView);
+            Platform.runLater(this::refreshLvUsers);
         }
 
         // change data of the server
@@ -469,7 +598,7 @@ public class ServerScreenController implements Controller {
 
         // change invitation
         if (action.equals(INVITE_EXPIRED)) {
-            // TODO inviteExpired
+            editor.deleteInvite(data.getString(ID), server);
         }
 
     }
@@ -602,10 +731,7 @@ public class ServerScreenController implements Controller {
         // load list view
         ServerUserListView serverUserListView = new ServerUserListView();
         lvServerUsers.setCellFactory(serverUserListView);
-        List<User> users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
-                .collect(Collectors.toList());
-        Collections.reverse(users);
-        this.lvServerUsers.setItems(FXCollections.observableList(users));
+        Platform.runLater(this::refreshLvUsers);
     }
 
     /**

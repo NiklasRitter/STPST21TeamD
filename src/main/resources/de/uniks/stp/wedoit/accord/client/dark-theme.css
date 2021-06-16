@@ -60,3 +60,12 @@
     -fx-background-color: rgba(127, 0, 0, 0.5);
     -fx-border-color: rgba(255, 0, 0, 0.75);
 }
+
+.redPromptText {
+    -fx-prompt-text-fill: "BLACK";
+    -fx-background-color: rgba(255, 0, 0, 0.75);
+}
+
+.font_size {
+    -fx-font-size: 7pt ;
+}

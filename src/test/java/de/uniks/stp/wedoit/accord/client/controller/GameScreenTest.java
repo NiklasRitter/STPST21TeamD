@@ -128,7 +128,7 @@ public class GameScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(StageManager.getPopupStage().isShowing());
+        Assert.assertTrue(StageManager.getGameStage().isShowing());
         Label score = lookup("#lbScore").query();
         Assert.assertEquals("0:0", score.getText());
         Assert.assertEquals(user.getName(), ((Label) lookup("#lbOpponent").query()).getText());
@@ -177,7 +177,7 @@ public class GameScreenTest extends ApplicationTest {
         user.setLocalUser(localUser);
 
         //got to result screen
-        Assert.assertEquals("Result",StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Result",StageManager.getGameStage().getTitle());
 
         clickOn("#btnPlayAgain");
         mockChatWebSocket(getTestMessageServerAnswer(user, GAMEINVITE));
@@ -188,11 +188,11 @@ public class GameScreenTest extends ApplicationTest {
         Platform.runLater(() -> StageManager.showGameScreen(user));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getGameStage().getTitle());
 
         Platform.runLater(() -> StageManager.showGameResultScreen(user,false));
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Result",StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Result",StageManager.getGameStage().getTitle());
 
         //accept a replay
         mockChatWebSocket(getServerMessageUserAnswer(user, GAMEINVITE));
@@ -201,7 +201,7 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(user, GAMEACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getGameStage().getTitle());
 
         Platform.runLater(() -> StageManager.showGameResultScreen(user,true));
         WaitForAsyncUtils.waitForFxEvents();
