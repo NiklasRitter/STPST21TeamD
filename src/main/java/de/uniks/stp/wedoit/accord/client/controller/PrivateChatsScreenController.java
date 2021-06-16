@@ -108,7 +108,6 @@ public class PrivateChatsScreenController implements Controller {
 
         this.initOnlineUsersList();
 
-
     }
 
 

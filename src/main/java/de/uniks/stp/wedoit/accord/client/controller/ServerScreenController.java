@@ -9,9 +9,7 @@ import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
@@ -58,8 +56,6 @@ public class ServerScreenController implements Controller {
     private TreeItem<Object> tvServerChannelsRoot;
     private WSCallback chatWSCallback = this::handleChatMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
-    private ContextMenu contextMenu;
-    private MenuItem menuItemLeaveServer;
     private List<User> users;
 
     /**
@@ -88,7 +84,7 @@ public class ServerScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        editor.setCurrentServer(server);
+        this.editor.setCurrentServer(server);
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
@@ -379,6 +375,7 @@ public class ServerScreenController implements Controller {
         }
     }
 
+
     /**
      * initChannelChat when channel is clicked twice
      *
@@ -481,7 +478,7 @@ public class ServerScreenController implements Controller {
             Platform.runLater(() -> {
                 if (this.observableMessageList.isEmpty()) {
                     this.observableMessageList.add(newMessage);
-                } else if(newMessage.getTimestamp() <= this.observableMessageList.get(observableMessageList.size()-1).getTimestamp()) {
+                } else if (newMessage.getTimestamp() <= this.observableMessageList.get(observableMessageList.size() - 1).getTimestamp()) {
                     this.observableMessageList.add(0, newMessage);
                 } else {
                     this.observableMessageList.add(newMessage);
