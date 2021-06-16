@@ -64,6 +64,7 @@ public class StageManager extends Application {
             stage.setTitle("Login");
             stage.setScene(scene);
             stage.centerOnScreen();
+            stage.setMaximized(false);
             stage.setResizable(false);
 
         } catch (Exception e) {
@@ -646,8 +647,8 @@ public class StageManager extends Application {
             systemTrayController.init();
         }
 
-        stage.setHeight(400);
-        stage.setWidth(600);
+        stage.setMinHeight(400);
+        stage.setMinWidth(600);
         showLoginScreen();
         stage.show();
     }
