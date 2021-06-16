@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -15,6 +16,7 @@ public class EditorTest {
     private LocalUser localUser;
     private Server server;
     private User user;
+    private Category category;
 
     @Before
     public void initEditor() {
@@ -24,6 +26,7 @@ public class EditorTest {
         server = new Server();
         localUser = new LocalUser().setName("Amir").setId("testKey123");
         user = new User().setName("Gelareh").setId("021");
+        category = new Category();
     }
 
     @Test
@@ -102,5 +105,16 @@ public class EditorTest {
         Assert.assertEquals(editor.getOnlineUsers().size(), 1);
         Assert.assertTrue(editor.getOnlineUsers().contains(user));
     }
+
+    @Test
+    public void testHaveCategory() {
+        category = editor.haveCategory("123", "Conversation", server);
+        editor.setCurrentServer(server);
+
+        Assert.assertTrue(server.getCategories().contains(category));
+        Assert.assertEquals(editor.getCurrentServer().getCategories().size(), server.getCategories().size());
+        Assert.assertEquals(server.getCategories().get(0).getName(), "Conversation");
+    }
+
 
 }
