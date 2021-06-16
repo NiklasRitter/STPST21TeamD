@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import javafx.application.Platform;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,6 +78,16 @@ public class EditorTest {
         Assert.assertEquals(user, editor.getServerUserById(server, "021"));
         Assert.assertTrue(localUser.getUsers().contains(editor.getServerUserById(server, "021")));
         Assert.assertEquals(user.getChannels(), editor.getServerUserById(server, "021").getChannels());
+    }
+
+    @Test
+    public void testUserLeft() {
+        user.setOnlineStatus(true);
+        editor.getLocalUser().withUsers(user);
+        editor.userLeft(user.getId());
+
+        Assert.assertTrue(!user.isOnlineStatus());
+        Assert.assertEquals(editor.getLocalUser(), user.getLocalUser());
     }
 
 }
