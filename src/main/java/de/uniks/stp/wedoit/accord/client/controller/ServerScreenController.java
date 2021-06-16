@@ -140,9 +140,7 @@ public class ServerScreenController implements Controller {
 
     private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            Platform.runLater(() -> {
-                this.refreshLvUsers();
-            });
+            Platform.runLater(this::refreshLvUsers);
         }
     }
 
@@ -154,10 +152,10 @@ public class ServerScreenController implements Controller {
      */
     public void refreshLvUsers() {
         if (channel.isPrivileged()) {
-            users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+            users = channel.getMembers().stream().sorted((Comparator.comparing(User::isOnlineStatus).thenComparing(User::getName, String::compareToIgnoreCase)))
                     .collect(Collectors.toList());
         } else if (!channel.isPrivileged()) {
-            users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus))
+            users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed())
                     .collect(Collectors.toList());
         }
         Collections.reverse(users);

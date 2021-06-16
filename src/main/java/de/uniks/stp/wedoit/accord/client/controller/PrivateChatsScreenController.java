@@ -227,18 +227,16 @@ public class PrivateChatsScreenController implements Controller {
         // load list view
         usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
         lwOnlineUsers.setCellFactory(usersListViewCellFactory);
-        availableUsers = localUser.getUsers().stream().sorted((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed())
-                .collect(Collectors.toList());
+        availableUsers = new ArrayList<>(localUser.getUsers());
 
         // Add listener for the loaded listView
         availableUsers.forEach(u -> {
-            if(u.getPrivateChat() == null){
-                u.setChatRead(true);
-            }
-
+            u.setChatRead(u.getPrivateChat() == null && u.isOnlineStatus());
         });
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
         this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
+        this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
+
 
         this.onlineUserObservableList.addAll(editor.loadOldChats());
         Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
