@@ -11,7 +11,6 @@ import javax.json.JsonArrayBuilder;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class EditorTest {
 
     private Editor editor;
@@ -20,6 +19,7 @@ public class EditorTest {
     private User user;
     private Category category;
     private Channel channel;
+    private List<String> userList;
 
     @Before
     public void initEditor() {
@@ -31,6 +31,7 @@ public class EditorTest {
         user = new User().setName("Gelareh").setId("021");
         channel = new Channel();
         category = new Category();
+        userList = new LinkedList<>();
     }
 
     @Test
@@ -121,13 +122,12 @@ public class EditorTest {
     }
 
     @Test
-    public void testHaveChannel() {
+    public void testHaveAndUpdateChannel() {
         server = editor.haveServer(localUser, "0098", "Accord");
         user = editor.haveUserWithServer(user.getName(), user.getId(), true, server);
         category = editor.haveCategory("123", "Conversation", server);
         editor.setCurrentServer(server);
 
-        List<String> userList = new LinkedList<>();
         userList.add(user.getId());
 
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
@@ -139,12 +139,21 @@ public class EditorTest {
 
         channel = editor.haveChannel("ch01", "tasks", "text", false, category, memberJson.build());
         user.withChannels(channel);
+        System.out.println(channel.getName());
+        System.out.println(category.getId());
 
         Assert.assertTrue(category.getChannels().contains(channel));
         Assert.assertTrue(server.getCategories().contains(channel.getCategory()));
+        Assert.assertEquals(category.getChannels().get(0).isPrivileged(), false);
         Assert.assertTrue(channel.getMembers().contains(user));
         Assert.assertEquals(channel.getName(), "tasks");
-    }
 
+        channel = editor.updateChannel(server, "ch01", "Discussion", "text", true, category.getId(), memberJson.build());
+
+        Assert.assertNotEquals(channel.getName(), "tasks");
+        Assert.assertEquals(category.getChannels().get(0).isPrivileged(), true);
+        Assert.assertTrue(category.getChannels().contains(channel));
+        Assert.assertTrue(server.getCategories().contains(channel.getCategory()));
+    }
 
 }
