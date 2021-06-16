@@ -90,4 +90,17 @@ public class EditorTest {
         Assert.assertEquals(editor.getLocalUser(), user.getLocalUser());
     }
 
+    @Test
+    public void testGetOnlineUsers() {
+        editor.getLocalUser().withUsers(user);
+
+        Assert.assertEquals(editor.getOnlineUsers().size(), 0);
+        Assert.assertFalse(editor.getOnlineUsers().contains(user));
+
+        user.setOnlineStatus(true);
+
+        Assert.assertEquals(editor.getOnlineUsers().size(), 1);
+        Assert.assertTrue(editor.getOnlineUsers().contains(user));
+    }
+
 }
