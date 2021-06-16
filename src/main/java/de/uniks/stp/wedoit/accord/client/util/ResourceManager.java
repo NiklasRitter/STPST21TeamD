@@ -20,19 +20,15 @@ public class ResourceManager {
     public void start(AccordClient clientModel) {
         if (clientModel.getOptions() != null) {
             loadOptions(clientModel.getOptions());
-            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE,
-                    preferenceManager.darkmodeListener);
-            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.rememberMeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
         }
         if (clientModel.getLocalUser() != null) {
             loadLocalUser(clientModel.getLocalUser());
-            Objects.requireNonNull(clientModel.getLocalUser()).listeners().addPropertyChangeListener(LocalUser.PROPERTY_PASSWORD,
-                    preferenceManager.passwordListener);
-            Objects.requireNonNull(clientModel.getLocalUser()).listeners().addPropertyChangeListener(LocalUser.PROPERTY_NAME,
-                    preferenceManager.usernameListener);
+            Objects.requireNonNull(clientModel.getLocalUser()).listeners().addPropertyChangeListener(LocalUser.PROPERTY_PASSWORD, preferenceManager.passwordListener);
+            Objects.requireNonNull(clientModel.getLocalUser()).listeners().addPropertyChangeListener(LocalUser.PROPERTY_NAME, preferenceManager.usernameListener);
         }
-        Objects.requireNonNull(clientModel).listeners().addPropertyChangeListener(AccordClient.PROPERTY_LOCAL_USER,
-                localUserListener);
+        Objects.requireNonNull(clientModel).listeners().addPropertyChangeListener(AccordClient.PROPERTY_LOCAL_USER, localUserListener);
     }
 
     /**
@@ -42,18 +38,14 @@ public class ResourceManager {
      */
     public void stop(AccordClient clientModel) {
         if (clientModel.getOptions() != null) {
-            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE,
-                    preferenceManager.darkmodeListener);
-            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.rememberMeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
         }
         if (clientModel.getLocalUser() != null) {
-            Objects.requireNonNull(clientModel.getLocalUser()).listeners().removePropertyChangeListener(LocalUser.PROPERTY_PASSWORD,
-                    preferenceManager.passwordListener);
-            Objects.requireNonNull(clientModel.getLocalUser()).listeners().removePropertyChangeListener(LocalUser.PROPERTY_NAME,
-                    preferenceManager.usernameListener);
+            Objects.requireNonNull(clientModel.getLocalUser()).listeners().removePropertyChangeListener(LocalUser.PROPERTY_PASSWORD, preferenceManager.passwordListener);
+            Objects.requireNonNull(clientModel.getLocalUser()).listeners().removePropertyChangeListener(LocalUser.PROPERTY_NAME, preferenceManager.usernameListener);
         }
-        Objects.requireNonNull(clientModel).listeners().removePropertyChangeListener(AccordClient.PROPERTY_LOCAL_USER,
-                localUserListener);
+        Objects.requireNonNull(clientModel).listeners().removePropertyChangeListener(AccordClient.PROPERTY_LOCAL_USER, localUserListener);
     }
 
     /**
@@ -123,4 +115,17 @@ public class ResourceManager {
         Objects.requireNonNull(localUser).setPassword(preferenceManager.loadPassword());
         Objects.requireNonNull(localUser).setName(preferenceManager.loadUsername());
     }
+
+    /*
+    TODO: Add encryption for saved password and username
+    public String getOrCreateInitializationVector() throws NoSuchAlgorithmException {
+        String IVString = preferenceManager.loadInitializationVector();
+        if (IVString.isEmpty()) {
+            byte[] iv = new byte[16];
+            SecureRandom.getInstanceStrong().nextBytes(iv);
+            IVString = new String(iv);
+            preferenceManager.saveInitializationVector(IVString);
+        }
+        return IVString;
+    }*/
 }
