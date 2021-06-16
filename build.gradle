@@ -5,8 +5,6 @@ plugins {
 	// https://plugins.gradle.org/plugin/org.fulib.fulibGradle
 	id 'org.fulib.fulibGradle' version '0.5.0'
     id 'jacoco' // DO NOT DELETE
-    id 'org.springframework.boot' version '2.5.0'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 javafx {
@@ -59,9 +57,8 @@ dependencies {
     implementation group: 'org.glassfish.tyrus', name: 'tyrus-client', version: '1.15'
     implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-client', version: '1.15'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.h2database:h2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.xerial:sqlite-jdbc:3.30.1'
+
 
 }
 

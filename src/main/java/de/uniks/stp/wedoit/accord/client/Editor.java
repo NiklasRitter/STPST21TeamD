@@ -2,20 +2,15 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
-import de.uniks.stp.wedoit.accord.client.db.EntityMapper.ChatMapper;
-import de.uniks.stp.wedoit.accord.client.db.EntityMapper.PrivateMessageMapper;
-import de.uniks.stp.wedoit.accord.client.db.dao.ChatRepository;
-import de.uniks.stp.wedoit.accord.client.db.dao.PrivateMessageRepository;
-import de.uniks.stp.wedoit.accord.client.db.entity.ChatEntity;
-import de.uniks.stp.wedoit.accord.client.db.entity.PrivateMessageEntity;
+import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
-import org.springframework.context.ConfigurableApplicationContext;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
 import javax.json.JsonArray;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,13 +23,7 @@ public class Editor {
     private final NetworkController networkController = new NetworkController(this);
     private AccordClient accordClient;
     private Server currentServer;
-    private ConfigurableApplicationContext context;
-    private ChatRepository chatRepo;
-    private PrivateMessageRepository msgRepo;
 
-    public Editor(ConfigurableApplicationContext context){
-        this.context = context;
-    }
 
     /**
      * @return private final NetworkController networkController
@@ -300,10 +289,8 @@ public class Editor {
             if (message.getFrom().equals(getLocalUser().getName())) {
                 getUser(message.getTo()).getPrivateChat().withMessages(message);
 
-                saveMessage(message);
-
             } else {
-                System.out.println("from other one: " + message);
+
                 SystemTrayController systemTrayController = StageManager.getSystemTrayController();
                 if (systemTrayController != null) {
                     systemTrayController.displayPrivateMessageNotification(message);
@@ -314,22 +301,29 @@ public class Editor {
                     privateChat = new Chat().setName(user.getName()).setUser(user);
                     user.setPrivateChat(privateChat);
                 }
+                message.setChat(privateChat);
                 privateChat.withMessages(message);
                 user.setChatRead(false);
             }
+            savePrivateMessage(message);
         }
     }
 
-    private void saveMessage(PrivateMessage message){
-        System.out.println(message);
-        if(chatRepo == null)chatRepo = context.getBean(ChatRepository.class);
-        if(msgRepo == null)msgRepo = context.getBean(PrivateMessageRepository.class);
+    private void savePrivateMessage(PrivateMessage message){
+        SqliteDB db = new SqliteDB();
 
-        if(!chatRepo.existsById(message.getTo()))chatRepo.save(new ChatEntity(message.getTo()));
-        msgRepo.save(PrivateMessageMapper.toEntity(message));
-        System.out.println(msgRepo.findAll());
+        /*
+        try {
+            db.save(message);
+        } catch (SQLException e) {
+            System.out.println("Couldnt save");
+            e.printStackTrace();
+        }
 
 
+         */
+
+        //TODO
     }
 
     /**
