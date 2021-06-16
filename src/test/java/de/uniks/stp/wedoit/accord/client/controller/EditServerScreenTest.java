@@ -137,6 +137,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
 
         // Assert that Pop-Up Window shows correct widgets

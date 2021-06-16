@@ -2,13 +2,11 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -31,7 +29,7 @@ public class EditorTest {
         editor.haveAccordClient();
         editor.haveLocalUser();
         server = new Server();
-        localUser = new LocalUser().setName("Amir").setId("testKey123");
+        localUser = new LocalUser().setName("Amir").setUserKey("testKey123").setId("1364");
         user = new User().setName("Gelareh").setId("021");
         channel = new Channel();
         category = new Category();
@@ -41,8 +39,7 @@ public class EditorTest {
 
     @Test
     public void testHaveLocalUser() {
-
-        localUser = editor.haveLocalUser(localUser.getName(), localUser.getId());
+        localUser = editor.haveLocalUser(localUser.getName(), localUser.getUserKey());
 
         Assert.assertEquals(editor.getLocalUser().getId(), localUser.getId());
         Assert.assertEquals(editor.getLocalUser().getUserKey(), "testKey123");
@@ -174,6 +171,21 @@ public class EditorTest {
         Assert.assertTrue(channel.getMessages().contains(message));
         Assert.assertEquals(channel.getMessages().get(0).getFrom(), "Gelareh");
         Assert.assertEquals(message.getChannel(), channel);
+    }
+
+    @Test
+    public void testLeaveServer() {
+        server = editor.haveServer(localUser, "0098", "Accord");
+        localUser = editor.haveLocalUser(localUser.getName(), localUser.getUserKey());
+        server.setLocalUser(localUser);
+
+        Assert.assertTrue(localUser.getServers().contains(server));
+        Assert.assertEquals(server.getLocalUser(), localUser);
+
+        editor.leaveServer(localUser.getUserKey(), server);
+
+        Assert.assertEquals(server.getLocalUser(), null);
+        Assert.assertFalse(localUser.getServers().contains(server));
     }
 
 }
