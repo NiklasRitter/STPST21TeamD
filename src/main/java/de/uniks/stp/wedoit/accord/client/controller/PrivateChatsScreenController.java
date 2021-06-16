@@ -252,12 +252,20 @@ public class PrivateChatsScreenController implements Controller {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.remove(user);
                 lwOnlineUsers.refresh();
+                if (user.getName().equals(this.lblSelectedUser.getText())) {
+                    this.tfPrivateChat.setPromptText(user.getName() + " is offline");
+                    this.tfPrivateChat.setEditable(false);
+                }
             });
         } else {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
                 lwOnlineUsers.refresh();
+                if (user.getName().equals(this.lblSelectedUser.getText())) {
+                    this.tfPrivateChat.setPromptText("your message");
+                    this.tfPrivateChat.setEditable(true);
+                }
             });
         }
     }
