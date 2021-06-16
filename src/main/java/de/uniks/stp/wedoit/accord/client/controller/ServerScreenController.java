@@ -15,7 +15,9 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -27,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 
@@ -57,6 +60,10 @@ public class ServerScreenController implements Controller {
     private WSCallback chatWSCallback = this::handleChatMessage;
     private WSCallback serverWSCallback = this::handleServerMessage;
     private List<User> users;
+    private HBox quoteVisible;
+    private Button btnCancelQuote;
+    private Label lblQuote;
+    private ContextMenu messageContextMenu;
 
     /**
      * Create a new Controller
@@ -103,6 +110,10 @@ public class ServerScreenController implements Controller {
             this.lbServerName.setText(server.getName());
         }
         this.lbServerName.setContextMenu(createContextMenuLeaveServer());
+        this.quoteVisible = (HBox) view.lookup("#quoteVisible");
+        this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
+        this.lblQuote = (Label) view.lookup("#lblQuote");
+
 
         // Add server websocket
         editor.getNetworkController().
@@ -199,6 +210,9 @@ public class ServerScreenController implements Controller {
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
+        this.btnCancelQuote.setOnAction(this::cancelQuote);
+        quoteVisible.getChildren().clear();
+        addMessageContextMenu();
 
     }
 
@@ -254,6 +268,40 @@ public class ServerScreenController implements Controller {
     }
 
     // Additional methods
+
+    private void addMessageContextMenu() {
+        MenuItem quote = new MenuItem("- quote");
+        messageContextMenu = new ContextMenu();
+        messageContextMenu.setId("messageContextMenu");
+        messageContextMenu.getItems().add(quote);
+        quote.setOnAction((event) -> {
+            handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem());
+        });
+    }
+
+    public void handleContextMenuClicked(String menu, Message message) {
+        lvTextChat.setContextMenu(null);
+        lvTextChat.getSelectionModel().select(null);
+        if (message != null) {
+            if (menu.equals(QUOTE)) {
+                String formatted = editor.getMessageFormatted(message);
+                removeQuote();
+                lblQuote.setText(formatted);
+                lblQuote.setAccessibleHelp(message.getId());
+                quoteVisible.getChildren().add(lblQuote);
+                quoteVisible.getChildren().add(btnCancelQuote);
+            }
+        }
+    }
+
+    private void cancelQuote(ActionEvent actionEvent) {
+        removeQuote();
+    }
+
+    public void removeQuote() {
+        lblQuote.setText("");
+        quoteVisible.getChildren().clear();
+    }
 
     public void deleteCurrentServer() {
         // Delete all connection to the server in the data model
@@ -457,6 +505,7 @@ public class ServerScreenController implements Controller {
      * @param mouseEvent
      */
     private void lvTextChatOnClick(MouseEvent mouseEvent) {
+        lvTextChat.setContextMenu(null);
         Message selectedMessage = lvTextChat.getSelectionModel().getSelectedItem();
         if (selectedMessage != null && selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
             this.observableMessageList.remove(0);
@@ -465,6 +514,13 @@ public class ServerScreenController implements Controller {
             String timestamp = String.valueOf(oldestMessage.getTimestamp());
             this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
         }
+        if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+            if (lvTextChat.getSelectionModel().getSelectedItem() != null && !editor.isQuote(lvTextChat.getSelectionModel().getSelectedItem())) {
+                lvTextChat.setContextMenu(messageContextMenu);
+                messageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            }
+        }
+
     }
 
     /**
@@ -496,9 +552,21 @@ public class ServerScreenController implements Controller {
         String message = this.tfInputMessage.getText();
         this.tfInputMessage.clear();
 
+
         if (message != null && !message.isEmpty() && currentChannel != null) {
-            JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
-            editor.getNetworkController().sendChannelChatMessage(jsonMsg.toString());
+
+            if (!lblQuote.getText().isEmpty()) {
+                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
+                JsonObject jsonMessage = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
+                removeQuote();
+
+                editor.getNetworkController().sendChannelChatMessage(quoteMsg.toString());
+                editor.getNetworkController().sendChannelChatMessage(jsonMessage.toString());
+            } else {
+
+                JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
+                editor.getNetworkController().sendChannelChatMessage(jsonMsg.toString());
+            }
         }
     }
 

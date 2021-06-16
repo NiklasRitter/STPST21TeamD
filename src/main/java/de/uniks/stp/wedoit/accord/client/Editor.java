@@ -507,6 +507,7 @@ public class Editor {
             }
         }
     }
+
     public void leaveServer(String userKey, String id) {
         if (id != null && !id.isEmpty()) {
             networkController.leaveServer(userKey, id);
@@ -537,6 +538,13 @@ public class Editor {
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 
+    public String getMessageFormatted(Message message) {
+        String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
+
+        return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
+    }
+
+
     public String cleanMessage(PrivateMessage item) {
         if (isQuote(item)) {
             String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
@@ -546,6 +554,12 @@ public class Editor {
     }
 
     public boolean isQuote(PrivateMessage item) {
+        return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
+                && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+                && (item.getText()).startsWith(QUOTE_PREFIX);
+    }
+
+    public boolean isQuote(Message item) {
         return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
                 && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
                 && (item.getText()).startsWith(QUOTE_PREFIX);
