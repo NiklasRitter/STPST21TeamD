@@ -670,12 +670,12 @@ public class StageManager extends Application {
         try {
             super.stop();
             if (systemTrayController != null) systemTrayController.stop();
-            editor.getNetworkController().stop();
+            editor.getWebSocketManager().stop();
             LocalUser localUser = model.getLocalUser();
             if (localUser != null) {
                 String userKey = localUser.getUserKey();
                 if (userKey != null && !userKey.isEmpty()) {
-                    editor.getNetworkController().getRestClient().logout(userKey, response -> {
+                    editor.getRestManager().getRestClient().logout(userKey, response -> {
                         Unirest.shutDown();
                         cleanup();
                     });

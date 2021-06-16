@@ -105,15 +105,9 @@ public class ServerScreenController implements Controller {
         this.lbServerName.setContextMenu(createContextMenuLeaveServer());
 
         // Add server websocket
-        editor.getNetworkController().
-
-                haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
-        editor.getNetworkController().
-
-                haveWebSocket(CHAT_USER_URL + this.editor.getNetworkController().
-
-                        getCleanLocalUserName()
+        editor.getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.editor.getWebSocketManager().getCleanLocalUserName()
                         + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         tvServerChannelsRoot = new TreeItem<>();
@@ -126,7 +120,7 @@ public class ServerScreenController implements Controller {
         // get members of this server
         // load categories after get users of a server
         // finally add PropertyChangeListener
-        editor.getNetworkController().getExplicitServerInformation(localUser, server, this);
+        editor.getRestManager().getExplicitServerInformation(localUser, server, this);
         this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         addActionListener();
 
@@ -237,8 +231,8 @@ public class ServerScreenController implements Controller {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
         }
 
-        this.editor.getNetworkController().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-        this.editor.getNetworkController().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
+        this.editor.getWebSocketManager().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+        this.editor.getWebSocketManager().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + this.server.getId());
 
         if (this.currentChannel != null) {
@@ -317,7 +311,7 @@ public class ServerScreenController implements Controller {
      * gets Categories from server and calls loadCategoryChannels()
      */
     private void initCategoryChannelList() {
-        editor.getNetworkController().getCategories(localUser, server, this);
+        editor.getRestManager().getCategories(localUser, server, this);
     }
 
     public void handleGetCategories(List<Category> categoryList) {
@@ -341,7 +335,7 @@ public class ServerScreenController implements Controller {
      * @param category of which the channels should be loaded
      */
     private void loadCategoryChannels(Category category, TreeItem<Object> categoryItem) {
-        editor.getNetworkController().getChannels(localUser, server, category, categoryItem, this);
+        editor.getRestManager().getChannels(localUser, server, category, categoryItem, this);
     }
 
     public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
@@ -419,7 +413,7 @@ public class ServerScreenController implements Controller {
 
         // display last 50 messages
         String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
-        this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
+        this.editor.getRestManager().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
 
 
         // Add listener for the loaded listView
@@ -463,7 +457,7 @@ public class ServerScreenController implements Controller {
             Message oldestMessage = this.observableMessageList.get(0);
             Channel channel = oldestMessage.getChannel();
             String timestamp = String.valueOf(oldestMessage.getTimestamp());
-            this.editor.getNetworkController().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
+            this.editor.getRestManager().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
         }
     }
 
@@ -498,7 +492,7 @@ public class ServerScreenController implements Controller {
 
         if (message != null && !message.isEmpty() && currentChannel != null) {
             JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
-            editor.getNetworkController().sendChannelChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendChannelChatMessage(jsonMsg.toString());
         }
     }
 

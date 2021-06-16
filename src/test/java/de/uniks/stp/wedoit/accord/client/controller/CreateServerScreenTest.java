@@ -71,12 +71,12 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         //create localUser to skip the login screen
         localUser = StageManager.getEditor().haveLocalUser("John", "testKey123");
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
+        StageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        StageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
 
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
+        StageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.getEditor().getRestManager().setRestClient(restMock);
         StageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -151,7 +151,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         }
         Assert.assertNotNull(server);
 
-        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        StageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + "123", channelChatWebSocketClient);
         WaitForAsyncUtils.waitForFxEvents();
 

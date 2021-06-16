@@ -91,7 +91,7 @@ public class LoginScreenController implements Controller {
             pwUserPw.getStyleClass().add("error");
             errorLabel.setText("Username or password is missing");
         } else {
-            editor.getNetworkController().loginUser(name, password, this);
+            editor.getRestManager().loginUser(name, password, this);
         }
     }
 
@@ -116,7 +116,7 @@ public class LoginScreenController implements Controller {
         String password = this.pwUserPw.getText();
 
         if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
-            editor.getNetworkController().registerUser(name, password, this);
+            editor.getRestManager().registerUser(name, password, this);
         } else {
             //reset name and password fields
             tfUserName.getStyleClass().add("error");

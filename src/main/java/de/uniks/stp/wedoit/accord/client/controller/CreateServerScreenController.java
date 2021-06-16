@@ -74,7 +74,7 @@ public class CreateServerScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
-            editor.getNetworkController().createServer(tfServerName.getText(), this);
+            editor.getRestManager().createServer(tfServerName.getText(), this);
         }
     }
 

@@ -172,7 +172,7 @@ public class EditServerScreenController implements Controller {
     private void saveButtonOnClick(ActionEvent actionEvent) {
         String newServerName = tfNewServernameInput.getText();
         if (!newServerName.isEmpty()) {
-            editor.getNetworkController().changeServerName(localUser, server, newServerName, this);
+            editor.getRestManager().changeServerName(localUser, server, newServerName, this);
         } else {
             stage.close();
         }
@@ -187,7 +187,7 @@ public class EditServerScreenController implements Controller {
         lblInvitationStatusText.setText("");
         lblInvitationStatus.setText("");
         if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
-            editor.getNetworkController().deleteInvite(localUser.getUserKey(), lvInvitation.getSelectionModel().getSelectedItem(), server, this);
+            editor.getRestManager().deleteInvite(localUser.getUserKey(), lvInvitation.getSelectionModel().getSelectedItem(), server, this);
         }
     }
 
@@ -201,14 +201,14 @@ public class EditServerScreenController implements Controller {
         if (radioBtnMaxCount.isSelected()) {
             if (tfMaxCountAmountInput.getText().matches("[1-9][0-9]*") && tfMaxCountAmountInput.getText().length() < 10) {
                 int max = Integer.parseInt(tfMaxCountAmountInput.getText());
-                editor.getNetworkController().createInvitation(COUNT, max, server, localUser.getUserKey(), this);
+                editor.getRestManager().createInvitation(COUNT, max, server, localUser.getUserKey(), this);
             } else {
                 tfMaxCountAmountInput.setText("");
                 tfMaxCountAmountInput.setPromptText("Insert Amount > 0");
                 tfMaxCountAmountInput.getStyleClass().add("redPromptText");
             }
         } else if (radioBtnTemporal.isSelected()) {
-            editor.getNetworkController().createInvitation(TEMPORAL, 0, server, localUser.getUserKey(), this);
+            editor.getRestManager().createInvitation(TEMPORAL, 0, server, localUser.getUserKey(), this);
         }
     }
 
@@ -336,7 +336,7 @@ public class EditServerScreenController implements Controller {
     }
 
     private void loadOldInvitations() {
-        this.editor.getNetworkController().loadInvitations(server, localUser.getUserKey(), this);
+        this.editor.getRestManager().loadInvitations(server, localUser.getUserKey(), this);
     }
 
     public void handleOldInvitations(List<Invitation> invitations) {

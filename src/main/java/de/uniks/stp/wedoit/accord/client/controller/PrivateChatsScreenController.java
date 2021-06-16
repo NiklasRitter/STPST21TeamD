@@ -183,10 +183,10 @@ public class PrivateChatsScreenController implements Controller {
     private void btnPlayOnClicked(ActionEvent actionEvent) {
         if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play")) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEINVITE);
-            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
         } else if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
-            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
             btnPlay.setText("Play");
             StageManager.showGameScreen(currentChat.getUser());
         }
@@ -221,7 +221,7 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void initOnlineUsersList() {
         // load online Users
-        editor.getNetworkController().getOnlineUsers(localUser, this);
+        editor.getRestManager().getOnlineUsers(localUser, this);
     }
 
     public void handleGetOnlineUsers() {
@@ -384,13 +384,13 @@ public class PrivateChatsScreenController implements Controller {
                 JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
                 JsonObject jsonMessage = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 removeQuote();
-                editor.getNetworkController().sendPrivateChatMessage(quoteMsg.toString());
-                editor.getNetworkController().sendPrivateChatMessage(jsonMessage.toString());
+                editor.getWebSocketManager().sendPrivateChatMessage(quoteMsg.toString());
+                editor.getWebSocketManager().sendPrivateChatMessage(jsonMessage.toString());
 
 
             } else {
                 jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
-                editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+                editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
             }
 
 

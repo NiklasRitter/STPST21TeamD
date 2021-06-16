@@ -1,9 +1,10 @@
 package de.uniks.stp.wedoit.accord.client;
 
-import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import de.uniks.stp.wedoit.accord.client.util.RestManager;
+import de.uniks.stp.wedoit.accord.client.util.WebSocketManager;
 import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -21,15 +22,23 @@ import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class Editor {
 
-    private final NetworkController networkController = new NetworkController(this);
+    private final RestManager restManager = new RestManager(this);
+    private final WebSocketManager webSocketManager = new WebSocketManager(this);
     private AccordClient accordClient;
     private Server currentServer;
 
     /**
-     * @return private final NetworkController networkController
+     * @return private final RestManager restManager
      */
-    public NetworkController getNetworkController() {
-        return networkController;
+    public RestManager getRestManager() {
+        return restManager;
+    }
+
+    /**
+     * @return private final WebSocketManager webSocketManager
+     */
+    public WebSocketManager getWebSocketManager() {
+        return webSocketManager;
     }
 
     public Server getCurrentServer() {
@@ -72,7 +81,7 @@ public class Editor {
         }
         localUser.setName(username);
         localUser.setUserKey(userKey);
-        networkController.setClearUsername();
+        webSocketManager.setClearUsername();
         return localUser;
     }
 
@@ -337,8 +346,8 @@ public class Editor {
      */
     public void logoutUser(String userKey) {
         if (userKey != null && !userKey.isEmpty()) {
-            networkController.stop();
-            networkController.logoutUser(userKey);
+            webSocketManager.stop();
+            restManager.logoutUser(userKey);
         }
     }
 
@@ -509,7 +518,7 @@ public class Editor {
     }
     public void leaveServer(String userKey, String id) {
         if (id != null && !id.isEmpty()) {
-            networkController.leaveServer(userKey, id);
+            restManager.leaveServer(userKey, id);
         }
     }
 

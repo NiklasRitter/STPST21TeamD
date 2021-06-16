@@ -76,10 +76,10 @@ public class LoginScreenTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
-        StageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        StageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        StageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.getEditor().getRestManager().setRestClient(restMock);
         StageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);

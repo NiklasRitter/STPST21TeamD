@@ -147,15 +147,15 @@ public class CreateChannelScreenController implements Controller {
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
             if (!checkBoxPrivileged.isSelected()) {
-                editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
                         TEXT, checkBoxPrivileged.isSelected(), null, this);
             } else if (checkBoxPrivileged.isSelected()) {
                 if (userList.size() <= 0) {
                     userList.add(this.localUser.getId());
-                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                    editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
                             TEXT, checkBoxPrivileged.isSelected(), userList, this);
                 } else {
-                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                    editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
                             TEXT, checkBoxPrivileged.isSelected(), userList, this);
                 }
             }

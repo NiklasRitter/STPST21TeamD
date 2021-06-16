@@ -81,11 +81,11 @@ public class ServerContextMenuTest extends ApplicationTest {
         this.localUser = StageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
         this.server = StageManager.getEditor().haveServer(localUser, "testId", "TServer");
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + StageManager.getEditor().
-                getNetworkController().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
+        StageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        StageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + StageManager.getEditor().
+                getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
+        StageManager.getEditor().getRestManager().setRestClient(restMock);
         StageManager.showServerScreen(server);
 
         this.stage.centerOnScreen();

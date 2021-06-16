@@ -76,7 +76,7 @@ public class CreateCategoryScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
-            editor.getNetworkController().createCategory(editor.getCurrentServer(), tfCategoryName.getText(), this);
+            editor.getRestManager().createCategory(editor.getCurrentServer(), tfCategoryName.getText(), this);
         }
     }
 

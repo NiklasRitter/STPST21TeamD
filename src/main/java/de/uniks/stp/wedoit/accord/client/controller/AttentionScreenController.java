@@ -76,7 +76,7 @@ public class AttentionScreenController implements Controller {
     }
 
     private void deleteOnClick(ActionEvent actionEvent) {
-        this.editor.getNetworkController().deleteObject(this.localUser, this.objectToDelete, this);
+        this.editor.getRestManager().deleteObject(this.localUser, this.objectToDelete, this);
     }
 
     private void showError(){
