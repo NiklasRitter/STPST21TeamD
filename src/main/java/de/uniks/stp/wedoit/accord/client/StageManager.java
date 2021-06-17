@@ -30,7 +30,6 @@ public class StageManager extends Application {
     private ResourceManager resourceManager = new ResourceManager();
     private Editor editor = new Editor();
     private PreferenceManager prefManager = new PreferenceManager();
-    {resourceManager.setPreferenceManager(prefManager);}
     private SystemTrayController systemTrayController;
     private AccordClient model;
     private Stage stage;
@@ -42,6 +41,7 @@ public class StageManager extends Application {
     private Stage gameStage;
     private Scene gameScene;
 
+    {resourceManager.setPreferenceManager(prefManager);}
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window

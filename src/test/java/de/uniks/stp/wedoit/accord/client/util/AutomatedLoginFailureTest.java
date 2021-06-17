@@ -5,8 +5,6 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -23,16 +21,14 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.Mockito.*;
 
-public class AutomatedLoginTest extends ApplicationTest {
+public class AutomatedLoginFailureTest extends ApplicationTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -77,7 +73,7 @@ public class AutomatedLoginTest extends ApplicationTest {
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
 
-        String returnMessage = Json.createObjectBuilder().add("status", "success").add("message", "").add("data", Json.createObjectBuilder().add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")).build().toString();
+        String returnMessage = Json.createObjectBuilder().add("status", "failure").add("message", "").add("data", Json.createObjectBuilder().add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")).build().toString();
         when(res.getBody()).thenReturn(new JsonNode(returnMessage));
         this.stageManager.start(stage);
         verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
@@ -112,8 +108,8 @@ public class AutomatedLoginTest extends ApplicationTest {
 
     @Test
     public void startWithRememberMeOption() {
-        Assert.assertEquals(stage.getTitle(), "Main");
-        Assert.assertEquals(stageManager.getEditor().getLocalUser().getName(), "username");
+        Assert.assertEquals(stage.getTitle(), "Login");
+        Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
     }
 
 
