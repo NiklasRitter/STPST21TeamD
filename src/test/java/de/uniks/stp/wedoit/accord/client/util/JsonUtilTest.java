@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.controller.NetworkController;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -11,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.json.Json;
-import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
@@ -67,5 +65,22 @@ public class JsonUtilTest {
 
         Assert.assertEquals(localUser.getName(), tempUserJson.getString(NAME));
         Assert.assertEquals(localUser.getName(), "Abbas");
+    }
+
+    @Test
+    public void testParseOnlineUser() {
+        JsonObject onlineUserJson = Json.createObjectBuilder().add("name", "Nahid").add("id", "21091985").build();
+
+        user.setOnlineStatus(false);
+        Assert.assertFalse(user.isOnlineStatus());
+
+        Assert.assertEquals(user.getName(), "Gelareh");
+
+        user = JsonUtil.parseOnlineUser(onlineUserJson);
+
+        Assert.assertEquals(user.getName(), onlineUserJson.getString(NAME));
+        Assert.assertEquals(onlineUserJson.getString(ID), user.getId());
+        Assert.assertEquals(onlineUserJson.getString(ID), "21091985");
+        Assert.assertTrue(user.isOnlineStatus());
     }
 }
