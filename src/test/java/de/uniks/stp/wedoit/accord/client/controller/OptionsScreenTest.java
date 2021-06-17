@@ -4,11 +4,8 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
-import javafx.application.Platform;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -73,19 +70,17 @@ public class OptionsScreenTest extends ApplicationTest {
     @Override
     public void start(Stage stage) {
 
-        preferenceManager = new PreferenceManager();
-        resourceManager = new ResourceManager();
-        resourceManager.setPreferenceManager(preferenceManager);
-        this.oldOptions = new Options();
-        stageManager.getResourceManager().loadOptions(oldOptions);
-        stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false));
-
-
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
+        this.oldOptions = new Options();
+
+
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getPopupStage();
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
+
 
         //create localUser to skip the login screen
         stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
@@ -102,6 +97,7 @@ public class OptionsScreenTest extends ApplicationTest {
     @Override
     public void stop() throws Exception {
         stageManager.getResourceManager().saveOptions(this.oldOptions);
+        oldOptions = null;
         super.stop();
         stage = null;
         popupStage = null;
@@ -198,4 +194,6 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertEquals(mainVBox.getHeight(), 150, 0);
         Assert.assertEquals(mainVBox.getWidth(), 300, 0);
     }
+
+
 }
