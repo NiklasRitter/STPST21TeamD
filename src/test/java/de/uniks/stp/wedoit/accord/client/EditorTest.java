@@ -1,6 +1,5 @@
-package de.uniks.stp.wedoit.accord.client.controller;
+package de.uniks.stp.wedoit.accord.client;
 
-import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import org.junit.Assert;
 import org.junit.Before;
