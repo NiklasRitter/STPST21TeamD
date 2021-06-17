@@ -31,6 +31,7 @@ public class CategoryTreeViewController implements Controller {
     private final Server server;
     private final ServerScreenController controller;
     private final Map<String, Channel> channelMap = new HashMap<>();
+    private Channel channel;
 
     private TreeView<Object> tvServerChannels;
     private TreeItem<Object> tvServerChannelsRoot;
@@ -46,6 +47,7 @@ public class CategoryTreeViewController implements Controller {
         this.editor = editor;
         this.server = server;
         this.controller = controller;
+        this.channel = new Channel();
     }
 
     public void init() {
@@ -62,13 +64,23 @@ public class CategoryTreeViewController implements Controller {
 
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
+        this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     public void stop() {
         this.tvServerChannels.setOnMouseReleased(null);
         for (Channel channel : channelMap.values()) {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
+            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
+            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         }
+        for(Category category : server.getCategories()){
+            category.listeners().removePropertyChangeListener(Category.PROPERTY_NAME, categoriesListener);
+            category.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, categoriesListener);
+        }
+        this.server.listeners().removePropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
+        this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
+        this.channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     // Channel and Category init
@@ -106,16 +118,16 @@ public class CategoryTreeViewController implements Controller {
     /**
      * initChannelChat when channel is clicked twice
      *
-     * @param mouseEvent occurs when a listitem is clicked
+     * @param mouseEvent occurs when a listItem is clicked
      */
     private void tvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
 
             if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
                 if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
-                    Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
+                    channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
                     controller.initChannelChat(channel);
-                    Platform.runLater(controller::refreshLvUsers);
+                    Platform.runLater(() -> controller.refreshLvUsers(channel));
                 }
             }
         }
@@ -128,21 +140,23 @@ public class CategoryTreeViewController implements Controller {
      */
     private void handleChannelReadChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            Platform.runLater(() -> {
-                tvServerChannels.refresh();
-            });
+            Platform.runLater(() -> tvServerChannels.refresh());
         }
     }
 
     private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            Platform.runLater(controller::refreshLvUsers);
+            if(propertyChangeEvent.getSource() instanceof Channel){
+                Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
+            }
+            else{
+                Platform.runLater(() -> controller.refreshLvUsers(null));
+            }
         }
     }
 
     private void handleCategoryChange(PropertyChangeEvent propertyChangeEvent) {
         Platform.runLater(() -> {
-            System.out.println("some");
             if(propertyChangeEvent.getPropertyName().equals(Server.PROPERTY_CATEGORIES)){
                 updateCategoryTreeView((Category) propertyChangeEvent.getOldValue(), (Category) propertyChangeEvent.getNewValue());
             }
