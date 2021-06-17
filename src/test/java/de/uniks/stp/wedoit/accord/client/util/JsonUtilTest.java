@@ -61,6 +61,8 @@ public class JsonUtilTest {
     public void testParseTempUser() {
         JsonObject tempUserJson = Json.createObjectBuilder().add("name", "Abbas").build();
 
+        Assert.assertEquals(localUser.getName(), "Amir");
+
         localUser = JsonUtil.parseTempUser(tempUserJson);
 
         Assert.assertEquals(localUser.getName(), tempUserJson.getString(NAME));
