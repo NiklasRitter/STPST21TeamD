@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -16,82 +17,92 @@
 <?import javafx.scene.text.Font?>
 
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="600.0" spacing="10.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Region minHeight="30.0" prefHeight="30.0" prefWidth="600.0" />
-      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" prefWidth="359.0">
-         <children>
-            <Label text="Enter your username:">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <TextField id="tfUserName" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="370.0" />
-            <Region prefHeight="76.0" prefWidth="398.0" />
-            <Label text="Enter your password:">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <PasswordField id="pwUserPw" prefHeight="25.0" prefWidth="370.0" />
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <VBox.margin>
-            <Insets left="100.0" right="100.0" top="5.0" />
-         </VBox.margin>
-      </VBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Button id="btnLogin" mnemonicParsing="false" styleClass="styleButton" text="Login">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Button>
-            <Region maxWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Label id="lblError" styleClass="redLabel" />
-            <Region maxWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Button id="btnRegister" mnemonicParsing="false" styleClass="styleButton" text="Register ">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Button>
-         </children>
-         <VBox.margin>
-            <Insets left="30.0" right="30.0" />
-         </VBox.margin>
-      </HBox>
-      <HBox alignment="CENTER" prefHeight="69.0" prefWidth="598.0">
-         <children>
-            <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="36.0" style="-fx-background-color: transparent;" styleClass="styleButton">
-               <graphic>
-                  <ImageView id="btnSetting" fitHeight="52.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/options.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <textFill>
-                  <LinearGradient endX="1.0" endY="1.0">
-                     <stops>
-                        <Stop>
-                           <color>
-                              <Color />
-                           </color>
-                        </Stop>
-                        <Stop offset="1.0">
-                           <color>
-                              <Color red="1.0" green="1.0" blue="1.0" />
-                           </color>
-                        </Stop>
-                     </stops>
-                  </LinearGradient>
-               </textFill>
-            </Button>
-         </children>
-      </HBox>
-   </children>
-   <padding>
-      <Insets bottom="10.0" />
-   </padding>
+    <children>
+        <Region minHeight="30.0" prefHeight="30.0" prefWidth="600.0" />
+        <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" prefWidth="359.0">
+            <children>
+                <Label text="Enter your username:">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <TextField id="tfUserName" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="370.0" />
+                <Region prefHeight="76.0" prefWidth="398.0" />
+                <Label text="Enter your password:">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <PasswordField id="pwUserPw" prefHeight="25.0" prefWidth="370.0" />
+            </children>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <VBox.margin>
+                <Insets left="100.0" right="100.0" top="5.0" />
+            </VBox.margin>
+        </VBox>
+        <HBox alignment="CENTER" minHeight="38.0" minWidth="141.0" prefHeight="38.0" prefWidth="600.0" spacing="20.0">
+            <children>
+                <Label text="Remember me:">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <CheckBox id="btnRememberMe" mnemonicParsing="false" styleClass="styleButton" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <children>
+                <Button id="btnLogin" mnemonicParsing="false" styleClass="styleButton" text="Login">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Button>
+                <Region maxWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Label id="lblError" styleClass="redLabel" />
+                <Region maxWidth="200.0" HBox.hgrow="ALWAYS" />
+                <Button id="btnRegister" mnemonicParsing="false" styleClass="styleButton" text="Register ">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Button>
+            </children>
+            <VBox.margin>
+                <Insets left="30.0" right="30.0" />
+            </VBox.margin>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="69.0" prefWidth="598.0">
+            <children>
+                <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="36.0" style="-fx-background-color: transparent;" styleClass="styleButton">
+                    <graphic>
+                        <ImageView id="btnSetting" fitHeight="52.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@images/options.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                    <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color blue="1.0" green="1.0" red="1.0" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </textFill>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="10.0" />
+    </padding>
 </VBox>

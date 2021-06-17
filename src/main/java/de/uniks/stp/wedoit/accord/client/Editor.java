@@ -49,6 +49,7 @@ public class Editor {
     public LocalUser haveLocalUser() {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
+        stageManager.getResourceManager();
         return localUser;
     }
 
@@ -60,7 +61,7 @@ public class Editor {
     /**
      * create localUser with the given arguments and set localUser in Editor
      * <p>
-     * if localUser already exists set username and userkey to current localUser
+     * if localUser already exists set username and userKey to current localUser
      *
      * @param username id of the localUser
      * @param userKey  name of the localUser
@@ -337,6 +338,9 @@ public class Editor {
      * @param userKey userKey of the user who is logged out
      */
     public void logoutUser(String userKey) {
+        accordClient.getOptions().setRememberMe(false);
+        accordClient.getLocalUser().setPassword("");
+        accordClient.getLocalUser().setName("");
         if (userKey != null && !userKey.isEmpty()) {
             networkController.stop();
             networkController.logoutUser(userKey);
@@ -595,4 +599,52 @@ public class Editor {
     public StageManager getStageManager() {
         return stageManager;
     }
+
+    public void automaticLogin(AccordClient accordClient) {
+        if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
+            networkController.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
+        } else {
+            stageManager.showLoginScreen();
+            stageManager.getStage().show();
+        }
+    }
+
+    public void handleAutomaticLogin(boolean success) {
+        if (success) {
+            Platform.runLater(stageManager::showMainScreen);
+        } else {
+            Platform.runLater(stageManager::showLoginScreen);
+        }
+        Platform.runLater(() -> {
+            stageManager.getStage().show();
+        });
+    }
+
+    /*
+    TODO: Add encryption for saved password and username
+    public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        KeySpec spec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
+                Base64.getDecoder().decode(StageManager.getResourceManager().getOrCreateInitializationVector()), 65536, 256);
+        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
+    }
+
+    public IvParameterSpec getOrCreateIvParameterSpec() throws NoSuchAlgorithmException {
+        return new IvParameterSpec(Base64.getDecoder().decode(StageManager.getResourceManager().getOrCreateInitializationVector()));
+    }
+
+    public String encryptData(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, createEncryptionKey(), getOrCreateIvParameterSpec());
+        byte[] cipherText = cipher.doFinal(Base64.getDecoder().decode(data));
+        return Base64.getEncoder().encodeToString(cipherText);
+    }
+
+    public String decryptData(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, createEncryptionKey(), getOrCreateIvParameterSpec());
+        byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(data));
+        return Base64.getEncoder().encodeToString(plainText);
+    }*/
+
 }

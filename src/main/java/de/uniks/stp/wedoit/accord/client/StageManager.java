@@ -25,6 +25,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 
 public class StageManager extends Application {
 
+
     private final Map<String, Controller> controllerMap = new HashMap<>();
     private SystemTrayController systemTrayController;
     private Editor editor;
@@ -39,6 +40,7 @@ public class StageManager extends Application {
     private Stage gameStage;
     private Scene gameScene;
     private ResourceManager resourceManager;
+
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -56,11 +58,11 @@ public class StageManager extends Application {
                 scene = new Scene(root);
             }
 
-            model.setLocalUser(new LocalUser());
+            editor.haveLocalUser();
 
             updateDarkmode();
 
-            LoginScreenController loginScreenController = new LoginScreenController(root, model.getLocalUser(), editor);
+            LoginScreenController loginScreenController = new LoginScreenController(root, model, editor);
             loginScreenController.init();
             controllerMap.put(LOGIN_SCREEN_CONTROLLER, loginScreenController);
 
@@ -617,14 +619,19 @@ public class StageManager extends Application {
         return popupStage;
     }
 
-    public Stage getEmojiPickerStage() {
-        return emojiPickerStage;
+
+    public ResourceManager getResourceManager() {
+        return resourceManager;
+
     }
 
     public Stage getGameStage() {
         return gameStage;
     }
 
+    public Stage getEmojiPickerStage() {
+        return emojiPickerStage;
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -659,8 +666,11 @@ public class StageManager extends Application {
         resourceManager = new ResourceManager();
         resourceManager.setPreferenceManager(prefManager);
         model = editor.haveAccordClient();
+        model.setOptions(new Options());
         editor.haveLocalUser();
-        model.setOptions(resourceManager.loadOptions());
+
+        resourceManager.start(model);
+
         if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
         else {
             systemTrayController = new SystemTrayController(editor);
@@ -669,8 +679,7 @@ public class StageManager extends Application {
 
         stage.setMinHeight(400);
         stage.setMinWidth(600);
-        showLoginScreen();
-        stage.show();
+        editor.automaticLogin(model);
     }
 
     @Override
@@ -680,6 +689,7 @@ public class StageManager extends Application {
             if (systemTrayController != null) systemTrayController.stop();
             editor.getNetworkController().stop();
             LocalUser localUser = model.getLocalUser();
+            resourceManager.stop(model);
             if (localUser != null) {
                 String userKey = localUser.getUserKey();
                 if (userKey != null && !userKey.isEmpty()) {

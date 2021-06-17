@@ -1,14 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
-import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Platform;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -33,7 +33,6 @@ import javax.json.JsonObject;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,11 +72,14 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
+
         preferenceManager = new PreferenceManager();
         resourceManager = new ResourceManager();
         resourceManager.setPreferenceManager(preferenceManager);
-        this.oldOptions = resourceManager.loadOptions();
-        resourceManager.saveOptions(new Options().setDarkmode(false));
+        this.oldOptions = new Options();
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false));
+
 
         // start application
         this.stage = stage;
@@ -99,7 +101,7 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Override
     public void stop() throws Exception {
-        ResourceManager.saveOptions(this.oldOptions);
+        stageManager.getResourceManager().saveOptions(this.oldOptions);
         super.stop();
         stage = null;
         popupStage = null;
