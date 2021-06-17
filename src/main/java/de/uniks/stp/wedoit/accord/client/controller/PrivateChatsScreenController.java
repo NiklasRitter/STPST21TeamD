@@ -25,7 +25,6 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -365,13 +364,6 @@ public class PrivateChatsScreenController implements Controller {
 
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
-    }
-
-    /**
-     * @param privateMessage
-     */
-    public void newChatMessage(PrivateMessage privateMessage) {
-        List<User> userCell = lwOnlineUsers.getItems().stream().filter(user1 -> user1.getName().equals(privateMessage.getFrom())).collect(Collectors.toList());
     }
 
     /**

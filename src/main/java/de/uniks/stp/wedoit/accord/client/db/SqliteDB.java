@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.db;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import de.uniks.stp.wedoit.accord.client.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -35,9 +34,9 @@ public class SqliteDB {
                     + ");"
             );
             c.close();
+            stmt.close();
 
         }catch (Exception e){
-            System.err.println("Couldnt init db");
             e.printStackTrace();
         }
     }
@@ -116,6 +115,8 @@ public class SqliteDB {
                 if(rs.getString("sender").equals(username)) users.add(rs.getString("receiver"));
                 else users.add(rs.getString("sender"));
             }
+            conn.close();
+            prep.close();
 
         }catch (Exception e){
             e.printStackTrace();

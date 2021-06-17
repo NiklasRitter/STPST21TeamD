@@ -11,7 +11,6 @@ import javafx.scene.input.ClipboardContent;
 
 import javax.json.JsonArray;
 import java.text.SimpleDateFormat;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -329,7 +328,6 @@ public class Editor {
                 offlineUser.add(new User().setName(s).setChatRead(getUser(s) == null || getUser(s).isChatRead()));
             }
         }
-
         return offlineUser;
     }
 
