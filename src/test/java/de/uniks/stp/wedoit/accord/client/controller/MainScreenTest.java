@@ -48,7 +48,6 @@ public class MainScreenTest extends ApplicationTest {
     private WebSocketClient chatWebSocketClient;
     @Mock
     private WebSocketClient channelChatWebSocketClient;
-    private Server server;
 
     @Mock
     private WebSocketClient webSocketClient;
@@ -88,7 +87,7 @@ public class MainScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
-        this.stageManager.showLoginScreen();
+        this.stageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -102,7 +101,6 @@ public class MainScreenTest extends ApplicationTest {
         systemWebSocketClient = null;
         chatWebSocketClient = null;
         channelChatWebSocketClient = null;
-        server = null;
         webSocketClient = null;
         restMock = null;
         res = null;
@@ -114,32 +112,6 @@ public class MainScreenTest extends ApplicationTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-    }
-
-    public void directToMainScreen() {
-        //Mocking of RestClient login function
-        JsonObject json = Json.createObjectBuilder()
-                .add("status", "success")
-                .add("message", "")
-                .add("data", Json.createObjectBuilder()
-                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
-                ).build();
-        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
-
-        //TestFX
-        String username = "username";
-        String password = "password";
-
-        ((TextField) lookup("#tfUserName").query()).setText(username);
-
-        ((TextField) lookup("#pwUserPw").query()).setText(password);
-
-        clickOn("#btnLogin");
-
-        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
-
-        Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
-        callbackLogin.completed(res);
     }
 
     /**
@@ -165,10 +137,6 @@ public class MainScreenTest extends ApplicationTest {
                 .build();
         when(res.getBody()).thenReturn(new JsonNode(json.toString()));
 
-        directToMainScreen();
-
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
 
         // testing logout button
@@ -192,11 +160,6 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void privateChatsButtonTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
 
@@ -206,11 +169,6 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void optionsButtonTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         clickOn("#btnOptions");
         Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
     }
@@ -218,11 +176,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test: list View load servers correct in the list view and sorted alphabetical
     @Test
     public void loadListViewWithTwoServersTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         // Mock the rest client getServers method
@@ -246,11 +199,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test: list View load zero servers correct in the list view
     @Test
     public void loadListViewWithZeroServersTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersSuccessWithZeroServers();
 
         // Mock the rest client getServers method
@@ -265,11 +213,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test: list view change correct with alphabetical order when a new server was created
     @Test
     public void listViewAddPropertyChangeListenerTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         mockRestClient(json);
@@ -303,11 +246,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test getServer failure message handling, server show LoginScreen
     @Test
     public void failureMessageTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersFailureResponse();
 
         mockRestClient(json);
@@ -319,11 +257,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test open server with a double click on this one
     @Test
     public void openServerDoubleClickedTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         mockRestClient(json);
@@ -365,11 +298,6 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void handleServerMessage() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         ListView<Server> listView = lookup("#lwServerList").queryListView();
         Assert.assertNotNull(listView);
 
@@ -404,11 +332,6 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void enterServerTestSuccessful() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         clickOn("#btnEnterInvitation");
         Assert.assertEquals("Join Server", this.stageManager.getPopupStage().getTitle());
 
@@ -438,11 +361,6 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void enterServerTestFailure() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         clickOn("#btnEnterInvitation");
         Assert.assertEquals("Join Server", this.stageManager.getPopupStage().getTitle());
 

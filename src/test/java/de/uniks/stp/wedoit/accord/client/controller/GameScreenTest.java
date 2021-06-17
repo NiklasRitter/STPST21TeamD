@@ -97,9 +97,13 @@ public class GameScreenTest extends ApplicationTest {
         rule = null;
         stage = null;
         stageManager = null;
+        localUser = null;
         restMock = null;
         systemWebSocketClient = null;
         chatWebSocketClient = null;
+        callbackArgumentSystemCaptorWebSocket = null;
+        callbackArgumentCaptor = null;
+        res = null;
     }
 
     @BeforeEach

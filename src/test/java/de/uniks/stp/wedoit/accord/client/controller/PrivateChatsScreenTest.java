@@ -71,8 +71,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentSystemCaptorWebSocket;
 
-    private Editor editor;
-
     @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
@@ -113,7 +111,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         systemWebSocketClient = null;
         chatWebSocketClient = null;
         callbackArgumentSystemCaptorWebSocket = null;
-        editor = null;
     }
 
     @BeforeEach

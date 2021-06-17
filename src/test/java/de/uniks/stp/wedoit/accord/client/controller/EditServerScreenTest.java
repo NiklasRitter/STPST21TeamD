@@ -47,7 +47,6 @@ public class EditServerScreenTest extends ApplicationTest {
     WebSocketClient webSocketClientMock;
     @Mock
     WebSocketClient chatWebSocketClientMock;
-    private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
@@ -69,7 +68,6 @@ public class EditServerScreenTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
@@ -647,7 +645,6 @@ public class EditServerScreenTest extends ApplicationTest {
 
     @Override
     public void stop() {
-        stage = null;
         stageManager = null;
         localUser = null;
         server = null;
