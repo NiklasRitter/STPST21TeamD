@@ -10,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.json.Json;
+import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
@@ -53,5 +55,15 @@ public class JsonUtilTest {
 
         Assert.assertEquals(loginData.getString(NAME), "Gelareh");
         Assert.assertEquals(loginData.getString(PASSWORD), "1324567890");
+    }
+
+    @Test
+    public void testParseTempUser() {
+        JsonObject tempUserJson = Json.createObjectBuilder().add("name", "Abbas").build();
+
+        localUser = JsonUtil.parseTempUser(tempUserJson);
+
+        Assert.assertEquals(localUser.getName(), tempUserJson.getString(NAME));
+        Assert.assertEquals(localUser.getName(), "Abbas");
     }
 }
