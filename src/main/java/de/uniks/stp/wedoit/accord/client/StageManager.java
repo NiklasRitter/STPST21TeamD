@@ -36,6 +36,7 @@ public class StageManager extends Application {
     private static Scene emojiPickerScene;
     private static Stage gameStage;
     private static Scene gameScene;
+
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
      */
@@ -64,6 +65,7 @@ public class StageManager extends Application {
             stage.setTitle("Login");
             stage.setScene(scene);
             stage.centerOnScreen();
+            stage.setMaximized(false);
             stage.setResizable(false);
 
         } catch (Exception e) {
@@ -355,20 +357,18 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
             emojiPickerScene = new Scene(root);
-
             updateDarkmode();
 
-            EmojiScreenController emojiScreenController = new EmojiScreenController(root, model.getLocalUser(), editor, tfForEmoji);
+            EmojiScreenController emojiScreenController = new EmojiScreenController(root, tfForEmoji);
             emojiScreenController.init();
             controllerMap.put("emojiScreenController", emojiScreenController);
-
             //display
             emojiPickerStage.setTitle("Emoji Picker");
             emojiPickerStage.setScene(emojiPickerScene);
-            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
-            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
             emojiPickerStage.setResizable(false);
             emojiPickerStage.show();
+            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
 
         } catch (Exception e) {
             System.err.println("Error on showing Emoji Picker");
@@ -548,6 +548,12 @@ public class StageManager extends Application {
                 gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
+            if (emojiPickerScene != null) {
+                emojiPickerScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
+                emojiPickerScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
+            }
         } else {
             if (scene != null) {
                 scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
@@ -565,6 +571,12 @@ public class StageManager extends Application {
                 gameScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
                 gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "light-theme.css")).toExternalForm());
+            }
+            if (emojiPickerScene != null) {
+                emojiPickerScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "dark-theme.css")).toExternalForm());
+                emojiPickerScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
         }
@@ -602,7 +614,7 @@ public class StageManager extends Application {
         return popupStage;
     }
 
-    public Stage getEmojiPickerStage() {
+    public static Stage getEmojiPickerStage() {
         return emojiPickerStage;
     }
 
@@ -621,12 +633,13 @@ public class StageManager extends Application {
         popupStage.initOwner(stage);
 
         gameStage = new Stage();
-        gameStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/Logo.png"))));
+        gameStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         gameStage.initOwner(stage);
 
         emojiPickerStage = new Stage();
+//        emojiPickerStage.setX(770.6000000238419);
+//        emojiPickerStage.setY(296.60000002384186);
         emojiPickerStage.initOwner(stage);
-
         //Removes title bar of emojiPickerStage including maximize, minimize and close icons.
         emojiPickerStage.initStyle(StageStyle.UNDECORATED);
         //Closes Emoji Picker when clicked outside.
@@ -646,8 +659,8 @@ public class StageManager extends Application {
             systemTrayController.init();
         }
 
-        stage.setHeight(400);
-        stage.setWidth(600);
+        stage.setMinHeight(400);
+        stage.setMinWidth(600);
         showLoginScreen();
         stage.show();
     }

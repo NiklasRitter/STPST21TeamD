@@ -109,7 +109,9 @@ public class PrivateChatsScreenController implements Controller {
 
         this.initOnlineUsersList();
 
-
+        this.tfPrivateChat.setPromptText("select a User");
+        this.tfPrivateChat.setEditable(false);
+        this.btnPlay.setVisible(false);
     }
 
 
@@ -258,6 +260,10 @@ public class PrivateChatsScreenController implements Controller {
                 if(editor.loadOldChats().stream().anyMatch((u)->u.getName().equals(user.getName()))) this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
+                if (user.getName().equals(this.lblSelectedUser.getText())) {
+                    this.tfPrivateChat.setPromptText(user.getName() + " is offline");
+                    this.tfPrivateChat.setEditable(false);
+                }
             });
         } else {
             Platform.runLater(() -> {
@@ -265,6 +271,10 @@ public class PrivateChatsScreenController implements Controller {
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
+                if (user.getName().equals(this.lblSelectedUser.getText())) {
+                    this.tfPrivateChat.setPromptText("your message");
+                    this.tfPrivateChat.setEditable(true);
+                }
             });
         }
     }
@@ -318,6 +328,9 @@ public class PrivateChatsScreenController implements Controller {
         this.currentChat = user.getPrivateChat();
         user.setChatRead(true);
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
+        this.tfPrivateChat.setPromptText("your message");
+        this.tfPrivateChat.setEditable(true);
+        this.btnPlay.setVisible(true);
 
         // load list view
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
