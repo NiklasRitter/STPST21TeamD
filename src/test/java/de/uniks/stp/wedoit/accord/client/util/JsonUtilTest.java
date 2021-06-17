@@ -10,7 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
+import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 
@@ -83,4 +85,21 @@ public class JsonUtilTest {
         Assert.assertEquals(onlineUserJson.getString(ID), "21091985");
         Assert.assertTrue(user.isOnlineStatus());
     }
+
+    /**
+     * following method tests parseServers() and parseServer() methods
+     */
+    @Test
+    public void testParseServers() {
+        JsonObject serverJson = Json.createObjectBuilder().add("name", "Accord").add("id", "STP2021").build();
+        JsonArray serversJsonArray = Json.createArrayBuilder().add(serverJson).build();
+        List<Server> servers = JsonUtil.parseServers(serversJsonArray);
+
+        Assert.assertEquals(servers.size(), 1);
+        Assert.assertEquals(servers.get(0).getName(), serverJson.getString(NAME));
+        Assert.assertEquals(servers.get(0).getName(), "Accord");
+        Assert.assertEquals(servers.get(0).getId(), serverJson.getString(ID));
+        Assert.assertEquals(servers.get(0).getId(), "STP2021");
+    }
+
 }
