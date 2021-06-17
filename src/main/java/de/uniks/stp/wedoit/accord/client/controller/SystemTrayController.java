@@ -33,7 +33,7 @@ public class SystemTrayController {
      */
     public void init() {
         try {
-            Image image = Toolkit.getDefaultToolkit().createImage(StageManager.class.getResource("view/images/Logo.png"));
+            Image image = Toolkit.getDefaultToolkit().createImage(StageManager.class.getResource("view/images/LogoAccord.png"));
             trayIcon = new TrayIcon(image, "Accord");
             trayIcon.setImageAutoSize(true);
             trayIcon.addActionListener(this::handleClickTrayIcon);
@@ -46,9 +46,9 @@ public class SystemTrayController {
 
     public void handleClickTrayIcon(ActionEvent actionEvent) {
         Platform.runLater(() -> {
-            StageManager.getStage().setIconified(false);
-            StageManager.getStage().setAlwaysOnTop(true);
-            StageManager.getStage().setAlwaysOnTop(false);
+            this.editor.getStageManager().getStage().setIconified(false);
+            this.editor.getStageManager().getStage().setAlwaysOnTop(true);
+            this.editor.getStageManager().getStage().setAlwaysOnTop(false);
         });
     }
 

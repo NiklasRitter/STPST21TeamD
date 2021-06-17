@@ -24,6 +24,7 @@ public class Editor {
     private final NetworkController networkController = new NetworkController(this);
     private AccordClient accordClient;
     private Server currentServer;
+    private StageManager stageManager;
 
     /**
      * @return private final NetworkController networkController
@@ -289,7 +290,7 @@ public class Editor {
             if (message.getFrom().equals(getLocalUser().getName())) {
                 getUser(message.getTo()).getPrivateChat().withMessages(message);
             } else {
-                SystemTrayController systemTrayController = StageManager.getSystemTrayController();
+                SystemTrayController systemTrayController = stageManager.getSystemTrayController();
                 if (systemTrayController != null) {
                     systemTrayController.displayPrivateMessageNotification(message);
                 }
@@ -343,12 +344,10 @@ public class Editor {
     }
 
     public void handleLogoutUser(boolean success) {
-        if (success) {
-            Platform.runLater(StageManager::showLoginScreen);
-        } else {
+        if (!success) {
             System.err.println("Error while logging out");
-            Platform.runLater(StageManager::showLoginScreen);
         }
+        Platform.runLater(() -> stageManager.showLoginScreen());
     }
 
     public List<User> getOnlineUsers() {
@@ -533,11 +532,32 @@ public class Editor {
         return clipboard.setContent(content);
     }
 
+    /**
+     * formats a message with the correct date in the format
+     * <p>
+     * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     * @param message message which should formatted
+     * @return the formatted message as string
+     */
     public String getMessageFormatted(PrivateMessage message) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
 
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
+
+    /**
+     * formats a message with the correct date in the format
+     * <p>
+     * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     * @param message message which should formatted
+     * @return the formatted message as string
+     */
+    public String getMessageFormatted(Message message) {
+        String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
+
+        return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
+    }
+
 
     public String cleanMessage(PrivateMessage item) {
         if (isQuote(item)) {
@@ -547,9 +567,33 @@ public class Editor {
         } else return item.getText();
     }
 
+    /**
+     * checks whether a message is a quote
+     * @param item item as message
+     * @return boolean whether a item is a quote
+     */
     public boolean isQuote(PrivateMessage item) {
         return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
                 && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
                 && (item.getText()).startsWith(QUOTE_PREFIX);
+    }
+
+    /**
+     * checks whether a message is a quote
+     * @param item item as message
+     * @return boolean whether a item is a quote
+     */
+    public boolean isQuote(Message item) {
+        return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
+                && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+                && (item.getText()).startsWith(QUOTE_PREFIX);
+    }
+
+    public void setStageManager(StageManager stageManager) {
+        this.stageManager = stageManager;
+    }
+
+    public StageManager getStageManager() {
+        return stageManager;
     }
 }

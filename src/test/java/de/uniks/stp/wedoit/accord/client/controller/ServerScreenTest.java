@@ -10,9 +10,13 @@ import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -35,6 +39,8 @@ import javax.json.*;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_SUFFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -100,15 +106,15 @@ public class ServerScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
         this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = StageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
+        this.localUser = this.stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
-        this.server = StageManager.getEditor().haveServer(localUser, "testId", "TServer");
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + StageManager.getEditor().
+        this.server = this.stageManager.getEditor().haveServer(localUser, "testId", "TServer");
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().
                 getNetworkController().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
-        StageManager.showServerScreen(server);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.showServerScreen(server);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -338,7 +344,7 @@ public class ServerScreenTest extends ApplicationTest {
     @Test
     public void optionsButtonTest() {
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
     }
 
     @Test
@@ -789,7 +795,7 @@ public class ServerScreenTest extends ApplicationTest {
         callbackLeaveServer.completed(res);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(StageManager.getStage().getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
 
     }
 
@@ -799,15 +805,87 @@ public class ServerScreenTest extends ApplicationTest {
         Button btnCancel = lookup("#btnCancel").query();
         Assert.assertEquals(btnCancel.getText(), "Cancel");
         clickOn(btnCancel);
-        Assert.assertEquals(StageManager.getStage().getTitle(), "Server");
+        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Server");
 
     }
 
     private void openAttentionScreen() {
         Platform.runLater(() -> {
-            StageManager.showAttentionLeaveServerScreen(this.server);
+            this.stageManager.showAttentionLeaveServerScreen(this.server);
         });
     }
+    @Test
+    public void testQuote() {
+        //init channel list and select first channel
+
+        initUserListView();
+        initChannelListView();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        Button btnEmoji = lookup("#btnEmoji").query();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //send message
+        clickOn("#tfInputMessage");
+        write("Test Message");
+        press(KeyCode.ENTER);
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message" );
+        mockChatWebSocket(getTestMessageServerAnswer(test_message, 1616935874));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn(lvTextChat.getContextMenu());
+        WaitForAsyncUtils.waitForFxEvents();
+        HBox quoteVisible = lookup("#quoteVisible").query();
+
+        Label lblQuote = (Label) lookup("#lblQuote").query();
+        Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
+
+        String formatted = this.stageManager.getEditor().getMessageFormatted(lvTextChat.getItems().get(0));
+        Assert.assertEquals(lblQuote.getText(), formatted);
+        clickOn(btnCancelQuote);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(lblQuote.getText(), "");
+
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+        clickOn(lvTextChat.getContextMenu());
+        WaitForAsyncUtils.waitForFxEvents();
+        lblQuote = (Label) lookup("#lblQuote").query();
+        btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
+
+        formatted = this.stageManager.getEditor().getMessageFormatted(lvTextChat.getItems().get(0));
+        Assert.assertEquals(lblQuote.getText(), formatted);
+
+        ((TextField) lookup("#tfInputMessage").query()).setText("quote");
+        clickOn("#tfInputMessage");
+        write("\n");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject quote = JsonUtil.buildServerChatMessage(channel.getId(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        JsonObject quote_message = JsonUtil.buildServerChatMessage(channel.getId(), "quote");
+        mockChatWebSocket(getTestMessageServerAnswer(quote, 1616935875));
+        mockChatWebSocket(getTestMessageServerAnswer(quote_message, 1616935876));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(lvTextChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        Assert.assertEquals(lvTextChat.getItems().get(2).getText(), "quote");
+
+    }
+
 
     // Methods for callbacks
 
@@ -1019,6 +1097,15 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("id", "5e2ffbd8770dd077d03dr458")
                 .add("channel", "idTest1")
                 .add("timestamp", 1616935874)
+                .add("from", localUser.getName())
+                .add("text", test_message.getString(MESSAGE))
+                .build();
+    }
+    public JsonObject getTestMessageServerAnswer(JsonObject test_message, long timestamp) {
+        return Json.createObjectBuilder()
+                .add("id", "5e2ffbd8770dd077d03dr458")
+                .add("channel", "idTest1")
+                .add("timestamp", timestamp)
                 .add("from", localUser.getName())
                 .add("text", test_message.getString(MESSAGE))
                 .build();

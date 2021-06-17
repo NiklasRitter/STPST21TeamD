@@ -41,7 +41,7 @@ public class AttentionLeaveServerController implements Controller {
     }
 
     private void btnCancelOnClick(ActionEvent actionEvent) {
-        StageManager.getPopupStage().close();
+        this.editor.getStageManager().getPopupStage().close();
     }
 
 
