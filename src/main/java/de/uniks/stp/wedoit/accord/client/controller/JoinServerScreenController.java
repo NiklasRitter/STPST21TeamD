@@ -87,10 +87,10 @@ public class JoinServerScreenController implements Controller {
      */
     public void handleInvitation(Server server, String responseMessage) {
         if (server != null) {
-            Platform.runLater(() -> StageManager.showServerScreen(server));
+            Platform.runLater(() -> this.editor.getStageManager().showServerScreen(server));
         } else {
             if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> StageManager.showMainScreen());
+                Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
             }
 
             Platform.runLater(() -> errorLabel.setText(responseMessage));

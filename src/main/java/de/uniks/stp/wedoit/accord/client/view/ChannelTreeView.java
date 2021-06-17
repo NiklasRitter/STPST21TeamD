@@ -10,6 +10,12 @@ import javafx.scene.control.TreeView;
 
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
 
+    private final StageManager stageManager;
+
+    public ChannelTreeView(StageManager stageManager) {
+        this.stageManager = stageManager;
+    }
+
     @Override
     public TreeCell<Object> call(TreeView<Object> param) {
         return new ChannelTreeCell();
@@ -48,13 +54,13 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem3);
 
         menuItem1.setOnAction((event) -> {
-            StageManager.showCreateCategoryScreen();
+            this.stageManager.showCreateCategoryScreen();
         });
         menuItem2.setOnAction((event) -> {
-            StageManager.showCreateChannelScreen(item.getCategory());
+            this.stageManager.showCreateChannelScreen(item.getCategory());
         });
         menuItem3.setOnAction((event) -> {
-            StageManager.showEditChannelScreen(item);
+            this.stageManager.showEditChannelScreen(item);
         });
 
         return contextMenu;
@@ -70,13 +76,13 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem3);
 
         menuItem1.setOnAction((event) -> {
-            StageManager.showCreateCategoryScreen();
+            this.stageManager.showCreateCategoryScreen();
         });
         menuItem2.setOnAction((event) -> {
-            StageManager.showEditCategoryScreen(item);
+            this.stageManager.showEditCategoryScreen(item);
         });
         menuItem3.setOnAction((event) -> {
-            StageManager.showCreateChannelScreen(item);
+            this.stageManager.showCreateChannelScreen(item);
         });
 
         return contextMenu;

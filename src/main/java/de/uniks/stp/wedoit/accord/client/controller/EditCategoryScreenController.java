@@ -109,6 +109,6 @@ public class EditCategoryScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteCategoryButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showAttentionScreen(category);
+        this.editor.getStageManager().showAttentionScreen(category);
     }
 }

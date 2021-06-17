@@ -69,7 +69,7 @@ public class GameResultScreenController implements Controller{
         if(this.localUser.getGameInvites().contains(opponent)){
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAMEACCEPT);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
-            StageManager.showGameScreen(opponent);
+            this.editor.getStageManager().showGameScreen(opponent);
             stop();
         }else{
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAMEINVITE);
@@ -83,7 +83,7 @@ public class GameResultScreenController implements Controller{
      * @param actionEvent occurs when the Quit button ist pressed
      */
     private void redirectToPrivateChats(ActionEvent actionEvent) {
-        StageManager.showPrivateChatsScreen();
+        this.editor.getStageManager().showPrivateChatsScreen();
     }
 
 

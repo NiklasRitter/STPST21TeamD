@@ -74,14 +74,14 @@ public class EditServerScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = StageManager.getEditor().haveLocalUser("Alice", "userKey123");
-        this.server = StageManager.getEditor().haveServer(localUser, "id456", "AliceServer");
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
-        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + StageManager.getEditor().getNetworkController().getCleanLocalUserName()
+        this.localUser = this.stageManager.getEditor().haveLocalUser("Alice", "userKey123");
+        this.server = this.stageManager.getEditor().haveServer(localUser, "id456", "AliceServer");
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().getNetworkController().getCleanLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClientMock);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
-        StageManager.showServerScreen(server);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.showServerScreen(server);
     }
 
     @BeforeEach
@@ -125,7 +125,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
         WaitForAsyncUtils.waitForFxEvents();
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
 
         // Assert that Pop-Up Window shows correct widgets
         VBox vBoxAdminOnly = lookup("#vBoxAdminOnly").query();
@@ -192,7 +192,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
 
         Label lblError = lookup("#lblError").query();
 
@@ -221,7 +221,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
 
         Label lblError = lookup("#lblError").query();
 
@@ -251,13 +251,13 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
 
         clickOn("#btnDelete");
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(StageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
     }
 
     @Test

@@ -160,7 +160,7 @@ public class GameScreenController implements Controller {
      */
     private void handleGameDone(){
         if(oppScore.get() == 3 || ownScore.get() == 3){
-            StageManager.showGameResultScreen(opponent, ownScore.get() == 3);
+            this.editor.getStageManager().showGameResultScreen(opponent, ownScore.get() == 3);
             stop();
         }
     }

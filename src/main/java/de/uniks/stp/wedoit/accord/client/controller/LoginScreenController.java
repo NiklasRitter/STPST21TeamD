@@ -101,7 +101,7 @@ public class LoginScreenController implements Controller {
             pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> errorLabel.setText("Username or password is wrong."));
         } else {
-            Platform.runLater(StageManager::showMainScreen);
+            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
         }
     }
 
@@ -146,6 +146,6 @@ public class LoginScreenController implements Controller {
      * @param actionEvent occurs when clicking the options button
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        StageManager.showOptionsScreen();
+        this.editor.getStageManager().showOptionsScreen();
     }
 }

@@ -128,7 +128,7 @@ public class ServerScreenController implements Controller {
                         + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         tvServerChannelsRoot = new TreeItem<>();
-        ChannelTreeView channelTreeView = new ChannelTreeView();
+        ChannelTreeView channelTreeView = new ChannelTreeView(this.editor.getStageManager());
         tvServerChannels.setCellFactory(channelTreeView);
         tvServerChannels.setShowRoot(false);
         tvServerChannels.setRoot(tvServerChannelsRoot);
@@ -186,18 +186,18 @@ public class ServerScreenController implements Controller {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addCategory = new MenuItem("- add category");
         contextMenu.getItems().add(addCategory);
-        addCategory.setOnAction((event) -> StageManager.showCreateCategoryScreen());
+        addCategory.setOnAction((event) -> this.editor.getStageManager().showCreateCategoryScreen());
         return contextMenu;
     }
 
     private void leaveServerAttention(ActionEvent actionEvent) {
-        StageManager.showAttentionLeaveServerScreen(this.server);
+        this.editor.getStageManager().showAttentionLeaveServerScreen(this.server);
     }
 
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        StageManager.showEmojiScreen(tfInputMessage, pos);
+        this.editor.getStageManager().showEmojiScreen(tfInputMessage, pos);
     }
 
     public void addActionListener() {
@@ -342,7 +342,7 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(StageManager::showLoginScreen);
+            Platform.runLater(() -> this.editor.getStageManager().showLoginScreen());
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
@@ -357,7 +357,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        this.editor.getStageManager().showMainScreen();
     }
 
     /**
@@ -366,7 +366,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showOptionsScreen();
+        this.editor.getStageManager().showOptionsScreen();
     }
 
     /**
@@ -375,7 +375,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void editButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showEditServerScreen(this.server);
+        this.editor.getStageManager().showEditServerScreen(this.server);
     }
 
 
@@ -398,7 +398,7 @@ public class ServerScreenController implements Controller {
             }
         } else {
             System.err.println("Error while loading categories from server");
-            Platform.runLater(StageManager::showLoginScreen);
+            Platform.runLater(() -> this.editor.getStageManager().showLoginScreen());
         }
     }
 
@@ -424,7 +424,7 @@ public class ServerScreenController implements Controller {
 
         } else {
             System.err.println("Error while loading channels from server");
-            Platform.runLater(StageManager::showLoginScreen);
+            Platform.runLater(() -> this.editor.getStageManager().showLoginScreen());
         }
     }
 
@@ -504,7 +504,7 @@ public class ServerScreenController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(StageManager::showMainScreen);
+            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
         }
     }
 
@@ -658,7 +658,7 @@ public class ServerScreenController implements Controller {
             Platform.runLater(() -> lbServerName.setText(server.getName()));
         }
         if (action.equals(SERVER_DELETED)) {
-            Platform.runLater(StageManager::showMainScreen);
+            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
         }
 
         //change category
@@ -676,7 +676,7 @@ public class ServerScreenController implements Controller {
             Channel channel = editor.updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE),
                     data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
             if (channel == null) {
-                Platform.runLater(() -> StageManager.showServerScreen(server));
+                Platform.runLater(() -> this.editor.getStageManager().showServerScreen(server));
             }
             tvServerChannels.refresh();
         }
@@ -722,7 +722,7 @@ public class ServerScreenController implements Controller {
                 categoryItem.setExpanded(true);
                 tvServerChannelsRoot.getChildren().add(categoryItem);
             } else {
-                Platform.runLater(() -> StageManager.showServerScreen(server));
+                Platform.runLater(() -> this.editor.getStageManager().showServerScreen(server));
             }
         } else {
             if (action.equals(CATEGORY_DELETED)) {
@@ -763,7 +763,7 @@ public class ServerScreenController implements Controller {
             }
         }
         if (category == null) {
-            StageManager.showServerScreen(server);
+            this.editor.getStageManager().showServerScreen(server);
         } else {
             Channel channel = null;
             TreeItem<Object> channelItem = null;
@@ -785,7 +785,7 @@ public class ServerScreenController implements Controller {
                     newChannelItem.setExpanded(true);
                     category.getChildren().add(newChannelItem);
                 } else {
-                    Platform.runLater(() -> StageManager.showServerScreen(server));
+                    Platform.runLater(() -> this.editor.getStageManager().showServerScreen(server));
                 }
             } else {
                 if (action.equals(CHANNEL_DELETED)) {

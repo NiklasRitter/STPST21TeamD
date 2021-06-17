@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
@@ -70,14 +71,17 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        this.oldOptions = ResourceManager.loadOptions();
-        ResourceManager.saveOptions(new Options().setDarkmode(false));
+        PreferenceManager preferenceManager = new PreferenceManager();
+        ResourceManager resourceManager = new ResourceManager();
+        resourceManager.setPreferenceManager(preferenceManager);
+        this.oldOptions = resourceManager.loadOptions();
+        resourceManager.saveOptions(new Options().setDarkmode(false));
 
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
-        this.popupStage = StageManager.getPopupStage();
+        this.popupStage = this.stageManager.getPopupStage();
 
         //create localUser to skip the login screen
         stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
@@ -86,7 +90,7 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
-        StageManager.showLoginScreen();
+        this.stageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
