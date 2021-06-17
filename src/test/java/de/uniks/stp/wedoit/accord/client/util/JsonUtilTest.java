@@ -47,4 +47,11 @@ public class JsonUtilTest {
         Assert.assertEquals(createServerAnswer.getJsonObject(DATA).getString(ID), "0098");
     }
 
+    @Test
+    public void testBuildLogin() {
+        JsonObject loginData = JsonUtil.buildLogin(user.getName(), "1324567890");
+
+        Assert.assertEquals(loginData.getString(NAME), "Gelareh");
+        Assert.assertEquals(loginData.getString(PASSWORD), "1324567890");
+    }
 }
