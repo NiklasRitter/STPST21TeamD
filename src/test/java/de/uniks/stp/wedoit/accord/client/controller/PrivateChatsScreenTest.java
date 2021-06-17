@@ -83,21 +83,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         System.setProperty("java.awt.headless", "true");
     }
 
-    private void deleteDB(){
-        try{
-            System.out.println("deleating...");
-            URL url = PrivateChatsScreenTest.class.getResource("/data/username.sqlite");
-            System.out.println(url);
-            if(url != null) {
-                boolean b = Files.deleteIfExists(Path.of(url.toURI()));
-                System.out.println("is deleated: "+ b);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
-
     @Override
     public void start(Stage stage) {
         // start application
