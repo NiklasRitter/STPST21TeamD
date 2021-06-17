@@ -8,6 +8,7 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
@@ -72,6 +73,20 @@ public class JsonUtil {
     }
 
     /**
+     * Parse a given JsonArray to a Server List.
+     * <p>
+     * Used for the Servers returned when getting all servers.
+     *
+     * @param serversJsonArray The JsonArray of the Servers to be parsed.
+     * @return The parsed Server List.
+     */
+    public static List<Server> parseServers(JsonArray serversJsonArray) {
+        List<Server> servers = new ArrayList<>();
+        serversJsonArray.forEach((jsonValue) -> servers.add(parseServer(jsonValue.asJsonObject())));
+        return servers;
+    }
+
+    /**
      * Parse a given JsonObject to a User.
      * <p>
      * Used for the Users returned when getting the server users.
@@ -82,7 +97,6 @@ public class JsonUtil {
     public static User parseServerUser(JsonObject serverUserJson) {
         return parseOnlineUser(serverUserJson).setOnlineStatus(serverUserJson.getBoolean(ONLINE));
     }
-
 
     /**
      * Parse a given JsonArray to a User List.
@@ -109,20 +123,6 @@ public class JsonUtil {
     public static Server parseServer(JsonObject serverJson) {
         return new Server().setId(serverJson.getString(ID))
                 .setName(serverJson.getString(NAME));
-    }
-
-    /**
-     * Parse a given JsonArray to a Server List.
-     * <p>
-     * Used for the Servers returned when getting all servers.
-     *
-     * @param serversJsonArray The JsonArray of the Servers to be parsed.
-     * @return The parsed Server List.
-     */
-    public static List<Server> parseServers(JsonArray serversJsonArray) {
-        List<Server> servers = new ArrayList<>();
-        serversJsonArray.forEach((jsonValue) -> servers.add(parseServer(jsonValue.asJsonObject())));
-        return servers;
     }
 
     /**

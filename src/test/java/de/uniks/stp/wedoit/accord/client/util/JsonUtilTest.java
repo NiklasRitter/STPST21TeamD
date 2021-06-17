@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -24,6 +25,7 @@ public class JsonUtilTest {
     private User user;
     private LocalUser localUser;
     private Server server;
+    private Category category;
 
     @Before
     public void initJsonUtil() {
@@ -33,6 +35,7 @@ public class JsonUtilTest {
         editor.haveAccordClient();
         editor.haveLocalUser();
         server = new Server();
+        category = new Category();
         user = new User().setName("Gelareh").setId("021");
         localUser = new LocalUser().setName("Amir").setUserKey("testKey123").setId("1364");
     }
@@ -101,5 +104,21 @@ public class JsonUtilTest {
         Assert.assertEquals(servers.get(0).getId(), serverJson.getString(ID));
         Assert.assertEquals(servers.get(0).getId(), "STP2021");
     }
+
+    @Test
+    public void testParseCategory() {
+        JsonObject categoryJson = Json.createObjectBuilder().add("name", "STP").add("id", "2021").build();
+
+        Assert.assertNull(category.getName());
+        Assert.assertNull(category.getId());
+
+        category = JsonUtil.parseCategory(categoryJson);
+
+        Assert.assertEquals(category.getName(), categoryJson.getString(NAME));
+        Assert.assertEquals(category.getName(), "STP");
+        Assert.assertEquals(category.getId(), categoryJson.getString(ID));
+        Assert.assertEquals(category.getId(), "2021");
+    }
+
 
 }
