@@ -15,7 +15,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         return new ChannelTreeCell();
     }
 
-    private static class ChannelTreeCell extends TreeCell<Object> {
+    private class ChannelTreeCell extends TreeCell<Object> {
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
             this.getStyleClass().remove("newMessage");
@@ -38,7 +38,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         }
     }
 
-    private static ContextMenu addContextMenuChannel(Channel item) {
+    private ContextMenu addContextMenuChannel(Channel item) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("- add category");
         MenuItem menuItem2 = new MenuItem("- add channel");
@@ -60,7 +60,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         return contextMenu;
     }
 
-    private static ContextMenu addContextMenuCategory(Category item) {
+    private ContextMenu addContextMenuCategory(Category item) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("- add category");
         MenuItem menuItem2 = new MenuItem("- edit category");

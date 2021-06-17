@@ -16,7 +16,7 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
         return new OnlineUserListCell(param);
     }
 
-    private static class OnlineUserListCell extends ListCell<PrivateMessage> {
+    private class OnlineUserListCell extends ListCell<PrivateMessage> {
 
         private final ListView<PrivateMessage> param;
 

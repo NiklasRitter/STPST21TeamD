@@ -13,7 +13,7 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
     }
 
 
-    private static class ServerListCell extends ListCell<Server> {
+    private class ServerListCell extends ListCell<Server> {
         protected void updateItem(Server item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
