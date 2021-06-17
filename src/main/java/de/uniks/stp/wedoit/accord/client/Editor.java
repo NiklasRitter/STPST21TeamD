@@ -415,7 +415,10 @@ public class Editor {
 
         for (Category category : server.getCategories()) {
             if (category.getId().equals(id)) {
-                return category.setName(name);
+                if(name != null){
+                    category.setName(name);
+                }
+                return category;
             }
         }
         return new Category().setName(name).setId(id).setServer(server);

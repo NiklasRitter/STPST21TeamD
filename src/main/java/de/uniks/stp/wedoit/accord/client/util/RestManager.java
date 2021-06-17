@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.controller.*;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
@@ -158,7 +159,7 @@ public class RestManager {
         });
     }
 
-    public void getCategories(LocalUser localUser, Server server, ServerScreenController controller) {
+    public void getCategories(LocalUser localUser, Server server, CategoryTreeViewController controller) {
         restClient.getCategories(server.getId(), localUser.getUserKey(), categoryResponse -> {
             if (categoryResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonArray serversCategoryResponse = JsonUtil.parse(String.valueOf(categoryResponse.getBody().getObject())).getJsonArray(DATA);
@@ -173,7 +174,7 @@ public class RestManager {
         });
     }
 
-    public void getChannels(LocalUser localUser, Server server, Category category, TreeItem<Object> categoryItem, ServerScreenController controller) {
+    public void getChannels(LocalUser localUser, Server server, Category category, TreeItem<Object> categoryItem, CategoryTreeViewController controller) {
         restClient.getChannels(server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
             if (channelsResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonArray categoriesChannelResponse = JsonUtil.parse(String.valueOf(channelsResponse.getBody().getObject())).getJsonArray(DATA);

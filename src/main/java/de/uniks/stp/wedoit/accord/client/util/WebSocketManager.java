@@ -1,12 +1,13 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.application.Platform;
 
-import javax.json.JsonObject;
-import javax.json.JsonStructure;
+import javax.json.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -145,6 +146,87 @@ public class WebSocketManager {
         message.setTo(jsonObject.getString(TO));
         editor.addNewPrivateMessage(message);
         return this;
+    }
+
+    /**
+     * Handles the response of the websocket server
+     *
+     * @param msg response of the websocket server
+     */
+    public void handleServerMessage(JsonStructure msg, Server server) {
+
+        JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
+        String action = ((JsonObject) msg).getString(ACTION);
+
+        // change members
+        if (action.equals(USER_JOINED) || action.equals(USER_LEFT) || action.equals(USER_ARRIVED) || action.equals(USER_EXITED)) {
+            String id = data.getString(ID);
+            String name = data.getString(NAME);
+
+            if (action.equals(USER_EXITED)) {
+                editor.userWithoutServer(id, server);
+            } else {
+                // create or get a new user with the data
+                User user = editor.haveUserWithServer(name, id, false, server);
+
+                if (action.equals(USER_JOINED)) {
+                    user.setOnlineStatus(true);
+                }
+                if (action.equals(USER_LEFT)) {
+                    user.setOnlineStatus(false);
+                }
+                if (action.equals(USER_ARRIVED)) {
+                    user.setOnlineStatus(data.getBoolean(ONLINE));
+                }
+            }
+            server.firePropertyChange(Server.PROPERTY_MEMBERS, null, server.getMembers());
+        }
+
+        // change data of the server
+        if (action.equals(SERVER_UPDATED)) {
+            server.setName(data.getString(NAME));
+        }
+        if (action.equals(SERVER_DELETED)) {
+            Platform.runLater(StageManager::showMainScreen);
+        }
+
+        //change category
+        if (action.equals(CATEGORY_UPDATED)) {
+            editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+        }
+        if (action.equals(CATEGORY_CREATED)) {
+            editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+        }
+        if (action.equals(CATEGORY_DELETED)){
+            Category category = editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+            for (Channel channel : category.getChannels()) {
+                channel.removeYou();
+            }
+            category.removeYou();
+        }
+
+        // change channel
+        if (action.equals(CHANNEL_UPDATED)) {
+            Channel channel = editor.updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
+            if (channel == null) {
+                Platform.runLater(() -> StageManager.showServerScreen(server));
+            }
+        }
+        if (action.equals(CHANNEL_CREATED)) {
+            Category category = editor.haveCategory(data.getString(CATEGORY), null, server);
+            editor.haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS));
+        }
+        if (action.equals(CHANNEL_DELETED)){
+            Category category = editor.haveCategory(data.getString(CATEGORY), null, server);
+            Channel channel = editor.haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build());
+            channel.removeYou();
+        }
+
+        // change invitation
+        if (action.equals(INVITE_EXPIRED)) {
+            editor.deleteInvite(data.getString(ID), server);
+        }
+
     }
 
     /**
