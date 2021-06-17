@@ -1,10 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,6 +23,7 @@ public class JsonUtilTest {
     private LocalUser localUser;
     private Server server;
     private Category category;
+    private Channel channel;
 
     @Before
     public void initJsonUtil() {
@@ -36,6 +34,7 @@ public class JsonUtilTest {
         editor.haveLocalUser();
         server = new Server();
         category = new Category();
+        channel = new Channel();
         user = new User().setName("Gelareh").setId("021");
         localUser = new LocalUser().setName("Amir").setUserKey("testKey123").setId("1364");
     }
@@ -118,6 +117,29 @@ public class JsonUtilTest {
         Assert.assertEquals(category.getName(), "STP");
         Assert.assertEquals(category.getId(), categoryJson.getString(ID));
         Assert.assertEquals(category.getId(), "2021");
+    }
+
+    @Test
+    public void testParseChannel() {
+        JsonObject channelJson = Json.createObjectBuilder()
+                .add("name", "University")
+                .add("id", "FB16")
+                .add("type", "text")
+                .add("privileged", false).build();
+
+        Assert.assertNull(channel.getType());
+        Assert.assertNull(channel.getName());
+
+        channel = JsonUtil.parseChannel(channelJson);
+
+        Assert.assertEquals(channel.getName(), channelJson.getString(NAME));
+        Assert.assertEquals(channel.getName(), "University");
+        Assert.assertEquals(channel.getId(), channelJson.getString(ID));
+        Assert.assertEquals(channel.getId(), "FB16");
+        Assert.assertEquals(channel.getType(), channelJson.getString(TYPE));
+        Assert.assertEquals(channel.getType(), "text");
+        Assert.assertTrue(!channel.isPrivileged());
+        Assert.assertEquals(channel.isPrivileged(), channelJson.getBoolean(PRIVILEGED));
     }
 
 
