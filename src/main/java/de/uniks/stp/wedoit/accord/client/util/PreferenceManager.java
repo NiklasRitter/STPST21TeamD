@@ -9,7 +9,9 @@ import java.util.prefs.Preferences;
 import static de.uniks.stp.wedoit.accord.client.constants.Preferences.DARKMODE;
 
 public class PreferenceManager {
-    public static PropertyChangeListener darkmodeListener = PreferenceManager::onDarkmodeChanged;
+
+    private StageManager stageManager;
+    public PropertyChangeListener darkmodeListener = this::onDarkmodeChanged;
 
     /**
      * Loads the darkmode preference from the Registry.
@@ -38,13 +40,17 @@ public class PreferenceManager {
      *
      * @param propertyChangeEvent The called event.
      */
-    public static void onDarkmodeChanged(PropertyChangeEvent propertyChangeEvent) {
+    public void onDarkmodeChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() instanceof Boolean) {
             boolean darkmode = (boolean) propertyChangeEvent.getNewValue();
 
-            StageManager.changeDarkmode(darkmode);
+            this.stageManager.changeDarkmode(darkmode);
 
             saveDarkmode(darkmode);
         }
+    }
+
+    public void setStageManager(StageManager stageManager) {
+        this.stageManager = stageManager;
     }
 }

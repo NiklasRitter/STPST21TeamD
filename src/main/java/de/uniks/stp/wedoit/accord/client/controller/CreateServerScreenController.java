@@ -81,7 +81,7 @@ public class CreateServerScreenController implements Controller {
     public void handleCreateServer(Server server) {
         if (server != null) {
             stop();
-            Platform.runLater(() -> StageManager.showServerScreen(server));
+            Platform.runLater(() -> this.editor.getStageManager().showServerScreen(server));
         } else {
             tfServerName.getStyleClass().add("error");
 

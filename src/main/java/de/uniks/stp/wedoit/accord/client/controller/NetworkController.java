@@ -640,10 +640,10 @@ public class NetworkController {
     public NetworkController leaveServer(String userKey, String serverId) {
         restClient.leaveServer(userKey, serverId, response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                Platform.runLater(StageManager::showMainScreen);
+                Platform.runLater(this.editor.getStageManager()::showMainScreen);
             } else {
                 System.err.println("Error while leaving server");
-                Platform.runLater(StageManager::showMainScreen);
+                Platform.runLater(this.editor.getStageManager()::showMainScreen);
             }
         });
         return this;

@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -24,23 +25,25 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 
 public class StageManager extends Application {
 
-    private static final Map<String, Controller> controllerMap = new HashMap<>();
-    private static SystemTrayController systemTrayController;
-    private static Editor editor;
-    private static AccordClient model;
-    private static Stage stage;
-    private static Scene scene;
-    private static Stage popupStage;
-    private static Scene popupScene;
-    private static Stage emojiPickerStage;
-    private static Scene emojiPickerScene;
-    private static Stage gameStage;
-    private static Scene gameScene;
+    private final Map<String, Controller> controllerMap = new HashMap<>();
+    private SystemTrayController systemTrayController;
+    private Editor editor;
+    private AccordClient model;
+    private PreferenceManager prefManager;
+    private Stage stage;
+    private Scene scene;
+    private Stage popupStage;
+    private Scene popupScene;
+    private Stage emojiPickerStage;
+    private Scene emojiPickerScene;
+    private Stage gameStage;
+    private Scene gameScene;
+    private ResourceManager resourceManager;
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
      */
-    public static void showLoginScreen() {
+    public void showLoginScreen() {
         cleanup();
 
         try {
@@ -77,7 +80,7 @@ public class StageManager extends Application {
     /**
      * load fxml of the MainScreen and show the MainScreen on the window
      */
-    public static void showMainScreen() {
+    public void showMainScreen() {
         cleanup();
 
         try {
@@ -107,7 +110,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showCreateServerScreen() {
+    public void showCreateServerScreen() {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateServerScreen.fxml")));
@@ -132,7 +135,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showJoinServerScreen() {
+    public void showJoinServerScreen() {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/JoinServerScreen.fxml")));
@@ -157,7 +160,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showPrivateChatsScreen() {
+    public void showPrivateChatsScreen() {
         cleanup();
 
         try {
@@ -185,7 +188,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showServerScreen(Server server) {
+    public void showServerScreen(Server server) {
         cleanup();
 
         try {
@@ -216,7 +219,7 @@ public class StageManager extends Application {
 
     }
 
-    public static void showGameScreen(User opponent) {
+    public void showGameScreen(User opponent) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
             gameScene = new Scene(root);
@@ -241,7 +244,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showGameResultScreen(User opponent, Boolean isWinner) {
+    public void showGameResultScreen(User opponent, Boolean isWinner) {
         if (gameStage.isShowing()) {
             gameStage.close();
             try {
@@ -272,7 +275,7 @@ public class StageManager extends Application {
 
     }
 
-    public static void showOptionsScreen() {
+    public void showOptionsScreen() {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/OptionsScreen.fxml")));
@@ -299,7 +302,7 @@ public class StageManager extends Application {
     }
 
 
-    public static void showCreateCategoryScreen() {
+    public void showCreateCategoryScreen() {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateCategoryScreen.fxml")));
@@ -326,7 +329,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEditCategoryScreen(Category category) {
+    public void showEditCategoryScreen(Category category) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditCategoryScreen.fxml")));
@@ -351,7 +354,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
+    public void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
@@ -377,7 +380,7 @@ public class StageManager extends Application {
     }
 
 
-    public static void showCreateChannelScreen(Category category) {
+    public void showCreateChannelScreen(Category category) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateChannelScreen.fxml")));
@@ -402,7 +405,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEditChannelScreen(Channel channel) {
+    public void showEditChannelScreen(Channel channel) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditChannelScreen.fxml")));
@@ -427,7 +430,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showEditServerScreen(Server server) {
+    public void showEditServerScreen(Server server) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditServerScreen.fxml")));
@@ -453,7 +456,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showAttentionScreen(Object objectToDelete) {
+    public void showAttentionScreen(Object objectToDelete) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/AttentionScreen.fxml")));
@@ -479,7 +482,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void showAttentionLeaveServerScreen(Server server) {
+    public void showAttentionLeaveServerScreen(Server server) {
         try {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/AttentionLeaveServerScreen.fxml")));
@@ -505,7 +508,7 @@ public class StageManager extends Application {
         }
     }
 
-    private static void cleanup() {
+    private void cleanup() {
         stopController();
 
         if (popupStage != null) {
@@ -519,7 +522,7 @@ public class StageManager extends Application {
         }
     }
 
-    private static void stopController() {
+    private void stopController() {
         Iterator<Map.Entry<String, Controller>> iterator = controllerMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, Controller> entry = iterator.next();
@@ -528,7 +531,7 @@ public class StageManager extends Application {
         }
     }
 
-    public static void changeDarkmode(boolean darkmode) {
+    public void changeDarkmode(boolean darkmode) {
         if (darkmode) {
             if (scene != null) {
                 scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
@@ -582,43 +585,43 @@ public class StageManager extends Application {
         }
     }
 
-    public static void updateDarkmode() {
+    public void updateDarkmode() {
         changeDarkmode(model.getOptions().isDarkmode());
     }
 
-    public static Map<String, Controller> getControllerMap() {
+    public Map<String, Controller> getControllerMap() {
         return controllerMap;
     }
 
-    public static SystemTrayController getSystemTrayController() {
+    public SystemTrayController getSystemTrayController() {
         return systemTrayController;
     }
 
-    public static Editor getEditor() {
+    public Editor getEditor() {
         return editor;
     }
 
-    public static Scene getScene() {
+    public Scene getScene() {
         return scene;
     }
 
-    public static Stage getStage() {
+    public Stage getStage() {
         return stage;
     }
 
-    public static Scene getPopupScene() {
+    public Scene getPopupScene() {
         return popupScene;
     }
 
-    public static Stage getPopupStage() {
+    public Stage getPopupStage() {
         return popupStage;
     }
 
-    public static Stage getEmojiPickerStage() {
+    public Stage getEmojiPickerStage() {
         return emojiPickerStage;
     }
 
-    public static Stage getGameStage() {
+    public Stage getGameStage() {
         return gameStage;
     }
 
@@ -650,9 +653,14 @@ public class StageManager extends Application {
         });
 
         editor = new Editor();
+        editor.setStageManager(this);
+        prefManager = new PreferenceManager();
+        prefManager.setStageManager(this);
+        resourceManager = new ResourceManager();
+        resourceManager.setPreferenceManager(prefManager);
         model = editor.haveAccordClient();
         editor.haveLocalUser();
-        model.setOptions(ResourceManager.loadOptions());
+        model.setOptions(resourceManager.loadOptions());
         if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
         else {
             systemTrayController = new SystemTrayController(editor);
@@ -691,6 +699,8 @@ public class StageManager extends Application {
             System.err.println("Error while shutdown program");
             e.printStackTrace();
         }
+        this.resourceManager = null;
+        this.prefManager = null;
     }
 }
 

@@ -40,7 +40,6 @@ public class AttentionScreenControllerTest extends ApplicationTest {
     WebSocketClient webSocketClientMock;
     @Mock
     WebSocketClient chatWebSocketClientMock;
-    private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
@@ -62,22 +61,21 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        this.stage = stage;
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = StageManager.getEditor().haveLocalUser("Alice", "userKey123").setId("owner123");
-        this.server = StageManager.getEditor().haveServer(localUser, "id456", "AliceServer");
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
-        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + StageManager.getEditor().getNetworkController().getCleanLocalUserName()
+        this.localUser = this.stageManager.getEditor().haveLocalUser("Alice", "userKey123").setId("owner123");
+        this.server = this.stageManager.getEditor().haveServer(localUser, "id456", "AliceServer");
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().getNetworkController().getCleanLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClientMock);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
 
         // first have to show server screen, so that the members and so on are loaded correctly
-        StageManager.showServerScreen(server);
-        StageManager.showEditServerScreen(server);
+        this.stageManager.showServerScreen(server);
+        this.stageManager.showEditServerScreen(server);
     }
 
     @BeforeEach
@@ -117,7 +115,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         clickOn("#btnDelete");
 
-        Assert.assertEquals(StageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
         Assert.assertEquals(localUser.getServers().size(), 1);
 
         clickOn("#btnDelete");
@@ -127,7 +125,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(StageManager.getStage().getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
         Assert.assertEquals(localUser.getServers().size(), 0);
     }
 
@@ -138,7 +136,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         clickOn("#btnDelete");
 
-        Assert.assertEquals(StageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
         Assert.assertEquals(localUser.getServers().size(), 1);
 
         clickOn("#btnDelete");
@@ -149,7 +147,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Label lblError = lookup("#lblError").query();
-        Assert.assertEquals(StageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
         Assert.assertTrue(lblError.isVisible());
         Assert.assertEquals(lblError.getText(), "Error. Delete Server was not successful!");
         Assert.assertEquals(localUser.getServers().size(), 1);
@@ -162,14 +160,14 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         clickOn("#btnDelete");
 
-        Assert.assertEquals(StageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
         Assert.assertEquals(localUser.getServers().size(), 1);
 
         clickOn("#btnDiscard");
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(StageManager.getPopupStage().getTitle(), "Edit Server");
+        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Edit Server");
         Assert.assertEquals(localUser.getServers().size(), 1);
     }
 
@@ -204,7 +202,6 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
     @Override
     public void stop() {
-        stage = null;
         stageManager = null;
         localUser = null;
         server = null;

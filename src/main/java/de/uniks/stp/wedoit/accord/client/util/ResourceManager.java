@@ -4,6 +4,8 @@ import de.uniks.stp.wedoit.accord.client.model.Options;
 
 public class ResourceManager {
 
+    private PreferenceManager preferenceManager;
+
     /**
      * Save all options using the PreferenceManager.
      *
@@ -20,10 +22,14 @@ public class ResourceManager {
      *
      * @return The loaded options.
      */
-    public static Options loadOptions() {
+    public Options loadOptions() {
         Options options = new Options();
         options.setDarkmode(PreferenceManager.loadDarkmode());
-        options.listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, PreferenceManager.darkmodeListener);
+        options.listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this.preferenceManager.darkmodeListener);
         return options;
+    }
+
+    public void setPreferenceManager(PreferenceManager preferenceManager) {
+        this.preferenceManager = preferenceManager;
     }
 }

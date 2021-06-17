@@ -11,7 +11,7 @@ public class PrivateChatsScreenOnlineUsersCellFactory implements javafx.util.Cal
         return new OnlineUserListCell();
     }
 
-    private static class OnlineUserListCell extends ListCell<User> {
+    private class OnlineUserListCell extends ListCell<User> {
         protected void updateItem(User item, boolean empty) {
             super.updateItem(item, empty);
             this.getStyleClass().remove("newMessage");
