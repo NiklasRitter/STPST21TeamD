@@ -59,6 +59,8 @@ public class OptionsScreenTest extends ApplicationTest {
     private Stage popupStage;
     private StageManager stageManager;
     private Options oldOptions;
+    private PreferenceManager preferenceManager;
+    private ResourceManager resourceManager;
 
     @BeforeClass
     public static void before() {
@@ -71,8 +73,8 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-        PreferenceManager preferenceManager = new PreferenceManager();
-        ResourceManager resourceManager = new ResourceManager();
+        preferenceManager = new PreferenceManager();
+        resourceManager = new ResourceManager();
         resourceManager.setPreferenceManager(preferenceManager);
         this.oldOptions = resourceManager.loadOptions();
         resourceManager.saveOptions(new Options().setDarkmode(false));
@@ -102,6 +104,8 @@ public class OptionsScreenTest extends ApplicationTest {
         stage = null;
         popupStage = null;
         stageManager = null;
+        resourceManager = null;
+        preferenceManager = null;
         oldOptions = null;
         rule = null;
         restMock = null;
