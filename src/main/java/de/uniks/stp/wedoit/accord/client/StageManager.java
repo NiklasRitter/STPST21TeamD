@@ -27,10 +27,12 @@ public class StageManager extends Application {
 
 
     private final Map<String, Controller> controllerMap = new HashMap<>();
+    private ResourceManager resourceManager = new ResourceManager();
+    private Editor editor = new Editor();
+    private PreferenceManager prefManager = new PreferenceManager();
+    {resourceManager.setPreferenceManager(prefManager);}
     private SystemTrayController systemTrayController;
-    private Editor editor;
     private AccordClient model;
-    private PreferenceManager prefManager;
     private Stage stage;
     private Scene scene;
     private Stage popupStage;
@@ -39,7 +41,6 @@ public class StageManager extends Application {
     private Scene emojiPickerScene;
     private Stage gameStage;
     private Scene gameScene;
-    private ResourceManager resourceManager;
 
 
     /**
@@ -659,12 +660,9 @@ public class StageManager extends Application {
             }
         });
 
-        editor = new Editor();
         editor.setStageManager(this);
-        prefManager = new PreferenceManager();
         prefManager.setStageManager(this);
-        resourceManager = new ResourceManager();
-        resourceManager.setPreferenceManager(prefManager);
+
         model = editor.haveAccordClient();
         model.setOptions(new Options());
         editor.haveLocalUser();

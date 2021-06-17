@@ -9,7 +9,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Objects;
 
 public class ResourceManager {
-    private PreferenceManager preferenceManager = new PreferenceManager();
+    private PreferenceManager preferenceManager;
     public PropertyChangeListener localUserListener = this::onLocalUserChange;
 
     /**
@@ -85,13 +85,6 @@ public class ResourceManager {
     }
 
 
-
-    public Options loadOptions() {
-        Options options = new Options();
-        options.setDarkmode(preferenceManager.loadDarkmode());
-        options.listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this.preferenceManager.darkmodeListener);
-        return options;
-    }
 
     public void setPreferenceManager(PreferenceManager preferenceManager) {
         this.preferenceManager = preferenceManager;
