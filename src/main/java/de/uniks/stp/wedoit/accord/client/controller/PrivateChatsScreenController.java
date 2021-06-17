@@ -230,15 +230,13 @@ public class PrivateChatsScreenController implements Controller {
         availableUsers = new ArrayList<>(localUser.getUsers());
 
         // Add listener for the loaded listView
-        availableUsers.forEach(u -> {
-            u.setChatRead(u.getPrivateChat() == null && u.isOnlineStatus());
-        });
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
         this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
         this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
 
 
         this.onlineUserObservableList.addAll(editor.loadOldChats());
+
         Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
 
         for (User user : availableUsers) {
@@ -261,7 +259,7 @@ public class PrivateChatsScreenController implements Controller {
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
             });
-        } else if(user.isOnlineStatus()) {
+        } else {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.remove(user);
                 this.onlineUserObservableList.add(user);
@@ -293,6 +291,7 @@ public class PrivateChatsScreenController implements Controller {
             this.availableUsers.add(newUser);
             if(newUser.getPrivateChat() == null) newUser.setChatRead(true);
             Platform.runLater(() -> {
+                this.onlineUserObservableList.remove(newUser);
                 this.onlineUserObservableList.add(newUser);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
             });
@@ -318,7 +317,6 @@ public class PrivateChatsScreenController implements Controller {
         }
         this.currentChat = user.getPrivateChat();
         user.setChatRead(true);
-        lwOnlineUsers.refresh();
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
 
         // load list view

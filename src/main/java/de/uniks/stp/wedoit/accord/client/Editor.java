@@ -155,7 +155,7 @@ public class Editor {
             }
         }
 
-        User user = new User().setId(id).setName(name).setOnlineStatus(true);
+        User user = new User().setId(id).setName(name).setOnlineStatus(true).setChatRead(true);
         localUser.withUsers(user);
         return localUser;
     }
@@ -306,8 +306,9 @@ public class Editor {
                     user.setPrivateChat(privateChat);
                 }
                 message.setChat(privateChat);
-                privateChat.withMessages(message);
                 user.setChatRead(false);
+                privateChat.withMessages(message);
+
             }
             savePrivateMessage(message);
         }
@@ -325,7 +326,7 @@ public class Editor {
         List<User> offlineUser = new ArrayList<>();
         for(String s: db.getOpenChats(getLocalUser().getName())){
             if(getOnlineUsers().stream().noneMatch((u)-> u.getName().equals(s))){
-                offlineUser.add(new User().setName(s).setChatRead(true));
+                offlineUser.add(new User().setName(s).setChatRead(getUser(s) == null || getUser(s).isChatRead()));
             }
         }
 
@@ -333,7 +334,7 @@ public class Editor {
     }
 
     public List<PrivateMessage> loadOldMessages(String user){
-        return db.getMessagesBetweenUsers(getLocalUser().getName(),user);
+        return db.getMessagesBetweenUsers(user);
     }
 
 

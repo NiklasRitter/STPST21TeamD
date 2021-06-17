@@ -14,6 +14,11 @@ public class SqliteDB {
     private String username;
     private String url = "jdbc:sqlite:./src/main/resources/data/";
 
+    /**
+     * When creating a SqliteDB object
+     *
+     * @param username wants username for creating the DB
+     */
     public SqliteDB(String username){
         this.username = username;
         try{
@@ -29,9 +34,7 @@ public class SqliteDB {
                     + " receiver varchar(255) NOT NULL "
                     + ");"
             );
-            //reciever
             c.close();
-
 
         }catch (Exception e){
             System.err.println("Couldnt init db");
@@ -39,6 +42,11 @@ public class SqliteDB {
         }
     }
 
+    /**
+     * saves a PrivateMessage to the DB
+     *
+     * @param message to be saved
+     */
     public void save(PrivateMessage message) {
         try(Connection conn = DriverManager.getConnection(url + username + ".sqlite");
             PreparedStatement prep = conn.prepareStatement("INSERT INTO messages VALUES(NULL,?,?,?,?);")){
@@ -56,14 +64,20 @@ public class SqliteDB {
         }
     }
 
-    public List<PrivateMessage> getMessagesBetweenUsers(String user1, String user2){
+    /**
+     * Query for messages between username (set in constructor) and user, ordered by timestamp
+     *
+     * @param user username to find chats with
+     * @return list of PrivateMessage that the localUser had with user
+     */
+    public List<PrivateMessage> getMessagesBetweenUsers(String user){
         List<PrivateMessage> messages = new ArrayList<>();
         try(Connection conn = DriverManager.getConnection(url + username + ".sqlite");
         PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY times")){
-            prep.setString(1,user1);
-            prep.setString(2,user2);
-            prep.setString(3,user2);
-            prep.setString(4,user1);
+            prep.setString(1,user);
+            prep.setString(2,username);
+            prep.setString(3,username);
+            prep.setString(4,user);
 
             ResultSet rs = prep.executeQuery();
 
@@ -83,12 +97,18 @@ public class SqliteDB {
         return messages;
     }
 
-    public List<String> getOpenChats(String username){
+    /**
+     * Query for started chats between username (set in constructor) and user, ordered by timestamp
+     *
+     * @param user username to find chats with
+     * @return list of usernames that a chat is opened with
+     */
+    public List<String> getOpenChats(String user){
         Set<String> users = new HashSet<>();
         try(Connection conn = DriverManager.getConnection(url + username + ".sqlite")){
             PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE sender = ? OR receiver = ? ORDER BY id;");
 
-            prep.setString(1,username);
+            prep.setString(1,user);
             prep.setString(2,username);
             ResultSet rs = prep.executeQuery();
 
