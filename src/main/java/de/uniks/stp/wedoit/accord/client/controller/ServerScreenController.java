@@ -39,7 +39,6 @@ public class ServerScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
-    private List<User> users;
     private Channel currentChannel;
     private ObservableList<Message> observableMessageList;
 
@@ -63,7 +62,6 @@ public class ServerScreenController implements Controller {
     private WSCallback serverWSCallback;
 
     // PropertyChangeListener
-    public final PropertyChangeListener userListViewListener = this::changeUserList;
     private final PropertyChangeListener newMessagesListener = this::newMessage;
     private final PropertyChangeListener serverNameListener = (propertyChangeEvent) -> this.handleServerNameChange();
 
@@ -289,12 +287,6 @@ public class ServerScreenController implements Controller {
 
     // PropertyChangeEvent Methods
 
-    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            Platform.runLater(() -> this.refreshLvUsers(null));
-        }
-    }
-
     private void handleServerNameChange() {
         Platform.runLater(() -> this.lbServerName.setText(this.server.getName()));
     }
@@ -327,9 +319,7 @@ public class ServerScreenController implements Controller {
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
-        quote.setOnAction((event) -> {
-            handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem());
-        });
+        quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -517,6 +507,7 @@ public class ServerScreenController implements Controller {
      * If no, it shows all users of the server
      */
     public void refreshLvUsers(Channel channel) {
+        List<User> users;
         if(channel != null) {
             if (channel.isPrivileged()) {
                 users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
