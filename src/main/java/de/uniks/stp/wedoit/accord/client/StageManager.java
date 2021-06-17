@@ -699,6 +699,8 @@ public class StageManager extends Application {
             System.err.println("Error while shutdown program");
             e.printStackTrace();
         }
+        this.resourceManager = null;
+        this.prefManager = null;
     }
 }
 
