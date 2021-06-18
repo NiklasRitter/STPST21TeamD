@@ -49,7 +49,6 @@ public class Editor {
     public LocalUser haveLocalUser() {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
-        stageManager.getResourceManager();
         return localUser;
     }
 
@@ -540,6 +539,7 @@ public class Editor {
      * formats a message with the correct date in the format
      * <p>
      * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     *
      * @param message message which should formatted
      * @return the formatted message as string
      */
@@ -553,6 +553,7 @@ public class Editor {
      * formats a message with the correct date in the format
      * <p>
      * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     *
      * @param message message which should formatted
      * @return the formatted message as string
      */
@@ -573,6 +574,7 @@ public class Editor {
 
     /**
      * checks whether a message is a quote
+     *
      * @param item item as message
      * @return boolean whether a item is a quote
      */
@@ -584,6 +586,7 @@ public class Editor {
 
     /**
      * checks whether a message is a quote
+     *
      * @param item item as message
      * @return boolean whether a item is a quote
      */
@@ -621,31 +624,5 @@ public class Editor {
         });
     }
 
-    /*
-    TODO: Add encryption for saved password and username
-    public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        KeySpec spec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
-                Base64.getDecoder().decode(StageManager.getResourceManager().getOrCreateInitializationVector()), 65536, 256);
-        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
-    }
-
-    public IvParameterSpec getOrCreateIvParameterSpec() throws NoSuchAlgorithmException {
-        return new IvParameterSpec(Base64.getDecoder().decode(StageManager.getResourceManager().getOrCreateInitializationVector()));
-    }
-
-    public String encryptData(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, createEncryptionKey(), getOrCreateIvParameterSpec());
-        byte[] cipherText = cipher.doFinal(Base64.getDecoder().decode(data));
-        return Base64.getEncoder().encodeToString(cipherText);
-    }
-
-    public String decryptData(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, createEncryptionKey(), getOrCreateIvParameterSpec());
-        byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(data));
-        return Base64.getEncoder().encodeToString(plainText);
-    }*/
 
 }

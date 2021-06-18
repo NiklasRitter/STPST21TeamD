@@ -65,10 +65,7 @@ public class PreferenceManager {
     public String loadUsername() {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-            /*
-            TODO: Add encryption for saved password and username
-            String encrypted = preferences.get(USERNAME, "");
-            return StageManager.getEditor().decryptData(encrypted);*/
+
             return preferences.get(USERNAME, "");
         } catch (Exception e) {
             System.err.println("Error while loading username:");
@@ -86,10 +83,7 @@ public class PreferenceManager {
         if (username != null) {
             try {
                 Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-                /*
-                TODO: Add encryption for saved password and username
-                String encrypted = StageManager.getEditor().encryptData(username);
-                preferences.put(USERNAME, encrypted);*/
+
                 preferences.put(USERNAME, username);
             } catch (Exception e) {
                 System.err.println("Error while saving username:");
@@ -106,10 +100,7 @@ public class PreferenceManager {
     public String loadPassword() {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-            /*
-            TODO: Add encryption for saved password and username
-            String encrypted = preferences.get(PASSWORD, "");
-            return StageManager.getEditor().decryptData(encrypted);*/
+
             return preferences.get(PASSWORD, "");
         } catch (Exception e) {
             System.err.println("Error while loading password:");
@@ -127,10 +118,7 @@ public class PreferenceManager {
         if (password != null) {
             try {
                 Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-                /*
-                TODO: Add encryption for saved password and username
-                String encrypted = StageManager.getEditor().encryptData(password);
-                preferences.put(PASSWORD, encrypted);*/
+
                 preferences.put(PASSWORD, password);
             } catch (Exception e) {
                 System.err.println("Error while saving password:");

@@ -110,7 +110,6 @@ public class EditServerScreenController implements Controller {
 
         // load old invitations and initialize lvInvitation
         loadOldInvitations();
-        // TODO: implement function of buttons and so on
         Tooltip privateChatsButton = new Tooltip();
         privateChatsButton.setText("double click to copy invitation");
         this.lvInvitation.setTooltip(privateChatsButton);

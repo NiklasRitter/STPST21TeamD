@@ -122,17 +122,6 @@ public class ResourceManager {
         Objects.requireNonNull(localUser).setName(preferenceManager.loadUsername());
     }
 
-    /*
-    TODO: Add encryption for saved password and username
-    public String getOrCreateInitializationVector() throws NoSuchAlgorithmException {
-        String IVString = preferenceManager.loadInitializationVector();
-        if (IVString.isEmpty()) {
-            byte[] iv = new byte[16];
-            SecureRandom.getInstanceStrong().nextBytes(iv);
-            IVString = new String(iv);
-            preferenceManager.saveInitializationVector(IVString);
-        }
-        return IVString;
-    }*/
+
 
 }
