@@ -306,6 +306,7 @@ public class Editor {
                 }
                 message.setChat(privateChat);
                 user.setChatRead(false);
+                updateUserChatRead(user);
                 privateChat.withMessages(message);
 
             }
@@ -325,7 +326,9 @@ public class Editor {
         List<User> offlineUser = new ArrayList<>();
         for (String s : db.getOpenChats(getLocalUser().getName())) {
             if (getOnlineUsers().stream().noneMatch((u) -> u.getName().equals(s))) {
-                offlineUser.add(new User().setName(s).setChatRead(getUser(s) == null || getUser(s).isChatRead()));
+                User user = new User().setName(s);
+                getUserChatRead(user);
+                offlineUser.add(user);
             }
         }
 

@@ -239,6 +239,7 @@ public class PrivateChatsScreenController implements Controller {
         Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
 
         for (User user : availableUsers) {
+            editor.getUserChatRead(user);
             user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
             user.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersChatReadListener);
         }
@@ -319,6 +320,7 @@ public class PrivateChatsScreenController implements Controller {
         }
         this.currentChat = user.getPrivateChat();
         user.setChatRead(true);
+        editor.updateUserChatRead(user);
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
 
         // load list view

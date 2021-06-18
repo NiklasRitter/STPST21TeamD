@@ -61,7 +61,6 @@ public class NetworkController {
         setClearUsername();
         haveWebSocket(SYSTEM_SOCKET_URL, this::handleSystemMessage);
         haveWebSocket(PRIVATE_USER_CHAT_PREFIX + cleanLocalUserName, this::handlePrivateChatMessage);
-        editor.getLocalUser().getUsers().forEach(editor::getUserChatRead);
         return this;
     }
 
