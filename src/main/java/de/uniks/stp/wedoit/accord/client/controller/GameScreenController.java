@@ -104,7 +104,7 @@ public class GameScreenController implements Controller {
         gameAction = ((Button) actionEvent.getSource()).getText();
 
         JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), PREFIX + gameAction);
-        editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+        editor.getNetworkController().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
 
         imgYouPlayed.setImage(new Image(getClass().getResource(IMGURL + gameAction + ".png").toString()));
 

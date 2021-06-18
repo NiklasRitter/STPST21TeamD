@@ -582,12 +582,12 @@ public class ServerScreenController implements Controller {
                 JsonObject jsonMessage = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
                 removeQuote();
 
-                editor.getNetworkController().sendChannelChatMessage(quoteMsg.toString());
-                editor.getNetworkController().sendChannelChatMessage(jsonMessage.toString());
+                editor.getNetworkController().sendChannelChatMessage(JsonUtil.stringify(quoteMsg));
+                editor.getNetworkController().sendChannelChatMessage(JsonUtil.stringify(jsonMessage));
             } else {
 
                 JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
-                editor.getNetworkController().sendChannelChatMessage(jsonMsg.toString());
+                editor.getNetworkController().sendChannelChatMessage(JsonUtil.stringify(jsonMsg));
             }
         }
     }
@@ -601,12 +601,8 @@ public class ServerScreenController implements Controller {
         JsonObject jsonObject = (JsonObject) msg;
 
         if (jsonObject.getString(CHANNEL).equals(currentChannel.getId())) {
-            Message message = new Message();
+            Message message = JsonUtil.parseMessage(jsonObject);
             message.setChannel(currentChannel);
-            message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
-            message.setFrom(jsonObject.getString(FROM));
-            message.setText(jsonObject.getString(TEXT));
-
             this.editor.addNewChannelMessage(message);
         } else {
             Channel channel = channelMap.get(jsonObject.getString(CHANNEL));
