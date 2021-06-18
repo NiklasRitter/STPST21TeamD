@@ -60,7 +60,7 @@ public class Editor {
     /**
      * create localUser with the given arguments and set localUser in Editor
      * <p>
-     * if localUser already exists set username and userkey to current localUser
+     * if localUser already exists set username and userKey to current localUser
      *
      * @param username id of the localUser
      * @param userKey  name of the localUser
@@ -337,6 +337,9 @@ public class Editor {
      * @param userKey userKey of the user who is logged out
      */
     public void logoutUser(String userKey) {
+        accordClient.getOptions().setRememberMe(false);
+        accordClient.getLocalUser().setPassword("");
+        accordClient.getLocalUser().setName("");
         if (userKey != null && !userKey.isEmpty()) {
             networkController.stop();
             networkController.logoutUser(userKey);
@@ -536,6 +539,7 @@ public class Editor {
      * formats a message with the correct date in the format
      * <p>
      * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     *
      * @param message message which should formatted
      * @return the formatted message as string
      */
@@ -549,6 +553,7 @@ public class Editor {
      * formats a message with the correct date in the format
      * <p>
      * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     *
      * @param message message which should formatted
      * @return the formatted message as string
      */
@@ -569,6 +574,7 @@ public class Editor {
 
     /**
      * checks whether a message is a quote
+     *
      * @param item item as message
      * @return boolean whether a item is a quote
      */
@@ -580,6 +586,7 @@ public class Editor {
 
     /**
      * checks whether a message is a quote
+     *
      * @param item item as message
      * @return boolean whether a item is a quote
      */
@@ -596,4 +603,26 @@ public class Editor {
     public StageManager getStageManager() {
         return stageManager;
     }
+
+    public void automaticLogin(AccordClient accordClient) {
+        if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
+            networkController.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
+        } else {
+            stageManager.showLoginScreen();
+            stageManager.getStage().show();
+        }
+    }
+
+    public void handleAutomaticLogin(boolean success) {
+        if (success) {
+            Platform.runLater(stageManager::showMainScreen);
+        } else {
+            Platform.runLater(stageManager::showLoginScreen);
+        }
+        Platform.runLater(() -> {
+            stageManager.getStage().show();
+        });
+    }
+
+
 }

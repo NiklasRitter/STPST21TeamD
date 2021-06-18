@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -65,6 +66,7 @@ public class GameScreenTest extends ApplicationTest {
 
     @Mock
     private HttpResponse<JsonNode> res;
+    private Options oldOptions;
 
     @BeforeClass
     public static void before() {
@@ -80,6 +82,9 @@ public class GameScreenTest extends ApplicationTest {
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
+        this.oldOptions = new Options();
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
         this.stageManager.start(stage);
 
 
@@ -94,6 +99,8 @@ public class GameScreenTest extends ApplicationTest {
 
     @Override
     public void stop() {
+        stageManager.getResourceManager().saveOptions(this.oldOptions);
+        oldOptions = null;
         rule = null;
         stage = null;
         stageManager = null;

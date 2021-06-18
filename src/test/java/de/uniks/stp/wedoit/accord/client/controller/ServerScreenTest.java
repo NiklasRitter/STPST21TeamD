@@ -88,6 +88,7 @@ public class ServerScreenTest extends ApplicationTest {
 
     @Captor
     private ArgumentCaptor<WSCallback> chatCallbackArgumentCaptorWebSocket;
+    private Options oldOptions;
 
     @BeforeClass
     public static void before() {
@@ -103,6 +104,10 @@ public class ServerScreenTest extends ApplicationTest {
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
+        this.oldOptions = new Options();
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+
         this.stageManager.start(stage);
         this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
@@ -122,6 +127,8 @@ public class ServerScreenTest extends ApplicationTest {
 
     @Override
     public void stop() {
+        stageManager.getResourceManager().saveOptions(this.oldOptions);
+        oldOptions = null;
         rule = null;
         webSocketClient = null;
         chatWebSocketClient = null;
