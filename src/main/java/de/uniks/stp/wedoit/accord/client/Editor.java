@@ -11,7 +11,6 @@ import javafx.scene.input.ClipboardContent;
 
 import javax.json.JsonArray;
 import java.text.SimpleDateFormat;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -314,18 +313,18 @@ public class Editor {
         }
     }
 
-    public void setUpDB(){
+    public void setUpDB() {
         db = new SqliteDB(getLocalUser().getName());
     }
 
-    private void savePrivateMessage(PrivateMessage message){
+    private void savePrivateMessage(PrivateMessage message) {
         db.save(message);
     }
 
-    public List<User> loadOldChats(){
+    public List<User> loadOldChats() {
         List<User> offlineUser = new ArrayList<>();
-        for(String s: db.getOpenChats(getLocalUser().getName())){
-            if(getOnlineUsers().stream().noneMatch((u)-> u.getName().equals(s))){
+        for (String s : db.getOpenChats(getLocalUser().getName())) {
+            if (getOnlineUsers().stream().noneMatch((u) -> u.getName().equals(s))) {
                 offlineUser.add(new User().setName(s).setChatRead(getUser(s) == null || getUser(s).isChatRead()));
             }
         }
@@ -333,10 +332,9 @@ public class Editor {
         return offlineUser;
     }
 
-    public List<PrivateMessage> loadOldMessages(String user){
-        return db.getMessagesBetweenUsers(user);
+    public List<PrivateMessage> loadOldMessages(String user) {
+        return db.getLastFiftyMessagesBetweenUsers(user);
     }
-
 
 
     /**
@@ -394,6 +392,14 @@ public class Editor {
             }
         }
         return onlineUsers;
+    }
+
+    public void updateUserChatRead(User user) {
+        db.updateOrInsertUserChatRead(user);
+    }
+
+    public void getUserChatRead(User user) {
+        db.getChatReadForUser(user);
     }
 
     /**
@@ -541,6 +547,7 @@ public class Editor {
             }
         }
     }
+
     public void leaveServer(String userKey, String id) {
         if (id != null && !id.isEmpty()) {
             networkController.leaveServer(userKey, id);
