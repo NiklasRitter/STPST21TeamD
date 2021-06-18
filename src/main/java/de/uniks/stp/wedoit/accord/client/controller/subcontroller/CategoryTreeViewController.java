@@ -54,7 +54,7 @@ public class CategoryTreeViewController implements Controller {
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
 
         this.tvServerChannelsRoot = new TreeItem<>();
-        ChannelTreeView channelTreeView = new ChannelTreeView();
+        ChannelTreeView channelTreeView = new ChannelTreeView(editor.getStageManager());
         this.tvServerChannels.setCellFactory(channelTreeView);
         this.tvServerChannels.setShowRoot(false);
         this.tvServerChannels.setRoot(tvServerChannelsRoot);
@@ -95,7 +95,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
-            Platform.runLater(StageManager::showLoginScreen);
+            Platform.runLater(editor.getStageManager()::showLoginScreen);
         }
     }
 
@@ -111,7 +111,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
-            Platform.runLater(StageManager::showLoginScreen);
+            Platform.runLater(editor.getStageManager()::showLoginScreen);
         }
     }
 
@@ -150,7 +150,7 @@ public class CategoryTreeViewController implements Controller {
                 Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
             }
             else{
-                Platform.runLater(() -> controller.refreshLvUsers(null));
+                Platform.runLater(controller::refreshLvUsers);
             }
         }
     }
@@ -235,7 +235,7 @@ public class CategoryTreeViewController implements Controller {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addCategory = new MenuItem("- add category");
         contextMenu.getItems().add(addCategory);
-        addCategory.setOnAction((event) -> StageManager.showCreateCategoryScreen());
+        addCategory.setOnAction((event) -> editor.getStageManager().showCreateCategoryScreen());
         return contextMenu;
     }
 

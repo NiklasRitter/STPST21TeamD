@@ -187,7 +187,7 @@ public class WebSocketManager {
             server.setName(data.getString(NAME));
         }
         if (action.equals(SERVER_DELETED)) {
-            Platform.runLater(StageManager::showMainScreen);
+            Platform.runLater(editor.getStageManager()::showMainScreen);
         }
 
         //change category
@@ -209,7 +209,7 @@ public class WebSocketManager {
         if (action.equals(CHANNEL_UPDATED)) {
             Channel channel = editor.updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
             if (channel == null) {
-                Platform.runLater(() -> StageManager.showServerScreen(server));
+                Platform.runLater(() -> editor.getStageManager().showServerScreen(server));
             }
         }
         if (action.equals(CHANNEL_CREATED)) {

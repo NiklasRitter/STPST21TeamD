@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -65,6 +66,7 @@ public class ServerScreenController implements Controller {
     private final PropertyChangeListener serverNameListener = (propertyChangeEvent) -> this.handleServerNameChange();
 
     private final CategoryTreeViewController categoryTreeViewController;
+    private final ServerChatController serverChatController;
 
     /**
      * Create a new Controller
@@ -81,6 +83,7 @@ public class ServerScreenController implements Controller {
         this.server = server;
         this.serverWSCallback = (msg) -> editor.getWebSocketManager().handleServerMessage(msg, server);
         categoryTreeViewController = new CategoryTreeViewController(view, model, editor, server, this);
+        serverChatController = new ServerChatController(view, model,editor, server, this);
     }
 
     /**
@@ -486,7 +489,7 @@ public class ServerScreenController implements Controller {
         // load list view
         ServerUserListView serverUserListView = new ServerUserListView();
         lvServerUsers.setCellFactory(serverUserListView);
-        Platform.runLater(() -> this.refreshLvUsers(null));
+        Platform.runLater(this::refreshLvUsers);
     }
 
     // Helping Methods
@@ -506,7 +509,7 @@ public class ServerScreenController implements Controller {
      * If no, it shows all users of the server
      */
     public void refreshLvUsers(Channel channel) {
-        List<User> users;
+        List<User> users = new LinkedList<>();
         if(channel != null) {
             if (channel.isPrivileged()) {
                 users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
@@ -515,9 +518,14 @@ public class ServerScreenController implements Controller {
                 users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
             }
         }
-        else {
-            users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
-        }
+        Collections.reverse(users);
+        this.lvServerUsers.getItems().removeAll();
+        this.lvServerUsers.setItems(FXCollections.observableList(users));
+        this.lvServerUsers.refresh();
+    }
+
+    public void refreshLvUsers(){
+        List<User> users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
         Collections.reverse(users);
         this.lvServerUsers.getItems().removeAll();
         this.lvServerUsers.setItems(FXCollections.observableList(users));

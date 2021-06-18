@@ -480,26 +480,6 @@ public class Editor {
         for (Category category : server.getCategories()) {
             if (category.getId().equals(categoryId)) {
                 Channel channel = haveChannel(id, name, type, privileged, category, members);
-//                for (Channel channel : category.getChannels()) {
-//                    if (channel.getId().equals(id)) {
-//                        channel.setName(name);
-//                        channel.setPrivileged(privileged);
-//                        channel.withoutMembers(new ArrayList<>(channel.getMembers()));
-//                        if (privileged) {
-//                            List<String> membersIds = new ArrayList<>();
-//                            for (int index = 0; index < members.toArray().length; index++) {
-//                                membersIds.add(members.getString(index));
-//                            }
-//
-//                            for (String memberId : membersIds) {
-//                                User user = this.getServerUserById(category.getServer(), memberId);
-//                                Objects.requireNonNull(user);
-//                                channel.withMembers(user);
-//                            }
-//                        }
-//                        return channel;
-//                    }
-//                }
                 return channel;
             }
         }
