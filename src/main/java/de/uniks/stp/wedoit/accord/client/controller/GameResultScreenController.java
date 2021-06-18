@@ -3,13 +3,18 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javax.json.JsonObject;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
@@ -22,6 +27,7 @@ public class GameResultScreenController implements Controller{
     private Editor editor;
     private User opponent;
     private Boolean isWinner;
+    private final PropertyChangeListener chatListener = this::newMessage;
 
     /**
      * Create a new Controller
@@ -86,6 +92,14 @@ public class GameResultScreenController implements Controller{
         StageManager.showPrivateChatsScreen();
     }
 
+
+    private void newMessage(PropertyChangeEvent event) {
+        if (event.getNewValue() != null) {
+            PrivateMessage message = (PrivateMessage) event.getNewValue();
+
+
+        }
+    }
 
     /**
      * Called to stop this controller

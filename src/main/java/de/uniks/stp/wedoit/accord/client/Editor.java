@@ -295,7 +295,7 @@ public class Editor {
 
         if(message.getText().equals(GAME_ACCEPT) && (getLocalUser().getGameInvites().contains(getUser(message.getTo())) || getLocalUser().getGameRequests().contains(getUser(message.getFrom())))){
             System.out.println(StageManager.getGameStage().getTitle());
-            if(!StageManager.getGameStage().isShowing()) {
+            if(!StageManager.getGameStage().isShowing() || StageManager.getGameStage().getTitle().equals("Result")) {
                 getLocalUser().withoutGameInvites(getUser(message.getTo()));
                 getLocalUser().withoutGameRequests(getUser(message.getFrom()));
 
