@@ -172,7 +172,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        this.editor.getStageManager().showMainScreen();
     }
 
     /**
@@ -198,7 +198,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Options Button is clicked
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        StageManager.showOptionsScreen();
+        this.editor.getStageManager().showOptionsScreen();
     }
 
     /**
@@ -209,7 +209,7 @@ public class PrivateChatsScreenController implements Controller {
     private void btnEmojiOnClicked(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        StageManager.showEmojiScreen(tfPrivateChat, pos);
+        this.editor.getStageManager().showEmojiScreen(tfPrivateChat, pos);
     }
 
     /**
@@ -357,7 +357,6 @@ public class PrivateChatsScreenController implements Controller {
                     if(StageManager.getGameStage().getTitle().equals("Result")){
 
                     }
-                });
             }
 
         }

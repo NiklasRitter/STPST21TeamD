@@ -95,7 +95,7 @@ public class EditChannelScreenController implements Controller {
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
         //Adjusts the size of the stage to its dynamically added content
-        StageManager.getPopupStage().sizeToScene();
+        this.editor.getStageManager().getPopupStage().sizeToScene();
     }
 
     private void checkIfIsPrivileged() {
@@ -188,7 +188,7 @@ public class EditChannelScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteChannelButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showAttentionScreen(channel);
+        this.editor.getStageManager().showAttentionScreen(channel);
     }
 
     public void addToUserList(User user) {

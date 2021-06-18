@@ -179,7 +179,7 @@ public class EditServerScreenController implements Controller {
     }
 
     private void deleteButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showAttentionScreen(this.server);
+        this.editor.getStageManager().showAttentionScreen(this.server);
     }
 
 

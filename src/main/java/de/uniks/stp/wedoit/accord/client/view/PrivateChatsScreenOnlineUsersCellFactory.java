@@ -12,8 +12,8 @@ public class PrivateChatsScreenOnlineUsersCellFactory implements javafx.util.Cal
     public ListCell<User> call(ListView<User> param) {
         return new OnlineUserListCell();
     }
-    private static class OnlineUserListCell extends ListCell<User> {
-        @Override
+
+    private class OnlineUserListCell extends ListCell<User> {
         protected void updateItem(User item, boolean empty) {
             super.updateItem(item, empty);
             this.setText(null);

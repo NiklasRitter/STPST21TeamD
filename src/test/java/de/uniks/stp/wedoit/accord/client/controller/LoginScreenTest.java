@@ -76,11 +76,11 @@ public class LoginScreenTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.stageManager.start(stage);
 
-        StageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
-        StageManager.showLoginScreen();
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -112,7 +112,7 @@ public class LoginScreenTest extends ApplicationTest {
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
     }
 
     @Test
@@ -142,8 +142,8 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertEquals("", res.getBody().getObject().getString("message"));
         Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", res.getBody().getObject().getJSONObject("data").getString("userKey"));
 
-        Assert.assertEquals(username, StageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", StageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertEquals(username, this.stageManager.getEditor().getLocalUser().getName());
+        Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", this.stageManager.getEditor().getLocalUser().getUserKey());
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
@@ -191,8 +191,8 @@ public class LoginScreenTest extends ApplicationTest {
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username or password is wrong.", errorLabel.getText());
 
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getName());
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
 
     @Test
@@ -215,8 +215,8 @@ public class LoginScreenTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getName());
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
 
 
@@ -241,8 +241,8 @@ public class LoginScreenTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getName());
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
 
     @Test
@@ -294,8 +294,8 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertEquals("", resLogin.getBody().getObject().getString("message"));
         Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", resLogin.getBody().getObject().getJSONObject("data").getString("userKey"));
 
-        Assert.assertEquals(username, StageManager.getEditor().getLocalUser().getName());
-        Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", StageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertEquals(username, this.stageManager.getEditor().getLocalUser().getName());
+        Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", this.stageManager.getEditor().getLocalUser().getUserKey());
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
@@ -343,8 +343,8 @@ public class LoginScreenTest extends ApplicationTest {
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username already taken.", errorLabel.getText());
 
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getName());
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
 
     @Test
@@ -367,8 +367,8 @@ public class LoginScreenTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getName());
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
 
     @Test
@@ -392,8 +392,8 @@ public class LoginScreenTest extends ApplicationTest {
         TextField pwUserPw = lookup("#pwUserPw").query();
         Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
 
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getName());
-        Assert.assertNull(StageManager.getEditor().getLocalUser().getUserKey());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
+        Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
 
 }

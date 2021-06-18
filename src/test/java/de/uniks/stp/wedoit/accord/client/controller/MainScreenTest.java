@@ -48,7 +48,6 @@ public class MainScreenTest extends ApplicationTest {
     private WebSocketClient chatWebSocketClient;
     @Mock
     private WebSocketClient channelChatWebSocketClient;
-    private Server server;
 
     @Mock
     private WebSocketClient webSocketClient;
@@ -81,14 +80,14 @@ public class MainScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen
-        localUser = StageManager.getEditor().haveLocalUser("username", "testKey123");
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        localUser = this.stageManager.getEditor().haveLocalUser("username", "testKey123");
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
-        StageManager.showLoginScreen();
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -102,7 +101,6 @@ public class MainScreenTest extends ApplicationTest {
         systemWebSocketClient = null;
         chatWebSocketClient = null;
         channelChatWebSocketClient = null;
-        server = null;
         webSocketClient = null;
         restMock = null;
         res = null;
@@ -114,32 +112,6 @@ public class MainScreenTest extends ApplicationTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-    }
-
-    public void directToMainScreen() {
-        //Mocking of RestClient login function
-        JsonObject json = Json.createObjectBuilder()
-                .add("status", "success")
-                .add("message", "")
-                .add("data", Json.createObjectBuilder()
-                        .add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")
-                ).build();
-        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
-
-        //TestFX
-        String username = "username";
-        String password = "password";
-
-        ((TextField) lookup("#tfUserName").query()).setText(username);
-
-        ((TextField) lookup("#pwUserPw").query()).setText(password);
-
-        clickOn("#btnLogin");
-
-        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
-
-        Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
-        callbackLogin.completed(res);
     }
 
     /**
@@ -165,10 +137,6 @@ public class MainScreenTest extends ApplicationTest {
                 .build();
         when(res.getBody()).thenReturn(new JsonNode(json.toString()));
 
-        directToMainScreen();
-
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
 
         // testing logout button
@@ -192,13 +160,8 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void privateChatsButtonTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
-        StageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
 
         clickOn("#btnPrivateChats");
         Assert.assertEquals("Private Chats", stage.getTitle());
@@ -206,23 +169,13 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void optionsButtonTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
     }
 
     // Test: list View load servers correct in the list view and sorted alphabetical
     @Test
     public void loadListViewWithTwoServersTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         // Mock the rest client getServers method
@@ -246,11 +199,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test: list View load zero servers correct in the list view
     @Test
     public void loadListViewWithZeroServersTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersSuccessWithZeroServers();
 
         // Mock the rest client getServers method
@@ -265,11 +213,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test: list view change correct with alphabetical order when a new server was created
     @Test
     public void listViewAddPropertyChangeListenerTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         mockRestClient(json);
@@ -284,7 +227,7 @@ public class MainScreenTest extends ApplicationTest {
         Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
 
         //create a new server
-        StageManager.getEditor().haveServer(StageManager.getEditor().getLocalUser(), "123", "AOServer");
+        this.stageManager.getEditor().haveServer(this.stageManager.getEditor().getLocalUser(), "123", "AOServer");
 
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -303,11 +246,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test getServer failure message handling, server show LoginScreen
     @Test
     public void failureMessageTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersFailureResponse();
 
         mockRestClient(json);
@@ -319,11 +257,6 @@ public class MainScreenTest extends ApplicationTest {
     // Test open server with a double click on this one
     @Test
     public void openServerDoubleClickedTest() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         JsonObject json = buildGetServersSuccessWithTwoServers();
 
         mockRestClient(json);
@@ -341,11 +274,11 @@ public class MainScreenTest extends ApplicationTest {
         listView.getSelectionModel().select(1);
         Server server = listView.getSelectionModel().getSelectedItem();
 
-        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
         WaitForAsyncUtils.async(() -> {
             while (!stage.getTitle().equals("Server")) {
-                StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+                this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
             }
         });
         doubleClickOn("#lwServerList");
@@ -365,11 +298,6 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void handleServerMessage() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         ListView<Server> listView = lookup("#lwServerList").queryListView();
         Assert.assertNotNull(listView);
 
@@ -404,13 +332,8 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void enterServerTestSuccessful() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         clickOn("#btnEnterInvitation");
-        Assert.assertEquals("Join Server", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Join Server", this.stageManager.getPopupStage().getTitle());
 
         TextField tfInvitationLink = lookup("#tfInvitationLink").query();
         Label lblError = lookup("#lblError").query();
@@ -418,11 +341,11 @@ public class MainScreenTest extends ApplicationTest {
         tfInvitationLink.setText("https://ac.uniks.de/api/servers/123/invites/in123");
         clickOn("#btnJoinServer");
 
-        StageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + "123", channelChatWebSocketClient);
 
-        Assert.assertEquals(StageManager.getEditor().getLocalUser().getServers().size(), 0);
+        Assert.assertEquals(this.stageManager.getEditor().getLocalUser().getServers().size(), 0);
 
         when(res.getBody()).thenReturn(new JsonNode(buildJoinedSuccessful().toString()));
         when(res.isSuccess()).thenReturn(true);
@@ -433,18 +356,13 @@ public class MainScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(stage.getTitle(), "Server");
-        Assert.assertEquals(StageManager.getEditor().getLocalUser().getServers().size(), 1);
+        Assert.assertEquals(this.stageManager.getEditor().getLocalUser().getServers().size(), 1);
     }
 
     @Test
     public void enterServerTestFailure() {
-        directToMainScreen();
-        // got to main screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
-
         clickOn("#btnEnterInvitation");
-        Assert.assertEquals("Join Server", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Join Server", this.stageManager.getPopupStage().getTitle());
 
         TextField tfInvitationLink = lookup("#tfInvitationLink").query();
         Label lblError = lookup("#lblError").query();
@@ -470,7 +388,7 @@ public class MainScreenTest extends ApplicationTest {
         tfInvitationLink.setText("https://ac.uniks.de/api/servers/123/invites/in123");
         clickOn("#btnJoinServer");
 
-        Assert.assertEquals(StageManager.getEditor().getLocalUser().getServers().size(), 0);
+        Assert.assertEquals(this.stageManager.getEditor().getLocalUser().getServers().size(), 0);
 
 
         when(res.isSuccess()).thenReturn(false);
@@ -482,14 +400,14 @@ public class MainScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(StageManager.getEditor().getLocalUser().getServers().size(), 0);
+        Assert.assertEquals(this.stageManager.getEditor().getLocalUser().getServers().size(), 0);
         Assert.assertEquals(lblError.getText(), buildJoinedSuccessful().getString(MESSAGE));
 
 
         tfInvitationLink.setText("https://ac.uniks.de/api/servers/123/invites/in123");
         clickOn("#btnJoinServer");
 
-        Assert.assertEquals(StageManager.getEditor().getLocalUser().getServers().size(), 0);
+        Assert.assertEquals(this.stageManager.getEditor().getLocalUser().getServers().size(), 0);
 
 
         when(res.isSuccess()).thenReturn(false);
@@ -501,7 +419,7 @@ public class MainScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(StageManager.getEditor().getLocalUser().getServers().size(), 0);
+        Assert.assertEquals(this.stageManager.getEditor().getLocalUser().getServers().size(), 0);
         Assert.assertEquals(lblError.getText(), "No valid invitation link");
 
     }

@@ -81,11 +81,11 @@ public class GameScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
 
 
-        StageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        StageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        StageManager.getEditor().getNetworkController().setRestClient(restMock);
-        StageManager.showLoginScreen();
+        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -95,9 +95,13 @@ public class GameScreenTest extends ApplicationTest {
         rule = null;
         stage = null;
         stageManager = null;
+        localUser = null;
         restMock = null;
         systemWebSocketClient = null;
         chatWebSocketClient = null;
+        callbackArgumentSystemCaptorWebSocket = null;
+        callbackArgumentCaptor = null;
+        res = null;
     }
 
     @BeforeEach
@@ -122,11 +126,11 @@ public class GameScreenTest extends ApplicationTest {
 
         Assert.assertEquals("Private Chats",stage.getTitle());
 
-        Platform.runLater(() -> StageManager.showGameScreen(user));
+        Platform.runLater(() -> this.stageManager.showGameScreen(user));
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(StageManager.getGameStage().isShowing());
+        Assert.assertTrue(this.stageManager.getGameStage().isShowing());
         Label score = lookup("#lbScore").query();
         Assert.assertEquals("0:0", score.getText());
         Assert.assertEquals(user.getName(), ((Label) lookup("#lbOpponent").query()).getText());
@@ -175,7 +179,7 @@ public class GameScreenTest extends ApplicationTest {
         user.setLocalUser(localUser);
 
         //got to result screen
-        Assert.assertEquals("Result",StageManager.getGameStage().getTitle());
+        Assert.assertEquals("Result",this.stageManager.getGameStage().getTitle());
 
         clickOn("#btnPlayAgain");
         mockChatWebSocket(getTestMessageServerAnswer(user, GAME_INVITE));
@@ -183,14 +187,14 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Platform.runLater(() -> StageManager.showGameScreen(user));
+        Platform.runLater(() -> this.stageManager.showGameScreen(user));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getGameStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getGameStage().getTitle());
 
-        Platform.runLater(() -> StageManager.showGameResultScreen(user,false));
+        Platform.runLater(() -> this.stageManager.showGameResultScreen(user,false));
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Result",StageManager.getGameStage().getTitle());
+        Assert.assertEquals("Result",this.stageManager.getGameStage().getTitle());
 
         //accept a replay
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
@@ -199,9 +203,9 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(user, GAME_ACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",StageManager.getGameStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getGameStage().getTitle());
 
-        Platform.runLater(() -> StageManager.showGameResultScreen(user,true));
+        Platform.runLater(() -> this.stageManager.showGameResultScreen(user,true));
         WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#btnQuit");
@@ -245,7 +249,7 @@ public class GameScreenTest extends ApplicationTest {
         Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
         callbackLogin.completed(res);
 
-        this.localUser = StageManager.getEditor().getLocalUser();
+        this.localUser = this.stageManager.getEditor().getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
         clickOn("#btnPrivateChats");
