@@ -164,4 +164,24 @@ public class JsonUtilTest {
         Assert.assertEquals(memberIds.size(), channelJson.getJsonArray(MEMBERS).size());
     }
 
+    @Test
+    public void testParseMessageArray() {
+        JsonObject messageJson = Json.createObjectBuilder()
+                .add("channel", "741852963")
+                .add("from", "Amir")
+                .add("id", "0098215700554")
+                .add("text", "Hello World!")
+                .add("timestamp", 162386966).build();
+        JsonArray messageJsonArray = Json.createArrayBuilder().add(messageJson).build();
+
+        List<Message> messages = JsonUtil.parseMessageArray(messageJsonArray);
+
+        Assert.assertEquals(messages.size(), messageJsonArray.size());
+        Assert.assertEquals(messages.get(0).getFrom(), messageJson.getString(FROM));
+        Assert.assertEquals(messages.get(0).getTimestamp(), messageJson.getInt(TIMESTAMP));
+        Assert.assertEquals(messages.get(0).getText(), "Hello World!");
+        Assert.assertEquals(messageJsonArray.getJsonObject(0).getString(TEXT), "Hello World!");
+        Assert.assertEquals(messageJsonArray.getJsonObject(0).getString(ID), "0098215700554");
+    }
+
 }
