@@ -142,5 +142,26 @@ public class JsonUtilTest {
         Assert.assertEquals(channel.isPrivileged(), channelJson.getBoolean(PRIVILEGED));
     }
 
+    @Test
+    public void testParseMembers() {
+        JsonObject channelJson = Json.createObjectBuilder()
+                .add("name", "University")
+                .add("id", "FB16")
+                .add("type", "text")
+                .add("privileged", false)
+                .add("audioMembers", "")
+                .add("members", Json.createArrayBuilder()
+                        .add("60ba1d40026b3534ca6021da")
+                        .add("60acf309c77d3f78988b2796")
+                        .add("60ae3e9fd821a339ba4bffa8").build())
+                .add("category", "3213131313131").build();
+
+        List<String> memberIds = JsonUtil.parseMembers(channelJson);
+
+        Assert.assertEquals(channelJson.getJsonArray(MEMBERS).size(), 3);
+        Assert.assertEquals(channelJson.getJsonArray(MEMBERS).getString(0), "60ba1d40026b3534ca6021da");
+        Assert.assertEquals(memberIds.get(0), channelJson.getJsonArray(MEMBERS).getString(0));
+        Assert.assertEquals(memberIds.size(), channelJson.getJsonArray(MEMBERS).size());
+    }
 
 }
