@@ -25,7 +25,6 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ public class PrivateChatsScreenController implements Controller {
     private Button btnEmoji;
     private Chat currentChat;
     private ListView<User> lwOnlineUsers;
-    private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
+    private final PropertyChangeListener usersChatReadListener = this::usersChatReadChanged;
     private TextField tfPrivateChat;
     private ListView<PrivateMessage> lwPrivateChat;
     private PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory;
@@ -150,7 +149,7 @@ public class PrivateChatsScreenController implements Controller {
 
         for (User user : availableUsers) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
-            user.listeners().removePropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
+            user.listeners().removePropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersChatReadListener);
         }
         this.btnHome.setOnAction(null);
         this.btnPlay.setOnAction(null);
@@ -241,7 +240,7 @@ public class PrivateChatsScreenController implements Controller {
 
         for (User user : availableUsers) {
             user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
-            user.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
+            user.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersChatReadListener);
         }
     }
 
@@ -252,10 +251,12 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void usersOnlineListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         User user = (User) propertyChangeEvent.getSource();
+        editor.getUserChatRead(user);
         if (!user.isOnlineStatus()) {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.remove(user);
-                if(editor.loadOldChats().stream().anyMatch((u)->u.getName().equals(user.getName()))) this.onlineUserObservableList.add(user);
+                if (editor.loadOldChats().stream().anyMatch((u) -> u.getName().equals(user.getName())))
+                    this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
             });
@@ -274,7 +275,8 @@ public class PrivateChatsScreenController implements Controller {
      *
      * @param propertyChangeEvent event occurs when a user gets a new message
      */
-    private void usersMessageListViewChanged(PropertyChangeEvent propertyChangeEvent) {
+    private void usersChatReadChanged(PropertyChangeEvent propertyChangeEvent) {
+        editor.updateUserChatRead((User) propertyChangeEvent.getSource());
         Platform.runLater(() -> lwOnlineUsers.refresh());
     }
 
@@ -287,9 +289,9 @@ public class PrivateChatsScreenController implements Controller {
         if (propertyChangeEvent.getNewValue() != null) {
             User newUser = (User) propertyChangeEvent.getNewValue();
             newUser.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
-            newUser.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
+            newUser.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersChatReadListener);
             this.availableUsers.add(newUser);
-            if(newUser.getPrivateChat() == null) newUser.setChatRead(true);
+            if (newUser.getPrivateChat() == null) newUser.setChatRead(true);
             Platform.runLater(() -> {
                 this.onlineUserObservableList.remove(newUser);
                 this.onlineUserObservableList.add(newUser);
