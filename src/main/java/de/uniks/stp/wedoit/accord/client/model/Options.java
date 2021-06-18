@@ -5,9 +5,11 @@ public class Options
 {
    public static final String PROPERTY_DARKMODE = "darkmode";
    public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
+   public static final String PROPERTY_REMEMBER_ME = "rememberMe";
    private boolean darkmode;
    private AccordClient accordClient;
    protected PropertyChangeSupport listeners;
+   private boolean rememberMe;
 
    public boolean isDarkmode()
    {
@@ -51,6 +53,24 @@ public class Options
          value.setOptions(this);
       }
       this.firePropertyChange(PROPERTY_ACCORD_CLIENT, oldValue, value);
+      return this;
+   }
+
+   public boolean isRememberMe()
+   {
+      return this.rememberMe;
+   }
+
+   public Options setRememberMe(boolean value)
+   {
+      if (value == this.rememberMe)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.rememberMe;
+      this.rememberMe = value;
+      this.firePropertyChange(PROPERTY_REMEMBER_ME, oldValue, value);
       return this;
    }
 
