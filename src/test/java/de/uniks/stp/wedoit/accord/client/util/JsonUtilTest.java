@@ -210,4 +210,13 @@ public class JsonUtilTest {
         Assert.assertEquals(invitations.get(0).getLink(), messageJsonArray.getJsonObject(0).getString(LINK));
     }
 
+    @Test
+    public void testBuildServerChatMessage() {
+        JsonObject chatMessageJson = JsonUtil.buildServerChatMessage("Channel0098", "HelloMyChannel");
+
+        Assert.assertTrue(JsonUtil.buildServerChatMessage("Channel0098", "HelloMyChannel") instanceof JsonObject);
+        Assert.assertEquals(chatMessageJson.getString(CHANNEL), "Channel0098");
+        Assert.assertEquals(chatMessageJson.getString(MESSAGE), "HelloMyChannel");
+    }
+
 }
