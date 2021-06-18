@@ -577,10 +577,6 @@ public class StageManager extends Application {
         changeDarkmode(model.getOptions().isDarkmode());
     }
 
-    public Map<String, Controller> getControllerMap() {
-        return controllerMap;
-    }
-
     public SystemTrayController getSystemTrayController() {
         return systemTrayController;
     }
@@ -595,10 +591,6 @@ public class StageManager extends Application {
 
     public Stage getStage() {
         return stage;
-    }
-
-    public Scene getPopupScene() {
-        return popupScene;
     }
 
     public Stage getPopupStage() {

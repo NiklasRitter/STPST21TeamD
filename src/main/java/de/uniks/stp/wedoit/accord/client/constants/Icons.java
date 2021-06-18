@@ -53,13 +53,9 @@ public enum Icons {
         this.iconName = iconName;
     }
 
-    public String character() {
-        return iconName;
-    }
-
     @Override
     public String toString() {
-        return iconName.toString();
+        return iconName;
     }
 
 }

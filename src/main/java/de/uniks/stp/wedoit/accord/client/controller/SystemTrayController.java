@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.application.Platform;
 
@@ -67,13 +66,4 @@ public class SystemTrayController {
         trayIcon.displayMessage("New private message.", message.getFrom() + ": " + message.getText(), TrayIcon.MessageType.NONE);
     }
 
-
-    /**
-     * Display notification for new server message
-     *
-     * @param message The new server message
-     */
-    public void displayServerMessageNotification(Message message) {
-        trayIcon.displayMessage("New message in " + message.getChannel().getCategory().getServer().getName() + " > " + message.getChannel().getCategory().getName() + " > " + message.getChannel().getName() + ".", message.getFrom() + ": " + message.getText(), TrayIcon.MessageType.NONE);
-    }
 }

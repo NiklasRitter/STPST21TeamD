@@ -24,7 +24,6 @@ public class Network {
     public static final String MESSAGES = "/messages";
     public static final String INVITES = "/invites";
     public static final String LEAVE_SERVER = "/leave";
-    public static final String SERVERSWITHOUTSLASH = "SERVERS";
     public static final String PRIVATE_USER_CHAT_PREFIX = WS_SERVER_URL + CHAT_PATH + "?user=";
 
 }

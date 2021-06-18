@@ -6,22 +6,23 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubV
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
-
 import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 
 public class CreateChannelScreenController implements Controller {
 
@@ -33,8 +34,7 @@ public class CreateChannelScreenController implements Controller {
     private Button btnCreateChannel;
     private CheckBox checkBoxPrivileged;
     private Label errorLabel, lblMembers;
-    private HBox hBoxLblMembers;
-    private VBox vBoxMain, vBoxMemberNameAndCheckBox;
+    private VBox vBoxMemberNameAndCheckBox;
     private ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private List<String> userList = new LinkedList<>();
 
@@ -67,9 +67,7 @@ public class CreateChannelScreenController implements Controller {
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
 
-        this.vBoxMain = (VBox) view.lookup("#vBoxMain");
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
-        this.hBoxLblMembers = (HBox) view.lookup("#hBoxLblMembers");
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
         checkIfIsPrivileged();
@@ -96,7 +94,7 @@ public class CreateChannelScreenController implements Controller {
     }
 
     /**
-     *If channel is privileged, then the lister of all users is dynamically added to CreateChannelScreen.
+     * If channel is privileged, then the lister of all users is dynamically added to CreateChannelScreen.
      * then calls MemberListSubViewController:
      * You can then add users (except the local user) to the privileged channel.
      */

@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 
@@ -17,7 +16,6 @@ public class MemberListSubViewController implements Controller {
     private final User user;
     private final Parent view;
     private final Controller controller;
-    private HBox hBoxPlaceHolder;
     private VBox vBoxMemberName, vBoxCheckBox;
     private CheckBox checkBoxPrivilegedMember;
     private Boolean isPrivilegedUser;
@@ -31,7 +29,6 @@ public class MemberListSubViewController implements Controller {
 
     @Override
     public void init() {
-        this.hBoxPlaceHolder = (HBox) this.view.lookup("#hBoxPlaceHolder");
         this.vBoxMemberName = (VBox) this.view.lookup("#vBoxMemberName");
         this.vBoxCheckBox = (VBox) this.view.lookup("#vBoxCheckBox");
 
@@ -43,9 +40,9 @@ public class MemberListSubViewController implements Controller {
     }
 
     /**
-     *Checks which controller calls the class.
-     *Adds the selected user to the user list of the corresponding controller.
-     *If you deselect a user, he will be removed from the list.
+     * Checks which controller calls the class.
+     * Adds the selected user to the user list of the corresponding controller.
+     * If you deselect a user, he will be removed from the list.
      */
     private void checkBoxOnClick(ActionEvent actionEvent) {
         if (controller.getClass().equals(CreateChannelScreenController.class)) {

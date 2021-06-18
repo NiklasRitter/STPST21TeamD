@@ -10,8 +10,10 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -31,10 +33,9 @@ public class EditChannelScreenController implements Controller {
     private CheckBox checkBoxPrivileged;
     private Button btnDeleteChannel;
     private Label errorLabel, lblMembers;
-    private HBox hBoxLblMembers;
-    private VBox vBoxMain, vBoxMemberNameAndCheckBox;
+    private VBox vBoxMemberNameAndCheckBox;
     private ArrayList<MemberListSubViewController> memberListSubViewControllers;
-    private List<String> userList;
+    private final List<String> userList;
     private Boolean isPrivilegedUser = false;
 
     /**
@@ -69,8 +70,6 @@ public class EditChannelScreenController implements Controller {
         this.errorLabel = (Label) view.lookup("#lblError");
 
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
-        this.vBoxMain = (VBox) view.lookup("#vBoxMain");
-        this.hBoxLblMembers = (HBox) view.lookup("#hBoxLblMembers");
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
         if (channel.isPrivileged()) {

@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -262,7 +261,7 @@ public class ServerScreenController implements Controller {
         this.chatWSCallback = null;
         this.serverWSCallback = null;
         this.newMessagesListener = null;
-        for (MenuItem item: messageContextMenu.getItems()) {
+        for (MenuItem item : messageContextMenu.getItems()) {
             item.setOnAction(null);
         }
 
@@ -288,7 +287,8 @@ public class ServerScreenController implements Controller {
 
     /**
      * handles when the context menu of the text chat is clicked
-     * @param menu the menu which is clicked like "quote"
+     *
+     * @param menu    the menu which is clicked like "quote"
      * @param message message which is selected in the text chat
      */
     public void handleContextMenuClicked(String menu, Message message) {
@@ -308,6 +308,7 @@ public class ServerScreenController implements Controller {
 
     /**
      * This method cancels a quote
+     *
      * @param actionEvent such as when a button is fired
      */
     private void cancelQuote(ActionEvent actionEvent) {
@@ -520,7 +521,7 @@ public class ServerScreenController implements Controller {
 
     /**
      * Checks if "Load more..." is clicked and if yes, then it loads new messages
-     *
+     * <p>
      * shows a context menu for a message if the message is not a quote and is clicked with primary mouse button
      *
      * @param mouseEvent

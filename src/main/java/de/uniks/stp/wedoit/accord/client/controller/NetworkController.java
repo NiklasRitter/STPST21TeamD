@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -533,11 +532,9 @@ public class NetworkController {
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        }
-        else if(objectToDelete.getClass().equals(Channel.class)){
+        } else if (objectToDelete.getClass().equals(Channel.class)) {
             deleteChannel(localUser, (Channel) objectToDelete, controller);
-        }
-        else if(objectToDelete.getClass().equals(Category.class)){
+        } else if (objectToDelete.getClass().equals(Category.class)) {
             deleteCategory(localUser, (Category) objectToDelete, controller);
         }
     }
@@ -565,12 +562,12 @@ public class NetworkController {
     /**
      * delivers last 50 messages from the channel after the timestamp
      *
-     * @param localUser     localUser who is logged in
-     * @param server        server of the channel
-     * @param category      category of the channel
-     * @param channel       channel of which the messages should be delivered
-     * @param timestamp     timestamp from where the last 50 messages should be delivered
-     * @param controller    controller in which the response is handled
+     * @param localUser  localUser who is logged in
+     * @param server     server of the channel
+     * @param category   category of the channel
+     * @param channel    channel of which the messages should be delivered
+     * @param timestamp  timestamp from where the last 50 messages should be delivered
+     * @param controller controller in which the response is handled
      */
     public void getChannelMessages(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, ServerScreenController controller) {
         restClient.getChannelMessages(localUser.getUserKey(), server.getId(), category.getId(), channel.getId(), timestamp, (response) -> {

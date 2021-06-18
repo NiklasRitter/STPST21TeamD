@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -14,7 +13,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -45,8 +43,6 @@ public class EditServerScreenController implements Controller {
     private TextField tfMaxCountAmountInput;
     private TextField tfInvitationLink;
 
-    private VBox vBoxAdminOnly;
-    private VBox mainVBox;
     private Label labelCopy;
 
     private Label lblError;
@@ -95,8 +91,6 @@ public class EditServerScreenController implements Controller {
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
         this.labelCopy = (Label) view.lookup("#labelCopy");
 
-        this.vBoxAdminOnly = (VBox) view.lookup("#vBoxAdminOnly");
-        this.mainVBox = (VBox) view.lookup("#mainVBox");
         this.lblError = (Label) view.lookup("#lblError");
         this.lblInvitationStatus = (Label) view.lookup("#lblInvitationStatus");
         this.lblInvitationStatusText = (Label) view.lookup("#lblInvitationStatusText");
@@ -240,6 +234,7 @@ public class EditServerScreenController implements Controller {
             this.tfMaxCountAmountInput.setEditable(false);
         }
     }
+
     private void resetAmountPromptText() {
         tfMaxCountAmountInput.setText("");
         tfMaxCountAmountInput.setPromptText("Amount");

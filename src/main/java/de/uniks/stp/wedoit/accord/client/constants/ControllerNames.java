@@ -19,6 +19,4 @@ public class ControllerNames {
     public static final String ATTENTION_SCREEN_CONTROLLER = "attentionScreenController";
     public static final String ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER = "attentionLeaveServerController";
 
-    public static final String NETWORK_CONTROLLER = "networkController";
-    public static final String SYSTEM_TRAY_CONTROLLER = "systemTrayController";
 }
