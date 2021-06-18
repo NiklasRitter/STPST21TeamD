@@ -229,6 +229,22 @@ public class NetworkController {
         return this;
     }
 
+    public NetworkController automaticLoginUser(String username, String password, Editor editor) {
+        restClient.login(username, password, (response) -> {
+            if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.handleAutomaticLogin(false);
+            } else {
+                JsonObject loginAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+                String userKey = loginAnswer.getString(USER_KEY);
+                LocalUser localUser = editor.haveLocalUser(username, userKey);
+                localUser.setPassword(password);
+                start();
+                editor.handleAutomaticLogin(true);
+            }
+        });
+        return this;
+    }
+
     public NetworkController registerUser(String username, String password, LoginScreenController controller) {
         restClient.register(username, password, registerResponse -> {
             controller.handleRegister(registerResponse.getBody().getObject().getString(STATUS).equals(SUCCESS));
@@ -544,21 +560,13 @@ public class NetworkController {
 
     private void deleteServer(LocalUser localUser, Server server, AttentionScreenController controller) {
         restClient.deleteServer(localUser.getUserKey(), server.getId(), (response) -> {
-            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                controller.handleDeleteServer(true);
-            } else {
-                controller.handleDeleteServer(false);
-            }
+            controller.handleDeleteServer(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
         });
     }
 
     private void deleteChannel(LocalUser localUser, Channel channel, AttentionScreenController controller) {
         restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> {
-            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                controller.handleDeleteChannel(true);
-            } else {
-                controller.handleDeleteChannel(false);
-            }
+            controller.handleDeleteChannel(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
         });
     }
 
