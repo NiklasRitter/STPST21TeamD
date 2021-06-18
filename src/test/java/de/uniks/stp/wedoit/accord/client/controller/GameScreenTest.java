@@ -34,8 +34,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -136,41 +134,41 @@ public class GameScreenTest extends ApplicationTest {
         //play a round until result screen
         //send game action
         clickOn("#btnRock");
-        mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + ROCK));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_ROCK));
         WaitForAsyncUtils.waitForFxEvents();
 
 
         //receive game action
-        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + PAPER));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_PAPER));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("0:1", ((Label) lookup("#lbScore").query()).getText());
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + ROCK));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_ROCK));
 
         clickOn("#btnPaper");
-        mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + PAPER));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_PAPER));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("1:1", ((Label) lookup("#lbScore").query()).getText());
 
         clickOn("#btnPaper");
-        mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + PAPER));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_PAPER));
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + PAPER));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_PAPER));
         //1:1 Score
 
 
         clickOn("#btnScissors");
-        mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + SCISSORS));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_SCISSORS));
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + PAPER));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_PAPER));
         //2:1 Score
 
         clickOn("#btnScissors");
-        mockChatWebSocket(getTestMessageServerAnswer(user, PREFIX + SCISSORS));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_SCISSORS));
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + PAPER));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_PAPER));
         WaitForAsyncUtils.waitForFxEvents();
 
         user.setPrivateChat(new Chat());
@@ -180,9 +178,9 @@ public class GameScreenTest extends ApplicationTest {
         Assert.assertEquals("Result",StageManager.getGameStage().getTitle());
 
         clickOn("#btnPlayAgain");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAMEINVITE));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_INVITE));
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAMEACCEPT));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
         Platform.runLater(() -> StageManager.showGameScreen(user));
@@ -195,10 +193,10 @@ public class GameScreenTest extends ApplicationTest {
         Assert.assertEquals("Result",StageManager.getGameStage().getTitle());
 
         //accept a replay
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAMEINVITE));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
 
         clickOn("#btnPlayAgain");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAMEACCEPT));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_ACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("Rock - Paper - Scissors",StageManager.getGameStage().getTitle());

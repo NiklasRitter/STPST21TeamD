@@ -182,13 +182,12 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void btnPlayOnClicked(ActionEvent actionEvent) {
         if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play")) {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEINVITE);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_INVITE);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
         } else if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")) {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPT);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
             btnPlay.setText("Play");
-            StageManager.showGameScreen(currentChat.getUser());
         }
 
     }
@@ -255,7 +254,7 @@ public class PrivateChatsScreenController implements Controller {
         User user = (User) propertyChangeEvent.getSource();
         if (!user.isOnlineStatus()) {
             Platform.runLater(() -> {
-                this.onlineUserObservableList.remove(user);
+                this.onlineUserObservableList.removeIf((e)->e.getName().equals(user.getName()));
                 if(editor.loadOldChats().stream().anyMatch((u)->u.getName().equals(user.getName()))) this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
@@ -266,7 +265,7 @@ public class PrivateChatsScreenController implements Controller {
             });
         } else {
             Platform.runLater(() -> {
-                this.onlineUserObservableList.remove(user);
+                this.onlineUserObservableList.removeIf((e)->e.getName().equals(user.getName()));
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
@@ -298,9 +297,9 @@ public class PrivateChatsScreenController implements Controller {
             newUser.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
             newUser.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
             this.availableUsers.add(newUser);
-            if(newUser.getPrivateChat() == null) newUser.setChatRead(true);
+
             Platform.runLater(() -> {
-                this.onlineUserObservableList.remove(newUser);
+                this.onlineUserObservableList.removeIf((e) -> e.getName().equals(newUser.getName()));
                 this.onlineUserObservableList.add(newUser);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
             });
@@ -351,18 +350,16 @@ public class PrivateChatsScreenController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
-            if (localUser.getGameInvites().contains(editor.getUser(message.getFrom()))) {
-                Platform.runLater(() -> btnPlay.setText("Accept"));
-            }
-
-            if (message.getText().equals(GAMEACCEPT) && localUser.getGameRequests().contains(editor.getUser(message.getFrom()))) {
-                message.setText(message.getText().substring(10));
-                Platform.runLater(() -> StageManager.showGameScreen(editor.getUser(message.getFrom())));
-            }
-
-            if (message.getText().startsWith(PREFIX)) message.setText(message.getText().substring(PREFIX.length()));
-
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
+            if(message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName())){
+                Platform.runLater(()-> {
+                    btnPlay.setText("Accept");
+                    if(StageManager.getGameStage().getTitle().equals("Result")){
+
+                    }
+                });
+            }
+
         }
     }
 
@@ -390,8 +387,6 @@ public class PrivateChatsScreenController implements Controller {
                 jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
             }
-
-
         }
     }
 

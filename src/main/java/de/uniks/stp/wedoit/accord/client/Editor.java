@@ -278,39 +278,67 @@ public class Editor {
      * @param message to add to the model
      */
     public void addNewPrivateMessage(PrivateMessage message) {
-        if (message.getText().equals(GAMEINVITE)) {
-            if (message.getFrom().equals(getLocalUser().getName()))
+        System.out.println("THIS IS: " + getLocalUser().getName());
+        System.out.println("TEXT: " +message.getText());
+        System.out.println("TO: " +message.getTo());
+        System.out.println("FROM: " +message.getFrom());
+
+        //game messages
+
+        if(message.getText().equals(GAME_INVITE)){
+            if(message.getTo().equals(getLocalUser().getName()))
+                getLocalUser().withGameInvites(getUser(message.getFrom()));
+            else
                 getLocalUser().withGameRequests(getUser(message.getTo()));
-            else getLocalUser().withGameInvites(getUser(message.getFrom()));
-            message.setText(message.getText().substring(PREFIX.length()));
+
         }
-        if (message.getText().startsWith(PREFIX) && (message.getText().endsWith(ROCK) || message.getText().endsWith(PAPER) || message.getText().endsWith(SCISSORS))) {
-            if (!message.getFrom().equals(getLocalUser().getName()))
-                getUser(message.getFrom()).setGameMove(message.getText().substring(PREFIX.length()));
 
-        } else {
-            if (message.getFrom().equals(getLocalUser().getName())) {
-                getUser(message.getTo()).getPrivateChat().withMessages(message);
+        if(message.getText().equals(GAME_ACCEPT) && (getLocalUser().getGameInvites().contains(getUser(message.getTo())) || getLocalUser().getGameRequests().contains(getUser(message.getFrom())))){
+            System.out.println(StageManager.getGameStage().getTitle());
+            if(!StageManager.getGameStage().isShowing()) {
+                getLocalUser().withoutGameInvites(getUser(message.getTo()));
+                getLocalUser().withoutGameRequests(getUser(message.getFrom()));
 
-            } else {
-
-                SystemTrayController systemTrayController = StageManager.getSystemTrayController();
-                if (systemTrayController != null) {
-                    systemTrayController.displayPrivateMessageNotification(message);
-                }
-                User user = getUser(message.getFrom());
-                Chat privateChat = user.getPrivateChat();
-                if (privateChat == null) {
-                    privateChat = new Chat().setName(user.getName()).setUser(user);
-                    user.setPrivateChat(privateChat);
-                }
-                message.setChat(privateChat);
-                user.setChatRead(false);
-                privateChat.withMessages(message);
-
+                Platform.runLater(() -> {
+                    if (message.getFrom().equals(getLocalUser().getName()))
+                        StageManager.showGameScreen(getUser(message.getTo()));
+                    else
+                        StageManager.showGameScreen(getUser(message.getFrom()));
+                });
+            }else{
+                System.out.println("Currently in game");
             }
-            savePrivateMessage(message);
+
         }
+
+
+        if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {
+            if (!message.getFrom().equals(getLocalUser().getName()))
+                getUser(message.getFrom()).setGameMove(message.getText().substring(GAME_PREFIX.length()));
+            return;
+        }
+
+
+        //message handling
+        if (message.getFrom().equals(getLocalUser().getName())) {
+            getUser(message.getTo()).getPrivateChat().withMessages(message);
+        } else {
+            SystemTrayController systemTrayController = StageManager.getSystemTrayController();
+            if (systemTrayController != null) {
+                systemTrayController.displayPrivateMessageNotification(message);
+            }
+            User user = getUser(message.getFrom());
+            Chat privateChat = user.getPrivateChat();
+            if (privateChat == null) {
+                privateChat = new Chat().setName(user.getName()).setUser(user);
+                user.setPrivateChat(privateChat);
+            }
+            message.setChat(privateChat);
+            user.setChatRead(false);
+            privateChat.withMessages(message);
+        }
+        savePrivateMessage(message);
+
     }
 
     public void setUpDB(){
@@ -355,11 +383,11 @@ public class Editor {
     public Boolean resultOfGame(String ownAction, String oppAction) {
         if (ownAction.equals(oppAction)) return null;
 
-        if (ownAction.equals(ROCK)) return oppAction.equals(SCISSORS);
+        if (ownAction.equals(GAME_ROCK)) return oppAction.equals(GAME_SCISSORS);
 
-        else if (ownAction.equals(PAPER)) return oppAction.equals(ROCK);
+        else if (ownAction.equals(GAME_PAPER)) return oppAction.equals(GAME_ROCK);
 
-        else return oppAction.equals(PAPER);
+        else return oppAction.equals(GAME_PAPER);
     }
 
     /**

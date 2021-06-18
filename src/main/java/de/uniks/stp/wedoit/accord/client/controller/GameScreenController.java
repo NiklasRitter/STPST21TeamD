@@ -33,7 +33,7 @@ public class GameScreenController implements Controller {
     private String gameAction;
     private List<User> oldInvites;
     private final PropertyChangeListener opponentGameMove = this::onOpponentGameMove;
-    private final Image choosingIMG = new Image(getClass().getResource(CHOOSINGIMG).toString());
+    private final Image choosingIMG = new Image(getClass().getResource(GAME_CHOOSINGIMG).toString());
 
     private final IntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
 
@@ -52,7 +52,7 @@ public class GameScreenController implements Controller {
         this.localUser = model;
         this.opponent = opponent;
         this.editor = editor;
-        this.oldInvites = localUser.getGameInvites();
+        //this.oldInvites = localUser.getGameInvites();
     }
 
 
@@ -67,8 +67,8 @@ public class GameScreenController implements Controller {
     public void init(){
 
         localUser.withoutGameInvites(opponent);
-        localUser.withoutGameRequests(opponent);
-        localUser.withoutGameInvites(oldInvites);
+        //localUser.withoutGameRequests(opponent);
+        //localUser.withoutGameInvites(oldInvites);
         opponent.setGameMove(null);
 
         this.lbOpponent = (Label) view.lookup("#lbOpponent");
@@ -103,20 +103,20 @@ public class GameScreenController implements Controller {
     private void gameActionOnClick(ActionEvent actionEvent) {
         gameAction = ((Button) actionEvent.getSource()).getText();
 
-        JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), PREFIX + gameAction);
+        JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_PREFIX + gameAction);
         editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
 
-        imgYouPlayed.setImage(new Image(getClass().getResource(IMGURL + gameAction + ".png").toString()));
+        imgYouPlayed.setImage(new Image(getClass().getResource(GAME_IMGURL + gameAction + ".png").toString()));
 
         if(opponent.getGameMove() != null){
-            imgOppPlayed.setImage(new Image(getClass().getResource(IMGURL + opponent.getGameMove() + ".png").toString()));
+            imgOppPlayed.setImage(new Image(getClass().getResource(GAME_IMGURL + opponent.getGameMove() + ".png").toString()));
 
             resolveGameOutcome();
 
             opponent.setGameMove(null);
             gameAction = null;
         }else{
-            imgOppPlayed.setImage(new Image(getClass().getResource(CHOOSINGIMG).toString()));
+            imgOppPlayed.setImage(new Image(getClass().getResource(GAME_CHOOSINGIMG).toString()));
         }
     }
 
@@ -127,8 +127,8 @@ public class GameScreenController implements Controller {
      */
     private void onOpponentGameMove(PropertyChangeEvent propertyChangeEvent) {
         if(propertyChangeEvent.getNewValue() != null && gameAction != null) {
-            imgYouPlayed.setImage(new Image(getClass().getResource(IMGURL + gameAction + ".png").toString()));
-            imgOppPlayed.setImage(new Image(getClass().getResource(IMGURL + opponent.getGameMove() + ".png").toString()));
+            imgYouPlayed.setImage(new Image(getClass().getResource(GAME_IMGURL + gameAction + ".png").toString()));
+            imgOppPlayed.setImage(new Image(getClass().getResource(GAME_IMGURL + opponent.getGameMove() + ".png").toString()));
 
             resolveGameOutcome();
 
@@ -177,7 +177,7 @@ public class GameScreenController implements Controller {
         this.btnPaper.setOnAction(null);
         this.opponent.listeners().removePropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
         this.lbScore.textProperty().unbind();
-        this.localUser.withGameInvites(oldInvites);
+        //this.localUser.withGameInvites(oldInvites);
 
     }
 }

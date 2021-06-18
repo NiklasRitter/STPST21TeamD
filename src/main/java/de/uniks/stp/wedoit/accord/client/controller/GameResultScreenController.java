@@ -67,12 +67,12 @@ public class GameResultScreenController implements Controller{
      */
     private void playAgainOnClick(ActionEvent actionEvent) {
         if(this.localUser.getGameInvites().contains(opponent)){
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAMEACCEPT);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_ACCEPT);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
             StageManager.showGameScreen(opponent);
             stop();
         }else{
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAMEINVITE);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_INVITE);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
         }
     }
