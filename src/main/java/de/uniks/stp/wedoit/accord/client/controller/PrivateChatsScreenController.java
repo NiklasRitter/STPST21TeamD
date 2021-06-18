@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
@@ -181,13 +180,16 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Play Button is clicked
      */
     private void btnPlayOnClicked(ActionEvent actionEvent) {
-        if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play")) {
+        if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play") && !localUser.getGameRequests().contains(currentChat.getUser())) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_INVITE);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
-        } else if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")) {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPT);
+        }else if ((currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept"))
+                &&
+                (!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result"))) {
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPTS);
             editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
-            btnPlay.setText("Play");
+        }else if(currentChat != null && currentChat.getUser() != null && editor.getStageManager().getGameStage().isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())){
+            this.privateMessageObservableList.add(new PrivateMessage().setText("###game### System: Cant play two games at once."));
         }
 
     }
@@ -252,6 +254,7 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void usersOnlineListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         User user = (User) propertyChangeEvent.getSource();
+        User selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
         if (!user.isOnlineStatus()) {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.removeIf((e)->e.getName().equals(user.getName()));
@@ -262,10 +265,11 @@ public class PrivateChatsScreenController implements Controller {
                     this.tfPrivateChat.setPromptText(user.getName() + " is offline");
                     this.tfPrivateChat.setEditable(false);
                 }
+                lwOnlineUsers.getSelectionModel().select(selectedUser);
             });
         } else {
             Platform.runLater(() -> {
-                this.onlineUserObservableList.removeIf((e)->e.getName().equals(user.getName()));
+                this.onlineUserObservableList.removeIf((e) -> e.getName().equals(user.getName()));
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
@@ -273,6 +277,7 @@ public class PrivateChatsScreenController implements Controller {
                     this.tfPrivateChat.setPromptText("your message");
                     this.tfPrivateChat.setEditable(true);
                 }
+                lwOnlineUsers.getSelectionModel().select(selectedUser);
             });
         }
     }
@@ -352,13 +357,11 @@ public class PrivateChatsScreenController implements Controller {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
             if(message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName())){
-                Platform.runLater(()-> {
-                    btnPlay.setText("Accept");
-                    if(StageManager.getGameStage().getTitle().equals("Result")){
-
-                    }
+                Platform.runLater(()-> btnPlay.setText("Accept"));
             }
-
+            if(message.getText().equals(GAME_START) && currentChat != null){
+                Platform.runLater(()-> btnPlay.setText("Play"));
+            }
         }
     }
 
@@ -383,6 +386,8 @@ public class PrivateChatsScreenController implements Controller {
 
 
             } else {
+                if(message.equals(GAME_INVITE) || message.equals(GAME_ACCEPTS) || message.equals(GAME_CLOSE) || message.equals(GAME_START) || message.equals(GAME_INGAME))
+                    message = message.substring(GAME_PREFIX.length());
                 jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
             }
@@ -450,5 +455,4 @@ public class PrivateChatsScreenController implements Controller {
             }
         }
     }
-
 }

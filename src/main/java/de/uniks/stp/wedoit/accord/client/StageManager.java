@@ -245,33 +245,35 @@ public class StageManager extends Application {
     }
 
     public void showGameResultScreen(User opponent, Boolean isWinner) {
-        if (gameStage.isShowing()) {
-            gameStage.close();
-            try {
-                Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
+        try {
+
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
+            if (gameScene != null) {
+                gameScene.setRoot(root);
+            } else {
                 gameScene = new Scene(root);
-
-                updateDarkmode();
-
-                //init controller
-                GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
-                gameResultScreenController.init();
-                controllerMap.put("GameResultScreenController", gameResultScreenController);
-
-                gameStage.setTitle("Result");
-                if (gameStage.getStyle() != StageStyle.DECORATED) gameStage.initStyle(StageStyle.DECORATED);
-                gameStage.setScene(gameScene);
-                gameStage.setMinHeight(0);
-                gameStage.setMinWidth(0);
-                gameStage.centerOnScreen();
-                gameStage.setResizable(false);
-                gameStage.show();
-
-            } catch (Exception e) {
-                System.err.println("Error on loading GameResultScreen");
-                e.printStackTrace();
             }
+
+            updateDarkmode();
+
+            //init controller
+            GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
+            gameResultScreenController.init();
+            controllerMap.put("GameResultScreenController", gameResultScreenController);
+
+            gameStage.setTitle("Result");
+
+            gameStage.setMinHeight(0);
+            gameStage.setMinWidth(0);
+            gameStage.setHeight(170);
+            gameStage.setWidth(370);
+            gameStage.setResizable(false);
+            gameStage.setScene(gameScene);
+        } catch (Exception e) {
+            System.err.println("Error on loading GameResultScreen");
+            e.printStackTrace();
         }
+
 
     }
 

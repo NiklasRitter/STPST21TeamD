@@ -3,12 +3,11 @@ package de.uniks.stp.wedoit.accord.client.constants;
 public class Game {
     //game invitation
     public static final String GAME_PREFIX = "###game### ";
-    public static final String GAME_INVITE_TEXT = "Invites you to Rock - Paper - Scissors!";
-    public static final String GAME_ACCEPTS = "Accepts!";
-    public static final String GAME_INVITE = GAME_PREFIX + GAME_INVITE_TEXT;
-    public static final String GAME_ACCEPT = GAME_PREFIX + GAME_ACCEPTS;
-    public static final String GAME_AGAIN = GAME_PREFIX + "Play again";
-    public static final String GAME_AGAIN_ACCEPT = GAME_PREFIX + "Play again Accept";
+    public static final String GAME_INVITE = GAME_PREFIX + "Invites you to Rock - Paper - Scissors!";
+    public static final String GAME_ACCEPTS = GAME_PREFIX + "Is game valid?";
+    public static final String GAME_CLOSE = GAME_PREFIX + "Exited the game!";
+    public static final String GAME_INGAME = GAME_PREFIX + "Already in game, try again later!";
+    public static final String GAME_START = GAME_PREFIX + "Lets start the Game!";
 
     //game actions
     public static final String GAME_IMGURL = "/de/uniks/stp/wedoit/accord/client/view/images/game/";

@@ -184,7 +184,7 @@ public class GameScreenTest extends ApplicationTest {
         clickOn("#btnPlayAgain");
         mockChatWebSocket(getTestMessageServerAnswer(user, GAME_INVITE));
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPT));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPTS));
         WaitForAsyncUtils.waitForFxEvents();
 
         Platform.runLater(() -> this.stageManager.showGameScreen(user));
@@ -200,7 +200,7 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
 
         clickOn("#btnPlayAgain");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_ACCEPT));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_ACCEPTS));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getGameStage().getTitle());

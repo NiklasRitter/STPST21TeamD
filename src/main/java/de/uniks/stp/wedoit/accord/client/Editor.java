@@ -10,6 +10,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -279,39 +280,42 @@ public class Editor {
      * @param message to add to the model
      */
     public void addNewPrivateMessage(PrivateMessage message) {
-        System.out.println("THIS IS: " + getLocalUser().getName());
-        System.out.println("TEXT: " +message.getText());
-        System.out.println("TO: " +message.getTo());
-        System.out.println("FROM: " +message.getFrom());
-
         //game messages
-
         if(message.getText().equals(GAME_INVITE)){
             if(message.getTo().equals(getLocalUser().getName()))
                 getLocalUser().withGameInvites(getUser(message.getFrom()));
             else
                 getLocalUser().withGameRequests(getUser(message.getTo()));
-
         }
 
-        if(message.getText().equals(GAME_ACCEPT) && (getLocalUser().getGameInvites().contains(getUser(message.getTo())) || getLocalUser().getGameRequests().contains(getUser(message.getFrom())))){
-            System.out.println(StageManager.getGameStage().getTitle());
-            if(!StageManager.getGameStage().isShowing() || StageManager.getGameStage().getTitle().equals("Result")) {
-                getLocalUser().withoutGameInvites(getUser(message.getTo()));
-                getLocalUser().withoutGameRequests(getUser(message.getFrom()));
+        if(message.getText().equals(GAME_ACCEPTS)){
+            if(!stageManager.getGameStage().isShowing() || stageManager.getGameStage().getTitle().equals("Result")) {
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getTo().equals(getLocalUser().getName()) ? message.getFrom(): message.getTo(), GAME_START);
+                getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+                return;
 
-                Platform.runLater(() -> {
-                    if (message.getFrom().equals(getLocalUser().getName()))
-                        StageManager.showGameScreen(getUser(message.getTo()));
-                    else
-                        StageManager.showGameScreen(getUser(message.getFrom()));
-                });
             }else{
-                System.out.println("Currently in game");
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(getLocalUser().getName()) ? message.getTo(): message.getFrom(), GAME_INGAME);
+                getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+                return;
+
             }
+        }else if(message.getText().equals(GAME_START)  && (getLocalUser().getGameInvites().contains(getUser(message.getTo())) || getLocalUser().getGameRequests().contains(getUser(message.getFrom())))) {
+            //Start game
+            getLocalUser().withoutGameInvites(getUser(message.getTo()));
+            getLocalUser().withoutGameRequests(getUser(message.getFrom()));
 
+            System.out.println("starting game");
+            Platform.runLater(() -> {
+                if (message.getFrom().equals(getLocalUser().getName()))
+                    stageManager.showGameScreen(getUser(message.getTo()));
+                else
+                    stageManager.showGameScreen(getUser(message.getFrom()));
+            });
+
+        }else if(message.getText().equals(GAME_CLOSE) && stageManager.getGameStage().isShowing()){
+            Platform.runLater(() -> stageManager.showGameResultScreen(getUser(message.getFrom()),null));
         }
-
 
         if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {
             if (!message.getFrom().equals(getLocalUser().getName()))
@@ -319,12 +323,11 @@ public class Editor {
             return;
         }
 
-
         //message handling
         if (message.getFrom().equals(getLocalUser().getName())) {
             getUser(message.getTo()).getPrivateChat().withMessages(message);
         } else {
-            SystemTrayController systemTrayController = StageManager.getSystemTrayController();
+            SystemTrayController systemTrayController = stageManager.getSystemTrayController();
             if (systemTrayController != null) {
                 systemTrayController.displayPrivateMessageNotification(message);
             }

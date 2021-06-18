@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -9,6 +8,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,6 +22,9 @@ import java.util.List;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class GameScreenController implements Controller {
+
+    @FXML
+    private Label lbOppPlayed;
 
     private Parent view;
     private LocalUser localUser;
@@ -52,7 +55,6 @@ public class GameScreenController implements Controller {
         this.localUser = model;
         this.opponent = opponent;
         this.editor = editor;
-        //this.oldInvites = localUser.getGameInvites();
     }
 
 
@@ -65,10 +67,12 @@ public class GameScreenController implements Controller {
      * setup score listener
      */
     public void init(){
+        editor.getStageManager().getGameStage().setOnCloseRequest((e) -> {
+            stop();
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_CLOSE);
+            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+        });
 
-        localUser.withoutGameInvites(opponent);
-        //localUser.withoutGameRequests(opponent);
-        //localUser.withoutGameInvites(oldInvites);
         opponent.setGameMove(null);
 
         this.lbOpponent = (Label) view.lookup("#lbOpponent");
@@ -91,6 +95,7 @@ public class GameScreenController implements Controller {
         this.opponent.listeners().addPropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
 
         this.lbScore.textProperty().bind(Bindings.createStringBinding(()-> (ownScore.get() + ":" + oppScore.get()), oppScore,ownScore));
+
 
     }
 

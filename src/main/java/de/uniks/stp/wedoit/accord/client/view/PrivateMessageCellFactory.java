@@ -50,9 +50,10 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
                     this.getStyleClass().add("font_size");
                     this.setText(">>>" + messages[0] + "\n");
 
+                }else if(item.getText().startsWith("###game### System")){
+                    this.setText(item.getText().substring(10));
                 }else if(item.getText().startsWith(GAME_PREFIX)) {
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
-
                 }else{
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
