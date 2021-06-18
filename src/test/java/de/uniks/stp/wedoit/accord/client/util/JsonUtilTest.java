@@ -184,4 +184,30 @@ public class JsonUtilTest {
         Assert.assertEquals(messageJsonArray.getJsonObject(0).getString(ID), "0098215700554");
     }
 
+    /**
+     * following method tests parseInvitation() and parseInvitations() methods
+     */
+    @Test
+    public void testParseInvitations() {
+        JsonArray messageJsonArray = Json.createArrayBuilder()
+                .add(Json.createObjectBuilder()
+                        .add("id", "666999888")
+                        .add("current", 2)
+                        .add("type", "private")
+                        .add("link", "www.google.de")
+                        .add("max", 100).build())
+                .add(Json.createObjectBuilder()
+                        .add("id", "0001111222")
+                        .add("current", 5)
+                        .add("type", "public")
+                        .add("link", "www.uni-kassel.de")
+                        .add("max", 50).build()).build();
+
+        List<Invitation> invitations = JsonUtil.parseInvitations(messageJsonArray, server);
+
+        Assert.assertTrue(server.getInvitations().equals(invitations));
+        Assert.assertTrue(invitations.get(0).getServer().equals(server));
+        Assert.assertEquals(invitations.get(0).getLink(), messageJsonArray.getJsonObject(0).getString(LINK));
+    }
+
 }
