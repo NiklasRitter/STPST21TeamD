@@ -219,4 +219,13 @@ public class JsonUtilTest {
         Assert.assertEquals(chatMessageJson.getString(MESSAGE), "HelloMyChannel");
     }
 
+    @Test
+    public void testBuildPrivateChatMessage() {
+        JsonObject privateChatMessageJson = JsonUtil.buildPrivateChatMessage("Ashkan", "GoStone");
+
+        Assert.assertTrue(JsonUtil.buildPrivateChatMessage("Ashkan", "GoStone") instanceof JsonObject);
+        Assert.assertEquals(privateChatMessageJson.getString(TO), "Ashkan");
+        Assert.assertEquals(privateChatMessageJson.getString(MESSAGE), "GoStone");
+    }
+
 }
