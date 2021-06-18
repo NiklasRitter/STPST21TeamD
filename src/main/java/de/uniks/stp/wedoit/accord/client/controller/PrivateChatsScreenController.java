@@ -172,7 +172,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        this.editor.getStageManager().showMainScreen();
     }
 
     /**
@@ -188,7 +188,7 @@ public class PrivateChatsScreenController implements Controller {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
             editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
             btnPlay.setText("Play");
-            StageManager.showGameScreen(currentChat.getUser());
+            this.editor.getStageManager().showGameScreen(currentChat.getUser());
         }
 
     }
@@ -199,7 +199,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Options Button is clicked
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        StageManager.showOptionsScreen();
+        this.editor.getStageManager().showOptionsScreen();
     }
 
     /**
@@ -210,7 +210,7 @@ public class PrivateChatsScreenController implements Controller {
     private void btnEmojiOnClicked(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        StageManager.showEmojiScreen(tfPrivateChat, pos);
+        this.editor.getStageManager().showEmojiScreen(tfPrivateChat, pos);
     }
 
     /**
@@ -352,7 +352,7 @@ public class PrivateChatsScreenController implements Controller {
 
             if (message.getText().equals(GAMEACCEPT) && localUser.getGameRequests().contains(editor.getUser(message.getFrom()))) {
                 message.setText(message.getText().substring(10));
-                Platform.runLater(() -> StageManager.showGameScreen(editor.getUser(message.getFrom())));
+                Platform.runLater(() -> this.editor.getStageManager().showGameScreen(editor.getUser(message.getFrom())));
             }
 
             if (message.getText().startsWith(PREFIX)) message.setText(message.getText().substring(PREFIX.length()));

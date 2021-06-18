@@ -26,6 +26,7 @@ public class Editor {
     private final WebSocketManager webSocketManager = new WebSocketManager(this);
     private AccordClient accordClient;
     private Server currentServer;
+    private StageManager stageManager;
 
     /**
      * @return private final RestManager restManager
@@ -298,7 +299,7 @@ public class Editor {
             if (message.getFrom().equals(getLocalUser().getName())) {
                 getUser(message.getTo()).getPrivateChat().withMessages(message);
             } else {
-                SystemTrayController systemTrayController = StageManager.getSystemTrayController();
+                SystemTrayController systemTrayController = stageManager.getSystemTrayController();
                 if (systemTrayController != null) {
                     systemTrayController.displayPrivateMessageNotification(message);
                 }
@@ -352,12 +353,10 @@ public class Editor {
     }
 
     public void handleLogoutUser(boolean success) {
-        if (success) {
-            Platform.runLater(StageManager::showLoginScreen);
-        } else {
+        if (!success) {
             System.err.println("Error while logging out");
-            Platform.runLater(StageManager::showLoginScreen);
         }
+        Platform.runLater(() -> stageManager.showLoginScreen());
     }
 
     public List<User> getOnlineUsers() {
@@ -523,9 +522,10 @@ public class Editor {
         }
     }
 
-    public void leaveServer(String userKey, String id) {
-        if (id != null && !id.isEmpty()) {
-            restManager.leaveServer(userKey, id);
+    public void leaveServer(String userKey, Server server) {
+        if (server.getId() != null && !server.getId().isEmpty()) {
+            restManager.leaveServer(userKey, server.getId());
+            this.getLocalUser().withoutServers(server);
         }
     }
 
@@ -602,5 +602,13 @@ public class Editor {
         return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
                 && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
                 && (item.getText()).startsWith(QUOTE_PREFIX);
+    }
+
+    public void setStageManager(StageManager stageManager) {
+        this.stageManager = stageManager;
+    }
+
+    public StageManager getStageManager() {
+        return stageManager;
     }
 }

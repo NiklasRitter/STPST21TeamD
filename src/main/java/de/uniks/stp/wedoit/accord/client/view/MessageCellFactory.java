@@ -17,7 +17,7 @@ public class MessageCellFactory implements javafx.util.Callback<ListView<Message
         return new MessageChatCell(param);
     }
 
-    private static class MessageChatCell extends ListCell<Message> {
+    private class MessageChatCell extends ListCell<Message> {
 
         private final ListView<Message> param;
 

@@ -106,15 +106,15 @@ public class ServerScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
         this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = StageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
+        this.localUser = this.stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
-        this.server = StageManager.getEditor().haveServer(localUser, "testId", "TServer");
-        StageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
-        StageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + StageManager.getEditor().
+        this.server = this.stageManager.getEditor().haveServer(localUser, "testId", "TServer");
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().
                 getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
-        StageManager.getEditor().getRestManager().setRestClient(restMock);
-        StageManager.showServerScreen(server);
+        this.stageManager.getEditor().getRestManager().setRestClient(restMock);
+        this.stageManager.showServerScreen(server);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -344,7 +344,7 @@ public class ServerScreenTest extends ApplicationTest {
     @Test
     public void optionsButtonTest() {
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", StageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
     }
 
     @Test
@@ -795,7 +795,7 @@ public class ServerScreenTest extends ApplicationTest {
         callbackLeaveServer.completed(res);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(StageManager.getStage().getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
 
     }
 
@@ -805,13 +805,13 @@ public class ServerScreenTest extends ApplicationTest {
         Button btnCancel = lookup("#btnCancel").query();
         Assert.assertEquals(btnCancel.getText(), "Cancel");
         clickOn(btnCancel);
-        Assert.assertEquals(StageManager.getStage().getTitle(), "Server");
+        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Server");
 
     }
 
     private void openAttentionScreen() {
         Platform.runLater(() -> {
-            StageManager.showAttentionLeaveServerScreen(this.server);
+            this.stageManager.showAttentionLeaveServerScreen(this.server);
         });
     }
     @Test
@@ -853,7 +853,7 @@ public class ServerScreenTest extends ApplicationTest {
         Label lblQuote = (Label) lookup("#lblQuote").query();
         Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
 
-        String formatted = StageManager.getEditor().getMessageFormatted(lvTextChat.getItems().get(0));
+        String formatted = this.stageManager.getEditor().getMessageFormatted(lvTextChat.getItems().get(0));
         Assert.assertEquals(lblQuote.getText(), formatted);
         clickOn(btnCancelQuote);
         WaitForAsyncUtils.waitForFxEvents();
@@ -867,7 +867,7 @@ public class ServerScreenTest extends ApplicationTest {
         lblQuote = (Label) lookup("#lblQuote").query();
         btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
 
-        formatted = StageManager.getEditor().getMessageFormatted(lvTextChat.getItems().get(0));
+        formatted = this.stageManager.getEditor().getMessageFormatted(lvTextChat.getItems().get(0));
         Assert.assertEquals(lblQuote.getText(), formatted);
 
         ((TextField) lookup("#tfInputMessage").query()).setText("quote");

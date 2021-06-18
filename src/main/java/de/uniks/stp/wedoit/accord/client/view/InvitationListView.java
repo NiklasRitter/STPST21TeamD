@@ -12,7 +12,7 @@ public class InvitationListView implements javafx.util.Callback<ListView<Invitat
     }
 
 
-    private static class InvitationListCell extends ListCell<Invitation> {
+    private class InvitationListCell extends ListCell<Invitation> {
         protected void updateItem(Invitation item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {

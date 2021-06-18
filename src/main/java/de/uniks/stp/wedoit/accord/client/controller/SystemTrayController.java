@@ -46,9 +46,9 @@ public class SystemTrayController {
 
     public void handleClickTrayIcon(ActionEvent actionEvent) {
         Platform.runLater(() -> {
-            StageManager.getStage().setIconified(false);
-            StageManager.getStage().setAlwaysOnTop(true);
-            StageManager.getStage().setAlwaysOnTop(false);
+            this.editor.getStageManager().getStage().setIconified(false);
+            this.editor.getStageManager().getStage().setAlwaysOnTop(true);
+            this.editor.getStageManager().getStage().setAlwaysOnTop(false);
         });
     }
 

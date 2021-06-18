@@ -106,7 +106,7 @@ public class MainScreenController implements Controller {
                 editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
             }
         } else {
-            Platform.runLater(StageManager::showLoginScreen);
+            Platform.runLater(this.editor.getStageManager()::showLoginScreen);
         }
     }
 
@@ -155,7 +155,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void privateChatsButtonOnClick(ActionEvent actionEvent) {
-        Platform.runLater(StageManager::showPrivateChatsScreen);
+        Platform.runLater(this.editor.getStageManager()::showPrivateChatsScreen);
     }
 
     /**
@@ -164,7 +164,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showOptionsScreen();
+        this.editor.getStageManager().showOptionsScreen();
     }
 
     /**
@@ -176,7 +176,7 @@ public class MainScreenController implements Controller {
         if (mouseEvent.getClickCount() == 2) {
             Server server = serverListView.getSelectionModel().getSelectedItem();
             if (server != null) {
-                StageManager.showServerScreen(server);
+                this.editor.getStageManager().showServerScreen(server);
             }
         }
     }
@@ -187,7 +187,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showCreateServerScreen();
+        this.editor.getStageManager().showCreateServerScreen();
     }
 
     /**
@@ -196,7 +196,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void enterInvitationButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showJoinServerScreen();
+        this.editor.getStageManager().showJoinServerScreen();
     }
 
     /**

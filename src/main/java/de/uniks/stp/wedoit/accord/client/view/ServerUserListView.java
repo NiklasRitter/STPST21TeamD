@@ -13,7 +13,7 @@ public class ServerUserListView implements javafx.util.Callback<ListView<User>, 
     }
 
 
-    private static class UserListCell extends ListCell<User> {
+    private class UserListCell extends ListCell<User> {
         protected void updateItem(User item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {

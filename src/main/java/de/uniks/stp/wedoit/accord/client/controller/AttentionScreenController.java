@@ -88,13 +88,13 @@ public class AttentionScreenController implements Controller {
 
     private void discardOnClick(ActionEvent actionEvent) {
         if (objectToDelete.getClass().equals(Server.class)) {
-            StageManager.showEditServerScreen((Server) objectToDelete);
+            this.editor.getStageManager().showEditServerScreen((Server) objectToDelete);
         }
         else if(objectToDelete.getClass().equals(Channel.class)){
-            StageManager.showEditChannelScreen((Channel) objectToDelete);
+            this.editor.getStageManager().showEditChannelScreen((Channel) objectToDelete);
         }
         else if(objectToDelete.getClass().equals(Category.class)){
-            StageManager.showEditCategoryScreen((Category) objectToDelete);
+            this.editor.getStageManager().showEditCategoryScreen((Category) objectToDelete);
         }
     }
 
@@ -102,7 +102,7 @@ public class AttentionScreenController implements Controller {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
             Platform.runLater(() -> {
-                StageManager.showMainScreen();
+                this.editor.getStageManager().showMainScreen();
             });
             stop();
         } else {

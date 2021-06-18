@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -203,13 +202,13 @@ public class ServerScreenController implements Controller {
 
     // ActionEvent Methods
     private void leaveServerAttention(ActionEvent actionEvent) {
-        StageManager.showAttentionLeaveServerScreen(this.server);
+        this.editor.getStageManager().showAttentionLeaveServerScreen(this.server);
     }
 
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        StageManager.showEmojiScreen(tfInputMessage, pos);
+        this.editor.getStageManager().showEmojiScreen(tfInputMessage, pos);
     }
 
     /**
@@ -218,7 +217,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showMainScreen();
+        this.editor.getStageManager().showMainScreen();
     }
 
     /**
@@ -227,7 +226,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showOptionsScreen();
+        this.editor.getStageManager().showOptionsScreen();
     }
 
     /**
@@ -236,7 +235,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void editButtonOnClick(ActionEvent actionEvent) {
-        StageManager.showEditServerScreen(this.server);
+        this.editor.getStageManager().showEditServerScreen(this.server);
     }
 
     /**
@@ -376,7 +375,7 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(StageManager::showLoginScreen);
+            Platform.runLater(() -> this.editor.getStageManager().showLoginScreen());
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
@@ -427,7 +426,7 @@ public class ServerScreenController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(StageManager::showMainScreen);
+            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
         }
     }
 
