@@ -60,51 +60,6 @@ public class JsonUtilTest {
     }
 
     @Test
-    public void testParseTempUser() {
-        JsonObject tempUserJson = Json.createObjectBuilder().add("name", "Abbas").build();
-
-        Assert.assertEquals(localUser.getName(), "Amir");
-
-        localUser = JsonUtil.parseTempUser(tempUserJson);
-
-        Assert.assertEquals(localUser.getName(), tempUserJson.getString(NAME));
-        Assert.assertEquals(localUser.getName(), "Abbas");
-    }
-
-    @Test
-    public void testParseOnlineUser() {
-        JsonObject onlineUserJson = Json.createObjectBuilder().add("name", "Nahid").add("id", "21091985").build();
-
-        user.setOnlineStatus(false);
-        Assert.assertFalse(user.isOnlineStatus());
-
-        Assert.assertEquals(user.getName(), "Gelareh");
-
-        user = JsonUtil.parseOnlineUser(onlineUserJson);
-
-        Assert.assertEquals(user.getName(), onlineUserJson.getString(NAME));
-        Assert.assertEquals(onlineUserJson.getString(ID), user.getId());
-        Assert.assertEquals(onlineUserJson.getString(ID), "21091985");
-        Assert.assertTrue(user.isOnlineStatus());
-    }
-
-    /**
-     * following method tests parseServers() and parseServer() methods
-     */
-    @Test
-    public void testParseServers() {
-        JsonObject serverJson = Json.createObjectBuilder().add("name", "Accord").add("id", "STP2021").build();
-        JsonArray serversJsonArray = Json.createArrayBuilder().add(serverJson).build();
-        List<Server> servers = JsonUtil.parseServers(serversJsonArray);
-
-        Assert.assertEquals(servers.size(), 1);
-        Assert.assertEquals(servers.get(0).getName(), serverJson.getString(NAME));
-        Assert.assertEquals(servers.get(0).getName(), "Accord");
-        Assert.assertEquals(servers.get(0).getId(), serverJson.getString(ID));
-        Assert.assertEquals(servers.get(0).getId(), "STP2021");
-    }
-
-    @Test
     public void testParseCategory() {
         JsonObject categoryJson = Json.createObjectBuilder().add("name", "STP").add("id", "2021").build();
 
