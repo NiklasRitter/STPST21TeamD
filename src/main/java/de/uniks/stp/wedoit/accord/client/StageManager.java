@@ -554,12 +554,6 @@ public class StageManager extends Application {
                 gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
-            if (emojiPickerScene != null) {
-                emojiPickerScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                        "light-theme.css")).toExternalForm());
-                emojiPickerScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
-                        "dark-theme.css")).toExternalForm());
-            }
         } else {
             if (scene != null) {
                 scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
@@ -577,12 +571,6 @@ public class StageManager extends Application {
                 gameScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
                 gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
-                        "light-theme.css")).toExternalForm());
-            }
-            if (emojiPickerScene != null) {
-                emojiPickerScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                        "dark-theme.css")).toExternalForm());
-                emojiPickerScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
         }
@@ -648,8 +636,6 @@ public class StageManager extends Application {
         gameStage.initOwner(stage);
 
         emojiPickerStage = new Stage();
-//        emojiPickerStage.setX(770.6000000238419);
-//        emojiPickerStage.setY(296.60000002384186);
         emojiPickerStage.initOwner(stage);
         //Removes title bar of emojiPickerStage including maximize, minimize and close icons.
         emojiPickerStage.initStyle(StageStyle.UNDECORATED);

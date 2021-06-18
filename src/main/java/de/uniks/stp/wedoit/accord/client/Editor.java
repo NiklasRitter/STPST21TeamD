@@ -511,9 +511,10 @@ public class Editor {
         }
     }
 
-    public void leaveServer(String userKey, String id) {
-        if (id != null && !id.isEmpty()) {
-            networkController.leaveServer(userKey, id);
+    public void leaveServer(String userKey, Server server) {
+        if (server.getId() != null && !server.getId().isEmpty()) {
+            networkController.leaveServer(userKey, server.getId());
+            this.getLocalUser().withoutServers(server);
         }
     }
 
