@@ -236,7 +236,7 @@ public class Editor {
         for (int index = 0; index < categoriesChannelResponse.toArray().length; index++) {
 
             if (!channelIds.contains(categoriesChannelResponse.getJsonObject(index).getString(ID))) {
-                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJsonObject(index));
+                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJsonObject(index)).setRead(true);
                 channel.setCategory(category);
                 List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJsonObject(index));
                 for (String memberId : memberIds) {
@@ -480,7 +480,7 @@ public class Editor {
         if (channel == null) {
             channel = new Channel();
         }
-        channel.setName(name).setPrivileged(privileged).setType(type).setId(id).setCategory(category);
+        channel.setName(name).setPrivileged(privileged).setType(type).setId(id).setCategory(category).setRead(true);
         channel.withoutMembers(new ArrayList<>(channel.getMembers()));
 
         List<String> membersIds = new ArrayList<>();
