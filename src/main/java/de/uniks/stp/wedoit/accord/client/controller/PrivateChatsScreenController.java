@@ -1,25 +1,19 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
 import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateChatsScreenOnlineUsersCellFactory;
-import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.geometry.Bounds;
-import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -30,7 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class PrivateChatsScreenController implements Controller {
 
@@ -39,24 +32,15 @@ public class PrivateChatsScreenController implements Controller {
     private final Editor editor;
     private Button btnOptions, btnPlay;
     private Button btnHome;
-    private Button btnEmoji;
-    private Chat currentChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
-    private TextField tfPrivateChat;
-    private ListView<PrivateMessage> lwPrivateChat;
-    private PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory;
-    private ObservableList<PrivateMessage> privateMessageObservableList;
-    private final PropertyChangeListener chatListener = this::newMessage;
     private ObservableList<User> onlineUserObservableList;
     private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private List<User> availableUsers = new ArrayList<>();
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser;
-    private ContextMenu messageContextMenu;
-    private HBox quoteVisible;
-    private Label lblQuote;
-    private Button btnCancelQuote;
+    private final PrivateChatController privateChatController;
+
 
     /**
      * Create a new Controller
@@ -69,6 +53,7 @@ public class PrivateChatsScreenController implements Controller {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
+        this.privateChatController = new PrivateChatController(view, model, editor, this);
     }
 
 
@@ -80,50 +65,24 @@ public class PrivateChatsScreenController implements Controller {
      * Add action listeners
      */
     public void init() {
-
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnPlay = (Button) view.lookup("#btnPlay");
         this.btnHome = (Button) view.lookup("#btnHome");
-        this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
-        this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
-        this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
-        this.quoteVisible = (HBox) view.lookup("#quoteVisible");
-        this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
-        this.lblQuote = (Label) view.lookup("#lblQuote");
+
+        privateChatController.init();
 
         this.btnHome.setOnAction(this::btnHomeOnClicked);
         this.btnPlay.setOnAction(this::btnPlayOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
-        this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
-        this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
-        this.lwPrivateChat.setOnMouseClicked(this::onLwPrivatChatClicked);
-        this.btnCancelQuote.setOnAction(this::cancelQuote);
-        quoteVisible.getChildren().clear();
-        addMessageContextMenu();
 
         this.initTooltips();
-
         this.initOnlineUsersList();
 
-        this.tfPrivateChat.setPromptText("select a User");
-        this.tfPrivateChat.setEditable(false);
         this.btnPlay.setVisible(false);
     }
-
-
-    private void addMessageContextMenu() {
-        MenuItem quote = new MenuItem("- quote");
-        messageContextMenu = new ContextMenu();
-        messageContextMenu.setId("messageContextMenu");
-        messageContextMenu.getItems().add(quote);
-        quote.setOnAction((event) -> {
-            handleContextMenuClicked(QUOTE, lwPrivateChat.getSelectionModel().getSelectedItem());
-        });
-    }
-
 
     /**
      * Initializes the Tooltips for the Buttons
@@ -144,9 +103,6 @@ public class PrivateChatsScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        if (this.currentChat != null) {
-            this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
-        }
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersOnlineListListener);
 
         for (User user : availableUsers) {
@@ -156,14 +112,7 @@ public class PrivateChatsScreenController implements Controller {
         this.btnHome.setOnAction(null);
         this.btnPlay.setOnAction(null);
         this.btnOptions.setOnAction(null);
-        this.tfPrivateChat.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
-        this.btnEmoji.setOnAction(null);
-        for (MenuItem item : messageContextMenu.getItems()) {
-            item.setOnAction(null);
-        }
-        messageContextMenu = null;
-        btnCancelQuote.setOnAction(null);
     }
 
     /**
@@ -181,12 +130,13 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Play Button is clicked
      */
     private void btnPlayOnClicked(ActionEvent actionEvent) {
+        Chat currentChat = privateChatController.getCurrentChat();
         if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play")) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEINVITE);
-            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
         } else if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
-            editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
             btnPlay.setText("Play");
             this.editor.getStageManager().showGameScreen(currentChat.getUser());
         }
@@ -203,17 +153,6 @@ public class PrivateChatsScreenController implements Controller {
     }
 
     /**
-     * Opens the Emoji Picker
-     *
-     * @param actionEvent occurs when Emoji Button is clicked
-     */
-    private void btnEmojiOnClicked(ActionEvent actionEvent) {
-        //get the position of Emoji Button and pass it to showEmojiScreen
-        Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().showEmojiScreen(tfPrivateChat, pos);
-    }
-
-    /**
      * initialize onlineUsers list
      * <p>
      * Load online users from server and add them to the data model.
@@ -221,12 +160,12 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void initOnlineUsersList() {
         // load online Users
-        editor.getNetworkController().getOnlineUsers(localUser, this);
+        editor.getRestManager().getOnlineUsers(localUser, this);
     }
 
     public void handleGetOnlineUsers() {
         // load list view
-        usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
+        PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
         lwOnlineUsers.setCellFactory(usersListViewCellFactory);
         availableUsers = localUser.getUsers().stream().sorted(Comparator.comparing(User::getName))
                 .collect(Collectors.toList());
@@ -249,14 +188,15 @@ public class PrivateChatsScreenController implements Controller {
      * @param propertyChangeEvent event occurs when a users online status changes
      */
     private void usersOnlineListViewChanged(PropertyChangeEvent propertyChangeEvent) {
+        TextField tfPrivateChat = privateChatController.getTfPrivateChat();
         User user = (User) propertyChangeEvent.getSource();
         if (!user.isOnlineStatus()) {
             Platform.runLater(() -> {
                 this.onlineUserObservableList.remove(user);
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    this.tfPrivateChat.setPromptText(user.getName() + " is offline");
-                    this.tfPrivateChat.setEditable(false);
+                    tfPrivateChat.setPromptText(user.getName() + " is offline");
+                    tfPrivateChat.setEditable(false);
                 }
             });
         } else {
@@ -265,8 +205,8 @@ public class PrivateChatsScreenController implements Controller {
                 this.onlineUserObservableList.sort(Comparator.comparing(User::getName));
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    this.tfPrivateChat.setPromptText("your message");
-                    this.tfPrivateChat.setEditable(true);
+                    tfPrivateChat.setPromptText("your message");
+                    tfPrivateChat.setEditable(true);
                 }
             });
         }
@@ -301,103 +241,6 @@ public class PrivateChatsScreenController implements Controller {
     }
 
     /**
-     * initialize private Chat with user
-     * <p>
-     * Load online users from server and add them to the data model.
-     * Set CellFactory and build lwOnlineUsers.
-     *
-     * @param user selected online user in lwOnlineUsers
-     */
-    public void initPrivateChat(User user) {
-        removeQuote();
-        if (this.currentChat != null) {
-            this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
-        }
-
-        if (user.getPrivateChat() == null) {
-            user.setPrivateChat(new Chat());
-        }
-        this.currentChat = user.getPrivateChat();
-        user.setChatRead(true);
-        lwOnlineUsers.refresh();
-        this.lblSelectedUser.setText(this.currentChat.getUser().getName());
-        this.tfPrivateChat.setPromptText("your message");
-        this.tfPrivateChat.setEditable(true);
-        this.btnPlay.setVisible(true);
-
-        // load list view
-        PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
-        lwPrivateChat.setCellFactory(chatCellFactory);
-        this.privateMessageObservableList = FXCollections.observableList(currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
-                .collect(Collectors.toList()));
-
-        this.lwPrivateChat.setItems(privateMessageObservableList);
-
-        // Add listener for the loaded listView
-        this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
-    }
-
-    /**
-     * update the chat when a new message arrived
-     * Filter for messages with ###game### prefix and handle when a game invite is accepted
-     *
-     * @param propertyChangeEvent event occurs when a new private message arrives
-     */
-    private void newMessage(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != null) {
-            PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
-            if (localUser.getGameInvites().contains(editor.getUser(message.getFrom()))) {
-                Platform.runLater(() -> btnPlay.setText("Accept"));
-            }
-
-            if (message.getText().equals(GAMEACCEPT) && localUser.getGameRequests().contains(editor.getUser(message.getFrom()))) {
-                message.setText(message.getText().substring(10));
-                Platform.runLater(() -> this.editor.getStageManager().showGameScreen(editor.getUser(message.getFrom())));
-            }
-
-            if (message.getText().startsWith(PREFIX)) message.setText(message.getText().substring(PREFIX.length()));
-
-            Platform.runLater(() -> this.privateMessageObservableList.add(message));
-        }
-    }
-
-    /**
-     * @param privateMessage
-     */
-    public void newChatMessage(PrivateMessage privateMessage) {
-        List<User> userCell = lwOnlineUsers.getItems().stream().filter(user1 -> user1.getName().equals(privateMessage.getFrom())).collect(Collectors.toList());
-    }
-
-    /**
-     * send message in textfield after enter button pressed
-     *
-     * @param actionEvent occurs when enter button is pressed
-     */
-    private void tfPrivateChatOnEnter(ActionEvent actionEvent) {
-        String message = this.tfPrivateChat.getText();
-        this.tfPrivateChat.clear();
-
-        if (message != null && !message.isEmpty() && currentChat != null) {
-            JsonObject jsonMsg;
-
-            if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
-                JsonObject jsonMessage = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
-                removeQuote();
-                editor.getNetworkController().sendPrivateChatMessage(quoteMsg.toString());
-                editor.getNetworkController().sendPrivateChatMessage(jsonMessage.toString());
-
-
-            } else {
-                jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
-                editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
-            }
-
-
-        }
-    }
-
-    /**
      * initPrivateChat when item of userList is clicked twice
      * manages the the Play button
      *
@@ -408,55 +251,15 @@ public class PrivateChatsScreenController implements Controller {
             User selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
                 btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ? "Accept" : "Play");
-                this.initPrivateChat(selectedUser);
+                privateChatController.initPrivateChat(selectedUser);
+                lwOnlineUsers.refresh();
+                this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
+                this.btnPlay.setVisible(true);
             }
         }
     }
 
-    public void handleContextMenuClicked(String menu, PrivateMessage message) {
-        lwPrivateChat.setContextMenu(null);
-        lwPrivateChat.getSelectionModel().select(null);
-        if (message != null) {
-            if (menu.equals(QUOTE)) {
-                String formatted = editor.getMessageFormatted(message);
-                removeQuote();
-                lblQuote.setText(formatted);
-                lblQuote.setAccessibleHelp(message.getTimestamp() + "");
-                quoteVisible.getChildren().add(lblQuote);
-                quoteVisible.getChildren().add(btnCancelQuote);
-            }
-        }
+    public void setBtnPlayText(String text) {
+        btnPlay.setText(text);
     }
-
-    private void cancelQuote(ActionEvent actionEvent) {
-        removeQuote();
-    }
-
-    public void removeQuote() {
-        lblQuote.setText("");
-        quoteVisible.getChildren().clear();
-    }
-
-    private void onLwPrivatChatClicked(MouseEvent mouseEvent) {
-        lwPrivateChat.setContextMenu(null);
-        if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            if (lwPrivateChat.getSelectionModel().getSelectedItem() != null && !editor.isQuote(lwPrivateChat.getSelectionModel().getSelectedItem())) {
-                lwPrivateChat.setContextMenu(messageContextMenu);
-                messageContextMenu.show(lwPrivateChat, Side.LEFT, 0, 0);
-            }
-        }
-        if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-            if (lwPrivateChat.getSelectionModel().getSelectedItem() != null && editor.isQuote(lwPrivateChat.getSelectionModel().getSelectedItem())) {
-                PrivateMessage message = lwPrivateChat.getSelectionModel().getSelectedItem();
-                String cleanMessage = editor.cleanMessage(message);
-                for (PrivateMessage msg : privateMessageObservableList) {
-                    if (editor.getMessageFormatted(msg).equals(cleanMessage)) {
-                        lwPrivateChat.scrollTo(msg);
-                        lwPrivateChat.getSelectionModel().select(msg);
-                    }
-                }
-            }
-        }
-    }
-
 }
