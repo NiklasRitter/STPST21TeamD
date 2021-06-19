@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
@@ -48,6 +49,9 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
 
                     this.getStyleClass().add("font_size");
                     this.setText(">>>" + messages[0] + "\n");
+                } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                    setAlignment(Pos.CENTER);
+                    this.setText(item.getText());
                 } else {
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
