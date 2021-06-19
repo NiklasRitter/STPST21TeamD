@@ -1,8 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -13,7 +11,6 @@ import javafx.scene.control.TextField;
 
 public class CreateServerScreenController implements Controller {
 
-    private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
     private TextField tfServerName;
@@ -22,14 +19,11 @@ public class CreateServerScreenController implements Controller {
 
     /**
      * Create a new Controller
-     *
-     * @param view   The view this Controller belongs to
-     * @param model  The model this Controller belongs to
+     *  @param view   The view this Controller belongs to
      * @param editor The editor of the Application
      */
-    public CreateServerScreenController(Parent view, LocalUser model, Editor editor) {
+    public CreateServerScreenController(Parent view, Editor editor) {
         this.view = view;
-        this.localUser = model;
         this.editor = editor;
     }
 
@@ -74,7 +68,7 @@ public class CreateServerScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
-            editor.getNetworkController().createServer(tfServerName.getText(), this);
+            editor.getRestManager().createServer(tfServerName.getText(), this);
         }
     }
 

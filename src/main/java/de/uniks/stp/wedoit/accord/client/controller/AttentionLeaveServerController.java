@@ -1,8 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -12,16 +10,14 @@ public class AttentionLeaveServerController implements Controller {
 
     private final Editor editor;
     private final Parent view;
-    private final LocalUser localUser;
     private final Server server;
 
     private Button btnLeave;
     private Button btnCancel;
 
-    public AttentionLeaveServerController(Parent view, Editor editor, LocalUser localUser, Server server) {
+    public AttentionLeaveServerController(Parent view, Editor editor, Server server) {
         this.editor = editor;
         this.view = view;
-        this.localUser = localUser;
         this.server = server;
     }
 
