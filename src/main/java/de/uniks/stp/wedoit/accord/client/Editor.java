@@ -316,6 +316,27 @@ public class Editor {
         clipboard.setContent(content);
     }
 
+    public void automaticLogin(AccordClient accordClient) {
+        if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
+            restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
+        } else {
+            stageManager.showLoginScreen();
+            stageManager.getStage().show();
+        }
+    }
+
+    public void handleAutomaticLogin(boolean success) {
+        if (success) {
+            Platform.runLater(stageManager::showMainScreen);
+        } else {
+            Platform.runLater(stageManager::showLoginScreen);
+        }
+        Platform.runLater(() -> {
+            stageManager.getStage().show();
+        });
+    }
+
+
     public void setStageManager(StageManager stageManager) {
         this.stageManager = stageManager;
     }
