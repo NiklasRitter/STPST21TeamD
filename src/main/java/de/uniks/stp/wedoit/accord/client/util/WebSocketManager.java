@@ -49,6 +49,10 @@ public class WebSocketManager {
         return this;
     }
 
+    /**
+     * sets the clean username of the current localUser
+     * @return this clean username
+     */
     public String setClearUsername() {
         String newName;
         try {

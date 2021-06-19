@@ -20,7 +20,8 @@ public class CreateCategoryScreenController implements Controller {
 
     /**
      * Create a new Controller
-     *  @param view   The view this Controller belongs to
+     *
+     * @param view   The view this Controller belongs to
      * @param editor The editor of the Application
      */
     public CreateCategoryScreenController(Parent view, Editor editor) {
@@ -72,6 +73,11 @@ public class CreateCategoryScreenController implements Controller {
         }
     }
 
+    /**
+     * handles the creation of a category.
+     *
+     * @param status status which says whether a deletion was successful
+     */
     public void handleCreateCategory(Category category) {
         if (category != null) {
             Stage stage = (Stage) view.getScene().getWindow();

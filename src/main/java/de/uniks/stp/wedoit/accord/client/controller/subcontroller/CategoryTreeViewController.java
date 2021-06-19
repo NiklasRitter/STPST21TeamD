@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.Category;
@@ -41,7 +40,7 @@ public class CategoryTreeViewController implements Controller {
     private final PropertyChangeListener categoriesListener = this::handleCategoryChange;
     private final PropertyChangeListener channelListener = this::handleChannelChange;
 
-    public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller){
+    public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
@@ -74,7 +73,7 @@ public class CategoryTreeViewController implements Controller {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         }
-        for(Category category : server.getCategories()){
+        for (Category category : server.getCategories()) {
             category.listeners().removePropertyChangeListener(Category.PROPERTY_NAME, categoriesListener);
             category.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, categoriesListener);
         }
@@ -84,6 +83,7 @@ public class CategoryTreeViewController implements Controller {
     }
 
     // Channel and Category init
+
     /**
      * initialize channel List view
      * gets Categories from server and calls loadCategoryChannels()
@@ -92,6 +92,10 @@ public class CategoryTreeViewController implements Controller {
         editor.getRestManager().getCategories(localUser, server, this);
     }
 
+
+    /**
+     * handles the categories of a server in the view
+     */
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
@@ -108,6 +112,10 @@ public class CategoryTreeViewController implements Controller {
         editor.getRestManager().getChannels(localUser, server, category, categoryItem, this);
     }
 
+
+    /**
+     * handles the channels of a server in the view
+     */
     public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
@@ -144,66 +152,83 @@ public class CategoryTreeViewController implements Controller {
         }
     }
 
+    /**
+     * rebuilds the user list
+     */
     private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            if(propertyChangeEvent.getSource() instanceof Channel){
+            if (propertyChangeEvent.getSource() instanceof Channel) {
                 Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
-            }
-            else{
+            } else {
                 Platform.runLater(() -> controller.refreshLvUsers(channel));
             }
         }
     }
 
+    /**
+     * handles a changed category
+     */
     private void handleCategoryChange(PropertyChangeEvent propertyChangeEvent) {
         Platform.runLater(() -> {
-            if(propertyChangeEvent.getPropertyName().equals(Server.PROPERTY_CATEGORIES)){
+            if (propertyChangeEvent.getPropertyName().equals(Server.PROPERTY_CATEGORIES)) {
                 updateCategoryTreeView((Category) propertyChangeEvent.getOldValue(), (Category) propertyChangeEvent.getNewValue());
-            }
-            else if(propertyChangeEvent.getPropertyName().equals(Category.PROPERTY_CHANNELS)){
+            } else if (propertyChangeEvent.getPropertyName().equals(Category.PROPERTY_CHANNELS)) {
                 updateChannelTreeView((Channel) propertyChangeEvent.getOldValue(), (Channel) propertyChangeEvent.getNewValue());
             }
             this.tvServerChannels.refresh();
         });
     }
 
+    /**
+     * handles a changed channel
+     */
     private void handleChannelChange(PropertyChangeEvent propertyChangeEvent) {
         Platform.runLater(() -> {
-            if(propertyChangeEvent.getPropertyName().equals(Channel.PROPERTY_NAME)){
+            if (propertyChangeEvent.getPropertyName().equals(Channel.PROPERTY_NAME)) {
                 this.tvServerChannels.refresh();
             }
         });
     }
 
-    private void updateCategoryTreeView(Category oldValue, Category newValue){
-        if(oldValue == null && newValue != null){
+    /**
+     * creates a category tree item or deletes a old one
+     *
+     * @param oldValue added category item which should removed in the view
+     * @param newValue which should be added to the view
+     */
+    private void updateCategoryTreeView(Category oldValue, Category newValue) {
+        if (oldValue == null && newValue != null) {
             TreeItem<Object> categoryItem = new TreeItem<>(newValue);
             categoryItem.setExpanded(true);
             tvServerChannelsRoot.getChildren().add(categoryItem);
             loadCategoryChannels(newValue, categoryItem);
             newValue.listeners().addPropertyChangeListener(Category.PROPERTY_NAME, categoriesListener);
             newValue.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, categoriesListener);
-        }
-        else if(oldValue != null && newValue == null){
+        } else if (oldValue != null && newValue == null) {
             TreeItem<Object> categoryItem = getTreeItemCategory(oldValue);
-            if(categoryItem != null){
+            if (categoryItem != null) {
                 tvServerChannelsRoot.getChildren().remove(categoryItem);
             }
         }
     }
 
-    private void updateChannelTreeView(Channel oldValue, Channel newValue){
-        if(oldValue == null && newValue != null) {
+    /**
+     * creates a category tree item or deletes a old one
+     *
+     * @param oldValue added channel item which should removed in the view
+     * @param newValue which should be added to the view
+     */
+    private void updateChannelTreeView(Channel oldValue, Channel newValue) {
+        if (oldValue == null && newValue != null) {
             TreeItem<Object> categoryItem = getTreeItemCategory(newValue.getCategory());
             if (categoryItem != null) {
                 addChannelToTreeView(newValue, categoryItem);
             }
-        }
-        else if(oldValue != null && newValue == null){
-            for(TreeItem<Object> categoryItem : this.tvServerChannelsRoot.getChildren()){
-                for(TreeItem<Object> channelItem : categoryItem.getChildren()){
+        } else if (oldValue != null && newValue == null) {
+            for (TreeItem<Object> categoryItem : this.tvServerChannelsRoot.getChildren()) {
+                for (TreeItem<Object> channelItem : categoryItem.getChildren()) {
                     Channel channel = (Channel) channelItem.getValue();
-                    if(channel.getId().equals(oldValue.getId())){
+                    if (channel.getId().equals(oldValue.getId())) {
                         categoryItem.getChildren().remove(channelItem);
                         break;
                     }
@@ -212,7 +237,13 @@ public class CategoryTreeViewController implements Controller {
         }
     }
 
-    public void addChannelToTreeView(Channel channel, TreeItem<Object> categoryItem){
+    /**
+     * adds a channel to the tree view and add property change listener
+     *
+     * @param channel      which should be added
+     * @param categoryItem the item where the channel is child of
+     */
+    public void addChannelToTreeView(Channel channel, TreeItem<Object> categoryItem) {
         channelMap.put(channel.getId(), channel);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_READ, this.channelReadListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
@@ -221,7 +252,11 @@ public class CategoryTreeViewController implements Controller {
         categoryItem.getChildren().add(channelItem);
     }
 
-    private TreeItem<Object> getTreeItemCategory(Category category){
+    /**
+     * @param category which is value of a certain tree item
+     * @return the correct tree item for a given category
+     */
+    private TreeItem<Object> getTreeItemCategory(Category category) {
         for (TreeItem<Object> categoryItem : tvServerChannelsRoot.getChildren()) {
             Category currentCategory = (Category) categoryItem.getValue();
             if (currentCategory.getId().equals(category.getId())) {
@@ -231,6 +266,11 @@ public class CategoryTreeViewController implements Controller {
         return null;
     }
 
+    /**
+     * create a context menu for category with the menu "add category"
+     *
+     * @return contextmenu
+     */
     private ContextMenu createContextMenuCategory() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addCategory = new MenuItem("- add category");
@@ -239,7 +279,10 @@ public class CategoryTreeViewController implements Controller {
         return contextMenu;
     }
 
-    public Map<String, Channel> getChannelMap(){
+    /**
+     * @return channelMap which includes all channel with the id as key and the channel as value
+     */
+    public Map<String, Channel> getChannelMap() {
         return channelMap;
     }
 }

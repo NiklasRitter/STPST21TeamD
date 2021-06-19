@@ -19,7 +19,8 @@ public class CreateServerScreenController implements Controller {
 
     /**
      * Create a new Controller
-     *  @param view   The view this Controller belongs to
+     *
+     * @param view   The view this Controller belongs to
      * @param editor The editor of the Application
      */
     public CreateServerScreenController(Parent view, Editor editor) {
@@ -72,6 +73,11 @@ public class CreateServerScreenController implements Controller {
         }
     }
 
+    /**
+     * handles the creation of a channel.
+     *
+     * @param server server which is created if creation was successful
+     */
     public void handleCreateServer(Server server) {
         if (server != null) {
             stop();

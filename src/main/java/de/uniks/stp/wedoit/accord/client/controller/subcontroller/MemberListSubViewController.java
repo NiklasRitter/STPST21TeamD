@@ -11,6 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 
+/**
+ * SubController for the member list of the Edit- and CreateChannelScreen
+ */
 public class MemberListSubViewController implements Controller {
 
     private final User user;
@@ -39,9 +42,9 @@ public class MemberListSubViewController implements Controller {
     }
 
     /**
-     *Checks which controller calls the class.
-     *Adds the selected user to the user list of the corresponding controller.
-     *If you deselect a user, he will be removed from the list.
+     * Checks which controller calls the class.
+     * Adds the selected user to the user list of the corresponding controller.
+     * If you deselect a user, he will be removed from the list.
      */
     private void checkBoxOnClick(ActionEvent actionEvent) {
         if (controller.getClass().equals(CreateChannelScreenController.class)) {

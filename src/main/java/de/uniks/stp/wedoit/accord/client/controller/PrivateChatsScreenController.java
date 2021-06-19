@@ -23,7 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEACCEPT;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEINVITE;
 
 public class PrivateChatsScreenController implements Controller {
 
@@ -163,6 +164,9 @@ public class PrivateChatsScreenController implements Controller {
         editor.getRestManager().getOnlineUsers(localUser, this);
     }
 
+    /**
+     * loads list view for the selected user and adds a listener for the chat
+     */
     public void handleGetOnlineUsers() {
         // load list view
         PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();

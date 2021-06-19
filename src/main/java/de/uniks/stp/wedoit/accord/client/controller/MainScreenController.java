@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -88,6 +87,11 @@ public class MainScreenController implements Controller {
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
     }
 
+    /**
+     * handles a response of a get servers request and inits the server list view.
+     *
+     * @param success success of the get servers request
+     */
     public void handleGetServers(boolean success) {
         if (success) {
             // load list view

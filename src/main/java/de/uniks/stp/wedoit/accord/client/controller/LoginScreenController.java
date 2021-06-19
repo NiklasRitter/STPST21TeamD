@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -107,6 +106,11 @@ public class LoginScreenController implements Controller {
         }
     }
 
+    /**
+     * handles a login and redirect to the correct screen
+     *
+     * @param success success of the login as boolean
+     */
     public void handleLogin(boolean success) {
         if (!success) {
             tfUserName.getStyleClass().add("error");
@@ -143,6 +147,11 @@ public class LoginScreenController implements Controller {
         }
     }
 
+    /**
+     * handles a register and sets label correct
+     *
+     * @param success success of the register as boolean
+     */
     public void handleRegister(boolean success) {
         if (!success) {
             //reset name and password fields

@@ -66,6 +66,9 @@ public class MessageManager {
         message.getChannel().withMessages(message);
     }
 
+    /**
+     * adds messages to a channel
+     */
     public void updateChannelMessages(Channel channel, List<Message> messages) {
         List<Message> channelMessages = channel.getMessages();
         for (Message message : messages) {
@@ -108,7 +111,9 @@ public class MessageManager {
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 
-
+    /**
+     * creates a clean message from a quote
+     */
     public String cleanMessage(PrivateMessage item) {
         if (isQuote(item)) {
             String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
