@@ -52,6 +52,10 @@ public class Editor {
         return localUser;
     }
 
+    /**
+     * creates a new AccordClient
+     * @return new Accord client
+     */
     public AccordClient haveAccordClient() {
         accordClient = new AccordClient();
         return accordClient;
@@ -114,6 +118,10 @@ public class Editor {
         return server;
     }
 
+    /**
+     *
+     * @return a user with given id, onlineStatus and name who is member of the given server
+     */
     public User haveUserWithServer(String name, String id, boolean online, Server server) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(id);
@@ -346,6 +354,10 @@ public class Editor {
         }
     }
 
+    /**
+     * redirect to the LoginScreen if success
+     * @param success of the logout request
+     */
     public void handleLogoutUser(boolean success) {
         if (!success) {
             System.err.println("Error while logging out");
@@ -353,6 +365,9 @@ public class Editor {
         Platform.runLater(() -> stageManager.showLoginScreen());
     }
 
+    /**
+     * @return all online users who are listed in the data model
+     */
     public List<User> getOnlineUsers() {
         List<User> allUsers = this.getLocalUser().getUsers();
         List<User> onlineUsers = new ArrayList<>();
@@ -494,6 +509,9 @@ public class Editor {
         return null;
     }
 
+    /**
+     * updates a channel message
+     */
     public void updateChannelMessages(Channel channel, List<Message> messages) {
         List<Message> channelMessages = channel.getMessages();
         for (Message message : messages) {
@@ -510,6 +528,9 @@ public class Editor {
         }
     }
 
+    /**
+     * leaves a server
+     */
     public void leaveServer(String userKey, Server server) {
         if (server.getId() != null && !server.getId().isEmpty()) {
             networkController.leaveServer(userKey, server.getId());
@@ -517,7 +538,9 @@ public class Editor {
         }
     }
 
-
+    /**
+     * delete a invitation in the data model
+     */
     public Invitation deleteInvite(String id, Server server) {
         for (Invitation invite : server.getInvitations()) {
             if (invite.getId().equals(id)) {
@@ -528,6 +551,11 @@ public class Editor {
         return null;
     }
 
+    /**
+     * copies a given text to the system clip board
+     * @param text text which should be copied
+     * @return true if successful
+     */
     public Boolean copyToSystemClipBoard(String text) {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
@@ -563,7 +591,9 @@ public class Editor {
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 
-
+    /**
+     * creates a clean message from a quote
+     */
     public String cleanMessage(PrivateMessage item) {
         if (isQuote(item)) {
             String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
@@ -604,6 +634,9 @@ public class Editor {
         return stageManager;
     }
 
+    /**
+     * calls the networkController to login automatically or show the login screen if remember me is not set.
+     */
     public void automaticLogin(AccordClient accordClient) {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             networkController.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
@@ -613,6 +646,9 @@ public class Editor {
         }
     }
 
+    /**
+     * handles the automatic login
+     */
     public void handleAutomaticLogin(boolean success) {
         if (success) {
             Platform.runLater(stageManager::showMainScreen);

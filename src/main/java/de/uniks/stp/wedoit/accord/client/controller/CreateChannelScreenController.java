@@ -79,12 +79,19 @@ public class CreateChannelScreenController implements Controller {
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
     }
 
+    /**
+     * loads member and set size of the screen correct.
+     * @param actionEvent actionEvent such a when a button is fired
+     */
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
         //Adjusts the size of the stage to its dynamically added content
         this.editor.getStageManager().getPopupStage().sizeToScene();
     }
 
+    /**
+     * shows members in sub view members list
+     */
     private void checkIfIsPrivileged() {
         if (this.checkBoxPrivileged.isSelected()) {
             initSubViewMemberList();
@@ -162,6 +169,10 @@ public class CreateChannelScreenController implements Controller {
         }
     }
 
+    /**
+     * handles the creation of a channel.
+     * @param channel channel which is created if creation was successful
+     */
     public void handleCreateChannel(Channel channel) {
         if (channel != null) {
             Stage stage = (Stage) view.getScene().getWindow();
@@ -173,10 +184,18 @@ public class CreateChannelScreenController implements Controller {
         }
     }
 
+    /**
+     * adds a user to the user list.
+     * @param user user which should be added
+     */
     public void addToUserList(User user) {
         userList.add(user.getId());
     }
 
+    /**
+     * removes a user from the user list.
+     * @param user user which should be removed
+     */
     public void removeFromUserList(User user) {
         userList.remove(user.getId());
     }

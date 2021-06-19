@@ -107,6 +107,10 @@ public class LoginScreenController implements Controller {
         }
     }
 
+    /**
+     * handles a login and redirect to the correct screen
+     * @param success success of the login as boolean
+     */
     public void handleLogin(boolean success) {
         if (!success) {
             tfUserName.getStyleClass().add("error");
@@ -143,6 +147,10 @@ public class LoginScreenController implements Controller {
         }
     }
 
+    /**
+     * handles a register and sets label correct
+     * @param success success of the register as boolean
+     */
     public void handleRegister(boolean success) {
         if (!success) {
             //reset name and password fields

@@ -92,6 +92,10 @@ public class EditCategoryScreenController implements Controller {
         }
     }
 
+    /**
+     * handles the updating of a category.
+     * @param category category which is updated if updating was successful
+     */
     public void handleEditCategory(Category category) {
         if (category != null) {
             Stage stage = (Stage) view.getScene().getWindow();

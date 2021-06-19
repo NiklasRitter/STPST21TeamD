@@ -80,6 +80,10 @@ public class CreateCategoryScreenController implements Controller {
         }
     }
 
+    /**
+     * handles the creation of a category.
+     * @param status status which says whether a deletion was successful
+     */
     public void handleCreateCategory(Category category) {
         if (category != null) {
             Stage stage = (Stage) view.getScene().getWindow();

@@ -78,6 +78,10 @@ public class CreateServerScreenController implements Controller {
         }
     }
 
+    /**
+     * handles the creation of a channel.
+     * @param server server which is created if creation was successful
+     */
     public void handleCreateServer(Server server) {
         if (server != null) {
             stop();

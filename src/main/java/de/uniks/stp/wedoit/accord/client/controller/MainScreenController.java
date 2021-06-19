@@ -88,6 +88,11 @@ public class MainScreenController implements Controller {
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
     }
 
+    /**
+     * handles a response of a get servers request and inits the server list view.
+     *
+     * @param success success of the get servers request
+     */
     public void handleGetServers(boolean success) {
         if (success) {
             // load list view

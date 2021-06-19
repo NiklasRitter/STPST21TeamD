@@ -113,6 +113,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the CreateServerScreen and show the CreateServerScreen on the window
+     */
     public void showCreateServerScreen() {
         try {
             //load view
@@ -138,6 +141,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the JoinServerScreen and show the JoinServerScreen on the window
+     */
     public void showJoinServerScreen() {
         try {
             //load view
@@ -163,6 +169,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the PrivateChatsScreen and show the PrivateChatsScreen on the window
+     */
     public void showPrivateChatsScreen() {
         cleanup();
 
@@ -191,6 +200,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the ServerScreen and show the ServerScreen on the window
+     */
     public void showServerScreen(Server server) {
         cleanup();
 
@@ -222,6 +234,9 @@ public class StageManager extends Application {
 
     }
 
+    /**
+     * loads fxml of the GameScreen and show the GameScreen on the window
+     */
     public void showGameScreen(User opponent) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
@@ -247,6 +262,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the GameScreen and show the GameScreen on the window
+     */
     public void showGameResultScreen(User opponent, Boolean isWinner) {
         if (gameStage.isShowing()) {
             gameStage.close();
@@ -278,6 +296,9 @@ public class StageManager extends Application {
 
     }
 
+    /**
+     * loads fxml of the OptionsScreen and show the OptionsScreen on the window
+     */
     public void showOptionsScreen() {
         try {
             //load view
@@ -305,6 +326,9 @@ public class StageManager extends Application {
     }
 
 
+    /**
+     * loads fxml of the CreateCategoryScreen and show the CreateCategoryScreen on the window
+     */
     public void showCreateCategoryScreen() {
         try {
             //load view
@@ -332,6 +356,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the EditCategoryScreen and show the EditCategoryScreen on the window
+     */
     public void showEditCategoryScreen(Category category) {
         try {
             //load view
@@ -357,6 +384,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the EmojiScreen and show the EmojiScreen on the window
+     */
     public void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
         try {
             //load view
@@ -383,6 +413,9 @@ public class StageManager extends Application {
     }
 
 
+    /**
+     * loads fxml of the CreateChannelScreen and show the CreateChannelScreen on the window
+     */
     public void showCreateChannelScreen(Category category) {
         try {
             //load view
@@ -408,6 +441,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the EditChannelScreen and show the EditChannelScreen on the window
+     */
     public void showEditChannelScreen(Channel channel) {
         try {
             //load view
@@ -433,6 +469,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the EditServerScreen and show the EditServerScreen on the window
+     */
     public void showEditServerScreen(Server server) {
         try {
             //load view
@@ -459,6 +498,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the AttentionScreen and show the AttentionScreen on the window
+     */
     public void showAttentionScreen(Object objectToDelete) {
         try {
             //load view
@@ -485,6 +527,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the AttentionLeaveServerScreen and show the AttentionLeaveServerScreen on the window
+     */
     public void showAttentionLeaveServerScreen(Server server) {
         try {
             //load view
@@ -534,6 +579,10 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * changes the view to light or darkmode
+     * @param darkmode boolean weather darkmode is enabled or not
+     */
     public void changeDarkmode(boolean darkmode) {
         if (darkmode) {
             if (scene != null) {

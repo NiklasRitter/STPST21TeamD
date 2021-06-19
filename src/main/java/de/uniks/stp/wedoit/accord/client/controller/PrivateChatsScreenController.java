@@ -113,7 +113,9 @@ public class PrivateChatsScreenController implements Controller {
         this.btnPlay.setVisible(false);
     }
 
-
+    /**
+     * adds message context menu for messages
+     */
     private void addMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
         messageContextMenu = new ContextMenu();
@@ -224,6 +226,9 @@ public class PrivateChatsScreenController implements Controller {
         editor.getNetworkController().getOnlineUsers(localUser, this);
     }
 
+    /**
+     * loads list view for the selected user and adds a listener for the chat
+     */
     public void handleGetOnlineUsers() {
         // load list view
         usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
@@ -413,6 +418,11 @@ public class PrivateChatsScreenController implements Controller {
         }
     }
 
+    /**
+     * handles if the context menu is clicked and sets the quote label.
+     * @param menu
+     * @param message
+     */
     public void handleContextMenuClicked(String menu, PrivateMessage message) {
         lwPrivateChat.setContextMenu(null);
         lwPrivateChat.getSelectionModel().select(null);
@@ -428,15 +438,29 @@ public class PrivateChatsScreenController implements Controller {
         }
     }
 
+    /**
+     * cancels a quote and remove the quote from the view.
+     * @param actionEvent
+     */
     private void cancelQuote(ActionEvent actionEvent) {
         removeQuote();
     }
 
+    /**
+     * removes a quote from the view
+     */
     public void removeQuote() {
         lblQuote.setText("");
         quoteVisible.getChildren().clear();
     }
 
+    /**
+     * implements that
+     * <p>
+     * - with a secondary mouse click, the context menu is shown
+     * <p>
+     * - with a primary mouse click and if the message is a quote, the chat scrolls the original message
+     */
     private void onLwPrivatChatClicked(MouseEvent mouseEvent) {
         lwPrivateChat.setContextMenu(null);
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {

@@ -145,6 +145,9 @@ public class ServerScreenController implements Controller {
 
     }
 
+    /**
+     * rebuilds the user list
+     */
     private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
             Platform.runLater(() -> {
@@ -173,7 +176,10 @@ public class ServerScreenController implements Controller {
         this.lvServerUsers.refresh();
     }
 
-
+    /**
+     * creates a context menu to leave a server
+     * @return the created context menu
+     */
     private ContextMenu createContextMenuLeaveServer() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
@@ -182,6 +188,10 @@ public class ServerScreenController implements Controller {
         return contextMenu;
     }
 
+    /**
+     * creates a context menu to add a category
+     * @return the created context menu
+     */
     private ContextMenu createContextMenuCategory() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addCategory = new MenuItem("- add category");
@@ -190,6 +200,10 @@ public class ServerScreenController implements Controller {
         return contextMenu;
     }
 
+    /**
+     * opens the AttentionLeaveServerScreen
+     * @param actionEvent
+     */
     private void leaveServerAttention(ActionEvent actionEvent) {
         this.editor.getStageManager().showAttentionLeaveServerScreen(this.server);
     }
@@ -322,6 +336,9 @@ public class ServerScreenController implements Controller {
         quoteVisible.getChildren().clear();
     }
 
+    /**
+     * delete the current server with all edges
+     */
     public void deleteCurrentServer() {
         // Delete all connection to the server in the data model
         for (Category category : server.getCategories()) {
@@ -333,6 +350,9 @@ public class ServerScreenController implements Controller {
         localUser.withoutServers(server);
     }
 
+    /**
+     * handles the explicit server information in the view
+     */
     public void handleGetExplicitServerInformation(JsonArray members) {
         if (members != null) {
             // create users which are member in the server and load user list view
@@ -387,6 +407,9 @@ public class ServerScreenController implements Controller {
         editor.getNetworkController().getCategories(localUser, server, this);
     }
 
+    /**
+     * handles the categories of a server in the view
+     */
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList != null) {
             for (Category category : categoryList) {
@@ -411,6 +434,9 @@ public class ServerScreenController implements Controller {
         editor.getNetworkController().getChannels(localUser, server, category, categoryItem, this);
     }
 
+    /**
+     * handles the channels of a server in the view
+     */
     public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
         if (channelList != null) {
             for (Channel channel : channelList) {
@@ -495,6 +521,9 @@ public class ServerScreenController implements Controller {
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
     }
 
+    /**
+     * handles new messages loaded over rest in the view
+     */
     public void handleGetChannelMessages(Channel channel, JsonArray data) {
         if (channel != null) {
             List<Message> messages = JsonUtil.parseMessageArray(data);

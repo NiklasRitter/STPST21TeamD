@@ -64,6 +64,10 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * sets the clean username of the current localUser
+     * @return this clean username
+     */
     public String setClearUsername() {
         String newName;
         try {
@@ -197,6 +201,14 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to create a server and handles the response.
+     * <p>
+     * Adds the responsed server to the data if successful.
+     * @param serverNameInput name for the new server
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController createServer(String serverNameInput, CreateServerScreenController controller) {
         restClient.createServer(serverNameInput, editor.getLocalUser().getUserKey(), (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -213,6 +225,15 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to login a user and handles the response.
+     * <p>
+     * Adds the localUser to the data if successful.
+     * @param username username
+     * @param password password
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController loginUser(String username, String password, LoginScreenController controller) {
         restClient.login(username, password, (response) -> {
             if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -229,6 +250,15 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to login a user and handles the response.
+     * <p>
+     * Adds the localUser to the data if successful.
+     * @param username username
+     * @param password password
+     * @param editor editor in which the response need handled
+     * @return this
+     */
     public NetworkController automaticLoginUser(String username, String password, Editor editor) {
         restClient.login(username, password, (response) -> {
             if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -245,6 +275,13 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to register a user and handles the response.
+     * @param username username
+     * @param password password
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController registerUser(String username, String password, LoginScreenController controller) {
         restClient.register(username, password, registerResponse -> {
             controller.handleRegister(registerResponse.getBody().getObject().getString(STATUS).equals(SUCCESS));
@@ -252,6 +289,14 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to get servers of the given localUser and handles the response.
+     * <p>
+     * Adds the servers to the data model.
+     * @param localUser logged in local user
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController getServers(LocalUser localUser, MainScreenController controller) {
         restClient.getServers(localUser.getUserKey(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -270,6 +315,15 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to get explicit information of the given server and handles the response.
+     * <p>
+     * Adds the explicit server information to the data model.
+     * @param localUser logged in local user
+     * @param server server
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController getExplicitServerInformation(LocalUser localUser, Server server, ServerScreenController controller) {
         // get members of this server
         restClient.getExplicitServerInformation(localUser.getUserKey(), server.getId(), response -> {
@@ -286,6 +340,15 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to change the name of the given server and handles the response.
+     * <p>
+     * And sets the name of the given server correct in the data model.
+     * @param localUser logged in local user
+     * @param server server
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController changeServerName(LocalUser localUser, Server server, String newServerName, EditServerScreenController controller) {
         restClient.changeServerName(server.getId(), newServerName, localUser.getUserKey(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -298,6 +361,14 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to get all online user and handles the response.
+     * <p>
+     * And adds the users to the data model.
+     * @param localUser logged in local user
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
@@ -313,6 +384,13 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to get all online user to get the id of a local user and handles the response.
+     * <p>
+     * And sets the id for the localUser to the data model.
+     * @param localUser logged in local user
+     * @return this
+     */
     public NetworkController getLocalUserId(LocalUser localUser) {
         // load online Users
         restClient.getOnlineUsers(localUser.getUserKey(), response -> {
@@ -331,6 +409,12 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to logout a user and handles the response.
+     * <p>
+     * @param userKey of the local user which should logged out
+     * @return this
+     */
     public NetworkController logoutUser(String userKey) {
         restClient.logout(userKey, response -> {
             editor.handleLogoutUser(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
@@ -338,6 +422,15 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to get categories of the given server and handles the response.
+     * <p>
+     * Adds the categories to the data model.
+     * @param localUser logged in local user
+     * @param server server
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController getCategories(LocalUser localUser, Server server, ServerScreenController controller) {
         restClient.getCategories(server.getId(), localUser.getUserKey(), categoryResponse -> {
             if (categoryResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -354,6 +447,15 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to get channels of the given server and handles the response.
+     * <p>
+     * Adds the channels to the data model.
+     * @param localUser logged in local user
+     * @param server server
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController getChannels(LocalUser localUser, Server server, Category category, TreeItem<Object> categoryItem, ServerScreenController controller) {
         restClient.getChannels(server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
             if (channelsResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -371,6 +473,15 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to create a category for the given server and handles the response.
+     * <p>
+     * Adds the category to the data model.
+     * @param server server
+     * @param categoryNameInput name for the new category
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController createCategory(Server server, String categoryNameInput, CreateCategoryScreenController controller) {
         restClient.createCategory(server.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -387,6 +498,17 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to create a channel for the given server and category and handles the response.
+     * <p>
+     * Adds the channel to the data model.
+     * @param server server
+     * @param privileged privileged
+     * @param members members for the options privileged
+     * @param channelNameInput name for the new channel
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController createChannel(Server server, Category category, String channelNameInput, String type, boolean privileged, List<String> members, CreateChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
         if (members != null) {
@@ -418,6 +540,19 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to update a channel for the given server and handles the response.
+     * <p>
+     * Updates the channel in the data model.
+     * @param server server
+     * @param category category
+     * @param channel channel which should be updated
+     * @param channelNameInput new name of the channel
+     * @param privileged privileged
+     * @param members members for the options privileged
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController updateChannel(Server server, Category category, Channel channel, String channelNameInput, boolean privileged, List<String> members, EditChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
         if (members != null) {
@@ -449,6 +584,16 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * does a rest request to update a category for the given server and handles the response.
+     * <p>
+     * Updates the category in the data model.
+     * @param server server
+     * @param category category
+     * @param categoryNameInput new name of the channel
+     * @param controller controller in which the response need handled
+     * @return this
+     */
     public NetworkController updateCategory(Server server, Category category, String categoryNameInput, EditCategoryScreenController controller) {
         restClient.updateCategory(server.getId(), category.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -558,12 +703,26 @@ public class NetworkController {
         }
     }
 
+    /**
+     * Try to delete a server with the Restclient::deleteServer method
+     *
+     * @param localUser      localUser who is logged in
+     * @param server server which should be deleted
+     * @param controller     controller in which the response is handled
+     */
     private void deleteServer(LocalUser localUser, Server server, AttentionScreenController controller) {
         restClient.deleteServer(localUser.getUserKey(), server.getId(), (response) -> {
             controller.handleDeleteServer(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
         });
     }
 
+    /**
+     * Try to delete a channel with the Restclient::deleteChannel method
+     *
+     * @param localUser      localUser who is logged in
+     * @param channel channel which should be deleted
+     * @param controller     controller in which the response is handled
+     */
     private void deleteChannel(LocalUser localUser, Channel channel, AttentionScreenController controller) {
         restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> {
             controller.handleDeleteChannel(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
@@ -591,6 +750,13 @@ public class NetworkController {
         });
     }
 
+    /**
+     * Try to delete a category with the Restclient::deleteCategory method
+     *
+     * @param localUser      localUser who is logged in
+     * @param category category which should be deleted
+     * @param controller     controller in which the response is handled
+     */
     private void deleteCategory(LocalUser localUser, Category category, AttentionScreenController controller) {
         restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -601,6 +767,14 @@ public class NetworkController {
         });
     }
 
+    /**
+     * does a rest request to get invitations of the given server and handles the response.
+     * <p>
+     * Adds the invitations to the data model.
+     * @param userKey      userKey of the localUser who is logged in
+     * @param server server
+     * @param controller controller in which the response need handled
+     */
     public void loadInvitations(Server server, String userKey, EditServerScreenController controller) {
 
         restClient.loadInvitations(server.getId(), userKey, response -> {
@@ -620,6 +794,13 @@ public class NetworkController {
 
     }
 
+    /**
+     * Try to delete a category with the Restclient::deleteCategory method
+     *
+     * @param userKey      userKey of the localUser who is logged in
+     * @param invitation invitation which should be deleted
+     * @param controller     controller in which the response is handled
+     */
     public void deleteInvite(String userKey, Invitation invitation, Server server, EditServerScreenController controller) {
         restClient.deleteInvitation(userKey, invitation.getId(), server.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -645,6 +826,12 @@ public class NetworkController {
         return this;
     }
 
+    /**
+     * tries to leave a server with the Restclient::leaveServer method
+     *
+     * @param userKey      userKey of the localUser who is logged in
+     * @param serverId id of the server which should be left
+     */
     public NetworkController leaveServer(String userKey, String serverId) {
         restClient.leaveServer(userKey, serverId, response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {

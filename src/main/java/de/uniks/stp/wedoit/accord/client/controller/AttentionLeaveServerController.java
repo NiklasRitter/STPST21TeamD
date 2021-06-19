@@ -33,13 +33,20 @@ public class AttentionLeaveServerController implements Controller {
         this.btnCancel.setOnAction(this::btnCancelOnClick);
     }
 
-
+    /**
+     * leaves a server
+     * @param actionEvent actionEvent such a when a button is fired
+     */
     private void btnLeaveOnClick(ActionEvent actionEvent) {
         this.editor.leaveServer(this.editor.getLocalUser().getUserKey(), this.server);
         this.editor.getLocalUser().withoutServers(this.server);
         this.server.setLocalUser(null);
     }
 
+    /**
+     * cancels leaving a server
+     * @param actionEvent actionEvent such a when a button is fired
+     */
     private void btnCancelOnClick(ActionEvent actionEvent) {
         this.editor.getStageManager().getPopupStage().close();
     }
