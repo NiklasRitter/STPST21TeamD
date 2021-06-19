@@ -22,8 +22,9 @@ public class EditCategoryScreenController implements Controller {
 
     /**
      * Create a new Controller
-     *  @param view   The view this Controller belongs to
-     * @param editor The editor of the Application
+     *
+     * @param view     The view this Controller belongs to
+     * @param editor   The editor of the Application
      * @param category The category to be changed
      */
     public EditCategoryScreenController(Parent view, Editor editor, Category category) {
@@ -83,6 +84,7 @@ public class EditCategoryScreenController implements Controller {
 
     /**
      * handles the updating of a category.
+     *
      * @param category category which is updated if updating was successful
      */
     public void handleEditCategory(Category category) {

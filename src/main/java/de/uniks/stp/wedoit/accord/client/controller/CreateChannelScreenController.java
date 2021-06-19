@@ -6,19 +6,24 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubV
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 
 public class CreateChannelScreenController implements Controller {
 
@@ -75,6 +80,7 @@ public class CreateChannelScreenController implements Controller {
 
     /**
      * loads member and set size of the screen correct.
+     *
      * @param actionEvent actionEvent such a when a button is fired
      */
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
@@ -97,7 +103,7 @@ public class CreateChannelScreenController implements Controller {
     }
 
     /**
-     *If channel is privileged, then the lister of all users is dynamically added to CreateChannelScreen.
+     * If channel is privileged, then the lister of all users is dynamically added to CreateChannelScreen.
      * then calls MemberListSubViewController:
      * You can then add users (except the local user) to the privileged channel.
      */
@@ -162,6 +168,7 @@ public class CreateChannelScreenController implements Controller {
 
     /**
      * handles the creation of a channel.
+     *
      * @param channel channel which is created if creation was successful
      */
     public void handleCreateChannel(Channel channel) {
@@ -177,6 +184,7 @@ public class CreateChannelScreenController implements Controller {
 
     /**
      * adds a user to the user list.
+     *
      * @param user user which should be added
      */
     public void addToUserList(User user) {
@@ -185,6 +193,7 @@ public class CreateChannelScreenController implements Controller {
 
     /**
      * removes a user from the user list.
+     *
      * @param user user which should be removed
      */
     public void removeFromUserList(User user) {

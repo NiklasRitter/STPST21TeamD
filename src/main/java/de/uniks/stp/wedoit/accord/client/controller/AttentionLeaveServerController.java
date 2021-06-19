@@ -31,6 +31,7 @@ public class AttentionLeaveServerController implements Controller {
 
     /**
      * leaves a server
+     *
      * @param actionEvent actionEvent such a when a button is fired
      */
     private void btnLeaveOnClick(ActionEvent actionEvent) {
@@ -41,6 +42,7 @@ public class AttentionLeaveServerController implements Controller {
 
     /**
      * cancels leaving a server
+     *
      * @param actionEvent actionEvent such a when a button is fired
      */
     private void btnCancelOnClick(ActionEvent actionEvent) {

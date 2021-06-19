@@ -228,6 +228,7 @@ public class ServerScreenTest extends ApplicationTest {
     public void initChannelListViewChannelFailure() {
         JsonObject categoriesRestJson = getServerCategories();
         mockGetCategoryRest(categoriesRestJson);
+        WaitForAsyncUtils.waitForFxEvents();
         JsonObject channelRestJson = getCategoryChannelsFailure();
         mockChannelRest(channelRestJson);
     }

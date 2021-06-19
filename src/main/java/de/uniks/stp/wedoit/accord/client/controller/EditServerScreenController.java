@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -182,6 +181,7 @@ public class EditServerScreenController implements Controller {
 
     /**
      * redirects to the attention screen to delete a server
+     *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteButtonOnClick(ActionEvent actionEvent) {
@@ -190,6 +190,7 @@ public class EditServerScreenController implements Controller {
 
     /**
      * deletes a selected invitation and removes status text of the invitation
+     *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteInvitationButtonOnClick(ActionEvent actionEvent) {
@@ -345,6 +346,7 @@ public class EditServerScreenController implements Controller {
 
     /**
      * handles the updating of a server.
+     *
      * @param status status which is true if updating was successful
      */
     public void handleChangeServerName(boolean status) {
@@ -369,6 +371,7 @@ public class EditServerScreenController implements Controller {
 
     /**
      * handle the loading of invitations and adds the new invitations to the invitations list.
+     *
      * @param invitations invitations of a server
      */
     public void handleOldInvitations(List<Invitation> invitations) {
@@ -385,6 +388,7 @@ public class EditServerScreenController implements Controller {
 
     /**
      * create a list view filled with invitations, but only links are shown
+     *
      * @param invitations invitations which should be added to the list
      */
     private void createLvInvitations(List<Invitation> invitations) {
@@ -398,6 +402,7 @@ public class EditServerScreenController implements Controller {
 
     /**
      * updates a invitations list
+     *
      * @param propertyChangeEvent event which is fired if the invitations of server have changed
      */
     private void invitationsChanged(PropertyChangeEvent propertyChangeEvent) {

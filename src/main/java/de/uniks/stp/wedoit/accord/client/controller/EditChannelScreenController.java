@@ -10,7 +10,10 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -182,6 +185,7 @@ public class EditChannelScreenController implements Controller {
 
     /**
      * handles the updating of a channel.
+     *
      * @param channel channel which is updated if updating was successful
      */
     public void handleEditChannel(Channel channel) {
@@ -206,6 +210,7 @@ public class EditChannelScreenController implements Controller {
 
     /**
      * adds a user to the user list.
+     *
      * @param user user which should be added
      */
     public void addToUserList(User user) {
@@ -216,6 +221,7 @@ public class EditChannelScreenController implements Controller {
 
     /**
      * removes a user from the user list.
+     *
      * @param user user which should be removed
      */
     public void removeFromUserList(User user) {
