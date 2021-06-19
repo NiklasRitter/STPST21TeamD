@@ -25,6 +25,7 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -326,7 +327,11 @@ public class PrivateChatsScreenController implements Controller {
         // load list view
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
-        this.privateMessageObservableList = FXCollections.observableList(editor.loadOldMessages(user.getName()));
+        List<PrivateMessage> oldMessages = editor.loadOldMessages(user.getName());
+        this.privateMessageObservableList = FXCollections.observableList(oldMessages);
+        if (oldMessages.size() == 50) {
+            displayLoadMore();
+        }
 
         this.lwPrivateChat.setItems(privateMessageObservableList);
 
@@ -436,16 +441,19 @@ public class PrivateChatsScreenController implements Controller {
 
     private void onLwPrivatChatClicked(MouseEvent mouseEvent) {
         lwPrivateChat.setContextMenu(null);
+        PrivateMessage selectedMessage = lwPrivateChat.getSelectionModel().getSelectedItem();
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            if (lwPrivateChat.getSelectionModel().getSelectedItem() != null && !editor.isQuote(lwPrivateChat.getSelectionModel().getSelectedItem())) {
+            if (selectedMessage != null && selectedMessage.getId() != null && !selectedMessage.getId().equals("idLoadMore") && !editor.isQuote(selectedMessage)) {
                 lwPrivateChat.setContextMenu(messageContextMenu);
                 messageContextMenu.show(lwPrivateChat, Side.LEFT, 0, 0);
             }
         }
         if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-            if (lwPrivateChat.getSelectionModel().getSelectedItem() != null && editor.isQuote(lwPrivateChat.getSelectionModel().getSelectedItem())) {
-                PrivateMessage message = lwPrivateChat.getSelectionModel().getSelectedItem();
-                String cleanMessage = editor.cleanMessage(message);
+            if (selectedMessage != null && selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
+                Platform.runLater(this::loadMoreMessages);
+            }
+            if (selectedMessage != null && editor.isQuote(selectedMessage)) {
+                String cleanMessage = editor.cleanMessage(selectedMessage);
                 for (PrivateMessage msg : privateMessageObservableList) {
                     if (editor.getMessageFormatted(msg).equals(cleanMessage)) {
                         lwPrivateChat.scrollTo(msg);
@@ -456,4 +464,27 @@ public class PrivateChatsScreenController implements Controller {
         }
     }
 
+    private void loadMoreMessages() {
+        this.privateMessageObservableList.remove(0);
+        PrivateMessage oldestMessage = this.privateMessageObservableList.get(0);
+        if (currentChat != null && currentChat.getUser() != null) {
+            long timestamp = oldestMessage.getTimestamp();
+            String userName = currentChat.getUser().getName();
+            List<PrivateMessage> olderMessages = editor.loadOlderMessages(userName, timestamp);
+            Collections.reverse(olderMessages);
+            if (olderMessages.size() == 50) {
+                Platform.runLater(this::displayLoadMore);
+            }
+        }
+    }
+
+    /**
+     * Displays load more on first position of ListView of the Chat
+     */
+    private void displayLoadMore() {
+        if (privateMessageObservableList.size() >= 50) {
+            PrivateMessage topMessage = new PrivateMessage().setText("Load more...").setId("idLoadMore");
+            this.privateMessageObservableList.add(0, topMessage);
+        }
+    }
 }
