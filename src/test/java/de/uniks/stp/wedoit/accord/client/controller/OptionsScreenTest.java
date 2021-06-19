@@ -74,12 +74,12 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.oldOptions = new Options();
-
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
 
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getPopupStage();
-        stageManager.getResourceManager().loadOptions(oldOptions);
-        stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
+
 
 
         //create localUser to skip the login screen
