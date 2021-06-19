@@ -120,7 +120,7 @@ public class EditorTest {
 
     @Test
     public void testHaveCategory() {
-        category = editor.haveCategory("123", "Conversation", server);
+        category = editor.getCategoryManager().haveCategory("123", "Conversation", server);
         editor.setCurrentServer(server);
 
         Assert.assertTrue(server.getCategories().contains(category));
@@ -132,7 +132,7 @@ public class EditorTest {
     public void testHaveAndUpdateChannel() {
         server = editor.haveServer(localUser, "0098", "Accord");
         user = editor.haveUserWithServer(user.getName(), user.getId(), true, server);
-        category = editor.haveCategory("123", "Conversation", server);
+        category = editor.getCategoryManager().haveCategory("123", "Conversation", server);
         editor.setCurrentServer(server);
 
         userList.add(user.getId());
@@ -144,7 +144,7 @@ public class EditorTest {
             }
         }
 
-        channel = editor.haveChannel("ch01", "tasks", "text", false, category, memberJson.build());
+        channel = editor.getChannelManager().haveChannel("ch01", "tasks", "text", false, category, memberJson.build());
         user.withChannels(channel);
         System.out.println(channel.getName());
         System.out.println(category.getId());
@@ -155,7 +155,7 @@ public class EditorTest {
         Assert.assertTrue(channel.getMembers().contains(user));
         Assert.assertEquals(channel.getName(), "tasks");
 
-        channel = editor.updateChannel(server, "ch01", "Discussion", "text", true, category.getId(), memberJson.build());
+        channel = editor.getChannelManager().updateChannel(server, "ch01", "Discussion", "text", true, category.getId(), memberJson.build());
 
         Assert.assertNotEquals(channel.getName(), "tasks");
         Assert.assertEquals(category.getChannels().get(0).isPrivileged(), true);
@@ -170,7 +170,7 @@ public class EditorTest {
 
         Assert.assertTrue(!channel.getMessages().contains(message));
 
-        editor.updateChannelMessages(channel, messages);
+        editor.getMessageManager().updateChannelMessages(channel, messages);
 
         Assert.assertTrue(channel.getMessages().contains(message));
         Assert.assertEquals(channel.getMessages().get(0).getFrom(), "Gelareh");
@@ -213,8 +213,8 @@ public class EditorTest {
     @Test
     public void testGetMessageFormatted() {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(privateMessage.getTimestamp()));
-        Assert.assertEquals(editor.getMessageFormatted(privateMessage), ("[" + time + "] " + privateMessage.getFrom() + ": " + privateMessage.getText()));
-        Assert.assertNotNull(editor.getMessageFormatted(privateMessage));
+        Assert.assertEquals(editor.getMessageManager().getMessageFormatted(privateMessage), ("[" + time + "] " + privateMessage.getFrom() + ": " + privateMessage.getText()));
+        Assert.assertNotNull(editor.getMessageManager().getMessageFormatted(privateMessage));
     }
 
 }

@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -101,9 +100,7 @@ public class AttentionScreenController implements Controller {
     public void handleDeleteServer(boolean status) {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
-            Platform.runLater(() -> {
-                this.editor.getStageManager().showMainScreen();
-            });
+            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
             stop();
         } else {
             showError();

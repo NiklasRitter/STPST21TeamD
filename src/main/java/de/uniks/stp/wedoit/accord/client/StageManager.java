@@ -119,7 +119,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            CreateServerScreenController createServerScreenController = new CreateServerScreenController(root, model.getLocalUser(), editor);
+            CreateServerScreenController createServerScreenController = new CreateServerScreenController(root, editor);
             createServerScreenController.init();
             controllerMap.put(CREATE_SERVER_SCREEN_CONTROLLER, createServerScreenController);
 
@@ -311,7 +311,7 @@ public class StageManager extends Application {
 
             updateDarkmode();
 
-            CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, model.getLocalUser(), editor);
+            CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, editor);
             createCategoryScreenController.init();
             controllerMap.put("createCategoryScreenController", createCategoryScreenController);
 
@@ -338,7 +338,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            EditCategoryScreenController editCategoryScreenController = new EditCategoryScreenController(root, model.getLocalUser(), editor, category);
+            EditCategoryScreenController editCategoryScreenController = new EditCategoryScreenController(root, editor, category);
             editCategoryScreenController.init();
             controllerMap.put("editCategoryScreenController", editCategoryScreenController);
 
@@ -491,7 +491,7 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            AttentionLeaveServerController attentionLeaveServerController = new AttentionLeaveServerController(root, editor, model.getLocalUser(), server);
+            AttentionLeaveServerController attentionLeaveServerController = new AttentionLeaveServerController(root, editor, server);
             attentionLeaveServerController.init();
             controllerMap.put("attentionLeaveServerController", attentionLeaveServerController);
 

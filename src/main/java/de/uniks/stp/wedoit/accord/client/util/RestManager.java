@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
@@ -164,7 +165,7 @@ public class RestManager {
             if (categoryResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonArray serversCategoryResponse = JsonUtil.parse(String.valueOf(categoryResponse.getBody().getObject())).getJsonArray(DATA);
 
-                editor.haveCategories(server, serversCategoryResponse);
+                editor.getCategoryManager().haveCategories(server, serversCategoryResponse);
 
                 List<Category> categoryList = server.getCategories();
                 controller.handleGetCategories(categoryList);
@@ -179,7 +180,7 @@ public class RestManager {
             if (channelsResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonArray categoriesChannelResponse = JsonUtil.parse(String.valueOf(channelsResponse.getBody().getObject())).getJsonArray(DATA);
 
-                editor.haveChannels(category, categoriesChannelResponse);
+                editor.getChannelManager().haveChannels(category, categoriesChannelResponse);
 
                 List<Channel> channelList = category.getChannels().stream().sorted(Comparator.comparing(Channel::getName))
                         .collect(Collectors.toList());
@@ -197,7 +198,7 @@ public class RestManager {
                 String categoryId = createCategoryAnswer.getString(ID);
                 String categoryName = createCategoryAnswer.getString(NAME);
 
-                Category category = editor.haveCategory(categoryId, categoryName, server);
+                Category category = editor.getCategoryManager().haveCategory(categoryId, categoryName, server);
                 controller.handleCreateCategory(category);
             } else {
                 controller.handleCreateCategory(null);
@@ -224,7 +225,7 @@ public class RestManager {
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
 
                 if (category.getId().equals(channelCategoryId)) {
-                    Channel channel = editor.haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers);
+                    Channel channel = editor.getChannelManager().haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers);
                     controller.handleCreateChannel(channel);
                 } else {
                     controller.handleCreateChannel(null);
@@ -254,7 +255,7 @@ public class RestManager {
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
 
                 if (category.getId().equals(channelCategoryId)) {
-                    Channel newChannel = editor.updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
+                    Channel newChannel = editor.getChannelManager().updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
                     controller.handleEditChannel(newChannel);
                 } else {
                     controller.handleEditChannel(null);
@@ -276,7 +277,7 @@ public class RestManager {
                 JsonArray channels = createCategoryIdAnswer.getJsonArray(JSON.CHANNELS);
 
                 if (category.getId().equals(categoryId)) {
-                    Category newCategory = editor.haveCategory(categoryId, categoryName, server);
+                    Category newCategory = editor.getCategoryManager().haveCategory(categoryId, categoryName, server);
                     controller.handleEditCategory(newCategory);
                 } else {
                     controller.handleEditCategory(null);
@@ -403,7 +404,7 @@ public class RestManager {
      * @param timestamp     timestamp from where the last 50 messages should be delivered
      * @param controller    controller in which the response is handled
      */
-    public void getChannelMessages(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, ServerScreenController controller) {
+    public void getChannelMessages(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, ServerChatController controller) {
         restClient.getChannelMessages(localUser.getUserKey(), server.getId(), category.getId(), channel.getId(), timestamp, (response) -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonArray data = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);

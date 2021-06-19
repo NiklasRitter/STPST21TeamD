@@ -144,7 +144,7 @@ public class WebSocketManager {
         message.setText(jsonObject.getString(MESSAGE));
         message.setFrom(jsonObject.getString(FROM));
         message.setTo(jsonObject.getString(TO));
-        editor.addNewPrivateMessage(message);
+        editor.getMessageManager().addNewPrivateMessage(message);
         return this;
     }
 
@@ -192,13 +192,13 @@ public class WebSocketManager {
 
         //change category
         if (action.equals(CATEGORY_UPDATED)) {
-            editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+            editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
         }
         if (action.equals(CATEGORY_CREATED)) {
-            editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+            editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
         }
         if (action.equals(CATEGORY_DELETED)){
-            Category category = editor.haveCategory(data.getString(ID), data.getString(NAME), server);
+            Category category = editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
             for (Channel channel : category.getChannels()) {
                 channel.removeYou();
             }
@@ -207,18 +207,18 @@ public class WebSocketManager {
 
         // change channel
         if (action.equals(CHANNEL_UPDATED)) {
-            Channel channel = editor.updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
+            Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
             if (channel == null) {
                 Platform.runLater(() -> editor.getStageManager().showServerScreen(server));
             }
         }
         if (action.equals(CHANNEL_CREATED)) {
-            Category category = editor.haveCategory(data.getString(CATEGORY), null, server);
-            editor.haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS));
+            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+            editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS));
         }
         if (action.equals(CHANNEL_DELETED)){
-            Category category = editor.haveCategory(data.getString(CATEGORY), null, server);
-            Channel channel = editor.haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build());
+            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+            Channel channel = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build());
             channel.removeYou();
         }
 

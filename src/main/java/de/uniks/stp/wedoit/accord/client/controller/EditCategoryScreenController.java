@@ -1,25 +1,17 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class EditCategoryScreenController implements Controller {
 
-    private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
     private final Category category;
@@ -30,15 +22,12 @@ public class EditCategoryScreenController implements Controller {
 
     /**
      * Create a new Controller
-     *
-     * @param view   The view this Controller belongs to
-     * @param model  The model this Controller belongs to
+     *  @param view   The view this Controller belongs to
      * @param editor The editor of the Application
      * @param category The category to be changed
      */
-    public EditCategoryScreenController(Parent view, LocalUser model, Editor editor, Category category) {
+    public EditCategoryScreenController(Parent view, Editor editor, Category category) {
         this.view = view;
-        this.localUser = model;
         this.editor = editor;
         this.category = category;
     }

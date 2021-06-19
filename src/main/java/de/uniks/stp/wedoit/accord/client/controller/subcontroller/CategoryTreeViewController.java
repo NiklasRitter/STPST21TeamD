@@ -64,7 +64,7 @@ public class CategoryTreeViewController implements Controller {
 
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
-        this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
+        //this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     public void stop() {
@@ -80,7 +80,7 @@ public class CategoryTreeViewController implements Controller {
         }
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
-        this.channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
+        //this.channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     // Channel and Category init
@@ -126,8 +126,8 @@ public class CategoryTreeViewController implements Controller {
             if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
                 if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
                     channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
-                    controller.initChannelChat(channel);
-                    Platform.runLater(() -> controller.refreshLvUsers(channel));
+                    controller.getServerChatController().initChannelChat(channel);
+                    controller.refreshLvUsers(channel);
                 }
             }
         }
@@ -150,7 +150,7 @@ public class CategoryTreeViewController implements Controller {
                 Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
             }
             else{
-                Platform.runLater(controller::refreshLvUsers);
+                Platform.runLater(() -> controller.refreshLvUsers(channel));
             }
         }
     }

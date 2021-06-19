@@ -37,8 +37,6 @@ public class GameScreenController implements Controller {
 
     private final IntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
 
-
-
     /**
      * Create a new Controller
      *
