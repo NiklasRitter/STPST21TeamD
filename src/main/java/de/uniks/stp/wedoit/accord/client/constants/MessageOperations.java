@@ -1,5 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
+/**
+ * include constants to create and handle incoming quotes
+ */
 public class MessageOperations {
 
     // Constants for quote a message

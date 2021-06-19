@@ -1,5 +1,9 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
+/**
+ * Constants for the names of used controller classes.
+ * This is for the controllerMap in the StageManager.
+ */
 public class ControllerNames {
     public static final String LOGIN_SCREEN_CONTROLLER = "loginScreenController";
     public static final String MAIN_SCREEN_CONTROLLER = "mainScreenController";
