@@ -15,6 +15,7 @@ import javax.json.JsonArray;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -25,7 +26,6 @@ public class ServerScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
-    private List<User> users;
 
     // View Elements
     private Button btnOptions;
@@ -263,8 +263,8 @@ public class ServerScreenController implements Controller {
      * If yes, it shows only members assigned to this channel.
      * If no, it shows all users of the server
      */
-
-    public void refreshLvUsers(Channel channel) {
+    public synchronized void refreshLvUsers(Channel channel) {
+        List<User> users = null;
         if(channel != null) {
             if (channel.isPrivileged()) {
                 users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
@@ -273,10 +273,12 @@ public class ServerScreenController implements Controller {
                 users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
             }
         }
-        Collections.reverse(users);
-        this.lvServerUsers.getItems().removeAll();
-        this.lvServerUsers.setItems(FXCollections.observableList(users));
-        this.lvServerUsers.refresh();
+        if(users != null){
+            Collections.reverse(users);
+            this.lvServerUsers.getItems().removeAll();
+            this.lvServerUsers.setItems(FXCollections.observableList(users));
+            this.lvServerUsers.refresh();
+        }
     }
 
     public CategoryTreeViewController getCategoryTreeViewController() {
