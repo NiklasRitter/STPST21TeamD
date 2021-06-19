@@ -108,6 +108,9 @@ public class ServerScreenController implements Controller {
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
     }
 
+    /**
+     * adds action listener
+     */
     public void addActionListener() {
         // Add action listeners
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
@@ -158,6 +161,10 @@ public class ServerScreenController implements Controller {
     }
 
     // ActionEvent Methods
+
+    /**
+     * opens the AttentionLeaveServerScreen
+     */
     private void leaveServerAttention(ActionEvent actionEvent) {
         this.editor.getStageManager().showAttentionLeaveServerScreen(this.server);
     }
@@ -191,10 +198,16 @@ public class ServerScreenController implements Controller {
 
     // PropertyChangeEvent Methods
 
+    /**
+     * sets the name of a server in the server name label
+     */
     private void handleServerNameChange() {
         Platform.runLater(() -> this.lbServerName.setText(this.server.getName()));
     }
 
+    /**
+     * deletes the current server with all edges
+     */
     public void deleteCurrentServer() {
         // Delete all connection to the server in the data model
         for (Category category : server.getCategories()) {
@@ -206,6 +219,9 @@ public class ServerScreenController implements Controller {
         localUser.withoutServers(server);
     }
 
+    /**
+     * handles the explicit server information in the view
+     */
     public void handleGetExplicitServerInformation(JsonArray members) {
         if (members != null) {
             // create users which are member in the server and load user list view
@@ -249,6 +265,10 @@ public class ServerScreenController implements Controller {
 
     // Helping Methods
 
+    /**
+     * creates a context menu to leave a server
+     * @return the created context menu
+     */
     private ContextMenu createContextMenuLeaveServer() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemLeaveServer = new MenuItem("Leave Server");

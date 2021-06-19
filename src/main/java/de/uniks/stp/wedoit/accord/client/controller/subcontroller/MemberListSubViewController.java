@@ -42,9 +42,9 @@ public class MemberListSubViewController implements Controller {
     }
 
     /**
-     *Checks which controller calls the class.
-     *Adds the selected user to the user list of the corresponding controller.
-     *If you deselect a user, he will be removed from the list.
+     * Checks which controller calls the class.
+     * Adds the selected user to the user list of the corresponding controller.
+     * If you deselect a user, he will be removed from the list.
      */
     private void checkBoxOnClick(ActionEvent actionEvent) {
         if (controller.getClass().equals(CreateChannelScreenController.class)) {

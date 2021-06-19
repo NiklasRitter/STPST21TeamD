@@ -268,7 +268,7 @@ public class EditServerScreenController implements Controller {
     /**
      * This method copies the invitation link and put the link in the system clipboard
      * <p>
-     * shows "Copied" for 1.5 seconds if there is a link
+     * shows "Copied" for 2 seconds if there is a link
      * else shows "First create invitation"
      */
     private void copyInvitationLinkOnClick(MouseEvent mouseEvent) {
@@ -326,7 +326,7 @@ public class EditServerScreenController implements Controller {
     }
 
     /**
-     * resets the copy label
+     * resets the labelCopy
      */
     private void resetLabelCopy() {
         PauseTransition visiblePause = new PauseTransition(
