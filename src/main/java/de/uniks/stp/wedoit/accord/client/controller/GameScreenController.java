@@ -37,8 +37,6 @@ public class GameScreenController implements Controller {
 
     private final IntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
 
-
-
     /**
      * Create a new Controller
      *
@@ -104,7 +102,7 @@ public class GameScreenController implements Controller {
         gameAction = ((Button) actionEvent.getSource()).getText();
 
         JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), PREFIX + gameAction);
-        editor.getNetworkController().sendPrivateChatMessage(jsonMsg.toString());
+        editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
 
         imgYouPlayed.setImage(new Image(getClass().getResource(IMGURL + gameAction + ".png").toString()));
 

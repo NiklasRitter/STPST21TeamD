@@ -95,10 +95,10 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
 
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.getEditor().getRestManager().setRestClient(restMock);
         this.stageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -503,7 +503,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Label lblQuote = (Label) lookup("#lblQuote").query();
         Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
 
-        String formatted = this.stageManager.getEditor().getMessageFormatted(lwPrivateChat.getItems().get(0));
+        String formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lwPrivateChat.getItems().get(0));
         Assert.assertEquals(lblQuote.getText(), formatted);
         clickOn(btnCancelQuote);
         WaitForAsyncUtils.waitForFxEvents();
@@ -518,7 +518,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         lblQuote = (Label) lookup("#lblQuote").query();
         btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
 
-        formatted = this.stageManager.getEditor().getMessageFormatted(lwPrivateChat.getItems().get(0));
+        formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lwPrivateChat.getItems().get(0));
         Assert.assertEquals(lblQuote.getText(), formatted);
 
         ((TextField) lookup("#tfEnterPrivateChat").query()).setText("quote");

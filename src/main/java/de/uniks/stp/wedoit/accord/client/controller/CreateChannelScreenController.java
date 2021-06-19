@@ -6,22 +6,19 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubV
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
-
 import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class CreateChannelScreenController implements Controller {
 
@@ -33,10 +30,9 @@ public class CreateChannelScreenController implements Controller {
     private Button btnCreateChannel;
     private CheckBox checkBoxPrivileged;
     private Label errorLabel, lblMembers;
-    private HBox hBoxLblMembers;
-    private VBox vBoxMain, vBoxMemberNameAndCheckBox;
-    private ArrayList<MemberListSubViewController> memberListSubViewControllers;
-    private List<String> userList = new LinkedList<>();
+    private VBox vBoxMemberNameAndCheckBox;
+    private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
+    private final List<String> userList = new LinkedList<>();
 
     /**
      * Create a new Controller
@@ -67,9 +63,7 @@ public class CreateChannelScreenController implements Controller {
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
 
-        this.vBoxMain = (VBox) view.lookup("#vBoxMain");
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
-        this.hBoxLblMembers = (HBox) view.lookup("#hBoxLblMembers");
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
         checkIfIsPrivileged();
@@ -112,7 +106,7 @@ public class CreateChannelScreenController implements Controller {
         for (User user : this.editor.getCurrentServer().getMembers()) {
             try {
                 if (!user.getId().equals(this.localUser.getId())) {
-                    Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
+                    Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/MemberListSubView.fxml")));
                     MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this, false);
                     memberListSubViewController.init();
 
@@ -154,17 +148,14 @@ public class CreateChannelScreenController implements Controller {
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
             if (!checkBoxPrivileged.isSelected()) {
-                editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
                         TEXT, checkBoxPrivileged.isSelected(), null, this);
             } else if (checkBoxPrivileged.isSelected()) {
                 if (userList.size() <= 0) {
                     userList.add(this.localUser.getId());
-                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
-                            TEXT, checkBoxPrivileged.isSelected(), userList, this);
-                } else {
-                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
-                            TEXT, checkBoxPrivileged.isSelected(), userList, this);
                 }
+                editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                        TEXT, checkBoxPrivileged.isSelected(), userList, this);
             }
         }
     }

@@ -80,11 +80,11 @@ public class EditServerScreenTest extends ApplicationTest {
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = this.stageManager.getEditor().haveLocalUser("Alice", "userKey123");
         this.server = this.stageManager.getEditor().haveServer(localUser, "id456", "AliceServer");
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().getNetworkController().getCleanLocalUserName()
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClientMock);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().getWebSocketManager().getCleanLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClientMock);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.getEditor().getRestManager().setRestClient(restMock);
         this.stageManager.showServerScreen(server);
     }
 

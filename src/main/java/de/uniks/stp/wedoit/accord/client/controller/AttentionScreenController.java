@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -85,7 +84,7 @@ public class AttentionScreenController implements Controller {
      * @param actionEvent actionEvent such a when a button is fired
      */
     private void deleteOnClick(ActionEvent actionEvent) {
-        this.editor.getNetworkController().deleteObject(this.localUser, this.objectToDelete, this);
+        this.editor.getRestManager().deleteObject(this.localUser, this.objectToDelete, this);
     }
 
     /**
@@ -121,9 +120,7 @@ public class AttentionScreenController implements Controller {
     public void handleDeleteServer(boolean status) {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
-            Platform.runLater(() -> {
-                this.editor.getStageManager().showMainScreen();
-            });
+            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
             stop();
         } else {
             showError();
@@ -154,6 +151,8 @@ public class AttentionScreenController implements Controller {
         if (status) {
             Category category = (Category) objectToDelete;
             category.setServer(null);
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
             stop();
         } else {
             showError();
