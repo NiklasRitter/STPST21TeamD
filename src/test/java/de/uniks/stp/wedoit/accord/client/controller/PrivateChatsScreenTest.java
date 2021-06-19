@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -70,6 +71,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
     @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentSystemCaptorWebSocket;
+    private Options oldOptions;
 
     @BeforeClass
     public static void before() {
@@ -85,6 +87,10 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
+        this.oldOptions = new Options();
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+
         this.stageManager.start(stage);
 
         this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
@@ -100,6 +106,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
     @Override
     public void stop() {
+        stageManager.getResourceManager().saveOptions(this.oldOptions);
+        oldOptions = null;
         rule = null;
         stage = null;
         stageManager = null;

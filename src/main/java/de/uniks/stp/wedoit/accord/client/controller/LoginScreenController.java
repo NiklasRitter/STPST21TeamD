@@ -2,11 +2,12 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -16,10 +17,11 @@ public class LoginScreenController implements Controller {
 
     private final Editor editor;
     private final Parent view;
-    private final LocalUser model;
+    private final AccordClient model;
     private Button btnLogin;
     private Button btnRegister;
     private Button btnOptions;
+    private CheckBox btnRememberMe;
     private TextField tfUserName;
     private TextField pwUserPw;
     private Label errorLabel;
@@ -31,7 +33,7 @@ public class LoginScreenController implements Controller {
      * @param model  The model this Controller belongs to
      * @param editor The editor of the Application
      */
-    public LoginScreenController(Parent view, LocalUser model, Editor editor) {
+    public LoginScreenController(Parent view, AccordClient model, Editor editor) {
         this.view = view;
         this.model = model;
         this.editor = editor;
@@ -53,12 +55,14 @@ public class LoginScreenController implements Controller {
         this.btnLogin = (Button) view.lookup("#btnLogin");
         this.btnRegister = (Button) view.lookup("#btnRegister");
         this.btnOptions = (Button) view.lookup("#btnOptions");
+        this.btnRememberMe = (CheckBox) view.lookup("#btnRememberMe");
 
 
         // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
+        this.btnRememberMe.setOnAction(this::btnRememberMeOnClick);
     }
 
     /**
@@ -71,7 +75,9 @@ public class LoginScreenController implements Controller {
         btnLogin.setOnAction(null);
         btnRegister.setOnAction(null);
         btnOptions.setOnAction(null);
+        btnRememberMe.setOnAction(null);
     }
+
 
     /**
      * login user to server and redirect to MainScreen
@@ -83,15 +89,21 @@ public class LoginScreenController implements Controller {
     }
 
     public void login() {
-        String name = this.tfUserName.getText();
-        String password = this.pwUserPw.getText();
-        if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
+        try {
+            String name = this.tfUserName.getText();
+            String password = this.pwUserPw.getText();
 
-            Objects.requireNonNull(tfUserName).getStyleClass().add("error");
-            pwUserPw.getStyleClass().add("error");
-            errorLabel.setText("Username or password is missing");
-        } else {
-            editor.getRestManager().loginUser(name, password, this);
+            if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
+                Objects.requireNonNull(tfUserName).getStyleClass().add("error");
+                Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
+                errorLabel.setText("Username or password is missing");
+            } else {
+                editor.getRestManager().loginUser(name, password, this);
+            }
+        } catch (Exception e) {
+            errorLabel.setText("An error has been encountered while logging in. Please try again.");
+            System.err.println("Error while logging user in!");
+            e.printStackTrace();
         }
     }
 
@@ -112,16 +124,22 @@ public class LoginScreenController implements Controller {
      * @param actionEvent occurs when clicking the register button
      */
     private void btnRegisterOnClicked(ActionEvent actionEvent) {
-        String name = this.tfUserName.getText();
-        String password = this.pwUserPw.getText();
+        try {
+            String name = this.tfUserName.getText();
+            String password = this.pwUserPw.getText();
 
-        if (name != null && !name.isEmpty() && password != null && !password.isEmpty()) {
-            editor.getRestManager().registerUser(name, password, this);
-        } else {
-            //reset name and password fields
-            tfUserName.getStyleClass().add("error");
-            pwUserPw.getStyleClass().add("error");
-            Platform.runLater(() -> errorLabel.setText("Please type in username and password."));
+            if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
+                //reset name and password fields
+                Objects.requireNonNull(tfUserName).getStyleClass().add("error");
+                Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
+                errorLabel.setText("Please type in username and password.");
+            } else {
+                editor.getRestManager().registerUser(name, password, this);
+            }
+        } catch (Exception e) {
+            errorLabel.setText("An error has been encountered while registering. Please try again.");
+            System.err.println("Error while registering user!");
+            e.printStackTrace();
         }
     }
 
@@ -137,6 +155,16 @@ public class LoginScreenController implements Controller {
             //login the user
             login();
         }
+    }
+
+
+    /**
+     * Change the remember me preference to the value of the CheckBox.
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
+    private void btnRememberMeOnClick(ActionEvent actionEvent) {
+        model.getOptions().setRememberMe(btnRememberMe.isSelected());
     }
 
 

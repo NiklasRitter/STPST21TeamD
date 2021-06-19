@@ -22,6 +22,7 @@ public class GenModel implements ClassModelDecorator {
 
     class Options {
         boolean darkmode;
+        boolean rememberMe;
 
         @Link("options")
         AccordClient accordClient;

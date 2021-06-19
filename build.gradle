@@ -78,6 +78,11 @@ application {
     mainClassName = 'de.uniks.stp.wedoit.accord.client.Launcher'
 }
 
+test {
+    minHeapSize = "128m"
+    maxHeapSize = "512m"
+}
+
 /* DO NOT CHANGE THIS PART */
 jacocoTestReport {
     reports {

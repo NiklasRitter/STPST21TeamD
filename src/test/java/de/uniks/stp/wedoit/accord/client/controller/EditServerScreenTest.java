@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -56,6 +57,7 @@ public class EditServerScreenTest extends ApplicationTest {
     private HttpResponse<JsonNode> res;
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
+    private Options oldOptions;
 
     @BeforeClass
     public static void before() {
@@ -69,6 +71,10 @@ public class EditServerScreenTest extends ApplicationTest {
     @Override
     public void start(Stage stage) {
         this.stageManager = new StageManager();
+        this.oldOptions = new Options();
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+
         this.stageManager.start(stage);
 
         //create localUser to skip the login screen and create server to skip the MainScreen
@@ -645,6 +651,8 @@ public class EditServerScreenTest extends ApplicationTest {
 
     @Override
     public void stop() {
+        stageManager.getResourceManager().saveOptions(this.oldOptions);
+        oldOptions = null;
         stageManager = null;
         localUser = null;
         server = null;

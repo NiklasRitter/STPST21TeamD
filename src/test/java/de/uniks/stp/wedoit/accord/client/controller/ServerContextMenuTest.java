@@ -61,6 +61,7 @@ public class ServerContextMenuTest extends ApplicationTest {
 
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> categoriesCallbackArgumentCaptor;
+    private Options oldOptions;
 
     @BeforeClass
     public static void before() {
@@ -76,6 +77,10 @@ public class ServerContextMenuTest extends ApplicationTest {
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
+        this.oldOptions = new Options();
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+
         this.stageManager.start(stage);
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = this.stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
@@ -94,6 +99,8 @@ public class ServerContextMenuTest extends ApplicationTest {
 
     @Override
     public void stop() {
+        stageManager.getResourceManager().saveOptions(this.oldOptions);
+        oldOptions = null;
         rule = null;
         webSocketClient = null;
         chatWebSocketClient = null;

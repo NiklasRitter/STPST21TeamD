@@ -1,8 +1,10 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -13,6 +15,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -59,6 +62,7 @@ public class LoginScreenTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorRegister;
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorLogin;
+    private Options oldOptions;
 
     @BeforeClass
     public static void before() {
@@ -74,6 +78,9 @@ public class LoginScreenTest extends ApplicationTest {
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
+        this.oldOptions = new Options();
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
         this.stageManager.start(stage);
 
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
@@ -87,6 +94,8 @@ public class LoginScreenTest extends ApplicationTest {
 
     @Override
     public void stop() {
+        stageManager.getResourceManager().saveOptions(this.oldOptions);
+        oldOptions = null;
         rule = null;
         stage = null;
         stageManager = null;
@@ -105,6 +114,29 @@ public class LoginScreenTest extends ApplicationTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
     }
+
+
+    @Test
+    public void testSetRememberMe() {
+        Options options = new Options();
+        stageManager.getResourceManager().loadOptions(options);
+        Assert.assertEquals(options.isRememberMe(), false);
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe(), false);
+        clickOn("#btnRememberMe");
+        stageManager.getResourceManager().loadOptions(options);
+        Assert.assertEquals(options.isRememberMe(), true);
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe(), true);
+        clickOn("#btnRememberMe");
+        stageManager.getResourceManager().loadOptions(options);
+        Assert.assertEquals(options.isRememberMe(), false);
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe(), false);
+    }
+
+    @Test
+    public void startWithRememberMeOption() {}
+
+    @Test
+    public void startWithoutRememberMeOption() {}
 
     @Test
     public void testBtnOptions() {

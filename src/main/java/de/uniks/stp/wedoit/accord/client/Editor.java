@@ -63,7 +63,7 @@ public class Editor {
     /**
      * create localUser with the given arguments and set localUser in Editor
      * <p>
-     * if localUser already exists set username and userkey to current localUser
+     * if localUser already exists set username and userKey to current localUser
      *
      * @param username id of the localUser
      * @param userKey  name of the localUser
@@ -239,6 +239,9 @@ public class Editor {
      * @param userKey userKey of the user who is logged out
      */
     public void logoutUser(String userKey) {
+        accordClient.getOptions().setRememberMe(false);
+        accordClient.getLocalUser().setPassword("");
+        accordClient.getLocalUser().setName("");
         if (userKey != null && !userKey.isEmpty()) {
             webSocketManager.stop();
             restManager.logoutUser(userKey);
