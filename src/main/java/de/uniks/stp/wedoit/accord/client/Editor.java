@@ -339,6 +339,10 @@ public class Editor {
         return db.getLastFiftyMessagesBetweenUsers(user);
     }
 
+    public List<PrivateMessage> loadOlderMessages(String user, long timestamp) {
+        return db.getLastFiftyMessagesBetweenUsers(user, timestamp);
+    }
+
 
     /**
      * add message to channel chat
