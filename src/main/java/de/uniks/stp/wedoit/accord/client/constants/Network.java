@@ -1,5 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
+/**
+ * includes constants to handle operations concerning Network, means rest and websocket connection.
+ */
 public class Network {
     public static final String REST_SERVER_URL = "https://ac.uniks.de";
     public static final String USERS_PATH = "/users";

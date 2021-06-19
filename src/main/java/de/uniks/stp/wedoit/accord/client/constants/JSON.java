@@ -1,5 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
+/**
+ * includes constants to create and handle incoming jsons
+ */
 public class JSON {
     public static final String STATUS = "status";
     public static final String MESSAGE = "message";
