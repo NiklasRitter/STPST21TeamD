@@ -195,9 +195,6 @@ public class WebSocketManager {
         }
         if (action.equals(CATEGORY_DELETED)){
             Category category = editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
-            for (Channel channel : category.getChannels()) {
-                channel.removeYou();
-            }
             category.removeYou();
         }
 
