@@ -293,7 +293,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals("Invites you to Rock - Paper - Scissors!", lwPrivateChat.getItems().get(lwNewestItem).getText());
+        Assert.assertEquals(GAME_INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
 
         clickOn(btnPlay);
 

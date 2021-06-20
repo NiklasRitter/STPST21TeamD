@@ -689,7 +689,7 @@ public class ServerScreenTest extends ApplicationTest {
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
         Assert.assertEquals(channel.getName(), webSocketCallbackChannelCreated().getJsonObject(DATA).getString(NAME));
         Assert.assertEquals(channel.getId(), webSocketCallbackChannelCreated().getJsonObject(DATA).getString(ID));
-        Assert.assertFalse(channel.isRead());
+        Assert.assertTrue(channel.isRead());
         Assert.assertEquals(category.getServer().getCategories().size(), 2);
         Assert.assertEquals(category.getChannels().size(), 1);
 
