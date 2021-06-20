@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class EditChannelScreenController implements Controller {
@@ -34,7 +35,7 @@ public class EditChannelScreenController implements Controller {
     private Button btnDeleteChannel;
     private Label errorLabel, lblMembers;
     private VBox vBoxMemberNameAndCheckBox;
-    private ArrayList<MemberListSubViewController> memberListSubViewControllers;
+    private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList;
     private Boolean isPrivilegedUser = false;
 
@@ -114,12 +115,8 @@ public class EditChannelScreenController implements Controller {
         for (User user : this.editor.getCurrentServer().getMembers()) {
             try {
                 if (!user.getId().equals(this.localUser.getId())) {
-                    if (this.channel.isPrivileged() && userList.contains(user.getId())) {
-                        isPrivilegedUser = true;
-                    } else {
-                        isPrivilegedUser = false;
-                    }
-                    Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
+                    isPrivilegedUser = this.channel.isPrivileged() && userList.contains(user.getId());
+                    Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/MemberListSubView.fxml")));
                     MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this, isPrivilegedUser);
                     memberListSubViewController.init();
 
@@ -141,6 +138,7 @@ public class EditChannelScreenController implements Controller {
         // Remove all action listeners
         btnSave.setOnAction(null);
         btnDeleteChannel.setOnAction(null);
+        checkBoxPrivileged.setOnAction(null);
     }
 
 
@@ -197,8 +195,6 @@ public class EditChannelScreenController implements Controller {
     }
 
     public void removeFromUserList(User user) {
-        if (userList.contains(user.getId())) {
-            userList.remove(user.getId());
-        }
+        userList.remove(user.getId());
     }
 }

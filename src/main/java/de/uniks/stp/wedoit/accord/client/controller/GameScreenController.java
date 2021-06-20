@@ -19,22 +19,23 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class GameScreenController implements Controller {
 
-    private Parent view;
-    private LocalUser localUser;
-    private Editor editor;
-    private User opponent;
-    private Label lbOpponent, lbScore;
+    private final Parent view;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final User opponent;
+    private Label lbScore;
     private ImageView imgYouPlayed, imgOppPlayed;
     private Button btnRock, btnPaper, btnScissors;
     private String gameAction;
-    private List<User> oldInvites;
+    private final List<User> oldInvites;
     private final PropertyChangeListener opponentGameMove = this::onOpponentGameMove;
-    private final Image choosingIMG = new Image(getClass().getResource(CHOOSINGIMG).toString());
+    private final Image choosingIMG = new Image(Objects.requireNonNull(getClass().getResource(CHOOSINGIMG)).toString());
 
     private final IntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
 
@@ -71,7 +72,7 @@ public class GameScreenController implements Controller {
         localUser.withoutGameInvites(oldInvites);
         opponent.setGameMove(null);
 
-        this.lbOpponent = (Label) view.lookup("#lbOpponent");
+        Label lbOpponent = (Label) view.lookup("#lbOpponent");
         this.imgYouPlayed = (ImageView) view.lookup("#imgYouPlayed");
         this.imgOppPlayed = (ImageView) view.lookup("#imgOppPlayed");
         this.btnPaper = (Button) view.lookup("#btnPaper");
@@ -79,7 +80,7 @@ public class GameScreenController implements Controller {
         this.btnScissors = (Button) view.lookup("#btnScissors");
         this.lbScore = (Label) view.lookup("#lbScore");
 
-        this.lbOpponent.setText(opponent.getName());
+        lbOpponent.setText(opponent.getName());
 
         this.imgYouPlayed.setImage(choosingIMG);
         this.imgOppPlayed.setImage(choosingIMG);
@@ -106,17 +107,17 @@ public class GameScreenController implements Controller {
         JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), PREFIX + gameAction);
         editor.getNetworkController().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
 
-        imgYouPlayed.setImage(new Image(getClass().getResource(IMGURL + gameAction + ".png").toString()));
+        imgYouPlayed.setImage(new Image(Objects.requireNonNull(getClass().getResource(IMGURL + gameAction + ".png")).toString()));
 
         if (opponent.getGameMove() != null) {
-            imgOppPlayed.setImage(new Image(getClass().getResource(IMGURL + opponent.getGameMove() + ".png").toString()));
+            imgOppPlayed.setImage(new Image(Objects.requireNonNull(getClass().getResource(IMGURL + opponent.getGameMove() + ".png")).toString()));
 
             resolveGameOutcome();
 
             opponent.setGameMove(null);
             gameAction = null;
         } else {
-            imgOppPlayed.setImage(new Image(getClass().getResource(CHOOSINGIMG).toString()));
+            imgOppPlayed.setImage(new Image(Objects.requireNonNull(getClass().getResource(CHOOSINGIMG)).toString()));
         }
     }
 
@@ -127,8 +128,8 @@ public class GameScreenController implements Controller {
      */
     private void onOpponentGameMove(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null && gameAction != null) {
-            imgYouPlayed.setImage(new Image(getClass().getResource(IMGURL + gameAction + ".png").toString()));
-            imgOppPlayed.setImage(new Image(getClass().getResource(IMGURL + opponent.getGameMove() + ".png").toString()));
+            imgYouPlayed.setImage(new Image(Objects.requireNonNull(getClass().getResource(IMGURL + gameAction + ".png")).toString()));
+            imgOppPlayed.setImage(new Image(Objects.requireNonNull(getClass().getResource(IMGURL + opponent.getGameMove() + ".png")).toString()));
 
             resolveGameOutcome();
 

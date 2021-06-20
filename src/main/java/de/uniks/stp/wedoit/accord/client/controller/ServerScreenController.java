@@ -46,7 +46,7 @@ public class ServerScreenController implements Controller {
     private Label lbServerName;
     private TreeView<Object> tvServerChannels;
     private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
-    private PropertyChangeListener userListViewListener = this::changeUserList;
+    private final PropertyChangeListener userListViewListener = this::changeUserList;
 
     private ListView<User> lvServerUsers;
     private TextField tfInputMessage;
@@ -146,9 +146,7 @@ public class ServerScreenController implements Controller {
 
     private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            Platform.runLater(() -> {
-                this.refreshLvUsers();
-            });
+            Platform.runLater(this::refreshLvUsers);
         }
     }
 
@@ -286,9 +284,7 @@ public class ServerScreenController implements Controller {
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
-        quote.setOnAction((event) -> {
-            handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem());
-        });
+        quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -343,9 +339,7 @@ public class ServerScreenController implements Controller {
     public void handleGetExplicitServerInformation(JsonArray members) {
         if (members != null) {
             // create users which are member in the server and load user list view
-            Platform.runLater(() -> {
-                lbServerName.setText(server.getName());
-            });
+            Platform.runLater(() -> lbServerName.setText(server.getName()));
 
             createUserListView(members);
         } else {
@@ -443,9 +437,7 @@ public class ServerScreenController implements Controller {
      */
     private void handleChannelReadChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            Platform.runLater(() -> {
-                tvServerChannels.refresh();
-            });
+            Platform.runLater(() -> tvServerChannels.refresh());
         }
     }
 
@@ -530,7 +522,7 @@ public class ServerScreenController implements Controller {
      * <p>
      * shows a context menu for a message if the message is not a quote and is clicked with primary mouse button
      *
-     * @param mouseEvent
+     * @param mouseEvent Expects a MouseEvent
      */
     private void lvTextChatOnClick(MouseEvent mouseEvent) {
         lvTextChat.setContextMenu(null);

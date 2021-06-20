@@ -37,7 +37,6 @@ public class MainScreenController implements Controller {
     private Button addServerButton;
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
-    private MainScreenServerListView mainScreenServerListView;
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
     private Button enterInvitationButton;
@@ -89,7 +88,7 @@ public class MainScreenController implements Controller {
     public void handleGetServers(boolean success) {
         if (success) {
             // load list view
-            mainScreenServerListView = new MainScreenServerListView();
+            MainScreenServerListView mainScreenServerListView = new MainScreenServerListView();
             serverListView.setCellFactory(mainScreenServerListView);
             List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
                     .collect(Collectors.toList());

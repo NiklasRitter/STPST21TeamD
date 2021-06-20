@@ -12,7 +12,6 @@ import javafx.scene.control.TextField;
 
 public class CreateServerScreenController implements Controller {
 
-    private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
     private TextField tfServerName;
@@ -28,7 +27,6 @@ public class CreateServerScreenController implements Controller {
      */
     public CreateServerScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
-        this.localUser = model;
         this.editor = editor;
     }
 

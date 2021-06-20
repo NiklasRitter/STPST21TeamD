@@ -28,7 +28,7 @@ public class StageManager extends Application {
 
     private final Map<String, Controller> controllerMap = new HashMap<>();
     private ResourceManager resourceManager = new ResourceManager();
-    private Editor editor = new Editor();
+    private final Editor editor = new Editor();
     private PreferenceManager prefManager = new PreferenceManager();
     private SystemTrayController systemTrayController;
     private AccordClient model;
@@ -386,7 +386,7 @@ public class StageManager extends Application {
     public void showCreateChannelScreen(Category category) {
         try {
             //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateChannelScreen.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditChannelScreen.fxml")));
             popupScene = new Scene(root);
 
             updateDarkmode();

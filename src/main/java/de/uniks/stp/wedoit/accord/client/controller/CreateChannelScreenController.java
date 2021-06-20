@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 
@@ -35,8 +36,9 @@ public class CreateChannelScreenController implements Controller {
     private CheckBox checkBoxPrivileged;
     private Label errorLabel, lblMembers;
     private VBox vBoxMemberNameAndCheckBox;
-    private ArrayList<MemberListSubViewController> memberListSubViewControllers;
-    private List<String> userList = new LinkedList<>();
+    private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
+    private final List<String> userList = new LinkedList<>();
+    private Button btnDeleteChannel;
 
     /**
      * Create a new Controller
@@ -62,7 +64,8 @@ public class CreateChannelScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        this.btnCreateChannel = (Button) view.lookup("#btnCreateChannel");
+        this.btnCreateChannel = (Button) view.lookup("#btnSave");
+        this.btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
         this.tfChannelName = (TextField) view.lookup("#tfChannelName");
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
@@ -71,6 +74,9 @@ public class CreateChannelScreenController implements Controller {
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
         checkIfIsPrivileged();
+
+        this.btnCreateChannel.setText("Create");
+        this.btnDeleteChannel.setVisible(false);
 
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::createChannelButtonOnClick);
@@ -103,7 +109,7 @@ public class CreateChannelScreenController implements Controller {
         for (User user : this.editor.getCurrentServer().getMembers()) {
             try {
                 if (!user.getId().equals(this.localUser.getId())) {
-                    Parent view = FXMLLoader.load(StageManager.class.getResource("view/subview/MemberListSubView.fxml"));
+                    Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/MemberListSubView.fxml")));
                     MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this, false);
                     memberListSubViewController.init();
 

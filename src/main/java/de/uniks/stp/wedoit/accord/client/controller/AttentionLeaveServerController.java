@@ -11,7 +11,6 @@ public class AttentionLeaveServerController implements Controller {
 
     private final Editor editor;
     private final Parent view;
-    private final LocalUser localUser;
     private final Server server;
 
     private Button btnLeave;
@@ -20,7 +19,6 @@ public class AttentionLeaveServerController implements Controller {
     public AttentionLeaveServerController(Parent view, Editor editor, LocalUser localUser, Server server) {
         this.editor = editor;
         this.view = view;
-        this.localUser = localUser;
         this.server = server;
     }
 

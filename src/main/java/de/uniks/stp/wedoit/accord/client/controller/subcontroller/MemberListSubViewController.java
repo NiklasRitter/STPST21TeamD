@@ -16,9 +16,8 @@ public class MemberListSubViewController implements Controller {
     private final User user;
     private final Parent view;
     private final Controller controller;
-    private VBox vBoxMemberName, vBoxCheckBox;
     private CheckBox checkBoxPrivilegedMember;
-    private Boolean isPrivilegedUser;
+    private final Boolean isPrivilegedUser;
 
     public MemberListSubViewController(User user, Parent view, Controller controller, Boolean isPrivilegedUser) {
         this.user = user;
@@ -29,14 +28,14 @@ public class MemberListSubViewController implements Controller {
 
     @Override
     public void init() {
-        this.vBoxMemberName = (VBox) this.view.lookup("#vBoxMemberName");
-        this.vBoxCheckBox = (VBox) this.view.lookup("#vBoxCheckBox");
+        VBox vBoxMemberName = (VBox) this.view.lookup("#vBoxMemberName");
+        VBox vBoxCheckBox = (VBox) this.view.lookup("#vBoxCheckBox");
 
         this.checkBoxPrivilegedMember = new CheckBox();
         this.checkBoxPrivilegedMember.setSelected(isPrivilegedUser);
         this.checkBoxPrivilegedMember.setOnAction(this::checkBoxOnClick);
-        this.vBoxMemberName.getChildren().add(new Label(user.getName()));
-        this.vBoxCheckBox.getChildren().add(checkBoxPrivilegedMember);
+        vBoxMemberName.getChildren().add(new Label(user.getName()));
+        vBoxCheckBox.getChildren().add(checkBoxPrivilegedMember);
     }
 
     /**

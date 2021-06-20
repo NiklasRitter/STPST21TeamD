@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 
 public class CreateCategoryScreenController implements Controller {
 
-    private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
     private TextField tfCategoryName;
@@ -29,7 +28,6 @@ public class CreateCategoryScreenController implements Controller {
      */
     public CreateCategoryScreenController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
-        this.localUser = model;
         this.editor = editor;
     }
 

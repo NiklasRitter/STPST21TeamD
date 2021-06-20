@@ -160,7 +160,7 @@ public class EditServerScreenController implements Controller {
      * In this method a new servername has to be set if set if the
      * user types in a new servername and close popup Window
      *
-     * @param actionEvent
+     * @param actionEvent expects an ActionEvent
      */
     private void saveButtonOnClick(ActionEvent actionEvent) {
         String newServerName = tfNewServernameInput.getText();
@@ -318,9 +318,7 @@ public class EditServerScreenController implements Controller {
 
     public void handleChangeServerName(boolean status) {
         if (status) {
-            Platform.runLater(() -> {
-                this.stage.close();
-            });
+            Platform.runLater(this.stage::close);
         } else {
             Platform.runLater(() -> {
                 lblError.setText("Error. Change Servername not successful!");

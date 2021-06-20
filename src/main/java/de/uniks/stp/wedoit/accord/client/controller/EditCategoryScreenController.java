@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 
 public class EditCategoryScreenController implements Controller {
 
-    private final LocalUser localUser;
     private final Editor editor;
     private final Parent view;
     private final Category category;
@@ -32,7 +31,6 @@ public class EditCategoryScreenController implements Controller {
      */
     public EditCategoryScreenController(Parent view, LocalUser model, Editor editor, Category category) {
         this.view = view;
-        this.localUser = model;
         this.editor = editor;
         this.category = category;
     }

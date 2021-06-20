@@ -118,9 +118,7 @@ public class PrivateChatsScreenController implements Controller {
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
-        quote.setOnAction((event) -> {
-            handleContextMenuClicked(QUOTE, lwPrivateChat.getSelectionModel().getSelectedItem());
-        });
+        quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lwPrivateChat.getSelectionModel().getSelectedItem()));
     }
 
 
@@ -370,7 +368,7 @@ public class PrivateChatsScreenController implements Controller {
     }
 
     /**
-     * @param privateMessage
+     * @param privateMessage expects a privateMessage
      */
     public void newChatMessage(PrivateMessage privateMessage) {
         List<User> userCell = lwOnlineUsers.getItems().stream().filter(user1 -> user1.getName().equals(privateMessage.getFrom())).collect(Collectors.toList());

@@ -196,11 +196,10 @@ public class Editor {
     /**
      * This method gives the the server categories which are created with the data of the JSONArray
      * The categories dont have channels.
-     *
-     * @param server                  server which gets the categories
+     *  @param server                  server which gets the categories
      * @param serversCategoryResponse server answer for categories of the server
      */
-    public List<Category> haveCategories(Server server, JsonArray serversCategoryResponse) {
+    public void haveCategories(Server server, JsonArray serversCategoryResponse) {
         Objects.requireNonNull(server);
         Objects.requireNonNull(serversCategoryResponse);
 
@@ -214,16 +213,15 @@ public class Editor {
                 category.setServer(server);
             }
         }
-        return server.getCategories();
+        server.getCategories();
     }
 
     /**
      * This method gives the category channels which are created with the data of the JSONArray
-     *
-     * @param category                  category which gets the channels
+     *  @param category                  category which gets the channels
      * @param categoriesChannelResponse server answer for channels of the category
      */
-    public List<Channel> haveChannels(Category category, JsonArray categoriesChannelResponse) {
+    public void haveChannels(Category category, JsonArray categoriesChannelResponse) {
         Objects.requireNonNull(category);
         Objects.requireNonNull(categoriesChannelResponse);
 
@@ -244,16 +242,15 @@ public class Editor {
                 }
             }
         }
-        return category.getChannels();
+        category.getChannels();
     }
 
     /**
      * deletes a user with the given id
      *
      * @param id id of the user
-     * @return this
      */
-    public Editor userLeft(String id) {
+    public void userLeft(String id) {
         LocalUser localUser = accordClient.getLocalUser();
 
         Objects.requireNonNull(localUser);
@@ -263,11 +260,10 @@ public class Editor {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
                     user.setOnlineStatus(false);
-                    return this;
+                    return;
                 }
             }
         }
-        return this;
     }
 
     /**
@@ -369,10 +365,8 @@ public class Editor {
      *
      * @param id     id of the member who should deleted
      * @param server server with member
-     * @return the given server if the user was deleted
-     * return null, if user was not in the members list
      */
-    public Server userWithoutServer(String id, Server server) {
+    public void userWithoutServer(String id, Server server) {
         User thisUser = null;
         for (User user : server.getMembers()) {
             if (user.getId().equals(id)) {
@@ -388,9 +382,7 @@ public class Editor {
                     }
                 }
             }
-            return server;
         }
-        return null;
     }
 
     /**
@@ -528,11 +520,11 @@ public class Editor {
         return null;
     }
 
-    public Boolean copyToSystemClipBoard(String text) {
+    public void copyToSystemClipBoard(String text) {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
         content.putString(text);
-        return clipboard.setContent(content);
+        clipboard.setContent(content);
     }
 
     /**
@@ -619,9 +611,7 @@ public class Editor {
         } else {
             Platform.runLater(stageManager::showLoginScreen);
         }
-        Platform.runLater(() -> {
-            stageManager.getStage().show();
-        });
+        Platform.runLater(() -> stageManager.getStage().show());
     }
 
 
