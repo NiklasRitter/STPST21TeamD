@@ -33,6 +33,7 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
                 setMinWidth(param.getWidth() - 20);
                 setMaxWidth(param.getWidth() - 20);
                 setPrefWidth(param.getWidth() - 20);
+                setAlignment(Pos.CENTER_LEFT);
 
                 // allow wrapping
                 setWrapText(true);
