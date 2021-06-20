@@ -339,8 +339,8 @@ public class Editor {
         return db.getLastFiftyMessagesBetweenUsers(user);
     }
 
-    public List<PrivateMessage> loadOlderMessages(String user, long timestamp) {
-        return db.getLastFiftyMessagesBetweenUsers(user, timestamp);
+    public List<PrivateMessage> loadOlderMessages(String user, int offset) {
+        return db.getLastFiftyMessagesBetweenUsers(user, offset);
     }
 
 
