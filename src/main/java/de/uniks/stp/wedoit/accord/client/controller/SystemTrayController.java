@@ -33,7 +33,7 @@ public class SystemTrayController {
      */
     public void init() {
         try {
-            Image image = Toolkit.getDefaultToolkit().createImage(StageManager.class.getResource("view/images/Logo.png"));
+            Image image = Toolkit.getDefaultToolkit().createImage(StageManager.class.getResource("view/images/LogoAccord.png"));
             trayIcon = new TrayIcon(image, "Accord");
             trayIcon.setImageAutoSize(true);
             trayIcon.addActionListener(this::handleClickTrayIcon);

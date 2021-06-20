@@ -50,10 +50,10 @@ public class PrivateChatsScreenController implements Controller {
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private final PropertyChangeListener chatListener = this::newMessage;
     private ObservableList<User> onlineUserObservableList;
-    private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private List<User> availableUsers = new ArrayList<>();
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser;
+    private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private ContextMenu messageContextMenu;
     private HBox quoteVisible;
     private Label lblQuote;
@@ -109,7 +109,9 @@ public class PrivateChatsScreenController implements Controller {
 
         this.initOnlineUsersList();
 
-
+        this.tfPrivateChat.setPromptText("select a User");
+        this.tfPrivateChat.setEditable(false);
+        this.btnPlay.setVisible(false);
     }
 
 
@@ -261,6 +263,10 @@ public class PrivateChatsScreenController implements Controller {
                     this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
+                if (user.getName().equals(this.lblSelectedUser.getText())) {
+                    this.tfPrivateChat.setPromptText(user.getName() + " is offline");
+                    this.tfPrivateChat.setEditable(false);
+                }
             });
         } else {
             Platform.runLater(() -> {
@@ -268,6 +274,10 @@ public class PrivateChatsScreenController implements Controller {
                 this.onlineUserObservableList.add(user);
                 this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
                 lwOnlineUsers.refresh();
+                if (user.getName().equals(this.lblSelectedUser.getText())) {
+                    this.tfPrivateChat.setPromptText("your message");
+                    this.tfPrivateChat.setEditable(true);
+                }
             });
         }
     }
@@ -323,6 +333,9 @@ public class PrivateChatsScreenController implements Controller {
         user.setChatRead(true);
         editor.updateUserChatRead(user);
         this.lblSelectedUser.setText(this.currentChat.getUser().getName());
+        this.tfPrivateChat.setPromptText("your message");
+        this.tfPrivateChat.setEditable(true);
+        this.btnPlay.setVisible(true);
 
         // load list view
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
@@ -362,13 +375,6 @@ public class PrivateChatsScreenController implements Controller {
 
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
-    }
-
-    /**
-     * @param privateMessage
-     */
-    public void newChatMessage(PrivateMessage privateMessage) {
-        List<User> userCell = lwOnlineUsers.getItems().stream().filter(user1 -> user1.getName().equals(privateMessage.getFrom())).collect(Collectors.toList());
     }
 
     /**

@@ -41,9 +41,9 @@ public class SqliteDB {
                     + ");"
             );
             c.close();
+            stmt.close();
 
-        } catch (Exception e) {
-            System.err.println("Couldnt init db");
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -233,6 +233,8 @@ public class SqliteDB {
                 if (rs.getString("sender").equals(username)) users.add(rs.getString("receiver"));
                 else users.add(rs.getString("sender"));
             }
+            conn.close();
+            prep.close();
 
         } catch (Exception e) {
             e.printStackTrace();
