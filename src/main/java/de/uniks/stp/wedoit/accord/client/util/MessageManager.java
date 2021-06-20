@@ -6,13 +6,13 @@ import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
 
+import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_PREFIX;
 
@@ -30,37 +30,74 @@ public class MessageManager {
      * @param message to add to the model
      */
     public void addNewPrivateMessage(PrivateMessage message) {
-        if (message.getText().equals(GAMEINVITE)) {
-            if (message.getFrom().equals(editor.getLocalUser().getName()))
-                editor.getLocalUser().withGameRequests(editor.getUser(message.getTo()));
-            else editor.getLocalUser().withGameInvites(editor.getUser(message.getFrom()));
-            message.setText(message.getText().substring(PREFIX.length()));
-        }
-        if (message.getText().startsWith(PREFIX) && (message.getText().endsWith(ROCK) || message.getText().endsWith(PAPER) || message.getText().endsWith(SCISSORS))) {
-            if (!message.getFrom().equals(editor.getLocalUser().getName()))
-                editor.getUser(message.getFrom()).setGameMove(message.getText().substring(PREFIX.length()));
-
+        
+        if(message.getText().startsWith(GAME_PREFIX) && handleGameMessages(message)) return;
+        
+        if (message.getFrom().equals(editor.getLocalUser().getName())) {
+            editor.getUser(message.getTo()).getPrivateChat().withMessages(message);
         } else {
-            if (message.getFrom().equals(editor.getLocalUser().getName())) {
-                editor.getUser(message.getTo()).getPrivateChat().withMessages(message);
-            } else {
-                SystemTrayController systemTrayController = editor.getStageManager().getSystemTrayController();
-                if (systemTrayController != null) {
-                    systemTrayController.displayPrivateMessageNotification(message);
-                }
-                User user = editor.getUser(message.getFrom());
-                Chat privateChat = user.getPrivateChat();
-                if (privateChat == null) {
-                    privateChat = new Chat().setName(user.getName()).setUser(user);
-                    user.setPrivateChat(privateChat);
-                }
-                message.setChat(privateChat);
-                privateChat.withMessages(message);
-                user.setChatRead(false);
-                editor.updateUserChatRead(user);
+            SystemTrayController systemTrayController = editor.getStageManager().getSystemTrayController();
+            if (systemTrayController != null) {
+                systemTrayController.displayPrivateMessageNotification(message);
             }
-            editor.savePrivateMessage(message);
+            User user = editor.getUser(message.getFrom());
+            Chat privateChat = user.getPrivateChat();
+            if (privateChat == null) {
+                privateChat = new Chat().setName(user.getName()).setUser(user);
+                user.setPrivateChat(privateChat);
+            }
+            message.setChat(privateChat);
+            privateChat.withMessages(message);
+            user.setChatRead(false);
+            editor.updateUserChatRead(user);
         }
+        editor.savePrivateMessage(message);
+    }
+
+    private boolean handleGameMessages(PrivateMessage message){
+        //game messages
+        if(message.getText().equals(GAME_INVITE)){
+            if(message.getTo().equals(editor.getLocalUser().getName()))
+                editor.getLocalUser().withGameInvites(editor.getUser(message.getFrom()));
+            else
+                editor.getLocalUser().withGameRequests(editor.getUser(message.getTo()));
+        }
+
+        if(message.getText().equals(GAME_ACCEPTS)){
+            System.out.println(editor.getStageManager().getGameStage().getTitle().equals("Result"));
+            if(!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result")) {
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getTo().equals(editor.getLocalUser().getName()) ? message.getFrom(): message.getTo(), GAME_START);
+                editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+                return true;
+
+            }else{
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo(): message.getFrom(), GAME_INGAME);
+                editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+                return true;
+
+            }
+        }else if(message.getText().equals(GAME_START)  && (editor.getLocalUser().getGameInvites().contains(editor.getUser(message.getTo())) || editor.getLocalUser().getGameRequests().contains(editor.getUser(message.getFrom())))) {
+            //Start game
+            editor.getLocalUser().withoutGameInvites(editor.getUser(message.getTo()));
+            editor.getLocalUser().withoutGameRequests(editor.getUser(message.getFrom()));
+
+            Platform.runLater(() -> {
+                if (message.getFrom().equals(editor.getLocalUser().getName()))
+                    editor.getStageManager().showGameScreen(editor.getUser(message.getTo()));
+                else
+                    editor.getStageManager().showGameScreen(editor.getUser(message.getFrom()));
+            });
+
+        }else if(message.getText().equals(GAME_CLOSE) && editor.getStageManager().getGameStage().isShowing()){
+            Platform.runLater(() -> editor.getStageManager().showGameResultScreen(editor.getUser(message.getFrom()),null));
+        }
+
+        if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {
+            if (!message.getFrom().equals(editor.getLocalUser().getName()))
+                editor.getUser(message.getFrom()).setGameMove(message.getText().substring(GAME_PREFIX.length()));
+            return true;
+        }
+        return false;
     }
 
     /**

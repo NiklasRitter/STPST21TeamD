@@ -247,7 +247,7 @@ public class StageManager extends Application {
             //init controller
             GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), opponent, editor);
             gameScreenController.init();
-            controllerMap.put(GAME_SCREEN_CONTROLLER, gameScreenController);
+            controllerMap.put("gameScreenController", gameScreenController);
 
             // display
             gameStage.setTitle("Rock - Paper - Scissors");
@@ -255,6 +255,8 @@ public class StageManager extends Application {
             gameStage.setScene(gameScene);
             gameStage.centerOnScreen();
             gameStage.setResizable(true);
+            gameStage.setHeight(450);
+            gameStage.setWidth(600);
             gameStage.show();
         } catch (Exception e) {
             System.err.println("Error on showing GameScreen");
@@ -266,32 +268,32 @@ public class StageManager extends Application {
      * loads fxml of the GameScreen and show the GameScreen on the window
      */
     public void showGameResultScreen(User opponent, Boolean isWinner) {
-        if (gameStage.isShowing()) {
-            gameStage.close();
-            try {
-                Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
+            if (gameScene != null) {
+                gameScene.setRoot(root);
+            } else {
                 gameScene = new Scene(root);
-
-                updateDarkmode();
-
-                //init controller
-                GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
-                gameResultScreenController.init();
-                controllerMap.put(GAME_RESULT_SCREEN_CONTROLLER, gameResultScreenController);
-
-                gameStage.setTitle("Result");
-                if (gameStage.getStyle() != StageStyle.DECORATED) gameStage.initStyle(StageStyle.DECORATED);
-                gameStage.setScene(gameScene);
-                gameStage.setMinHeight(0);
-                gameStage.setMinWidth(0);
-                gameStage.centerOnScreen();
-                gameStage.setResizable(false);
-                gameStage.show();
-
-            } catch (Exception e) {
-                System.err.println("Error on loading GameResultScreen");
-                e.printStackTrace();
             }
+
+            updateDarkmode();
+
+            //init controller
+            GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
+            gameResultScreenController.init();
+            controllerMap.put("GameResultScreenController", gameResultScreenController);
+
+            gameStage.setTitle("Result");
+
+            gameStage.setMinHeight(0);
+            gameStage.setMinWidth(0);
+            gameStage.setHeight(170);
+            gameStage.setWidth(370);
+            gameStage.setResizable(false);
+            gameStage.setScene(gameScene);
+        } catch (Exception e) {
+            System.err.println("Error on loading GameResultScreen");
+            e.printStackTrace();
         }
 
     }

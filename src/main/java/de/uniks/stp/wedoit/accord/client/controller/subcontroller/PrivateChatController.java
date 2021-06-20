@@ -27,10 +27,9 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEACCEPT;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.PREFIX;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_ACCEPTS;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class PrivateChatController implements Controller {
@@ -43,7 +42,7 @@ public class PrivateChatController implements Controller {
     private ContextMenu messageContextMenu;
     private HBox quoteVisible;
     private Label lblQuote;
-    private Button btnCancelQuote;
+    private Button btnCancelQuote, btnPlay;
     private TextField tfPrivateChat;
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private ListView<PrivateMessage> lwPrivateChat;
@@ -73,11 +72,13 @@ public class PrivateChatController implements Controller {
         this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
         this.lblQuote = (Label) view.lookup("#lblQuote");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
+        this.btnPlay = (Button) view.lookup("#btnPlay");
 
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
         this.lwPrivateChat.setOnMouseClicked(this::onLwPrivatChatClicked);
         this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
         this.btnCancelQuote.setOnAction(this::cancelQuote);
+        this.btnPlay.setOnAction(this::btnPlayOnClicked);
         quoteVisible.getChildren().clear();
         addMessageContextMenu();
         this.tfPrivateChat.setPromptText("select a User");
@@ -175,18 +176,14 @@ public class PrivateChatController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
-            if (localUser.getGameInvites().contains(editor.getUser(message.getFrom()))) {
-                Platform.runLater(() -> controller.setBtnPlayText("Accept"));
-            }
-
-            if (message.getText().equals(GAMEACCEPT) && localUser.getGameRequests().contains(editor.getUser(message.getFrom()))) {
-                message.setText(message.getText().substring(10));
-                Platform.runLater(() -> this.editor.getStageManager().showGameScreen(editor.getUser(message.getFrom())));
-            }
-
-            if (message.getText().startsWith(PREFIX)) message.setText(message.getText().substring(PREFIX.length()));
-
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
+
+            if(message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName())){
+                Platform.runLater(()-> btnPlay.setText("Accept"));
+            }
+            if(message.getText().equals(GAME_START) && currentChat != null){
+                Platform.runLater(()-> btnPlay.setText("Play"));
+            }
         }
     }
 
@@ -282,6 +279,8 @@ public class PrivateChatController implements Controller {
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMessage.toString());
 
             } else {
+                if(message.equals(GAME_INVITE) || message.equals(GAME_ACCEPTS) || message.equals(GAME_CLOSE) || message.equals(GAME_START) || message.equals(GAME_INGAME))
+                    message = message.substring(GAME_PREFIX.length());
                 jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
             }
@@ -311,6 +310,26 @@ public class PrivateChatController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         }
+    }
+
+    /**
+     * Send a game request or accept a pending invite, if invite accepted redirect to GameScreen
+     *
+     * @param actionEvent occurs when Play Button is clicked
+     */
+    private void btnPlayOnClicked(ActionEvent actionEvent) {
+        if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play") && !localUser.getGameRequests().contains(currentChat.getUser())) {
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_INVITE);
+            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+        }else if ((currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept"))
+                &&
+                (!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result"))) {
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPTS);
+            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+        }else if(currentChat != null && currentChat.getUser() != null && editor.getStageManager().getGameStage().isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())){
+            privateMessageObservableList.add(new PrivateMessage().setText("###game### System: Cant play two games at once."));
+        }
+
     }
 
     public Chat getCurrentChat() {

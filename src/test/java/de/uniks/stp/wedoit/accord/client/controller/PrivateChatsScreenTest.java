@@ -222,7 +222,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         //send game invite
-        JsonObject gameInvite = JsonUtil.buildPrivateChatMessage(user.getName(), GAMEINVITE);
+        JsonObject gameInvite = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_INVITE);
         mockChatWebSocket(getTestMessageServerAnswer(gameInvite));
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -233,18 +233,18 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
 
         //receive game accepted message
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAMEACCEPT));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertTrue(stageManager.getGameStage().isShowing());
         Assert.assertEquals("Rock - Paper - Scissors", stageManager.getGameStage().getTitle());
 
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + ROCK));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_ROCK));
         WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#btnPaper");
-        JsonObject gameAction = JsonUtil.buildPrivateChatMessage(user.getName(), PREFIX + PAPER);
+        JsonObject gameAction = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_PREFIX + GAME_PAPER);
         mockChatWebSocket(getTestMessageServerAnswer(gameAction));
         WaitForAsyncUtils.waitForFxEvents();
     }
@@ -267,7 +267,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
         //receive invite message
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAMEINVITE));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("Accept", btnPlay.getText());
@@ -280,7 +280,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         clickOn(btnPlay);
 
-        JsonObject gameAccept = JsonUtil.buildPrivateChatMessage(user.getName(), GAMEACCEPT);
+        JsonObject gameAccept = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_ACCEPT);
         mockChatWebSocket(getTestMessageServerAnswer(gameAccept));
         WaitForAsyncUtils.waitForFxEvents();
 

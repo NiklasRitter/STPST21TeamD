@@ -8,7 +8,6 @@ import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.PrivateChatsScreenOnlineUsersCellFactory;
-import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,13 +20,11 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEACCEPT;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEINVITE;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class PrivateChatsScreenController implements Controller {
 
@@ -79,7 +76,7 @@ public class PrivateChatsScreenController implements Controller {
         privateChatController.init();
 
         this.btnHome.setOnAction(this::btnHomeOnClicked);
-        this.btnPlay.setOnAction(this::btnPlayOnClicked);
+
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
@@ -133,24 +130,7 @@ public class PrivateChatsScreenController implements Controller {
         this.editor.getStageManager().showMainScreen();
     }
 
-    /**
-     * Send a game request or accept a pending invite, if invite accepted redirect to GameScreen
-     *
-     * @param actionEvent occurs when Play Button is clicked
-     */
-    private void btnPlayOnClicked(ActionEvent actionEvent) {
-        Chat currentChat = privateChatController.getCurrentChat();
-        if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play")) {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEINVITE);
-            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
-        } else if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept")) {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAMEACCEPT);
-            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
-            btnPlay.setText("Play");
-            this.editor.getStageManager().showGameScreen(currentChat.getUser());
-        }
 
-    }
 
     /**
      * redirect to Options Menu
@@ -256,6 +236,7 @@ public class PrivateChatsScreenController implements Controller {
             newUser.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
             newUser.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
             this.availableUsers.add(newUser);
+            if (newUser.getPrivateChat() == null) newUser.setChatRead(true);
             Platform.runLater(() -> {
                 this.onlineUserObservableList.removeIf((e)-> e.getName().equals(newUser.getName()));
                 this.onlineUserObservableList.add(newUser);

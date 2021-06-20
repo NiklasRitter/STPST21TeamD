@@ -163,13 +163,14 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
-                    user.setOnlineStatus(false);
+                    user.setOnlineStatus(true);
+                    user.setChatRead(true);
                     return localUser;
                 }
             }
         }
 
-        User user = new User().setId(id).setName(name).setOnlineStatus(true);
+        User user = new User().setId(id).setName(name).setOnlineStatus(true).setChatRead(true);
         localUser.withUsers(user);
         return localUser;
     }
@@ -240,11 +241,11 @@ public class Editor {
     public Boolean resultOfGame(String ownAction, String oppAction) {
         if (ownAction.equals(oppAction)) return null;
 
-        if (ownAction.equals(ROCK)) return oppAction.equals(SCISSORS);
+        if (ownAction.equals(GAME_ROCK)) return oppAction.equals(GAME_SCISSORS);
 
-        else if (ownAction.equals(PAPER)) return oppAction.equals(ROCK);
+        else if (ownAction.equals(GAME_PAPER)) return oppAction.equals(GAME_ROCK);
 
-        else return oppAction.equals(PAPER);
+        else return oppAction.equals(GAME_PAPER);
     }
 
     /**
