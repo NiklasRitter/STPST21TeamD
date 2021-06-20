@@ -166,15 +166,16 @@ public class WebSocketManager {
 
                 if (action.equals(USER_JOINED)) {
                     user.setOnlineStatus(true);
+                    server.firePropertyChange(Server.PROPERTY_MEMBERS, null, server.getMembers());
                 }
                 if (action.equals(USER_LEFT)) {
                     user.setOnlineStatus(false);
+                    server.firePropertyChange(Server.PROPERTY_MEMBERS, null, server.getMembers());
                 }
                 if (action.equals(USER_ARRIVED)) {
                     user.setOnlineStatus(data.getBoolean(ONLINE));
                 }
             }
-            server.firePropertyChange(Server.PROPERTY_MEMBERS, null, server.getMembers());
         }
 
         // change data of the server

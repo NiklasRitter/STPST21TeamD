@@ -257,9 +257,9 @@ public class RestManager {
 
                 List<Channel> channelList = category.getChannels().stream().sorted(Comparator.comparing(Channel::getName))
                         .collect(Collectors.toList());
-                controller.handleGetChannels(channelList, categoryItem);
+                controller.handleGetChannels(channelList);
             } else {
-                controller.handleGetChannels(null, categoryItem);
+                controller.handleGetChannels(null);
             }
         });
     }
