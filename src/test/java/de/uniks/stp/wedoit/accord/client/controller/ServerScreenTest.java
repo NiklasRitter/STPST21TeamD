@@ -466,6 +466,7 @@ public class ServerScreenTest extends ApplicationTest {
         verify(restMock).getCategories(anyString(), anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> catCallback = callbackArgumentCaptor.getValue();
         catCallback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
 
         when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
 

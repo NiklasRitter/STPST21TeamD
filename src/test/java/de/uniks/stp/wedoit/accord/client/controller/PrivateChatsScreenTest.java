@@ -291,13 +291,12 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Accept", btnPlay.getText());
         Assert.assertEquals(1, localUser.getGameInvites().size());
         Assert.assertEquals(0, localUser.getGameRequests().size());
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(GAME_INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
+        Assert.assertEquals("Invites you to Rock - Paper - Scissors!", lwPrivateChat.getItems().get(lwNewestItem).getText());
 
         clickOn(btnPlay);
 
@@ -348,7 +347,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfEnterPrivateChat");
-        write("Test Message");
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -442,26 +441,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(lastLwIndex), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lastLwIndex).getText(), user.getPrivateChat().getMessages().get(0).getText());
         Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(lastLwIndex).getText());
-
-        lwOnlineUsers.getSelectionModel().select(1);
-        User user1 = lwOnlineUsers.getSelectionModel().getSelectedItem();
-
-        clickOn("#lwOnlineUsers");
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(user1.getName(), lblSelectedUser.getText());
-
-        Assert.assertEquals(0, lwPrivateChat.getItems().size());
-
-        clickOn("#lwPrivateChat");
-
-        lwOnlineUsers.getSelectionModel().select(0);
-        User user2 = lwOnlineUsers.getSelectionModel().getSelectedItem();
-        clickOn("#lwOnlineUsers");
-
-        Assert.assertEquals(user2.getName(), lblSelectedUser.getText());
-
-        int lwNewestItem = lwPrivateChat.getItems().size() -1;
-        Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(lwNewestItem).getText());
     }
 
     public void mockRest(JsonObject restClientJson) {
