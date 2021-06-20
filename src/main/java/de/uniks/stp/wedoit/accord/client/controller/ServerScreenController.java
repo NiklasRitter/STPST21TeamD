@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 
 import javax.json.JsonArray;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static java.util.Collections.synchronizedList;
 
 public class ServerScreenController implements Controller {
 
@@ -43,6 +43,7 @@ public class ServerScreenController implements Controller {
     private WSCallback serverWSCallback;
 
     // PropertyChangeListener
+    private final PropertyChangeListener userListViewListener = this::changeUserList;
     private final PropertyChangeListener serverNameListener = (propertyChangeEvent) -> this.handleServerNameChange();
 
     private final CategoryTreeViewController categoryTreeViewController;
@@ -155,6 +156,7 @@ public class ServerScreenController implements Controller {
                 + AND_SERVER_ID_URL + this.server.getId());
 
         server.listeners().removePropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
+        this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
 
         this.chatWSCallback = null;
         this.serverWSCallback = null;
@@ -202,6 +204,14 @@ public class ServerScreenController implements Controller {
     }
 
     // PropertyChangeEvent Methods
+    /**
+     * rebuilds the user list
+     */
+    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
+            Platform.runLater(() -> this.refreshLvUsers(null));
+        }
+    }
 
     /**
      * sets the name of a server in the server name label
@@ -265,6 +275,8 @@ public class ServerScreenController implements Controller {
         // load list view
         ServerUserListView serverUserListView = new ServerUserListView();
         lvServerUsers.setCellFactory(serverUserListView);
+        this.refreshLvUsers(new Channel());
+        this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     // Helping Methods
@@ -288,24 +300,22 @@ public class ServerScreenController implements Controller {
      * If yes, it shows only members assigned to this channel.
      * If no, it shows all users of the server
      */
-    public synchronized void refreshLvUsers(Channel channel) {
-        List<User> users = null;
+    public void refreshLvUsers(Channel channel) {
+        List<User> users;
         if (channel != null) {
             if (channel.isPrivileged()) {
-                users = channel.getMembers();
+                users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
             } else {
-                users = server.getMembers();
+                users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
             }
-            users = synchronizedList(users);
-            users = users.stream().sorted(Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed())
-                    .collect(Collectors.toList());
         }
-        if (users != null) {
-            Collections.reverse(users);
-            this.lvServerUsers.getItems().removeAll();
-            this.lvServerUsers.setItems(FXCollections.observableList(users));
-            this.lvServerUsers.refresh();
+        else{
+            users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
         }
+        Collections.reverse(users);
+        this.lvServerUsers.getItems().removeAll();
+        this.lvServerUsers.setItems(FXCollections.observableList(users));
+        this.lvServerUsers.refresh();
     }
 
     public CategoryTreeViewController getCategoryTreeViewController() {

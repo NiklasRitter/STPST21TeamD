@@ -208,7 +208,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(3, listView.getItems().toArray().length);
+        Assert.assertEquals(4, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(1)));
@@ -247,7 +247,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(3, listView.getItems().toArray().length);
+        Assert.assertEquals(4, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(1)));
@@ -363,7 +363,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(0, listView.getItems().toArray().length);
         mockRest(restJson);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(3, listView.getItems().toArray().length);
+        Assert.assertEquals(4, listView.getItems().toArray().length);
         Assert.assertEquals(server.getMembers().toArray().length, listView.getItems().toArray().length);
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(0)));
         Assert.assertTrue(listView.getItems().contains(server.getMembers().get(1)));
@@ -986,7 +986,10 @@ public class ServerScreenTest extends ApplicationTest {
                                 .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
                                         .add("online", false))
                                 .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
-                                        .add("online", true)))).build();
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil")
+                                        .add("online", false))
+                        )).build();
     }
 
     public JsonObject getServerIdFailure() {

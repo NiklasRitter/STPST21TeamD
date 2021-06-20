@@ -166,15 +166,16 @@ public class WebSocketManager {
 
                 if (action.equals(USER_JOINED)) {
                     user.setOnlineStatus(true);
+                    server.firePropertyChange(Server.PROPERTY_MEMBERS, null, server.getMembers());
                 }
                 if (action.equals(USER_LEFT)) {
                     user.setOnlineStatus(false);
+                    server.firePropertyChange(Server.PROPERTY_MEMBERS, null, server.getMembers());
                 }
                 if (action.equals(USER_ARRIVED)) {
                     user.setOnlineStatus(data.getBoolean(ONLINE));
                 }
             }
-            server.firePropertyChange(Server.PROPERTY_MEMBERS, null, server.getMembers());
         }
 
         // change data of the server
@@ -194,9 +195,6 @@ public class WebSocketManager {
         }
         if (action.equals(CATEGORY_DELETED)){
             Category category = editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
-            for (Channel channel : category.getChannels()) {
-                channel.removeYou();
-            }
             category.removeYou();
         }
 
