@@ -461,7 +461,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user2.getName(), lblSelectedUser.getText());
 
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
-        Assert.assertEquals(stageManager.getEditor().loadOldMessages("Albert").size()+1, lwPrivateChat.getItems().size());
         Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(lwNewestItem).getText());
     }
 
