@@ -11,7 +11,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.CATEGORIES;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.CHANNELS;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 

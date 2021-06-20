@@ -63,7 +63,8 @@ public class CreateChannelScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        this.btnCreateChannel = (Button) view.lookup("#btnCreateChannel");
+        this.btnCreateChannel = (Button) view.lookup("#btnSave");
+        Button btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
         this.tfChannelName = (TextField) view.lookup("#tfChannelName");
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
@@ -72,6 +73,9 @@ public class CreateChannelScreenController implements Controller {
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
         checkIfIsPrivileged();
+
+        this.btnCreateChannel.setText("Create");
+        btnDeleteChannel.setVisible(false);
 
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::createChannelButtonOnClick);

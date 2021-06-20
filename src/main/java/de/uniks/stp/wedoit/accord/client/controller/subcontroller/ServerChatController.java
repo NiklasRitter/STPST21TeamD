@@ -93,6 +93,11 @@ public class ServerChatController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         quoteVisible.getChildren().clear();
         addMessageContextMenu();
+
+        Tooltip emojiButton = new Tooltip();
+        emojiButton.setText("Emojis");
+        emojiButton.setStyle("-fx-font-size: 10");
+        this.btnEmoji.setTooltip(emojiButton);
     }
 
     /**

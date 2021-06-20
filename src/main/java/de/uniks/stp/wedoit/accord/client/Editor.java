@@ -361,9 +361,7 @@ public class Editor {
         } else {
             Platform.runLater(stageManager::showLoginScreen);
         }
-        Platform.runLater(() -> {
-            stageManager.getStage().show();
-        });
+        Platform.runLater(() -> stageManager.getStage().show());
     }
 
 

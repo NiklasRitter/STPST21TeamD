@@ -59,7 +59,7 @@ public class OptionsScreenController implements Controller {
             parent.setPrefWidth(300);
         }
         Tooltip logoutButton = new Tooltip();
-        logoutButton.setText("logout");
+        logoutButton.setText("Logout");
         this.logoutButton.setTooltip(logoutButton);
     }
 

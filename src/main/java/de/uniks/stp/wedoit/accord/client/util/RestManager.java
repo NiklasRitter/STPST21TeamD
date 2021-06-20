@@ -1,8 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
@@ -15,11 +13,12 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.SUCCESS;
 
 public class RestManager {
 
@@ -96,9 +95,7 @@ public class RestManager {
      * @param controller controller in which the response need handled
      */
     public void registerUser(String username, String password, LoginScreenController controller) {
-        restClient.register(username, password, registerResponse -> {
-            controller.handleRegister(registerResponse.getBody().getObject().getString(STATUS).equals(SUCCESS));
-        });
+        restClient.register(username, password, registerResponse -> controller.handleRegister(registerResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)));
     }
 
     /**
@@ -217,9 +214,7 @@ public class RestManager {
      * @param userKey of the local user which should logged out
      */
     public void logoutUser(String userKey) {
-        restClient.logout(userKey, response -> {
-            editor.handleLogoutUser(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
-        });
+        restClient.logout(userKey, response -> editor.handleLogoutUser(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
     }
 
     /**
@@ -390,8 +385,6 @@ public class RestManager {
 
                 String categoryId = createCategoryIdAnswer.getString(ID);
                 String categoryName = createCategoryIdAnswer.getString(NAME);
-                String serverId = createCategoryIdAnswer.getString(SERVER);
-                JsonArray channels = createCategoryIdAnswer.getJsonArray(JSON.CHANNELS);
 
                 if (category.getId().equals(categoryId)) {
                     Category newCategory = editor.getCategoryManager().haveCategory(categoryId, categoryName, server);
@@ -499,9 +492,7 @@ public class RestManager {
      * @param controller     controller in which the response is handled
      */
     private void deleteServer(LocalUser localUser, Server server, AttentionScreenController controller) {
-        restClient.deleteServer(localUser.getUserKey(), server.getId(), (response) -> {
-            controller.handleDeleteServer(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
-        });
+        restClient.deleteServer(localUser.getUserKey(), server.getId(), (response) -> controller.handleDeleteServer(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
     }
 
     /**
@@ -512,9 +503,7 @@ public class RestManager {
      * @param controller     controller in which the response is handled
      */
     private void deleteChannel(LocalUser localUser, Channel channel, AttentionScreenController controller) {
-        restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> {
-            controller.handleDeleteChannel(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
-        });
+        restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> controller.handleDeleteChannel(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
     }
 
     /**
@@ -622,9 +611,8 @@ public class RestManager {
      * @param username username
      * @param password password
      * @param editor editor in which the response need handled
-     * @return this
      */
-    public RestManager automaticLoginUser(String username, String password, Editor editor) {
+    public void automaticLoginUser(String username, String password, Editor editor) {
         restClient.login(username, password, (response) -> {
             if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.handleAutomaticLogin(false);
@@ -636,7 +624,6 @@ public class RestManager {
                 editor.handleAutomaticLogin(true);
             }
         });
-        return this;
     }
 
 

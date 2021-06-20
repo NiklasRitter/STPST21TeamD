@@ -80,6 +80,11 @@ public class PrivateChatController implements Controller {
         addMessageContextMenu();
         this.tfPrivateChat.setPromptText("select a User");
         this.tfPrivateChat.setEditable(false);
+
+        Tooltip emojiButton = new Tooltip();
+        emojiButton.setText("Emojis");
+        emojiButton.setStyle("-fx-font-size: 10");
+        this.btnEmoji.setTooltip(emojiButton);
     }
 
     @Override
@@ -177,13 +182,6 @@ public class PrivateChatController implements Controller {
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
         }
     }
-
-//    /**
-//     * @param privateMessage
-//     */
-//    public void newChatMessage(PrivateMessage privateMessage) {
-//        List<User> userCell = lwOnlineUsers.getItems().stream().filter(user1 -> user1.getName().equals(privateMessage.getFrom())).collect(Collectors.toList());
-//    }
 
     /**
      * handles if the context menu is clicked and sets the quote label.

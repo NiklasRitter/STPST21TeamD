@@ -63,7 +63,6 @@ public class CategoryTreeViewController implements Controller {
 
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
-        //this.channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     public void stop() {
@@ -79,7 +78,6 @@ public class CategoryTreeViewController implements Controller {
         }
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
-        //this.channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     // Channel and Category init
@@ -213,7 +211,7 @@ public class CategoryTreeViewController implements Controller {
     }
 
     /**
-     * creates a category tree item or deletes a old one
+     * creates a channel tree item or deletes a old one
      *
      * @param oldValue added channel item which should removed in the view
      * @param newValue which should be added to the view

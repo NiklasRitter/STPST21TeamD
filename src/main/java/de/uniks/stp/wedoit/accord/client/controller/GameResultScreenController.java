@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEACCEPT;
@@ -16,13 +15,12 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEINVITE;
 
 public class GameResultScreenController implements Controller {
 
-    private Label lbOutcome;
     private Button btnQuit, btnPlayAgain;
-    private Parent view;
-    private LocalUser localUser;
-    private Editor editor;
-    private User opponent;
-    private Boolean isWinner;
+    private final Parent view;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final User opponent;
+    private final Boolean isWinner;
 
     /**
      * Create a new Controller
@@ -49,7 +47,7 @@ public class GameResultScreenController implements Controller {
      * Add action listeners
      */
     public void init() {
-        lbOutcome = (Label) view.lookup("#lbOutcome");
+        Label lbOutcome = (Label) view.lookup("#lbOutcome");
         btnPlayAgain = (Button) view.lookup("#btnPlayAgain");
         btnQuit = (Button) view.lookup("#btnQuit");
 

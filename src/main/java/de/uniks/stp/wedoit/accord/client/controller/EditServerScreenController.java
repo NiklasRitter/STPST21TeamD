@@ -13,7 +13,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -44,8 +43,6 @@ public class EditServerScreenController implements Controller {
     private TextField tfMaxCountAmountInput;
     private TextField tfInvitationLink;
 
-    private VBox vBoxAdminOnly;
-    private VBox mainVBox;
     private Label labelCopy;
 
     private Label lblError;
@@ -94,8 +91,6 @@ public class EditServerScreenController implements Controller {
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
         this.labelCopy = (Label) view.lookup("#labelCopy");
 
-        this.vBoxAdminOnly = (VBox) view.lookup("#vBoxAdminOnly");
-        this.mainVBox = (VBox) view.lookup("#mainVBox");
         this.lblError = (Label) view.lookup("#lblError");
         this.lblInvitationStatus = (Label) view.lookup("#lblInvitationStatus");
         this.lblInvitationStatusText = (Label) view.lookup("#lblInvitationStatusText");
@@ -168,7 +163,7 @@ public class EditServerScreenController implements Controller {
      * In this method a new servername has to be set if set if the
      * user types in a new servername and close popup Window
      *
-     * @param actionEvent
+     * @param actionEvent expects an ActionEvent
      */
     private void saveButtonOnClick(ActionEvent actionEvent) {
         String newServerName = tfNewServernameInput.getText();
@@ -351,9 +346,7 @@ public class EditServerScreenController implements Controller {
      */
     public void handleChangeServerName(boolean status) {
         if (status) {
-            Platform.runLater(() -> {
-                this.stage.close();
-            });
+            Platform.runLater(this.stage::close);
         } else {
             Platform.runLater(() -> {
                 lblError.setText("Error. Change Servername not successful!");

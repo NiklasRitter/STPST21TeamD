@@ -90,12 +90,16 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
-        homeButton.setText("home");
+        homeButton.setText("Home");
         btnHome.setTooltip(homeButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("options");
+        optionsButton.setText("Options");
         btnOptions.setTooltip(optionsButton);
+
+        Tooltip playButton = new Tooltip();
+        playButton.setText("Play Rock-Paper-Scissors");
+        btnPlay.setTooltip(playButton);
     }
 
     /**

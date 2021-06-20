@@ -146,8 +146,6 @@ public class EditorTest {
 
         channel = editor.getChannelManager().haveChannel("ch01", "tasks", "text", false, category, memberJson.build());
         user.withChannels(channel);
-        System.out.println(channel.getName());
-        System.out.println(category.getId());
 
         Assert.assertTrue(category.getChannels().contains(channel));
         Assert.assertTrue(server.getCategories().contains(channel.getCategory()));

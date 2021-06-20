@@ -1,13 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Platform;
 
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonStructure;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -17,9 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.AND_SERVER_ID_URL;
 
 public class WebSocketManager {
 
@@ -51,9 +50,8 @@ public class WebSocketManager {
 
     /**
      * sets the clean username of the current localUser
-     * @return this clean username
      */
-    public String setClearUsername() {
+    public void setClearUsername() {
         String newName;
         try {
             newName = URLEncoder.encode(this.editor.getLocalUser().getName(), StandardCharsets.UTF_8.toString());
@@ -61,7 +59,6 @@ public class WebSocketManager {
         } catch (UnsupportedEncodingException e) {
             cleanLocalUserName = this.editor.getLocalUser().getName();
         }
-        return cleanLocalUserName;
     }
 
     public String getCleanLocalUserName() {
@@ -105,14 +102,12 @@ public class WebSocketManager {
      * remove a webSocket with given url
      *
      * @param url url of a webSocket
-     * @return the webSocket which is removed or null if there was no mapping of this url
      */
-    public WebSocketClient withOutWebSocket(String url) {
+    public void withOutWebSocket(String url) {
         WebSocketClient webSocketClient = webSocketMap.remove(url);
         if (webSocketClient != null) {
             webSocketClient.stop();
         }
-        return webSocketClient;
     }
 
 
@@ -120,9 +115,8 @@ public class WebSocketManager {
      * handle messages on the system channel by adding or deleting users from the data model
      *
      * @param msg message from the server on the system channel
-     * @return NetworkController
      */
-    public WebSocketManager handleSystemMessage(JsonStructure msg) {
+    public void handleSystemMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
         JsonObject data = jsonObject.getJsonObject(DATA);
 
@@ -132,16 +126,14 @@ public class WebSocketManager {
         } else if (jsonObject.getString(ACTION).equals(USER_LEFT)) {
             editor.userLeft(data.getString(ID));
         }
-        return this;
     }
 
     /**
      * handle chat message by adding it to the data model
      *
      * @param msg message from the server on the private chat channel
-     * @return NetworkController
      */
-    public WebSocketManager handlePrivateChatMessage(JsonStructure msg) {
+    public void handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
         PrivateMessage message = new PrivateMessage();
         message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
@@ -149,7 +141,6 @@ public class WebSocketManager {
         message.setFrom(jsonObject.getString(FROM));
         message.setTo(jsonObject.getString(TO));
         editor.getMessageManager().addNewPrivateMessage(message);
-        return this;
     }
 
     /**
@@ -238,11 +229,10 @@ public class WebSocketManager {
      *
      * @param jsonMsgString The stringified Json message
      */
-    public WebSocketManager sendPrivateChatMessage(String jsonMsgString) {
+    public void sendPrivateChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(PRIVATE_USER_CHAT_PREFIX + cleanLocalUserName);
         webSocketClient.sendMessage(jsonMsgString);
-        return this;
     }
 
     /**
@@ -250,12 +240,11 @@ public class WebSocketManager {
      *
      * @param jsonMsgString The stringified Json message
      */
-    public WebSocketManager sendChannelChatMessage(String jsonMsgString) {
+    public void sendChannelChatMessage(String jsonMsgString) {
         WebSocketClient webSocketClient =
                 getOrCreateWebSocket(CHAT_USER_URL + cleanLocalUserName
                         + AND_SERVER_ID_URL + this.editor.getCurrentServer().getId());
         webSocketClient.sendMessage(jsonMsgString);
-        return this;
     }
 
     /**

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static java.util.Collections.synchronizedList;
 
 public class ServerScreenController implements Controller {
 
@@ -126,15 +127,16 @@ public class ServerScreenController implements Controller {
      */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
-        homeButton.setText("home");
+        homeButton.setText("Home");
         btnHome.setTooltip(homeButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("options");
+        optionsButton.setText("Options");
         btnOptions.setTooltip(optionsButton);
 
         Tooltip editButton = new Tooltip();
-        editButton.setText("edit Server");
+        editButton.setText("Edit Server");
+        editButton.setStyle("-fx-font-size: 10");
         btnEdit.setTooltip(editButton);
     }
 
@@ -263,7 +265,6 @@ public class ServerScreenController implements Controller {
         // load list view
         ServerUserListView serverUserListView = new ServerUserListView();
         lvServerUsers.setCellFactory(serverUserListView);
-        //Platform.runLater(() -> this.refreshLvUsers(new Channel()));
     }
 
     // Helping Methods
@@ -291,10 +292,12 @@ public class ServerScreenController implements Controller {
         List<User> users = null;
         if (channel != null) {
             if (channel.isPrivileged()) {
-                users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
+                users = channel.getMembers();
             } else {
-                users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
+                users = server.getMembers();
             }
+            users = synchronizedList(users);
+            users = users.stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
         }
         if (users != null) {
             Collections.reverse(users);

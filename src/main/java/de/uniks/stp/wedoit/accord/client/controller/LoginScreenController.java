@@ -5,10 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.util.Objects;
 
@@ -62,6 +59,22 @@ public class LoginScreenController implements Controller {
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.btnRememberMe.setOnAction(this::btnRememberMeOnClick);
+
+        this.initTooltips();
+    }
+
+    private void initTooltips() {
+        Tooltip optionsButton = new Tooltip();
+        optionsButton.setText("Options");
+        this.btnOptions.setTooltip(optionsButton);
+
+        Tooltip loginButton = new Tooltip();
+        loginButton.setText("Login");
+        this.btnLogin.setTooltip(loginButton);
+
+        Tooltip registerButton = new Tooltip();
+        registerButton.setText("Register");
+        this.btnRegister.setTooltip(registerButton);
     }
 
     /**
