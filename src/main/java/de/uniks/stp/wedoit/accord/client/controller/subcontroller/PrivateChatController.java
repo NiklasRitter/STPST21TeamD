@@ -24,7 +24,9 @@ import javafx.scene.layout.HBox;
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEACCEPT;
@@ -144,14 +146,19 @@ public class PrivateChatController implements Controller {
         }
         this.currentChat = user.getPrivateChat();
         user.setChatRead(true);
+        editor.updateUserChatRead(user);
         this.tfPrivateChat.setPromptText("your message");
         this.tfPrivateChat.setEditable(true);
 
         // load list view
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
-        this.privateMessageObservableList = FXCollections.observableList(currentChat.getMessages().stream().sorted(Comparator.comparing(PrivateMessage::getTimestamp))
-                .collect(Collectors.toList()));
+        List<PrivateMessage> oldMessages = editor.loadOldMessages(user.getName());
+        Collections.reverse(oldMessages);
+        this.privateMessageObservableList = FXCollections.observableList(oldMessages);
+        if (oldMessages.size() == 50) {
+            displayLoadMore();
+        }
 
         this.lwPrivateChat.setItems(privateMessageObservableList);
 
@@ -230,16 +237,21 @@ public class PrivateChatController implements Controller {
      */
     private void onLwPrivatChatClicked(MouseEvent mouseEvent) {
         lwPrivateChat.setContextMenu(null);
+        PrivateMessage selectedMessage = lwPrivateChat.getSelectionModel().getSelectedItem();
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            if (lwPrivateChat.getSelectionModel().getSelectedItem() != null && !editor.getMessageManager().isQuote(lwPrivateChat.getSelectionModel().getSelectedItem())) {
+            if (selectedMessage != null  && selectedMessage.getId().equals("idLoadMore") && !editor.getMessageManager().isQuote(selectedMessage)) {
                 lwPrivateChat.setContextMenu(messageContextMenu);
                 messageContextMenu.show(lwPrivateChat, Side.LEFT, 0, 0);
             }
         }
         if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-            if (lwPrivateChat.getSelectionModel().getSelectedItem() != null && editor.getMessageManager().isQuote(lwPrivateChat.getSelectionModel().getSelectedItem())) {
-                PrivateMessage message = lwPrivateChat.getSelectionModel().getSelectedItem();
-                String cleanMessage = editor.getMessageManager().cleanMessage(message);
+            if (selectedMessage != null &&
+                    selectedMessage.getId() != null &&
+                    selectedMessage.getId().equals("idLoadMore")) {
+                Platform.runLater(this::loadMoreMessages);
+            }
+            if (selectedMessage != null && editor.getMessageManager().isQuote(selectedMessage)) {
+                String cleanMessage = editor.getMessageManager().cleanMessage(selectedMessage);
                 for (PrivateMessage msg : privateMessageObservableList) {
                     if (editor.getMessageManager().getMessageFormatted(msg).equals(cleanMessage)) {
                         lwPrivateChat.scrollTo(msg);
@@ -272,6 +284,31 @@ public class PrivateChatController implements Controller {
             } else {
                 jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+            }
+        }
+    }
+
+    /**
+     * Displays load more on first position of ListView of the Chat
+     */
+    private void displayLoadMore() {
+        if (privateMessageObservableList.size() >= 50) {
+            PrivateMessage topMessage = new PrivateMessage().setText("Load more...").setId("idLoadMore");
+            this.privateMessageObservableList.add(0, topMessage);
+        }
+    }
+
+    private void loadMoreMessages() {
+        this.privateMessageObservableList.remove(0);
+        if (currentChat != null && currentChat.getUser() != null) {
+            int offset = privateMessageObservableList.size();
+            String userName = currentChat.getUser().getName();
+            List<PrivateMessage> olderMessages = editor.loadOlderMessages(userName, offset);
+            Collections.reverse(olderMessages);
+            privateMessageObservableList.addAll(olderMessages);
+            privateMessageObservableList.sort(Comparator.comparingLong(PrivateMessage::getTimestamp));
+            if (olderMessages.size() == 50) {
+                Platform.runLater(this::displayLoadMore);
             }
         }
     }

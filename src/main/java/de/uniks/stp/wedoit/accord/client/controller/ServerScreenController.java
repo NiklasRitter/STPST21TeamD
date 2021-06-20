@@ -297,7 +297,8 @@ public class ServerScreenController implements Controller {
                 users = server.getMembers();
             }
             users = synchronizedList(users);
-            users = users.stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
+            users = users.stream().sorted(Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed())
+                    .collect(Collectors.toList());
         }
         if (users != null) {
             Collections.reverse(users);

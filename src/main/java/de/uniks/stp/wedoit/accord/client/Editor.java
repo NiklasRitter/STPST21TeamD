@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client;
 
+import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
@@ -21,6 +22,7 @@ public class Editor {
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
+    private SqliteDB db;
 
     /**
      * @return private final RestManager restManager
@@ -42,6 +44,10 @@ public class Editor {
 
     public void setCurrentServer(Server currentServer) {
         this.currentServer = currentServer;
+    }
+
+    public SqliteDB getDb(){
+        return db;
     }
 
     /**
@@ -157,7 +163,7 @@ public class Editor {
         if (localUser.getUsers() != null) {
             for (User user : localUser.getUsers()) {
                 if (user.getId().equals(id)) {
-                    user.setOnlineStatus(true);
+                    user.setOnlineStatus(false);
                     return localUser;
                 }
             }
@@ -304,6 +310,42 @@ public class Editor {
                 }
             }
         }
+    }
+
+    public void setUpDB() {
+        db = new SqliteDB(getLocalUser().getName());
+    }
+
+    public void savePrivateMessage(PrivateMessage message) {
+        db.save(message);
+    }
+
+    public List<User> loadOldChats() {
+        List<User> offlineUser = new ArrayList<>();
+        for (String s : db.getOpenChats(getLocalUser().getName())) {
+            if (getOnlineUsers().stream().noneMatch((u) -> u.getName().equals(s))) {
+                User user = new User().setName(s);
+                getUserChatRead(user);
+                offlineUser.add(user);
+            }
+        }
+        return offlineUser;
+    }
+
+    public List<PrivateMessage> loadOldMessages(String user) {
+        return db.getLastFiftyMessagesBetweenUsers(user);
+    }
+
+    public List<PrivateMessage> loadOlderMessages(String user, int offset) {
+        return db.getLastFiftyMessagesBetweenUsers(user, offset);
+    }
+
+    public void updateUserChatRead(User user) {
+        db.updateOrInsertUserChatRead(user);
+    }
+
+    public void getUserChatRead(User user) {
+        db.getChatReadForUser(user);
     }
 
     /**

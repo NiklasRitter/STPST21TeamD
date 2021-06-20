@@ -2,8 +2,11 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
+import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import javafx.application.Platform;
 
+import java.beans.PropertyChangeEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -51,9 +54,12 @@ public class MessageManager {
                     privateChat = new Chat().setName(user.getName()).setUser(user);
                     user.setPrivateChat(privateChat);
                 }
+                message.setChat(privateChat);
                 privateChat.withMessages(message);
                 user.setChatRead(false);
+                editor.updateUserChatRead(user);
             }
+            editor.savePrivateMessage(message);
         }
     }
 
