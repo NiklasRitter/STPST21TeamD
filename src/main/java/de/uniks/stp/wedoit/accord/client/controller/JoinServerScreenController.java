@@ -72,7 +72,7 @@ public class JoinServerScreenController implements Controller {
 
         if (tfInvitationLink.getText().contains(REST_SERVER_URL + API_PREFIX + SERVER_PATH) && tfInvitationLink.getText().contains(INVITES) && !tfInvitationLink.getText().contains(" ")) {
             errorLabel.setText("Try to join server...");
-            editor.getNetworkController().joinServer(localUser, tfInvitationLink.getText(), this);
+            editor.getRestManager().joinServer(localUser, tfInvitationLink.getText(), this);
         } else {
             errorLabel.setText("Please insert a valid invitation link");
         }

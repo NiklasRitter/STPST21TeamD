@@ -68,10 +68,10 @@ public class AutomatedLoginFailureTest extends ApplicationTest {
         stageManager.getResourceManager().loadLocalUser(oldLocalUser);
         stageManager.getResourceManager().saveLocalUser(new LocalUser().setName("username").setPassword("123"));
 
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.getEditor().getRestManager().setRestClient(restMock);
 
         String returnMessage = Json.createObjectBuilder().add("status", "failure").add("message", "").add("data", Json.createObjectBuilder().add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")).build().toString();
         when(res.getBody()).thenReturn(new JsonNode(returnMessage));

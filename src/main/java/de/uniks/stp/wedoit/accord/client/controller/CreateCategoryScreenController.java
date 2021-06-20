@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -23,10 +22,9 @@ public class CreateCategoryScreenController implements Controller {
      * Create a new Controller
      *
      * @param view   The view this Controller belongs to
-     * @param model  The model this Controller belongs to
      * @param editor The editor of the Application
      */
-    public CreateCategoryScreenController(Parent view, LocalUser model, Editor editor) {
+    public CreateCategoryScreenController(Parent view, Editor editor) {
         this.view = view;
         this.editor = editor;
     }
@@ -71,10 +69,15 @@ public class CreateCategoryScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
-            editor.getNetworkController().createCategory(editor.getCurrentServer(), tfCategoryName.getText(), this);
+            editor.getRestManager().createCategory(editor.getCurrentServer(), tfCategoryName.getText(), this);
         }
     }
 
+    /**
+     * handles the creation of a category.
+     *
+     * @param category the category which should be created
+     */
     public void handleCreateCategory(Category category) {
         if (category != null) {
             Stage stage = (Stage) view.getScene().getWindow();

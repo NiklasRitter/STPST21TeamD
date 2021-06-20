@@ -114,11 +114,11 @@ public class ServerScreenTest extends ApplicationTest {
         this.localUser = this.stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
         this.localUser.setId("123");
         this.server = this.stageManager.getEditor().haveServer(localUser, "testId", "TServer");
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().
-                getNetworkController().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().
+                getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.getEditor().getRestManager().setRestClient(restMock);
         this.stageManager.showServerScreen(server);
 
         this.stage.centerOnScreen();
@@ -228,6 +228,7 @@ public class ServerScreenTest extends ApplicationTest {
     public void initChannelListViewChannelFailure() {
         JsonObject categoriesRestJson = getServerCategories();
         mockGetCategoryRest(categoriesRestJson);
+        WaitForAsyncUtils.waitForFxEvents();
         JsonObject channelRestJson = getCategoryChannelsFailure();
         mockChannelRest(channelRestJson);
     }
@@ -860,7 +861,7 @@ public class ServerScreenTest extends ApplicationTest {
         Label lblQuote = (Label) lookup("#lblQuote").query();
         Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
 
-        String formatted = this.stageManager.getEditor().getMessageFormatted(lvTextChat.getItems().get(0));
+        String formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0));
         Assert.assertEquals(lblQuote.getText(), formatted);
         clickOn(btnCancelQuote);
         WaitForAsyncUtils.waitForFxEvents();
@@ -874,7 +875,7 @@ public class ServerScreenTest extends ApplicationTest {
         lblQuote = (Label) lookup("#lblQuote").query();
         btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
 
-        formatted = this.stageManager.getEditor().getMessageFormatted(lvTextChat.getItems().get(0));
+        formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0));
         Assert.assertEquals(lblQuote.getText(), formatted);
 
         ((TextField) lookup("#tfInputMessage").query()).setText("quote");

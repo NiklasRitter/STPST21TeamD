@@ -1,5 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
+/**
+ * This class includes constants for operations in the Accord-game scissors stone paper.
+ */
 public class Game {
     //game invitation
     public static final String PREFIX = "###game### ";

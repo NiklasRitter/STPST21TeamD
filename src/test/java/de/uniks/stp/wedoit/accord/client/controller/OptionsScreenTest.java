@@ -74,21 +74,21 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.oldOptions = new Options();
-
+        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
 
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getPopupStage();
-        stageManager.getResourceManager().loadOptions(oldOptions);
-        stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
+
 
 
         //create localUser to skip the login screen
         stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
-        stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.getEditor().getRestManager().setRestClient(restMock);
         this.stageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);

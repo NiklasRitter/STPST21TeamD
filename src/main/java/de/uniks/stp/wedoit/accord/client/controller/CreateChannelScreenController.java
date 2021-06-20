@@ -38,7 +38,6 @@ public class CreateChannelScreenController implements Controller {
     private VBox vBoxMemberNameAndCheckBox;
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList = new LinkedList<>();
-    private Button btnDeleteChannel;
 
     /**
      * Create a new Controller
@@ -65,7 +64,7 @@ public class CreateChannelScreenController implements Controller {
     public void init() {
         // Load all view references
         this.btnCreateChannel = (Button) view.lookup("#btnSave");
-        this.btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
+        Button btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
         this.tfChannelName = (TextField) view.lookup("#tfChannelName");
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
@@ -76,19 +75,27 @@ public class CreateChannelScreenController implements Controller {
         checkIfIsPrivileged();
 
         this.btnCreateChannel.setText("Create");
-        this.btnDeleteChannel.setVisible(false);
+        btnDeleteChannel.setVisible(false);
 
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::createChannelButtonOnClick);
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
     }
 
+    /**
+     * loads member and set size of the screen correct.
+     *
+     * @param actionEvent actionEvent such a when a button is fired
+     */
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
         //Adjusts the size of the stage to its dynamically added content
         this.editor.getStageManager().getPopupStage().sizeToScene();
     }
 
+    /**
+     * shows members in sub view members list
+     */
     private void checkIfIsPrivileged() {
         if (this.checkBoxPrivileged.isSelected()) {
             initSubViewMemberList();
@@ -151,21 +158,23 @@ public class CreateChannelScreenController implements Controller {
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
             if (!checkBoxPrivileged.isSelected()) {
-                editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
                         TEXT, checkBoxPrivileged.isSelected(), null, this);
             } else if (checkBoxPrivileged.isSelected()) {
                 if (userList.size() <= 0) {
                     userList.add(this.localUser.getId());
-                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
-                            TEXT, checkBoxPrivileged.isSelected(), userList, this);
-                } else {
-                    editor.getNetworkController().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
-                            TEXT, checkBoxPrivileged.isSelected(), userList, this);
                 }
+                editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
+                        TEXT, checkBoxPrivileged.isSelected(), userList, this);
             }
         }
     }
 
+    /**
+     * handles the creation of a channel.
+     *
+     * @param channel channel which is created if creation was successful
+     */
     public void handleCreateChannel(Channel channel) {
         if (channel != null) {
             Stage stage = (Stage) view.getScene().getWindow();
@@ -177,10 +186,20 @@ public class CreateChannelScreenController implements Controller {
         }
     }
 
+    /**
+     * adds a user to the user list.
+     *
+     * @param user user which should be added
+     */
     public void addToUserList(User user) {
         userList.add(user.getId());
     }
 
+    /**
+     * removes a user from the user list.
+     *
+     * @param user user which should be removed
+     */
     public void removeFromUserList(User user) {
         userList.remove(user.getId());
     }

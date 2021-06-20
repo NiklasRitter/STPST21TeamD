@@ -86,12 +86,12 @@ public class MainScreenTest extends ApplicationTest {
 
         //create localUser to skip the login screen
         localUser = this.stageManager.getEditor().haveLocalUser("username", "testKey123");
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df506", webSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
-        this.stageManager.getEditor().getNetworkController().setRestClient(restMock);
+        this.stageManager.getEditor().getRestManager().setRestClient(restMock);
         this.stageManager.showMainScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -167,8 +167,8 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void privateChatsButtonTest() {
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
 
         clickOn("#btnPrivateChats");
         Assert.assertEquals("Private Chats", stage.getTitle());
@@ -281,11 +281,11 @@ public class MainScreenTest extends ApplicationTest {
         listView.getSelectionModel().select(1);
         Server server = listView.getSelectionModel().getSelectedItem();
 
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + server.getId(), channelChatWebSocketClient);
         WaitForAsyncUtils.async(() -> {
             while (!stage.getTitle().equals("Server")) {
-                this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+                this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
             }
         });
         doubleClickOn("#lwServerList");
@@ -348,8 +348,8 @@ public class MainScreenTest extends ApplicationTest {
         tfInvitationLink.setText("https://ac.uniks.de/api/servers/123/invites/in123");
         clickOn("#btnJoinServer");
 
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
-        this.stageManager.getEditor().getNetworkController().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + "123", channelChatWebSocketClient);
 
         Assert.assertEquals(this.stageManager.getEditor().getLocalUser().getServers().size(), 0);

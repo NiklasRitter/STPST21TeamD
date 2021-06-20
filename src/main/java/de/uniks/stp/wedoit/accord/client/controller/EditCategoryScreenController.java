@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -25,11 +24,10 @@ public class EditCategoryScreenController implements Controller {
      * Create a new Controller
      *
      * @param view     The view this Controller belongs to
-     * @param model    The model this Controller belongs to
      * @param editor   The editor of the Application
      * @param category The category to be changed
      */
-    public EditCategoryScreenController(Parent view, LocalUser model, Editor editor, Category category) {
+    public EditCategoryScreenController(Parent view, Editor editor, Category category) {
         this.view = view;
         this.editor = editor;
         this.category = category;
@@ -80,10 +78,15 @@ public class EditCategoryScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
-            editor.getNetworkController().updateCategory(editor.getCurrentServer(), category, tfCategoryName.getText(), this);
+            editor.getRestManager().updateCategory(editor.getCurrentServer(), category, tfCategoryName.getText(), this);
         }
     }
 
+    /**
+     * handles the updating of a category.
+     *
+     * @param category category which is updated if updating was successful
+     */
     public void handleEditCategory(Category category) {
         if (category != null) {
             Stage stage = (Stage) view.getScene().getWindow();

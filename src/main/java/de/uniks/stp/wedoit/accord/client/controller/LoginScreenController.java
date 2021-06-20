@@ -110,7 +110,7 @@ public class LoginScreenController implements Controller {
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
                 errorLabel.setText("Username or password is missing");
             } else {
-                editor.getNetworkController().loginUser(name, password, this);
+                editor.getRestManager().loginUser(name, password, this);
             }
         } catch (Exception e) {
             errorLabel.setText("An error has been encountered while logging in. Please try again.");
@@ -119,6 +119,11 @@ public class LoginScreenController implements Controller {
         }
     }
 
+    /**
+     * handles a login and redirect to the correct screen
+     *
+     * @param success success of the login as boolean
+     */
     public void handleLogin(boolean success) {
         if (!success) {
             tfUserName.getStyleClass().add("error");
@@ -146,7 +151,7 @@ public class LoginScreenController implements Controller {
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
                 errorLabel.setText("Please type in username and password.");
             } else {
-                editor.getNetworkController().registerUser(name, password, this);
+                editor.getRestManager().registerUser(name, password, this);
             }
         } catch (Exception e) {
             errorLabel.setText("An error has been encountered while registering. Please try again.");
@@ -155,6 +160,11 @@ public class LoginScreenController implements Controller {
         }
     }
 
+    /**
+     * handles a register and sets label correct
+     *
+     * @param success success of the register as boolean
+     */
     public void handleRegister(boolean success) {
         if (!success) {
             //reset name and password fields

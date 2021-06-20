@@ -72,10 +72,10 @@ public class MainScreenController implements Controller {
         this.initTooltips();
 
         // load servers of the localUser
-        editor.getNetworkController().getServers(localUser, this);
+        editor.getRestManager().getServers(localUser, this);
 
         // load localUserId in order to later be able to edit server
-        editor.getNetworkController().getLocalUserId(localUser);
+        editor.getRestManager().getLocalUserId(localUser);
 
         // Add action listeners
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
@@ -85,6 +85,11 @@ public class MainScreenController implements Controller {
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
     }
 
+    /**
+     * handles a response of a get servers request and inits the server list view.
+     *
+     * @param success success of the get servers request
+     */
     public void handleGetServers(boolean success) {
         if (success) {
             // load list view
@@ -100,7 +105,7 @@ public class MainScreenController implements Controller {
             // Add server websockets
             for (Server server : localUser.getServers()) {
                 webSocketServerUrls.add(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-                editor.getNetworkController().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+                editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
             }
         } else {
             Platform.runLater(this.editor.getStageManager()::showLoginScreen);
@@ -135,7 +140,7 @@ public class MainScreenController implements Controller {
      */
     public void stop() {
         for (String url : webSocketServerUrls) {
-            editor.getNetworkController().withOutWebSocket(url);
+            editor.getWebSocketManager().withOutWebSocket(url);
         }
         serverWSCallback = null;
         privateChatsButton.setOnAction(null);

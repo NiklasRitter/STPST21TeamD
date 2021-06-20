@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEACCEPT;
@@ -67,12 +66,12 @@ public class GameResultScreenController implements Controller {
     private void playAgainOnClick(ActionEvent actionEvent) {
         if (this.localUser.getGameInvites().contains(opponent)) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAMEACCEPT);
-            editor.getNetworkController().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
+            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
             this.editor.getStageManager().showGameScreen(opponent);
             stop();
         } else {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAMEINVITE);
-            editor.getNetworkController().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
+            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
         }
     }
 

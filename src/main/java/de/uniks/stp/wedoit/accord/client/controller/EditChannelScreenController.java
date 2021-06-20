@@ -91,13 +91,18 @@ public class EditChannelScreenController implements Controller {
 
     }
 
-
+    /**
+     * shows members in sub view members list
+     */
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
         //Adjusts the size of the stage to its dynamically added content
         this.editor.getStageManager().getPopupStage().sizeToScene();
     }
 
+    /**
+     * shows members in sub view members list
+     */
     private void checkIfIsPrivileged() {
         if (this.checkBoxPrivileged.isSelected()) {
             channel.setPrivileged(true);
@@ -110,6 +115,10 @@ public class EditChannelScreenController implements Controller {
         }
     }
 
+    /**
+     * If channel is privileged, then the lister of all users is dynamically added to CreateChannelScreen.
+     * then calls MemberListSubViewController:
+     */
     private void initSubViewMemberList() {
         this.vBoxMemberNameAndCheckBox.getChildren().clear();
         for (User user : this.editor.getCurrentServer().getMembers()) {
@@ -155,19 +164,24 @@ public class EditChannelScreenController implements Controller {
             Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
         } else {
             if (!checkBoxPrivileged.isSelected()) {
-                editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), null, this);
+                editor.getRestManager().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), null, this);
             } else if (checkBoxPrivileged.isSelected()) {
                 if (userList.size() <= 0) {
                     userList.add(this.localUser.getId());
-                    editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
+                    editor.getRestManager().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
                 } else {
-                    editor.getNetworkController().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
+                    editor.getRestManager().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), userList, this);
                 }
             }
         }
 
     }
 
+    /**
+     * handles the updating of a channel.
+     *
+     * @param channel channel which is updated if updating was successful
+     */
     public void handleEditChannel(Channel channel) {
         if (channel != null) {
             Stage stage = (Stage) view.getScene().getWindow();
@@ -188,12 +202,22 @@ public class EditChannelScreenController implements Controller {
         this.editor.getStageManager().showAttentionScreen(channel);
     }
 
+    /**
+     * adds a user to the user list.
+     *
+     * @param user user which should be added
+     */
     public void addToUserList(User user) {
         if (!userList.contains(user.getId())) {
             userList.add(user.getId());
         }
     }
 
+    /**
+     * removes a user from the user list.
+     *
+     * @param user user which should be removed
+     */
     public void removeFromUserList(User user) {
         userList.remove(user.getId());
     }

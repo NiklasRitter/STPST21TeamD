@@ -68,35 +68,57 @@ public class AttentionScreenController implements Controller {
         this.btnDelete.setOnAction(null);
     }
 
+    /**
+     * shows the correct text of to be deleted object
+     *
+     * @param objectToDelete object which should deleted
+     */
     private void loadCorrectLabelText(Object objectToDelete) {
         String[] strings = objectToDelete.getClass().toString().split("\\.");
         String objectName = strings[strings.length - 1];
         this.lblObjectToDelete.setText(objectName);
     }
 
+
+    /**
+     * deletes objectToDelete
+     *
+     * @param actionEvent actionEvent such a when a button is fired
+     */
     private void deleteOnClick(ActionEvent actionEvent) {
-        this.editor.getNetworkController().deleteObject(this.localUser, this.objectToDelete, this);
+        this.editor.getRestManager().deleteObject(this.localUser, this.objectToDelete, this);
     }
 
-    private void showError(){
+    /**
+     * shows error message if delete server was not successful
+     */
+    private void showError() {
         Platform.runLater(() -> {
             lblError.setText("Error. Delete Server was not successful!");
             lblError.setVisible(true);
         });
     }
 
+    /**
+     * cancels a deletion and show the correct screen
+     *
+     * @param actionEvent actionEvent such a when a button is fired
+     */
     private void discardOnClick(ActionEvent actionEvent) {
         if (objectToDelete.getClass().equals(Server.class)) {
             this.editor.getStageManager().showEditServerScreen((Server) objectToDelete);
-        }
-        else if(objectToDelete.getClass().equals(Channel.class)){
+        } else if (objectToDelete.getClass().equals(Channel.class)) {
             this.editor.getStageManager().showEditChannelScreen((Channel) objectToDelete);
-        }
-        else if(objectToDelete.getClass().equals(Category.class)){
+        } else if (objectToDelete.getClass().equals(Category.class)) {
             this.editor.getStageManager().showEditCategoryScreen((Category) objectToDelete);
         }
     }
 
+    /**
+     * handles the deletion of a server
+     *
+     * @param status status which says whether a deletion was successful
+     */
     public void handleDeleteServer(boolean status) {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
@@ -107,6 +129,11 @@ public class AttentionScreenController implements Controller {
         }
     }
 
+    /**
+     * handles the deletion of a channel
+     *
+     * @param status status which says whether a deletion was successful
+     */
     public void handleDeleteChannel(boolean status) {
         if (status) {
             Channel channel = (Channel) objectToDelete;
@@ -119,10 +146,17 @@ public class AttentionScreenController implements Controller {
         }
     }
 
+    /**
+     * handles the deletion of a category
+     *
+     * @param status status which says whether a deletion was successful
+     */
     public void handleDeleteCategory(boolean status) {
         if (status) {
             Category category = (Category) objectToDelete;
             category.setServer(null);
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
             stop();
         } else {
             showError();

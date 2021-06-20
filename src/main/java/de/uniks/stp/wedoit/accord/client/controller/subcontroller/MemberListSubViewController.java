@@ -11,6 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 
+/**
+ * SubController for the member list of the Edit- and CreateChannelScreen
+ */
 public class MemberListSubViewController implements Controller {
 
     private final User user;

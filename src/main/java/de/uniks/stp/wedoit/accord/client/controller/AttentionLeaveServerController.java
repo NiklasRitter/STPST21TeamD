@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -16,7 +15,7 @@ public class AttentionLeaveServerController implements Controller {
     private Button btnLeave;
     private Button btnCancel;
 
-    public AttentionLeaveServerController(Parent view, Editor editor, LocalUser localUser, Server server) {
+    public AttentionLeaveServerController(Parent view, Editor editor, Server server) {
         this.editor = editor;
         this.view = view;
         this.server = server;
@@ -30,13 +29,22 @@ public class AttentionLeaveServerController implements Controller {
         this.btnCancel.setOnAction(this::btnCancelOnClick);
     }
 
-
+    /**
+     * leaves a server
+     *
+     * @param actionEvent actionEvent such a when a button is fired
+     */
     private void btnLeaveOnClick(ActionEvent actionEvent) {
         this.editor.leaveServer(this.editor.getLocalUser().getUserKey(), this.server);
         this.editor.getLocalUser().withoutServers(this.server);
         this.server.setLocalUser(null);
     }
 
+    /**
+     * cancels leaving a server
+     *
+     * @param actionEvent actionEvent such a when a button is fired
+     */
     private void btnCancelOnClick(ActionEvent actionEvent) {
         this.editor.getStageManager().getPopupStage().close();
     }
