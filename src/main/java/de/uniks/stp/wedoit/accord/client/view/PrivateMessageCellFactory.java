@@ -1,12 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<PrivateMessage>, ListCell<PrivateMessage>> {
@@ -26,12 +28,14 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
 
         protected void updateItem(PrivateMessage item, boolean empty) {
             super.updateItem(item, empty);
+            this.getStyleClass().removeAll("font_size");
             if (!empty) {
 
                 // set the width (-20 to eliminate overhang in ListView)
                 setMinWidth(param.getWidth() - 20);
                 setMaxWidth(param.getWidth() - 20);
                 setPrefWidth(param.getWidth() - 20);
+                setAlignment(Pos.CENTER_LEFT);
 
                 // allow wrapping
                 setWrapText(true);
@@ -48,7 +52,14 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
 
                     this.getStyleClass().add("font_size");
                     this.setText(">>>" + messages[0] + "\n");
-                } else {
+                }else if(item.getText().startsWith("###game### System")){
+                    this.setText(item.getText().substring(GAME_PREFIX.length()));
+                }else if(item.getText().startsWith(GAME_PREFIX)) {
+                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                }else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                    setAlignment(Pos.CENTER);
+                    this.setText(item.getText());
+                }else{
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
             } else {

@@ -366,7 +366,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         }
         Assert.assertNotNull(newChannel);
         Assert.assertEquals(newChannel.getName(), "testChannel");
-        Assert.assertFalse(newChannel.isRead());
+        Assert.assertTrue(newChannel.isRead());
     }
 
     @Test
@@ -441,7 +441,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Assert.assertEquals(newChannel.getName(), "testChannel");
         Assert.assertEquals(newChannel.getMembers().get(0).getId(), server.getMembers().get(0).getId());
         Assert.assertEquals(newChannel.getMembers().get(0).getName(), lblMemberName.getText());
-        Assert.assertFalse(newChannel.isRead());
+        Assert.assertTrue(newChannel.isRead());
 
     }
 
