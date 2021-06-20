@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
@@ -34,6 +35,7 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
                 setMinWidth(param.getWidth() - 20);
                 setMaxWidth(param.getWidth() - 20);
                 setPrefWidth(param.getWidth() - 20);
+                setAlignment(Pos.CENTER_LEFT);
 
                 // allow wrapping
                 setWrapText(true);
@@ -54,7 +56,10 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
                     this.setText(item.getText().substring(GAME_PREFIX.length()));
                 }else if(item.getText().startsWith(GAME_PREFIX)) {
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
-                }else{
+                }else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                    setAlignment(Pos.CENTER);
+                    this.setText(item.getText());
+                }{
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
             } else {
