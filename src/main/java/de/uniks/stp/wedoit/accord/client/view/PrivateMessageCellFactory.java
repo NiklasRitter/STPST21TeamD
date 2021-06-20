@@ -59,7 +59,7 @@ public class PrivateMessageCellFactory implements javafx.util.Callback<ListView<
                 }else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
-                }{
+                }else{
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
             } else {
