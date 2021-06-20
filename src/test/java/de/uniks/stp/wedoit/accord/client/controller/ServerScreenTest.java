@@ -400,7 +400,8 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(3, categoryThree.getChannels().size());
 
         // click on one channel and check if messages loaded correctly
-        clickOn("#tvServerChannels");
+        Bounds lwBounds = (lookup("#tvServerChannels").query()).localToScreen((lookup("#tvServerChannels").query().getBoundsInLocal()));
+        clickOn(lwBounds.getCenterX(),lwBounds.getCenterY()-70);
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
         when(res.getBody()).thenReturn(new JsonNode(getChannelMessage(channel).toString()));
@@ -443,7 +444,15 @@ public class ServerScreenTest extends ApplicationTest {
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
         WaitForAsyncUtils.waitForFxEvents();
 
-        clickOn("#tvServerChannels");
+
+        Bounds lwBounds = (lookup("#tvServerChannels").query()).localToScreen((lookup("#tvServerChannels").query().getBoundsInLocal()));
+        clickOn(lwBounds.getCenterX(),lwBounds.getCenterY()-70);
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
         when(res.getBody()).thenReturn(new JsonNode(getChannelMessagesFailure().toString()));
@@ -481,7 +490,8 @@ public class ServerScreenTest extends ApplicationTest {
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
         WaitForAsyncUtils.waitForFxEvents();
 
-        clickOn("#tvServerChannels");
+        Bounds lwBounds = (lookup("#tvServerChannels").query()).localToScreen((lookup("#tvServerChannels").query().getBoundsInLocal()));
+        clickOn(lwBounds.getCenterX(),lwBounds.getCenterY()-70);
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
         when(res.getBody()).thenReturn(new JsonNode(build50Messages(channel).toString()));
