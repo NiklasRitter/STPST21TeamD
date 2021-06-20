@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static java.util.Collections.synchronizedList;
 
 public class ServerScreenController implements Controller {
 
@@ -291,10 +292,12 @@ public class ServerScreenController implements Controller {
         List<User> users = null;
         if (channel != null) {
             if (channel.isPrivileged()) {
-                users = channel.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
+                users = channel.getMembers();
             } else {
-                users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
+                users = server.getMembers();
             }
+            users = synchronizedList(users);
+            users = users.stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
         }
         if (users != null) {
             Collections.reverse(users);
