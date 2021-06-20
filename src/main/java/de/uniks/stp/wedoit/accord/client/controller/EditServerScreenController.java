@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -14,7 +13,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -45,8 +43,6 @@ public class EditServerScreenController implements Controller {
     private TextField tfMaxCountAmountInput;
     private TextField tfInvitationLink;
 
-    private VBox vBoxAdminOnly;
-    private VBox mainVBox;
     private Label labelCopy;
 
     private Label lblError;
@@ -95,8 +91,6 @@ public class EditServerScreenController implements Controller {
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
         this.labelCopy = (Label) view.lookup("#labelCopy");
 
-        this.vBoxAdminOnly = (VBox) view.lookup("#vBoxAdminOnly");
-        this.mainVBox = (VBox) view.lookup("#mainVBox");
         this.lblError = (Label) view.lookup("#lblError");
         this.lblInvitationStatus = (Label) view.lookup("#lblInvitationStatus");
         this.lblInvitationStatusText = (Label) view.lookup("#lblInvitationStatusText");
@@ -117,6 +111,9 @@ public class EditServerScreenController implements Controller {
         addActionListener();
     }
 
+    /**
+     * adds needed action listener for javafx nodes
+     */
     private void addActionListener() {
         // Add action listeners
         this.btnCreateInvitation.setOnAction(this::createInvitationButtonOnClick);
@@ -166,7 +163,7 @@ public class EditServerScreenController implements Controller {
      * In this method a new servername has to be set if set if the
      * user types in a new servername and close popup Window
      *
-     * @param actionEvent
+     * @param actionEvent expects an ActionEvent
      */
     private void saveButtonOnClick(ActionEvent actionEvent) {
         String newServerName = tfNewServernameInput.getText();
@@ -177,11 +174,20 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    /**
+     * redirects to the attention screen to delete a server
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void deleteButtonOnClick(ActionEvent actionEvent) {
         this.editor.getStageManager().showAttentionScreen(this.server);
     }
 
-
+    /**
+     * deletes a selected invitation and removes status text of the invitation
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
     private void deleteInvitationButtonOnClick(ActionEvent actionEvent) {
         lblInvitationStatusText.setText("");
         lblInvitationStatus.setText("");
@@ -225,6 +231,9 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    /**
+     * sets the possibility to input a max amount of a invitation true
+     */
     private void radioBtnMaxCountOnClick(MouseEvent mouseEvent) {
         resetAmountPromptText();
         if (this.radioBtnMaxCount.isFocused()) {
@@ -232,6 +241,9 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    /**
+     * sets the possibility to input a max amount of a invitation false
+     */
     private void radioBtnTemporalOnClick(MouseEvent mouseEvent) {
         resetAmountPromptText();
 
@@ -239,6 +251,10 @@ public class EditServerScreenController implements Controller {
             this.tfMaxCountAmountInput.setEditable(false);
         }
     }
+
+    /**
+     * resets amount input
+     */
     private void resetAmountPromptText() {
         tfMaxCountAmountInput.setText("");
         tfMaxCountAmountInput.setPromptText("Amount");
@@ -248,7 +264,7 @@ public class EditServerScreenController implements Controller {
     /**
      * This method copies the invitation link and put the link in the system clipboard
      * <p>
-     * shows "Copied" for 1.5 seconds if there is a link
+     * shows "Copied" for 2 seconds if there is a link
      * else shows "First create invitation"
      */
     private void copyInvitationLinkOnClick(MouseEvent mouseEvent) {
@@ -270,7 +286,7 @@ public class EditServerScreenController implements Controller {
     /**
      * This method copies the invitation link and put the link in the system clipboard
      * <p>
-     * shows "Copied" for 1.5 seconds if there is a link
+     * shows "Copied" for 2 seconds if there is a link
      * else shows "First create invitation"
      */
     private void copyLvInvitationLinkOnClick(MouseEvent mouseEvent) {
@@ -305,6 +321,9 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    /**
+     * resets the labelCopy
+     */
     private void resetLabelCopy() {
         PauseTransition visiblePause = new PauseTransition(
                 Duration.seconds(2)
@@ -320,12 +339,14 @@ public class EditServerScreenController implements Controller {
         visiblePause.play();
     }
 
-
+    /**
+     * handles the updating of a server.
+     *
+     * @param status status which is true if updating was successful
+     */
     public void handleChangeServerName(boolean status) {
         if (status) {
-            Platform.runLater(() -> {
-                this.stage.close();
-            });
+            Platform.runLater(this.stage::close);
         } else {
             Platform.runLater(() -> {
                 lblError.setText("Error. Change Servername not successful!");
@@ -334,10 +355,18 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    /**
+     * loads invitation for a certain server
+     */
     private void loadOldInvitations() {
         this.editor.getRestManager().loadInvitations(server, localUser.getUserKey(), this);
     }
 
+    /**
+     * handle the loading of invitations and adds the new invitations to the invitations list.
+     *
+     * @param invitations invitations of a server
+     */
     public void handleOldInvitations(List<Invitation> invitations) {
         if (invitations != null) {
             createLvInvitations(invitations);
@@ -350,6 +379,11 @@ public class EditServerScreenController implements Controller {
         }
     }
 
+    /**
+     * create a list view filled with invitations, but only links are shown
+     *
+     * @param invitations invitations which should be added to the list
+     */
     private void createLvInvitations(List<Invitation> invitations) {
         this.invitationsObservableList = FXCollections.observableList(server.getInvitations());
 
@@ -359,6 +393,11 @@ public class EditServerScreenController implements Controller {
         server.listeners().addPropertyChangeListener(Server.PROPERTY_INVITATIONS, this.invitationsListener);
     }
 
+    /**
+     * updates a invitations list
+     *
+     * @param propertyChangeEvent event which is fired if the invitations of server have changed
+     */
     private void invitationsChanged(PropertyChangeEvent propertyChangeEvent) {
         this.invitationsObservableList = FXCollections.observableList(server.getInvitations());
         Platform.runLater(() -> lvInvitation.setItems(invitationsObservableList));

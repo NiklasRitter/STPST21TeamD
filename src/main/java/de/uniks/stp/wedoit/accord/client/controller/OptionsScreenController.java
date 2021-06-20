@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -60,7 +59,7 @@ public class OptionsScreenController implements Controller {
             parent.setPrefWidth(300);
         }
         Tooltip logoutButton = new Tooltip();
-        logoutButton.setText("logout");
+        logoutButton.setText("Logout");
         this.logoutButton.setTooltip(logoutButton);
     }
 

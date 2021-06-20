@@ -34,7 +34,7 @@
                               </Stop>
                               <Stop offset="1.0">
                                  <color>
-                                    <Color blue="1.0" green="1.0" red="1.0" />
+                                    <Color red="1.0" green="1.0" blue="1.0" />
                                  </color>
                               </Stop>
                            </stops>
@@ -57,10 +57,17 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button id="btnEdit" mnemonicParsing="false" prefHeight="40.0" prefWidth="48.0" styleClass="styleButton" text="Edit" textAlignment="CENTER">
+                  <Button id="btnEdit" mnemonicParsing="false" prefHeight="40.0" prefWidth="48.0" styleClass="styleButton" textAlignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
+                     <graphic>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/edit.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Button>
                   <Region VBox.vgrow="ALWAYS" />
                </children>

@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -36,10 +35,8 @@ public class MainScreenController implements Controller {
     private Button privateChatsButton;
     private Button optionsButton;
     private Button addServerButton;
-    private Button logoutButton;
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
-    private MainScreenServerListView mainScreenServerListView;
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
     private Button enterInvitationButton;
@@ -88,10 +85,15 @@ public class MainScreenController implements Controller {
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
     }
 
+    /**
+     * handles a response of a get servers request and inits the server list view.
+     *
+     * @param success success of the get servers request
+     */
     public void handleGetServers(boolean success) {
         if (success) {
             // load list view
-            mainScreenServerListView = new MainScreenServerListView();
+            MainScreenServerListView mainScreenServerListView = new MainScreenServerListView();
             serverListView.setCellFactory(mainScreenServerListView);
             List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
                     .collect(Collectors.toList());
@@ -115,19 +117,19 @@ public class MainScreenController implements Controller {
      */
     private void initTooltips() {
         Tooltip privateChatsButton = new Tooltip();
-        privateChatsButton.setText("private chats");
+        privateChatsButton.setText("Private Chats");
         this.privateChatsButton.setTooltip(privateChatsButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("options");
+        optionsButton.setText("Options");
         this.optionsButton.setTooltip(optionsButton);
 
         Tooltip addServerButton = new Tooltip();
-        addServerButton.setText("create new server");
+        addServerButton.setText("Create new Server");
         this.addServerButton.setTooltip(addServerButton);
 
         Tooltip joinServerButton = new Tooltip();
-        joinServerButton.setText("Join server");
+        joinServerButton.setText("Join Server");
         this.enterInvitationButton.setTooltip(joinServerButton);
     }
 

@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAMEACCEPT;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_SUFFIX;
 
 public class PrivateChatController implements Controller {
 
@@ -81,6 +80,11 @@ public class PrivateChatController implements Controller {
         addMessageContextMenu();
         this.tfPrivateChat.setPromptText("select a User");
         this.tfPrivateChat.setEditable(false);
+
+        Tooltip emojiButton = new Tooltip();
+        emojiButton.setText("Emojis");
+        emojiButton.setStyle("-fx-font-size: 10");
+        this.btnEmoji.setTooltip(emojiButton);
     }
 
     @Override
@@ -99,6 +103,9 @@ public class PrivateChatController implements Controller {
         btnCancelQuote.setOnAction(null);
     }
 
+    /**
+     * adds message context menu for messages with the option "quote"
+     */
     private void addMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
         messageContextMenu = new ContextMenu();
@@ -176,13 +183,12 @@ public class PrivateChatController implements Controller {
         }
     }
 
-//    /**
-//     * @param privateMessage
-//     */
-//    public void newChatMessage(PrivateMessage privateMessage) {
-//        List<User> userCell = lwOnlineUsers.getItems().stream().filter(user1 -> user1.getName().equals(privateMessage.getFrom())).collect(Collectors.toList());
-//    }
-
+    /**
+     * handles if the context menu is clicked and sets the quote label.
+     *
+     * @param menu    menu which is selected
+     * @param message message which is selected
+     */
     public void handleContextMenuClicked(String menu, PrivateMessage message) {
         lwPrivateChat.setContextMenu(null);
         lwPrivateChat.getSelectionModel().select(null);
@@ -198,15 +204,30 @@ public class PrivateChatController implements Controller {
         }
     }
 
+    /**
+     * cancels a quote and remove the quote from the view.
+     *
+     * @param actionEvent such as when the quote cancel button is clicked
+     */
     private void cancelQuote(ActionEvent actionEvent) {
         removeQuote();
     }
 
+    /**
+     * removes a quote from the view
+     */
     public void removeQuote() {
         lblQuote.setText("");
         quoteVisible.getChildren().clear();
     }
 
+    /**
+     * implements that
+     * <p>
+     * - with a secondary mouse click, the context menu is shown
+     * <p>
+     * - with a primary mouse click and if the message is a quote, the chat scrolls to the original message
+     */
     private void onLwPrivatChatClicked(MouseEvent mouseEvent) {
         lwPrivateChat.setContextMenu(null);
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
@@ -255,7 +276,7 @@ public class PrivateChatController implements Controller {
         }
     }
 
-    public Chat getCurrentChat(){
+    public Chat getCurrentChat() {
         return currentChat;
     }
 

@@ -1,5 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
+/**
+ * includes constants to create and handle incoming jsons
+ */
 public class JSON {
     public static final String STATUS = "status";
     public static final String MESSAGE = "message";
@@ -11,7 +14,6 @@ public class JSON {
     public static final String USER_KEY = "userKey";
     public static final String OWNER = "owner";
     public static final String CATEGORY = "category";
-    public static final String CATEGORIES = "categories";
     public static final String MEMBERS = "members";
     public static final String ONLINE = "online";
     public static final String SERVER = "server";
@@ -24,7 +26,6 @@ public class JSON {
     public static final String TO = "to";
     public static final String TEXT = "text";
     public static final String SUCCESS = "success";
-    public static final String SUCCESSFULLY_EXITED = "Successfully exited";
     public static final String FAILURE = "failure";
     public static final String PRIVATE = "private";
     public static final String COUNT = "count";

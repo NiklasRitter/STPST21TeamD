@@ -13,6 +13,17 @@ import java.util.List;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 
 public class JsonUtil {
+
+    /**
+     * Stringify the given JsonObject.
+     *
+     * @param object The JsonObject to be stringified.
+     * @return The stringified JSON.
+     */
+    public static String stringify(JsonObject object) {
+        return object.toString();
+    }
+
     /**
      * Parse given stringified JSON to JsonObject.
      *
@@ -83,6 +94,37 @@ public class JsonUtil {
     }
 
     /**
+     * Parse given JsonObject to a PrivateMessage
+     *
+     * @param jsonObject jsonObject to parse
+     * @return privateMessage
+     */
+    public static PrivateMessage parsePrivateMessage(JsonObject jsonObject) {
+        PrivateMessage message = new PrivateMessage();
+        message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
+        message.setText(jsonObject.getString(MESSAGE));
+        message.setFrom(jsonObject.getString(FROM));
+        message.setTo(jsonObject.getString(TO));
+        return message;
+    }
+
+    /**
+     * Parse given JsonObject to a Message
+     *
+     * @param jsonMessage jsonObject to parse
+     * @return message
+     */
+    public static Message parseMessage(JsonObject jsonMessage) {
+        Message message = new Message();
+        message.setId(jsonMessage.asJsonObject().getString(ID));
+        message.setText(jsonMessage.asJsonObject().getString(TEXT));
+        message.setFrom(jsonMessage.asJsonObject().getString(FROM));
+        String timestamp = jsonMessage.asJsonObject().get(TIMESTAMP).toString();
+        message.setTimestamp(Long.parseLong(timestamp));
+        return message;
+    }
+
+    /**
      * Parse given JsonArray to a List of Messages
      *
      * @param jsonMessages The JsonArray to parse
@@ -91,12 +133,7 @@ public class JsonUtil {
     public static List<Message> parseMessageArray(JsonArray jsonMessages) {
         ArrayList<Message> messages = new ArrayList<>();
         for (JsonValue jsonMessage : jsonMessages) {
-            Message message = new Message();
-            message.setId(jsonMessage.asJsonObject().getString(ID));
-            message.setText(jsonMessage.asJsonObject().getString(TEXT));
-            message.setFrom(jsonMessage.asJsonObject().getString(FROM));
-            String timestamp = jsonMessage.asJsonObject().get(TIMESTAMP).toString();
-            message.setTimestamp(Long.parseLong(timestamp));
+            Message message = parseMessage(jsonMessage.asJsonObject());
             messages.add(message);
         }
         return messages;

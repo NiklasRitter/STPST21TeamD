@@ -28,7 +28,7 @@ public class StageManager extends Application {
 
     private final Map<String, Controller> controllerMap = new HashMap<>();
     private ResourceManager resourceManager = new ResourceManager();
-    private Editor editor = new Editor();
+    private final Editor editor = new Editor();
     private PreferenceManager prefManager = new PreferenceManager();
     private SystemTrayController systemTrayController;
     private AccordClient model;
@@ -113,6 +113,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the CreateServerScreen and show the CreateServerScreen on the window
+     */
     public void showCreateServerScreen() {
         try {
             //load view
@@ -138,6 +141,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the JoinServerScreen and show the JoinServerScreen on the window
+     */
     public void showJoinServerScreen() {
         try {
             //load view
@@ -149,7 +155,7 @@ public class StageManager extends Application {
             //init controller
             JoinServerScreenController joinServerScreenController = new JoinServerScreenController(root, model.getLocalUser(), editor);
             joinServerScreenController.init();
-            controllerMap.put("joinServerScreenController", joinServerScreenController);
+            controllerMap.put(JOIN_SERVER_SCREEN_CONTROLLER, joinServerScreenController);
 
             //display
             popupStage.setTitle("Join Server");
@@ -163,6 +169,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the PrivateChatsScreen and show the PrivateChatsScreen on the window
+     */
     public void showPrivateChatsScreen() {
         cleanup();
 
@@ -191,6 +200,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the ServerScreen and show the ServerScreen on the window
+     */
     public void showServerScreen(Server server) {
         cleanup();
 
@@ -222,6 +234,9 @@ public class StageManager extends Application {
 
     }
 
+    /**
+     * loads fxml of the GameScreen and show the GameScreen on the window
+     */
     public void showGameScreen(User opponent) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
@@ -232,7 +247,7 @@ public class StageManager extends Application {
             //init controller
             GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), opponent, editor);
             gameScreenController.init();
-            controllerMap.put("gameScreenController", gameScreenController);
+            controllerMap.put(GAME_SCREEN_CONTROLLER, gameScreenController);
 
             // display
             gameStage.setTitle("Rock - Paper - Scissors");
@@ -247,6 +262,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the GameScreen and show the GameScreen on the window
+     */
     public void showGameResultScreen(User opponent, Boolean isWinner) {
         if (gameStage.isShowing()) {
             gameStage.close();
@@ -259,7 +277,7 @@ public class StageManager extends Application {
                 //init controller
                 GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
                 gameResultScreenController.init();
-                controllerMap.put("GameResultScreenController", gameResultScreenController);
+                controllerMap.put(GAME_RESULT_SCREEN_CONTROLLER, gameResultScreenController);
 
                 gameStage.setTitle("Result");
                 if (gameStage.getStyle() != StageStyle.DECORATED) gameStage.initStyle(StageStyle.DECORATED);
@@ -278,6 +296,9 @@ public class StageManager extends Application {
 
     }
 
+    /**
+     * loads fxml of the OptionsScreen and show the OptionsScreen on the window
+     */
     public void showOptionsScreen() {
         try {
             //load view
@@ -305,6 +326,9 @@ public class StageManager extends Application {
     }
 
 
+    /**
+     * loads fxml of the CreateCategoryScreen and show the CreateCategoryScreen on the window
+     */
     public void showCreateCategoryScreen() {
         try {
             //load view
@@ -316,7 +340,7 @@ public class StageManager extends Application {
 
             CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, editor);
             createCategoryScreenController.init();
-            controllerMap.put("createCategoryScreenController", createCategoryScreenController);
+            controllerMap.put(CREATE_CATEGORY_SCREEN_CONTROLLER, createCategoryScreenController);
 
             //display
             popupStage.setTitle("Create Category");
@@ -332,6 +356,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the EditCategoryScreen and show the EditCategoryScreen on the window
+     */
     public void showEditCategoryScreen(Category category) {
         try {
             //load view
@@ -343,7 +370,7 @@ public class StageManager extends Application {
             //init controller
             EditCategoryScreenController editCategoryScreenController = new EditCategoryScreenController(root, editor, category);
             editCategoryScreenController.init();
-            controllerMap.put("editCategoryScreenController", editCategoryScreenController);
+            controllerMap.put(EDIT_CATEGORY_SCREEN_CONTROLLER, editCategoryScreenController);
 
             //display
             popupStage.setTitle("Edit Category");
@@ -357,6 +384,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the EmojiScreen and show the EmojiScreen on the window
+     */
     public void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
         try {
             //load view
@@ -367,7 +397,7 @@ public class StageManager extends Application {
 
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, tfForEmoji);
             emojiScreenController.init();
-            controllerMap.put("emojiScreenController", emojiScreenController);
+            controllerMap.put(EMOJI_SCREEN_CONTROLLER, emojiScreenController);
             //display
             emojiPickerStage.setTitle("Emoji Picker");
             emojiPickerStage.setScene(emojiPickerScene);
@@ -383,10 +413,13 @@ public class StageManager extends Application {
     }
 
 
+    /**
+     * loads fxml of the CreateChannelScreen and show the CreateChannelScreen on the window
+     */
     public void showCreateChannelScreen(Category category) {
         try {
             //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateChannelScreen.fxml")));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditChannelScreen.fxml")));
             popupScene = new Scene(root);
 
             updateDarkmode();
@@ -394,7 +427,7 @@ public class StageManager extends Application {
             //init controller
             CreateChannelScreenController createChannelScreenController = new CreateChannelScreenController(root, model.getLocalUser(), editor, category);
             createChannelScreenController.init();
-            controllerMap.put("createChannelScreenController", createChannelScreenController);
+            controllerMap.put(CREATE_CHANNEL_SCREEN_CONTROLLER, createChannelScreenController);
 
             //display
             popupStage.setTitle("Create Channel");
@@ -408,6 +441,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the EditChannelScreen and show the EditChannelScreen on the window
+     */
     public void showEditChannelScreen(Channel channel) {
         try {
             //load view
@@ -419,7 +455,7 @@ public class StageManager extends Application {
             //init controller
             EditChannelScreenController editChannelScreenController = new EditChannelScreenController(root, model.getLocalUser(), editor, channel);
             editChannelScreenController.init();
-            controllerMap.put("editChannelScreenController", editChannelScreenController);
+            controllerMap.put(EDIT_CHANNEL_SCREEN_CONTROLLER, editChannelScreenController);
 
             //display
             popupStage.setTitle("Edit Channel");
@@ -433,6 +469,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the EditServerScreen and show the EditServerScreen on the window
+     */
     public void showEditServerScreen(Server server) {
         try {
             //load view
@@ -444,7 +483,7 @@ public class StageManager extends Application {
             //init controller
             EditServerScreenController editServerScreenController = new EditServerScreenController(root, model.getLocalUser(), editor, server, popupStage);
             editServerScreenController.init();
-            controllerMap.put("editServerScreenController", editServerScreenController);
+            controllerMap.put(EDIT_SERVER_SCREEN_CONTROLLER, editServerScreenController);
 
             //display
             popupStage.setTitle("Edit Server");
@@ -459,6 +498,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the AttentionScreen and show the AttentionScreen on the window
+     */
     public void showAttentionScreen(Object objectToDelete) {
         try {
             //load view
@@ -470,7 +512,7 @@ public class StageManager extends Application {
             //init controller
             AttentionScreenController attentionScreenController = new AttentionScreenController(root, model.getLocalUser(), editor, objectToDelete);
             attentionScreenController.init();
-            controllerMap.put("attentionScreenController", attentionScreenController);
+            controllerMap.put(ATTENTION_SCREEN_CONTROLLER, attentionScreenController);
 
             //display
             popupStage.setTitle("Attention");
@@ -485,6 +527,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads fxml of the AttentionLeaveServerScreen and show the AttentionLeaveServerScreen on the window
+     */
     public void showAttentionLeaveServerScreen(Server server) {
         try {
             //load view
@@ -496,7 +541,7 @@ public class StageManager extends Application {
             //init controller
             AttentionLeaveServerController attentionLeaveServerController = new AttentionLeaveServerController(root, editor, server);
             attentionLeaveServerController.init();
-            controllerMap.put("attentionLeaveServerController", attentionLeaveServerController);
+            controllerMap.put(ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, attentionLeaveServerController);
 
             //display
             popupStage.setTitle("Attention");
@@ -534,6 +579,10 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * changes the view to light or darkmode
+     * @param darkmode boolean weather darkmode is enabled or not
+     */
     public void changeDarkmode(boolean darkmode) {
         if (darkmode) {
             if (scene != null) {
@@ -580,10 +629,6 @@ public class StageManager extends Application {
         changeDarkmode(model.getOptions().isDarkmode());
     }
 
-    public Map<String, Controller> getControllerMap() {
-        return controllerMap;
-    }
-
     public SystemTrayController getSystemTrayController() {
         return systemTrayController;
     }
@@ -598,10 +643,6 @@ public class StageManager extends Application {
 
     public Stage getStage() {
         return stage;
-    }
-
-    public Scene getPopupScene() {
-        return popupScene;
     }
 
     public Stage getPopupStage() {

@@ -3,7 +3,10 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
-import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.model.Channel;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Message;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
@@ -30,7 +33,6 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_SUFFIX;
 
 public class ServerChatController implements Controller {
 
@@ -91,6 +93,11 @@ public class ServerChatController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         quoteVisible.getChildren().clear();
         addMessageContextMenu();
+
+        Tooltip emojiButton = new Tooltip();
+        emojiButton.setText("Emojis");
+        emojiButton.setStyle("-fx-font-size: 10");
+        this.btnEmoji.setTooltip(emojiButton);
     }
 
     /**
@@ -104,7 +111,7 @@ public class ServerChatController implements Controller {
         this.lvTextChat.setOnMouseClicked(null);
         this.btnCancelQuote.setOnAction(null);
 
-        for (MenuItem item: messageContextMenu.getItems()) {
+        for (MenuItem item : messageContextMenu.getItems()) {
             item.setOnAction(null);
         }
         if (this.currentChannel != null) {
@@ -145,7 +152,8 @@ public class ServerChatController implements Controller {
 
     /**
      * handles when the context menu of the text chat is clicked
-     * @param menu the menu which is clicked like "quote"
+     *
+     * @param menu    the menu which is clicked like "quote"
      * @param message message which is selected in the text chat
      */
     public void handleContextMenuClicked(String menu, Message message) {
@@ -165,6 +173,7 @@ public class ServerChatController implements Controller {
 
     /**
      * This method cancels a quote
+     *
      * @param actionEvent such as when a button is fired
      */
     private void cancelQuote(ActionEvent actionEvent) {
@@ -179,6 +188,9 @@ public class ServerChatController implements Controller {
         quoteVisible.getChildren().clear();
     }
 
+    /**
+     * opens the EmojiScreen
+     */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
@@ -262,6 +274,9 @@ public class ServerChatController implements Controller {
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
     }
 
+    /**
+     * handles new messages loaded over rest in the view
+     */
     public void handleGetChannelMessages(Channel channel, JsonArray data) {
         if (channel != null) {
             List<Message> messages = JsonUtil.parseMessageArray(data);

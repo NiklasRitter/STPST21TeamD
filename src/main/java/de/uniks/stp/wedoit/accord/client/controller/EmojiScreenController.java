@@ -17,11 +17,11 @@ public class EmojiScreenController implements Controller {
 
     private final Parent view;
     private GridPane pane;
-    private TextField tfForEmoji;
+    private final TextField tfForEmoji;
 
     private EmojiButton emoji;
-    private HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<EmojiButton, String>();
-    private List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
+    private final HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<>();
+    private final List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
 
     public EmojiScreenController(Parent view, TextField tfForEmoji) {
         this.view = view;
@@ -68,9 +68,7 @@ public class EmojiScreenController implements Controller {
      * added the emoji button text in the chat text field
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
-        Platform.runLater(() -> {
-                    this.tfForEmoji.setText(this.tfForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource()));
-                }
+        Platform.runLater(() -> this.tfForEmoji.setText(this.tfForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource()))
         );
     }
 

@@ -345,12 +345,12 @@ public class ServerContextMenuTest extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        Button button = lookup("#btnCreateChannel").query();
+        Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Create");
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
-        clickOn("#btnCreateChannel");
+        clickOn("#btnSave");
 
         JsonArray members = Json.createArrayBuilder().build();
         JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "text", false, members);
@@ -382,7 +382,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
 
-        Button button = lookup("#btnCreateChannel").query();
+        Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Create");
 
         TextField textField = lookup("#tfChannelName").query();
@@ -415,7 +415,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         }
 
         WaitForAsyncUtils.waitForFxEvents();
-        Button btnCreate = lookup("#btnCreateChannel").query();
+        Button btnCreate = lookup("#btnSave").query();
         Assert.assertEquals(btnCreate.getText(), "Create");
         clickOn(btnCreate);
 
@@ -453,16 +453,16 @@ public class ServerContextMenuTest extends ApplicationTest {
             this.stageManager.showCreateChannelScreen(category);
         });
         WaitForAsyncUtils.waitForFxEvents();
-        Button button = lookup("#btnCreateChannel").query();
+        Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Create");
 
-        clickOn("#btnCreateChannel");
+        clickOn("#btnSave");
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals(errorLabel.getText(), "Name has to be at least 1 symbols long");
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
-        clickOn("#btnCreateChannel");
+        clickOn("#btnSave");
 
         JsonObject json = buildFailure();
         mockCreateChannelRest(json);

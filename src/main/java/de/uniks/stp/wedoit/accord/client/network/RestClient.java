@@ -11,7 +11,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.CATEGORIES;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.CHANNELS;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
@@ -287,6 +286,9 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * sends a request to delete a server.
+     */
     public void deleteServer(String userKey, String serverId, Callback<JsonNode> callback) {
         // Use UniRest to delete server
         HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId)
@@ -295,6 +297,9 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * sends a request to delete a channel.
+     */
     public void deleteChannel(String userKey, String channelId, String categoryId, String serverId, Callback<JsonNode> callback) {
         // Use UniRest to delete channel
         HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS + SLASH + channelId)
@@ -303,6 +308,9 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * sends a request to delete a category.
+     */
     public void deleteCategory(String userKey, String categoryId, String serverId, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId)
                 .header(USER_KEY, userKey);
@@ -348,6 +356,9 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * sends a request to load a invitation
+     */
     public void loadInvitations(String serverId, String userKey, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.get(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES)
                 .header(USER_KEY, userKey);
@@ -355,6 +366,9 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    /**
+     * sends a request to delete a invitation
+     */
     public void deleteInvitation(String userKey, String inviteId, String serverId, Callback<JsonNode> callback) {
         HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + INVITES + SLASH + inviteId)
                 .header(USER_KEY, userKey);
@@ -372,6 +386,9 @@ public class RestClient {
         req.asJsonAsync(callback);
     }
 
+    /**
+     * sends a request to leave a server.
+     */
     public void leaveServer(String userKey, String serverID, Callback<JsonNode> callback) {
         // Use UniRest to leave server
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverID + LEAVE_SERVER)
