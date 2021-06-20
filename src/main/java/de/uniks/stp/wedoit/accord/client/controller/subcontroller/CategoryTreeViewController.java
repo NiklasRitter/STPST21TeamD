@@ -211,7 +211,7 @@ public class CategoryTreeViewController implements Controller {
     }
 
     /**
-     * creates a category tree item or deletes a old one
+     * creates a channel tree item or deletes a old one
      *
      * @param oldValue added channel item which should removed in the view
      * @param newValue which should be added to the view
