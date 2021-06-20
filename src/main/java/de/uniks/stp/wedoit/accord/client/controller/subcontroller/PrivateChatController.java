@@ -183,13 +183,6 @@ public class PrivateChatController implements Controller {
         }
     }
 
-//    /**
-//     * @param privateMessage
-//     */
-//    public void newChatMessage(PrivateMessage privateMessage) {
-//        List<User> userCell = lwOnlineUsers.getItems().stream().filter(user1 -> user1.getName().equals(privateMessage.getFrom())).collect(Collectors.toList());
-//    }
-
     /**
      * handles if the context menu is clicked and sets the quote label.
      *
