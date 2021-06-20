@@ -79,11 +79,14 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
     @BeforeClass
     public static void before() {
+        /*
         System.setProperty("testfx.robot", "glass");
         System.setProperty("testfx.headless", "true");
         System.setProperty("prism.order", "sw");
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
+
+         */
     }
 
     @Override
@@ -458,7 +461,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user2.getName(), lblSelectedUser.getText());
 
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
-        Assert.assertEquals(stageManager.getEditor().loadOldMessages("Albert").size(), lwPrivateChat.getItems().size());
+        Assert.assertEquals(stageManager.getEditor().loadOldMessages("Albert").size()+1, lwPrivateChat.getItems().size());
         Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(lwNewestItem).getText());
     }
 
@@ -512,7 +515,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Bounds lwBounds = (lookup("#lwPrivateChat").query()).localToScreen((lookup("#lwPrivateChat").query().getBoundsInLocal()));
-        rightClickOn(lwBounds.getMinX()+20,lwBounds.getMinY()+10);
+        rightClickOn(lwBounds.getMinX()+40,lwBounds.getMinY()+40);
         Bounds boundsInLocal = (lookup("#messageContextMenu").query()).localToScreen((lookup("#messageContextMenu").query().getBoundsInLocal()));
         PrivateMessage selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
         clickOn(boundsInLocal.getCenterX(), boundsInLocal.getCenterY());
@@ -528,7 +531,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
 
         lwPrivateChat.getSelectionModel().select(0);
-        rightClickOn(lwBounds.getMinX()+5,lwBounds.getMinY()+5);
+        rightClickOn(lwBounds.getMinX()+40,lwBounds.getMinY()+40);
         boundsInLocal = (lookup("#messageContextMenu").query()).localToScreen((lookup("#messageContextMenu").query().getBoundsInLocal()));
         selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
         clickOn(boundsInLocal.getCenterX(), boundsInLocal.getCenterY());

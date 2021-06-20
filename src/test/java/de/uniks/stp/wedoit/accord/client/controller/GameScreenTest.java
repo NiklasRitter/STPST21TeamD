@@ -207,7 +207,12 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
 
         clickOn("#btnPlayAgain");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_ACCEPT));
+        //receive game accepted message
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPTS));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        //receive game accepted message
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_START));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getGameStage().getTitle());
