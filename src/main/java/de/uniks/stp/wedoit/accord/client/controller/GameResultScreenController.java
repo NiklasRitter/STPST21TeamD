@@ -76,7 +76,6 @@ public class GameResultScreenController implements Controller{
         if(this.localUser.getGameInvites().contains(opponent)){
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_ACCEPTS);
             editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
-            this.editor.getStageManager().showGameScreen(opponent);
             stop();
         }else{
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_INVITE);

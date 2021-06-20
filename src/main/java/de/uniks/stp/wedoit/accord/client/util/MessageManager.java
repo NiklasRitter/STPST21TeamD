@@ -64,13 +64,16 @@ public class MessageManager {
         }
 
         if(message.getText().equals(GAME_ACCEPTS)){
-            System.out.println(editor.getStageManager().getGameStage().getTitle().equals("Result"));
             if(!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result")) {
                 JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getTo().equals(editor.getLocalUser().getName()) ? message.getFrom(): message.getTo(), GAME_START);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
             }else{
+                System.out.println("this is: " + editor.getLocalUser().getName());
+                System.out.println( editor.getStageManager().getGameStage().getTitle());
+                System.out.println(!editor.getStageManager().getGameStage().isShowing());
+                System.out.println(!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result"));
                 JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo(): message.getFrom(), GAME_INGAME);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;

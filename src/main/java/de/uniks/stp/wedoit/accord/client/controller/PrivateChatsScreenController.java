@@ -265,8 +265,4 @@ public class PrivateChatsScreenController implements Controller {
             }
         }
     }
-
-    public void setBtnPlayText(String text) {
-        btnPlay.setText(text);
-    }
 }

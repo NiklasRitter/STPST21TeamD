@@ -318,6 +318,7 @@ public class PrivateChatController implements Controller {
      * @param actionEvent occurs when Play Button is clicked
      */
     private void btnPlayOnClicked(ActionEvent actionEvent) {
+
         if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play") && !localUser.getGameRequests().contains(currentChat.getUser())) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_INVITE);
             editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
