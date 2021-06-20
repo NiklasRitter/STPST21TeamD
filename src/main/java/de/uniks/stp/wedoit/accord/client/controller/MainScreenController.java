@@ -113,19 +113,19 @@ public class MainScreenController implements Controller {
      */
     private void initTooltips() {
         Tooltip privateChatsButton = new Tooltip();
-        privateChatsButton.setText("private chats");
+        privateChatsButton.setText("Private Chats");
         this.privateChatsButton.setTooltip(privateChatsButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("options");
+        optionsButton.setText("Options");
         this.optionsButton.setTooltip(optionsButton);
 
         Tooltip addServerButton = new Tooltip();
-        addServerButton.setText("create new server");
+        addServerButton.setText("Create new Server");
         this.addServerButton.setTooltip(addServerButton);
 
         Tooltip joinServerButton = new Tooltip();
-        joinServerButton.setText("Join server");
+        joinServerButton.setText("Join Server");
         this.enterInvitationButton.setTooltip(joinServerButton);
     }
 

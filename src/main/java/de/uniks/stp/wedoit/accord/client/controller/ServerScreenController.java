@@ -220,16 +220,22 @@ public class ServerScreenController implements Controller {
      */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
-        homeButton.setText("home");
+        homeButton.setText("Home");
         btnHome.setTooltip(homeButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("options");
+        optionsButton.setText("Options");
         btnOptions.setTooltip(optionsButton);
 
         Tooltip editButton = new Tooltip();
-        editButton.setText("edit Server");
+        editButton.setText("Edit Server");
+        editButton.setStyle("-fx-font-size: 10");
         btnEdit.setTooltip(editButton);
+
+        Tooltip emojiButton = new Tooltip();
+        emojiButton.setText("Emojis");
+        emojiButton.setStyle("-fx-font-size: 10");
+        btnEmoji.setTooltip(emojiButton);
     }
 
     /**
