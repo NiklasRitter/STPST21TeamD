@@ -621,6 +621,7 @@ public class RestManager {
                 String userKey = loginAnswer.getString(USER_KEY);
                 LocalUser localUser = editor.haveLocalUser(username, userKey);
                 localUser.setPassword(password);
+                editor.getWebSocketManager().start();
                 editor.handleAutomaticLogin(true);
             }
         });
