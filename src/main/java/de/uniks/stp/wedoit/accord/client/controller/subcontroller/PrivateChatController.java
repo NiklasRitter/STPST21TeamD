@@ -239,7 +239,7 @@ public class PrivateChatController implements Controller {
         lwPrivateChat.setContextMenu(null);
         PrivateMessage selectedMessage = lwPrivateChat.getSelectionModel().getSelectedItem();
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            if (selectedMessage != null  && selectedMessage.getId().equals("idLoadMore") && !editor.getMessageManager().isQuote(selectedMessage)) {
+            if (selectedMessage != null && selectedMessage.getId() == null && !editor.getMessageManager().isQuote(selectedMessage)) {
                 lwPrivateChat.setContextMenu(messageContextMenu);
                 messageContextMenu.show(lwPrivateChat, Side.LEFT, 0, 0);
             }

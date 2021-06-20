@@ -71,6 +71,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
     @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentSystemCaptorWebSocket;
+
+    private Editor editor;
     private Options oldOptions;
 
     @BeforeClass
@@ -90,10 +92,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
-
         this.stageManager.start(stage);
-
-        this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
 
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
@@ -102,12 +101,11 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         this.stageManager.showLoginScreen();
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
+        emojiPickerStage = stageManager.getEmojiPickerStage();
     }
 
     @Override
     public void stop() {
-        stageManager.getResourceManager().saveOptions(this.oldOptions);
-        oldOptions = null;
         rule = null;
         stage = null;
         stageManager = null;
@@ -119,6 +117,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         systemWebSocketClient = null;
         chatWebSocketClient = null;
         callbackArgumentSystemCaptorWebSocket = null;
+        editor = null;
     }
 
     @BeforeEach
@@ -143,9 +142,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(0)));
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
-        Assert.assertFalse(userListView.getItems().get(0).isChatRead());
-        Assert.assertFalse(userListView.getItems().get(1).isChatRead());
-        Assert.assertFalse(userListView.getItems().get(2).isChatRead());
     }
 
     @Test
@@ -174,10 +170,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(1)));
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(2)));
         Assert.assertTrue(userListView.getItems().contains(localUser.getUsers().get(3)));
-        Assert.assertFalse(userListView.getItems().get(0).isChatRead());
-        Assert.assertFalse(userListView.getItems().get(1).isChatRead());
-        Assert.assertFalse(userListView.getItems().get(2).isChatRead());
-        Assert.assertFalse(userListView.getItems().get(3).isChatRead());
     }
 
     @Test
@@ -203,7 +195,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
 
         Assert.assertEquals(3, userListView.getItems().size());
-        Assert.assertEquals(this.stageManager.getEditor().getOnlineUsers().size(), userListView.getItems().size());
+        Assert.assertEquals(stageManager.getEditor().getOnlineUsers().size(), userListView.getItems().size());
     }
 
     @Test
@@ -234,18 +226,18 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(gameInvite));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(1, lwPrivateChat.getItems().size());
         Assert.assertEquals(1, localUser.getGameRequests().size());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(0).getText());
+        int lwNewestItem = lwPrivateChat.getItems().size() -1;
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
+        Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
 
         //receive game accepted message
         mockChatWebSocket(getServerMessageUserAnswer(user, GAMEACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(this.stageManager.getGameStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getGameStage().getTitle());
+        Assert.assertTrue(stageManager.getGameStage().isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", stageManager.getGameStage().getTitle());
 
 
         mockChatWebSocket(getServerMessageUserAnswer(user, PREFIX + ROCK));
@@ -279,12 +271,12 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("Accept", btnPlay.getText());
-        Assert.assertEquals(1, lwPrivateChat.getItems().size());
         Assert.assertEquals(1, localUser.getGameInvites().size());
         Assert.assertEquals(0, localUser.getGameRequests().size());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(0).getText());
+        int lwNewestItem = lwPrivateChat.getItems().size() -1;
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
+        Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
 
         clickOn(btnPlay);
 
@@ -292,8 +284,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(gameAccept));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(this.stageManager.getGameStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getGameStage().getTitle());
+        Assert.assertTrue(stageManager.getGameStage().isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", stageManager.getGameStage().getTitle());
 
     }
 
@@ -334,11 +326,10 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(1, lwPrivateChat.getItems().size());
-        Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals("Test Message" + emoji.getText(), lwPrivateChat.getItems().get(0).getText());
+        int lwNewestItem = lwPrivateChat.getItems().size() -1;
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
+        Assert.assertEquals("Test Message" + emoji.getText(), lwPrivateChat.getItems().get(lwNewestItem).getText());
     }
 
     @Test
@@ -359,11 +350,11 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, "Hallo"));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(1, lwPrivateChat.getItems().size());
-        Assert.assertEquals(user.getPrivateChat().getMessages().size(), lwPrivateChat.getItems().size());
-        Assert.assertEquals(lwPrivateChat.getItems().get(0), user.getPrivateChat().getMessages().get(0));
-        Assert.assertEquals(lwPrivateChat.getItems().get(0).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(0).getText());
+        int lastLwIndex = lwPrivateChat.getItems().size()-1;
+        System.err.println(lastLwIndex);
+        Assert.assertEquals(lwPrivateChat.getItems().get(lastLwIndex), user.getPrivateChat().getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(lastLwIndex).getText(), user.getPrivateChat().getMessages().get(0).getText());
+        Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(lastLwIndex).getText());
     }
 
     @Test
@@ -441,8 +432,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
         Assert.assertEquals(stageManager.getEditor().loadOldMessages("Albert").size(), lwPrivateChat.getItems().size());
-        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user2.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals("Test Message", lwPrivateChat.getItems().get(lwNewestItem).getText());
+        Assert.assertEquals("Hallo", lwPrivateChat.getItems().get(lwNewestItem).getText());
     }
 
     public void mockRest(JsonObject restClientJson) {
@@ -462,6 +452,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         wsSystemCallback.handleMessage(webSocketJson);
     }
+
+
 
 
     @Test
@@ -484,8 +476,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         //send message
-        clickOn("#tfEnterPrivateChat");
-        write("Test Message");
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -493,15 +484,16 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
         WaitForAsyncUtils.waitForFxEvents();
 
-        lwPrivateChat.getSelectionModel().select(0);
-        rightClickOn(lwPrivateChat);
+        Bounds lwBounds = (lookup("#lwPrivateChat").query()).localToScreen((lookup("#lwPrivateChat").query().getBoundsInLocal()));
+        rightClickOn(lwBounds.getMinX()+20,lwBounds.getMinY()+10);
         Bounds boundsInLocal = (lookup("#messageContextMenu").query()).localToScreen((lookup("#messageContextMenu").query().getBoundsInLocal()));
+        PrivateMessage selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
         clickOn(boundsInLocal.getCenterX(), boundsInLocal.getCenterY());
         WaitForAsyncUtils.waitForFxEvents();
         Label lblQuote = (Label) lookup("#lblQuote").query();
         Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
 
-        String formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lwPrivateChat.getItems().get(0));
+        String formatted = stageManager.getEditor().getMessageManager().getMessageFormatted(selectedItem);
         Assert.assertEquals(lblQuote.getText(), formatted);
         clickOn(btnCancelQuote);
         WaitForAsyncUtils.waitForFxEvents();
@@ -509,14 +501,14 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
 
         lwPrivateChat.getSelectionModel().select(0);
-        rightClickOn(lwPrivateChat);
+        rightClickOn(lwBounds.getMinX()+5,lwBounds.getMinY()+5);
         boundsInLocal = (lookup("#messageContextMenu").query()).localToScreen((lookup("#messageContextMenu").query().getBoundsInLocal()));
+        selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
         clickOn(boundsInLocal.getCenterX(), boundsInLocal.getCenterY());
         WaitForAsyncUtils.waitForFxEvents();
         lblQuote = (Label) lookup("#lblQuote").query();
-        btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
 
-        formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lwPrivateChat.getItems().get(0));
+        formatted = stageManager.getEditor().getMessageManager().getMessageFormatted(selectedItem);
         Assert.assertEquals(lblQuote.getText(), formatted);
 
         ((TextField) lookup("#tfEnterPrivateChat").query()).setText("quote");
@@ -530,12 +522,14 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(quote_message));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(lwPrivateChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
-        Assert.assertEquals(lwPrivateChat.getItems().get(2).getText(), "quote");
 
-        lwPrivateChat.getSelectionModel().select(1);
-        clickOn(lwPrivateChat);
-        Assert.assertEquals(lwPrivateChat.getSelectionModel().getSelectedItem(),lwPrivateChat.getItems().get(0));
+        int lwNewestItem = lwPrivateChat.getItems().size() -1;
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem-1).getText(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), "quote");
+
+        lwPrivateChat.getSelectionModel().select(lwNewestItem);
+        //clickOn(lwPrivateChat);
+        Assert.assertEquals(lwPrivateChat.getSelectionModel().getSelectedItem(), lwPrivateChat.getItems().get(lwNewestItem));
     }
 
 
@@ -634,7 +628,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
         callbackLogin.completed(res);
 
-        this.localUser = this.stageManager.getEditor().getLocalUser();
+        this.localUser = stageManager.getEditor().getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
         clickOn("#btnPrivateChats");
@@ -687,7 +681,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
     }
 
     @Test
