@@ -62,7 +62,6 @@ public class CategoryTreeViewController implements Controller {
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
 
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
-        this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     public void stop() {
@@ -77,7 +76,6 @@ public class CategoryTreeViewController implements Controller {
             category.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, categoriesListener);
         }
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
-        this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
     }
 
     // Channel and Category init
@@ -114,7 +112,7 @@ public class CategoryTreeViewController implements Controller {
     /**
      * handles the channels of a server in the view
      */
-    public void handleGetChannels(List<Channel> channelList, TreeItem<Object> categoryItem) {
+    public void handleGetChannels(List<Channel> channelList) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
             Platform.runLater(editor.getStageManager()::showLoginScreen);
@@ -157,8 +155,6 @@ public class CategoryTreeViewController implements Controller {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
             if (propertyChangeEvent.getSource() instanceof Channel) {
                 Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
-            } else {
-                Platform.runLater(() -> controller.refreshLvUsers(channel));
             }
         }
     }

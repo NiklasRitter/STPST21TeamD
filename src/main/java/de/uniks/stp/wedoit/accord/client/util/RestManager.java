@@ -257,9 +257,9 @@ public class RestManager {
 
                 List<Channel> channelList = category.getChannels().stream().sorted(Comparator.comparing(Channel::getName))
                         .collect(Collectors.toList());
-                controller.handleGetChannels(channelList, categoryItem);
+                controller.handleGetChannels(channelList);
             } else {
-                controller.handleGetChannels(null, categoryItem);
+                controller.handleGetChannels(null);
             }
         });
     }
@@ -621,6 +621,7 @@ public class RestManager {
                 String userKey = loginAnswer.getString(USER_KEY);
                 LocalUser localUser = editor.haveLocalUser(username, userKey);
                 localUser.setPassword(password);
+                editor.getWebSocketManager().start();
                 editor.handleAutomaticLogin(true);
             }
         });
