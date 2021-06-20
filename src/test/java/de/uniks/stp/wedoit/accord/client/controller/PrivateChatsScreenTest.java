@@ -39,6 +39,8 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import java.util.List;
+
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
@@ -213,7 +215,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
 
         clickOn("#lwOnlineUsers");
-
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
@@ -221,23 +222,38 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn(btnPlay);
         WaitForAsyncUtils.waitForFxEvents();
 
-        //send game invite
-        JsonObject gameInvite = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_INVITE);
-        mockChatWebSocket(getTestMessageServerAnswer(gameInvite));
+        //send message
+        JsonObject gameAccept = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_INVITE);
+        mockChatWebSocket(getTestMessageServerAnswer(gameAccept));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(1, localUser.getGameRequests().size());
+        //no more message is send
+        clickOn(btnPlay);
+        WaitForAsyncUtils.waitForFxEvents();
+
+
+
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
+        Assert.assertEquals(1, localUser.getGameRequests().size());
+        Assert.assertEquals(0, localUser.getGameInvites().size());
+        Assert.assertEquals(localUser.getName(),lwPrivateChat.getItems().get(lwNewestItem).getFrom());
+        Assert.assertEquals(user.getName(),lwPrivateChat.getItems().get(lwNewestItem).getTo());
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
+        Assert.assertEquals(GAME_INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
+
+
 
         //receive game accepted message
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPT));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPTS));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(stageManager.getGameStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors", stageManager.getGameStage().getTitle());
+        //receive game accepted message
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_START));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertTrue(this.stageManager.getGameStage().isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getGameStage().getTitle());
 
 
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_ROCK));
@@ -247,6 +263,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         JsonObject gameAction = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_PREFIX + GAME_PAPER);
         mockChatWebSocket(getTestMessageServerAnswer(gameAction));
         WaitForAsyncUtils.waitForFxEvents();
+
+
     }
 
     @Test
@@ -276,16 +294,25 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
+        Assert.assertEquals(GAME_INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
 
         clickOn(btnPlay);
 
-        JsonObject gameAccept = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_ACCEPT);
+        //send message
+        JsonObject gameAccept = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_ACCEPTS);
         mockChatWebSocket(getTestMessageServerAnswer(gameAccept));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(stageManager.getGameStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors", stageManager.getGameStage().getTitle());
+
+        //start message
+        JsonObject gameStart = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_START);
+        mockChatWebSocket(getTestMessageServerAnswer(gameStart));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(List.of(),localUser.getGameRequests());
+        Assert.assertEquals(List.of(),localUser.getGameInvites());
+        Assert.assertTrue(this.stageManager.getGameStage().isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getGameStage().getTitle());
 
     }
 
