@@ -8,6 +8,8 @@ import javafx.application.Platform;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
+
 public class SystemTrayController {
     private final Editor editor;
     private TrayIcon trayIcon;
@@ -63,6 +65,7 @@ public class SystemTrayController {
      * @param message The new private message
      */
     public void displayPrivateMessageNotification(PrivateMessage message) {
+        if(message.getText().startsWith(GAME_PREFIX)) message.setText(message.getText().substring(GAME_PREFIX.length()));
         trayIcon.displayMessage("New private message.", message.getFrom() + ": " + message.getText(), TrayIcon.MessageType.NONE);
     }
 
