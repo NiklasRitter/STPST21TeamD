@@ -328,6 +328,7 @@ public class PrivateChatsScreenController implements Controller {
         PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(user.getName());
+        Collections.reverse(oldMessages);
         this.privateMessageObservableList = FXCollections.observableList(oldMessages);
         if (oldMessages.size() == 50) {
             displayLoadMore();
@@ -466,12 +467,13 @@ public class PrivateChatsScreenController implements Controller {
 
     private void loadMoreMessages() {
         this.privateMessageObservableList.remove(0);
-        PrivateMessage oldestMessage = this.privateMessageObservableList.get(0);
         if (currentChat != null && currentChat.getUser() != null) {
-            long timestamp = oldestMessage.getTimestamp();
+            int offset = privateMessageObservableList.size();
             String userName = currentChat.getUser().getName();
-            List<PrivateMessage> olderMessages = editor.loadOlderMessages(userName, timestamp);
+            List<PrivateMessage> olderMessages = editor.loadOlderMessages(userName, offset);
             Collections.reverse(olderMessages);
+            privateMessageObservableList.addAll(olderMessages);
+            privateMessageObservableList.sort(Comparator.comparingLong(PrivateMessage::getTimestamp));
             if (olderMessages.size() == 50) {
                 Platform.runLater(this::displayLoadMore);
             }
