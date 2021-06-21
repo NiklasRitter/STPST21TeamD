@@ -1,54 +1,49 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class GameScreenController implements Controller {
 
-    private Parent view;
-    private LocalUser localUser;
-    private Editor editor;
-    private User opponent;
-    private Label lbOpponent, lbScore;
+    private final Parent view;
+    private final Editor editor;
+    private final User opponent;
+    private Label lbScore;
     private ImageView imgYouPlayed, imgOppPlayed;
-    private Button btnRock,btnPaper,btnScissors;
+    private Button btnRock, btnPaper, btnScissors;
     private String gameAction;
     private final PropertyChangeListener opponentGameMove = this::onOpponentGameMove;
-    private final Image choosingIMG = new Image(getClass().getResource(GAME_CHOOSINGIMG).toString());
+    private final Image choosingIMG = new Image(String.valueOf(getClass().getResource(GAME_CHOOSINGIMG)));
 
     private final IntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
-
 
 
     /**
      * Create a new Controller
      *
-     * @param view   The view this Controller belongs to
-     * @param model  The model this Controller belongs to
-     * @param editor The editor of the Application
+     * @param view     The view this Controller belongs to
+     * @param editor   The editor of the Application
      * @param opponent The Opponent who the localUser is playing against
      */
-    public GameScreenController(Parent view, LocalUser model, User opponent, Editor editor){
+    public GameScreenController(Parent view, User opponent, Editor editor) {
         this.view = view;
-        this.localUser = model;
         this.opponent = opponent;
         this.editor = editor;
     }
@@ -62,7 +57,7 @@ public class GameScreenController implements Controller {
      * Add action listeners,
      * setup score listener
      */
-    public void init(){
+    public void init() {
         editor.getStageManager().getGameStage().setOnCloseRequest((e) -> {
             stop();
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_CLOSE);
@@ -71,7 +66,7 @@ public class GameScreenController implements Controller {
 
         opponent.setGameMove(null);
 
-        this.lbOpponent = (Label) view.lookup("#lbOpponent");
+        Label lbOpponent = (Label) view.lookup("#lbOpponent");
         this.imgYouPlayed = (ImageView) view.lookup("#imgYouPlayed");
         this.imgOppPlayed = (ImageView) view.lookup("#imgOppPlayed");
         this.btnPaper = (Button) view.lookup("#btnPaper");
@@ -79,7 +74,7 @@ public class GameScreenController implements Controller {
         this.btnScissors = (Button) view.lookup("#btnScissors");
         this.lbScore = (Label) view.lookup("#lbScore");
 
-        this.lbOpponent.setText(opponent.getName());
+        lbOpponent.setText(opponent.getName());
 
         this.imgYouPlayed.setImage(choosingIMG);
         this.imgOppPlayed.setImage(choosingIMG);
@@ -90,9 +85,7 @@ public class GameScreenController implements Controller {
 
         this.opponent.listeners().addPropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
 
-        this.lbScore.textProperty().bind(Bindings.createStringBinding(()-> (ownScore.get() + ":" + oppScore.get()), oppScore,ownScore));
-
-
+        this.lbScore.textProperty().bind(Bindings.createStringBinding(() -> (ownScore.get() + ":" + oppScore.get()), oppScore, ownScore));
     }
 
     /**
@@ -107,17 +100,19 @@ public class GameScreenController implements Controller {
         JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_PREFIX + gameAction);
         editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
 
-        imgYouPlayed.setImage(new Image(getClass().getResource(GAME_IMGURL + gameAction + ".png").toString()));
+        StringBuilder buf = new StringBuilder().append(GAME_IMGURL).append(gameAction).append(".png");
+        imgYouPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
 
-        if(opponent.getGameMove() != null){
-            imgOppPlayed.setImage(new Image(getClass().getResource(GAME_IMGURL + opponent.getGameMove() + ".png").toString()));
+        buf = new StringBuilder().append(GAME_IMGURL).append(opponent.getGameMove()).append(".png");
+        if (opponent.getGameMove() != null) {
+            imgOppPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
 
             resolveGameOutcome();
 
             opponent.setGameMove(null);
             gameAction = null;
-        }else{
-            imgOppPlayed.setImage(new Image(getClass().getResource(GAME_CHOOSINGIMG).toString()));
+        } else {
+            imgOppPlayed.setImage(new Image(String.valueOf(getClass().getResource(GAME_CHOOSINGIMG))));
         }
     }
 
@@ -127,9 +122,11 @@ public class GameScreenController implements Controller {
      * @param propertyChangeEvent event occurs when the opponent choose a action
      */
     private void onOpponentGameMove(PropertyChangeEvent propertyChangeEvent) {
-        if(propertyChangeEvent.getNewValue() != null && gameAction != null) {
-            imgYouPlayed.setImage(new Image(getClass().getResource(GAME_IMGURL + gameAction + ".png").toString()));
-            imgOppPlayed.setImage(new Image(getClass().getResource(GAME_IMGURL + opponent.getGameMove() + ".png").toString()));
+        if (propertyChangeEvent.getNewValue() != null && gameAction != null) {
+            StringBuilder buf = new StringBuilder().append(GAME_IMGURL).append(gameAction).append(".png");
+            imgYouPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
+            buf = new StringBuilder().append(GAME_IMGURL).append(opponent.getGameMove()).append(".png");
+            imgOppPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
 
             resolveGameOutcome();
 
@@ -143,12 +140,12 @@ public class GameScreenController implements Controller {
      * <p>
      * resolve the game by the action of both players and update score
      */
-    private void resolveGameOutcome(){
+    private void resolveGameOutcome() {
         Boolean outCome = editor.resultOfGame(gameAction, opponent.getGameMove());
         Platform.runLater(() -> {
 
-            if(outCome != null && outCome) ownScore.set(ownScore.get() + 1);
-            else if(outCome != null) oppScore.set(oppScore.get() + 1);
+            if (outCome != null && outCome) ownScore.set(ownScore.get() + 1);
+            else if (outCome != null) oppScore.set(oppScore.get() + 1);
             handleGameDone();
         });
     }
@@ -159,8 +156,8 @@ public class GameScreenController implements Controller {
      * checks weather one of the player has won,
      * in that case they get redirected to the result screen
      */
-    private void handleGameDone(){
-        if(oppScore.get() == 3 || ownScore.get() == 3){
+    private void handleGameDone() {
+        if (oppScore.get() == 3 || ownScore.get() == 3) {
             this.editor.getStageManager().showGameResultScreen(opponent, ownScore.get() == 3);
             stop();
         }

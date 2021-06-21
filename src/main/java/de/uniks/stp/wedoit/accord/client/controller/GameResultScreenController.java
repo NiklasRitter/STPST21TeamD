@@ -18,13 +18,12 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class GameResultScreenController implements Controller{
 
-    private Label lbOutcome;
     private Button btnQuit, btnPlayAgain;
-    private Parent view;
-    private LocalUser localUser;
-    private Editor editor;
-    private User opponent;
-    private Boolean isWinner;
+    private final Parent view;
+    private final LocalUser localUser;
+    private final Editor editor;
+    private final User opponent;
+    private final Boolean isWinner;
     private final PropertyChangeListener chatListener = this::newMessage;
 
     /**
@@ -52,7 +51,7 @@ public class GameResultScreenController implements Controller{
      * Add action listeners
      */
     public void init() {
-        lbOutcome = (Label) view.lookup("#lbOutcome");
+        Label lbOutcome = (Label) view.lookup("#lbOutcome");
         btnPlayAgain = (Button) view.lookup("#btnPlayAgain");
         btnQuit = (Button) view.lookup("#btnQuit");
         if(isWinner == null){
@@ -75,11 +74,11 @@ public class GameResultScreenController implements Controller{
     private void playAgainOnClick(ActionEvent actionEvent) {
         if(this.localUser.getGameInvites().contains(opponent)){
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_ACCEPTS);
-            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             stop();
         }else{
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_INVITE);
-            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         }
     }
 
@@ -95,9 +94,8 @@ public class GameResultScreenController implements Controller{
 
     private void newMessage(PropertyChangeEvent event) {
         if (event.getNewValue() != null) {
-            PrivateMessage message = (PrivateMessage) event.getNewValue();
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_CLOSE);
-            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         }
     }
 
