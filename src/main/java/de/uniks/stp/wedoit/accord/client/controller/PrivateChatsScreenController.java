@@ -2,12 +2,9 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
-import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import de.uniks.stp.wedoit.accord.client.view.PrivateChatsScreenOnlineUsersCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,15 +13,12 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
-import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class PrivateChatsScreenController implements Controller {
 
@@ -157,7 +151,7 @@ public class PrivateChatsScreenController implements Controller {
      */
     public void handleGetOnlineUsers() {
         // load list view
-        PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
+        OnlineUsersCellFactory usersListViewCellFactory = new OnlineUsersCellFactory();
         lwOnlineUsers.setCellFactory(usersListViewCellFactory);
         availableUsers = new ArrayList<>(localUser.getUsers());
 

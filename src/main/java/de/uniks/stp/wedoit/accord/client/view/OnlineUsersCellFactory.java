@@ -6,12 +6,15 @@ import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class PrivateChatsScreenOnlineUsersCellFactory implements javafx.util.Callback<ListView<User>, ListCell<User>> {
+public class OnlineUsersCellFactory implements javafx.util.Callback<ListView<User>, ListCell<User>> {
+    boolean isPrivate;
 
     @Override
     public ListCell<User> call(ListView<User> param) {
+        isPrivate = param.getId().equals("lwOnlineUsers");
         return new OnlineUserListCell();
     }
+
 
     private class OnlineUserListCell extends ListCell<User> {
         protected void updateItem(User item, boolean empty) {
@@ -20,11 +23,12 @@ public class PrivateChatsScreenOnlineUsersCellFactory implements javafx.util.Cal
             this.setGraphic(null);
             Circle circle = new Circle(4);
             circle.setFill(Color.TRANSPARENT);
-            this.getStyleClass().remove("newMessage");
+            if(isPrivate) this.getStyleClass().removeAll("newMessage");
+
             if (!empty && item != null) {
                 this.setGraphic(circle);
                 this.setText(item.getName());
-                if (!item.isChatRead()) {
+                if (isPrivate && !item.isChatRead()) {
                     this.getStyleClass().add("newMessage");
                 }
 
