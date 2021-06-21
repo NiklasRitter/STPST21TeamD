@@ -103,8 +103,8 @@ public class GameScreenController implements Controller {
         StringBuilder buf = new StringBuilder().append(GAME_IMGURL).append(gameAction).append(".png");
         imgYouPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
 
-        buf = new StringBuilder().append(GAME_IMGURL).append(opponent.getGameMove()).append(".png");
         if (opponent.getGameMove() != null) {
+            buf = new StringBuilder().append(GAME_IMGURL).append(opponent.getGameMove()).append(".png");
             imgOppPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
 
             resolveGameOutcome();
