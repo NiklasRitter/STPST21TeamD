@@ -535,13 +535,8 @@ public class RestManager {
      * @param controller     controller in which the response is handled
      */
     private void deleteCategory(LocalUser localUser, Category category, AttentionScreenController controller) {
-        restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) -> {
-            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                controller.handleDeleteCategory(true);
-            } else {
-                controller.handleDeleteCategory(false);
-            }
-        });
+        restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) ->
+                controller.handleDeleteCategory(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
     }
 
     /**
@@ -576,9 +571,8 @@ public class RestManager {
      *
      * @param userKey      userKey of the localUser who is logged in
      * @param invitation invitation which should be deleted
-     * @param controller     controller in which the response is handled
      */
-    public void deleteInvite(String userKey, Invitation invitation, Server server, EditServerScreenController controller) {
+    public void deleteInvite(String userKey, Invitation invitation, Server server) {
         restClient.deleteInvitation(userKey, invitation.getId(), server.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
 
@@ -595,12 +589,10 @@ public class RestManager {
      */
     public void leaveServer(String userKey, String serverId) {
         restClient.leaveServer(userKey, serverId, response -> {
-            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                Platform.runLater(editor.getStageManager()::showMainScreen);
-            } else {
+            if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 System.err.println("Error while leaving server");
-                Platform.runLater(editor.getStageManager()::showMainScreen);
             }
+            Platform.runLater(editor.getStageManager()::showMainScreen);
         });
     }
 

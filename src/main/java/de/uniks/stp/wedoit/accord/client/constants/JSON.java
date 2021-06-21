@@ -16,8 +16,6 @@ public class JSON {
     public static final String CATEGORY = "category";
     public static final String MEMBERS = "members";
     public static final String ONLINE = "online";
-    public static final String SERVER = "server";
-    public static final String CHANNELS = "channels";
     public static final String CHANNEL = "channel";
     public static final String TYPE = "type";
     public static final String PRIVILEGED = "privileged";
