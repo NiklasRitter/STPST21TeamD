@@ -1,34 +1,43 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.model.Message;
+import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.util.Callback;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_ID;
 
-public class MessageCellFactory implements javafx.util.Callback<ListView<Message>, ListCell<Message>> {
-
+public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
     @Override
-    public ListCell<Message> call(ListView<Message> param) {
-        return new MessageChatCell(param);
+    public ListCell<T> call(ListView<T> param) {
+        return new OnlineUserListCell<>(param);
     }
 
-    private class MessageChatCell extends ListCell<Message> {
+    private static class OnlineUserListCell<S extends Message> extends ListCell<S> {
 
-        private final ListView<Message> param;
 
-        private MessageChatCell(ListView<Message> param) {
+        private final ListView<S> param;
+
+        private OnlineUserListCell(ListView<S> param) {
             this.param = param;
         }
 
-        protected void updateItem(Message item, boolean empty) {
+
+        @Override
+        protected void updateItem(S item, boolean empty) {
             super.updateItem(item, empty);
+            this.setText(null);
+            this.getStyleClass().removeAll("font_size");
             if (!empty) {
-                // set the width's
+
+                // set the width (-20 to eliminate overhang in ListView)
                 setMinWidth(param.getWidth() - 20);
                 setMaxWidth(param.getWidth() - 20);
                 setPrefWidth(param.getWidth() - 20);
@@ -37,12 +46,16 @@ public class MessageCellFactory implements javafx.util.Callback<ListView<Message
                 // allow wrapping
                 setWrapText(true);
 
+                String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
+
                 if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
+
                 } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
                         && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
+
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
                     String[] messages = quoteMessage.split(QUOTE_ID);
@@ -51,7 +64,70 @@ public class MessageCellFactory implements javafx.util.Callback<ListView<Message
                     this.setText(">>>" + messages[0] + "\n");
 
                 } else {
-                    String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
+                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                }
+
+                if (item instanceof PrivateMessage) {
+                    if(item.getText().startsWith("###game### System")){
+                        this.setText(item.getText().substring(GAME_PREFIX.length()));
+                    }else if(item.getText().startsWith(GAME_PREFIX)) {
+                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+    /*
+    @Override
+    public ListCell<PrivateMessage> call(ListView<PrivateMessage> param) {
+        return new OnlineUserListCell(param);
+    }
+
+    private class OnlineUserListCell extends ListCell<PrivateMessage> {
+
+        private final ListView<PrivateMessage> param;
+
+        private OnlineUserListCell(ListView<PrivateMessage> param) {
+            this.param = param;
+        }
+
+        protected void updateItem(PrivateMessage item, boolean empty) {
+            super.updateItem(item, empty);
+            this.getStyleClass().removeAll("font_size");
+            if (!empty) {
+
+                // set the width (-20 to eliminate overhang in ListView)
+                setMinWidth(param.getWidth() - 20);
+                setMaxWidth(param.getWidth() - 20);
+                setPrefWidth(param.getWidth() - 20);
+                setAlignment(Pos.CENTER_LEFT);
+
+                // allow wrapping
+                setWrapText(true);
+
+                String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
+
+                // handle quotes
+                if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
+                        && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+                        && (item.getText()).startsWith(QUOTE_PREFIX)) {
+                    String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
+
+                    String[] messages = quoteMessage.split(QUOTE_ID);
+
+                    this.getStyleClass().add("font_size");
+                    this.setText(">>>" + messages[0] + "\n");
+                }else if(item.getText().startsWith("###game### System")){
+                    this.setText(item.getText().substring(GAME_PREFIX.length()));
+                }else if(item.getText().startsWith(GAME_PREFIX)) {
+                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                }else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                    setAlignment(Pos.CENTER);
+                    this.setText(item.getText());
+                }else{
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
             } else {
@@ -60,4 +136,6 @@ public class MessageCellFactory implements javafx.util.Callback<ListView<Message
             }
         }
     }
-}
+
+     */
+

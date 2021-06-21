@@ -8,7 +8,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -152,8 +152,8 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.setEditable(true);
 
         // load list view
-        PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
-        lwPrivateChat.setCellFactory(chatCellFactory);
+        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>();
+        lwPrivateChat.setCellFactory(new MessageCellFactory<>());
         List<PrivateMessage> oldMessages = editor.loadOldMessages(user.getName());
         Collections.reverse(oldMessages);
         this.privateMessageObservableList = FXCollections.observableList(oldMessages);
@@ -178,7 +178,7 @@ public class PrivateChatController implements Controller {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
 
-            if(message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName())){
+            if(message.getText().equals(GAME_INVITE.substring(GAME_PREFIX.length())) && !message.getFrom().equals(localUser.getName())){
                 Platform.runLater(()-> btnPlay.setText("Accept"));
             }
             if(message.getText().equals(GAME_START) && currentChat != null){

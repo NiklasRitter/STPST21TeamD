@@ -1,5 +1,5 @@
 - c: 	org.fulib.classmodel.ClassModel
-  classes: 	privateMessage 	chat 	message 	channel 	category 	server 	user 	invitation 	localUser 	accordClient 	options
+  classes: 	privateMessage 	message 	chat 	channel 	category 	server 	user 	invitation 	localUser 	accordClient 	options
   defaultCollectionType: 	c1
   defaultPropertyStyle: 	Bean
   defaultRoleType: 	"java.util.ArrayList<%s>"
@@ -14,14 +14,7 @@
   name: 	PrivateMessage
   propertyStyle: 	Bean
   roles: 	privateMessage_chat
-
-- chat: 	org.fulib.classmodel.Clazz
-  attributes: 	chat_name
-  model: 	c
-  modified: 	false
-  name: 	Chat
-  propertyStyle: 	Bean
-  roles: 	chat_messages 	chat_user
+  superClass: 	message
 
 - message: 	org.fulib.classmodel.Clazz
   attributes: 	message_id 	message_timestamp 	message_text 	message_from
@@ -30,6 +23,15 @@
   name: 	Message
   propertyStyle: 	Bean
   roles: 	message_channel
+  subClasses: 	privateMessage
+
+- chat: 	org.fulib.classmodel.Clazz
+  attributes: 	chat_name
+  model: 	c
+  modified: 	false
+  name: 	Chat
+  propertyStyle: 	Bean
+  roles: 	chat_messages 	chat_user
 
 - channel: 	org.fulib.classmodel.Clazz
   attributes: 	channel_id 	channel_name 	channel_type 	channel_privileged 	channel_read
@@ -156,37 +158,6 @@
   other: 	chat_messages
   propertyStyle: 	Bean
 
-- chat_name: 	org.fulib.classmodel.Attribute
-  clazz: 	chat
-  id: 	Chat_name
-  modified: 	false
-  name: 	name
-  propertyStyle: 	Bean
-  type: 	String
-  typeSignature: 	String
-
-- chat_messages: 	org.fulib.classmodel.AssocRole
-  aggregation: 	false
-  cardinality: 	42
-  clazz: 	chat
-  collectionType: 	c1
-  id: 	Chat_messages
-  modified: 	false
-  name: 	messages
-  other: 	privateMessage_chat
-  propertyStyle: 	Bean
-  roleType: 	"java.util.ArrayList<%s>"
-
-- chat_user: 	org.fulib.classmodel.AssocRole
-  aggregation: 	false
-  cardinality: 	1
-  clazz: 	chat
-  id: 	Chat_user
-  modified: 	false
-  name: 	user
-  other: 	user_privateChat
-  propertyStyle: 	Bean
-
 - message_id: 	org.fulib.classmodel.Attribute
   clazz: 	message
   id: 	Message_id
@@ -231,6 +202,37 @@
   modified: 	false
   name: 	channel
   other: 	channel_messages
+  propertyStyle: 	Bean
+
+- chat_name: 	org.fulib.classmodel.Attribute
+  clazz: 	chat
+  id: 	Chat_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- chat_messages: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	chat
+  collectionType: 	c1
+  id: 	Chat_messages
+  modified: 	false
+  name: 	messages
+  other: 	privateMessage_chat
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- chat_user: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chat
+  id: 	Chat_user
+  modified: 	false
+  name: 	user
+  other: 	user_privateChat
   propertyStyle: 	Bean
 
 - channel_id: 	org.fulib.classmodel.Attribute

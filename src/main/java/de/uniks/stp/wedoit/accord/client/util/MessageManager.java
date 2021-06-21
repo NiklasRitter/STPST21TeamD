@@ -140,7 +140,7 @@ public class MessageManager {
      */
     public String getMessageFormatted(PrivateMessage message) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
-
+        if(message.getText().startsWith(GAME_PREFIX)) message.setText(message.getText().substring(GAME_PREFIX.length()));
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 
