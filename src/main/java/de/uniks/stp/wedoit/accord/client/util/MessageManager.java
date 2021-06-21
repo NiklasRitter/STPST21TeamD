@@ -2,19 +2,16 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
-import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
 
 import javax.json.JsonObject;
-import java.beans.PropertyChangeEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_PREFIX;
 
 public class MessageManager {
 

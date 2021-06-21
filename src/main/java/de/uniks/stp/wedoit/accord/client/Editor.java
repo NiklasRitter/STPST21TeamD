@@ -46,9 +46,6 @@ public class Editor {
         this.currentServer = currentServer;
     }
 
-    public SqliteDB getDb(){
-        return db;
-    }
 
     /**
      * create localUser without initialisation and set localUser in Editor

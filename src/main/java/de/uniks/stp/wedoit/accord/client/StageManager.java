@@ -37,7 +37,6 @@ public class StageManager extends Application {
     private Stage popupStage;
     private Scene popupScene;
     private Stage emojiPickerStage;
-    private Scene emojiPickerScene;
     private Stage gameStage;
     private Scene gameScene;
 
@@ -245,9 +244,9 @@ public class StageManager extends Application {
             updateDarkmode();
 
             //init controller
-            GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), opponent, editor);
+            GameScreenController gameScreenController = new GameScreenController(root, opponent, editor);
             gameScreenController.init();
-            controllerMap.put("gameScreenController", gameScreenController);
+            controllerMap.put(GAME_SCREEN_CONTROLLER, gameScreenController);
 
             // display
             gameStage.setTitle("Rock - Paper - Scissors");
@@ -281,7 +280,7 @@ public class StageManager extends Application {
             //init controller
             GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
             gameResultScreenController.init();
-            controllerMap.put("GameResultScreenController", gameResultScreenController);
+            controllerMap.put(GAME_RESULT_SCREEN_CONTROLLER, gameResultScreenController);
 
             gameStage.setTitle("Result");
 
@@ -394,7 +393,7 @@ public class StageManager extends Application {
             //load view
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
 
-            emojiPickerScene = new Scene(root);
+            Scene emojiPickerScene = new Scene(root);
             updateDarkmode();
 
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, tfForEmoji);
