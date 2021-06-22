@@ -172,48 +172,57 @@ public class WebSocketManager {
                     user.setOnlineStatus(data.getBoolean(ONLINE));
                 }
             }
+            return;
         }
 
-        // change data of the server
-        if (action.equals(SERVER_UPDATED)) {
-            server.setName(data.getString(NAME));
-        }
-        if (action.equals(SERVER_DELETED)) {
-            Platform.runLater(editor.getStageManager()::showMainScreen);
-        }
-
-        //change category
-        if (action.equals(CATEGORY_UPDATED)) {
-            editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
-        }
-        if (action.equals(CATEGORY_CREATED)) {
-            editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
-        }
-        if (action.equals(CATEGORY_DELETED)){
-            Category category = editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
-            category.removeYou();
-        }
-
-        // change channel
-        if (action.equals(CHANNEL_UPDATED)) {
-            Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
-            if (channel == null) {
-                Platform.runLater(() -> editor.getStageManager().showServerScreen(server));
-            }
-        }
-        if (action.equals(CHANNEL_CREATED)) {
-            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
-            editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS));
-        }
-        if (action.equals(CHANNEL_DELETED)){
-            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
-            Channel channel = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build());
-            channel.removeYou();
-        }
-
-        // change invitation
-        if (action.equals(INVITE_EXPIRED)) {
-            editor.deleteInvite(data.getString(ID), server);
+        switch (action) {
+            case SERVER_UPDATED:
+                server.setName(data.getString(NAME));
+                break;
+            case SERVER_DELETED:
+                Platform.runLater(editor.getStageManager()::showMainScreen);
+                break;
+            case CATEGORY_CREATED:
+                editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
+                break;
+            case CATEGORY_UPDATED:
+                editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
+                break;
+            case CATEGORY_DELETED:
+                editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server).removeYou();
+                break;
+            case CHANNEL_CREATED:
+                Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+                editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS));
+                break;
+            case CHANNEL_UPDATED:
+                Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
+                if (channel == null) {
+                    Platform.runLater(() -> editor.getStageManager().showServerScreen(server));
+                }
+                break;
+            case CHANNEL_DELETED:
+                Category categoryDeleted = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+                Channel channelDeleted = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, categoryDeleted, Json.createArrayBuilder().build());
+                channelDeleted.removeYou();
+                break;
+            case INVITE_EXPIRED:
+                editor.deleteInvite(data.getString(ID), server);
+                break;
+            case MESSAGE_UPDATED:
+                // TODO: Update Message
+                break;
+            case MESSAGE_DELETED:
+                // TODO: Delete Message
+                break;
+            case AUDIO_JOINED:
+                // TODO: Audio Joined
+                break;
+            case AUDIO_LEFT:
+                // TODO: Audio Left
+                break;
+            default:
+                System.err.println("Unknown Server Action");
         }
 
     }
