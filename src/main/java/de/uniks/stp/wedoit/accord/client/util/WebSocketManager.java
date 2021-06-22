@@ -212,7 +212,7 @@ public class WebSocketManager {
             case MESSAGE_UPDATED:
                 // TODO: Update Message
                 Message message = JsonUtil.parseMessageUpdated(data);
-                Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CHANNEL));
+                Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
                 if (channelUpdatedMessage == null) {
                     Platform.runLater(() -> editor.getStageManager().showMainScreen());
                     System.err.println("Error from message updated");
@@ -223,6 +223,7 @@ public class WebSocketManager {
             case MESSAGE_DELETED:
                 // TODO: Delete Message
                 // example: {"action":"messageDeleted","data":{"id":"60d2181a313aa83bed147e8a","category":"60d216c6313aa83bed147e0e","channel":"60d216c6313aa83bed147e0f"}}
+
                 break;
             case AUDIO_JOINED:
                 // TODO: Audio Joined
