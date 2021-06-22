@@ -4,9 +4,8 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -17,7 +16,9 @@ public class OptionsScreenController implements Controller {
     private final Editor editor;
 
     private CheckBox btnDarkmode;
-    private Button logoutButton;
+    private Button logoutButton, btnSave;
+    private Label lblLanguage;
+    private ChoiceBox choiseBoxLanguage;
 
 
     /**
@@ -43,6 +44,9 @@ public class OptionsScreenController implements Controller {
     public void init() {
         this.btnDarkmode = (CheckBox) view.lookup("#btnDarkmode");
         this.logoutButton = (Button) view.lookup("#btnLogout");
+        this.btnSave = (Button) view.lookup("#btnSave");
+        this.lblLanguage = (Label) view.lookup("#lblLanguage");
+        this.choiseBoxLanguage = (ChoiceBox) view.lookup("#choiseBoxLanguage");
 
         this.btnDarkmode.setSelected(options.isDarkmode());
 
@@ -53,7 +57,7 @@ public class OptionsScreenController implements Controller {
         Stage stage = this.editor.getStageManager().getStage();
         if (stage.getTitle().equals("Login")) {
             logoutButton.setVisible(false);
-            VBox parent = (VBox) logoutButton.getParent();
+            HBox parent = (HBox) logoutButton.getParent();
             parent.getChildren().remove(logoutButton);
             parent.setPrefHeight(80);
             parent.setPrefWidth(300);
