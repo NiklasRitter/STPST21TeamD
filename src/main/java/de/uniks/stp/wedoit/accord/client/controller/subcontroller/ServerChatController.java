@@ -126,7 +126,7 @@ public class ServerChatController implements Controller {
     }
 
     /**
-     * update the chat when a new message arrived
+     * update the chat when a new message arrived or an old message is deleted
      *
      * @param propertyChangeEvent event occurs when a new private message arrives
      */
@@ -140,6 +140,12 @@ public class ServerChatController implements Controller {
                     this.observableMessageList.add(0, newMessage);
                 } else this.observableMessageList.add(newMessage);
                 newMessage.listeners().addPropertyChangeListener(Message.PROPERTY_TEXT, this.messageTextChangedListener);
+            });
+        } else {
+            Message oldMessage = (Message) propertyChangeEvent.getOldValue();
+            Platform.runLater(() -> {
+                this.observableMessageList.remove(oldMessage);
+                this.lvTextChat.refresh();
             });
         }
     }

@@ -428,8 +428,8 @@ public class Editor {
     /**
      * returns category by its id
      *
-     * @param server     server of the channel
-     * @param id  id of the searched category
+     * @param server server of the channel
+     * @param id     id of the searched category
      * @return the category with the given id
      */
     public Category getCategoryById(Server server, String id) {

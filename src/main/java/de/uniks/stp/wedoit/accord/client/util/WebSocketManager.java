@@ -210,20 +210,23 @@ public class WebSocketManager {
                 editor.deleteInvite(data.getString(ID), server);
                 break;
             case MESSAGE_UPDATED:
-                // TODO: Update Message
-                Message message = JsonUtil.parseMessageUpdated(data);
+                Message messageToUpdate = JsonUtil.parseMessageUpdated(data);
                 Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
                 if (channelUpdatedMessage == null) {
                     Platform.runLater(() -> editor.getStageManager().showMainScreen());
                     System.err.println("Error from message updated");
                     return;
                 }
-                editor.getMessageManager().updateMessage(channelUpdatedMessage, message);
+                editor.getMessageManager().updateMessage(channelUpdatedMessage, messageToUpdate);
                 break;
             case MESSAGE_DELETED:
-                // TODO: Delete Message
-                // example: {"action":"messageDeleted","data":{"id":"60d2181a313aa83bed147e8a","category":"60d216c6313aa83bed147e0e","channel":"60d216c6313aa83bed147e0f"}}
-
+                Channel channelDeleteMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
+                if (channelDeleteMessage == null) {
+                    Platform.runLater(() -> editor.getStageManager().showMainScreen());
+                    System.err.println("Error from message delete");
+                    return;
+                }
+                editor.getMessageManager().deleteMessage(channelDeleteMessage, data.getString(ID));
                 break;
             case AUDIO_JOINED:
                 // TODO: Audio Joined
