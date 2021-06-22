@@ -42,17 +42,20 @@ public class ServerChatController implements Controller {
     private final Server server;
     private Channel currentChannel;
     private final ServerScreenController controller;
-    private ObservableList<Message> observableMessageList;
-    private ContextMenu messageContextMenu;
-    private TextField tfInputMessage;
-    private ListView<Message> lvTextChat;
-    private Label lbChannelName;
+
     private HBox quoteVisible;
+    private ContextMenu messageContextMenu;
+    private Label lbChannelName;
+    private Label lblQuote;
+    private TextField tfInputMessage;
     private Button btnCancelQuote;
     private Button btnEmoji;
-    private Label lblQuote;
+    private ListView<Message> lvTextChat;
+    private ObservableList<Message> observableMessageList;
 
     private final PropertyChangeListener newMessagesListener = this::newMessage;
+    private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
+
 
     /**
      * Create a new Controller
@@ -116,6 +119,9 @@ public class ServerChatController implements Controller {
         }
         if (this.currentChannel != null) {
             this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+            for (Message message : this.currentChannel.getMessages()) {
+                message.listeners().removePropertyChangeListener(Message.PROPERTY_TEXT, this.messageTextChangedListener);
+            }
         }
     }
 
@@ -133,8 +139,19 @@ public class ServerChatController implements Controller {
                 } else if (newMessage.getTimestamp() <= this.observableMessageList.get(observableMessageList.size() - 1).getTimestamp()) {
                     this.observableMessageList.add(0, newMessage);
                 } else this.observableMessageList.add(newMessage);
+                newMessage.listeners().addPropertyChangeListener(Message.PROPERTY_TEXT, this.messageTextChangedListener);
             });
         }
+    }
+
+    /**
+     * refreshes the textChatListView when a message is updated. This is needed, so that the message
+     * is displayed correctly
+     *
+     * @param propertyChangeEvent event occurs when a messageText is changed
+     */
+    private void onMessageTextChanged(PropertyChangeEvent propertyChangeEvent) {
+        Platform.runLater(() -> this.lvTextChat.refresh());
     }
 
     // Additional methods

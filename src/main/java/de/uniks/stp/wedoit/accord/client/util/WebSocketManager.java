@@ -211,15 +211,26 @@ public class WebSocketManager {
                 break;
             case MESSAGE_UPDATED:
                 // TODO: Update Message
+                Message message = JsonUtil.parseMessageUpdated(data);
+                Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CHANNEL));
+                if (channelUpdatedMessage == null) {
+                    Platform.runLater(() -> editor.getStageManager().showMainScreen());
+                    System.err.println("Error from message updated");
+                    return;
+                }
+                editor.getMessageManager().updateMessage(channelUpdatedMessage, message);
                 break;
             case MESSAGE_DELETED:
                 // TODO: Delete Message
+                // example: {"action":"messageDeleted","data":{"id":"60d2181a313aa83bed147e8a","category":"60d216c6313aa83bed147e0e","channel":"60d216c6313aa83bed147e0f"}}
                 break;
             case AUDIO_JOINED:
                 // TODO: Audio Joined
+                // example: {"action":"audioJoined","data":{"id":"60acfbf4c77d3f78988b27f9","category":"60d216c6313aa83bed147e0e","channel":"60d21c1f313aa83bed147fe9"}}
                 break;
             case AUDIO_LEFT:
                 // TODO: Audio Left
+                // example: {"action":"audioLeft","data":{"id":"60acfbf4c77d3f78988b27f9","category":"60d216c6313aa83bed147e0e","channel":"60d21c1f313aa83bed147fe9"}}
                 break;
             default:
                 System.err.println("Unknown Server Action");

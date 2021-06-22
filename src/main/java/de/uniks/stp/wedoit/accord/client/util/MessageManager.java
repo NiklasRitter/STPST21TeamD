@@ -128,6 +128,21 @@ public class MessageManager {
         }
     }
 
+
+    /**
+     * updates message in the data model
+     * @param channel in which the message should be updated
+     * @param message to update
+     */
+    public void updateMessage(Channel channel, Message message) {
+        for (Message channelMessage : channel.getMessages()) {
+            if (channelMessage.getId().equals(message.getId())) {
+                channelMessage.setText(message.getText());
+                return;
+            }
+        }
+    }
+
     /**
      * formats a message with the correct date in the format
      * <p>
