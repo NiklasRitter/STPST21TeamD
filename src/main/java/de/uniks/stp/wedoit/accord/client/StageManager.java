@@ -16,10 +16,7 @@ import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 
@@ -666,6 +663,7 @@ public class StageManager extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        Locale.setDefault(new Locale("en_GB"));
         stage = primaryStage;
         stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
 
