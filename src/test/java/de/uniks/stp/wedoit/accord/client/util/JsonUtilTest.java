@@ -10,6 +10,7 @@ import org.junit.Test;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
@@ -181,6 +182,35 @@ public class JsonUtilTest {
         Assert.assertTrue(JsonUtil.buildPrivateChatMessage("Ashkan", "GoStone") instanceof JsonObject);
         Assert.assertEquals(privateChatMessageJson.getString(TO), "Ashkan");
         Assert.assertEquals(privateChatMessageJson.getString(MESSAGE), "GoStone");
+    }
+
+    @Test
+    public void testParsePrivateChatMessage() {
+        JsonObject jsonObj = Json.createObjectBuilder()
+                .add(FROM, "Alice")
+                .add(TO, "Bob")
+                .add(TIMESTAMP, 343141232)
+                .add(MESSAGE, "Hello Bob")
+                .build();
+
+        PrivateMessage message = JsonUtil.parsePrivateMessage(jsonObj);
+
+        Assert.assertEquals(message.getFrom(), "Alice");
+        Assert.assertEquals(message.getTo(), "Bob");
+        Assert.assertEquals(message.getTimestamp(), 343141232);
+        Assert.assertEquals(message.getText(), "Hello Bob");
+    }
+
+    @Test
+    public void testStringify() {
+        JsonObject jsonObj = Json.createObjectBuilder()
+                .add(FROM, "Alice")
+                .add(TO, "Bob")
+                .add(TIMESTAMP, 343141232)
+                .add(MESSAGE, "Hello Bob")
+                .build();
+
+        Assert.assertEquals("{\"from\":\"Alice\",\"to\":\"Bob\",\"timestamp\":343141232,\"message\":\"Hello Bob\"}", JsonUtil.stringify(jsonObj));
     }
 
 }
