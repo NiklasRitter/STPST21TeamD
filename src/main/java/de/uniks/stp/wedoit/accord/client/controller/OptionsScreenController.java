@@ -1,13 +1,18 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.util.Locale;
 
 public class OptionsScreenController implements Controller {
 
@@ -19,7 +24,6 @@ public class OptionsScreenController implements Controller {
     private Button logoutButton, btnSave;
     private Label lblLanguage;
     private ChoiceBox choiseBoxLanguage;
-
 
     /**
      * Create a new Controller
@@ -48,6 +52,12 @@ public class OptionsScreenController implements Controller {
         this.lblLanguage = (Label) view.lookup("#lblLanguage");
         this.choiseBoxLanguage = (ChoiceBox) view.lookup("#choiseBoxLanguage");
 
+        this.choiseBoxLanguage.getItems().add("English");
+        this.choiseBoxLanguage.getItems().add("Deutsch");
+        this.choiseBoxLanguage.getItems().add("فارسی");
+
+        this.choiseBoxLanguage.setOnAction(this::choiseBoxLanguageOnClick);
+
         this.btnDarkmode.setSelected(options.isDarkmode());
 
         this.btnDarkmode.setOnAction(this::btnDarkmodeOnClick);
@@ -59,12 +69,34 @@ public class OptionsScreenController implements Controller {
             logoutButton.setVisible(false);
             HBox parent = (HBox) logoutButton.getParent();
             parent.getChildren().remove(logoutButton);
-            parent.setPrefHeight(80);
-            parent.setPrefWidth(300);
         }
+        stage.sizeToScene();
         Tooltip logoutButton = new Tooltip();
         logoutButton.setText("Logout");
         this.logoutButton.setTooltip(logoutButton);
+    }
+
+    private void choiseBoxLanguageOnClick(Event event) {
+        Object selectedItem = this.choiseBoxLanguage.getSelectionModel().getSelectedItem();
+
+        switch (selectedItem.toString()) {
+            case "English":
+                setLanguage("language/Language");
+                break;
+            case "Deutsch":
+                setLanguage("language/Language_de_DE");
+                break;
+            case "فارسی":
+                setLanguage("language/Language_fa_IR");
+                break;
+        }
+        lblLanguage.setText(LanguageResolver.getString("LANGUAGE"));
+    }
+
+    private void setLanguage(String languageURL) {
+        Locale.setDefault(LanguagePreferences.getLanguagePreferences().getCurrentLocale(languageURL));
+        LanguageResolver.load();
+        LanguagePreferences.getLanguagePreferences().setLanguage(languageURL);
     }
 
     /**
