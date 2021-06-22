@@ -13,24 +13,17 @@ import java.util.logging.Logger;
  */
 public class LanguageResolver {
 
-    //<editor-fold defaultstate="collapsed" desc="constructor">
-    // Suppress default constructor for noninstantiability
     private LanguageResolver() {
         throw new AssertionError();
     }
 
-    //</editor-fold>
     private static final Logger logger = Logger.getLogger(LanguageResolver.class.getName());
 
     static {
         logger.setLevel(Level.WARNING);
     }
 
-    // Auf true aendern wenn für Tests gespeichert werden soll welche Strings
-    // nicht gefunden werden konnten.
-    private static final String DEFAULT_BUNDLE_FOR_PDF = "language/Language_en_GB";
     private static volatile ResourceBundle resource;
-    private static final List<String> notFoundStrings = new ArrayList<String>();
 
     /**
      * Searches for a key in the language file and returns its value.
