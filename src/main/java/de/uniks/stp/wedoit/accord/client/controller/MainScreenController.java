@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -122,7 +123,7 @@ public class MainScreenController implements Controller {
         this.privateChatsButton.setTooltip(privateChatsButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("Options");
+        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
         this.optionsButton.setTooltip(optionsButton);
 
         Tooltip addServerButton = new Tooltip();

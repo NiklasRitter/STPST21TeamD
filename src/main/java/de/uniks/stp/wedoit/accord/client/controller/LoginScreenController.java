@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -65,7 +66,7 @@ public class LoginScreenController implements Controller {
 
     private void initTooltips() {
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("Options");
+        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
         this.btnOptions.setTooltip(optionsButton);
 
         Tooltip loginButton = new Tooltip();
