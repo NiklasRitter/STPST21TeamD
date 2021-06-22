@@ -34,13 +34,10 @@ public class LanguagePreferences {
 
     }
 
-
-
     /**
-     * Erzeugt eine Instanz der Einstellungen oder liefert eine vorhandene
-     * zurück.
+     * Creates an instance of the settings or returns an existing one.
      *
-     * @return eine Instanz der Einstellungen
+     * @return an instance of the settings
      */
     public static LanguagePreferences getLanguagePreferences() {
         if (instance == null) {
@@ -50,7 +47,7 @@ public class LanguagePreferences {
     }
 
     /**
-     * Setzt die verwendete Sprache
+     * Sets the language used
      *
      * @param language
      */
@@ -59,9 +56,7 @@ public class LanguagePreferences {
     }
 
     /**
-     * Liefert die verwendete Sprache zurück
-     *
-     * @return die verwendete Sprache
+     * @return the used language
      */
     public String getLanguage() {
         return language;
