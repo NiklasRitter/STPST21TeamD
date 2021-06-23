@@ -7,49 +7,53 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0" styleClass="styleBackgroundHighlight">
+        <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0"
+              styleClass="styleBackgroundHighlight">
             <children>
-                <Label text="Darkmode:">
+                <Label id="lblDarkMode" text="Darkmode:">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="14.0"/>
                     </font>
                 </Label>
-                <CheckBox id="btnDarkmode" mnemonicParsing="false" styleClass="styleButton" />
+                <CheckBox id="btnDarkmode" mnemonicParsing="false" styleClass="styleButton"/>
             </children>
         </HBox>
         <HBox id="hBoxLanguage" alignment="CENTER">
             <children>
-                <Label id="lblLanguage" text="Label">
+                <Label id="lblLanguage">
                     <font>
-                        <Font size="14.0" />
+                        <Font size="14.0"/>
                     </font>
                 </Label>
-                <Region prefHeight="25.0" prefWidth="153.0" />
-                <ChoiceBox id="choiseBoxLanguage" />
+                <Region prefHeight="25.0" prefWidth="153.0"/>
+                <ChoiceBox id="choiseBoxLanguage"/>
             </children>
             <VBox.margin>
-                <Insets />
+                <Insets/>
             </VBox.margin>
         </HBox>
         <HBox id="hBoxBtns" alignment="CENTER">
             <children>
                 <Button id="btnLogout" mnemonicParsing="false" styleClass="styleButton">
                     <graphic>
-                        <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true"
+                                   preserveRatio="true">
                             <image>
-                                <Image url="@images/log_out.png" />
+                                <Image url="@images/log_out.png"/>
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Region prefHeight="40.0" prefWidth="238.0" />
+                <Region prefHeight="40.0" prefWidth="238.0"/>
                 <Button id="btnSave" mnemonicParsing="false" styleClass="styleButton">
                     <graphic>
-                        <ImageView id="imgViewBtnSave" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView id="imgViewBtnSave" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true"
+                                   preserveRatio="true">
                             <image>
-                                <Image url="@images/save.png" />
+                                <Image url="@images/save.png"/>
                             </image>
                         </ImageView>
                     </graphic>
@@ -58,10 +62,10 @@
         </HBox>
     </children>
     <styleClass>
-        <String fx:value="styleBackgroundHighlight" />
-        <String fx:value="styleBorder" />
+        <String fx:value="styleBackgroundHighlight"/>
+        <String fx:value="styleBorder"/>
     </styleClass>
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" />
+        <Insets bottom="5.0" left="5.0" right="5.0"/>
     </padding>
 </VBox>
