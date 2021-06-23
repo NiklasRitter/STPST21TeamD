@@ -557,6 +557,33 @@ public class StageManager extends Application {
         }
     }
 
+    public void showUpdateMessageScreen(Message message) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/UpdateMessageScreen.fxml")));
+
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            UpdateMessageScreenController updateMessageScreenController = new UpdateMessageScreenController(root, editor, message);
+            updateMessageScreenController.init();
+            controllerMap.put(UPDATE_MESSAGE_SCREEN_CONTROLLER, updateMessageScreenController);
+
+            //display
+            popupStage.setTitle("Create Category");
+
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing CreateCategoryScreen");
+            e.printStackTrace();
+        }
+    }
+
     private void cleanup() {
         stopController();
 

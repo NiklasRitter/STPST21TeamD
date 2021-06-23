@@ -144,10 +144,16 @@ public class ServerChatController implements Controller {
      */
     private void addMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
+        MenuItem updateMessage = new MenuItem("- update message");
+        MenuItem deleteMessage = new MenuItem("- delete message");
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
+        messageContextMenu.getItems().add(updateMessage);
+        messageContextMenu.getItems().add(deleteMessage);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
+        updateMessage.setOnAction((event) -> handleContextMenuClicked(UPDATE, lvTextChat.getSelectionModel().getSelectedItem()));
+        deleteMessage.setOnAction((event) -> handleContextMenuClicked(DELETE, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -167,6 +173,12 @@ public class ServerChatController implements Controller {
                 lblQuote.setAccessibleHelp(message.getId());
                 quoteVisible.getChildren().add(lblQuote);
                 quoteVisible.getChildren().add(btnCancelQuote);
+            }
+            if (menu.equals(UPDATE)) {
+                this.editor.getStageManager().showUpdateMessageScreen(message);
+            }
+            if (menu.equals(DELETE)) {
+
             }
         }
     }

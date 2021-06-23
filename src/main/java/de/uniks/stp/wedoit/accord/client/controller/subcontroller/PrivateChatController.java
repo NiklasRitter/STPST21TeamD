@@ -254,6 +254,7 @@ public class PrivateChatController implements Controller {
                 }
             }
         }
+
     }
 
     /**

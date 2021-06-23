@@ -619,5 +619,8 @@ public class RestManager {
         });
     }
 
+    public void updateMessage(Message oldMessage, String message) {
+
+    }
 
 }

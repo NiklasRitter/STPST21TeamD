@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import kong.unirest.Callback;
 import kong.unirest.HttpRequest;
@@ -393,6 +394,20 @@ public class RestClient {
         // Use UniRest to leave server
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverID + LEAVE_SERVER)
                 .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
+    public void updateMessage(String userKey, String newMessage, Message oldMessage, Callback<JsonNode> callback) {
+        String body = Json.createObjectBuilder().add(TEXT, newMessage).build().toString();
+
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH +
+                oldMessage.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
+                oldMessage.getChannel().getCategory().getId() + CHANNELS + SLASH +
+                oldMessage.getChannel().getId() + MESSAGES +
+                SLASH + oldMessage.getId())
+                .header(USER_KEY, userKey)
+                .body(body);
 
         sendRequest(req, callback);
     }

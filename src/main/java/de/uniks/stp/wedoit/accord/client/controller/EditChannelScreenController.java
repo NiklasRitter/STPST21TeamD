@@ -148,6 +148,8 @@ public class EditChannelScreenController implements Controller {
         btnSave.setOnAction(null);
         btnDeleteChannel.setOnAction(null);
         checkBoxPrivileged.setOnAction(null);
+
+
     }
 
 
