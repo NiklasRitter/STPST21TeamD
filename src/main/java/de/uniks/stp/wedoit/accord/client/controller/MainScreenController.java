@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -36,11 +37,12 @@ public class MainScreenController implements Controller {
     private Button privateChatsButton;
     private Button optionsButton;
     private Button addServerButton;
+    private Button enterInvitationButton;
+    private Label lblYourServers;
     private ListView<Server> serverListView;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
-    private Button enterInvitationButton;
 
     /**
      * Create a new Controller
@@ -69,6 +71,9 @@ public class MainScreenController implements Controller {
         this.addServerButton = (Button) view.lookup("#btnAddServer");
         this.enterInvitationButton = (Button) view.lookup("#btnEnterInvitation");
         this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
+        this.lblYourServers = (Label) view.lookup("#lblYourServers");
+
+        this.setComponentsText();
 
         this.initTooltips();
 
@@ -85,6 +90,10 @@ public class MainScreenController implements Controller {
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
         this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
+    }
+
+    private void setComponentsText() {
+        this.lblYourServers.setText(LanguageResolver.getString("YOUR_SERVERS"));
     }
 
     /**
@@ -119,19 +128,19 @@ public class MainScreenController implements Controller {
      */
     private void initTooltips() {
         Tooltip privateChatsButton = new Tooltip();
-        privateChatsButton.setText("Private Chats");
+        privateChatsButton.setText(LanguageResolver.getString("PRIVATE_CHATS"));
         this.privateChatsButton.setTooltip(privateChatsButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
+        optionsButton.setText(LanguageResolver.getString(LanguageResolver.getString("OPTIONS")));
         this.optionsButton.setTooltip(optionsButton);
 
         Tooltip addServerButton = new Tooltip();
-        addServerButton.setText("Create new Server");
+        addServerButton.setText(LanguageResolver.getString("CREATE_SERVER"));
         this.addServerButton.setTooltip(addServerButton);
 
         Tooltip joinServerButton = new Tooltip();
-        joinServerButton.setText("Join Server");
+        joinServerButton.setText(LanguageResolver.getString("JOIN_SERVER"));
         this.enterInvitationButton.setTooltip(joinServerButton);
     }
 

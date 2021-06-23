@@ -1,7 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.language;
 
-import java.util.*;
-import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

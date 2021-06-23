@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
@@ -35,7 +36,7 @@ public class ServerScreenController implements Controller {
     private Button btnOptions;
     private Button btnHome;
     private Button btnEdit;
-    private Label lbServerName;
+    private Label lbServerName, lblServerUsers;
     private ListView<User> lvServerUsers;
 
     // Websockets
@@ -83,10 +84,13 @@ public class ServerScreenController implements Controller {
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEdit = (Button) view.lookup("#btnEdit");
         this.lbServerName = (Label) view.lookup("#lbServerName");
+        this.lblServerUsers = (Label) view.lookup("#lbServerUsers");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
 
         categoryTreeViewController.init();
         serverChatController.init();
+
+        this.setComponentsText();
 
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
@@ -113,6 +117,10 @@ public class ServerScreenController implements Controller {
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
     }
 
+    private void setComponentsText() {
+        this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
+    }
+
     /**
      * adds action listener
      */
@@ -128,15 +136,15 @@ public class ServerScreenController implements Controller {
      */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
-        homeButton.setText("Home");
+        homeButton.setText(LanguageResolver.getString("HOME"));
         btnHome.setTooltip(homeButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("Options");
+        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
         btnOptions.setTooltip(optionsButton);
 
         Tooltip editButton = new Tooltip();
-        editButton.setText("Edit Server");
+        editButton.setText(LanguageResolver.getString("EDIT_SERVER"));
         editButton.setStyle("-fx-font-size: 10");
         btnEdit.setTooltip(editButton);
     }
@@ -288,7 +296,7 @@ public class ServerScreenController implements Controller {
      */
     private ContextMenu createContextMenuLeaveServer() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
+        MenuItem menuItemLeaveServer = new MenuItem(LanguageResolver.getString("LEAVE_SERVER"));
         contextMenu.getItems().add(menuItemLeaveServer);
         menuItemLeaveServer.setOnAction(this::leaveServerAttention);
         return contextMenu;

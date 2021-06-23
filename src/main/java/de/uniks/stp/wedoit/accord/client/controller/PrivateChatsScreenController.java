@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.view.PrivateChatsScreenOnlineUsersCellFactory;
@@ -34,7 +35,7 @@ public class PrivateChatsScreenController implements Controller {
     private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private List<User> availableUsers = new ArrayList<>();
     private final PropertyChangeListener newUsersListener = this::newUser;
-    private Label lblSelectedUser;
+    private Label lblSelectedUser, lblOnlineUser;
     private final PrivateChatController privateChatController;
 
 
@@ -66,6 +67,9 @@ public class PrivateChatsScreenController implements Controller {
         this.btnHome = (Button) view.lookup("#btnHome");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
+        this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
+
+        this.setComponentsText();
 
         privateChatController.init();
 
@@ -80,20 +84,26 @@ public class PrivateChatsScreenController implements Controller {
         this.btnPlay.setVisible(false);
     }
 
+    private void setComponentsText() {
+        this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
+        this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
+        this.btnPlay.setText(LanguageResolver.getString("PLAY"));
+    }
+
     /**
      * Initializes the Tooltips for the Buttons
      */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
-        homeButton.setText("Home");
+        homeButton.setText(LanguageResolver.getString("HOME"));
         btnHome.setTooltip(homeButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("Options");
+        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
         btnOptions.setTooltip(optionsButton);
 
         Tooltip playButton = new Tooltip();
-        playButton.setText("Play Rock-Paper-Scissors");
+        playButton.setText(LanguageResolver.getString("ROCK_PAPER_SCISSORS"));
         btnPlay.setTooltip(playButton);
     }
 
@@ -123,7 +133,6 @@ public class PrivateChatsScreenController implements Controller {
     private void btnHomeOnClicked(ActionEvent actionEvent) {
         this.editor.getStageManager().showMainScreen();
     }
-
 
 
     /**
@@ -157,8 +166,10 @@ public class PrivateChatsScreenController implements Controller {
 
         // Add listener for the loaded listView
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
-        this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus).collect(Collectors.toList()));
-        this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
+        this.onlineUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus)
+                .collect(Collectors.toList()));
+        this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
+                .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
 
         this.onlineUserObservableList.addAll(editor.loadOldChats());
 
@@ -182,26 +193,30 @@ public class PrivateChatsScreenController implements Controller {
         editor.getUserChatRead(user);
         if (!user.isOnlineStatus()) {
             Platform.runLater(() -> {
-                this.onlineUserObservableList.removeIf((e)-> e.getName().equals(user.getName()));
+                this.onlineUserObservableList.removeIf((e) -> e.getName().equals(user.getName()));
                 if (editor.loadOldChats().stream().anyMatch((u) -> u.getName().equals(user.getName())))
                     this.onlineUserObservableList.add(user);
-                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
-                if(privateChatController.getCurrentChat() !=null && privateChatController.getCurrentChat().getUser() != null) lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
+                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
+                        .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
+                if (privateChatController.getCurrentChat() != null && privateChatController.getCurrentChat().getUser() != null)
+                    lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    tfPrivateChat.setPromptText(user.getName() + " is offline");
+                    tfPrivateChat.setPromptText(user.getName() + LanguageResolver.getString("IS_OFFLINE"));
                     tfPrivateChat.setEditable(false);
                 }
             });
         } else {
             Platform.runLater(() -> {
-                this.onlineUserObservableList.removeIf((e)-> e.getName().equals(user.getName()));
+                this.onlineUserObservableList.removeIf((e) -> e.getName().equals(user.getName()));
                 this.onlineUserObservableList.add(user);
-                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
-                if(privateChatController.getCurrentChat() !=null && privateChatController.getCurrentChat().getUser() != null) lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
+                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
+                        .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
+                if (privateChatController.getCurrentChat() != null && privateChatController.getCurrentChat().getUser() != null)
+                    lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    tfPrivateChat.setPromptText("your message");
+                    tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
                     tfPrivateChat.setEditable(true);
                 }
             });
@@ -232,10 +247,11 @@ public class PrivateChatsScreenController implements Controller {
             this.availableUsers.add(newUser);
             if (newUser.getPrivateChat() == null) newUser.setChatRead(true);
             Platform.runLater(() -> {
-                this.onlineUserObservableList.removeIf((e)-> e.getName().equals(newUser.getName()));
+                this.onlineUserObservableList.removeIf((e) -> e.getName().equals(newUser.getName()));
                 this.onlineUserObservableList.add(newUser);
-                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed().thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
-                if(oldSelect != null) lwOnlineUsers.getSelectionModel().select(oldSelect);
+                this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
+                        .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
+                if (oldSelect != null) lwOnlineUsers.getSelectionModel().select(oldSelect);
                 lwOnlineUsers.refresh();
             });
         }
@@ -251,7 +267,8 @@ public class PrivateChatsScreenController implements Controller {
         if (mouseEvent.getClickCount() == 1) {
             User selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
-                btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ? "Accept" : "Play");
+                btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ?
+                        LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
                 privateChatController.initPrivateChat(selectedUser);
                 lwOnlineUsers.refresh();
                 this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());

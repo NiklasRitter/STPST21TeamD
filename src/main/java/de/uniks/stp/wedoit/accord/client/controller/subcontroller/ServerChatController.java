@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Message;
@@ -87,6 +88,8 @@ public class ServerChatController implements Controller {
         this.lblQuote = (Label) view.lookup("#lblQuote");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
+        this.setComponentsText();
+
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
         this.btnCancelQuote.setOnAction(this::cancelQuote);
@@ -95,9 +98,14 @@ public class ServerChatController implements Controller {
         addMessageContextMenu();
 
         Tooltip emojiButton = new Tooltip();
-        emojiButton.setText("Emojis");
+        emojiButton.setText(LanguageResolver.getString("EMOJIS"));
         emojiButton.setStyle("-fx-font-size: 10");
         this.btnEmoji.setTooltip(emojiButton);
+    }
+
+    private void setComponentsText() {
+        this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
+        this.tfInputMessage.setText(LanguageResolver.getString("YOUR_MESSAGE"));
     }
 
     /**
@@ -143,7 +151,7 @@ public class ServerChatController implements Controller {
      * adds a context menu for a message
      */
     private void addMessageContextMenu() {
-        MenuItem quote = new MenuItem("- quote");
+        MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
@@ -210,7 +218,8 @@ public class ServerChatController implements Controller {
             this.editor.getRestManager().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
         }
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            if (lvTextChat.getSelectionModel().getSelectedItem() != null && !editor.getMessageManager().isQuote(lvTextChat.getSelectionModel().getSelectedItem())) {
+            if (lvTextChat.getSelectionModel().getSelectedItem() != null && !editor.getMessageManager()
+                    .isQuote(lvTextChat.getSelectionModel().getSelectedItem())) {
                 lvTextChat.setContextMenu(messageContextMenu);
                 messageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             }
@@ -229,7 +238,8 @@ public class ServerChatController implements Controller {
         if (message != null && !message.isEmpty() && currentChannel != null) {
 
             if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
+                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText()
+                        + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
                 JsonObject jsonMessage = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
                 removeQuote();
 
@@ -259,7 +269,8 @@ public class ServerChatController implements Controller {
 
         // init list view
         lvTextChat.setCellFactory(new MessageCellFactory());
-        this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
+        this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream()
+                .sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
         this.lvTextChat.setItems(observableMessageList);

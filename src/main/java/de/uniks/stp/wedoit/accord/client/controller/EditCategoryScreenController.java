@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -18,7 +19,7 @@ public class EditCategoryScreenController implements Controller {
     private TextField tfCategoryName;
     private Button btnEditCategory;
     private Button btnDeleteCategory;
-    private Label errorLabel;
+    private Label errorLabel, lblCategoryName;
 
     /**
      * Create a new Controller
@@ -46,12 +47,21 @@ public class EditCategoryScreenController implements Controller {
         this.btnDeleteCategory = (Button) view.lookup("#btnDeleteCategory");
         this.tfCategoryName = (TextField) view.lookup("#tfCategoryName");
         this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblCategoryName = (Label) view.lookup("#lblCategoryName");
+
+        this.setComponentsText();
 
         // Add action listeners
         this.btnEditCategory.setOnAction(this::editCategoryButtonOnClick);
         this.btnDeleteCategory.setOnAction(this::deleteCategoryButtonOnClick);
 
         tfCategoryName.setText(category.getName());
+    }
+
+    private void setComponentsText() {
+        this.lblCategoryName.setText(LanguageResolver.getString("CATEGORY_NAME"));
+        this.btnEditCategory.setText(LanguageResolver.getString("SAVE"));
+        this.btnDeleteCategory.setText(LanguageResolver.getString("DELETE"));
     }
 
     /**
@@ -74,9 +84,9 @@ public class EditCategoryScreenController implements Controller {
      */
     private void editCategoryButtonOnClick(ActionEvent actionEvent) {
         if (tfCategoryName.getText().length() < 1 || tfCategoryName.getText() == null) {
-            tfCategoryName.getStyleClass().add("error");
+            tfCategoryName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
             editor.getRestManager().updateCategory(editor.getCurrentServer(), category, tfCategoryName.getText(), this);
         }
@@ -93,8 +103,8 @@ public class EditCategoryScreenController implements Controller {
             Platform.runLater(stage::close);
             stop();
         } else {
-            tfCategoryName.getStyleClass().add("error");
-            Platform.runLater(() -> errorLabel.setText("Something went wrong while updating the category"));
+            tfCategoryName.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("SOMETHING_WRONG_WHILE_UPDATE_CATEGORY")));
         }
     }
 

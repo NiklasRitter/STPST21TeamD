@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -53,16 +54,23 @@ public class GameResultScreenController implements Controller{
         Label lbOutcome = (Label) view.lookup("#lbOutcome");
         btnPlayAgain = (Button) view.lookup("#btnPlayAgain");
         btnQuit = (Button) view.lookup("#btnQuit");
+
+        this.setComponentsText();
+
         if(isWinner == null){
-            lbOutcome.setText("Opponent Left");
+            lbOutcome.setText(LanguageResolver.getString("YOU_WON"));
         }else if(!isWinner){
-            lbOutcome.setText("2nd Place");
+            lbOutcome.setText(LanguageResolver.getString("SECOND_PLACE"));
         }
 
         btnQuit.setOnAction(this::redirectToPrivateChats);
         btnPlayAgain.setOnAction(this::playAgainOnClick);
     }
 
+    private void setComponentsText() {
+        this.btnPlayAgain.setText(LanguageResolver.getString("PLAY_AGAIN"));
+        this.btnQuit.setText(LanguageResolver.getString("QUIT"));
+    }
 
 
     /**

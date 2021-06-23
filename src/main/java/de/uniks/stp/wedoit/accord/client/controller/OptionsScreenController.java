@@ -22,7 +22,7 @@ public class OptionsScreenController implements Controller {
 
     private CheckBox btnDarkmode;
     private Button logoutButton, btnSave;
-    private Label lblLanguage;
+    private Label lblLanguage, lblDarkMode;
     private ChoiceBox choiseBoxLanguage;
 
     /**
@@ -50,13 +50,15 @@ public class OptionsScreenController implements Controller {
         this.logoutButton = (Button) view.lookup("#btnLogout");
         this.btnSave = (Button) view.lookup("#btnSave");
         this.lblLanguage = (Label) view.lookup("#lblLanguage");
-        this.choiseBoxLanguage = (ChoiceBox) view.lookup("#choiseBoxLanguage");
+        this.lblDarkMode = (Label) view.lookup("#lblDarkMode");
 
+        this.choiseBoxLanguage = (ChoiceBox) view.lookup("#choiseBoxLanguage");
         this.choiseBoxLanguage.getItems().add("English");
         this.choiseBoxLanguage.getItems().add("Deutsch");
         this.choiseBoxLanguage.getItems().add("فارسی");
-
         this.choiseBoxLanguage.setOnAction(this::choiseBoxLanguageOnClick);
+
+        setComponentsText();
 
         this.btnDarkmode.setSelected(options.isDarkmode());
 
@@ -76,6 +78,11 @@ public class OptionsScreenController implements Controller {
         this.logoutButton.setTooltip(logoutButton);
     }
 
+    private void setComponentsText() {
+        this.lblDarkMode.setText(LanguageResolver.getString("DARKMODE"));
+        this.lblLanguage.setText(LanguageResolver.getString("LANGUAGE"));
+    }
+
     private void choiseBoxLanguageOnClick(Event event) {
         Object selectedItem = this.choiseBoxLanguage.getSelectionModel().getSelectedItem();
 
@@ -90,7 +97,7 @@ public class OptionsScreenController implements Controller {
                 setLanguage("language/Language_fa_IR");
                 break;
         }
-        lblLanguage.setText(LanguageResolver.getString("LANGUAGE"));
+        setComponentsText();
     }
 
     private void setLanguage(String languageURL) {

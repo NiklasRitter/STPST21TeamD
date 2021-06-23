@@ -37,7 +37,9 @@ public class StageManager extends Application {
     private Stage gameStage;
     private Scene gameScene;
 
-    {resourceManager.setPreferenceManager(prefManager);}
+    {
+        resourceManager.setPreferenceManager(prefManager);
+    }
 
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
@@ -410,7 +412,6 @@ public class StageManager extends Application {
         }
     }
 
-
     /**
      * loads fxml of the CreateChannelScreen and show the CreateChannelScreen on the window
      */
@@ -579,6 +580,7 @@ public class StageManager extends Application {
 
     /**
      * changes the view to light or darkmode
+     *
      * @param darkmode boolean weather darkmode is enabled or not
      */
     public void changeDarkmode(boolean darkmode) {
