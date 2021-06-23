@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.*;
 
 public class StageManager extends Application {
 
@@ -43,524 +44,277 @@ public class StageManager extends Application {
 
     {resourceManager.setPreferenceManager(prefManager);}
 
+    public void initView(String scene, String title, String fxmlName, String controllerName, boolean resizable, Object parameter, Object parameterTwo){
+        try {
+            String fxmlSource = "view/" + fxmlName + ".fxml";
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource(fxmlSource)));
+            switch (scene) {
+                case STAGE:
+                    cleanup();
+                    initStage(root, title, resizable);
+                    break;
+                case POPUPSTAGE:
+                    initPopupStage(root, title, resizable);
+                    break;
+                case GAMESTAGE:
+                    initGameStage(root, title, resizable, controllerName);
+                    break;
+                case EMOJIPICKERSTAGE:
+                    initEmojiPickerStage(root, title, resizable, (Bounds) parameterTwo);
+                    break;
+            }
+            updateDarkmode();
+            openController(root, controllerName, parameter, parameterTwo);
+        } catch (Exception e) {
+            System.err.println("Error on showing " + controllerName);
+            e.printStackTrace();
+        }
+    }
+
+    private void initStage(Parent root, String title, boolean resizable){
+        if (scene != null) {
+            scene.setRoot(root);
+        } else {
+            scene = new Scene(root);
+        }
+        stage.setTitle(title);
+        stage.setScene(scene);
+        stage.centerOnScreen();
+        stage.setResizable(resizable);
+        stage.show();
+    }
+
+    private void initPopupStage(Parent root, String title, boolean resizable){
+        popupScene = new Scene(root);
+        popupStage.setTitle(title);
+        popupStage.setScene(popupScene);
+        popupStage.centerOnScreen();
+        popupStage.setResizable(resizable);
+        popupStage.show();
+    }
+
+    private void initGameStage(Parent root, String title, boolean resizable, String controllerName){
+        gameScene = new Scene(root);
+        gameStage.setTitle(title);
+        if (gameStage.getStyle() != StageStyle.DECORATED) gameStage.initStyle(StageStyle.DECORATED);
+        gameStage.setScene(gameScene);
+        gameStage.centerOnScreen();
+        gameStage.setResizable(resizable);
+        if(controllerName.equals(GAME_SCREEN_CONTROLLER)){
+            gameStage.setHeight(450);
+            gameStage.setWidth(600);
+        }
+        else if(controllerName.equals(GAME_RESULT_SCREEN_CONTROLLER)){
+            gameStage.setMinHeight(0);
+            gameStage.setMinWidth(0);
+            gameStage.setHeight(170);
+            gameStage.setWidth(370);
+        }
+        gameStage.show();
+    }
+
+    private void initEmojiPickerStage(Parent root, String title, boolean resizable, Bounds pos){
+        emojiPickerScene = new Scene(root);
+        emojiPickerStage.setTitle(title);
+        emojiPickerStage.setScene(emojiPickerScene);
+        emojiPickerStage.setResizable(resizable);
+        emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
+        emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
+        emojiPickerStage.show();
+    }
+
+    private void openController(Parent root, String controllerName, Object parameter, Object parameter2){
+        Controller controller = null;
+        switch (controllerName){
+            case LOGIN_SCREEN_CONTROLLER:
+                editor.haveLocalUser();
+                controller = new LoginScreenController(root, model, editor);
+                break;
+            case MAIN_SCREEN_CONTROLLER:
+                controller = new MainScreenController(root, model.getLocalUser(), editor);
+                break;
+            case CREATE_SERVER_SCREEN_CONTROLLER:
+                controller = new CreateServerScreenController(root, editor);
+                break;
+            case JOIN_SERVER_SCREEN_CONTROLLER:
+                controller = new JoinServerScreenController(root, model.getLocalUser(), editor);
+                break;
+            case PRIVATE_CHATS_SCREEN_CONTROLLER:
+                controller = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
+                break;
+            case SERVER_SCREEN_CONTROLLER:
+                Server server = (Server) parameter;
+                controller = new ServerScreenController(root, model.getLocalUser(), editor, server);
+                break;
+            case GAME_SCREEN_CONTROLLER:
+                User opponent = (User) parameter;
+                controller = new GameScreenController(root, model.getLocalUser(), opponent, editor);
+                break;
+            case GAME_RESULT_SCREEN_CONTROLLER:
+                opponent = (User) parameter;
+                boolean isWinner = (boolean) parameter2;
+                controller = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
+                break;
+            case OPTIONS_SCREEN_CONTROLLER:
+                controller = new OptionsScreenController(root, model.getOptions(), editor);
+                break;
+            case CREATE_CATEGORY_SCREEN_CONTROLLER:
+                controller = new CreateCategoryScreenController(root, editor);
+                break;
+            case EDIT_CATEGORY_SCREEN_CONTROLLER:
+                Category category = (Category) parameter;
+                controller = new EditCategoryScreenController(root, editor, category);
+                break;
+            case CREATE_CHANNEL_SCREEN_CONTROLLER:
+                category = (Category) parameter;
+                controller = new CreateChannelScreenController(root, model.getLocalUser(), editor, category);
+                break;
+            case EDIT_CHANNEL_SCREEN_CONTROLLER:
+                Channel channel = (Channel) parameter;
+                controller = new EditChannelScreenController(root, model.getLocalUser(), editor, channel);
+                break;
+            case EMOJI_SCREEN_CONTROLLER:
+                TextField tfForEmoji = (TextField) parameter;
+                controller = new EmojiScreenController(root, tfForEmoji);
+                break;
+            case ATTENTION_SCREEN_CONTROLLER:
+                controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter);
+                break;
+            case ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER:
+                server = (Server) parameter;
+                controller = new AttentionLeaveServerController(root, editor, server);
+                break;
+            case EDIT_SERVER_SCREEN_CONTROLLER:
+                server = (Server) parameter;
+                controller = new EditServerScreenController(root, model.getLocalUser(), editor, server, popupStage);
+        }
+        if(controller != null){
+            controller.init();
+            controllerMap.put(controllerName, controller);
+        }
+    }
+
     /**
      * load fxml of the LoginScreen and show the LoginScreen on the window
      */
     public void showLoginScreen() {
-        cleanup();
-
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/LoginScreen.fxml")));
-
-            if (scene != null) {
-                scene.setRoot(root);
-            } else {
-                scene = new Scene(root);
-            }
-
-            editor.haveLocalUser();
-
-            updateDarkmode();
-
-            LoginScreenController loginScreenController = new LoginScreenController(root, model, editor);
-            loginScreenController.init();
-            controllerMap.put(LOGIN_SCREEN_CONTROLLER, loginScreenController);
-
-            //display
-            stage.setTitle("Login");
-            stage.setScene(scene);
-            stage.centerOnScreen();
-            stage.setMaximized(false);
-            stage.setResizable(false);
-
-        } catch (Exception e) {
-            System.err.println("Error on showing start screen");
-            e.printStackTrace();
-        }
+        initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
      * load fxml of the MainScreen and show the MainScreen on the window
      */
     public void showMainScreen() {
-        cleanup();
-
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/MainScreen.fxml")));
-            if (scene != null) {
-                scene.setRoot(root);
-            } else {
-                scene = new Scene(root);
-            }
-
-            updateDarkmode();
-
-            //init controller
-            MainScreenController mainScreenController = new MainScreenController(root, model.getLocalUser(), editor);
-            mainScreenController.init();
-            controllerMap.put(MAIN_SCREEN_CONTROLLER, mainScreenController);
-
-            // display
-            stage.setTitle("Main");
-            stage.setScene(scene);
-            stage.setResizable(true);
-
-        } catch (Exception e) {
-            System.err.println("Error on showing MainScreen");
-            e.printStackTrace();
-        }
+        initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
     }
 
     /**
      * loads fxml of the CreateServerScreen and show the CreateServerScreen on the window
      */
     public void showCreateServerScreen() {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateServerScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            CreateServerScreenController createServerScreenController = new CreateServerScreenController(root, editor);
-            createServerScreenController.init();
-            controllerMap.put(CREATE_SERVER_SCREEN_CONTROLLER, createServerScreenController);
-
-            //display
-            popupStage.setTitle("Create Server");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-            popupStage.show();
-        } catch (Exception e) {
-            System.err.println("Error on showing CreateServerScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Create Server", "CreateServerScreen", CREATE_SERVER_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
      * loads fxml of the JoinServerScreen and show the JoinServerScreen on the window
      */
     public void showJoinServerScreen() {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/JoinServerScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            JoinServerScreenController joinServerScreenController = new JoinServerScreenController(root, model.getLocalUser(), editor);
-            joinServerScreenController.init();
-            controllerMap.put(JOIN_SERVER_SCREEN_CONTROLLER, joinServerScreenController);
-
-            //display
-            popupStage.setTitle("Join Server");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-            popupStage.show();
-        } catch (Exception e) {
-            System.err.println("Error on showing JoinServerScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Join Server", "JoinServerScreen", JOIN_SERVER_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
      * loads fxml of the PrivateChatsScreen and show the PrivateChatsScreen on the window
      */
     public void showPrivateChatsScreen() {
-        cleanup();
-
-        try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/PrivateChatsScreen.fxml")));
-            if (scene != null) {
-                scene.setRoot(root);
-            } else {
-                scene = new Scene(root);
-            }
-
-            updateDarkmode();
-
-            PrivateChatsScreenController privateChatsScreenController = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
-            privateChatsScreenController.init();
-            controllerMap.put(PRIVATE_CHATS_SCREEN_CONTROLLER, privateChatsScreenController);
-
-            //display
-            stage.setTitle("Private Chats");
-            stage.setScene(scene);
-            stage.setResizable(true);
-
-        } catch (Exception e) {
-            System.err.println("Error on showing PrivateChatsScreen");
-            e.printStackTrace();
-        }
+        initView(STAGE, "Private Chats", "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true, null, null);
     }
 
     /**
      * loads fxml of the ServerScreen and show the ServerScreen on the window
      */
     public void showServerScreen(Server server) {
-        cleanup();
-
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/ServerScreen.fxml")));
-            if (scene != null) {
-                scene.setRoot(root);
-            } else {
-                scene = new Scene(root);
-            }
-
-            updateDarkmode();
-
-            //init controller
-            ServerScreenController serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, server);
-            serverScreenController.init();
-            controllerMap.put(SERVER_SCREEN_CONTROLLER, serverScreenController);
-
-            //display
-            stage.setTitle("Server");
-            stage.setScene(scene);
-            stage.setResizable(true);
-
-        } catch (Exception e) {
-            System.err.println("Error on showing ServerScreenController");
-            e.printStackTrace();
-        }
-
+        initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
     }
 
     /**
      * loads fxml of the GameScreen and show the GameScreen on the window
      */
     public void showGameScreen(User opponent) {
-        try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameScreen.fxml")));
-            gameScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            GameScreenController gameScreenController = new GameScreenController(root, model.getLocalUser(), opponent, editor);
-            gameScreenController.init();
-            controllerMap.put("gameScreenController", gameScreenController);
-
-            // display
-            gameStage.setTitle("Rock - Paper - Scissors");
-            if (gameStage.getStyle() != StageStyle.DECORATED) gameStage.initStyle(StageStyle.DECORATED);
-            gameStage.setScene(gameScene);
-            gameStage.centerOnScreen();
-            gameStage.setResizable(true);
-            gameStage.setHeight(450);
-            gameStage.setWidth(600);
-            gameStage.show();
-        } catch (Exception e) {
-            System.err.println("Error on showing GameScreen");
-            e.printStackTrace();
-        }
+        initView(GAMESTAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, opponent, null);
     }
 
     /**
      * loads fxml of the GameScreen and show the GameScreen on the window
      */
     public void showGameResultScreen(User opponent, Boolean isWinner) {
-        try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/GameResultScreen.fxml")));
-            if (gameScene != null) {
-                gameScene.setRoot(root);
-            } else {
-                gameScene = new Scene(root);
-            }
-
-            updateDarkmode();
-
-            //init controller
-            GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
-            gameResultScreenController.init();
-            controllerMap.put("GameResultScreenController", gameResultScreenController);
-
-            gameStage.setTitle("Result");
-
-            gameStage.setMinHeight(0);
-            gameStage.setMinWidth(0);
-            gameStage.setHeight(170);
-            gameStage.setWidth(370);
-            gameStage.setResizable(false);
-            gameStage.setScene(gameScene);
-        } catch (Exception e) {
-            System.err.println("Error on loading GameResultScreen");
-            e.printStackTrace();
-        }
-
+        initView(GAMESTAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, opponent, isWinner);
     }
 
     /**
      * loads fxml of the OptionsScreen and show the OptionsScreen on the window
      */
     public void showOptionsScreen() {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/OptionsScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            OptionsScreenController optionsScreenController = new OptionsScreenController(root, model.getOptions(), editor);
-            optionsScreenController.init();
-            controllerMap.put(OPTIONS_SCREEN_CONTROLLER, optionsScreenController);
-
-            //display
-            popupStage.setTitle("Options");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-            popupStage.show();
-
-        } catch (Exception e) {
-            System.err.println("Error on showing OptionsScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Options", "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
     }
-
 
     /**
      * loads fxml of the CreateCategoryScreen and show the CreateCategoryScreen on the window
      */
     public void showCreateCategoryScreen() {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/CreateCategoryScreen.fxml")));
-
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, editor);
-            createCategoryScreenController.init();
-            controllerMap.put(CREATE_CATEGORY_SCREEN_CONTROLLER, createCategoryScreenController);
-
-            //display
-            popupStage.setTitle("Create Category");
-
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-            popupStage.show();
-
-        } catch (Exception e) {
-            System.err.println("Error on showing CreateCategoryScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Create Category", "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
      * loads fxml of the EditCategoryScreen and show the EditCategoryScreen on the window
      */
     public void showEditCategoryScreen(Category category) {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditCategoryScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            EditCategoryScreenController editCategoryScreenController = new EditCategoryScreenController(root, editor, category);
-            editCategoryScreenController.init();
-            controllerMap.put(EDIT_CATEGORY_SCREEN_CONTROLLER, editCategoryScreenController);
-
-            //display
-            popupStage.setTitle("Edit Category");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-            popupStage.show();
-        } catch (Exception e) {
-            System.err.println("Error on showing EditCategoryScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Edit Category", "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, category, null);
     }
 
     /**
      * loads fxml of the EmojiScreen and show the EmojiScreen on the window
      */
     public void showEmojiScreen(TextField tfForEmoji, Bounds pos) {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EmojiScreen.fxml")));
-
-            emojiPickerScene = new Scene(root);
-            updateDarkmode();
-
-            EmojiScreenController emojiScreenController = new EmojiScreenController(root, tfForEmoji);
-            emojiScreenController.init();
-            controllerMap.put(EMOJI_SCREEN_CONTROLLER, emojiScreenController);
-            //display
-            emojiPickerStage.setTitle("Emoji Picker");
-            emojiPickerStage.setScene(emojiPickerScene);
-            emojiPickerStage.setResizable(false);
-            emojiPickerStage.show();
-            emojiPickerStage.setX(pos.getMinX() - emojiPickerStage.getWidth());
-            emojiPickerStage.setY(pos.getMinY() - emojiPickerStage.getHeight());
-
-        } catch (Exception e) {
-            System.err.println("Error on showing Emoji Picker");
-            e.printStackTrace();
-        }
+        initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfForEmoji, pos);
     }
-
 
     /**
      * loads fxml of the CreateChannelScreen and show the CreateChannelScreen on the window
      */
     public void showCreateChannelScreen(Category category) {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditChannelScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            CreateChannelScreenController createChannelScreenController = new CreateChannelScreenController(root, model.getLocalUser(), editor, category);
-            createChannelScreenController.init();
-            controllerMap.put(CREATE_CHANNEL_SCREEN_CONTROLLER, createChannelScreenController);
-
-            //display
-            popupStage.setTitle("Create Channel");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(true);
-            popupStage.show();
-        } catch (Exception e) {
-            System.err.println("Error on showing CreateChannelScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, category, null);
     }
 
     /**
      * loads fxml of the EditChannelScreen and show the EditChannelScreen on the window
      */
     public void showEditChannelScreen(Channel channel) {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditChannelScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            EditChannelScreenController editChannelScreenController = new EditChannelScreenController(root, model.getLocalUser(), editor, channel);
-            editChannelScreenController.init();
-            controllerMap.put(EDIT_CHANNEL_SCREEN_CONTROLLER, editChannelScreenController);
-
-            //display
-            popupStage.setTitle("Edit Channel");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(true);
-            popupStage.show();
-        } catch (Exception e) {
-            System.err.println("Error on showing EditChannelScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Edit Channel", "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, channel, null);
     }
 
     /**
      * loads fxml of the EditServerScreen and show the EditServerScreen on the window
      */
     public void showEditServerScreen(Server server) {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/EditServerScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            EditServerScreenController editServerScreenController = new EditServerScreenController(root, model.getLocalUser(), editor, server, popupStage);
-            editServerScreenController.init();
-            controllerMap.put(EDIT_SERVER_SCREEN_CONTROLLER, editServerScreenController);
-
-            //display
-            popupStage.setTitle("Edit Server");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-            popupStage.show();
-
-        } catch (Exception e) {
-            System.err.println("Error on showing EditServerScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Edit Server", "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
     }
 
     /**
      * loads fxml of the AttentionScreen and show the AttentionScreen on the window
      */
     public void showAttentionScreen(Object objectToDelete) {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/AttentionScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            AttentionScreenController attentionScreenController = new AttentionScreenController(root, model.getLocalUser(), editor, objectToDelete);
-            attentionScreenController.init();
-            controllerMap.put(ATTENTION_SCREEN_CONTROLLER, attentionScreenController);
-
-            //display
-            popupStage.setTitle("Attention");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-            popupStage.show();
-
-        } catch (Exception e) {
-            System.err.println("Error on showing EditServerScreen");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Attention", "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, objectToDelete, null);
     }
 
     /**
      * loads fxml of the AttentionLeaveServerScreen and show the AttentionLeaveServerScreen on the window
      */
     public void showAttentionLeaveServerScreen(Server server) {
-        try {
-            //load view
-            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/AttentionLeaveServerScreen.fxml")));
-            popupScene = new Scene(root);
-
-            updateDarkmode();
-
-            //init controller
-            AttentionLeaveServerController attentionLeaveServerController = new AttentionLeaveServerController(root, editor, server);
-            attentionLeaveServerController.init();
-            controllerMap.put(ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, attentionLeaveServerController);
-
-            //display
-            popupStage.setTitle("Attention");
-            popupStage.setScene(popupScene);
-            popupStage.centerOnScreen();
-            popupStage.setResizable(false);
-            popupStage.show();
-
-        } catch (Exception e) {
-            System.err.println("Error on showing Leave Server Attention");
-            e.printStackTrace();
-        }
+        initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
     }
 
     private void cleanup() {
         stopController();
-
         if (popupStage != null) {
             popupStage.hide();
         }
@@ -651,10 +405,8 @@ public class StageManager extends Application {
         return popupStage;
     }
 
-
     public ResourceManager getResourceManager() {
         return resourceManager;
-
     }
 
     public Stage getGameStage() {
@@ -669,15 +421,12 @@ public class StageManager extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
-
         popupStage = new Stage();
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         popupStage.initOwner(stage);
-
         gameStage = new Stage();
         gameStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         gameStage.initOwner(stage);
-
         emojiPickerStage = new Stage();
         emojiPickerStage.initOwner(stage);
         //Removes title bar of emojiPickerStage including maximize, minimize and close icons.
@@ -688,22 +437,17 @@ public class StageManager extends Application {
                 emojiPickerStage.close();
             }
         });
-
         editor.setStageManager(this);
         prefManager.setStageManager(this);
-
         model = editor.haveAccordClient();
         model.setOptions(new Options());
         editor.haveLocalUser();
-
         resourceManager.start(model);
-
         if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
         else {
             systemTrayController = new SystemTrayController(editor);
             systemTrayController.init();
         }
-
         stage.setMinHeight(400);
         stage.setMinWidth(600);
         editor.automaticLogin(model);
