@@ -31,8 +31,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class ServerChatController implements Controller {
 
@@ -194,7 +198,7 @@ public class ServerChatController implements Controller {
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().showEmojiScreen(tfInputMessage, pos);
+        this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
     }
 
     /**
@@ -286,7 +290,7 @@ public class ServerChatController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 

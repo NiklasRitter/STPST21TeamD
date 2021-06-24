@@ -18,7 +18,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class RestManager {
 
@@ -595,12 +597,10 @@ public class RestManager {
      */
     public void leaveServer(String userKey, String serverId) {
         restClient.leaveServer(userKey, serverId, response -> {
-            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                Platform.runLater(editor.getStageManager()::showMainScreen);
-            } else {
+            if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 System.err.println("Error while leaving server");
-                Platform.runLater(editor.getStageManager()::showMainScreen);
             }
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         });
     }
 

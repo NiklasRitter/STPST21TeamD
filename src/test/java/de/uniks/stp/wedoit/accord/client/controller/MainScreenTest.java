@@ -31,8 +31,10 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -92,7 +94,7 @@ public class MainScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.showMainScreen();
+        this.stageManager.initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);;
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
