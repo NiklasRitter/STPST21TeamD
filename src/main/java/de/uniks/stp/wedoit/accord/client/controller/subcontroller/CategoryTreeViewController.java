@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
+
 public class CategoryTreeViewController implements Controller {
 
     private final LocalUser localUser;
@@ -129,9 +131,13 @@ public class CategoryTreeViewController implements Controller {
 
             if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
                 if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
-                    channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
-                    controller.getServerChatController().initChannelChat(channel);
-                    controller.refreshLvUsers(channel);
+                    Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
+                    //TODO .getType allowed or editor?
+                    if (channel.getType().equals(TEXT)) {
+                        channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
+                        controller.getServerChatController().initChannelChat(channel);
+                        controller.refreshLvUsers(channel);
+                    }
                 }
             }
         }
