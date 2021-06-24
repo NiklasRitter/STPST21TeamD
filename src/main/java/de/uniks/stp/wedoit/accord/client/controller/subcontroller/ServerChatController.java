@@ -237,12 +237,12 @@ public class ServerChatController implements Controller {
                 JsonObject jsonMessage = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
                 removeQuote();
 
-                editor.getWebSocketManager().sendChannelChatMessage(quoteMsg.toString());
-                editor.getWebSocketManager().sendChannelChatMessage(jsonMessage.toString());
+                editor.getWebSocketManager().sendChannelChatMessage(JsonUtil.stringify(quoteMsg));
+                editor.getWebSocketManager().sendChannelChatMessage(JsonUtil.stringify(jsonMessage));
             } else {
 
                 JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
-                editor.getWebSocketManager().sendChannelChatMessage(jsonMsg.toString());
+                editor.getWebSocketManager().sendChannelChatMessage(JsonUtil.stringify(jsonMsg));
             }
         }
     }
@@ -313,11 +313,8 @@ public class ServerChatController implements Controller {
         JsonObject jsonObject = (JsonObject) msg;
 
         if (jsonObject.getString(CHANNEL).equals(currentChannel.getId())) {
-            Message message = new Message();
+            Message message = JsonUtil.parseMessage(jsonObject);
             message.setChannel(currentChannel);
-            message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
-            message.setFrom(jsonObject.getString(FROM));
-            message.setText(jsonObject.getString(TEXT));
 
             this.editor.getMessageManager().addNewChannelMessage(message);
         } else {

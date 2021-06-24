@@ -194,7 +194,7 @@ public class EditServerScreenController implements Controller {
         lblInvitationStatusText.setText("");
         lblInvitationStatus.setText("");
         if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
-            editor.getRestManager().deleteInvite(localUser.getUserKey(), lvInvitation.getSelectionModel().getSelectedItem(), server, this);
+            editor.getRestManager().deleteInvite(localUser.getUserKey(), lvInvitation.getSelectionModel().getSelectedItem(), server);
         }
     }
 
@@ -371,7 +371,7 @@ public class EditServerScreenController implements Controller {
      */
     public void handleOldInvitations(List<Invitation> invitations) {
         if (invitations != null) {
-            createLvInvitations(invitations);
+            createLvInvitations();
         } else {
             Platform.runLater(() -> {
                 lblError.setText("Error while loading invitations");
@@ -384,9 +384,8 @@ public class EditServerScreenController implements Controller {
     /**
      * create a list view filled with invitations, but only links are shown
      *
-     * @param invitations invitations which should be added to the list
      */
-    private void createLvInvitations(List<Invitation> invitations) {
+    private void createLvInvitations() {
         this.invitationsObservableList = FXCollections.observableList(server.getInvitations());
 
         lvInvitation.setCellFactory(new InvitationListView());

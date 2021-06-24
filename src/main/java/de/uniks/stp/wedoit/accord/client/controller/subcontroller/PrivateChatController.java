@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.controller.PrivateChatsScreenController;
 import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
@@ -39,7 +38,6 @@ public class PrivateChatController implements Controller {
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
-    private final PrivateChatsScreenController controller;
 
     private ContextMenu messageContextMenu;
     private HBox quoteVisible;
@@ -59,11 +57,10 @@ public class PrivateChatController implements Controller {
      * @param model  The model this Controller belongs to
      * @param editor The editor of the Application
      */
-    public PrivateChatController(Parent view, LocalUser model, Editor editor, PrivateChatsScreenController controller) {
+    public PrivateChatController(Parent view, LocalUser model, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.editor = editor;
-        this.controller = controller;
     }
 
     @Override
@@ -277,14 +274,14 @@ public class PrivateChatController implements Controller {
                 JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
                 JsonObject jsonMessage = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 removeQuote();
-                editor.getWebSocketManager().sendPrivateChatMessage(quoteMsg.toString());
-                editor.getWebSocketManager().sendPrivateChatMessage(jsonMessage.toString());
+                editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(quoteMsg));
+                editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMessage));
 
             } else {
                 if(message.equals(GAME_INVITE) || message.equals(GAME_ACCEPTS) || message.equals(GAME_CLOSE) || message.equals(GAME_START) || message.equals(GAME_INGAME))
                     message = message.substring(GAME_PREFIX.length());
                 jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
-                editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+                editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             }
         }
     }
@@ -323,12 +320,12 @@ public class PrivateChatController implements Controller {
 
         if (currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Play") && !localUser.getGameRequests().contains(currentChat.getUser())) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_INVITE);
-            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         }else if ((currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals("Accept"))
                 &&
                 (!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result"))) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPTS);
-            editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
+            editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         }else if(currentChat != null && currentChat.getUser() != null && editor.getStageManager().getGameStage().isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())){
             privateMessageObservableList.add(new PrivateMessage().setText("###game### System: Cant play two games at once."));
         }
