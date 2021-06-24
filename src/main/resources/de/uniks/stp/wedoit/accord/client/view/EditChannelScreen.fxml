@@ -46,7 +46,7 @@
             </HBox>
             <HBox prefHeight="20.0" prefWidth="208.0" HBox.hgrow="ALWAYS">
                <children>
-                  <RadioButton id="radioBtnVoice" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Voice" HBox.hgrow="ALWAYS">
+                  <RadioButton id="radioBtnAudio" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Audio" HBox.hgrow="ALWAYS">
                      <font>
                         <Font size="14.0" />
                      </font>
