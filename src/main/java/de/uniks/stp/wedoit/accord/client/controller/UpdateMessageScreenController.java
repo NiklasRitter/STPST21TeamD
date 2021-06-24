@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -26,6 +27,7 @@ public class UpdateMessageScreenController implements Controller{
     private Button btnDiscard;
     private Button btnUpdateMessage;
     private Label errorLabel;
+    private Button btnEmoji;
 
     public UpdateMessageScreenController(Parent view, Editor editor, Message message) {
         this.view = view;
@@ -36,6 +38,7 @@ public class UpdateMessageScreenController implements Controller{
     @Override
     public void init() {
         tfUpdateMessage = (TextField) view.lookup("#tfUpdateMessage");
+        btnEmoji = (Button) view.lookup("#btnEmoji");
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
         errorLabel = (Label) view.lookup("#lblError");
@@ -44,7 +47,7 @@ public class UpdateMessageScreenController implements Controller{
         
         btnDiscard.setOnAction(this::discardChanges);
         btnUpdateMessage.setOnAction(this::updateMessage);
-        
+        this.btnEmoji.setOnAction(this::btnEmojiOnClick);
     }
 
     private void updateMessage(ActionEvent actionEvent) {
@@ -73,11 +76,22 @@ public class UpdateMessageScreenController implements Controller{
         }
     }
 
+    /**
+     * open the EmojiScreen
+     */
+    private void btnEmojiOnClick(ActionEvent actionEvent) {
+        //get the position of Emoji Button and pass it to showEmojiScreen
+        Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
+        this.editor.getStageManager().showEmojiScreen(tfUpdateMessage, pos);
+    }
+
     @Override
     public void stop() {
         btnDiscard.setOnAction(null);
         btnUpdateMessage.setOnAction(null);
+        btnEmoji.setOnAction(null);
 
+        btnEmoji = null;
         tfUpdateMessage = null;
         btnDiscard = null;
         btnUpdateMessage = null;
