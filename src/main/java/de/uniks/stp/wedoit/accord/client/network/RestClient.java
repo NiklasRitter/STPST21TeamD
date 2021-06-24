@@ -401,7 +401,7 @@ public class RestClient {
     public void updateMessage(String userKey, String newMessage, Message oldMessage, Callback<JsonNode> callback) {
         String body = Json.createObjectBuilder().add(TEXT, newMessage).build().toString();
 
-        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH +
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH +
                 oldMessage.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
                 oldMessage.getChannel().getCategory().getId() + CHANNELS + SLASH +
                 oldMessage.getChannel().getId() + MESSAGES +
@@ -412,4 +412,15 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void deleteMessage(String userKey, Message message, Callback<JsonNode> callback) {
+
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH +
+                message.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
+                message.getChannel().getCategory().getId() + CHANNELS + SLASH +
+                message.getChannel().getId() + MESSAGES +
+                SLASH + message.getId())
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
 }

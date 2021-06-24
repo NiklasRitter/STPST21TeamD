@@ -14,6 +14,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.STATUS;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.SUCCESS;
+
 public class UpdateMessageScreenController implements Controller{
 
     private final Parent view;
@@ -51,7 +54,7 @@ public class UpdateMessageScreenController implements Controller{
             this.editor.getStageManager().getPopupStage().close();
         }
         else if (newMessage.length() >= 1) {
-            editor.getRestManager().updateMessage(message, newMessage);
+            editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
         }
         else {
             Platform.runLater(() -> errorLabel.setText("Updated message needs at least 1 character!"));
@@ -60,6 +63,14 @@ public class UpdateMessageScreenController implements Controller{
 
     private void discardChanges(ActionEvent actionEvent) {
         this.editor.getStageManager().getPopupStage().close();
+    }
+
+    public void handleUpdateMessage(Boolean status) {
+        if (status) {
+            Platform.runLater(editor.getStageManager().getPopupStage()::close);
+        } else {
+            Platform.runLater(() -> errorLabel.setText("An error occurred, please try again later!"));
+        }
     }
 
     @Override

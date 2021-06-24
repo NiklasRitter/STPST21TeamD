@@ -201,7 +201,7 @@ public class ServerChatController implements Controller {
                 this.editor.getStageManager().showUpdateMessageScreen(message);
             }
             if (menu.equals(DELETE)) {
-
+                this.editor.getStageManager().showAttentionScreen(message);
             }
         }
     }

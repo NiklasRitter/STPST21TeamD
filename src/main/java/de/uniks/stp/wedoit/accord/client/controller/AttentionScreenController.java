@@ -1,10 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -111,6 +108,8 @@ public class AttentionScreenController implements Controller {
             this.editor.getStageManager().showEditChannelScreen((Channel) objectToDelete);
         } else if (objectToDelete.getClass().equals(Category.class)) {
             this.editor.getStageManager().showEditCategoryScreen((Category) objectToDelete);
+        } else if (objectToDelete.getClass().equals(Message.class)){
+            this.editor.getStageManager().getPopupStage().close();
         }
     }
 
@@ -160,6 +159,27 @@ public class AttentionScreenController implements Controller {
             stop();
         } else {
             showError();
+        }
+    }
+
+    /**
+     * handles the deletion of a message
+     *
+     * @param status status which says whether a deletion was successful
+     */
+    public void handleDeleteMessage(boolean status) {
+        System.out.println(status);
+        if (status) {
+            Message message = (Message) objectToDelete;
+            message.setChannel(null);
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
+            stop();
+        } else {
+            Platform.runLater(() -> {
+                lblError.setText("Error. Delete Message was not successful!");
+                lblError.setVisible(true);
+            });
         }
     }
 }

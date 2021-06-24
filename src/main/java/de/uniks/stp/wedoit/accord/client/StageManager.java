@@ -571,7 +571,7 @@ public class StageManager extends Application {
             controllerMap.put(UPDATE_MESSAGE_SCREEN_CONTROLLER, updateMessageScreenController);
 
             //display
-            popupStage.setTitle("Create Category");
+            popupStage.setTitle("Update Message");
 
             popupStage.setScene(popupScene);
             popupStage.centerOnScreen();
