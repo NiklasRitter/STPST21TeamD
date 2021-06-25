@@ -90,6 +90,9 @@ public class CreateChannelScreenController implements Controller {
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
     }
 
+    /**
+     * creates toggle group for audio/text channel option
+     */
     private void initTextVoiceOption() {
         ToggleGroup toggleGroup = new ToggleGroup();
         this.radioBtnText.setToggleGroup(toggleGroup);
