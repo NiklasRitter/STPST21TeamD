@@ -13,6 +13,8 @@ public class PreferenceManager {
 
     private StageManager stageManager;
     public PropertyChangeListener darkmodeListener = this::onDarkmodeChanged;
+    public PropertyChangeListener languageListener = this::onLanguageChanged;
+
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
     public PropertyChangeListener passwordListener = this::onPasswordChanged;
     public PropertyChangeListener usernameListener = this::onUsernameChanged;
@@ -166,6 +168,29 @@ public class PreferenceManager {
         }
     }
 
+    private void onLanguageChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof String) {
+            String language = (String) propertyChangeEvent.getNewValue();
+
+            this.stageManager.changeLanguage(language);
+
+            saveLanguage(language);
+        }
+    }
+
+    public void saveLanguage(String language) {
+        if (language != null) {
+            try {
+                Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+
+                preferences.put(LANGUAGE, language);
+            } catch (Exception e) {
+                System.err.println("Error while saving language!");
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void setStageManager(StageManager stageManager) {
         this.stageManager = stageManager;
@@ -213,6 +238,18 @@ public class PreferenceManager {
             String username = (String) propertyChangeEvent.getNewValue();
 
             saveUsername(username);
+        }
+    }
+
+    public String loadLanguage() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+
+            return preferences.get(LANGUAGE, "");
+        } catch (Exception e) {
+            System.err.println("Error while loading language!");
+            e.printStackTrace();
+            return "";
         }
     }
 }
