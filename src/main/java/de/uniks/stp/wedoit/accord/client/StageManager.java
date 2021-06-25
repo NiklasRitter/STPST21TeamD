@@ -690,6 +690,10 @@ public class StageManager extends Application {
         return emojiPickerStage;
     }
 
+    public Map<String, Controller> getControllerMap() {
+        return controllerMap;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;

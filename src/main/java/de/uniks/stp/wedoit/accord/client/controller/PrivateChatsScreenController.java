@@ -36,6 +36,7 @@ public class PrivateChatsScreenController implements Controller {
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser;
     private final PrivateChatController privateChatController;
+    private User selectedUser;
 
 
     /**
@@ -245,11 +246,11 @@ public class PrivateChatsScreenController implements Controller {
      * initPrivateChat when item of userList is clicked twice
      * manages the the Play button
      *
-     * @param mouseEvent occurs when a listitem is clicked
+     * @param mouseEvent occurs when a list item is clicked
      */
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
-            User selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
+            this.selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
                 btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ? "Accept" : "Play");
                 privateChatController.initPrivateChat(selectedUser);
@@ -258,5 +259,29 @@ public class PrivateChatsScreenController implements Controller {
                 this.btnPlay.setVisible(true);
             }
         }
+    }
+
+    public PrivateChatController getPrivateChatController() {
+        return privateChatController;
+    }
+
+    public void setSelectedUser(User user) {
+        this.selectedUser = user;
+    }
+
+    public Label getLblSelectedUser() {
+        return lblSelectedUser;
+    }
+
+    public ListView<User> getLwOnlineUsers() {
+        return lwOnlineUsers;
+    }
+
+    public Button getBtnPlay() {
+        return btnPlay;
+    }
+
+    public Button getBtnOptions() {
+        return btnOptions;
     }
 }
