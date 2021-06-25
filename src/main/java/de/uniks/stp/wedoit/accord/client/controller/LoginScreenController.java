@@ -3,11 +3,20 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.stage.WindowEvent;
 
+import javax.swing.text.html.Option;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Locale;
 import java.util.Objects;
 
 public class LoginScreenController implements Controller {
@@ -15,6 +24,7 @@ public class LoginScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final AccordClient model;
+
     private Button btnLogin;
     private Button btnRegister;
     private Button btnOptions;
@@ -22,6 +32,14 @@ public class LoginScreenController implements Controller {
     private TextField tfUserName;
     private TextField pwUserPw;
     private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe;
+    private final PropertyChangeListener changeLanguage = this::changeLanguage;
+
+    private void changeLanguage(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
+            Platform.runLater(() -> this.setComponentsText());
+        }
+    }
+
 
     /**
      * Create a new Controller
@@ -57,7 +75,7 @@ public class LoginScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnRememberMe = (CheckBox) view.lookup("#btnRememberMe");
 
-        setComponentsText();
+        this.setComponentsText();
 
         // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
@@ -66,6 +84,16 @@ public class LoginScreenController implements Controller {
         this.btnRememberMe.setOnAction(this::btnRememberMeOnClick);
 
         this.initTooltips();
+
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
+                    setComponentsText();
+                    initTooltips();
+                }
+            }
+        });
     }
 
     /**

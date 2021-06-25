@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
@@ -8,11 +9,13 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public class OptionsScreenController implements Controller {
 
@@ -20,10 +23,10 @@ public class OptionsScreenController implements Controller {
     private final Options options;
     private final Editor editor;
 
-    private CheckBox btnDarkmode;
-    private Button logoutButton, btnSave;
+    private CheckBox btnDarkMode;
+    private Button logoutButton;
     private Label lblLanguage, lblDarkMode;
-    private ChoiceBox choiseBoxLanguage;
+    private ChoiceBox choiceBoxLanguage;
 
     /**
      * Create a new Controller
@@ -46,23 +49,19 @@ public class OptionsScreenController implements Controller {
      * Add action listeners
      */
     public void init() {
-        this.btnDarkmode = (CheckBox) view.lookup("#btnDarkmode");
+        this.btnDarkMode = (CheckBox) view.lookup("#btnDarkMode");
         this.logoutButton = (Button) view.lookup("#btnLogout");
-        this.btnSave = (Button) view.lookup("#btnSave");
         this.lblLanguage = (Label) view.lookup("#lblLanguage");
         this.lblDarkMode = (Label) view.lookup("#lblDarkMode");
 
-        this.choiseBoxLanguage = (ChoiceBox) view.lookup("#choiseBoxLanguage");
-        this.choiseBoxLanguage.getItems().add("English");
-        this.choiseBoxLanguage.getItems().add("Deutsch");
-        this.choiseBoxLanguage.getItems().add("فارسی");
-        this.choiseBoxLanguage.setOnAction(this::choiseBoxLanguageOnClick);
+        this.choiceBoxLanguage = (ChoiceBox) view.lookup("#choiceBoxLanguage");
+        createChoiceBox();
 
         setComponentsText();
 
-        this.btnDarkmode.setSelected(options.isDarkmode());
+        this.btnDarkMode.setSelected(options.isDarkmode());
 
-        this.btnDarkmode.setOnAction(this::btnDarkmodeOnClick);
+        this.btnDarkMode.setOnAction(this::btnDarkmodeOnClick);
         this.logoutButton.setOnAction(this::logoutButtonOnClick);
 
         // If current stage is LoginScreen, than OptionScreen should not show logout button
@@ -73,9 +72,26 @@ public class OptionsScreenController implements Controller {
             parent.getChildren().remove(logoutButton);
         }
         stage.sizeToScene();
+
         Tooltip logoutButton = new Tooltip();
-        logoutButton.setText("Logout");
+        logoutButton.setText(LanguageResolver.getString("LOGOUT"));
         this.logoutButton.setTooltip(logoutButton);
+    }
+
+    private void createChoiceBox() {
+        this.choiceBoxLanguage.getItems().add("English");
+        this.choiceBoxLanguage.getItems().add("Deutsch");
+        this.choiceBoxLanguage.getItems().add("فارسی");
+
+        if (Locale.getDefault().getLanguage().equals("fa_ir")) {
+            this.choiceBoxLanguage.getSelectionModel().select(2);
+        } else if (Locale.getDefault().getLanguage().equals("de_de")) {
+            this.choiceBoxLanguage.getSelectionModel().select(1);
+        } else if (Locale.getDefault().getLanguage().equals("en_gb")) {
+            this.choiceBoxLanguage.getSelectionModel().select(0);
+        }
+
+        this.choiceBoxLanguage.setOnAction(this::choiseBoxLanguageOnClick);
     }
 
     private void setComponentsText() {
@@ -84,16 +100,19 @@ public class OptionsScreenController implements Controller {
     }
 
     private void choiseBoxLanguageOnClick(Event event) {
-        Object selectedItem = this.choiseBoxLanguage.getSelectionModel().getSelectedItem();
+        Object selectedItem = this.choiceBoxLanguage.getSelectionModel().getSelectedItem();
 
         switch (selectedItem.toString()) {
             case "English":
+                options.setLanguage("en_GB");
                 setLanguage("language/Language");
                 break;
             case "Deutsch":
+                options.setLanguage("de_DE");
                 setLanguage("language/Language_de_DE");
                 break;
             case "فارسی":
+                options.setLanguage("fa_IR");
                 setLanguage("language/Language_fa_IR");
                 break;
         }
@@ -112,7 +131,7 @@ public class OptionsScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        btnDarkmode.setOnAction(null);
+        btnDarkMode.setOnAction(null);
         logoutButton.setOnAction(null);
     }
 
@@ -122,7 +141,7 @@ public class OptionsScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void btnDarkmodeOnClick(ActionEvent actionEvent) {
-        options.setDarkmode(btnDarkmode.isSelected());
+        options.setDarkmode(btnDarkMode.isSelected());
     }
 
     /**

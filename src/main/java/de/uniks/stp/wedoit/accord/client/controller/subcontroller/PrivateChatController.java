@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
@@ -20,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.WindowEvent;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -85,6 +87,20 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         this.tfPrivateChat.setEditable(false);
 
+        initToolTip();
+
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
+                    setComponentsText();
+                    initToolTip();
+                }
+            }
+        });
+    }
+
+    private void initToolTip() {
         Tooltip emojiButtonToolTip = new Tooltip();
         emojiButtonToolTip.setText(LanguageResolver.getString("EMOJIS"));
         emojiButtonToolTip.setStyle("-fx-font-size: 10");

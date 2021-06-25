@@ -51,7 +51,7 @@ public class EditServerScreenController implements Controller {
     private Button btnDeleteInvitation;
     private ObservableList<Invitation> invitationsObservableList;
     private PropertyChangeListener invitationsListener = this::invitationsChanged;
-    private Label lblInvitationStatus;
+    private Label lblInvitationStatus, lblDelete, lblInvititation;
     private Label lblInvitationStatusText;
 
 
@@ -98,12 +98,12 @@ public class EditServerScreenController implements Controller {
         this.lblChangeName = (Label) view.lookup("#lblChangeName");
         this.lblInvite = (Label) view.lookup("#lblInvite");
         this.lblOldInvit = (Label) view.lookup("#lblOldInvit");
-
-        this.setComponentsText();
-
+        this.lblInvititation = (Label) view.lookup("#lblInvititation");
+        this.lblDelete = (Label) view.lookup("#lblDelete");
         this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
         this.btnDeleteInvitation = (Button) view.lookup("#btnDeleteInvitation");
 
+        this.setComponentsText();
         // Depending on if localUser is admin or not display the correct editMenu
         loadDefaultSettings();
 
@@ -125,7 +125,7 @@ public class EditServerScreenController implements Controller {
         this.btnSave.setText(LanguageResolver.getString("SAVE"));
         this.btnCreateInvitation.setText(LanguageResolver.getString("CREATE_INVITATION"));
         this.btnDeleteInvitation.setText(LanguageResolver.getString("DELETE_INVITATION"));
-        this.tfInvitationLink.setText(LanguageResolver.getString("INVIT_LINK"));
+//        this.tfInvitationLink.setText(LanguageResolver.getString("INVIT_LINK"));
         this.tfMaxCountAmountInput.setText(LanguageResolver.getString("AMOUNT"));
         this.radioBtnTemporal.setText(LanguageResolver.getString("TEMPORAL"));
         this.radioBtnMaxCount.setText(LanguageResolver.getString("MAX_COUNT"));
@@ -247,7 +247,9 @@ public class EditServerScreenController implements Controller {
         if (invitationLink != null) {
             tfInvitationLink.setText(invitationLink);
         } else {
-            tfInvitationLink.setPromptText(LanguageResolver.getString("GENERATION_FAILED"));
+            Platform.runLater(() -> {
+                tfInvitationLink.setPromptText(LanguageResolver.getString("GENERATION_FAILED"));
+            });
         }
     }
 
@@ -292,9 +294,7 @@ public class EditServerScreenController implements Controller {
 
             if (!tfInvitationLink.getText().equals("")) {
                 editor.copyToSystemClipBoard(tfInvitationLink.getText());
-
                 labelCopy.setText(LanguageResolver.getString("COPIED"));
-
             } else {
                 labelCopy.setText(LanguageResolver.getString("FIRST_CREATE_INVIT"));
             }
@@ -401,7 +401,6 @@ public class EditServerScreenController implements Controller {
 
     /**
      * create a list view filled with invitations, but only links are shown
-     *
      */
     private void createLvInvitations() {
         this.invitationsObservableList = FXCollections.observableList(server.getInvitations());

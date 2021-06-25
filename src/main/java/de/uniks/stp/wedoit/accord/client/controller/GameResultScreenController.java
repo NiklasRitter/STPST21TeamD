@@ -19,6 +19,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 public class GameResultScreenController implements Controller{
 
     private Button btnQuit, btnPlayAgain;
+    private Label lbOutcome;
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
@@ -51,7 +52,7 @@ public class GameResultScreenController implements Controller{
      * Add action listeners
      */
     public void init() {
-        Label lbOutcome = (Label) view.lookup("#lbOutcome");
+        lbOutcome = (Label) view.lookup("#lbOutcome");
         btnPlayAgain = (Button) view.lookup("#btnPlayAgain");
         btnQuit = (Button) view.lookup("#btnQuit");
 

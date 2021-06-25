@@ -10,8 +10,10 @@ import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.stage.WindowEvent;
 
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
@@ -36,7 +38,8 @@ public class ServerScreenController implements Controller {
     private Button btnOptions;
     private Button btnHome;
     private Button btnEdit;
-    private Label lbServerName, lblServerUsers;
+    private Label lbServerName, lblServerUsers, lbChannelName;
+    private TextField tfInputMessage;
     private ListView<User> lvServerUsers;
 
     // Websockets
@@ -80,12 +83,15 @@ public class ServerScreenController implements Controller {
     public void init() {
         // Load all view references
         this.editor.setCurrentServer(server);
+        this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEdit = (Button) view.lookup("#btnEdit");
         this.lbServerName = (Label) view.lookup("#lbServerName");
-        this.lblServerUsers = (Label) view.lookup("#lbServerUsers");
+        this.lblServerUsers = (Label) view.lookup("#lblServerUsers");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
+        this.lbChannelName = (Label) view.lookup("#lbChannelName");
+
 
         categoryTreeViewController.init();
         serverChatController.init();
@@ -115,10 +121,22 @@ public class ServerScreenController implements Controller {
 
         // add PropertyChangeListener
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
+
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
+                    setComponentsText();
+                    initTooltips();
+                }
+            }
+        });
     }
 
     private void setComponentsText() {
         this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
+        this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
+        this.tfInputMessage.setText(LanguageResolver.getString("YOUR_MESSAGE"));
     }
 
     /**

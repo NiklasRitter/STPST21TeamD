@@ -10,9 +10,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.WindowEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -28,6 +30,7 @@ public class PrivateChatsScreenController implements Controller {
     private final Editor editor;
     private Button btnOptions, btnPlay;
     private Button btnHome;
+    private TextField tfPrivateChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
     //private final PropertyChangeListener usersChatReadListener = this::usersChatReadChanged;
@@ -68,6 +71,7 @@ public class PrivateChatsScreenController implements Controller {
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
+        this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
 
         this.setComponentsText();
 
@@ -82,12 +86,23 @@ public class PrivateChatsScreenController implements Controller {
         this.initOnlineUsersList();
 
         this.btnPlay.setVisible(false);
+
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
+                    setComponentsText();
+                    initTooltips();
+                }
+            }
+        });
     }
 
     private void setComponentsText() {
         this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
         this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
         this.btnPlay.setText(LanguageResolver.getString("PLAY"));
+        this.tfPrivateChat.setText(LanguageResolver.getString("YOUR_MESSAGE"));
     }
 
     /**

@@ -14,12 +14,14 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.WindowEvent;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -101,6 +103,15 @@ public class ServerChatController implements Controller {
         emojiButton.setText(LanguageResolver.getString("EMOJIS"));
         emojiButton.setStyle("-fx-font-size: 10");
         this.btnEmoji.setTooltip(emojiButton);
+
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
+                    init();
+                }
+            }
+        });
     }
 
     private void setComponentsText() {

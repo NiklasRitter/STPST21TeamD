@@ -9,12 +9,14 @@ import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.WindowEvent;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
@@ -90,6 +92,16 @@ public class MainScreenController implements Controller {
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
         this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
+
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
+                    setComponentsText();
+                    initTooltips();
+                }
+            }
+        });
     }
 
     private void setComponentsText() {
@@ -218,7 +230,6 @@ public class MainScreenController implements Controller {
      * @param propertyChangeEvent event which changed the Listener for the servers of the local user
      */
     private void serverListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-
         if (propertyChangeEvent.getNewValue() != null) {
             serverListView.getItems().removeAll();
             List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
