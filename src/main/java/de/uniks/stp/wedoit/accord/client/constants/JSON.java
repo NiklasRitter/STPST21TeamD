@@ -33,9 +33,6 @@ public class JSON {
     public static final String LINK = "link";
     public static final String CURRENT = "current";
 
-
-
-
     // Constants for system messages
     public static final String USER_JOINED = "userJoined";
     public static final String USER_LEFT = "userLeft";

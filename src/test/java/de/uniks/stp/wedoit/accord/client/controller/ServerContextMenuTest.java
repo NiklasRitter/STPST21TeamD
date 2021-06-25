@@ -30,8 +30,11 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.AND_SERVER_ID_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -80,6 +83,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 
         this.stageManager.start(stage);
         //create localUser to skip the login screen and create server to skip the MainScreen
@@ -91,7 +95,7 @@ public class ServerContextMenuTest extends ApplicationTest {
                 getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.showServerScreen(server);
+        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -105,6 +109,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -192,7 +197,7 @@ public class ServerContextMenuTest extends ApplicationTest {
 
     @Test
     public void createCategoryTest() {
-        Platform.runLater(() -> stageManager.showCreateCategoryScreen());
+        Platform.runLater(() -> stageManager.initView(POPUPSTAGE, "Create Category", "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnCreateCategory").query();
         Assert.assertEquals(button.getText(), "Create");
@@ -217,7 +222,7 @@ public class ServerContextMenuTest extends ApplicationTest {
 
     @Test
     public void createCategoryFailureTest() {
-        Platform.runLater(() -> stageManager.showCreateCategoryScreen());
+        Platform.runLater(() -> stageManager.initView(POPUPSTAGE, "Create Category", "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnCreateCategory").query();
         Assert.assertEquals(button.getText(), "Create");
@@ -242,7 +247,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Category category = new Category().setId("12345").setName("someCategory");
         server.withCategories(category);
         Platform.runLater(() -> {
-            this.stageManager.showEditCategoryScreen(category);
+            this.stageManager.initView(POPUPSTAGE, "Edit Category", "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, category, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnEditCategory").query();
@@ -267,7 +272,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Category category = new Category().setId("12345").setName("someCategory");
         category.setServer(server);
         Platform.runLater(() -> {
-            this.stageManager.showEditCategoryScreen(category);
+            this.stageManager.initView(POPUPSTAGE, "Edit Category", "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, category, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnEditCategory").query();
@@ -293,7 +298,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Category category = new Category().setId("12345").setName("someCategory");
         category.setServer(server);
         Platform.runLater(() -> {
-            this.stageManager.showEditCategoryScreen(category);
+            this.stageManager.initView(POPUPSTAGE, "Edit Category", "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, category, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnDeleteCategory").query();
@@ -318,7 +323,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Category category = new Category().setId("12345");
         category.setServer(server);
         Platform.runLater(() -> {
-            this.stageManager.showEditCategoryScreen(category);
+            this.stageManager.initView(POPUPSTAGE, "Edit Category", "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, category, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnDeleteCategory").query();
@@ -341,7 +346,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         category.setServer(server);
 
         Platform.runLater(() -> {
-            this.stageManager.showCreateChannelScreen(category);
+            this.stageManager.initView(POPUPSTAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, category, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -378,7 +383,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         category.setServer(server);
 
         Platform.runLater(() -> {
-            this.stageManager.showCreateChannelScreen(category);
+            this.stageManager.initView(POPUPSTAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, category, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -450,7 +455,7 @@ public class ServerContextMenuTest extends ApplicationTest {
 
         Category category = new Category().setId("12345");
         Platform.runLater(() -> {
-            this.stageManager.showCreateChannelScreen(category);
+            this.stageManager.initView(POPUPSTAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, category, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnSave").query();
@@ -478,7 +483,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         channel.setCategory(category);
         server.withCategories(category);
         Platform.runLater(() -> {
-            this.stageManager.showEditChannelScreen(channel);
+            this.stageManager.initView(POPUPSTAGE, "Edit Channel", "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, channel, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnSave").query();
@@ -509,7 +514,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         server.withCategories(category);
 
         Platform.runLater(() -> {
-            this.stageManager.showEditChannelScreen(channel);
+            this.stageManager.initView(POPUPSTAGE, "Edit Channel", "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, channel, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -565,7 +570,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Channel channel = new Channel().setId("54321");
         channel.setCategory(category);
         Platform.runLater(() -> {
-            this.stageManager.showEditChannelScreen(channel);
+            this.stageManager.initView(POPUPSTAGE, "Edit Channel", "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, channel, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnSave").query();
@@ -593,7 +598,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Channel channel = new Channel().setId("54321").setName("testChannel");
         channel.setCategory(category);
         Platform.runLater(() -> {
-            this.stageManager.showEditChannelScreen(channel);
+            this.stageManager.initView(POPUPSTAGE, "Edit Channel", "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, channel, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnDeleteChannel").query();
@@ -621,7 +626,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         Channel channel = new Channel().setId("54321").setName("testChannel");
         channel.setCategory(category);
         Platform.runLater(() -> {
-            this.stageManager.showEditChannelScreen(channel);
+            this.stageManager.initView(POPUPSTAGE, "Edit Channel", "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, channel, null);
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnDeleteChannel").query();

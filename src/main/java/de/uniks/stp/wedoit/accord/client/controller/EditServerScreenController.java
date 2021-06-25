@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -20,8 +21,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 
 
 public class EditServerScreenController implements Controller {
@@ -43,14 +46,14 @@ public class EditServerScreenController implements Controller {
     private TextField tfMaxCountAmountInput;
     private TextField tfInvitationLink;
 
-    private Label labelCopy;
+    private Label labelCopy, lblChangeName, lblInvite, lblOldInvit;
 
     private Label lblError;
     private ListView<Invitation> lvInvitation;
     private Button btnDeleteInvitation;
     private ObservableList<Invitation> invitationsObservableList;
     private PropertyChangeListener invitationsListener = this::invitationsChanged;
-    private Label lblInvitationStatus;
+    private Label lblInvitationStatus, lblDelete, lblInvititation;
     private Label lblInvitationStatusText;
 
 
@@ -94,21 +97,40 @@ public class EditServerScreenController implements Controller {
         this.lblError = (Label) view.lookup("#lblError");
         this.lblInvitationStatus = (Label) view.lookup("#lblInvitationStatus");
         this.lblInvitationStatusText = (Label) view.lookup("#lblInvitationStatusText");
-
-
+        this.lblChangeName = (Label) view.lookup("#lblChangeName");
+        this.lblInvite = (Label) view.lookup("#lblInvite");
+        this.lblOldInvit = (Label) view.lookup("#lblOldInvit");
+        this.lblInvititation = (Label) view.lookup("#lblInvititation");
+        this.lblDelete = (Label) view.lookup("#lblDelete");
         this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
         this.btnDeleteInvitation = (Button) view.lookup("#btnDeleteInvitation");
 
+        this.setComponentsText();
         // Depending on if localUser is admin or not display the correct editMenu
         loadDefaultSettings();
 
         // load old invitations and initialize lvInvitation
         loadOldInvitations();
         Tooltip privateChatsButton = new Tooltip();
-        privateChatsButton.setText("double click to copy invitation");
+        privateChatsButton.setText(LanguageResolver.getString("DOUBLE_CLICK_COPY_INVITATION"));
         this.lvInvitation.setTooltip(privateChatsButton);
 
         addActionListener();
+    }
+
+    private void setComponentsText() {
+        this.lblError.setText(LanguageResolver.getString(LanguageResolver.getString("SOMETHING_WENT_WRONG")));
+        this.lblChangeName.setText(LanguageResolver.getString("CHANGE_NAME"));
+        this.lblInvite.setText(LanguageResolver.getString("INVITE"));
+        this.lblOldInvit.setText(LanguageResolver.getString("OLD_INVITATIONS"));
+        this.btnDelete.setText(LanguageResolver.getString("DELETE_SERVER"));
+        this.btnSave.setText(LanguageResolver.getString("SAVE"));
+        this.btnCreateInvitation.setText(LanguageResolver.getString("CREATE_INVITATION"));
+        this.btnDeleteInvitation.setText(LanguageResolver.getString("DELETE_INVITATION"));
+//        this.tfInvitationLink.setText(LanguageResolver.getString("INVIT_LINK"));
+        this.tfMaxCountAmountInput.setText(LanguageResolver.getString("AMOUNT"));
+        this.radioBtnTemporal.setText(LanguageResolver.getString("TEMPORAL"));
+        this.radioBtnMaxCount.setText(LanguageResolver.getString("MAX_COUNT"));
     }
 
     /**
@@ -180,7 +202,7 @@ public class EditServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showAttentionScreen(this.server);
+        this.editor.getStageManager().initView(POPUPSTAGE, "Attention", "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, this.server, null);
     }
 
     /**
@@ -209,7 +231,7 @@ public class EditServerScreenController implements Controller {
                 editor.getRestManager().createInvitation(COUNT, max, server, localUser.getUserKey(), this);
             } else {
                 tfMaxCountAmountInput.setText("");
-                tfMaxCountAmountInput.setPromptText("Insert Amount > 0");
+                tfMaxCountAmountInput.setPromptText(LanguageResolver.getString("INSERT_AMOUNT_>_0"));
                 tfMaxCountAmountInput.getStyleClass().add("redPromptText");
             }
         } else if (radioBtnTemporal.isSelected()) {
@@ -227,7 +249,9 @@ public class EditServerScreenController implements Controller {
         if (invitationLink != null) {
             tfInvitationLink.setText(invitationLink);
         } else {
-            tfInvitationLink.setPromptText("generation failed");
+            Platform.runLater(() -> {
+                tfInvitationLink.setPromptText(LanguageResolver.getString("GENERATION_FAILED"));
+            });
         }
     }
 
@@ -257,7 +281,7 @@ public class EditServerScreenController implements Controller {
      */
     private void resetAmountPromptText() {
         tfMaxCountAmountInput.setText("");
-        tfMaxCountAmountInput.setPromptText("Amount");
+        tfMaxCountAmountInput.setPromptText(LanguageResolver.getString("AMOUNT"));
         tfMaxCountAmountInput.getStyleClass().removeAll("redPromptText");
     }
 
@@ -272,11 +296,9 @@ public class EditServerScreenController implements Controller {
 
             if (!tfInvitationLink.getText().equals("")) {
                 editor.copyToSystemClipBoard(tfInvitationLink.getText());
-
-                labelCopy.setText("Copied");
-
+                labelCopy.setText(LanguageResolver.getString("COPIED"));
             } else {
-                labelCopy.setText("First create invitation");
+                labelCopy.setText(LanguageResolver.getString("FIRST_CREATE_INVIT"));
             }
 
             resetLabelCopy();
@@ -293,13 +315,13 @@ public class EditServerScreenController implements Controller {
         if (mouseEvent.getClickCount() == 1 || mouseEvent.getClickCount() == 2) {
 
             if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
-                lblInvitationStatusText.setText("invitation status:");
+                lblInvitationStatusText.setText(LanguageResolver.getString("INVITATION_STATUS"));
                 Invitation invitation = lvInvitation.getSelectionModel().getSelectedItem();
                 if (invitation.getType().equals(COUNT)) {
                     lblInvitationStatus.setText("usable " + (invitation.getMax() - invitation.getCurrent() + 1) + " more times");
                 }
                 if (invitation.getType().equals(TEMPORAL)) {
-                    lblInvitationStatus.setText("valid for less than 24 hours");
+                    lblInvitationStatus.setText(LanguageResolver.getString("VALID_FOR_24"));
                 }
 
             }
@@ -311,10 +333,10 @@ public class EditServerScreenController implements Controller {
             if (lvInvitation.getSelectionModel().getSelectedItem() != null) {
                 editor.copyToSystemClipBoard(lvInvitation.getSelectionModel().getSelectedItem().getLink());
 
-                labelCopy.setText("Copied");
+                labelCopy.setText(LanguageResolver.getString("COPIED"));
 
             } else {
-                labelCopy.setText("Select invitation");
+                labelCopy.setText(LanguageResolver.getString("SELECT_INVITATION"));
             }
 
             resetLabelCopy();
@@ -349,7 +371,7 @@ public class EditServerScreenController implements Controller {
             Platform.runLater(this.stage::close);
         } else {
             Platform.runLater(() -> {
-                lblError.setText("Error. Change Servername not successful!");
+                lblError.setText(LanguageResolver.getString("ERROR_CHANGE_SERVERNAME"));
                 lblError.setVisible(true);
             });
         }
@@ -372,7 +394,7 @@ public class EditServerScreenController implements Controller {
             createLvInvitations();
         } else {
             Platform.runLater(() -> {
-                lblError.setText("Error while loading invitations");
+                lblError.setText(LanguageResolver.getString("ERROR_WHILE_LOADING_INVIT"));
                 lblError.setVisible(true);
             });
 
@@ -381,7 +403,6 @@ public class EditServerScreenController implements Controller {
 
     /**
      * create a list view filled with invitations, but only links are shown
-     *
      */
     private void createLvInvitations() {
         this.invitationsObservableList = FXCollections.observableList(server.getInvitations());

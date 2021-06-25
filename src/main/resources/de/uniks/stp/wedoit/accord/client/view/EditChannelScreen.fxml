@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="vBoxMain" alignment="CENTER" prefHeight="217.0" prefWidth="410.0" spacing="10.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="vBoxMain" alignment="CENTER" prefHeight="217.0" prefWidth="410.0" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label prefWidth="160.0" text="Channel Name:" HBox.hgrow="ALWAYS">
+            <Label id="lblChannelName" prefWidth="160.0" text="Channel Name:" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -57,7 +57,7 @@
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label prefHeight="20.0" prefWidth="162.0" text="Privileged:" HBox.hgrow="ALWAYS">
+            <Label id="lblPrivileged" prefWidth="140.0" text="Privileged:" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

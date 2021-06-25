@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -29,9 +30,9 @@ public class CreateChannelScreenController implements Controller {
     private final Parent view;
     private final Category category;
     private TextField tfChannelName;
-    private Button btnCreateChannel;
+    private Button btnCreateChannel,btnDeleteChannel;
     private CheckBox checkBoxPrivileged;
-    private Label errorLabel, lblMembers;
+    private Label errorLabel, lblMembers, lblChannelName, lblPrivileged;
     private VBox vBoxMemberNameAndCheckBox;
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList = new LinkedList<>();
@@ -63,16 +64,20 @@ public class CreateChannelScreenController implements Controller {
     public void init() {
         // Load all view references
         this.btnCreateChannel = (Button) view.lookup("#btnSave");
-        Button btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
+        this.btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
         this.tfChannelName = (TextField) view.lookup("#tfChannelName");
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblPrivileged = (Label) view.lookup("#lblPrivileged");
+        this.lblChannelName = (Label) view.lookup("#lblChannelName");
 
         this.radioBtnText = (RadioButton) view.lookup("#radioBtnText");
         this.radioBtnAudio = (RadioButton) view.lookup("#radioBtnAudio");
 
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
         this.lblMembers = (Label) view.lookup("#lblMembers");
+
+        this.setComponentsText();
 
         checkIfIsPrivileged();
         initTextVoiceOption();
@@ -85,13 +90,20 @@ public class CreateChannelScreenController implements Controller {
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
     }
 
-
     private void initTextVoiceOption() {
         ToggleGroup toggleGroup = new ToggleGroup();
         this.radioBtnText.setToggleGroup(toggleGroup);
         this.radioBtnAudio.setToggleGroup(toggleGroup);
 
         radioBtnText.setSelected(true);
+    }
+
+    private void setComponentsText() {
+        this.lblChannelName.setText(LanguageResolver.getString("CHANNEL_NAME"));
+        this.lblPrivileged.setText(LanguageResolver.getString("PRIVILEGED"));
+        this.lblMembers.setText(LanguageResolver.getString("MEMBERS"));
+        this.btnCreateChannel.setText(LanguageResolver.getString("SAVE"));
+        this.btnDeleteChannel.setText(LanguageResolver.getString("DELETE"));
     }
 
     /**
@@ -165,9 +177,9 @@ public class CreateChannelScreenController implements Controller {
      */
     private void createChannelButtonOnClick(ActionEvent actionEvent) {
         if (tfChannelName.getText().length() < 1 || tfChannelName.getText() == null) {
-            tfChannelName.getStyleClass().add("error");
+            tfChannelName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
             String channelType = this.radioBtnText.isSelected() ? TEXT: AUDIO;
 
@@ -195,8 +207,8 @@ public class CreateChannelScreenController implements Controller {
             Platform.runLater(stage::close);
             stop();
         } else {
-            tfChannelName.getStyleClass().add("error");
-            Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the channel"));
+            tfChannelName.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("SOMETHING_WRONG_WHILE_CREATING_CHANNEL")));
         }
     }
 

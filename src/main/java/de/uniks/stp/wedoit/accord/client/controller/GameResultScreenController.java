@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -13,11 +14,14 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class GameResultScreenController implements Controller{
 
     private Button btnQuit, btnPlayAgain;
+    private Label lbOutcome;
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
@@ -50,19 +54,26 @@ public class GameResultScreenController implements Controller{
      * Add action listeners
      */
     public void init() {
-        Label lbOutcome = (Label) view.lookup("#lbOutcome");
+        lbOutcome = (Label) view.lookup("#lbOutcome");
         btnPlayAgain = (Button) view.lookup("#btnPlayAgain");
         btnQuit = (Button) view.lookup("#btnQuit");
+
+        this.setComponentsText();
+
         if(isWinner == null){
-            lbOutcome.setText("Opponent Left");
+            lbOutcome.setText(LanguageResolver.getString("YOU_WON"));
         }else if(!isWinner){
-            lbOutcome.setText("2nd Place");
+            lbOutcome.setText(LanguageResolver.getString("SECOND_PLACE"));
         }
 
         btnQuit.setOnAction(this::redirectToPrivateChats);
         btnPlayAgain.setOnAction(this::playAgainOnClick);
     }
 
+    private void setComponentsText() {
+        this.btnPlayAgain.setText(LanguageResolver.getString("PLAY_AGAIN"));
+        this.btnQuit.setText(LanguageResolver.getString("QUIT"));
+    }
 
 
     /**
@@ -87,7 +98,7 @@ public class GameResultScreenController implements Controller{
      * @param actionEvent occurs when the Quit button ist pressed
      */
     private void redirectToPrivateChats(ActionEvent actionEvent) {
-        this.editor.getStageManager().showPrivateChatsScreen();
+        this.editor.getStageManager().initView(STAGE, "Private Chats", "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true, null, null);
     }
 
 

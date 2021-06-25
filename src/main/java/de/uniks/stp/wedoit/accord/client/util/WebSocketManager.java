@@ -17,8 +17,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class WebSocketManager {
 
@@ -179,7 +182,7 @@ public class WebSocketManager {
             server.setName(data.getString(NAME));
         }
         if (action.equals(SERVER_DELETED)) {
-            Platform.runLater(editor.getStageManager()::showMainScreen);
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         }
 
         //change category
@@ -198,7 +201,7 @@ public class WebSocketManager {
         if (action.equals(CHANNEL_UPDATED)) {
             Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
             if (channel == null) {
-                Platform.runLater(() -> editor.getStageManager().showServerScreen(server));
+                Platform.runLater(() -> editor.getStageManager().initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
             }
         }
         if (action.equals(CHANNEL_CREATED)) {

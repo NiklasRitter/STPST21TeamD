@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.CREATE_CATEGORY_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class CategoryTreeViewController implements Controller {
 
@@ -97,7 +101,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
-            Platform.runLater(editor.getStageManager()::showLoginScreen);
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
     }
 
@@ -117,7 +121,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetChannels(List<Channel> channelList) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
-            Platform.runLater(editor.getStageManager()::showLoginScreen);
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
     }
 
@@ -274,7 +278,7 @@ public class CategoryTreeViewController implements Controller {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addCategory = new MenuItem("- add category");
         contextMenu.getItems().add(addCategory);
-        addCategory.setOnAction((event) -> editor.getStageManager().showCreateCategoryScreen());
+        addCategory.setOnAction((event) -> editor.getStageManager().initView(POPUPSTAGE, "Create Category", "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
         return contextMenu;
     }
 
