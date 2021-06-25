@@ -63,11 +63,11 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @BeforeClass
     public static void before() {
-//        System.setProperty("testfx.robot", "glass");
-//        System.setProperty("testfx.headless", "true");
-//        System.setProperty("prism.order", "sw");
-//        System.setProperty("prism.text", "t2k");
-//        System.setProperty("java.awt.headless", "true");
+        System.setProperty("testfx.robot", "glass");
+        System.setProperty("testfx.headless", "true");
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
+        System.setProperty("java.awt.headless", "true");
     }
 
     @Override
@@ -168,6 +168,9 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Test
     public void testChoiceBoxLanguage() {
+        Label lblEnterUserName = lookup("#lblEnterUserName").query();
+        Assert.assertEquals(lblEnterUserName.getText(), "Enter your username");
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
         // open options screen
         directToOptionsScreen();
 
@@ -194,16 +197,6 @@ public class OptionsScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lblLanguage.getText(), "Sprache");
 
-    }
-
-    @Test
-    public void testChangedLanguageOnLoginScreen() {
-        Label lblEnterUserName = lookup("#lblEnterUserName").query();
-        Assert.assertEquals(lblEnterUserName.getText(), "Enter your username");
-        Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
-
-        testChoiceBoxLanguage();
-
         Platform.runLater(() -> {
             popupStage.hide();
         });
@@ -214,8 +207,7 @@ public class OptionsScreenTest extends ApplicationTest {
         Label lblYourServers = lookup("#lblYourServers").query();
         Assert.assertEquals(lblYourServers.getText(), "Ihre Server");
 
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
     }
 
     @Test

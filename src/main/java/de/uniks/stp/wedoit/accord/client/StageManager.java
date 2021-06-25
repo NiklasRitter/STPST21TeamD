@@ -59,6 +59,7 @@ public class StageManager extends Application {
                     initEmojiPickerStage(root, title, resizable);
                     break;
             }
+            updateLanguage();
             updateDarkmode();
             openController(root, controllerName, parameter, parameterTwo);
         } catch (Exception e) {
