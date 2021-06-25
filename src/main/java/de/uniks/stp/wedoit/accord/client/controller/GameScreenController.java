@@ -18,7 +18,9 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_RESULT_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
 
 public class GameScreenController implements Controller {
 
@@ -156,9 +158,9 @@ public class GameScreenController implements Controller {
      * checks weather one of the player has won,
      * in that case they get redirected to the result screen
      */
-    private void handleGameDone() {
-        if (oppScore.get() == 3 || ownScore.get() == 3) {
-            this.editor.getStageManager().showGameResultScreen(opponent, ownScore.get() == 3);
+    private void handleGameDone(){
+        if(oppScore.get() == 3 || ownScore.get() == 3){
+            this.editor.getStageManager().initView(GAMESTAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, opponent, ownScore.get() == 3);
             stop();
         }
     }

@@ -28,8 +28,12 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EDIT_SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -82,8 +86,8 @@ public class AttentionScreenControllerTest extends ApplicationTest {
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
 
         // first have to show server screen, so that the members and so on are loaded correctly
-        this.stageManager.showServerScreen(server);
-        this.stageManager.showEditServerScreen(server);
+        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
+        this.stageManager.initView(POPUPSTAGE, "Edit Server", "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
     }
 
     @BeforeEach
@@ -212,6 +216,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
     public void stop() {
         stageManager.getResourceManager().saveOptions(this.oldOptions);
         oldOptions = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;

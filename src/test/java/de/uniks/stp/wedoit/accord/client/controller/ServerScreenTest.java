@@ -38,9 +38,13 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.util.List;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -120,7 +124,7 @@ public class ServerScreenTest extends ApplicationTest {
                 getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.showServerScreen(server);
+        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -135,6 +139,7 @@ public class ServerScreenTest extends ApplicationTest {
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -817,7 +822,7 @@ public class ServerScreenTest extends ApplicationTest {
 
     private void openAttentionScreen() {
         Platform.runLater(() -> {
-            this.stageManager.showAttentionLeaveServerScreen(this.server);
+            this.stageManager.initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
         });
     }
 

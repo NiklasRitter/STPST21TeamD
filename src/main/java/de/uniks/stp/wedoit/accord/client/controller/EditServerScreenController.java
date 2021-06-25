@@ -20,8 +20,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 
 
 public class EditServerScreenController implements Controller {
@@ -180,7 +182,7 @@ public class EditServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showAttentionScreen(this.server);
+        this.editor.getStageManager().initView(POPUPSTAGE, "Attention", "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, this.server, null);
     }
 
     /**

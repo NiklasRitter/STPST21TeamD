@@ -8,6 +8,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
 
     private final StageManager stageManager;
@@ -53,9 +56,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
 
-        menuItem1.setOnAction((event) -> this.stageManager.showCreateCategoryScreen());
-        menuItem2.setOnAction((event) -> this.stageManager.showCreateChannelScreen(item.getCategory()));
-        menuItem3.setOnAction((event) -> this.stageManager.showEditChannelScreen(item));
+        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, "Create Category", "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item.getCategory(), null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, "Edit Channel", "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, item, null));
 
         return contextMenu;
     }
@@ -69,9 +72,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
 
-        menuItem1.setOnAction((event) -> this.stageManager.showCreateCategoryScreen());
-        menuItem2.setOnAction((event) -> this.stageManager.showEditCategoryScreen(item));
-        menuItem3.setOnAction((event) -> this.stageManager.showCreateChannelScreen(item));
+        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, "Create Category", "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, "Edit Category", "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, item, null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item, null));
 
         return contextMenu;
     }
