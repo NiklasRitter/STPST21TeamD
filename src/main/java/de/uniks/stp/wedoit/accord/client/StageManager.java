@@ -59,6 +59,7 @@ public class StageManager extends Application {
 
             editor.haveLocalUser();
 
+            updateLanguage();
             updateDarkmode();
 
             LoginScreenController loginScreenController = new LoginScreenController(root, model, editor);
@@ -94,6 +95,7 @@ public class StageManager extends Application {
             }
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             MainScreenController mainScreenController = new MainScreenController(root, model.getLocalUser(), editor);
@@ -121,6 +123,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             CreateServerScreenController createServerScreenController = new CreateServerScreenController(root, editor);
@@ -149,6 +152,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             JoinServerScreenController joinServerScreenController = new JoinServerScreenController(root, model.getLocalUser(), editor);
@@ -182,6 +186,7 @@ public class StageManager extends Application {
             }
 
             updateDarkmode();
+            updateLanguage();
 
             PrivateChatsScreenController privateChatsScreenController = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
             privateChatsScreenController.init();
@@ -214,6 +219,7 @@ public class StageManager extends Application {
             }
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             ServerScreenController serverScreenController = new ServerScreenController(root, model.getLocalUser(), editor, server);
@@ -241,6 +247,7 @@ public class StageManager extends Application {
             gameScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             GameScreenController gameScreenController = new GameScreenController(root, opponent, editor);
@@ -275,6 +282,7 @@ public class StageManager extends Application {
             }
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             GameResultScreenController gameResultScreenController = new GameResultScreenController(root, model.getLocalUser(), opponent, isWinner, editor);
@@ -305,6 +313,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/OptionsScreen.fxml")));
             popupScene = new Scene(root);
 
+            updateLanguage();
             updateDarkmode();
 
             //init controller
@@ -337,6 +346,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             CreateCategoryScreenController createCategoryScreenController = new CreateCategoryScreenController(root, editor);
             createCategoryScreenController.init();
@@ -366,6 +376,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             EditCategoryScreenController editCategoryScreenController = new EditCategoryScreenController(root, editor, category);
@@ -394,6 +405,7 @@ public class StageManager extends Application {
 
             Scene emojiPickerScene = new Scene(root);
             updateDarkmode();
+            updateLanguage();
 
             EmojiScreenController emojiScreenController = new EmojiScreenController(root, tfForEmoji);
             emojiScreenController.init();
@@ -422,6 +434,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             CreateChannelScreenController createChannelScreenController = new CreateChannelScreenController(root, model.getLocalUser(), editor, category);
@@ -450,6 +463,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             EditChannelScreenController editChannelScreenController = new EditChannelScreenController(root, model.getLocalUser(), editor, channel);
@@ -478,6 +492,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             EditServerScreenController editServerScreenController = new EditServerScreenController(root, model.getLocalUser(), editor, server, popupStage);
@@ -507,6 +522,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             AttentionScreenController attentionScreenController = new AttentionScreenController(root, model.getLocalUser(), editor, objectToDelete);
@@ -536,6 +552,7 @@ public class StageManager extends Application {
             popupScene = new Scene(root);
 
             updateDarkmode();
+            updateLanguage();
 
             //init controller
             AttentionLeaveServerController attentionLeaveServerController = new AttentionLeaveServerController(root, editor, server);
@@ -629,6 +646,18 @@ public class StageManager extends Application {
         changeDarkmode(model.getOptions().isDarkmode());
     }
 
+    public void updateLanguage() {
+        changeLanguage(model.getOptions().getLanguage());
+    }
+
+    public void changeLanguage(String language) {
+        if (language != null) {
+            Locale.setDefault(new Locale(language));
+        } else {
+            Locale.setDefault(new Locale("en_GB"));
+        }
+    }
+
     public SystemTrayController getSystemTrayController() {
         return systemTrayController;
     }
@@ -665,7 +694,6 @@ public class StageManager extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Locale.setDefault(new Locale("en_GB"));
         stage = primaryStage;
         stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
 
