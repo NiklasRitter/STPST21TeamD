@@ -13,6 +13,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
+
 public class AttentionScreenController implements Controller {
 
     private final LocalUser localUser;
@@ -118,11 +122,11 @@ public class AttentionScreenController implements Controller {
      */
     private void discardOnClick(ActionEvent actionEvent) {
         if (objectToDelete.getClass().equals(Server.class)) {
-            this.editor.getStageManager().showEditServerScreen((Server) objectToDelete);
+            this.editor.getStageManager().initView(POPUPSTAGE, "Edit Server", "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Channel.class)) {
-            this.editor.getStageManager().showEditChannelScreen((Channel) objectToDelete);
+            this.editor.getStageManager().initView(POPUPSTAGE, "Edit Channel", "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Category.class)) {
-            this.editor.getStageManager().showEditCategoryScreen((Category) objectToDelete);
+            this.editor.getStageManager().initView(POPUPSTAGE, "Edit Category", "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, objectToDelete, null);
         }
     }
 
@@ -134,7 +138,7 @@ public class AttentionScreenController implements Controller {
     public void handleDeleteServer(boolean status) {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
-            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
             stop();
         } else {
             showError();

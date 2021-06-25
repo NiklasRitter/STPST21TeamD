@@ -11,6 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+
 public class EditCategoryScreenController implements Controller {
 
     private final Editor editor;
@@ -114,6 +117,6 @@ public class EditCategoryScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteCategoryButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showAttentionScreen(category);
+        this.editor.getStageManager().initView(POPUPSTAGE, "Attention", "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, category, null);
     }
 }

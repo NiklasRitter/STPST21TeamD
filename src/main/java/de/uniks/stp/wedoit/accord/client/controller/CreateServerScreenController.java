@@ -10,6 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
+
 public class CreateServerScreenController implements Controller {
 
     private final Editor editor;
@@ -91,7 +94,7 @@ public class CreateServerScreenController implements Controller {
     public void handleCreateServer(Server server) {
         if (server != null) {
             stop();
-            Platform.runLater(() -> this.editor.getStageManager().showServerScreen(server));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
         } else {
             tfServerName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 

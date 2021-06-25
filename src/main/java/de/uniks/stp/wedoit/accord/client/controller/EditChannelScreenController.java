@@ -23,6 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+
 
 public class EditChannelScreenController implements Controller {
 
@@ -212,7 +215,7 @@ public class EditChannelScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteChannelButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showAttentionScreen(channel);
+        this.editor.getStageManager().initView(POPUPSTAGE, "Attention", "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, channel, null);;
     }
 
     /**
