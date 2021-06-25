@@ -96,6 +96,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
         this.stageManager.start(stage);
 
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);

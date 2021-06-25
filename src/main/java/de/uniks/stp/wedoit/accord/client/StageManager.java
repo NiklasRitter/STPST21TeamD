@@ -15,10 +15,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.*;
@@ -39,7 +36,9 @@ public class StageManager extends Application {
     private Stage gameStage;
     private Scene gameScene;
 
-    {resourceManager.setPreferenceManager(prefManager);}
+    {
+        resourceManager.setPreferenceManager(prefManager);
+    }
 
     public void initView(String scene, String title, String fxmlName, String controllerName, boolean resizable, Object parameter, Object parameterTwo){
         try {
@@ -60,6 +59,7 @@ public class StageManager extends Application {
                     initEmojiPickerStage(root, title, resizable);
                     break;
             }
+            updateLanguage();
             updateDarkmode();
             openController(root, controllerName, parameter, parameterTwo);
         } catch (Exception e) {
@@ -187,6 +187,7 @@ public class StageManager extends Application {
 
     /**
      * changes the view to light or darkmode
+     *
      * @param darkmode boolean weather darkmode is enabled or not
      */
     public void changeDarkmode(boolean darkmode) {
@@ -233,6 +234,18 @@ public class StageManager extends Application {
 
     public void updateDarkmode() {
         changeDarkmode(model.getOptions().isDarkmode());
+    }
+
+    public void updateLanguage() {
+        changeLanguage(model.getOptions().getLanguage());
+    }
+
+    public void changeLanguage(String language) {
+        if (language != null) {
+            Locale.setDefault(new Locale(language));
+        } else {
+            Locale.setDefault(new Locale("en_GB"));
+        }
     }
 
     public SystemTrayController getSystemTrayController() {

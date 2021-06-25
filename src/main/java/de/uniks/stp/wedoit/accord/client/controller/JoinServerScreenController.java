@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
@@ -22,7 +23,7 @@ public class JoinServerScreenController implements Controller {
     private final Parent view;
     private TextField tfInvitationLink;
     private Button btnJoinServer;
-    private Label errorLabel;
+    private Label errorLabel, lblEnterInvitLink;
 
     /**
      * Create a new Controller
@@ -49,9 +50,18 @@ public class JoinServerScreenController implements Controller {
         this.btnJoinServer = (Button) view.lookup("#btnJoinServer");
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
         this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblEnterInvitLink = (Label) view.lookup("#lblEnterInvitLink");
+
+        this.setComponentsText();
 
         // Add action listeners
         this.btnJoinServer.setOnAction(this::joinServerButtonOnClick);
+    }
+
+    private void setComponentsText() {
+        this.lblEnterInvitLink.setText(LanguageResolver.getString("ENTER_INVITATION_LINK"));
+        this.tfInvitationLink.setText(LanguageResolver.getString("INVIT_LINK"));
+        this.btnJoinServer.setText(LanguageResolver.getString("JOIN"));
     }
 
     /**
@@ -73,11 +83,12 @@ public class JoinServerScreenController implements Controller {
      */
     private void joinServerButtonOnClick(ActionEvent actionEvent) {
 
-        if (tfInvitationLink.getText().contains(REST_SERVER_URL + API_PREFIX + SERVER_PATH) && tfInvitationLink.getText().contains(INVITES) && !tfInvitationLink.getText().contains(" ")) {
-            errorLabel.setText("Try to join server...");
+        if (tfInvitationLink.getText().contains(REST_SERVER_URL + API_PREFIX + SERVER_PATH) && tfInvitationLink.getText()
+                .contains(INVITES) && !tfInvitationLink.getText().contains(" ")) {
+            errorLabel.setText(LanguageResolver.getString("TRY_JOIN_SERVER"));
             editor.getRestManager().joinServer(localUser, tfInvitationLink.getText(), this);
         } else {
-            errorLabel.setText("Please insert a valid invitation link");
+            errorLabel.setText(LanguageResolver.getString("INSERT_VALID_INVIT_LINK"));
         }
     }
 

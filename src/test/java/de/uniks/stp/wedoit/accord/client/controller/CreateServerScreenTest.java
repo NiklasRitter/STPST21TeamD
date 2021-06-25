@@ -74,6 +74,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 
         this.stageManager.start(stage);
 
@@ -209,7 +210,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         Assert.assertNull(server);
 
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field Error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Something went wrong while creating the server", errorLabel.getText());
@@ -249,7 +250,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         }
         Assert.assertNull(server);
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field Error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Name has to be at least 1 symbols long", errorLabel.getText());

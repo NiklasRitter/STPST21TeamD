@@ -83,6 +83,7 @@ public class LoginScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
         this.stageManager.start(stage);
 
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
@@ -218,13 +219,13 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field Error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field Error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Username or password is wrong.", errorLabel.getText());
+        Assert.assertEquals("Username or password is wrong", errorLabel.getText());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -370,13 +371,13 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field Error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field Error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Username already taken.", errorLabel.getText());
+        Assert.assertEquals("Username already taken", errorLabel.getText());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -394,13 +395,13 @@ public class LoginScreenTest extends ApplicationTest {
         clickOn("#btnRegister");
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Please type in username and password.", errorLabel.getText());
+        Assert.assertEquals("Please type in username and password", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field Error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field Error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -419,13 +420,13 @@ public class LoginScreenTest extends ApplicationTest {
         clickOn("#btnRegister");
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Please type in username and password.", errorLabel.getText());
+        Assert.assertEquals("Please type in username and password", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field Error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field Error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
