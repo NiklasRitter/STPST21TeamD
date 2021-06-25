@@ -13,12 +13,12 @@
         <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0"
               styleClass="styleBackgroundHighlight">
             <children>
-                <Label id="lblDarkMode" text="Darkmode:">
+                <Label id="lblDarkMode">
                     <font>
                         <Font name="System Bold" size="14.0"/>
                     </font>
                 </Label>
-                <CheckBox id="btnDarkmode" mnemonicParsing="false" styleClass="styleButton"/>
+                <CheckBox id="btnDarkMode" mnemonicParsing="false" styleClass="styleButton"/>
             </children>
         </HBox>
         <HBox id="hBoxLanguage" alignment="CENTER">
@@ -29,7 +29,7 @@
                     </font>
                 </Label>
                 <Region prefHeight="25.0" prefWidth="153.0"/>
-                <ChoiceBox id="choiseBoxLanguage"/>
+                <ChoiceBox id="choiceBoxLanguage"/>
             </children>
             <VBox.margin>
                 <Insets/>
@@ -43,17 +43,6 @@
                                    preserveRatio="true">
                             <image>
                                 <Image url="@images/log_out.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Region prefHeight="40.0" prefWidth="238.0"/>
-                <Button id="btnSave" mnemonicParsing="false" styleClass="styleButton">
-                    <graphic>
-                        <ImageView id="imgViewBtnSave" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true"
-                                   preserveRatio="true">
-                            <image>
-                                <Image url="@images/save.png"/>
                             </image>
                         </ImageView>
                     </graphic>
