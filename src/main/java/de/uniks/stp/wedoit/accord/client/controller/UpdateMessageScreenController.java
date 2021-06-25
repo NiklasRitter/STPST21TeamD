@@ -80,7 +80,6 @@ public class UpdateMessageScreenController implements Controller{
      * open the EmojiScreen
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
-        //get the position of Emoji Button and pass it to showEmojiScreen
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
         this.editor.getStageManager().showEmojiScreen(tfUpdateMessage, pos);
     }
