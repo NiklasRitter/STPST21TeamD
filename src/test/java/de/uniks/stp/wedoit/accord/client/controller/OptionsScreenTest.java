@@ -204,10 +204,26 @@ public class OptionsScreenTest extends ApplicationTest {
         directToMainScreen();
 
         WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
         Label lblYourServers = lookup("#lblYourServers").query();
         Assert.assertEquals(lblYourServers.getText(), "Ihre Server");
 
-        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
+        // open options screen
+        directToOptionsScreen();
+
+        Platform.runLater(() -> {
+            //choice german as language
+            choiceBoxLanguage.getSelectionModel().select(0);
+        });
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(lblLanguage.getText(), "Language");
+
+        Platform.runLater(() -> {
+            popupStage.hide();
+        });
+
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
     }
 
     @Test
