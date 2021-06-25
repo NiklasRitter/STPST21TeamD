@@ -557,6 +557,32 @@ public class StageManager extends Application {
         }
     }
 
+    public void showPrivateMessageServerScreen(Server server, User user) {
+        try {
+            //load view
+            Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/PrivateMessageServerScreen.fxml")));
+            popupScene = new Scene(root);
+
+            updateDarkmode();
+
+            //init controller
+            PrivateMessageServerScreenController privateMessageServerScreenController = new PrivateMessageServerScreenController(root, editor, server, user);
+            privateMessageServerScreenController.init();
+            controllerMap.put(PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, privateMessageServerScreenController);
+
+            //display
+            popupStage.setTitle(user.getName());
+            popupStage.setScene(popupScene);
+            popupStage.centerOnScreen();
+            popupStage.setResizable(false);
+            popupStage.show();
+
+        } catch (Exception e) {
+            System.err.println("Error on showing Private Message Server Screen");
+            e.printStackTrace();
+        }
+    }
+
     private void cleanup() {
         stopController();
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Region prefHeight="35.0" prefWidth="300.0" />
+      <HBox id="hBoxTextField" alignment="CENTER" prefHeight="35.0" prefWidth="300.0">
+         <children>
+            <TextField id="tfMessage" prefHeight="35.0" prefWidth="270.0" promptText="Your Message" />
+         </children>
+      </HBox>
+      <Region prefHeight="27.0" prefWidth="268.0" />
+      <Button id="btnShowChat" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" styleClass="styleButton" text="Show Chat" />
+      <Region prefHeight="35.0" prefWidth="300.0" />
+   </children>
+   <styleClass>
+      <String fx:value="styleBorder" />
+      <String fx:value="styleBackgroundHighlight" />
+   </styleClass>
+</VBox>

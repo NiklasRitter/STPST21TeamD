@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 public class ServerScreenController implements Controller {
@@ -268,7 +267,7 @@ public class ServerScreenController implements Controller {
         categoryTreeViewController.initCategoryChannelList();
 
         // load list view
-        ServerUserListView serverUserListView = new ServerUserListView();
+        ServerUserListView serverUserListView = new ServerUserListView(this.editor.getStageManager(), this.server);
         lvServerUsers.setCellFactory(serverUserListView);
         this.refreshLvUsers(new Channel());
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
