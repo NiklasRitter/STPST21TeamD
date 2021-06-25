@@ -96,6 +96,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         oldOptions = null;
         rule = null;
         stage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         webSocketClient = null;

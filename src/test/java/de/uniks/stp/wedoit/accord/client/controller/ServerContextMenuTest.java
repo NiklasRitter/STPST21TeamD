@@ -108,6 +108,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;

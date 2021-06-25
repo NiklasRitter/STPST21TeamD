@@ -104,6 +104,7 @@ public class GameScreenTest extends ApplicationTest {
         oldOptions = null;
         rule = null;
         stage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         restMock = null;

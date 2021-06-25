@@ -655,6 +655,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void stop() {
         stageManager.getResourceManager().saveOptions(this.oldOptions);
         oldOptions = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;

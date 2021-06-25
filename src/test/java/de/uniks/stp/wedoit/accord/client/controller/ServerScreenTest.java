@@ -139,6 +139,7 @@ public class ServerScreenTest extends ApplicationTest {
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;

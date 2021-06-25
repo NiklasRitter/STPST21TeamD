@@ -103,6 +103,7 @@ public class OptionsScreenTest extends ApplicationTest {
         super.stop();
         stage = null;
         popupStage = null;
+        stageManager.stop();
         stageManager = null;
         resourceManager = null;
         preferenceManager = null;

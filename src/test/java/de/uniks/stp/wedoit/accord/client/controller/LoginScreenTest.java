@@ -100,6 +100,7 @@ public class LoginScreenTest extends ApplicationTest {
         oldOptions = null;
         rule = null;
         stage = null;
+        stageManager.stop();
         stageManager = null;
         restMock = null;
         systemWebSocketClient = null;

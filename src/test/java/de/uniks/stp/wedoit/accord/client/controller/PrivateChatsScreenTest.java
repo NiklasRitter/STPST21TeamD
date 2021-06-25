@@ -112,6 +112,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
     public void stop() {
         rule = null;
         stage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         restMock = null;
