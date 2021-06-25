@@ -95,6 +95,7 @@ public class AutomatedLoginTest extends ApplicationTest {
         oldLocalUser = null;
         rule = null;
         stage = null;
+        stageManager.stop();
         stageManager = null;
         restMock = null;
         systemWebSocketClient = null;

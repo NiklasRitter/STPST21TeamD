@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import java.util.Map;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class PrivateMessageServerScreenController implements Controller {
 
@@ -46,25 +47,10 @@ public class PrivateMessageServerScreenController implements Controller {
     }
 
     private void btnShowChatOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showPrivateChatsScreen();
+        this.editor.getStageManager().initView(STAGE, "Private Chats", "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true, null, null);
         Map<String, Controller> controllerMap = this.editor.getStageManager().getControllerMap();
         PrivateChatsScreenController privateChatsScreenController = (PrivateChatsScreenController) controllerMap.get(PRIVATE_CHATS_SCREEN_CONTROLLER);
         privateChatsScreenController.setSelectedUser(memberToWrite);
         privateChatsScreenController.doStuff(memberToWrite);
-
-        //PrivateChatController privateChatController = privateChatsScreenController.getPrivateChatController();
-            /*privateChatsScreenController.setSelectedUser(memberToWrite);
-            if (memberToWrite != null) {
-                privateChatController.initPrivateChat(memberToWrite);
-                privateChatsScreenController.getLwOnlineUsers().refresh();
-                privateChatsScreenController.getLblSelectedUser().setText(privateChatController.getCurrentChat().getUser().getName());
-                privateChatsScreenController.getBtnPlay().setVisible(true);
-            }
-            System.out.println(memberToWrite.getPrivateChat().getMessages());*/
-        //privateChatsScreenController.setSelectedUser(memberToWrite);
-        //PrivateChatController privateChatController = privateChatsScreenController.getPrivateChatController();
-
-        //privateChatController.initPrivateChat(memberToWrite);
-        //privateChatController.setLblSelectedUserText(memberToWrite.getName());
     }
 }

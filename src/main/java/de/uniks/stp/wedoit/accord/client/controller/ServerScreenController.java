@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -10,8 +11,10 @@ import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.stage.WindowEvent;
 
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
@@ -22,7 +25,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class ServerScreenController implements Controller {
 
@@ -35,7 +42,8 @@ public class ServerScreenController implements Controller {
     private Button btnOptions;
     private Button btnHome;
     private Button btnEdit;
-    private Label lbServerName;
+    private Label lbServerName, lblServerUsers, lbChannelName;
+    private TextField tfInputMessage;
     private ListView<User> lvServerUsers;
 
     // Websockets
@@ -79,14 +87,20 @@ public class ServerScreenController implements Controller {
     public void init() {
         // Load all view references
         this.editor.setCurrentServer(server);
+        this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEdit = (Button) view.lookup("#btnEdit");
         this.lbServerName = (Label) view.lookup("#lbServerName");
+        this.lblServerUsers = (Label) view.lookup("#lblServerUsers");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
+        this.lbChannelName = (Label) view.lookup("#lbChannelName");
+
 
         categoryTreeViewController.init();
         serverChatController.init();
+
+        this.setComponentsText();
 
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
@@ -111,6 +125,22 @@ public class ServerScreenController implements Controller {
 
         // add PropertyChangeListener
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
+
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
+                    setComponentsText();
+                    initTooltips();
+                }
+            }
+        });
+    }
+
+    private void setComponentsText() {
+        this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
+        this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
+        this.tfInputMessage.setText(LanguageResolver.getString("YOUR_MESSAGE"));
     }
 
     /**
@@ -128,15 +158,15 @@ public class ServerScreenController implements Controller {
      */
     private void initTooltips() {
         Tooltip homeButton = new Tooltip();
-        homeButton.setText("Home");
+        homeButton.setText(LanguageResolver.getString("HOME"));
         btnHome.setTooltip(homeButton);
 
         Tooltip optionsButton = new Tooltip();
-        optionsButton.setText("Options");
+        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
         btnOptions.setTooltip(optionsButton);
 
         Tooltip editButton = new Tooltip();
-        editButton.setText("Edit Server");
+        editButton.setText(LanguageResolver.getString("EDIT_SERVER"));
         editButton.setStyle("-fx-font-size: 10");
         btnEdit.setTooltip(editButton);
     }
@@ -173,7 +203,7 @@ public class ServerScreenController implements Controller {
      * opens the AttentionLeaveServerScreen
      */
     private void leaveServerAttention(ActionEvent actionEvent) {
-        this.editor.getStageManager().showAttentionLeaveServerScreen(this.server);
+        this.editor.getStageManager().initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
     }
 
     /**
@@ -182,7 +212,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showMainScreen();
+        this.editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
     }
 
     /**
@@ -191,7 +221,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showOptionsScreen();
+        this.editor.getStageManager().initView(POPUPSTAGE, "Options", "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
@@ -200,7 +230,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void editButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showEditServerScreen(this.server);
+        this.editor.getStageManager().initView(POPUPSTAGE, "Edit Server", "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
     }
 
     // PropertyChangeEvent Methods
@@ -244,7 +274,7 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().showLoginScreen());
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
@@ -282,7 +312,7 @@ public class ServerScreenController implements Controller {
      */
     private ContextMenu createContextMenuLeaveServer() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemLeaveServer = new MenuItem("Leave Server");
+        MenuItem menuItemLeaveServer = new MenuItem(LanguageResolver.getString("LEAVE_SERVER"));
         contextMenu.getItems().add(menuItemLeaveServer);
         menuItemLeaveServer.setOnAction(this::leaveServerAttention);
         return contextMenu;

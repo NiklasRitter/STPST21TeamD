@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.controller.PrivateMessageServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.scene.control.ContextMenu;
@@ -10,6 +11,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 
 public class ServerUserListView implements javafx.util.Callback<ListView<User>, ListCell<User>> {
 
@@ -63,7 +67,7 @@ public class ServerUserListView implements javafx.util.Callback<ListView<User>, 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemWriteMembers = new MenuItem("Private Message");
         contextMenu.getItems().add(menuItemWriteMembers);
-        menuItemWriteMembers.setOnAction((event) -> stageManager.showPrivateMessageServerScreen(server, user));
+        menuItemWriteMembers.setOnAction((event) -> stageManager.initView(POPUPSTAGE, user.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, user));
         return contextMenu;
     }
 

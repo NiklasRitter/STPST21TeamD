@@ -10,8 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_RESULT_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
 
 public class MessageManager {
 
@@ -84,13 +88,13 @@ public class MessageManager {
 
             Platform.runLater(() -> {
                 if (message.getFrom().equals(editor.getLocalUser().getName()))
-                    editor.getStageManager().showGameScreen(editor.getUser(message.getTo()));
+                    editor.getStageManager().initView(GAMESTAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, editor.getUser(message.getTo()), null);
                 else
-                    editor.getStageManager().showGameScreen(editor.getUser(message.getFrom()));
+                    editor.getStageManager().initView(GAMESTAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, editor.getUser(message.getFrom()), null);
             });
 
         }else if(message.getText().equals(GAME_CLOSE) && editor.getStageManager().getGameStage().isShowing()){
-            Platform.runLater(() -> editor.getStageManager().showGameResultScreen(editor.getUser(message.getFrom()),null));
+            Platform.runLater(() -> editor.getStageManager().initView(GAMESTAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, editor.getUser(message.getFrom()), null));
         }
 
         if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {

@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -9,13 +10,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
+
 public class CreateServerScreenController implements Controller {
 
     private final Editor editor;
     private final Parent view;
     private TextField tfServerName;
     private Button btnCreateServer;
-    private Label errorLabel;
+    private Label errorLabel, lblEnterServerName;
 
     /**
      * Create a new Controller
@@ -40,9 +44,18 @@ public class CreateServerScreenController implements Controller {
         this.btnCreateServer = (Button) view.lookup("#btnCreateServer");
         this.tfServerName = (TextField) view.lookup("#tfServerName");
         this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblEnterServerName = (Label) view.lookup("#lblEnterServerName");
+
+        this.setComponentsText();
 
         // Add action listeners
         this.btnCreateServer.setOnAction(this::createServerButtonOnClick);
+    }
+
+    private void setComponentsText() {
+        this.lblEnterServerName.setText(LanguageResolver.getString("ENTER_SERVER_NAME"));
+        this.tfServerName.setText(LanguageResolver.getString("SERVERNAME"));
+        this.btnCreateServer.setText(LanguageResolver.getString("CREATE_SERVER"));
     }
 
     /**
@@ -65,9 +78,9 @@ public class CreateServerScreenController implements Controller {
     private void createServerButtonOnClick(ActionEvent actionEvent) {
 
         if (tfServerName.getText().length() < 1 || tfServerName.getText() == null) {
-            tfServerName.getStyleClass().add("error");
+            tfServerName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
             editor.getRestManager().createServer(tfServerName.getText(), this);
         }
@@ -81,11 +94,11 @@ public class CreateServerScreenController implements Controller {
     public void handleCreateServer(Server server) {
         if (server != null) {
             stop();
-            Platform.runLater(() -> this.editor.getStageManager().showServerScreen(server));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
         } else {
-            tfServerName.getStyleClass().add("error");
+            tfServerName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the server"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("SOMETHING_WORNG_WHILE_CREATING_SERVER")));
         }
     }
 }
