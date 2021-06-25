@@ -76,7 +76,7 @@ public class OptionsScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
-
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getPopupStage();
 
@@ -157,7 +157,7 @@ public class OptionsScreenTest extends ApplicationTest {
                 .contains(Objects.requireNonNull(StageManager.class.getResource("light-theme.css")).toExternalForm()));
 
         // test darkmode button
-        clickOn("#btnDarkmode");
+        clickOn("#btnDarkMode");
 
         // check if stylesheets contain dark theme
         WaitForAsyncUtils.waitForFxEvents();
