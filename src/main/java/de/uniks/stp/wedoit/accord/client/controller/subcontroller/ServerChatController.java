@@ -55,6 +55,8 @@ public class ServerChatController implements Controller {
 
     private final PropertyChangeListener newMessagesListener = this::newMessage;
     private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
+    private ContextMenu localUserMessageContextMenu;
+    private ContextMenu userMessageContextMenu;
 
 
     /**
@@ -95,7 +97,8 @@ public class ServerChatController implements Controller {
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         quoteVisible.getChildren().clear();
-        addMessageContextMenu();
+        addUserMessageContextMenu();
+        addLocalUserMessageContextMenu();
 
         Tooltip emojiButton = new Tooltip();
         emojiButton.setText("Emojis");
@@ -114,7 +117,10 @@ public class ServerChatController implements Controller {
         this.lvTextChat.setOnMouseClicked(null);
         this.btnCancelQuote.setOnAction(null);
 
-        for (MenuItem item : messageContextMenu.getItems()) {
+        for (MenuItem item : localUserMessageContextMenu.getItems()) {
+            item.setOnAction(null);
+        }
+        for (MenuItem item : userMessageContextMenu.getItems()) {
             item.setOnAction(null);
         }
         if (this.currentChannel != null) {
@@ -165,18 +171,29 @@ public class ServerChatController implements Controller {
     /**
      * adds a context menu for a message
      */
-    private void addMessageContextMenu() {
+    private void addLocalUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
         MenuItem updateMessage = new MenuItem("- update message");
         MenuItem deleteMessage = new MenuItem("- delete message");
-        messageContextMenu = new ContextMenu();
-        messageContextMenu.setId("messageContextMenu");
-        messageContextMenu.getItems().add(quote);
-        messageContextMenu.getItems().add(updateMessage);
-        messageContextMenu.getItems().add(deleteMessage);
+        localUserMessageContextMenu = new ContextMenu();
+        localUserMessageContextMenu.setId("localUserMessageContextMenu");
+        localUserMessageContextMenu.getItems().add(quote);
+        localUserMessageContextMenu.getItems().add(updateMessage);
+        localUserMessageContextMenu.getItems().add(deleteMessage);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         updateMessage.setOnAction((event) -> handleContextMenuClicked(UPDATE, lvTextChat.getSelectionModel().getSelectedItem()));
         deleteMessage.setOnAction((event) -> handleContextMenuClicked(DELETE, lvTextChat.getSelectionModel().getSelectedItem()));
+    }
+
+    /**
+     * adds a context menu for a message
+     */
+    private void addUserMessageContextMenu() {
+        MenuItem quote = new MenuItem("- quote");
+        userMessageContextMenu = new ContextMenu();
+        userMessageContextMenu.setId("userMessageContextMenu");
+        userMessageContextMenu.getItems().add(quote);
+        quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -246,8 +263,15 @@ public class ServerChatController implements Controller {
         }
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
             if (lvTextChat.getSelectionModel().getSelectedItem() != null && !editor.getMessageManager().isQuote(lvTextChat.getSelectionModel().getSelectedItem())) {
-                lvTextChat.setContextMenu(messageContextMenu);
-                messageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                if (lvTextChat.getSelectionModel().getSelectedItem().getFrom().equals(editor.getLocalUser().getName())) {
+                    lvTextChat.setContextMenu(localUserMessageContextMenu);
+                    localUserMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                }
+                else {
+                    lvTextChat.setContextMenu(userMessageContextMenu);
+                    userMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                }
+
             }
         }
     }
@@ -293,7 +317,7 @@ public class ServerChatController implements Controller {
         this.lbChannelName.setText(this.currentChannel.getName());
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory());
+        lvTextChat.setCellFactory(new MessageCellFactory(editor, this));
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 

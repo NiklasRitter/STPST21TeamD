@@ -90,14 +90,14 @@ public class ServerScreenTest extends ApplicationTest {
     private Options oldOptions;
 
 
-    @BeforeClass
+/*    @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
         System.setProperty("testfx.headless", "true");
         System.setProperty("prism.order", "sw");
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
-    }
+    }*/
 
 
     @Override
@@ -843,7 +843,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfInputMessage");
-        write("Test Message");
+        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
@@ -853,7 +853,7 @@ public class ServerScreenTest extends ApplicationTest {
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
 
-        clickOn(lvTextChat.getContextMenu());
+        clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
         HBox quoteVisible = lookup("#quoteVisible").query();
 
@@ -869,7 +869,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
-        clickOn(lvTextChat.getContextMenu());
+        clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
         lblQuote = (Label) lookup("#lblQuote").query();
         btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
@@ -890,6 +890,47 @@ public class ServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lvTextChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
         Assert.assertEquals(lvTextChat.getItems().get(2).getText(), "quote");
+
+    }
+
+    @Test
+    public void testUpdateMessage() {
+        //init channel list and select first channel
+
+        initUserListView();
+        initChannelListView();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        Button btnEmoji = lookup("#btnEmoji").query();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //send message
+        clickOn("#tfInputMessage");
+
+        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        press(KeyCode.ENTER);
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message, 1616935874));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn("- update message");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ((TextField) lookup("#tfUpdateMessage").query()).setText("update");
+        clickOn("#btnUpdateMessage");
 
     }
 
