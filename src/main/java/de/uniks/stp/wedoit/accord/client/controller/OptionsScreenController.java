@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
@@ -9,13 +8,10 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.util.Locale;
-import java.util.Objects;
 
 public class OptionsScreenController implements Controller {
 
@@ -55,7 +51,7 @@ public class OptionsScreenController implements Controller {
         this.lblDarkMode = (Label) view.lookup("#lblDarkMode");
 
         this.choiceBoxLanguage = (ChoiceBox) view.lookup("#choiceBoxLanguage");
-        createChoiceBox();
+        createChoiceBoxItems();
 
         setComponentsText();
 
@@ -78,7 +74,7 @@ public class OptionsScreenController implements Controller {
         this.logoutButton.setTooltip(logoutButton);
     }
 
-    private void createChoiceBox() {
+    private void createChoiceBoxItems() {
         this.choiceBoxLanguage.getItems().add("English");
         this.choiceBoxLanguage.getItems().add("Deutsch");
         this.choiceBoxLanguage.getItems().add("فارسی");

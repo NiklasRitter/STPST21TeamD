@@ -6,8 +6,8 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.application.Platform;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -27,6 +27,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.util.Locale;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -60,16 +61,15 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @BeforeClass
     public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
+//        System.setProperty("testfx.robot", "glass");
+//        System.setProperty("testfx.headless", "true");
+//        System.setProperty("prism.order", "sw");
+//        System.setProperty("prism.text", "t2k");
+//        System.setProperty("java.awt.headless", "true");
     }
 
     @Override
     public void start(Stage stage) {
-
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
@@ -79,8 +79,6 @@ public class OptionsScreenTest extends ApplicationTest {
         stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getPopupStage();
-
-
 
         //create localUser to skip the login screen
         stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
@@ -163,7 +161,58 @@ public class OptionsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(stageManager.getScene().getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
+    }
 
+    @Test
+    public void testChoiceBoxLanguage() {
+        // open options screen
+        directToOptionsScreen();
+
+        // check if stylesheets contain light theme
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(popupStage.isShowing());
+        Assert.assertEquals("Options", popupStage.getTitle());
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
+
+        Label lblLanguage = lookup("#lblLanguage").query();
+        Assert.assertEquals(lblLanguage.getText(), "Language");
+
+        ChoiceBox choiceBoxLanguage = lookup("#choiceBoxLanguage").query();
+
+        clickOn(choiceBoxLanguage);
+
+        Platform.runLater(() -> {
+            //choice german as language
+            choiceBoxLanguage.getSelectionModel().select(1);
+        });
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
+
+        Assert.assertEquals(lblLanguage.getText(), "Sprache");
+
+    }
+
+    @Test
+    public void testChangedLanguageOnLoginScreen() {
+        Label lblEnterUserName = lookup("#lblEnterUserName").query();
+        Assert.assertEquals(lblEnterUserName.getText(), "Enter your username");
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
+
+        testChoiceBoxLanguage();
+
+        Platform.runLater(() -> {
+            popupStage.hide();
+        });
+
+        directToMainScreen();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblYourServers = lookup("#lblYourServers").query();
+        Assert.assertEquals(lblYourServers.getText(), "Ihre Server");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
     }
 
     @Test
