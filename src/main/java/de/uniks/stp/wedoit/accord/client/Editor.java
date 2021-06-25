@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +61,7 @@ public class Editor {
 
     /**
      * creates a new AccordClient
+     *
      * @return new Accord client
      */
     public AccordClient haveAccordClient() {
@@ -125,7 +127,6 @@ public class Editor {
     }
 
     /**
-     *
      * @return a user with given id, onlineStatus and name who is member of the given server
      */
     public User haveUserWithServer(String name, String id, boolean online, Server server) {
@@ -262,6 +263,7 @@ public class Editor {
 
     /**
      * redirect to the LoginScreen if success
+     *
      * @param success of the logout request
      */
     public void handleLogoutUser(boolean success) {
@@ -371,6 +373,7 @@ public class Editor {
 
     /**
      * copies a given text to the system clip board
+     *
      * @param text text which should be copied
      */
     public void copyToSystemClipBoard(String text) {
@@ -404,6 +407,17 @@ public class Editor {
         Platform.runLater(() -> stageManager.getStage().show());
     }
 
+    /**
+     * Adds members to datamodel if they not exist already and sets link to server
+     *
+     * @param members The users that have to be added
+     * @param server  The server the users have to be added to
+     */
+    public void serverWithMembers(List<User> members, Server server) {
+        for (User member : members) {
+            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
+        }
+    }
 
     public void setStageManager(StageManager stageManager) {
         this.stageManager = stageManager;

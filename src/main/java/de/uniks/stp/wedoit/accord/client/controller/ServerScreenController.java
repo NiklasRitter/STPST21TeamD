@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeVi
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -257,17 +258,11 @@ public class ServerScreenController implements Controller {
      * create new users which a member of this server and load user list view with this users,
      * sorted by the online status
      *
-     * @param members JSONArray with users formatted as JSONObject
+     * @param jsonMembers JSONArray with users formatted as JSONObject
      */
-    private void createUserListView(JsonArray members) {
-        for (int index = 0; index < members.toArray().length; index++) {
-
-            String name = members.getJsonObject(index).getString(NAME);
-            String id = members.getJsonObject(index).getString(ID);
-            boolean onlineStatus = members.getJsonObject(index).getBoolean(ONLINE);
-
-            editor.haveUserWithServer(name, id, onlineStatus, server);
-        }
+    private void createUserListView(JsonArray jsonMembers) {
+        List<User> members = JsonUtil.parseUserArray(jsonMembers);
+        editor.serverWithMembers(members, server);
 
         // load categories
         categoryTreeViewController.initCategoryChannelList();
