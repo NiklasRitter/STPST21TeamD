@@ -36,7 +36,7 @@ public class CreateChannelScreenController implements Controller {
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList = new LinkedList<>();
     private RadioButton radioBtnText;
-    private RadioButton radioBtnVoice;
+    private RadioButton radioBtnAudio;
 
     /**
      * Create a new Controller
@@ -69,7 +69,7 @@ public class CreateChannelScreenController implements Controller {
         this.errorLabel = (Label) view.lookup("#lblError");
 
         this.radioBtnText = (RadioButton) view.lookup("#radioBtnText");
-        this.radioBtnVoice = (RadioButton) view.lookup("#radioBtnVoice");
+        this.radioBtnAudio = (RadioButton) view.lookup("#radioBtnAudio");
 
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
         this.lblMembers = (Label) view.lookup("#lblMembers");
@@ -89,19 +89,9 @@ public class CreateChannelScreenController implements Controller {
     private void initTextVoiceOption() {
         ToggleGroup toggleGroup = new ToggleGroup();
         this.radioBtnText.setToggleGroup(toggleGroup);
-        this.radioBtnVoice.setToggleGroup(toggleGroup);
+        this.radioBtnAudio.setToggleGroup(toggleGroup);
 
         radioBtnText.setSelected(true);
-        //TODO only implement this if also in editChannelScreen
-        /*
-        String channelType = this.editor.getChannelType();
-
-        if (channelType.equals(TEXT)) {
-            radioBtnText.setSelected(true);
-        } else {
-            radioBtnVoice.setSelected(true);
-        }
-        */
     }
 
     /**

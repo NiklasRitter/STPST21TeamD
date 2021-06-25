@@ -132,7 +132,6 @@ public class CategoryTreeViewController implements Controller {
             if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
                 if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
                     Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
-                    //TODO .getType allowed or editor?
                     if (channel.getType().equals(TEXT)) {
                         channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
                         controller.getServerChatController().initChannelChat(channel);

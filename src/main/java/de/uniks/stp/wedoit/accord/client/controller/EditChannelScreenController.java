@@ -36,8 +36,6 @@ public class EditChannelScreenController implements Controller {
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList;
     private Boolean isPrivilegedUser = false;
-    private RadioButton radioBtnText;
-    private RadioButton radioBtnVoice;
     private HBox hBoxChannelType;
 
     /**
@@ -72,8 +70,6 @@ public class EditChannelScreenController implements Controller {
         this.errorLabel = (Label) view.lookup("#lblError");
 
         this.hBoxChannelType = (HBox) view.lookup("#hBoxChannelType");
-        this.radioBtnText = (RadioButton) view.lookup("#radioBtnText");
-        this.radioBtnVoice = (RadioButton) view.lookup("#radioBtnVoice");
 
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
         this.lblMembers = (Label) view.lookup("#lblMembers");
