@@ -171,10 +171,7 @@ public class OptionsScreenTest extends ApplicationTest {
         directToOptionsScreen();
         VBox mainVBox = (VBox) lookup("#mainVBox").query();
 
-        // Assert that in Login screen the Logout button is not visible and it has correct size
-        Assert.assertEquals(mainVBox.getHeight(), 80, 0);
-        Assert.assertEquals(mainVBox.getWidth(), 300, 0);
-        Assert.assertEquals(mainVBox.getChildren().size(), 1);
+        Assert.assertEquals(mainVBox.getChildren().size(), 3);
     }
 
     @Test
@@ -189,10 +186,8 @@ public class OptionsScreenTest extends ApplicationTest {
         VBox mainVBox = (VBox) lookup("#mainVBox").query();
         Button btnLogout = (Button) lookup("#btnLogout").query();
 
-        Assert.assertEquals(mainVBox.getChildren().size(), 2);
+        Assert.assertEquals(mainVBox.getChildren().size(), 3);
         Assert.assertTrue(btnLogout.isVisible());
-        Assert.assertEquals(mainVBox.getHeight(), 150, 0);
-        Assert.assertEquals(mainVBox.getWidth(), 300, 0);
     }
 
 

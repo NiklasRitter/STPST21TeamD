@@ -367,6 +367,7 @@ public class EditServerScreenTest extends ApplicationTest {
         tfMaxCountAmountInput.setText("15");
         clickOn("#btnCreateInvitation");
 
+        WaitForAsyncUtils.waitForFxEvents();
         verify(restMock).createInvite(anyInt(), anyString(), anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -385,10 +386,10 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals("generation failed", tfInvitationLink.getPromptText());
 
+        WaitForAsyncUtils.waitForFxEvents();
         Label labelCopy = lookup("#labelCopy").query();
 
         clickOn(tfInvitationLink);
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("First create invitation", labelCopy.getText());
 
         WaitForAsyncUtils.waitForFxEvents();
