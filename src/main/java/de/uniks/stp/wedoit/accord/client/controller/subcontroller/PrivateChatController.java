@@ -177,8 +177,8 @@ public class PrivateChatController implements Controller {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> {
                 this.privateMessageObservableList.add(message);
-                this.lwPrivateChat.refresh();
             });
+            Platform.runLater(() -> this.lwPrivateChat.refresh());
 
             if(message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName())){
                 Platform.runLater(()-> btnPlay.setText("Accept"));

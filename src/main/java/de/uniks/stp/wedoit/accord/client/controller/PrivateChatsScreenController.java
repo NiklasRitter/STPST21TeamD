@@ -251,13 +251,17 @@ public class PrivateChatsScreenController implements Controller {
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
             this.selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
-            if (selectedUser != null) {
-                btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ? "Accept" : "Play");
-                privateChatController.initPrivateChat(selectedUser);
-                lwOnlineUsers.refresh();
-                this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
-                this.btnPlay.setVisible(true);
-            }
+            doStuff(selectedUser);
+        }
+    }
+
+    public void doStuff(User selectedUser) {
+        if (selectedUser != null) {
+            btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ? "Accept" : "Play");
+            privateChatController.initPrivateChat(selectedUser);
+            lwOnlineUsers.refresh();
+            this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
+            this.btnPlay.setVisible(true);
         }
     }
 
