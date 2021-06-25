@@ -71,10 +71,9 @@ public class AttentionScreenControllerTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 
         this.stageManager.start(stage);
-
-
 
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = this.stageManager.getEditor().haveLocalUser("Alice", "userKey123").setId("owner123");

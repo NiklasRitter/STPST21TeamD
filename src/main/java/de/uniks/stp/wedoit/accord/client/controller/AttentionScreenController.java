@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -26,7 +27,7 @@ public class AttentionScreenController implements Controller {
     private Label lblObjectToDelete;
     private Button btnDiscard;
     private Button btnDelete;
-    private Label lblError;
+    private Label lblError,lblAreYouSure, lblAttention;
 
     /**
      * Create a new Controller
@@ -47,13 +48,24 @@ public class AttentionScreenController implements Controller {
     public void init() {
         lblObjectToDelete = (Label) this.view.lookup("#lblObjectToDelete");
         lblError = (Label) this.view.lookup("#lblError");
+        lblAttention = (Label) this.view.lookup("#lblAttention");
+        lblAreYouSure = (Label) this.view.lookup("#lblAreYouSure");
         btnDiscard = (Button) this.view.lookup("#btnDiscard");
         btnDelete = (Button) this.view.lookup("#btnDelete");
+
+        this.setComponentsText();
 
         this.lblError.setVisible(false);
         loadCorrectLabelText(objectToDelete);
 
         addActionListener();
+    }
+
+    private void setComponentsText() {
+        this.lblAttention.setText(LanguageResolver.getString("ATTENTION"));
+        this.lblAreYouSure.setText(LanguageResolver.getString("ATTENTION_DELETE"));
+        this.btnDelete.setText(LanguageResolver.getString("DELETE"));
+        this.btnDiscard.setText(LanguageResolver.getString("DISCARD"));
     }
 
     /**
@@ -98,7 +110,7 @@ public class AttentionScreenController implements Controller {
      */
     private void showError() {
         Platform.runLater(() -> {
-            lblError.setText("Error. Delete Server was not successful!");
+            lblError.setText(LanguageResolver.getString("ERROR_DELETE_SERVER"));
             lblError.setVisible(true);
         });
     }

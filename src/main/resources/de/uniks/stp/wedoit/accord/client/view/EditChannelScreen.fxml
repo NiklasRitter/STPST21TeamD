@@ -10,7 +10,7 @@
    <children>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label prefWidth="160.0" text="Channel Name:" HBox.hgrow="ALWAYS">
+            <Label id="lblChannelName" prefWidth="160.0" text="Channel Name:" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -30,7 +30,7 @@
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label prefWidth="140.0" text="Privileged:" HBox.hgrow="ALWAYS">
+            <Label id="lblPrivileged" prefWidth="140.0" text="Privileged:" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

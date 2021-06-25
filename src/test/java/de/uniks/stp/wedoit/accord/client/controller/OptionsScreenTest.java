@@ -6,8 +6,8 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.application.Platform;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -27,6 +27,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.util.Locale;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
@@ -71,18 +72,15 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) {
-
         // start application
         this.stage = stage;
         this.stageManager = new StageManager();
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
-
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getPopupStage();
-
-
 
         //create localUser to skip the login screen
         stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
@@ -160,13 +158,56 @@ public class OptionsScreenTest extends ApplicationTest {
                 .contains(Objects.requireNonNull(StageManager.class.getResource("light-theme.css")).toExternalForm()));
 
         // test darkmode button
-        clickOn("#btnDarkmode");
+        clickOn("#btnDarkMode");
 
         // check if stylesheets contain dark theme
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(stageManager.getScene().getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
+    }
 
+    @Test
+    public void testChoiceBoxLanguage() {
+        Label lblEnterUserName = lookup("#lblEnterUserName").query();
+        Assert.assertEquals(lblEnterUserName.getText(), "Enter your username");
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
+        // open options screen
+        directToOptionsScreen();
+
+        // check if stylesheets contain light theme
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(popupStage.isShowing());
+        Assert.assertEquals("Options", popupStage.getTitle());
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
+
+        Label lblLanguage = lookup("#lblLanguage").query();
+        Assert.assertEquals(lblLanguage.getText(), "Language");
+
+        ChoiceBox choiceBoxLanguage = lookup("#choiceBoxLanguage").query();
+
+        clickOn(choiceBoxLanguage);
+
+        Platform.runLater(() -> {
+            //choice german as language
+            choiceBoxLanguage.getSelectionModel().select(1);
+        });
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
+
+        Assert.assertEquals(lblLanguage.getText(), "Sprache");
+
+        Platform.runLater(() -> {
+            popupStage.hide();
+        });
+
+        directToMainScreen();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblYourServers = lookup("#lblYourServers").query();
+        Assert.assertEquals(lblYourServers.getText(), "Ihre Server");
+
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
     }
 
     @Test
@@ -174,10 +215,7 @@ public class OptionsScreenTest extends ApplicationTest {
         directToOptionsScreen();
         VBox mainVBox = (VBox) lookup("#mainVBox").query();
 
-        // Assert that in Login screen the Logout button is not visible and it has correct size
-        Assert.assertEquals(mainVBox.getHeight(), 150, 0);
-        Assert.assertEquals(mainVBox.getWidth(), 300, 0);
-        Assert.assertEquals(mainVBox.getChildren().size(), 1);
+        Assert.assertEquals(mainVBox.getChildren().size(), 3);
     }
 
     @Test
@@ -192,10 +230,8 @@ public class OptionsScreenTest extends ApplicationTest {
         VBox mainVBox = (VBox) lookup("#mainVBox").query();
         Button btnLogout = (Button) lookup("#btnLogout").query();
 
-        Assert.assertEquals(mainVBox.getChildren().size(), 2);
+        Assert.assertEquals(mainVBox.getChildren().size(), 3);
         Assert.assertTrue(btnLogout.isVisible());
-        Assert.assertEquals(mainVBox.getHeight(), 150, 0);
-        Assert.assertEquals(mainVBox.getWidth(), 300, 0);
     }
 
 
