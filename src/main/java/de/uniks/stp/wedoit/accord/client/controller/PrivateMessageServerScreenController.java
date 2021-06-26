@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,10 +16,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class PrivateMessageServerScreenController implements Controller {
@@ -53,6 +56,7 @@ public class PrivateMessageServerScreenController implements Controller {
 
         this.tfMessage.setOnAction(this::tfMessageOnEnter);
         this.btnShowChat.setOnAction(this::btnShowChatOnClick);
+        this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
 
         this.memberToWrite.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
     }
@@ -81,13 +85,6 @@ public class PrivateMessageServerScreenController implements Controller {
     }
 
     /**
-     * Is called when the online status of the selected User changes. Changes the textfield properties correctly
-     */
-    private void onOnlineChanged(PropertyChangeEvent propertyChangeEvent) {
-        this.setCorrectPromptText((Boolean) propertyChangeEvent.getNewValue());
-    }
-
-    /**
      * Redirects User to the private Chat of the selected Member
      *
      * @param actionEvent expected actionEvent
@@ -100,6 +97,21 @@ public class PrivateMessageServerScreenController implements Controller {
         privateChatsScreenController.initPrivateChatView(memberToWrite);
         privateChatsScreenController.getLwOnlineUsers().getSelectionModel().select(memberToWrite);
         privateChatsScreenController.setTfPrivateChatText(this.tfMessage.getText());
+    }
+
+    private void btnEmojiOnClicked(ActionEvent actionEvent) {
+        //get the position of Emoji Button and pass it to showEmojiScreen
+        if (memberToWrite.isOnlineStatus()) {
+            Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
+            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, this.tfMessage, pos);
+        }
+    }
+
+    /**
+     * Is called when the online status of the selected User changes. Changes the textfield properties correctly
+     */
+    private void onOnlineChanged(PropertyChangeEvent propertyChangeEvent) {
+        this.setCorrectPromptText((Boolean) propertyChangeEvent.getNewValue());
     }
 
     // additional helper Methods
