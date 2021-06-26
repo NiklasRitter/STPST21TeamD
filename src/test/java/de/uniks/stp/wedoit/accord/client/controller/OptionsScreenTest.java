@@ -212,7 +212,7 @@ public class OptionsScreenTest extends ApplicationTest {
         directToOptionsScreen();
 
         Platform.runLater(() -> {
-            //choice german as language
+            //choice english as language
             choiceBoxLanguage.getSelectionModel().select(0);
         });
 

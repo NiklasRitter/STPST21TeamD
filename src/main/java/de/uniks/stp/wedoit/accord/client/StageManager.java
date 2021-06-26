@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.controller.*;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
@@ -14,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
+
 import java.awt.*;
 import java.util.*;
 
@@ -40,7 +42,7 @@ public class StageManager extends Application {
         resourceManager.setPreferenceManager(prefManager);
     }
 
-    public void initView(String scene, String title, String fxmlName, String controllerName, boolean resizable, Object parameter, Object parameterTwo){
+    public void initView(String scene, String title, String fxmlName, String controllerName, boolean resizable, Object parameter, Object parameterTwo) {
         try {
             String fxmlSource = "view/" + fxmlName + ".fxml";
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource(fxmlSource)));
@@ -68,7 +70,7 @@ public class StageManager extends Application {
         }
     }
 
-    private void initStage(Parent root, String title, boolean resizable){
+    private void initStage(Parent root, String title, boolean resizable) {
         if (scene != null) {
             scene.setRoot(root);
         } else {
@@ -81,7 +83,7 @@ public class StageManager extends Application {
         stage.show();
     }
 
-    private void initPopupStage(Parent root, String title, boolean resizable){
+    private void initPopupStage(Parent root, String title, boolean resizable) {
         popupScene = new Scene(root);
         popupStage.setTitle(title);
         popupStage.setScene(popupScene);
@@ -90,18 +92,17 @@ public class StageManager extends Application {
         popupStage.show();
     }
 
-    private void initGameStage(Parent root, String title, boolean resizable, String controllerName){
+    private void initGameStage(Parent root, String title, boolean resizable, String controllerName) {
         gameScene = new Scene(root);
         gameStage.setTitle(title);
         if (gameStage.getStyle() != StageStyle.DECORATED) gameStage.initStyle(StageStyle.DECORATED);
         gameStage.setScene(gameScene);
         gameStage.centerOnScreen();
         gameStage.setResizable(resizable);
-        if(controllerName.equals(GAME_SCREEN_CONTROLLER)){
+        if (controllerName.equals(GAME_SCREEN_CONTROLLER)) {
             gameStage.setHeight(450);
             gameStage.setWidth(600);
-        }
-        else if(controllerName.equals(GAME_RESULT_SCREEN_CONTROLLER)){
+        } else if (controllerName.equals(GAME_RESULT_SCREEN_CONTROLLER)) {
             gameStage.setMinHeight(0);
             gameStage.setMinWidth(0);
             gameStage.setHeight(170);
@@ -110,7 +111,7 @@ public class StageManager extends Application {
         gameStage.show();
     }
 
-    private void initEmojiPickerStage(Parent root, String title, boolean resizable){
+    private void initEmojiPickerStage(Parent root, String title, boolean resizable) {
         Scene emojiPickerScene = new Scene(root);
         emojiPickerStage.setTitle(title);
         emojiPickerStage.setScene(emojiPickerScene);
@@ -118,46 +119,62 @@ public class StageManager extends Application {
         emojiPickerStage.sizeToScene();
     }
 
-    private void openController(Parent root, String controllerName, Object parameter, Object parameterTwo){
+    private void openController(Parent root, String controllerName, Object parameter, Object parameterTwo) {
         Controller controller = null;
-        switch (controllerName){
+        switch (controllerName) {
             case LOGIN_SCREEN_CONTROLLER:
                 editor.haveLocalUser();
-                controller = new LoginScreenController(root, model, editor); break;
+                controller = new LoginScreenController(root, model, editor);
+                break;
             case MAIN_SCREEN_CONTROLLER:
-                controller = new MainScreenController(root, model.getLocalUser(), editor); break;
+                controller = new MainScreenController(root, model.getLocalUser(), editor);
+                break;
             case CREATE_SERVER_SCREEN_CONTROLLER:
-                controller = new CreateServerScreenController(root, editor); break;
+                controller = new CreateServerScreenController(root, editor);
+                break;
             case JOIN_SERVER_SCREEN_CONTROLLER:
-                controller = new JoinServerScreenController(root, model.getLocalUser(), editor); break;
+                controller = new JoinServerScreenController(root, model.getLocalUser(), editor);
+                break;
             case PRIVATE_CHATS_SCREEN_CONTROLLER:
-                controller = new PrivateChatsScreenController(root, model.getLocalUser(), editor); break;
+                controller = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
+                break;
             case SERVER_SCREEN_CONTROLLER:
-                controller = new ServerScreenController(root, model.getLocalUser(), editor, (Server) parameter); break;
+                controller = new ServerScreenController(root, model.getLocalUser(), editor, (Server) parameter);
+                break;
             case GAME_SCREEN_CONTROLLER:
-                controller = new GameScreenController(root, (User) parameter, editor); break;
+                controller = new GameScreenController(root, (User) parameter, editor);
+                break;
             case GAME_RESULT_SCREEN_CONTROLLER:
-                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter, (boolean) parameterTwo, editor); break;
+                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter, (boolean) parameterTwo, editor);
+                break;
             case OPTIONS_SCREEN_CONTROLLER:
-                controller = new OptionsScreenController(root, model.getOptions(), editor); break;
+                controller = new OptionsScreenController(root, model.getOptions(), editor);
+                break;
             case CREATE_CATEGORY_SCREEN_CONTROLLER:
-                controller = new CreateCategoryScreenController(root, editor); break;
+                controller = new CreateCategoryScreenController(root, editor);
+                break;
             case EDIT_CATEGORY_SCREEN_CONTROLLER:
-                controller = new EditCategoryScreenController(root, editor, (Category) parameter); break;
+                controller = new EditCategoryScreenController(root, editor, (Category) parameter);
+                break;
             case CREATE_CHANNEL_SCREEN_CONTROLLER:
-                controller = new CreateChannelScreenController(root, model.getLocalUser(), editor, (Category) parameter); break;
+                controller = new CreateChannelScreenController(root, model.getLocalUser(), editor, (Category) parameter);
+                break;
             case EDIT_CHANNEL_SCREEN_CONTROLLER:
-                controller = new EditChannelScreenController(root, model.getLocalUser(), editor, (Channel) parameter); break;
+                controller = new EditChannelScreenController(root, model.getLocalUser(), editor, (Channel) parameter);
+                break;
             case EMOJI_SCREEN_CONTROLLER:
-                controller = new EmojiScreenController(root, (TextField) parameter, (Bounds) parameterTwo); break;
+                controller = new EmojiScreenController(root, (TextField) parameter, (Bounds) parameterTwo);
+                break;
             case ATTENTION_SCREEN_CONTROLLER:
-                controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter); break;
+                controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter);
+                break;
             case ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER:
-                controller = new AttentionLeaveServerController(root, editor, (Server) parameter); break;
+                controller = new AttentionLeaveServerController(root, editor, (Server) parameter);
+                break;
             case EDIT_SERVER_SCREEN_CONTROLLER:
                 controller = new EditServerScreenController(root, model.getLocalUser(), editor, (Server) parameter, popupStage);
         }
-        if(controller != null){
+        if (controller != null) {
             controller.init();
             controllerMap.put(controllerName, controller);
         }
@@ -306,6 +323,7 @@ public class StageManager extends Application {
         model.setOptions(new Options());
         editor.haveLocalUser();
         resourceManager.start(model);
+        updateLanguage();
         if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
         else {
             systemTrayController = new SystemTrayController(editor);

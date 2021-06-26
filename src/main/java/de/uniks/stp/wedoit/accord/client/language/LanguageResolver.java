@@ -20,6 +20,7 @@ public class LanguageResolver {
 
     private static final Logger logger = Logger.getLogger(LanguageResolver.class.getName());
 
+
     static {
         logger.setLevel(Level.WARNING);
     }
