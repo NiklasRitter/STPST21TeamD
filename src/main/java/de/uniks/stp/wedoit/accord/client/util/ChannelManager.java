@@ -34,7 +34,7 @@ public class ChannelManager {
      * @param id id of the channel which channels compared by
      * @return category with given id and name and with server server
      */
-    public Channel haveChannel(String id, String name, String type, Boolean privileged, Category category, JsonArray members) {
+    public Channel haveChannel(String id, String name, String type, Boolean privileged, Category category, JsonArray members, JsonArray audioMembers) {
         Server server = category.getServer();
         Channel channel = null;
         for (Channel channelIterator : category.getChannels()) {
@@ -48,6 +48,7 @@ public class ChannelManager {
         }
         channel.setName(name).setPrivileged(privileged).setType(type).setId(id).setCategory(category).setRead(true);
         channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+        channel.withoutAudioMembers(channel.getAudioMembers());
 
         if(members != null){
             List<String> membersIds = new ArrayList<>();
@@ -62,6 +63,17 @@ public class ChannelManager {
                 }
             }
         }
+        if(audioMembers != null){
+            List<String> membersAudioIds = new ArrayList<>();
+            for (int index = 0; index < audioMembers.toArray().length; index++) {
+                membersAudioIds.add(audioMembers.getString(index));
+            }
+            for (User user : server.getMembers()) {
+                if (membersAudioIds.contains(user.getId())) {
+                    channel.withAudioMembers(user);
+                }
+            }
+        }
         return channel;
     }
 
@@ -73,10 +85,10 @@ public class ChannelManager {
      * @param id id of the channel which channels compared by
      * @return channel upgraded channel or null
      */
-    public Channel updateChannel(Server server, String id, String name, String type, Boolean privileged, String categoryId, JsonArray members) {
+    public Channel updateChannel(Server server, String id, String name, String type, Boolean privileged, String categoryId, JsonArray members, JsonArray audioMembers) {
         for (Category category : server.getCategories()) {
             if (category.getId().equals(categoryId)) {
-                return haveChannel(id, name, type, privileged, category, members);
+                return haveChannel(id, name, type, privileged, category, members, audioMembers);
             }
         }
         return null;

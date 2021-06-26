@@ -37,7 +37,7 @@
   modified: 	false
   name: 	Channel
   propertyStyle: 	Bean
-  roles: 	channel_messages 	channel_category 	channel_members
+  roles: 	channel_messages 	channel_category 	channel_members 	channel_audioMembers
 
 - category: 	org.fulib.classmodel.Clazz
   attributes: 	category_name 	category_id
@@ -61,7 +61,7 @@
   modified: 	false
   name: 	User
   propertyStyle: 	Bean
-  roles: 	user_channels 	user_servers 	user_privateChat 	user_localUser
+  roles: 	user_channels 	user_audioChannel 	user_servers 	user_privateChat 	user_localUser
 
 - invitation: 	org.fulib.classmodel.Clazz
   attributes: 	invitation_id 	invitation_link 	invitation_type 	invitation_max 	invitation_current
@@ -312,6 +312,18 @@
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
 
+- channel_audioMembers: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	channel
+  collectionType: 	c1
+  id: 	Channel_audioMembers
+  modified: 	false
+  name: 	audioMembers
+  other: 	user_audioChannel
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
 - category_name: 	org.fulib.classmodel.Attribute
   clazz: 	category
   id: 	Category_name
@@ -481,6 +493,16 @@
   other: 	channel_members
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
+
+- user_audioChannel: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	user
+  id: 	User_audioChannel
+  modified: 	false
+  name: 	audioChannel
+  other: 	channel_audioMembers
+  propertyStyle: 	Bean
 
 - user_servers: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

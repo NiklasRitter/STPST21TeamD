@@ -317,9 +317,10 @@ public class RestManager {
                 boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
+                JsonArray channelAudioMembers = createChannelAnswer.getJsonArray(AUDIOMEMBERS);
 
                 if (category.getId().equals(channelCategoryId)) {
-                    Channel channel = editor.getChannelManager().haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers);
+                    Channel channel = editor.getChannelManager().haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers, channelAudioMembers);
                     controller.handleCreateChannel(channel);
                 } else {
                     controller.handleCreateChannel(null);
@@ -359,9 +360,10 @@ public class RestManager {
                 boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
+                JsonArray channelAudioMembers = createChannelAnswer.getJsonArray(AUDIOMEMBERS);
 
                 if (category.getId().equals(channelCategoryId)) {
-                    Channel newChannel = editor.getChannelManager().updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
+                    Channel newChannel = editor.getChannelManager().updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers, channelAudioMembers);
                     controller.handleEditChannel(newChannel);
                 } else {
                     controller.handleEditChannel(null);

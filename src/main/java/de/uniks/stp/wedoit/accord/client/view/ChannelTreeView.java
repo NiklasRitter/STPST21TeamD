@@ -8,8 +8,13 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
@@ -31,11 +36,34 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
             this.getStyleClass().remove("newMessage");
             if (!empty) {
                 if (item instanceof Category) {
-                    this.setText("#" + ((Category) item).getName());
+                    this.setText(((Category) item).getName());
                     this.setContextMenu(addContextMenuCategory((Category) item));
                 }
                 if (item instanceof Channel) {
-                    this.setText(((Channel) item).getName());
+                    Channel channel = (Channel) item;
+                    ImageView icon;
+                    if(channel.getType().equals(TEXT)){
+                        if(isSelected() && !stageManager.getModel().getOptions().isDarkmode()){
+                            icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit.png"))));
+                        }
+                        else{
+                            icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit_dark.png"))));
+                        }
+                        icon.setFitHeight(13);
+                        icon.setFitWidth(13);
+                    }
+                    else{
+                        if(isSelected() && !stageManager.getModel().getOptions().isDarkmode()){
+                            icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound.png"))));
+                        }
+                        else{
+                            icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound_dark.png"))));
+                        }
+                        icon.setFitHeight(15);
+                        icon.setFitWidth(15);
+                    }
+                    this.setGraphic(icon);
+                    this.setText(channel.getName());
                     this.setContextMenu(addContextMenuChannel((Channel) item));
                     if (!((Channel) item).isRead()) {
                         this.getStyleClass().add("newMessage");
@@ -44,6 +72,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
             } else {
                 this.setText(null);
                 this.setContextMenu(null);
+                this.setGraphic(null);
             }
         }
     }
