@@ -146,8 +146,6 @@ public class WebSocketManager {
      */
     public void handleServerMessage(JsonStructure msg, Server server) {
 
-        System.out.println(msg);
-
         JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
         String action = ((JsonObject) msg).getString(ACTION);
 

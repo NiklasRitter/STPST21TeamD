@@ -151,10 +151,15 @@ public class MessageManager {
      * @param messageToDeleteId id of the message to delete
      */
     public void deleteMessage(Channel channel, String messageToDeleteId) {
+        Message foundMessage = null;
         for (Message message : channel.getMessages()) {
             if (message.getId().equals(messageToDeleteId)) {
-                channel.withoutMessages(message);
+                foundMessage = message;
+                break;
             }
+        }
+        if (foundMessage != null) {
+            channel.withoutMessages(foundMessage);
         }
     }
 

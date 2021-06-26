@@ -12,7 +12,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.CHANNELS;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 public class RestClient {
@@ -339,12 +338,12 @@ public class RestClient {
     /**
      * Gets the last 50 Messages from timestamp
      *
-     * @param userKey       userKey of localUser
-     * @param serverId      The ID of the Server from which the messages should be loaded.
-     * @param categoryId    The ID of the Category from which the messages should be loaded.
-     * @param channelId     The ID of the Channel from which the messages should be loaded.
-     * @param timestamp     The time from where the message should be loaded
-     * @param callback      The Callback to be called after the Request.
+     * @param userKey    userKey of localUser
+     * @param serverId   The ID of the Server from which the messages should be loaded.
+     * @param categoryId The ID of the Category from which the messages should be loaded.
+     * @param channelId  The ID of the Channel from which the messages should be loaded.
+     * @param timestamp  The time from where the message should be loaded
+     * @param callback   The Callback to be called after the Request.
      */
     public void getChannelMessages(String userKey, String serverId, String categoryId, String channelId, String timestamp, Callback<JsonNode> callback) {
         // Build correct URL

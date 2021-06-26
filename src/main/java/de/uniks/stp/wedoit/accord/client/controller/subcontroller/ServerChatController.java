@@ -31,7 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class ServerChatController implements Controller {
@@ -266,8 +266,7 @@ public class ServerChatController implements Controller {
                 if (lvTextChat.getSelectionModel().getSelectedItem().getFrom().equals(editor.getLocalUser().getName())) {
                     lvTextChat.setContextMenu(localUserMessageContextMenu);
                     localUserMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-                }
-                else {
+                } else {
                     lvTextChat.setContextMenu(userMessageContextMenu);
                     userMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
                 }

@@ -5,20 +5,12 @@ import de.uniks.stp.wedoit.accord.client.model.Message;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.STATUS;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.SUCCESS;
-
-public class UpdateMessageScreenController implements Controller{
+public class UpdateMessageScreenController implements Controller {
 
     private final Parent view;
     private final Editor editor;
@@ -42,9 +34,9 @@ public class UpdateMessageScreenController implements Controller{
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
         errorLabel = (Label) view.lookup("#lblError");
-        
+
         tfUpdateMessage.setText(message.getText());
-        
+
         btnDiscard.setOnAction(this::discardChanges);
         btnUpdateMessage.setOnAction(this::updateMessage);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
@@ -55,12 +47,10 @@ public class UpdateMessageScreenController implements Controller{
 
         if (newMessage.equals(message.getText())) {
             this.editor.getStageManager().getPopupStage().close();
-        }
-        else if (newMessage.length() >= 1) {
+        } else if (newMessage.length() >= 1) {
             editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
-        }
-        else {
-            Platform.runLater(() -> errorLabel.setText("Something went wrong, please try again later."));
+        } else {
+            Platform.runLater(() -> errorLabel.setText("Updated message needs at least 1 character!"));
         }
     }
 
@@ -96,5 +86,5 @@ public class UpdateMessageScreenController implements Controller{
         btnUpdateMessage = null;
         errorLabel = null;
     }
-    
+
 }
