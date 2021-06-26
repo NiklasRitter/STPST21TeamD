@@ -30,7 +30,7 @@ public class CreateChannelScreenController implements Controller {
     private final Parent view;
     private final Category category;
     private TextField tfChannelName;
-    private Button btnCreateChannel,btnDeleteChannel;
+    private Button btnCreateChannel, btnDeleteChannel;
     private CheckBox checkBoxPrivileged;
     private Label errorLabel, lblMembers, lblChannelName, lblPrivileged;
     private VBox vBoxMemberNameAndCheckBox;
@@ -82,7 +82,6 @@ public class CreateChannelScreenController implements Controller {
         checkIfIsPrivileged();
         initTextVoiceOption();
 
-        this.btnCreateChannel.setText("Create");
         btnDeleteChannel.setVisible(false);
 
         // Add action listeners
@@ -102,6 +101,7 @@ public class CreateChannelScreenController implements Controller {
     }
 
     private void setComponentsText() {
+        this.tfChannelName.setPromptText(LanguageResolver.getString("CHANNEL_NAME"));
         this.lblChannelName.setText(LanguageResolver.getString("CHANNEL_NAME"));
         this.lblPrivileged.setText(LanguageResolver.getString("PRIVILEGED"));
         this.lblMembers.setText(LanguageResolver.getString("MEMBERS"));

@@ -39,10 +39,10 @@ public class CreateCategoryScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        this.btnCreateCategory = (Button) view.lookup("#btnCreateCategory");
         this.tfCategoryName = (TextField) view.lookup("#tfCategoryName");
         this.errorLabel = (Label) view.lookup("#lblError");
         this.lblCategoryName = (Label) view.lookup("#lblCategoryName");
+        this.btnCreateCategory = (Button) view.lookup("#btnCreateCategory");
 
         this.setComponentsText();
 
@@ -51,6 +51,7 @@ public class CreateCategoryScreenController implements Controller {
     }
 
     private void setComponentsText() {
+        this.tfCategoryName.setPromptText(LanguageResolver.getString("CATEGORY_NAME"));
         this.lblCategoryName.setText(LanguageResolver.getString("CATEGORY_NAME"));
         this.btnCreateCategory.setText(LanguageResolver.getString("CREATES"));
     }
@@ -64,7 +65,6 @@ public class CreateCategoryScreenController implements Controller {
         // Remove all action listeners
         btnCreateCategory.setOnAction(null);
     }
-
 
     /**
      * After pressing "Create", the category will be created with the name in the text field and you get

@@ -52,6 +52,7 @@ public class PrivateChatController implements Controller {
     private Button btnEmoji;
     private Chat currentChat;
     private final PropertyChangeListener chatListener = this::newMessage;
+    private MenuItem quote;
 
     /**
      * Create a new Controller
@@ -83,34 +84,19 @@ public class PrivateChatController implements Controller {
         this.btnPlay.setOnAction(this::btnPlayOnClicked);
         this.quoteVisible.getChildren().clear();
 
-        this.setComponentsText();
-
         addMessageContextMenu();
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         this.tfPrivateChat.setEditable(false);
 
         initToolTip();
 
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
-                    setComponentsText();
-                    initToolTip();
-                }
-            }
-        });
     }
 
-    private void initToolTip() {
+    public void initToolTip() {
         Tooltip emojiButtonToolTip = new Tooltip();
         emojiButtonToolTip.setText(LanguageResolver.getString("EMOJIS"));
         emojiButtonToolTip.setStyle("-fx-font-size: 10");
         this.btnEmoji.setTooltip(emojiButtonToolTip);
-    }
-
-    private void setComponentsText() {
-        this.tfPrivateChat.setText(LanguageResolver.getString("YOUR_MESSAGE"));
     }
 
     @Override
@@ -132,8 +118,8 @@ public class PrivateChatController implements Controller {
     /**
      * adds message context menu for messages with the option "quote"
      */
-    private void addMessageContextMenu() {
-        MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
+    public void addMessageContextMenu() {
+        quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
