@@ -44,7 +44,7 @@ public class PrivateChatsScreenController implements Controller {
     private List<User> availableUsers = new ArrayList<>();
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser, lblOnlineUser;
-    private final PrivateChatController privateChatController;
+    private PrivateChatController privateChatController;
     private User selectedUser;
 
 
@@ -144,6 +144,9 @@ public class PrivateChatsScreenController implements Controller {
         this.btnPlay.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
+
+        privateChatController.stop();
+        privateChatController = null;
     }
 
     /**
@@ -287,11 +290,11 @@ public class PrivateChatsScreenController implements Controller {
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
             this.selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
-            doStuff(selectedUser);
+            initPrivateChatView(selectedUser);
         }
     }
 
-    public void doStuff(User selectedUser) {
+    public void initPrivateChatView(User selectedUser) {
         if (selectedUser != null) {
             btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ?
                     LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
@@ -302,24 +305,12 @@ public class PrivateChatsScreenController implements Controller {
         }
     }
 
-    public PrivateChatController getPrivateChatController() {
-        return privateChatController;
-    }
-
     public void setSelectedUser(User user) {
         this.selectedUser = user;
     }
 
-    public Label getLblSelectedUser() {
-        return lblSelectedUser;
-    }
-
     public ListView<User> getLwOnlineUsers() {
         return lwOnlineUsers;
-    }
-
-    public Button getBtnPlay() {
-        return btnPlay;
     }
 
     public Button getBtnOptions() {

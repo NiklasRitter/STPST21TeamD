@@ -1,10 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -51,6 +49,7 @@ public class PrivateMessageServerScreenController implements Controller {
         Map<String, Controller> controllerMap = this.editor.getStageManager().getControllerMap();
         PrivateChatsScreenController privateChatsScreenController = (PrivateChatsScreenController) controllerMap.get(PRIVATE_CHATS_SCREEN_CONTROLLER);
         privateChatsScreenController.setSelectedUser(memberToWrite);
-        privateChatsScreenController.doStuff(memberToWrite);
+        privateChatsScreenController.initPrivateChatView(memberToWrite);
+        privateChatsScreenController.getLwOnlineUsers().getSelectionModel().select(memberToWrite);
     }
 }

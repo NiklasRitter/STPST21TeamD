@@ -75,7 +75,7 @@ public class EditorTest {
 
     @Test
     public void testHaveUser() {
-        localUser = editor.haveUser(user.getId(), user.getName());
+        editor.haveUser(user.getId(), user.getName());
         localUser.withUsers(user);
 
         Assert.assertEquals(localUser.getUsers().get(0).getName(), user.getName());

@@ -52,7 +52,6 @@ public class PrivateChatController implements Controller {
     private Button btnEmoji;
     private Chat currentChat;
     private final PropertyChangeListener chatListener = this::newMessage;
-    private Label lblSelectedUser;
 
     /**
      * Create a new Controller
@@ -76,7 +75,6 @@ public class PrivateChatController implements Controller {
         this.lblQuote = (Label) view.lookup("#lblQuote");
         this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
         this.btnPlay = (Button) view.lookup("#btnPlay");
-        this.lblSelectedUser =  (Label) view.lookup("#lblSelectedUser");
 
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
         this.lwPrivateChat.setOnMouseClicked(this::onLwPrivatChatClicked);
@@ -127,6 +125,7 @@ public class PrivateChatController implements Controller {
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
+        this.currentChat = null;
         messageContextMenu = null;
         btnCancelQuote.setOnAction(null);
     }
@@ -201,10 +200,7 @@ public class PrivateChatController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
-            Platform.runLater(() -> {
-                this.privateMessageObservableList.add(message);
-            });
-            Platform.runLater(() -> this.lwPrivateChat.refresh());
+            Platform.runLater(() -> this.privateMessageObservableList.add(message));
 
             if(message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName())){
                 Platform.runLater(()-> btnPlay.setText(LanguageResolver.getString("ACCEPT")));
@@ -369,7 +365,4 @@ public class PrivateChatController implements Controller {
         return tfPrivateChat;
     }
 
-    public void setLblSelectedUserText(String text) {
-        this.lblSelectedUser.setText(text);
-    }
 }
