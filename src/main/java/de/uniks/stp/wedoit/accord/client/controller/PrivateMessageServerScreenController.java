@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.util.Map;
@@ -20,8 +21,10 @@ public class PrivateMessageServerScreenController implements Controller {
     private final Server server;
     private final User memberToWrite;
 
+    private Label lblTitle;
     private TextField tfMessage;
     private Button btnShowChat;
+    private Button btnEmoji;
 
     public PrivateMessageServerScreenController(Parent root, Editor editor, Server server, User memberToWrite) {
         this.view = root;
@@ -32,10 +35,13 @@ public class PrivateMessageServerScreenController implements Controller {
 
     @Override
     public void init() {
+        this.lblTitle = (Label) view.lookup("#lblTitle");
         this.tfMessage = (TextField) view.lookup("#tfMessage");
         this.btnShowChat = (Button) view.lookup("#btnShowChat");
+        this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
-        this.tfMessage.setPromptText("Send Message to @" + memberToWrite.getName());
+        this.lblTitle.setText("Send Message to " + memberToWrite.getName());
+        this.tfMessage.setPromptText("Send Message to " + memberToWrite.getName());
         btnShowChat.setOnAction(this::btnShowChatOnClick);
     }
 
