@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
@@ -11,7 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class Editor {
 
@@ -270,7 +274,7 @@ public class Editor {
         if (!success) {
             System.err.println("Error while logging out");
         }
-        Platform.runLater(() -> stageManager.showLoginScreen());
+        Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
     }
 
     /**
@@ -390,7 +394,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.showLoginScreen();
+            stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null);
             stageManager.getStage().show();
         }
     }
@@ -400,9 +404,9 @@ public class Editor {
      */
     public void handleAutomaticLogin(boolean success) {
         if (success) {
-            Platform.runLater(stageManager::showMainScreen);
+            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         } else {
-            Platform.runLater(stageManager::showLoginScreen);
+            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
         Platform.runLater(() -> stageManager.getStage().show());
     }

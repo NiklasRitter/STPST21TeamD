@@ -9,22 +9,28 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
 
 public class UpdateMessageScreenController implements Controller {
 
     private final Parent view;
     private final Editor editor;
     private final Message message;
+    private final Object stage;
     private TextField tfUpdateMessage;
     private Button btnDiscard;
     private Button btnUpdateMessage;
     private Label errorLabel;
     private Button btnEmoji;
 
-    public UpdateMessageScreenController(Parent view, Editor editor, Message message) {
+    public UpdateMessageScreenController(Parent view, Editor editor, Message message, Stage stage) {
         this.view = view;
         this.editor = editor;
         this.message = message;
+        this.stage = stage;
     }
 
     @Override
@@ -71,7 +77,8 @@ public class UpdateMessageScreenController implements Controller {
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().showEmojiScreen(tfUpdateMessage, pos);
+        this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker",
+                "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfUpdateMessage, pos);
     }
 
     @Override

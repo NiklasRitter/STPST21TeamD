@@ -34,8 +34,10 @@ import javax.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -74,6 +76,7 @@ public class EditServerScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 
         this.stageManager.start(stage);
 
@@ -85,7 +88,7 @@ public class EditServerScreenTest extends ApplicationTest {
                 + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClientMock);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.showServerScreen(server);
+        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
     }
 
     @BeforeEach
@@ -280,7 +283,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         clickOn(radioBtnMaxCount);
         Assert.assertTrue(tfMaxCountAmountInput.isEditable());
-        tfMaxCountAmountInput.setText("15");
+        tfMaxCountAmountInput. setText("15");
         clickOn("#btnCreateInvitation");
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -367,6 +370,7 @@ public class EditServerScreenTest extends ApplicationTest {
         tfMaxCountAmountInput.setText("15");
         clickOn("#btnCreateInvitation");
 
+        WaitForAsyncUtils.waitForFxEvents();
         verify(restMock).createInvite(anyInt(), anyString(), anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -385,10 +389,10 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals("generation failed", tfInvitationLink.getPromptText());
 
+        WaitForAsyncUtils.waitForFxEvents();
         Label labelCopy = lookup("#labelCopy").query();
 
         clickOn(tfInvitationLink);
-        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("First create invitation", labelCopy.getText());
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -653,6 +657,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void stop() {
         stageManager.getResourceManager().saveOptions(this.oldOptions);
         oldOptions = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;

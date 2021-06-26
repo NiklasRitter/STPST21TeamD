@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Message;
@@ -31,8 +32,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.*;
 
 public class ServerChatController implements Controller {
 
@@ -100,8 +103,12 @@ public class ServerChatController implements Controller {
         addUserMessageContextMenu();
         addLocalUserMessageContextMenu();
 
+        initToolTip();
+    }
+
+    public void initToolTip() {
         Tooltip emojiButton = new Tooltip();
-        emojiButton.setText("Emojis");
+        emojiButton.setText(LanguageResolver.getString("EMOJIS"));
         emojiButton.setStyle("-fx-font-size: 10");
         this.btnEmoji.setTooltip(emojiButton);
     }
@@ -169,9 +176,9 @@ public class ServerChatController implements Controller {
     // Additional methods
 
     /**
-     * adds a context menu for a message
+     * adds a context menu for a message from localUser
      */
-    private void addLocalUserMessageContextMenu() {
+    public void addLocalUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
         MenuItem updateMessage = new MenuItem("- update message");
         MenuItem deleteMessage = new MenuItem("- delete message");
@@ -188,7 +195,7 @@ public class ServerChatController implements Controller {
     /**
      * adds a context menu for a message
      */
-    private void addUserMessageContextMenu() {
+    public void addUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
         userMessageContextMenu = new ContextMenu();
         userMessageContextMenu.setId("userMessageContextMenu");
@@ -215,10 +222,15 @@ public class ServerChatController implements Controller {
                 quoteVisible.getChildren().add(btnCancelQuote);
             }
             if (menu.equals(UPDATE)) {
-                this.editor.getStageManager().showUpdateMessageScreen(message);
+                this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"),
+                        "UpdateMessageScreen", UPDATE_MESSAGE_SCREEN_CONTROLLER,
+                        false, message, null);
+                //TODO Language Zeug
             }
             if (menu.equals(DELETE)) {
-                this.editor.getStageManager().showAttentionScreen(message);
+                this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"),
+                        "AttentionScreen", ATTENTION_SCREEN_CONTROLLER,
+                        false, message, null);
             }
         }
     }
@@ -246,7 +258,7 @@ public class ServerChatController implements Controller {
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().showEmojiScreen(tfInputMessage, pos);
+        this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
     }
 
     /**
@@ -270,7 +282,6 @@ public class ServerChatController implements Controller {
                     lvTextChat.setContextMenu(userMessageContextMenu);
                     userMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
                 }
-
             }
         }
     }
@@ -287,7 +298,8 @@ public class ServerChatController implements Controller {
         if (message != null && !message.isEmpty() && currentChannel != null) {
 
             if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
+                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText()
+                        + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
                 JsonObject jsonMessage = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
                 removeQuote();
 
@@ -344,7 +356,7 @@ public class ServerChatController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 

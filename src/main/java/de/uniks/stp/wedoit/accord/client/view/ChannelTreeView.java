@@ -1,12 +1,16 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
+
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
 
@@ -46,32 +50,32 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
 
     private ContextMenu addContextMenuChannel(Channel item) {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("- add category");
-        MenuItem menuItem2 = new MenuItem("- add channel");
-        MenuItem menuItem3 = new MenuItem("- edit channel");
+        MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
+        MenuItem menuItem2 = new MenuItem("- " + LanguageResolver.getString("ADD_CHANNEL"));
+        MenuItem menuItem3 = new MenuItem("- " + LanguageResolver.getString("EDIT_CHANNEL"));
         contextMenu.getItems().add(menuItem1);
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
 
-        menuItem1.setOnAction((event) -> this.stageManager.showCreateCategoryScreen());
-        menuItem2.setOnAction((event) -> this.stageManager.showCreateChannelScreen(item.getCategory()));
-        menuItem3.setOnAction((event) -> this.stageManager.showEditChannelScreen(item));
+        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item.getCategory(), null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, item, null));
 
         return contextMenu;
     }
 
     private ContextMenu addContextMenuCategory(Category item) {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("- add category");
-        MenuItem menuItem2 = new MenuItem("- edit category");
-        MenuItem menuItem3 = new MenuItem("- add channel");
+        MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
+        MenuItem menuItem2 = new MenuItem("- " + LanguageResolver.getString("EDIT_CATEGORY"));
+        MenuItem menuItem3 = new MenuItem("- " + LanguageResolver.getString("ADD_CHANNEL"));
         contextMenu.getItems().add(menuItem1);
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
 
-        menuItem1.setOnAction((event) -> this.stageManager.showCreateCategoryScreen());
-        menuItem2.setOnAction((event) -> this.stageManager.showEditCategoryScreen(item));
-        menuItem3.setOnAction((event) -> this.stageManager.showCreateChannelScreen(item));
+        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CATEGORY"), "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, item, null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item, null));
 
         return contextMenu;
     }

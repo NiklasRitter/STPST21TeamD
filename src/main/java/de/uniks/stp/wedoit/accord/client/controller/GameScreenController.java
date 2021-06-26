@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
@@ -18,14 +19,16 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_RESULT_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
 
 public class GameScreenController implements Controller {
 
     private final Parent view;
     private final Editor editor;
     private final User opponent;
-    private Label lbScore;
+    private Label lbScore, lblOpponentPlayed, lblYouPlayed, lblYou;
     private ImageView imgYouPlayed, imgOppPlayed;
     private Button btnRock, btnPaper, btnScissors;
     private String gameAction;
@@ -73,6 +76,11 @@ public class GameScreenController implements Controller {
         this.btnRock = (Button) view.lookup("#btnRock");
         this.btnScissors = (Button) view.lookup("#btnScissors");
         this.lbScore = (Label) view.lookup("#lbScore");
+        this.lblOpponentPlayed = (Label) view.lookup("#lblOpponentPlayed");
+        this.lblYouPlayed = (Label) view.lookup("#lblYouPlayed");
+        this.lblYou = (Label) view.lookup("#lblYou");
+
+        this.setComponentsText();
 
         lbOpponent.setText(opponent.getName());
 
@@ -88,6 +96,15 @@ public class GameScreenController implements Controller {
         this.lbScore.textProperty().bind(Bindings.createStringBinding(() -> (ownScore.get() + ":" + oppScore.get()), oppScore, ownScore));
     }
 
+    private void setComponentsText() {
+        this.lblYou.setText(LanguageResolver.getString("YOU"));
+        this.lblYouPlayed.setText(LanguageResolver.getString("YOU_PLAYED"));
+        this.lblOpponentPlayed.setText(LanguageResolver.getString("OPPONENT_PLAYED"));
+        this.btnRock.setText(LanguageResolver.getString("ROCK"));
+        this.btnPaper.setText(LanguageResolver.getString("PAPER"));
+        this.btnScissors.setText(LanguageResolver.getString("SCISSORS"));
+    }
+
     /**
      * send message off corresponding action <br>
      * resolves game if opponent already choose a action
@@ -95,7 +112,13 @@ public class GameScreenController implements Controller {
      * @param actionEvent occurs when one of the action button is pressed
      */
     private void gameActionOnClick(ActionEvent actionEvent) {
-        gameAction = ((Button) actionEvent.getSource()).getText();
+        if ((Button) actionEvent.getSource() == btnRock) {
+            gameAction = "Rock";
+        } else if ((Button) actionEvent.getSource() == btnPaper) {
+            gameAction = "Paper";
+        } else if ((Button) actionEvent.getSource() == btnScissors) {
+            gameAction = "Scissors";
+        }
 
         JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_PREFIX + gameAction);
         editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
@@ -156,9 +179,9 @@ public class GameScreenController implements Controller {
      * checks weather one of the player has won,
      * in that case they get redirected to the result screen
      */
-    private void handleGameDone() {
-        if (oppScore.get() == 3 || ownScore.get() == 3) {
-            this.editor.getStageManager().showGameResultScreen(opponent, ownScore.get() == 3);
+    private void handleGameDone(){
+        if(oppScore.get() == 3 || ownScore.get() == 3){
+            this.editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, opponent, ownScore.get() == 3);
             stop();
         }
     }

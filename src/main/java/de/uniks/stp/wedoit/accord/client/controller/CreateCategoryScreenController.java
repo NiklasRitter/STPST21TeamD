@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -16,7 +17,7 @@ public class CreateCategoryScreenController implements Controller {
     private final Parent view;
     private TextField tfCategoryName;
     private Button btnCreateCategory;
-    private Label errorLabel;
+    private Label errorLabel, lblCategoryName;
 
     /**
      * Create a new Controller
@@ -38,12 +39,21 @@ public class CreateCategoryScreenController implements Controller {
      */
     public void init() {
         // Load all view references
-        this.btnCreateCategory = (Button) view.lookup("#btnCreateCategory");
         this.tfCategoryName = (TextField) view.lookup("#tfCategoryName");
         this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblCategoryName = (Label) view.lookup("#lblCategoryName");
+        this.btnCreateCategory = (Button) view.lookup("#btnCreateCategory");
+
+        this.setComponentsText();
 
         // Add action listeners
         this.btnCreateCategory.setOnAction(this::createCategoryButtonOnClick);
+    }
+
+    private void setComponentsText() {
+        this.tfCategoryName.setPromptText(LanguageResolver.getString("CATEGORY_NAME"));
+        this.lblCategoryName.setText(LanguageResolver.getString("CATEGORY_NAME"));
+        this.btnCreateCategory.setText(LanguageResolver.getString("CREATES"));
     }
 
     /**
@@ -56,7 +66,6 @@ public class CreateCategoryScreenController implements Controller {
         btnCreateCategory.setOnAction(null);
     }
 
-
     /**
      * After pressing "Create", the category will be created with the name in the text field and you get
      * redirected to the Screen for the Server
@@ -65,9 +74,9 @@ public class CreateCategoryScreenController implements Controller {
      */
     private void createCategoryButtonOnClick(ActionEvent actionEvent) {
         if (tfCategoryName.getText().length() < 1 || tfCategoryName.getText() == null) {
-            tfCategoryName.getStyleClass().add("error");
+            tfCategoryName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
             editor.getRestManager().createCategory(editor.getCurrentServer(), tfCategoryName.getText(), this);
         }
@@ -84,8 +93,8 @@ public class CreateCategoryScreenController implements Controller {
             Platform.runLater(stage::close);
             stop();
         } else {
-            tfCategoryName.getStyleClass().add("error");
-            Platform.runLater(() -> errorLabel.setText("Something went wrong while creating the category"));
+            tfCategoryName.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("SOMETHING_WRONG_WHILE_CREATING_CATEGORY")));
         }
     }
 }

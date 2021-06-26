@@ -21,6 +21,7 @@ public class ResourceManager {
         if (clientModel.getOptions() != null) {
             loadOptions(clientModel.getOptions());
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, preferenceManager.languageListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
         }
         if (clientModel.getLocalUser() != null) {
@@ -39,6 +40,7 @@ public class ResourceManager {
     public void stop(AccordClient clientModel) {
         if (clientModel.getOptions() != null) {
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, preferenceManager.languageListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
         }
         if (clientModel.getLocalUser() != null) {
@@ -82,8 +84,8 @@ public class ResourceManager {
     public void saveOptions(Options options) {
         preferenceManager.saveDarkmode(options.isDarkmode());
         preferenceManager.saveRememberMe(options.isRememberMe());
+        preferenceManager.saveLanguage(options.getLanguage());
     }
-
 
 
     public void setPreferenceManager(PreferenceManager preferenceManager) {
@@ -99,6 +101,7 @@ public class ResourceManager {
      */
     public void loadOptions(Options options) {
         Objects.requireNonNull(options).setDarkmode(preferenceManager.loadDarkmode());
+        Objects.requireNonNull(options).setLanguage(preferenceManager.loadLanguage());
         Objects.requireNonNull(options).setRememberMe(preferenceManager.loadRememberMe());
     }
 
@@ -121,7 +124,6 @@ public class ResourceManager {
         Objects.requireNonNull(localUser).setPassword(preferenceManager.loadPassword());
         Objects.requireNonNull(localUser).setName(preferenceManager.loadUsername());
     }
-
 
 
 }

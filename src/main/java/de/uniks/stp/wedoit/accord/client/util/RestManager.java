@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
@@ -18,7 +19,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class RestManager {
 
@@ -608,7 +611,7 @@ public class RestManager {
             if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 System.err.println("Error while leaving server");
             }
-            Platform.runLater(editor.getStageManager()::showMainScreen);
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         });
     }
 
