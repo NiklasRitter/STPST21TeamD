@@ -60,7 +60,7 @@ public class UpdateMessageScreenController implements Controller{
             editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
         }
         else {
-            Platform.runLater(() -> errorLabel.setText("Updated message needs at least 1 character!"));
+            Platform.runLater(() -> errorLabel.setText("Something went wrong, please try again later."));
         }
     }
 
