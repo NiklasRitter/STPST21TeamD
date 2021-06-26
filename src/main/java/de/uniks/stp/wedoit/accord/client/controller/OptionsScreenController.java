@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
+import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -50,10 +51,11 @@ public class OptionsScreenController implements Controller {
         this.lblLanguage = (Label) view.lookup("#lblLanguage");
         this.lblDarkMode = (Label) view.lookup("#lblDarkMode");
 
+        setComponentsText();
+
         this.choiceBoxLanguage = (ChoiceBox) view.lookup("#choiceBoxLanguage");
         createChoiceBoxItems();
 
-        setComponentsText();
 
         this.btnDarkMode.setSelected(options.isDarkmode());
 
@@ -86,16 +88,16 @@ public class OptionsScreenController implements Controller {
         } else if (Locale.getDefault().getLanguage().equals("en_gb")) {
             this.choiceBoxLanguage.getSelectionModel().select(0);
         }
-
-        this.choiceBoxLanguage.setOnAction(this::choiseBoxLanguageOnClick);
+        this.choiceBoxLanguage.setOnAction(this::choiceBoxLanguageOnClick);
     }
 
     private void setComponentsText() {
         this.lblDarkMode.setText(LanguageResolver.getString("DARKMODE"));
         this.lblLanguage.setText(LanguageResolver.getString("LANGUAGE"));
+        this.editor.getStageManager().getPopupStage().setTitle(LanguageResolver.getString("OPTIONS"));
     }
 
-    private void choiseBoxLanguageOnClick(Event event) {
+    private void choiceBoxLanguageOnClick(Event event) {
         Object selectedItem = this.choiceBoxLanguage.getSelectionModel().getSelectedItem();
 
         switch (selectedItem.toString()) {
