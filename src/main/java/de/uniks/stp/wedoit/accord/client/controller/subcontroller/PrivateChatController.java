@@ -189,6 +189,7 @@ public class PrivateChatController implements Controller {
 
         // Add listener for the loaded listView
         this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        Platform.runLater(() -> this.lwPrivateChat.scrollTo(this.privateMessageObservableList.size()));
     }
 
     /**

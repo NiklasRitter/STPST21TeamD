@@ -299,7 +299,6 @@ public class PrivateChatsScreenController implements Controller {
             btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ?
                     LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
             privateChatController.initPrivateChat(selectedUser);
-            lwOnlineUsers.refresh();
             this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
             this.btnPlay.setVisible(true);
         }
@@ -315,5 +314,9 @@ public class PrivateChatsScreenController implements Controller {
 
     public Button getBtnOptions() {
         return btnOptions;
+    }
+
+    public void setTfPrivateChatText(String text) {
+        this.tfPrivateChat.setText(text);
     }
 }
