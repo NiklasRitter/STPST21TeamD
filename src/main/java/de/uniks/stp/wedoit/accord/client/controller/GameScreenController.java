@@ -181,7 +181,7 @@ public class GameScreenController implements Controller {
      */
     private void handleGameDone(){
         if(oppScore.get() == 3 || ownScore.get() == 3){
-            this.editor.getStageManager().initView(GAMESTAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, opponent, ownScore.get() == 3);
+            this.editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, opponent, ownScore.get() == 3);
             stop();
         }
     }

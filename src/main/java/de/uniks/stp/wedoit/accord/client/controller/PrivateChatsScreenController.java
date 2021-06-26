@@ -44,6 +44,7 @@ public class PrivateChatsScreenController implements Controller {
     private List<User> availableUsers = new ArrayList<>();
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser, lblOnlineUser;
+    private Boolean userIsSelected = false;
     private PrivateChatController privateChatController;
     private User selectedUser;
 
@@ -96,19 +97,25 @@ public class PrivateChatsScreenController implements Controller {
         this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
-                    setComponentsText();
-                    initTooltips();
-                }
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
+                privateChatController.initToolTip();
+                privateChatController.addMessageContextMenu();
             }
         });
+
     }
 
     private void setComponentsText() {
         this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
         this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
         this.btnPlay.setText(LanguageResolver.getString("PLAY"));
-        this.tfPrivateChat.setText(LanguageResolver.getString("YOUR_MESSAGE"));
+/*        if (userIsSelected) {
+            this.tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+        } else {*/
+        this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
+        //}
     }
 
     /**
@@ -155,7 +162,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
     }
 
 
@@ -165,7 +172,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Options Button is clicked
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, "Options", "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
@@ -299,6 +306,7 @@ public class PrivateChatsScreenController implements Controller {
             btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ?
                     LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
             privateChatController.initPrivateChat(selectedUser);
+            this.userIsSelected = true;
             this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
             this.btnPlay.setVisible(true);
         }
