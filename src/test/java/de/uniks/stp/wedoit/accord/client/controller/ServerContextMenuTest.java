@@ -351,7 +351,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Button button = lookup("#btnSave").query();
-        Assert.assertEquals(button.getText(), "Create");
+        Assert.assertEquals(button.getText(), "Save");
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
@@ -388,7 +388,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Button button = lookup("#btnSave").query();
-        Assert.assertEquals(button.getText(), "Create");
+        Assert.assertEquals(button.getText(), "Save");
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
@@ -421,7 +421,7 @@ public class ServerContextMenuTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         Button btnCreate = lookup("#btnSave").query();
-        Assert.assertEquals(btnCreate.getText(), "Create");
+        Assert.assertEquals(btnCreate.getText(), "Save");
         clickOn(btnCreate);
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -459,7 +459,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         });
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnSave").query();
-        Assert.assertEquals(button.getText(), "Create");
+        Assert.assertEquals(button.getText(), "Save");
 
         clickOn("#btnSave");
         Label errorLabel = lookup("#lblError").query();

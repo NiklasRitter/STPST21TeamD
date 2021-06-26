@@ -98,7 +98,7 @@ public class GameResultScreenController implements Controller{
      * @param actionEvent occurs when the Quit button ist pressed
      */
     private void redirectToPrivateChats(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(STAGE, "Private Chats", "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true, null, null);
+        this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("PRIVATE_CHATS"), "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true, null, null);
     }
 
 
