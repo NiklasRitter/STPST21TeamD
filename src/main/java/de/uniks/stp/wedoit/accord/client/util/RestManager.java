@@ -202,9 +202,9 @@ public class RestManager {
             for (int index = 0; index < getServersResponse.toArray().length; index++) {
                 String name = getServersResponse.getJsonObject(index).getString(NAME);
                 String id = getServersResponse.getJsonObject(index).getString(ID);
-                if (name.equals(localUser.getName())) {
+                User user = editor.haveUser(id, name);
+                if (user.getName().equals(localUser.getName())) {
                     localUser.setId(id);
-                    return;
                 }
             }
 
