@@ -14,14 +14,12 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.WindowEvent;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -32,12 +30,11 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
@@ -205,8 +202,10 @@ public class ServerChatController implements Controller {
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
-        Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
+        if (this.currentChannel != null) {
+            Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
+            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
+        }
     }
 
     /**
@@ -270,6 +269,8 @@ public class ServerChatController implements Controller {
         channel.setRead(true);
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
+        this.tfInputMessage.setPromptText("Your message");
+        this.tfInputMessage.setEditable(this.currentChannel!=null);
 
         // init list view
         lvTextChat.setCellFactory(new MessageCellFactory());

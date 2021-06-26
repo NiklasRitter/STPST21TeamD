@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
@@ -104,6 +103,8 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
+        this.tfInputMessage.setPromptText("Select a textchannel");
+        this.tfInputMessage.setEditable(false);
 
         // Add server websocket
         editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
