@@ -1,7 +1,9 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
@@ -11,17 +13,16 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
@@ -55,6 +56,7 @@ public class ServerScreenController implements Controller {
 
     private final CategoryTreeViewController categoryTreeViewController;
     private final ServerChatController serverChatController;
+    private VBox audioChannelSubViewContainer;
 
     /**
      * Create a new Controller
@@ -95,6 +97,8 @@ public class ServerScreenController implements Controller {
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
+        this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
+        this.audioChannelSubViewContainer.getChildren().clear();
 
         categoryTreeViewController.init();
         serverChatController.init();
@@ -134,7 +138,25 @@ public class ServerScreenController implements Controller {
                 }
             }
         });
+
+        //TODO
+        //initAudioChannelSubView();
     }
+
+    public void initAudioChannelSubView() {
+        this.audioChannelSubViewContainer.getChildren().clear();
+        try {
+            Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
+            // MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this, false);
+            // memberListSubViewController.init();
+
+            this.audioChannelSubViewContainer.getChildren().add(view);
+            // this.memberListSubViewControllers.add(memberListSubViewController);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void setComponentsText() {
         this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
