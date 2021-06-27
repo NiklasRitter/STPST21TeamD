@@ -200,18 +200,18 @@ public class WebSocketManager {
 
         // change channel
         if (action.equals(CHANNEL_UPDATED)) {
-            Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
+            Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS), data.getJsonArray(AUDIOMEMBERS));
             if (channel == null) {
                 Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
             }
         }
         if (action.equals(CHANNEL_CREATED)) {
             Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
-            editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS));
+            editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS), data.getJsonArray(AUDIOMEMBERS));
         }
         if (action.equals(CHANNEL_DELETED)){
             Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
-            Channel channel = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build());
+            Channel channel = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build(), Json.createArrayBuilder().build());
             channel.removeYou();
         }
 

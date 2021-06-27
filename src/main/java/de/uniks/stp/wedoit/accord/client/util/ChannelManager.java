@@ -7,11 +7,12 @@ import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.ID;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 
 public class ChannelManager {
 
@@ -34,7 +35,7 @@ public class ChannelManager {
      * @param id id of the channel which channels compared by
      * @return category with given id and name and with server server
      */
-    public Channel haveChannel(String id, String name, String type, Boolean privileged, Category category, JsonArray members) {
+    public Channel haveChannel(String id, String name, String type, Boolean privileged, Category category, JsonArray members, JsonArray audioMembers) {
         Server server = category.getServer();
         Channel channel = null;
         for (Channel channelIterator : category.getChannels()) {
@@ -48,6 +49,7 @@ public class ChannelManager {
         }
         channel.setName(name).setPrivileged(privileged).setType(type).setId(id).setCategory(category).setRead(true);
         channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+        channel.withoutAudioMembers(channel.getAudioMembers());
 
         if(members != null){
             List<String> membersIds = new ArrayList<>();
@@ -62,6 +64,17 @@ public class ChannelManager {
                 }
             }
         }
+        if(audioMembers != null){
+            List<String> membersAudioIds = new ArrayList<>();
+            for (int index = 0; index < audioMembers.toArray().length; index++) {
+                membersAudioIds.add(audioMembers.getString(index));
+            }
+            for (User user : server.getMembers()) {
+                if (membersAudioIds.contains(user.getId())) {
+                    channel.withAudioMembers(user);
+                }
+            }
+        }
         return channel;
     }
 
@@ -73,10 +86,10 @@ public class ChannelManager {
      * @param id id of the channel which channels compared by
      * @return channel upgraded channel or null
      */
-    public Channel updateChannel(Server server, String id, String name, String type, Boolean privileged, String categoryId, JsonArray members) {
+    public Channel updateChannel(Server server, String id, String name, String type, Boolean privileged, String categoryId, JsonArray members, JsonArray audioMembers) {
         for (Category category : server.getCategories()) {
             if (category.getId().equals(categoryId)) {
-                return haveChannel(id, name, type, privileged, category, members);
+                return haveChannel(id, name, type, privileged, category, members, audioMembers);
             }
         }
         return null;
@@ -91,24 +104,29 @@ public class ChannelManager {
         Objects.requireNonNull(category);
         Objects.requireNonNull(categoriesChannelResponse);
 
-        List<String> channelIds = new ArrayList<>();
-        for (Channel channel : category.getChannels()) {
-            channelIds.add(channel.getId());
-        }
+//        List<String> channelIds = new ArrayList<>();
+//        for (Channel channel : category.getChannels()) {
+//            channelIds.add(channel.getId());
+//        }
         for (int index = 0; index < categoriesChannelResponse.toArray().length; index++) {
-
-            if (!channelIds.contains(categoriesChannelResponse.getJsonObject(index).getString(ID))) {
-                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJsonObject(index)).setRead(true);
-                channel.setCategory(category);
-                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJsonObject(index));
-                for (String memberId : memberIds) {
-                    User user = editor.getServerUserById(category.getServer(), memberId);
-
-                    channel.withMembers(user);
-                }
-            }
+            JsonObject channel = categoriesChannelResponse.getJsonObject(index);
+            haveChannel(channel.getString(ID), channel.getString(NAME), channel.getString(TYPE), channel.getBoolean(PRIVILEGED), category, channel.getJsonArray(MEMBERS), channel.getJsonArray(AUDIOMEMBERS));
+//            if (!channelIds.contains(categoriesChannelResponse.getJsonObject(index).getString(ID))) {
+//                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJsonObject(index)).setRead(true);
+//                channel.setCategory(category);
+//                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJsonObject(index));
+//                List<String> audioMemberIds = JsonUtil.parseAudioMembers(categoriesChannelResponse.getJsonObject(index));
+//                for (String memberId : memberIds) {
+//                    User user = editor.getServerUserById(category.getServer(), memberId);
+//                    channel.withMembers(user);
+//                }
+//                for(String audioMemberId : audioMemberIds){
+//                    User user = editor.getServerUserById(category.getServer(), audioMemberId);
+//                    channel.withAudioMembers(user);
+//                }
+//            }
         }
-        category.getChannels();
+//        category.getChannels();
     }
 
 }
