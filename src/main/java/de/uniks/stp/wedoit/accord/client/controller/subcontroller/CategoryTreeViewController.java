@@ -149,7 +149,7 @@ public class CategoryTreeViewController implements Controller {
                         controller.refreshLvUsers(channel);
                     }
                     else if (channel.getType().equals(AUDIO)) {
-                        controller.initAudioChannelSubView();
+                        controller.initAudioChannelSubView(channel);
                     }
                 }
             }

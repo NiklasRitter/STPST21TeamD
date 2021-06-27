@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
@@ -57,6 +58,7 @@ public class ServerScreenController implements Controller {
     private final CategoryTreeViewController categoryTreeViewController;
     private final ServerChatController serverChatController;
     private VBox audioChannelSubViewContainer;
+    private AudioChannelSubViewController audioChannelSubViewController;
 
     /**
      * Create a new Controller
@@ -141,25 +143,7 @@ public class ServerScreenController implements Controller {
                 categoryTreeViewController.initContextMenu();
             }
         });
-
-        //TODO
-        //initAudioChannelSubView();
     }
-
-    public void initAudioChannelSubView() {
-        this.audioChannelSubViewContainer.getChildren().clear();
-        try {
-            Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
-            // MemberListSubViewController memberListSubViewController = new MemberListSubViewController(user, view, this, false);
-            // memberListSubViewController.init();
-
-            this.audioChannelSubViewContainer.getChildren().add(view);
-            // this.memberListSubViewControllers.add(memberListSubViewController);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 
     private void setComponentsText() {
         this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
@@ -196,6 +180,26 @@ public class ServerScreenController implements Controller {
     }
 
     /**
+     * If audio channel is clicked, then the audioChannelSubView is dynamically added to ServerScreen.
+     * then calls AudioChannelSubViewController:
+     * You can then take actions in an audio channel.
+     */
+    public void initAudioChannelSubView(Channel channel) {
+        this.audioChannelSubViewContainer.getChildren().clear();
+        try {
+            Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
+
+            audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, this, channel);
+            audioChannelSubViewController.init();
+
+            this.audioChannelSubViewContainer.getChildren().add(view);
+            // this.audioChannelSubViewControllers.add(audioChannelSubViewController);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Called to stop this controller
      * <p>
      * Remove action listeners
@@ -209,16 +213,18 @@ public class ServerScreenController implements Controller {
         this.editor.getWebSocketManager().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + this.server.getId());
 
-        server.listeners().removePropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
+        this.server.listeners().removePropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
 
         this.chatWSCallback = null;
         this.serverWSCallback = null;
 
-        categoryTreeViewController.stop();
-        serverChatController.stop();
-        editor.setCurrentServer(null);
+        this.categoryTreeViewController.stop();
+        this.serverChatController.stop();
+        this.editor.setCurrentServer(null);
         deleteCurrentServer();
+
+        this.audioChannelSubViewController.stop();
     }
 
     // ActionEvent Methods

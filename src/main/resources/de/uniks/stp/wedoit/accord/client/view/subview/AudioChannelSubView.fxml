@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="67.0" prefWidth="150.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="67.0" prefWidth="150.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox prefHeight="22.0" prefWidth="150.0">
          <children>
@@ -17,7 +17,7 @@
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin></Label>
-            <Label id="lblAudioChannelName" prefHeight="17.0" prefWidth="69.0" text="Meeting" />
+            <Label id="lblAudioChannelName" prefHeight="17.0" prefWidth="56.0" text="Meeting" />
          </children>
       </HBox>
       <Label id="lblUserName" prefHeight="17.0" prefWidth="184.0" text="Bob">
@@ -26,7 +26,7 @@
          </VBox.margin></Label>
       <HBox alignment="CENTER" prefHeight="33.0" prefWidth="150.0">
          <children>
-            <Button id="btnMicro" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="styleButton">
+            <Button id="btnMuteYou" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="styleButton">
                <graphic>
                   <ImageView fitHeight="31.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -38,7 +38,7 @@
                   <Insets bottom="5.0" />
                </HBox.margin>
             </Button>
-            <Button id="btnSound" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="styleButton">
+            <Button id="btnMuteAll" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="styleButton">
                <HBox.margin>
                   <Insets bottom="5.0" left="10.0" right="10.0" />
                </HBox.margin>
@@ -50,7 +50,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button id="btnLeaveAudioChannel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="styleButton">
+            <Button id="btnLeave" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="styleButton">
                <HBox.margin>
                   <Insets bottom="5.0" />
                </HBox.margin>
