@@ -385,4 +385,8 @@ public class ServerScreenController implements Controller {
     public ServerChatController getServerChatController() {
         return serverChatController;
     }
+
+    public VBox getAudioChannelSubViewContainer() {
+        return audioChannelSubViewContainer;
+    }
 }

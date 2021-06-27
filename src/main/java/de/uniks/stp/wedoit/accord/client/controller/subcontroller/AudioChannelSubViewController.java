@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.CreateChannelScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.EditChannelScreenController;
+import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.event.ActionEvent;
@@ -20,13 +21,13 @@ public class AudioChannelSubViewController implements Controller {
 
     private final LocalUser localUser;
     private final Parent view;
-    private final Controller controller;
+    private final ServerScreenController controller;
     private final Channel channel;
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
 
-    public AudioChannelSubViewController(LocalUser localUser, Parent view, Controller controller, Channel channel) {
+    public AudioChannelSubViewController(LocalUser localUser, Parent view, ServerScreenController controller, Channel channel) {
         this.localUser = localUser;
         this.view = view;
         this.controller = controller;
@@ -60,7 +61,6 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     private void btnLeaveOnClick(ActionEvent actionEvent) {
-
     }
 
     public void initAudioChannel() {

@@ -1,12 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -17,10 +19,7 @@ import javafx.scene.layout.VBox;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
@@ -146,18 +145,17 @@ public class CategoryTreeViewController implements Controller {
                         controller.getServerChatController().initChannelChat(channel);
                         controller.refreshLvUsers(channel);
                     }
-                    else if (channel.getType().equals(AUDIO)) {
-                        controller.initAudioChannelSubView(channel);
-                    }
                 }
                 else if (mouseEvent.getClickCount() == 2) {
                     if (channel.getType().equals(AUDIO)){
                         for(User user : channel.getAudioMembers()){
                             if(user.getId().equals(localUser.getId())){
                                 editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+                                controller.getAudioChannelSubViewContainer().getChildren().clear();
                                 return;
                             }
                         }
+                        controller.initAudioChannelSubView(channel);
                         editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
                     }
                 }
