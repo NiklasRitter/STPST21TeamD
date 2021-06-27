@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
@@ -68,6 +69,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                     if (!((Channel) item).isRead()) {
                         this.getStyleClass().add("newMessage");
                     }
+                }
+                if(item instanceof User){
+                    this.setText("- " + ((User) item).getName());
                 }
             } else {
                 this.setText(null);

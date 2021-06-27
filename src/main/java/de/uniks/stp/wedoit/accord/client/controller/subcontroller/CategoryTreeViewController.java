@@ -4,10 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
 import javafx.scene.Parent;
@@ -20,9 +17,11 @@ import javafx.scene.input.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.CREATE_CATEGORY_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
@@ -46,6 +45,7 @@ public class CategoryTreeViewController implements Controller {
     private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
     private final PropertyChangeListener categoriesListener = this::handleCategoryChange;
     private final PropertyChangeListener channelListener = this::handleChannelChange;
+    private final PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
 
     public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
@@ -136,15 +136,25 @@ public class CategoryTreeViewController implements Controller {
      * @param mouseEvent occurs when a listItem is clicked
      */
     private void tvServerChannelsOnDoubleClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 1) {
-
-            if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
-                if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
-                    Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
+        if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
+            if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
+                Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
+                if (mouseEvent.getClickCount() == 1) {
                     if (channel.getType().equals(TEXT)) {
                         channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
                         controller.getServerChatController().initChannelChat(channel);
                         controller.refreshLvUsers(channel);
+                    }
+                }
+                else if (mouseEvent.getClickCount() == 2) {
+                    if (channel.getType().equals(AUDIO)){
+                        for(User user : channel.getAudioMembers()){
+                            if(user.getId().equals(localUser.getId())){
+                                editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+                                return;
+                            }
+                        }
+                        editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
                     }
                 }
             }
@@ -199,6 +209,17 @@ public class CategoryTreeViewController implements Controller {
     }
 
     /**
+     * handles a change in the audio members of a channel
+     */
+    private void handleChannelAudioMemberChange(PropertyChangeEvent propertyChangeEvent) {
+        Platform.runLater(() -> {
+            if (propertyChangeEvent.getSource()instanceof Channel) {
+                updateAudioChannelMembers((Channel) propertyChangeEvent.getSource(), (User) propertyChangeEvent.getOldValue(), (User) propertyChangeEvent.getNewValue());
+            }
+        });
+    }
+
+    /**
      * creates a category tree item or deletes a old one
      *
      * @param oldValue added category item which should removed in the view
@@ -245,6 +266,18 @@ public class CategoryTreeViewController implements Controller {
         }
     }
 
+    private void updateAudioChannelMembers(Channel channel, User oldValue, User newValue){
+        TreeItem<Object> channelItem = getTreeItemChannel(channel);
+        if(channelItem != null){
+            if(oldValue == null && newValue != null){
+                addAudioMemberToTreeView(channel, channelItem);
+            }
+            else if (oldValue != null && newValue == null) {
+                channelItem.getChildren().removeIf(objectTreeItem -> objectTreeItem.getValue().equals(oldValue));
+            }
+        }
+    }
+
     /**
      * adds a channel to the tree view and add property change listener
      *
@@ -256,8 +289,19 @@ public class CategoryTreeViewController implements Controller {
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_READ, this.channelReadListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
+        channel.listeners().addPropertyChangeListener(Channel.PROPERTY_AUDIO_MEMBERS, this.audioMemberListener);
         TreeItem<Object> channelItem = new TreeItem<>(channel);
         categoryItem.getChildren().add(channelItem);
+        if(!channel.getAudioMembers().isEmpty()){
+            addAudioMemberToTreeView(channel, channelItem);
+        }
+    }
+
+    private void addAudioMemberToTreeView(Channel channel, TreeItem<Object> channelItem) {
+        for(User user : channel.getAudioMembers()){
+            TreeItem<Object> audioMemberItem = new TreeItem<>(user);
+            channelItem.getChildren().add(audioMemberItem);
+        }
     }
 
     /**
@@ -269,6 +313,21 @@ public class CategoryTreeViewController implements Controller {
             Category currentCategory = (Category) categoryItem.getValue();
             if (currentCategory.getId().equals(category.getId())) {
                 return categoryItem;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param channel which is value of a certain tree item
+     * @return the correct tree item for a given channel
+     */
+    private TreeItem<Object> getTreeItemChannel(Channel channel) {
+        TreeItem<Object> categoryItem = getTreeItemCategory(channel.getCategory());
+        for (TreeItem<Object> channelItem : categoryItem.getChildren()) {
+            Channel currentChannel = (Channel) channelItem.getValue();
+            if (currentChannel.getId().equals(channel.getId())) {
+                return channelItem;
             }
         }
         return null;
@@ -292,5 +351,23 @@ public class CategoryTreeViewController implements Controller {
      */
     public Map<String, Channel> getChannelMap() {
         return channelMap;
+    }
+
+    public void handleJoinAudioChannel(Category category) {
+        if(category != null){
+            loadCategoryChannels(category, getTreeItemCategory(category));
+        }
+        else{
+            System.out.println("Join Problem");
+        }
+    }
+
+    public void handleLeaveAudioChannel(Category category) {
+        if(category != null){
+            loadCategoryChannels(category, getTreeItemCategory(category));
+        }
+        else{
+            System.out.println("Join Problem");
+        }
     }
 }

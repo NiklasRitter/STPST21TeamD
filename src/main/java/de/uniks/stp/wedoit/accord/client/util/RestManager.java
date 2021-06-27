@@ -83,6 +83,7 @@ public class RestManager {
             } else {
                 JsonObject loginAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
                 String userKey = loginAnswer.getString(USER_KEY);
+                System.out.println(userKey);
                 LocalUser localUser = editor.haveLocalUser(username, userKey);
                 localUser.setPassword(password);
                 editor.getWebSocketManager().start();
@@ -620,6 +621,28 @@ public class RestManager {
                 localUser.setPassword(password);
                 editor.getWebSocketManager().start();
                 editor.handleAutomaticLogin(true);
+            }
+        });
+    }
+
+    public void joinAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
+        restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                controller.handleJoinAudioChannel(channel.getCategory());
+            }
+            else{
+                controller.handleJoinAudioChannel(null);
+            }
+        });
+    }
+
+    public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
+        restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                controller.handleLeaveAudioChannel(channel.getCategory());
+            }
+            else{
+                controller.handleLeaveAudioChannel(null);
             }
         });
     }
