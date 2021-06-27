@@ -37,14 +37,6 @@ public class LoginScreenController implements Controller {
     private TextField tfUserName;
     private TextField pwUserPw;
     private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe;
-    private final PropertyChangeListener changeLanguage = this::changeLanguage;
-
-    private void changeLanguage(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            Platform.runLater(() -> this.setComponentsText());
-        }
-    }
-
 
     /**
      * Create a new Controller
@@ -93,10 +85,9 @@ public class LoginScreenController implements Controller {
         this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
-                    setComponentsText();
-                    initTooltips();
-                }
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("LOGIN"));
             }
         });
     }
@@ -179,7 +170,7 @@ public class LoginScreenController implements Controller {
             pwUserPw.getStyleClass().add(LanguageResolver.getString("ERROR"));
             Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("USERNAME_PASSWORD_WRONG")));
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 
@@ -245,6 +236,6 @@ public class LoginScreenController implements Controller {
      * @param actionEvent occurs when clicking the options button
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, "Options", "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
     }
 }

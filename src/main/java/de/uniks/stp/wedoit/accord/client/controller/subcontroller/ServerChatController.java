@@ -32,6 +32,7 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
@@ -94,8 +95,6 @@ public class ServerChatController implements Controller {
         this.lblQuote = (Label) view.lookup("#lblQuote");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
-        this.setComponentsText();
-
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
         this.btnCancelQuote.setOnAction(this::cancelQuote);
@@ -103,24 +102,14 @@ public class ServerChatController implements Controller {
         quoteVisible.getChildren().clear();
         addMessageContextMenu();
 
+        initToolTip();
+    }
+
+    public void initToolTip() {
         Tooltip emojiButton = new Tooltip();
         emojiButton.setText(LanguageResolver.getString("EMOJIS"));
         emojiButton.setStyle("-fx-font-size: 10");
         this.btnEmoji.setTooltip(emojiButton);
-
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
-                    init();
-                }
-            }
-        });
-    }
-
-    private void setComponentsText() {
-        this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
-        this.tfInputMessage.setText(LanguageResolver.getString("YOUR_MESSAGE"));
     }
 
     /**
@@ -165,7 +154,7 @@ public class ServerChatController implements Controller {
     /**
      * adds a context menu for a message
      */
-    private void addMessageContextMenu() {
+    public void addMessageContextMenu() {
         MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
@@ -312,7 +301,7 @@ public class ServerChatController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 

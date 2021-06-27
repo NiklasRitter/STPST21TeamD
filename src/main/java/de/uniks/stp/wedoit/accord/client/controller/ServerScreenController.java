@@ -132,10 +132,13 @@ public class ServerScreenController implements Controller {
         this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                if (editor.getStageManager().getPopupStage().getTitle().equals("Options")) {
-                    setComponentsText();
-                    initTooltips();
-                }
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
+                lbServerName.setContextMenu(createContextMenuLeaveServer());
+                serverChatController.initToolTip();
+                serverChatController.addMessageContextMenu();
+                categoryTreeViewController.initContextMenu();
             }
         });
 
@@ -161,7 +164,7 @@ public class ServerScreenController implements Controller {
     private void setComponentsText() {
         this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
-        this.tfInputMessage.setText(LanguageResolver.getString("YOUR_MESSAGE"));
+        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
     }
 
     /**
@@ -224,7 +227,7 @@ public class ServerScreenController implements Controller {
      * opens the AttentionLeaveServerScreen
      */
     private void leaveServerAttention(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
+        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"), "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
     }
 
     /**
@@ -233,7 +236,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
     }
 
     /**
@@ -242,7 +245,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, "Options", "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
@@ -251,10 +254,11 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void editButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, "Edit Server", "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
+        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_SERVER"), "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
     }
 
     // PropertyChangeEvent Methods
+
     /**
      * rebuilds the user list
      */
@@ -295,7 +299,7 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
@@ -359,8 +363,7 @@ public class ServerScreenController implements Controller {
             } else {
                 users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
             }
-        }
-        else{
+        } else {
             users = server.getMembers().stream().sorted(Comparator.comparing(User::isOnlineStatus)).collect(Collectors.toList());
         }
         Collections.reverse(users);
