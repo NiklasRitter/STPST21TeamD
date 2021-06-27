@@ -6,12 +6,15 @@ import de.uniks.stp.wedoit.accord.client.controller.EditChannelScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.network.AudioStream;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+
+import javax.sound.sampled.AudioSystem;
 
 
 /**
@@ -64,7 +67,7 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     public void initAudioChannel() {
-
+        // AudioStream.connecting();
     }
 
     @Override
