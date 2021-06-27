@@ -411,12 +411,4 @@ public class RestClient {
 
         sendRequest(req, callback);
     }
-
-    public void joinAudioChannel(String userKey, String serverId, String categoryId, String channelId, Callback<JsonNode> callback){
-        // Use UniRest to leave server
-        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH + serverId + CATEGORIES + SLASH + categoryId + CHANNELS + SLASH + channelId + JOIN)
-                .header(USER_KEY, userKey);
-
-        sendRequest(req, callback);
-    }
 }
