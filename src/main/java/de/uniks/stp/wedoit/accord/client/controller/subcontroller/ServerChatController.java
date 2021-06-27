@@ -179,9 +179,9 @@ public class ServerChatController implements Controller {
      * adds a context menu for a message from localUser
      */
     public void addLocalUserMessageContextMenu() {
-        MenuItem quote = new MenuItem("- quote");
-        MenuItem updateMessage = new MenuItem("- update message");
-        MenuItem deleteMessage = new MenuItem("- delete message");
+        MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
+        MenuItem updateMessage = new MenuItem("- " + LanguageResolver.getString("UPDATE_MESSAGE_CONTEXT"));
+        MenuItem deleteMessage = new MenuItem("- " + LanguageResolver.getString("DELETE_MESSAGE"));
         localUserMessageContextMenu = new ContextMenu();
         localUserMessageContextMenu.setId("localUserMessageContextMenu");
         localUserMessageContextMenu.getItems().add(quote);
@@ -222,10 +222,9 @@ public class ServerChatController implements Controller {
                 quoteVisible.getChildren().add(btnCancelQuote);
             }
             if (menu.equals(UPDATE)) {
-                this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"),
+                this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("UPDATE_MESSAGE"),
                         "UpdateMessageScreen", UPDATE_MESSAGE_SCREEN_CONTROLLER,
                         false, message, null);
-                //TODO Language Zeug
             }
             if (menu.equals(DELETE)) {
                 this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"),

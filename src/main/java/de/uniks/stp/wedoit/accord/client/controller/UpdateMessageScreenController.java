@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -43,9 +44,16 @@ public class UpdateMessageScreenController implements Controller {
 
         tfUpdateMessage.setText(message.getText());
 
+        setComponentsText();
+
         btnDiscard.setOnAction(this::discardChanges);
         btnUpdateMessage.setOnAction(this::updateMessage);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
+    }
+
+    private void setComponentsText() {
+        this.btnUpdateMessage.setText(LanguageResolver.getString("SAVE"));
+        this.btnDiscard.setText(LanguageResolver.getString("DISCARD"));
     }
 
     private void updateMessage(ActionEvent actionEvent) {
@@ -56,7 +64,7 @@ public class UpdateMessageScreenController implements Controller {
         } else if (newMessage.length() >= 1) {
             editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
         } else {
-            Platform.runLater(() -> errorLabel.setText("Updated message needs at least 1 character!"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE_CHAR_COUNT")));
         }
     }
 
@@ -68,7 +76,7 @@ public class UpdateMessageScreenController implements Controller {
         if (status) {
             Platform.runLater(editor.getStageManager().getPopupStage()::close);
         } else {
-            Platform.runLater(() -> errorLabel.setText("An error occurred, please try again later!"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE")));
         }
     }
 

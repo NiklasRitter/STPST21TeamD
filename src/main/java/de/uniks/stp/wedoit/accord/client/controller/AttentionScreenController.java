@@ -184,7 +184,6 @@ public class AttentionScreenController implements Controller {
      * @param status status which says whether a deletion was successful
      */
     public void handleDeleteMessage(boolean status) {
-        System.out.println(status);
         if (status) {
             Message message = (Message) objectToDelete;
             message.setChannel(null);
