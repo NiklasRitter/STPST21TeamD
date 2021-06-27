@@ -116,8 +116,8 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <TextField id="tfEnterPrivateChat" prefHeight="27.0" promptText="your message"
-                                           style="-fx-border-color: #3c3f41;" HBox.hgrow="ALWAYS"/>
+                                <TextField id="tfEnterPrivateChat" prefHeight="27.0" style="-fx-border-color: #3c3f41;"
+                                           HBox.hgrow="ALWAYS"/>
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false"
                                         style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>

@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -59,15 +60,19 @@ public class CategoryTreeViewController implements Controller {
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
 
         this.tvServerChannelsRoot = new TreeItem<>();
+        initContextMenu();
+
+        this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
+
+        this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
+    }
+
+    public void initContextMenu() {
         ChannelTreeView channelTreeView = new ChannelTreeView(editor.getStageManager());
         this.tvServerChannels.setCellFactory(channelTreeView);
         this.tvServerChannels.setShowRoot(false);
         this.tvServerChannels.setRoot(tvServerChannelsRoot);
         this.tvServerChannels.setContextMenu(createContextMenuCategory());
-
-        this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
-
-        this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
     }
 
     public void stop() {
@@ -101,7 +106,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
-            Platform.runLater(() -> editor.getStageManager().initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
     }
 
@@ -121,7 +126,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetChannels(List<Channel> channelList) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
-            Platform.runLater(() -> editor.getStageManager().initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
     }
 
@@ -276,9 +281,9 @@ public class CategoryTreeViewController implements Controller {
      */
     private ContextMenu createContextMenuCategory() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem addCategory = new MenuItem("- add category");
+        MenuItem addCategory = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
         contextMenu.getItems().add(addCategory);
-        addCategory.setOnAction((event) -> editor.getStageManager().initView(POPUPSTAGE, "Create Category", "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        addCategory.setOnAction((event) -> editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
         return contextMenu;
     }
 
