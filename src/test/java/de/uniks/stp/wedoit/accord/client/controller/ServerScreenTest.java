@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -37,8 +38,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -1097,6 +1097,51 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Updated message needs at least 1 character!", errorLabel.getText());
+    }
+
+    @Test
+    public void privateMessageTest() {
+        JsonObject restJson = getServerIdSuccessful();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
+        mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // select certain user
+        clickOn("Phil");
+        User phil = (User) listView.getSelectionModel().getSelectedItem();
+
+        //Assert.assertEquals(phil.getPrivateChat().getMessages().size(), 0);
+
+        rightClickOn(listView);
+        //Platform.runLater(() -> stageManager.initView(POPUPSTAGE, phil.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, phil));
+        WaitForAsyncUtils.waitForFxEvents();
+        clickOn("einszweidrei");
+        //clickOn(LanguageResolver.getString("PRIVATE_MESSAGE"));
+/*        clickOn("Private Message");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(stageManager.getPopupStage().getTitle(), phil.getName());
+
+        TextField tfMessage = lookup("#tfMessage").query();
+        Button btnShowChat = lookup("#btnShowChat").query();
+
+        Assert.assertEquals(tfMessage.isEditable(), phil.isOnlineStatus());
+        Assert.assertEquals(tfMessage.getPromptText(), phil.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+
+        phil.setOnlineStatus(true);
+
+        Assert.assertEquals(tfMessage.isEditable(), phil.isOnlineStatus());
+        Assert.assertEquals(tfMessage.getPromptText(), "Send Message to " +phil.getName());
+
+        tfMessage.setText("Hello Phil");
+        WaitForAsyncUtils.waitForFxEvents();
+        press(KeyCode.ENTER);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject test_message = JsonUtil.buildPrivateChatMessage(phil.getName(), "Hello Phil");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(phil.getPrivateChat().getMessages().size(), 0);*/
     }
 
     // Methods for callbacks
