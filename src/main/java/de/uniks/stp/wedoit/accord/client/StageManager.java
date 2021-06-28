@@ -78,7 +78,6 @@ public class StageManager extends Application {
         }
         stage.setTitle(title);
         stage.setScene(scene);
-        stage.centerOnScreen();
         stage.setResizable(resizable);
         stage.show();
     }
