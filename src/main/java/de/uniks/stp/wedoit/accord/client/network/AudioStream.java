@@ -1,8 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
 import java.io.*;
-import java.net.*; // internet traffic
-import javax.sound.sampled.*; // retrieve data formatted accordingly
+import java.net.*;
+import javax.sound.sampled.*;
 
 public class AudioStream {
 
@@ -39,7 +39,7 @@ public class AudioStream {
             // open thread - sample microphone
             line.open(audioFormat);
             // save it into byte array
-            byte[] data = new byte[1279]; //1024? (or 4096, 1024)
+            byte[] data = new byte[1279]; //1024?
 
             InetAddress inetAddress = InetAddress.getByName(this.address);
             MulticastSocket socket = new MulticastSocket();
@@ -58,23 +58,21 @@ public class AudioStream {
         AudioInputStream audioInputStream;
         AudioFormat audioFormat;
 
-        // datalines to connect to speakers and play sound from them
-        DataLine.Info dataLineInfo;
-
         System.setProperty("java.net.preferIPv4Stack", "true");
 
         try {
-            // create multicast group
+            // create multicast group - multiple listeners possible
             InetAddress inetAddress = InetAddress.getByName(this.address);
             MulticastSocket socket = new MulticastSocket(this.port);
             socket.joinGroup(inetAddress);
 
             byte[] receiveData = new byte[1279]; //1024? (or 4096, 1024)
 
+            // how java saves digital version of the audio
             audioFormat = new AudioFormat(this.bitRate, this.sampleSize, this.channels, true, this.bigEndian);
 
-            // converting data into sound
-            dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
+            // datalines to connect to speakers and play sound from them (converting data into sound)
+            DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
             SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
             sourceDataLine.open(audioFormat);
 

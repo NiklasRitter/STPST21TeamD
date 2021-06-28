@@ -193,7 +193,6 @@ public class ServerScreenController implements Controller {
             audioChannelSubViewController.init();
 
             this.audioChannelSubViewContainer.getChildren().add(view);
-            // this.audioChannelSubViewControllers.add(audioChannelSubViewController);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -224,7 +223,9 @@ public class ServerScreenController implements Controller {
         this.editor.setCurrentServer(null);
         deleteCurrentServer();
 
-        this.audioChannelSubViewController.stop();
+        if (audioChannelSubViewController != null) {
+            this.audioChannelSubViewController.stop();
+        }
     }
 
     // ActionEvent Methods
