@@ -211,4 +211,21 @@ public class JsonUtil {
                 .add(MESSAGE, message)
                 .build();
     }
+
+    public static User parseUser(JsonObject jsonUser) {
+        return new User()
+                .setId(jsonUser.getString(ID))
+                .setName(jsonUser.getString(NAME))
+                .setOnlineStatus(jsonUser.getBoolean(ONLINE));
+    }
+
+    public static List<User> parseUserArray(JsonArray jsonUsers) {
+        ArrayList<User> users = new ArrayList<>();
+        for (JsonValue jsonUser : jsonUsers) {
+            User user = parseUser(jsonUser.asJsonObject());
+            users.add(user);
+        }
+        return users;
+    }
+
 }

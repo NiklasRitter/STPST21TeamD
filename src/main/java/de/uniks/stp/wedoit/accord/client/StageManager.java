@@ -78,7 +78,6 @@ public class StageManager extends Application {
         }
         stage.setTitle(title);
         stage.setScene(scene);
-        stage.centerOnScreen();
         stage.setResizable(resizable);
         stage.show();
     }
@@ -176,6 +175,9 @@ public class StageManager extends Application {
                 break;
             case UPDATE_MESSAGE_SCREEN_CONTROLLER:
                 controller = new UpdateMessageScreenController(root, editor, (Message) parameter, popupStage);
+                break;
+            case PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER:
+                controller = new PrivateMessageServerScreenController(root, editor, (Server) parameter, (User) parameterTwo); break;
         }
         if (controller != null) {
             controller.init();
@@ -298,6 +300,10 @@ public class StageManager extends Application {
 
     public Stage getEmojiPickerStage() {
         return emojiPickerStage;
+    }
+
+    public Map<String, Controller> getControllerMap() {
+        return controllerMap;
     }
 
     @Override

@@ -31,6 +31,8 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.AND_SERVER_ID_URL;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
@@ -340,7 +342,7 @@ public class ServerContextMenuTest extends ApplicationTest {
     }
 
     @Test
-    public void createChannelTest() {
+    public void createTextChannelTest() {
 
         Category category = new Category().setId("12345");
         category.setServer(server);
@@ -355,6 +357,10 @@ public class ServerContextMenuTest extends ApplicationTest {
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
+
+        RadioButton radioBtnText = lookup("#radioBtnText").query();
+        clickOn(radioBtnText);
+
         clickOn("#btnSave");
 
         JsonArray members = Json.createArrayBuilder().build();
@@ -372,6 +378,47 @@ public class ServerContextMenuTest extends ApplicationTest {
         Assert.assertNotNull(newChannel);
         Assert.assertEquals(newChannel.getName(), "testChannel");
         Assert.assertTrue(newChannel.isRead());
+        Assert.assertEquals(newChannel.getType(), TEXT);
+    }
+
+    @Test
+    public void createAudioChannelTest() {
+
+        Category category = new Category().setId("12345");
+        category.setServer(server);
+
+        Platform.runLater(() -> {
+            this.stageManager.initView(POPUPSTAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, category, null);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Button button = lookup("#btnSave").query();
+        Assert.assertEquals("Save", button.getText());
+
+        TextField textField = lookup("#tfChannelName").query();
+        textField.setText("testChannel");
+
+        RadioButton radioBtnAudio = lookup("#radioBtnAudio").query();
+        clickOn(radioBtnAudio);
+
+        clickOn("#btnSave");
+
+        JsonArray members = Json.createArrayBuilder().build();
+        JsonObject json = buildCreateChannel(category.getId(), "4321", "testChannel", "audio", false, members);
+        mockCreateChannelRest(json);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Channel newChannel = null;
+        for (Channel channel : category.getChannels()) {
+            if (channel.getId().equals("4321")) {
+                newChannel = channel;
+            }
+        }
+        Assert.assertNotNull(newChannel);
+        Assert.assertEquals(newChannel.getName(), "testChannel");
+        Assert.assertTrue(newChannel.isRead());
+        Assert.assertEquals(newChannel.getType(), AUDIO);
     }
 
     @Test
@@ -392,6 +439,9 @@ public class ServerContextMenuTest extends ApplicationTest {
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");
+
+        RadioButton radioBtnText = lookup("#radioBtnText").query();
+        clickOn(radioBtnText);
 
         CheckBox checkBoxPrivileged = lookup("#checkBoxPrivileged").query();
         clickOn(checkBoxPrivileged);
@@ -460,6 +510,9 @@ public class ServerContextMenuTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Button button = lookup("#btnSave").query();
         Assert.assertEquals(button.getText(), "Save");
+
+        RadioButton radioBtnText = lookup("#radioBtnText").query();
+        clickOn(radioBtnText);
 
         clickOn("#btnSave");
         Label errorLabel = lookup("#lblError").query();
