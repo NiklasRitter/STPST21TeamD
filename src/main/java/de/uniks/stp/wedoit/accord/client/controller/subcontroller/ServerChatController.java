@@ -15,11 +15,14 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -65,6 +68,7 @@ public class ServerChatController implements Controller {
     private ObservableList<User> selectUserObservableList;
     private ArrayList<User> availableUsers;
     private ListView<User> lvSelectUser;
+    private VBox boxTextfield;
 
 
     /**
@@ -93,6 +97,7 @@ public class ServerChatController implements Controller {
      */
     public void init() {
         this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
+        this.boxTextfield = (VBox) view.lookup("#boxTextfield");
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
@@ -106,8 +111,11 @@ public class ServerChatController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnKeyTyped(this::isMarking);
 
+        lvSelectUser = new ListView<User>();
+        lvSelectUser.setVisible(false);
 
         quoteVisible.getChildren().clear();
+
         addUserMessageContextMenu();
         addLocalUserMessageContextMenu();
 
@@ -116,21 +124,21 @@ public class ServerChatController implements Controller {
 
     private void isMarking(KeyEvent keyEvent) {
 
-        if (keyEvent.getCharacter().equals("@")){
-            lvSelectUser = new ListView<User>();
-            this.popup = new Popup();
-            popup.getContent().add(lvSelectUser);
+        if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible()){
+            boxTextfield.getChildren().add(lvSelectUser);
+
+            lvSelectUser.setMinHeight(30);
+            lvSelectUser.setPrefHeight(80);
+            lvSelectUser.setVisible(true);
 
             initLwSelectUser(lvSelectUser);
-            Bounds pos = tfInputMessage.localToScreen(tfInputMessage.getBoundsInLocal());
-
-            popup.setX(pos.getMinX());
-            popup.setAnchorY(pos.getMinY());
-            popup.show(editor.getStageManager().getStage());
-
         }
-        if (keyEvent.getCharacter().equals("x") && popup != null){
-           popup.hide();
+
+        else if (keyEvent.getCharacter().equals("\b")){
+            if (!tfInputMessage.getText().contains("@")) {
+                boxTextfield.getChildren().remove(lvSelectUser);
+                lvSelectUser.setVisible(false);
+            }
         }
 
     }
