@@ -361,9 +361,9 @@ public class CategoryTreeViewController implements Controller {
         return channelMap;
     }
 
-    public void handleJoinAudioChannel(Category category) {
-        if(category != null){
-            loadCategoryChannels(category, getTreeItemCategory(category));
+    public void handleJoinAudioChannel(Channel channel) {
+        if(channel.getCategory() != null){
+            loadCategoryChannels(channel.getCategory(), getTreeItemCategory(channel.getCategory()));
             //TODO here?
             controller.initAudioChannelSubView(channel);
         }

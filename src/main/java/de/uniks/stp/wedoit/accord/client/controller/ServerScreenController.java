@@ -186,14 +186,16 @@ public class ServerScreenController implements Controller {
      * You can then take actions in an audio channel.
      */
     public void initAudioChannelSubView(Channel channel) {
-        this.audioChannelSubViewContainer.getChildren().clear();
+        if (!this.audioChannelSubViewContainer.getChildren().isEmpty()) {
+            this.audioChannelSubViewContainer.getChildren().clear();
+        }
         try {
             Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
 
             audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, this, channel);
             audioChannelSubViewController.init();
 
-            this.audioChannelSubViewContainer.getChildren().add(view);
+            Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().add(view));
         } catch (Exception e) {
             e.printStackTrace();
         }

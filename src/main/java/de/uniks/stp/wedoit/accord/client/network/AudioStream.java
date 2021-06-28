@@ -1,8 +1,15 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
+import de.uniks.stp.wedoit.accord.client.model.Channel;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+
 import java.io.*;
 import java.net.*;
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.sound.sampled.*;
+
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 
 public class AudioStream {
 
@@ -15,7 +22,9 @@ public class AudioStream {
     private MulticastSocket sendSocket;
     private MulticastSocket receiveSocketGroup;
 
-    public void connecting() {
+    public void connecting(LocalUser localUser, Channel channel) {
+
+        createMetaData(localUser, channel);
 
         // default IPv6, but UPD multicasting not available at IPv6
         System.setProperty("java.net.preferIPv4Stack", "true");
@@ -41,14 +50,14 @@ public class AudioStream {
             // open thread - sample microphone
             line.open(audioFormat);
             // save it into byte array
-            byte[] data = new byte[1279]; //1024?
+            byte[] readData = new byte[1024]; //1279?
 
             InetAddress inetAddress = InetAddress.getByName(this.address);
             // ? DatagramSocket
             this.sendSocket = new MulticastSocket();
             while (true) {
-                line.read(data, 0, data.length);
-                datagramPacket = new DatagramPacket(data, data.length, inetAddress, port);
+                line.read(readData, 0, readData.length);
+                datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
                 this.sendSocket.send(datagramPacket);
             }
         } catch (Exception e) {
@@ -96,6 +105,19 @@ public class AudioStream {
             e.printStackTrace();
         }
 
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    private byte[] createMetaData(LocalUser localUser, Channel channel) {
+        JsonObject metaData = Json.createObjectBuilder()
+                .add(CHANNEL, channel.getId())
+                .add(NAME, localUser.getName())
+                .build();
+
+        //TODO MetaData to bytes
+
+        return new byte[25];
     }
 
     private void toSpeaker (byte[] soundBytes, SourceDataLine sourceDataLine) {
