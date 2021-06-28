@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -64,6 +65,7 @@ public class Editor {
 
     /**
      * creates a new AccordClient
+     *
      * @return new Accord client
      */
     public AccordClient haveAccordClient() {
@@ -129,7 +131,6 @@ public class Editor {
     }
 
     /**
-     *
      * @return a user with given id, onlineStatus and name who is member of the given server
      */
     public User haveUserWithServer(String name, String id, boolean online, Server server) {
@@ -266,6 +267,7 @@ public class Editor {
 
     /**
      * redirect to the LoginScreen if success
+     *
      * @param success of the logout request
      */
     public void handleLogoutUser(boolean success) {
@@ -375,6 +377,7 @@ public class Editor {
 
     /**
      * copies a given text to the system clip board
+     *
      * @param text text which should be copied
      */
     public void copyToSystemClipBoard(String text) {
@@ -406,6 +409,40 @@ public class Editor {
             Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
         Platform.runLater(() -> stageManager.getStage().show());
+    }
+
+    /**
+     * returns channel by its id
+     *
+     * @param server     server of the channel
+     * @param channelId  id of the searched channel
+     * @param categoryId category of the channel
+     * @return the channel with the given id
+     */
+    public Channel getChannelById(Server server, String categoryId, String channelId) {
+        Category category = getCategoryById(server, categoryId);
+        for (Channel channel : category.getChannels()) {
+            if (channel.getId().equals(channelId)) {
+                return channel;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * returns category by its id
+     *
+     * @param server server of the channel
+     * @param id     id of the searched category
+     * @return the category with the given id
+     */
+    public Category getCategoryById(Server server, String id) {
+        for (Category category : server.getCategories()) {
+            if (category.getId().equals(id)) {
+                return category;
+            }
+        }
+        return null;
     }
 
 

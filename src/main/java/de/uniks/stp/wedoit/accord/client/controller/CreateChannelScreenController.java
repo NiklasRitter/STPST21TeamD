@@ -77,6 +77,7 @@ public class CreateChannelScreenController implements Controller {
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         checkIfIsPrivileged();

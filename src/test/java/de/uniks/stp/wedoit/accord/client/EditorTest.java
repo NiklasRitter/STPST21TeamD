@@ -176,21 +176,6 @@ public class EditorTest {
     }
 
     @Test
-    public void testLeaveServer() {
-        server = editor.haveServer(localUser, "0098", "Accord");
-        localUser = editor.haveLocalUser(localUser.getName(), localUser.getUserKey());
-        server.setLocalUser(localUser);
-
-        Assert.assertTrue(localUser.getServers().contains(server));
-        Assert.assertEquals(server.getLocalUser(), localUser);
-
-        editor.leaveServer(localUser.getUserKey(), server);
-
-        Assert.assertEquals(server.getLocalUser(), null);
-        Assert.assertFalse(localUser.getServers().contains(server));
-    }
-
-    @Test
     public void testDeleteInvite() {
         String invitationLink = "https://ac.uniks.de/api/servers/60b0d03e026b3534ca54acf8/invites/60ca7f694445370200a52209";
         invitation.setLink(invitationLink).setId("3006");

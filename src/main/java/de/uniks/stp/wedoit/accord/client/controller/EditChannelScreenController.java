@@ -35,7 +35,7 @@ public class EditChannelScreenController implements Controller {
     private Button btnSave;
     private CheckBox checkBoxPrivileged;
     private Button btnDeleteChannel;
-    private Label errorLabel, lblMembers,lblChannelName, lblPrivileged;
+    private Label errorLabel, lblMembers, lblChannelName, lblPrivileged;
     private VBox vBoxMemberNameAndCheckBox;
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList;
@@ -80,6 +80,7 @@ public class EditChannelScreenController implements Controller {
         this.lblChannelName = (Label) view.lookup("#lblChannelName");
         this.lblPrivileged = (Label) view.lookup("#lblPrivileged");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         if (channel.isPrivileged()) {
@@ -132,6 +133,7 @@ public class EditChannelScreenController implements Controller {
             channel.setPrivileged(false);
             lblMembers.setVisible(false);
         }
+        this.editor.getStageManager().getPopupStage().sizeToScene();
     }
 
     /**
@@ -167,6 +169,8 @@ public class EditChannelScreenController implements Controller {
         btnSave.setOnAction(null);
         btnDeleteChannel.setOnAction(null);
         checkBoxPrivileged.setOnAction(null);
+
+
     }
 
 
@@ -218,7 +222,7 @@ public class EditChannelScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteChannelButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"), "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, channel, null);;
+        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"), "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, channel, null);
     }
 
     /**
