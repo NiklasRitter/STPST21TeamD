@@ -167,6 +167,8 @@ public class EditChannelScreenController implements Controller {
         btnSave.setOnAction(null);
         btnDeleteChannel.setOnAction(null);
         checkBoxPrivileged.setOnAction(null);
+
+
     }
 
 
@@ -218,7 +220,7 @@ public class EditChannelScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteChannelButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"), "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, channel, null);;
+        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"), "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, channel, null);
     }
 
     /**

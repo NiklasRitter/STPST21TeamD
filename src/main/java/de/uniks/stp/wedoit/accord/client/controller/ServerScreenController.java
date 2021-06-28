@@ -6,7 +6,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatCont
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
-import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
+import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -132,7 +132,8 @@ public class ServerScreenController implements Controller {
                 editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
                 lbServerName.setContextMenu(createContextMenuLeaveServer());
                 serverChatController.initToolTip();
-                serverChatController.addMessageContextMenu();
+                serverChatController.addUserMessageContextMenu();
+                serverChatController.addLocalUserMessageContextMenu();
                 categoryTreeViewController.initContextMenu();
             }
         });
@@ -305,8 +306,7 @@ public class ServerScreenController implements Controller {
         categoryTreeViewController.initCategoryChannelList();
 
         // load list view
-        ServerUserListView serverUserListView = new ServerUserListView();
-        lvServerUsers.setCellFactory(serverUserListView);
+        lvServerUsers.setCellFactory(new OnlineUsersCellFactory());
         this.refreshLvUsers(new Channel());
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
     }
