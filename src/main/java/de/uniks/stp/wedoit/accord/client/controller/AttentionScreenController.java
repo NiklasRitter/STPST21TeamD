@@ -2,10 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.Category;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -27,7 +24,7 @@ public class AttentionScreenController implements Controller {
     private Label lblObjectToDelete;
     private Button btnDiscard;
     private Button btnDelete;
-    private Label lblError,lblAreYouSure, lblAttention;
+    private Label lblError, lblAreYouSure, lblAttention;
 
     /**
      * Create a new Controller
@@ -127,6 +124,8 @@ public class AttentionScreenController implements Controller {
             this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Category.class)) {
             this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CATEGORY"), "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, objectToDelete, null);
+        } else if (objectToDelete.getClass().equals(Message.class)) {
+            this.editor.getStageManager().getPopupStage().close();
         }
     }
 
@@ -176,6 +175,26 @@ public class AttentionScreenController implements Controller {
             stop();
         } else {
             showError();
+        }
+    }
+
+    /**
+     * handles the deletion of a message
+     *
+     * @param status status which says whether a deletion was successful
+     */
+    public void handleDeleteMessage(boolean status) {
+        if (status) {
+            Message message = (Message) objectToDelete;
+            message.setChannel(null);
+            Stage stage = (Stage) view.getScene().getWindow();
+            Platform.runLater(stage::close);
+            stop();
+        } else {
+            Platform.runLater(() -> {
+                lblError.setText("Error. Delete Message was not successful!");
+                lblError.setVisible(true);
+            });
         }
     }
 }
