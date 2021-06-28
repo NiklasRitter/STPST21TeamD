@@ -65,7 +65,9 @@ public class PrivateMessageServerScreenController implements Controller {
 
     @Override
     public void stop() {
+        this.tfMessage.setOnAction(null);
         this.btnShowChat.setOnAction(null);
+        this.btnEmoji.setOnAction(null);
         this.memberToWrite.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
     }
 

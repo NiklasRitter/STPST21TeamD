@@ -54,7 +54,7 @@ public class ServerUserListView implements javafx.util.Callback<ListView<User>, 
                     circle.setFill(Color.RED);
                 }
             } else {
-                //this.setContextMenu(null);
+                this.setContextMenu(null);
             }
         }
     }
@@ -66,11 +66,9 @@ public class ServerUserListView implements javafx.util.Callback<ListView<User>, 
      */
     private ContextMenu createContextMenuWriteMembers(User user) {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemWriteMembers = new MenuItem("einszweidrei");
-        //MenuItem menuItemWriteMembers = new MenuItem(LanguageResolver.getString("PRIVATE_MESSAGE"));
+        MenuItem menuItemWriteMembers = new MenuItem(LanguageResolver.getString("PRIVATE_MESSAGE"));
         contextMenu.getItems().add(menuItemWriteMembers);
         menuItemWriteMembers.setOnAction((event) -> {
-            System.out.println("hallo");
             stageManager.initView(POPUPSTAGE, user.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, user);
         });
         return contextMenu;
