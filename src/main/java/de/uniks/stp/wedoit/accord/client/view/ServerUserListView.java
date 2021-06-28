@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.PrivateMessageServerScreenController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.scene.control.ContextMenu;
@@ -65,7 +66,7 @@ public class ServerUserListView implements javafx.util.Callback<ListView<User>, 
      */
     private ContextMenu createContextMenuWriteMembers(User user) {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemWriteMembers = new MenuItem("Private Message");
+        MenuItem menuItemWriteMembers = new MenuItem(LanguageResolver.getString("PRIVATE_MESSAGE"));
         contextMenu.getItems().add(menuItemWriteMembers);
         menuItemWriteMembers.setOnAction((event) -> stageManager.initView(POPUPSTAGE, user.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, user));
         return contextMenu;

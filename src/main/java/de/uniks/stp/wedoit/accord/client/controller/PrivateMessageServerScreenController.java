@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -51,8 +52,9 @@ public class PrivateMessageServerScreenController implements Controller {
         this.btnShowChat = (Button) view.lookup("#btnShowChat");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
-        lblTitle.setText("Send Message to " + memberToWrite.getName());
+        lblTitle.setText(LanguageResolver.getString("SEND_MESSAGE_TO") +" " + memberToWrite.getName());
         this.setCorrectPromptText(memberToWrite.isOnlineStatus());
+        this.btnShowChat.setText(LanguageResolver.getString("SHOW_CHAT"));
 
         this.tfMessage.setOnAction(this::tfMessageOnEnter);
         this.btnShowChat.setOnAction(this::btnShowChatOnClick);
@@ -125,9 +127,9 @@ public class PrivateMessageServerScreenController implements Controller {
         this.tfMessage.setEditable(onlineStatus);
         if (!onlineStatus) {
             this.tfMessage.clear();
-            this.tfMessage.setPromptText(memberToWrite.getName() + " is not online");
+            this.tfMessage.setPromptText(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
         } else {
-            this.tfMessage.setPromptText("Send Message to " + memberToWrite.getName());
+            this.tfMessage.setPromptText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
         }
     }
 

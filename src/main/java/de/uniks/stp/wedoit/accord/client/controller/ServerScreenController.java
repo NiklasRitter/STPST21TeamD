@@ -103,7 +103,6 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
-        this.tfInputMessage.setPromptText("Select a textchannel");
         this.tfInputMessage.setEditable(false);
 
         // Add server websocket
@@ -143,7 +142,7 @@ public class ServerScreenController implements Controller {
     private void setComponentsText() {
         this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
-        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+        this.tfInputMessage.setPromptText(LanguageResolver.getString("SELECT_A_CHANNEL"));
     }
 
     /**
