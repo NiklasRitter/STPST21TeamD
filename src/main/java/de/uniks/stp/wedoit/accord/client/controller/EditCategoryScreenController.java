@@ -52,6 +52,7 @@ public class EditCategoryScreenController implements Controller {
         this.errorLabel = (Label) view.lookup("#lblError");
         this.lblCategoryName = (Label) view.lookup("#lblCategoryName");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         // Add action listeners
@@ -62,6 +63,7 @@ public class EditCategoryScreenController implements Controller {
     }
 
     private void setComponentsText() {
+        this.tfCategoryName.setPromptText(LanguageResolver.getString("CATEGORY_NAME"));
         this.lblCategoryName.setText(LanguageResolver.getString("CATEGORY_NAME"));
         this.btnEditCategory.setText(LanguageResolver.getString("SAVE"));
         this.btnDeleteCategory.setText(LanguageResolver.getString("DELETE"));
