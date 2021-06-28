@@ -8,12 +8,11 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.MessageCell;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
@@ -21,8 +20,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -162,7 +159,7 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.setEditable(true);
 
         // load list view
-        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>();
+        MessageCell<PrivateMessage> chatCellFactory = new MessageCell<>();
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(user.getName());
         Collections.reverse(oldMessages);
@@ -189,7 +186,7 @@ public class PrivateChatController implements Controller {
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
 
             if(message.getText().equals(GAME_INVITE.substring(GAME_PREFIX.length())) && !message.getFrom().equals(localUser.getName())){
-                Platform.runLater(()-> btnPlay.setText("Accept"));
+                Platform.runLater(()->btnPlay.setText(LanguageResolver.getString("ACCEPT")));
             }
             if(message.getText().equals(GAME_START) && currentChat != null){
                 Platform.runLater(()-> btnPlay.setText(LanguageResolver.getString("PLAY")));

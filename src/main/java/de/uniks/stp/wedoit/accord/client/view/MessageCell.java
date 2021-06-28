@@ -20,7 +20,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_ID;
 
-public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
+public class MessageCell<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
     @Override
     public ListCell<T> call(ListView<T> param) {
         return new OnlineUserListCell<>(param);
