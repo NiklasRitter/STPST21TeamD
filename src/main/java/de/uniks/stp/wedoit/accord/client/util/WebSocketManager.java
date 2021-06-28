@@ -163,6 +163,9 @@ public class WebSocketManager {
             } else {
                 // create or get a new user with the data
                 User user = editor.haveUserWithServer(name, id, false, server);
+                if (user == null) {
+                    return;
+                }
 
                 if (action.equals(USER_JOINED)) {
                     user.setOnlineStatus(true);
