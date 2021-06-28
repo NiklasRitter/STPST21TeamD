@@ -12,7 +12,7 @@ import java.util.Set;
 public class SqliteDB {
 
     private final String username;
-    private final String url = "jdbc:sqlite:./src/main/resources/data/";
+    private final String url = "jdbc:sqlite::resource:" + getClass().getResource("/data/");
 
     /**
      * When creating a SqliteDB object

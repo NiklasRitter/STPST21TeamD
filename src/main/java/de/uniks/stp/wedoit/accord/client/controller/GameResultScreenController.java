@@ -59,10 +59,11 @@ public class GameResultScreenController implements Controller{
         btnQuit = (Button) view.lookup("#btnQuit");
 
         this.setComponentsText();
-
         if(isWinner == null){
+            lbOutcome.setText(LanguageResolver.getString("OPPONENT_LEFT"));
+        }else if(isWinner){
             lbOutcome.setText(LanguageResolver.getString("YOU_WON"));
-        }else if(!isWinner){
+        }else{
             lbOutcome.setText(LanguageResolver.getString("SECOND_PLACE"));
         }
 

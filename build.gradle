@@ -2,8 +2,8 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'java'
-	// https://plugins.gradle.org/plugin/org.fulib.fulibGradle
-	id 'org.fulib.fulibGradle' version '0.5.0'
+    // https://plugins.gradle.org/plugin/org.fulib.fulibGradle
+    id 'org.fulib.fulibGradle' version '0.5.0'
     id 'jacoco' // DO NOT DELETE
 }
 

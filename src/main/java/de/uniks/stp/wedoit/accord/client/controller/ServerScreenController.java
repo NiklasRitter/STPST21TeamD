@@ -7,7 +7,7 @@ import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
+import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -301,8 +301,11 @@ public class ServerScreenController implements Controller {
         categoryTreeViewController.initCategoryChannelList();
 
         // load list view
+        /* TODO resolve!
         ServerUserListView serverUserListView = new ServerUserListView(this.editor.getStageManager(), this.server);
         lvServerUsers.setCellFactory(serverUserListView);
+         */
+        lvServerUsers.setCellFactory(new OnlineUsersCellFactory(this.editor.getStageManager(), this.server));
         this.refreshLvUsers(new Channel());
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
     }

@@ -3,38 +3,19 @@ import java.util.Objects;
 import java.beans.PropertyChangeSupport;
 
 public class PrivateMessage
-{
-   public static final String PROPERTY_ID = "id";
+extends Message {
    public static final String PROPERTY_TIMESTAMP = "timestamp";
    public static final String PROPERTY_TEXT = "text";
    public static final String PROPERTY_FROM = "from";
    public static final String PROPERTY_TO = "to";
    public static final String PROPERTY_CHAT = "chat";
-   private String id;
+   public static final String PROPERTY_ID = "id";
    private long timestamp;
    private String text;
    private String from;
    private String to;
    private Chat chat;
-   protected PropertyChangeSupport listeners;
-
-   public String getId()
-   {
-      return this.id;
-   }
-
-   public PrivateMessage setId(String value)
-   {
-      if (Objects.equals(value, this.id))
-      {
-         return this;
-      }
-
-      final String oldValue = this.id;
-      this.id = value;
-      this.firePropertyChange(PROPERTY_ID, oldValue, value);
-      return this;
-   }
+   private String id;
 
    public long getTimestamp()
    {
@@ -135,38 +116,39 @@ public class PrivateMessage
       return this;
    }
 
-   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+   public String getId()
    {
-      if (this.listeners != null)
-      {
-         this.listeners.firePropertyChange(propertyName, oldValue, newValue);
-         return true;
-      }
-      return false;
+      return this.id;
    }
 
-   public PropertyChangeSupport listeners()
+   public PrivateMessage setId(String value)
    {
-      if (this.listeners == null)
+      if (Objects.equals(value, this.id))
       {
-         this.listeners = new PropertyChangeSupport(this);
+         return this;
       }
-      return this.listeners;
+
+      final String oldValue = this.id;
+      this.id = value;
+      this.firePropertyChange(PROPERTY_ID, oldValue, value);
+      return this;
    }
 
    @Override
    public String toString()
    {
-      final StringBuilder result = new StringBuilder();
+      final StringBuilder result = new StringBuilder(super.toString());
       result.append(' ').append(this.getId());
       result.append(' ').append(this.getText());
       result.append(' ').append(this.getFrom());
       result.append(' ').append(this.getTo());
-      return result.substring(1);
+      return result.toString();
    }
 
+   @Override
    public void removeYou()
    {
+      super.removeYou();
       this.setChat(null);
    }
 }

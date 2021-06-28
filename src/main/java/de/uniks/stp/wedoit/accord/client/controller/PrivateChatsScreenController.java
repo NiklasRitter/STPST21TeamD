@@ -5,7 +5,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatCon
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.view.PrivateChatsScreenOnlineUsersCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,13 +38,11 @@ public class PrivateChatsScreenController implements Controller {
     private TextField tfPrivateChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
-    //private final PropertyChangeListener usersChatReadListener = this::usersChatReadChanged;
     private ObservableList<User> onlineUserObservableList;
     private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private List<User> availableUsers = new ArrayList<>();
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser, lblOnlineUser;
-    private Boolean userIsSelected = false;
     private PrivateChatController privateChatController;
     private User selectedUser;
 
@@ -191,7 +189,7 @@ public class PrivateChatsScreenController implements Controller {
      */
     public void handleGetOnlineUsers() {
         // load list view
-        PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
+        OnlineUsersCellFactory usersListViewCellFactory = new OnlineUsersCellFactory(null, null);
         lwOnlineUsers.setCellFactory(usersListViewCellFactory);
         availableUsers = new ArrayList<>(localUser.getUsers());
 
@@ -306,7 +304,6 @@ public class PrivateChatsScreenController implements Controller {
             btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ?
                     LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
             privateChatController.initPrivateChat(selectedUser);
-            this.userIsSelected = true;
             this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
             this.btnPlay.setVisible(true);
         }

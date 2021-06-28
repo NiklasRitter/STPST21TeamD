@@ -8,7 +8,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import de.uniks.stp.wedoit.accord.client.view.PrivateMessageCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -49,6 +49,7 @@ public class PrivateChatController implements Controller {
     private Button btnEmoji;
     private Chat currentChat;
     private final PropertyChangeListener chatListener = this::newMessage;
+    private MenuItem quote;
     private User selectedUser;
 
     /**
@@ -117,7 +118,7 @@ public class PrivateChatController implements Controller {
      * adds message context menu for messages with the option "quote"
      */
     public void addMessageContextMenu() {
-        MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
+        quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
@@ -167,7 +168,7 @@ public class PrivateChatController implements Controller {
         }
 
         // load list view
-        PrivateMessageCellFactory chatCellFactory = new PrivateMessageCellFactory();
+        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>();
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(selectedUser.getName());
         Collections.reverse(oldMessages);
@@ -194,8 +195,8 @@ public class PrivateChatController implements Controller {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
 
-            if (message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName())) {
-                Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("ACCEPT")));
+            if(message.getText().equals(GAME_INVITE.substring(GAME_PREFIX.length())) && !message.getFrom().equals(localUser.getName())){
+                Platform.runLater(()->btnPlay.setText(LanguageResolver.getString("ACCEPT")));
             }
             if (message.getText().equals(GAME_START) && currentChat != null) {
                 Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("PLAY")));
@@ -272,6 +273,7 @@ public class PrivateChatController implements Controller {
                     }
                 }
             }
+
         }
 
     }
