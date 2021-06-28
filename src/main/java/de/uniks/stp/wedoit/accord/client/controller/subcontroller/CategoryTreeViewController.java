@@ -155,9 +155,9 @@ public class CategoryTreeViewController implements Controller {
                                 return;
                             }
                         }
-                        // editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+                        editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
                         // TODO here?
-                        controller.initAudioChannelSubView(channel);
+                        // controller.initAudioChannelSubView(channel);
                     }
                 }
             }
@@ -360,7 +360,7 @@ public class CategoryTreeViewController implements Controller {
         if(category != null){
             loadCategoryChannels(category, getTreeItemCategory(category));
             //TODO here?
-            // controller.initAudioChannelSubView(channel);
+            controller.initAudioChannelSubView(channel);
         }
         else{
             System.err.println("Join Problem");

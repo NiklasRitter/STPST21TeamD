@@ -649,7 +649,7 @@ public class RestManager {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 controller.handleJoinAudioChannel(channel.getCategory());
                 // TODO here?
-                controller.getController().initAudioChannelSubView(channel);
+                // controller.getController().initAudioChannelSubView(channel);
             }
             else{
                 controller.handleJoinAudioChannel(null);
