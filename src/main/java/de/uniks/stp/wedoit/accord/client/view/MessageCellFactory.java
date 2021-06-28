@@ -1,9 +1,15 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
+import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import javafx.geometry.Pos;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,6 +17,14 @@ import java.util.Date;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class MessageCellFactory implements javafx.util.Callback<ListView<Message>, ListCell<Message>> {
+
+    private final Editor editor;
+    private final ServerChatController serverChatController;
+
+    public MessageCellFactory(Editor editor, ServerChatController serverChatController) {
+        this.editor = editor;
+        this.serverChatController = serverChatController;
+    }
 
     @Override
     public ListCell<Message> call(ListView<Message> param) {
@@ -54,6 +68,7 @@ public class MessageCellFactory implements javafx.util.Callback<ListView<Message
                     String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
+
             } else {
                 this.setText("");
                 this.getStyleClass().removeAll("font_size");

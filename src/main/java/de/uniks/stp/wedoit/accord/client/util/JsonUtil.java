@@ -142,6 +142,19 @@ public class JsonUtil {
     }
 
     /**
+     * Parse given JsonObject to a Message but without from and timestamp
+     *
+     * @param jsonMessage jsonObject to parse
+     * @return message
+     */
+    public static Message parseMessageUpdated(JsonObject jsonMessage) {
+        Message message = new Message();
+        message.setId(jsonMessage.asJsonObject().getString(ID));
+        message.setText(jsonMessage.asJsonObject().getString(TEXT));
+        return message;
+    }
+
+    /**
      * Parse given JsonArray to a List of Messages
      *
      * @param jsonMessages The JsonArray to parse

@@ -50,8 +50,9 @@ public class RestManager {
      * does a rest request to create a server and handles the response.
      * <p>
      * Adds the responsed server to the data if successful.
+     *
      * @param serverNameInput name for the new server
-     * @param controller controller in which the response need handled
+     * @param controller      controller in which the response need handled
      */
     public void createServer(String serverNameInput, CreateServerScreenController controller) {
         restClient.createServer(serverNameInput, editor.getLocalUser().getUserKey(), (response) -> {
@@ -72,8 +73,9 @@ public class RestManager {
      * does a rest request to login a user and handles the response.
      * <p>
      * Adds the localUser to the data if successful.
-     * @param username username
-     * @param password password
+     *
+     * @param username   username
+     * @param password   password
      * @param controller controller in which the response need handled
      */
     public void loginUser(String username, String password, LoginScreenController controller) {
@@ -93,8 +95,9 @@ public class RestManager {
 
     /**
      * does a rest request to register a user and handles the response.
-     * @param username username
-     * @param password password
+     *
+     * @param username   username
+     * @param password   password
      * @param controller controller in which the response need handled
      */
     public void registerUser(String username, String password, LoginScreenController controller) {
@@ -105,7 +108,8 @@ public class RestManager {
      * does a rest request to get servers of the given localUser and handles the response.
      * <p>
      * Adds the servers to the data model.
-     * @param localUser logged in local user
+     *
+     * @param localUser  logged in local user
      * @param controller controller in which the response need handled
      */
     public void getServers(LocalUser localUser, MainScreenController controller) {
@@ -129,8 +133,9 @@ public class RestManager {
      * does a rest request to get explicit information of the given server and handles the response.
      * <p>
      * Adds the explicit server information to the data model.
-     * @param localUser logged in local user
-     * @param server server
+     *
+     * @param localUser  logged in local user
+     * @param server     server
      * @param controller controller in which the response need handled
      */
     public void getExplicitServerInformation(LocalUser localUser, Server server, ServerScreenController controller) {
@@ -152,8 +157,9 @@ public class RestManager {
      * does a rest request to change the name of the given server and handles the response.
      * <p>
      * And sets the name of the given server correct in the data model.
-     * @param localUser logged in local user
-     * @param server server
+     *
+     * @param localUser  logged in local user
+     * @param server     server
      * @param controller controller in which the response need handled
      */
     public void changeServerName(LocalUser localUser, Server server, String newServerName, EditServerScreenController controller) {
@@ -171,7 +177,8 @@ public class RestManager {
      * does a rest request to get all online user and handles the response.
      * <p>
      * And adds the users to the data model.
-     * @param localUser logged in local user
+     *
+     * @param localUser  logged in local user
      * @param controller controller in which the response need handled
      */
     public void getOnlineUsers(LocalUser localUser, PrivateChatsScreenController controller) {
@@ -192,6 +199,7 @@ public class RestManager {
      * does a rest request to get all online user to get the id of a local user and handles the response.
      * <p>
      * And sets the id for the localUser to the data model.
+     *
      * @param localUser logged in local user
      */
     public void getLocalUserId(LocalUser localUser) {
@@ -214,6 +222,7 @@ public class RestManager {
     /**
      * does a rest request to logout a user and handles the response.
      * <p>
+     *
      * @param userKey of the local user which should logged out
      */
     public void logoutUser(String userKey) {
@@ -224,8 +233,9 @@ public class RestManager {
      * does a rest request to get categories of the given server and handles the response.
      * <p>
      * Adds the categories to the data model.
-     * @param localUser logged in local user
-     * @param server server
+     *
+     * @param localUser  logged in local user
+     * @param server     server
      * @param controller controller in which the response need handled
      */
     public void getCategories(LocalUser localUser, Server server, CategoryTreeViewController controller) {
@@ -247,8 +257,9 @@ public class RestManager {
      * does a rest request to get channels of the given server and handles the response.
      * <p>
      * Adds the channels to the data model.
-     * @param localUser logged in local user
-     * @param server server
+     *
+     * @param localUser  logged in local user
+     * @param server     server
      * @param controller controller in which the response need handled
      */
     public void getChannels(LocalUser localUser, Server server, Category category, TreeItem<Object> categoryItem, CategoryTreeViewController controller) {
@@ -271,9 +282,10 @@ public class RestManager {
      * does a rest request to create a category for the given server and handles the response.
      * <p>
      * Adds the category to the data model.
-     * @param server server
+     *
+     * @param server            server
      * @param categoryNameInput name for the new category
-     * @param controller controller in which the response need handled
+     * @param controller        controller in which the response need handled
      */
     public void createCategory(Server server, String categoryNameInput, CreateCategoryScreenController controller) {
         restClient.createCategory(server.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
@@ -294,11 +306,12 @@ public class RestManager {
      * does a rest request to create a channel for the given server and category and handles the response.
      * <p>
      * Adds the channel to the data model.
-     * @param server server
-     * @param privileged privileged
-     * @param members members for the options privileged
+     *
+     * @param server           server
+     * @param privileged       privileged
+     * @param members          members for the options privileged
      * @param channelNameInput name for the new channel
-     * @param controller controller in which the response need handled
+     * @param controller       controller in which the response need handled
      */
     public void createChannel(Server server, Category category, String channelNameInput, String type, boolean privileged, List<String> members, CreateChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
@@ -335,13 +348,14 @@ public class RestManager {
      * does a rest request to update a channel for the given server and handles the response.
      * <p>
      * Updates the channel in the data model.
-     * @param server server
-     * @param category category
-     * @param channel channel which should be updated
+     *
+     * @param server           server
+     * @param category         category
+     * @param channel          channel which should be updated
      * @param channelNameInput new name of the channel
-     * @param privileged privileged
-     * @param members members for the options privileged
-     * @param controller controller in which the response need handled
+     * @param privileged       privileged
+     * @param members          members for the options privileged
+     * @param controller       controller in which the response need handled
      */
     public void updateChannel(Server server, Category category, Channel channel, String channelNameInput, boolean privileged, List<String> members, EditChannelScreenController controller) {
         JsonArrayBuilder memberJson = Json.createArrayBuilder();
@@ -378,10 +392,11 @@ public class RestManager {
      * does a rest request to update a category for the given server and handles the response.
      * <p>
      * Updates the category in the data model.
-     * @param server server
-     * @param category category
+     *
+     * @param server            server
+     * @param category          category
      * @param categoryNameInput new name of the channel
-     * @param controller controller in which the response need handled
+     * @param controller        controller in which the response need handled
      */
     public void updateCategory(Server server, Category category, String categoryNameInput, EditCategoryScreenController controller) {
         restClient.updateCategory(server.getId(), category.getId(), categoryNameInput, editor.getLocalUser().getUserKey(), (response) -> {
@@ -474,27 +489,27 @@ public class RestManager {
 
 
     /**
-     * Should be called if a server, category or channel will be deleted.
+     * Should be called if a server, category, message or channel will be deleted.
      * It automatically chooses the correct delete method
      */
     public void deleteObject(LocalUser localUser, Object objectToDelete, AttentionScreenController controller) {
         if (objectToDelete.getClass().equals(Server.class)) {
             deleteServer(localUser, (Server) objectToDelete, controller);
-        }
-        else if(objectToDelete.getClass().equals(Channel.class)){
+        } else if (objectToDelete.getClass().equals(Channel.class)) {
             deleteChannel(localUser, (Channel) objectToDelete, controller);
-        }
-        else if(objectToDelete.getClass().equals(Category.class)){
+        } else if (objectToDelete.getClass().equals(Category.class)) {
             deleteCategory(localUser, (Category) objectToDelete, controller);
+        } else if (objectToDelete.getClass().equals(Message.class)) {
+            deleteMessage(localUser, (Message) objectToDelete, controller);
         }
     }
 
     /**
      * Try to delete a server with the Restclient::deleteServer method
      *
-     * @param localUser      localUser who is logged in
-     * @param server server which should be deleted
-     * @param controller     controller in which the response is handled
+     * @param localUser  localUser who is logged in
+     * @param server     server which should be deleted
+     * @param controller controller in which the response is handled
      */
     private void deleteServer(LocalUser localUser, Server server, AttentionScreenController controller) {
         restClient.deleteServer(localUser.getUserKey(), server.getId(), (response) -> controller.handleDeleteServer(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
@@ -503,9 +518,9 @@ public class RestManager {
     /**
      * Try to delete a channel with the Restclient::deleteChannel method
      *
-     * @param localUser      localUser who is logged in
-     * @param channel channel which should be deleted
-     * @param controller     controller in which the response is handled
+     * @param localUser  localUser who is logged in
+     * @param channel    channel which should be deleted
+     * @param controller controller in which the response is handled
      */
     private void deleteChannel(LocalUser localUser, Channel channel, AttentionScreenController controller) {
         restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> controller.handleDeleteChannel(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
@@ -514,12 +529,12 @@ public class RestManager {
     /**
      * delivers last 50 messages from the channel after the timestamp
      *
-     * @param localUser     localUser who is logged in
-     * @param server        server of the channel
-     * @param category      category of the channel
-     * @param channel       channel of which the messages should be delivered
-     * @param timestamp     timestamp from where the last 50 messages should be delivered
-     * @param controller    controller in which the response is handled
+     * @param localUser  localUser who is logged in
+     * @param server     server of the channel
+     * @param category   category of the channel
+     * @param channel    channel of which the messages should be delivered
+     * @param timestamp  timestamp from where the last 50 messages should be delivered
+     * @param controller controller in which the response is handled
      */
     public void getChannelMessages(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, ServerChatController controller) {
         restClient.getChannelMessages(localUser.getUserKey(), server.getId(), category.getId(), channel.getId(), timestamp, (response) -> {
@@ -535,9 +550,9 @@ public class RestManager {
     /**
      * Try to delete a category with the Restclient::deleteCategory method
      *
-     * @param localUser      localUser who is logged in
-     * @param category category which should be deleted
-     * @param controller     controller in which the response is handled
+     * @param localUser  localUser who is logged in
+     * @param category   category which should be deleted
+     * @param controller controller in which the response is handled
      */
     private void deleteCategory(LocalUser localUser, Category category, AttentionScreenController controller) {
         restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) ->
@@ -548,8 +563,9 @@ public class RestManager {
      * does a rest request to get invitations of the given server and handles the response.
      * <p>
      * Adds the invitations to the data model.
-     * @param userKey      userKey of the localUser who is logged in
-     * @param server server
+     *
+     * @param userKey    userKey of the localUser who is logged in
+     * @param server     server
      * @param controller controller in which the response need handled
      */
     public void loadInvitations(Server server, String userKey, EditServerScreenController controller) {
@@ -574,7 +590,7 @@ public class RestManager {
     /**
      * Try to delete a category with the Restclient::deleteCategory method
      *
-     * @param userKey      userKey of the localUser who is logged in
+     * @param userKey    userKey of the localUser who is logged in
      * @param invitation invitation which should be deleted
      */
     public void deleteInvite(String userKey, Invitation invitation, Server server) {
@@ -589,7 +605,7 @@ public class RestManager {
     /**
      * tries to leave a server with the Restclient::leaveServer method
      *
-     * @param userKey      userKey of the localUser who is logged in
+     * @param userKey  userKey of the localUser who is logged in
      * @param serverId id of the server which should be left
      */
     public void leaveServer(String userKey, String serverId) {
@@ -605,9 +621,10 @@ public class RestManager {
      * does a rest request to login a user and handles the response.
      * <p>
      * Adds the localUser to the data if successful.
+     *
      * @param username username
      * @param password password
-     * @param editor editor in which the response need handled
+     * @param editor   editor in which the response need handled
      */
     public void automaticLoginUser(String username, String password, Editor editor) {
         restClient.login(username, password, (response) -> {
@@ -660,5 +677,18 @@ public class RestManager {
         });
     }
 
+    public void updateMessage(LocalUser localUser, String message, Message oldMessage, UpdateMessageScreenController controller) {
+        restClient.updateMessage(localUser.getUserKey(), message, oldMessage, (response) -> controller.handleUpdateMessage(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
+    }
 
+    /**
+     * Try to delete a server with the Restclient::deleteMessage method
+     *
+     * @param localUser  localUser who is logged in
+     * @param message    message which should be deleted
+     * @param controller controller in which the response is handled
+     */
+    private void deleteMessage(LocalUser localUser, Message message, AttentionScreenController controller) {
+        restClient.deleteMessage(localUser.getUserKey(), message, (response) -> controller.handleDeleteMessage(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
+    }
 }

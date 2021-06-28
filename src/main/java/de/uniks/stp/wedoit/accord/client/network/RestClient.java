@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import kong.unirest.Callback;
 import kong.unirest.HttpRequest;
@@ -11,7 +12,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.CHANNELS;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 public class RestClient {
@@ -338,12 +338,12 @@ public class RestClient {
     /**
      * Gets the last 50 Messages from timestamp
      *
-     * @param userKey       userKey of localUser
-     * @param serverId      The ID of the Server from which the messages should be loaded.
-     * @param categoryId    The ID of the Category from which the messages should be loaded.
-     * @param channelId     The ID of the Channel from which the messages should be loaded.
-     * @param timestamp     The time from where the message should be loaded
-     * @param callback      The Callback to be called after the Request.
+     * @param userKey    userKey of localUser
+     * @param serverId   The ID of the Server from which the messages should be loaded.
+     * @param categoryId The ID of the Category from which the messages should be loaded.
+     * @param channelId  The ID of the Channel from which the messages should be loaded.
+     * @param timestamp  The time from where the message should be loaded
+     * @param callback   The Callback to be called after the Request.
      */
     public void getChannelMessages(String userKey, String serverId, String categoryId, String channelId, String timestamp, Callback<JsonNode> callback) {
         // Build correct URL
@@ -413,4 +413,29 @@ public class RestClient {
         sendRequest(req, callback);
     }
 
+    public void updateMessage(String userKey, String newMessage, Message oldMessage, Callback<JsonNode> callback) {
+        String body = Json.createObjectBuilder().add(TEXT, newMessage).build().toString();
+
+        HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH +
+                oldMessage.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
+                oldMessage.getChannel().getCategory().getId() + CHANNELS + SLASH +
+                oldMessage.getChannel().getId() + MESSAGES +
+                SLASH + oldMessage.getId())
+                .header(USER_KEY, userKey)
+                .body(body);
+
+        sendRequest(req, callback);
+    }
+
+    public void deleteMessage(String userKey, Message message, Callback<JsonNode> callback) {
+
+        HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH +
+                message.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
+                message.getChannel().getCategory().getId() + CHANNELS + SLASH +
+                message.getChannel().getId() + MESSAGES +
+                SLASH + message.getId())
+                .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
 }
