@@ -133,7 +133,8 @@ public class ServerScreenController implements Controller {
                 editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
                 lbServerName.setContextMenu(createContextMenuLeaveServer());
                 serverChatController.initToolTip();
-                serverChatController.addMessageContextMenu();
+                serverChatController.addUserMessageContextMenu();
+                serverChatController.addLocalUserMessageContextMenu();
                 categoryTreeViewController.initContextMenu();
             }
         });

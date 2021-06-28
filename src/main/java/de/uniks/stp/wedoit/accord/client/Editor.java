@@ -430,6 +430,40 @@ public class Editor {
             haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
         }
     }
+    /**
+     * returns channel by its id
+     *
+     * @param server     server of the channel
+     * @param channelId  id of the searched channel
+     * @param categoryId category of the channel
+     * @return the channel with the given id
+     */
+    public Channel getChannelById(Server server, String categoryId, String channelId) {
+        Category category = getCategoryById(server, categoryId);
+        for (Channel channel : category.getChannels()) {
+            if (channel.getId().equals(channelId)) {
+                return channel;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * returns category by its id
+     *
+     * @param server server of the channel
+     * @param id     id of the searched category
+     * @return the category with the given id
+     */
+    public Category getCategoryById(Server server, String id) {
+        for (Category category : server.getCategories()) {
+            if (category.getId().equals(id)) {
+                return category;
+            }
+        }
+        return null;
+    }
+
 
     public void setStageManager(StageManager stageManager) {
         this.stageManager = stageManager;

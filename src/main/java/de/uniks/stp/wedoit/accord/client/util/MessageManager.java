@@ -15,14 +15,13 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_R
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
 
 public class MessageManager {
 
     private final Editor editor;
 
-    public MessageManager(Editor editor){
+    public MessageManager(Editor editor) {
         this.editor = editor;
     }
 
@@ -32,9 +31,9 @@ public class MessageManager {
      * @param message to add to the model
      */
     public void addNewPrivateMessage(PrivateMessage message) {
-        
-        if(message.getText().startsWith(GAME_PREFIX) && handleGameMessages(message)) return;
-        
+
+        if (message.getText().startsWith(GAME_PREFIX) && handleGameMessages(message)) return;
+
         if (message.getFrom().equals(editor.getLocalUser().getName())) {
             User user = editor.getUser(message.getTo());
             user.getPrivateChat().withMessages(message);
@@ -57,32 +56,32 @@ public class MessageManager {
         editor.savePrivateMessage(message);
     }
 
-    private boolean handleGameMessages(PrivateMessage message){
+    private boolean handleGameMessages(PrivateMessage message) {
         //game messages
-        if(message.getText().equals(GAME_INVITE)){
-            if(message.getTo().equals(editor.getLocalUser().getName()))
+        if (message.getText().equals(GAME_INVITE)) {
+            if (message.getTo().equals(editor.getLocalUser().getName()))
                 editor.getLocalUser().withGameInvites(editor.getUser(message.getFrom()));
             else
                 editor.getLocalUser().withGameRequests(editor.getUser(message.getTo()));
         }
 
-        if(message.getText().equals(GAME_ACCEPTS)){
-            if(!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result")) {
-                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getTo().equals(editor.getLocalUser().getName()) ? message.getFrom(): message.getTo(), GAME_START);
+        if (message.getText().equals(GAME_ACCEPTS)) {
+            if (!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result")) {
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getTo().equals(editor.getLocalUser().getName()) ? message.getFrom() : message.getTo(), GAME_START);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
-            }else{
+            } else {
                 System.out.println("this is: " + editor.getLocalUser().getName());
-                System.out.println( editor.getStageManager().getGameStage().getTitle());
+                System.out.println(editor.getStageManager().getGameStage().getTitle());
                 System.out.println(!editor.getStageManager().getGameStage().isShowing());
                 System.out.println(!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result"));
-                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo(): message.getFrom(), GAME_INGAME);
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo() : message.getFrom(), GAME_INGAME);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
             }
-        }else if(message.getText().equals(GAME_START)  && (editor.getLocalUser().getGameInvites().contains(editor.getUser(message.getTo())) || editor.getLocalUser().getGameRequests().contains(editor.getUser(message.getFrom())))) {
+        } else if (message.getText().equals(GAME_START) && (editor.getLocalUser().getGameInvites().contains(editor.getUser(message.getTo())) || editor.getLocalUser().getGameRequests().contains(editor.getUser(message.getFrom())))) {
             //Start game
             editor.getLocalUser().withoutGameInvites(editor.getUser(message.getTo()));
             editor.getLocalUser().withoutGameRequests(editor.getUser(message.getFrom()));
@@ -94,8 +93,9 @@ public class MessageManager {
                     editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("ROCK_PAPER_SCISSORS"), "GameScreen", GAME_SCREEN_CONTROLLER, true, editor.getUser(message.getFrom()), null);
             });
 
-        }else if(message.getText().equals(GAME_CLOSE) && editor.getStageManager().getGameStage().isShowing()){
+        } else if (message.getText().equals(GAME_CLOSE) && editor.getStageManager().getGameStage().isShowing()) {
             Platform.runLater(() -> editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, editor.getUser(message.getFrom()), null));
+
         }
 
         if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {
@@ -134,10 +134,46 @@ public class MessageManager {
         }
     }
 
+
+    /**
+     * updates message in the data model
+     *
+     * @param channel in which the message should be updated
+     * @param message to update
+     */
+    public void updateMessage(Channel channel, Message message) {
+        for (Message channelMessage : channel.getMessages()) {
+            if (channelMessage.getId().equals(message.getId())) {
+                channelMessage.setText(message.getText());
+                return;
+            }
+        }
+    }
+
+    /**
+     * deletes the message with given id
+     *
+     * @param channel           channel of the message
+     * @param messageToDeleteId id of the message to delete
+     */
+    public void deleteMessage(Channel channel, String messageToDeleteId) {
+        Message foundMessage = null;
+        for (Message message : channel.getMessages()) {
+            if (message.getId().equals(messageToDeleteId)) {
+                foundMessage = message;
+                break;
+            }
+        }
+        if (foundMessage != null) {
+            channel.withoutMessages(foundMessage);
+        }
+    }
+
     /**
      * formats a message with the correct date in the format
      * <p>
      * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     *
      * @param message message which should formatted
      * @return the formatted message as string
      */
@@ -151,6 +187,7 @@ public class MessageManager {
      * formats a message with the correct date in the format
      * <p>
      * [" + dd/MM/yyyy HH:mm:ss + "] " + FROM + ": " + MESSAGE
+     *
      * @param message message which should formatted
      * @return the formatted message as string
      */
@@ -173,6 +210,7 @@ public class MessageManager {
 
     /**
      * checks whether a message is a quote
+     *
      * @param item item as message
      * @return boolean whether a item is a quote
      */
@@ -184,6 +222,7 @@ public class MessageManager {
 
     /**
      * checks whether a message is a quote
+     *
      * @param item item as message
      * @return boolean whether a item is a quote
      */

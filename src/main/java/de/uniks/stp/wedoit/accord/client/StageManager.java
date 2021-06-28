@@ -171,7 +171,11 @@ public class StageManager extends Application {
                 controller = new AttentionLeaveServerController(root, editor, (Server) parameter);
                 break;
             case EDIT_SERVER_SCREEN_CONTROLLER:
-                controller = new EditServerScreenController(root, model.getLocalUser(), editor, (Server) parameter, popupStage); break;
+                controller = new EditServerScreenController(root, model.getLocalUser(), editor, (Server) parameter, popupStage);
+                break;
+            case UPDATE_MESSAGE_SCREEN_CONTROLLER:
+                controller = new UpdateMessageScreenController(root, editor, (Message) parameter, popupStage);
+                break;
             case PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER:
                 controller = new PrivateMessageServerScreenController(root, editor, (Server) parameter, (User) parameterTwo); break;
         }
