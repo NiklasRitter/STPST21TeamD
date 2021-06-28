@@ -60,7 +60,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
 
                 if(setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)){
-                    label.setText(item.getText());
+                    label.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                     if(!vBox.getChildren().contains(imageView)){
                         vBox.getChildren().addAll(imageView, label);
                     }
@@ -109,7 +109,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private boolean setImgGraphic(String url) {
             if(isValid(url)){
-                Image image = new Image(url, 400,Integer.MAX_VALUE,true,false,true);
+                Image image = new Image(url, 370,Integer.MAX_VALUE,true,false,true);
                 if(!image.isError()){
                     imageView.setImage(image);
                     imageView.setPreserveRatio(true);
