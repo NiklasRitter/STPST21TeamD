@@ -5,9 +5,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.util.Callback;
 
-public class OnlineUsersCellFactory implements javafx.util.Callback<ListView<User>, ListCell<User>> {
-    boolean isPrivate;
+public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell<User>> {
+    private boolean isPrivate;
 
     @Override
     public ListCell<User> call(ListView<User> param) {
@@ -15,8 +16,8 @@ public class OnlineUsersCellFactory implements javafx.util.Callback<ListView<Use
         return new OnlineUserListCell();
     }
 
-
     private class OnlineUserListCell extends ListCell<User> {
+        @Override
         protected void updateItem(User item, boolean empty) {
             super.updateItem(item, empty);
             this.setText(null);

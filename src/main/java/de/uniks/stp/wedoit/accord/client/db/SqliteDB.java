@@ -11,8 +11,8 @@ import java.util.Set;
 
 public class SqliteDB {
 
-    private String username;
-    private String url = "jdbc:sqlite:./src/main/resources/data/";
+    private final String username;
+    private final String url = "jdbc:sqlite::resource:" + getClass().getResource("/data/");
 
     /**
      * When creating a SqliteDB object
@@ -92,7 +92,6 @@ public class SqliteDB {
      * Query for messages between username (set in constructor) and user, ordered by timestamp
      *
      * @param user username to find chats with
-     * @return list of PrivateMessage that the localUser had with user
      */
     public void getChatReadForUser(User user) {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");

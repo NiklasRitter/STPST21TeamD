@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
@@ -256,6 +257,7 @@ public class PrivateChatController implements Controller {
                     }
                 }
             }
+
         }
     }
 

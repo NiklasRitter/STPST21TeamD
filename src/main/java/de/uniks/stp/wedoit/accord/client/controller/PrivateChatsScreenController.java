@@ -29,7 +29,6 @@ public class PrivateChatsScreenController implements Controller {
     private Button btnHome;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
-    //private final PropertyChangeListener usersChatReadListener = this::usersChatReadChanged;
     private ObservableList<User> onlineUserObservableList;
     private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private List<User> availableUsers = new ArrayList<>();
