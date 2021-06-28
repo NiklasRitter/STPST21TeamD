@@ -46,6 +46,7 @@ public class CreateServerScreenController implements Controller {
         this.errorLabel = (Label) view.lookup("#lblError");
         this.lblEnterServerName = (Label) view.lookup("#lblEnterServerName");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         // Add action listeners
@@ -54,7 +55,7 @@ public class CreateServerScreenController implements Controller {
 
     private void setComponentsText() {
         this.lblEnterServerName.setText(LanguageResolver.getString("ENTER_SERVER_NAME"));
-        this.tfServerName.setText(LanguageResolver.getString("SERVERNAME"));
+        this.tfServerName.setPromptText(LanguageResolver.getString("SERVERNAME"));
         this.btnCreateServer.setText(LanguageResolver.getString("CREATE_SERVER"));
     }
 

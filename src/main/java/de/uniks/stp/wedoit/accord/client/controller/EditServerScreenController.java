@@ -105,6 +105,7 @@ public class EditServerScreenController implements Controller {
         this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
         this.btnDeleteInvitation = (Button) view.lookup("#btnDeleteInvitation");
 
+        this.view.requestFocus();
         this.setComponentsText();
         // Depending on if localUser is admin or not display the correct editMenu
         loadDefaultSettings();
@@ -127,8 +128,8 @@ public class EditServerScreenController implements Controller {
         this.btnSave.setText(LanguageResolver.getString("SAVE"));
         this.btnCreateInvitation.setText(LanguageResolver.getString("CREATE_INVITATION"));
         this.btnDeleteInvitation.setText(LanguageResolver.getString("DELETE_INVITATION"));
-//        this.tfInvitationLink.setText(LanguageResolver.getString("INVIT_LINK"));
-        this.tfMaxCountAmountInput.setText(LanguageResolver.getString("AMOUNT"));
+        this.tfMaxCountAmountInput.setPromptText(LanguageResolver.getString("AMOUNT"));
+        this.tfNewServernameInput.setPromptText(LanguageResolver.getString("NEW_SERVERNAME"));
         this.radioBtnTemporal.setText(LanguageResolver.getString("TEMPORAL"));
         this.radioBtnMaxCount.setText(LanguageResolver.getString("MAX_COUNT"));
     }

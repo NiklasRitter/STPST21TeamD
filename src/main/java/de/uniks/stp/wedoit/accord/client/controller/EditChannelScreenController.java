@@ -79,6 +79,7 @@ public class EditChannelScreenController implements Controller {
         this.lblChannelName = (Label) view.lookup("#lblChannelName");
         this.lblPrivileged = (Label) view.lookup("#lblPrivileged");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         if (channel.isPrivileged()) {
@@ -100,6 +101,7 @@ public class EditChannelScreenController implements Controller {
     }
 
     private void setComponentsText() {
+        this.tfChannelName.setPromptText(LanguageResolver.getString("CHANNEL_NAME"));
         this.lblChannelName.setText(LanguageResolver.getString("CHANNEL_NAME"));
         this.lblPrivileged.setText(LanguageResolver.getString("PRIVILEGED"));
         this.lblMembers.setText(LanguageResolver.getString("MEMBERS"));
