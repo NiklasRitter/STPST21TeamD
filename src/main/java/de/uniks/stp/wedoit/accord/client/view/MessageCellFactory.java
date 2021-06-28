@@ -20,20 +20,20 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_ID;
 
-public class MessageCell<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
+public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
     @Override
     public ListCell<T> call(ListView<T> param) {
-        return new OnlineUserListCell<>(param);
+        return new MessageCell<>(param);
     }
 
-    private static class OnlineUserListCell<S extends Message> extends ListCell<S> {
+    private static class MessageCell<S extends Message> extends ListCell<S> {
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
         private final Label label = new Label();
 
 
-        private OnlineUserListCell(ListView<S> param) {
+        private MessageCell(ListView<S> param) {
             this.param = param;
         }
 

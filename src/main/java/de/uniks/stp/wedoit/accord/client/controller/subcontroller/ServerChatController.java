@@ -9,7 +9,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import de.uniks.stp.wedoit.accord.client.view.MessageCell;
+import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -327,7 +327,7 @@ public class ServerChatController implements Controller {
         this.lbChannelName.setText(this.currentChannel.getName());
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCell<>());
+        lvTextChat.setCellFactory(new MessageCellFactory<>());
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 

@@ -8,7 +8,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
-import de.uniks.stp.wedoit.accord.client.view.MessageCell;
+import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -159,7 +159,7 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.setEditable(true);
 
         // load list view
-        MessageCell<PrivateMessage> chatCellFactory = new MessageCell<>();
+        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>();
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(user.getName());
         Collections.reverse(oldMessages);
