@@ -11,10 +11,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -42,6 +40,7 @@ public class EditChannelScreenController implements Controller {
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList;
     private Boolean isPrivilegedUser = false;
+    private HBox hBoxChannelType;
 
     /**
      * Create a new Controller
@@ -74,6 +73,8 @@ public class EditChannelScreenController implements Controller {
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
 
+        this.hBoxChannelType = (HBox) view.lookup("#hBoxChannelType");
+
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
         this.lblMembers = (Label) view.lookup("#lblMembers");
         this.lblChannelName = (Label) view.lookup("#lblChannelName");
@@ -92,6 +93,8 @@ public class EditChannelScreenController implements Controller {
         checkIfIsPrivileged();
 
         this.tfChannelName.setText(channel.getName());
+
+        this.hBoxChannelType.setVisible(false);
 
         // Add action listeners
         this.btnSave.setOnAction(this::btnSaveOnClick);
