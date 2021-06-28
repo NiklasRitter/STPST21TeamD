@@ -32,10 +32,7 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER;
@@ -229,6 +226,13 @@ public class ServerScreenTest extends ApplicationTest {
         JsonObject categoriesRestJson = getServerCategories();
         mockGetCategoryRest(categoriesRestJson);
         JsonObject channelRestJson = getCategoryChannels();
+        mockChannelRest(channelRestJson);
+    }
+
+    private void initAudioChannelListView(JsonArray audioMembers) {
+        JsonObject categoriesRestJson = getServerCategories();
+        mockGetCategoryRest(categoriesRestJson);
+        JsonObject channelRestJson = getCategoryAudioChannels(audioMembers);
         mockChannelRest(channelRestJson);
     }
 
@@ -899,6 +903,29 @@ public class ServerScreenTest extends ApplicationTest {
 
     }
 
+    @Test
+    public void joinAudioServerTest(){
+        initUserListView();
+        JsonArray audioMembers = Json.createArrayBuilder().add("I1").build();
+        initAudioChannelListView(audioMembers);
+        WaitForAsyncUtils.waitForFxEvents();
+        TreeView<Object> treeView = lookup("#tvServerChannels").query();
+        Assert.assertSame(treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren().get(0).getValue(), server.getMembers().get(0));
+
+        doubleClickOn("channelName1");
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject restClientJson = joinOrLeaveAudioChannel(server.getLocalUser().getId(), "idTest", "idTest1");
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+        verify(restMock).joinAudioChannel(anyString(), anyString(), anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
+        Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+        audioMembers = Json.createArrayBuilder().add("I1").add(server.getLocalUser().getId()).build();
+        initAudioChannelListView(audioMembers);
+        WaitForAsyncUtils.waitForFxEvents();
+        User user = (User) treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren().get(1).getValue();
+        Assert.assertEquals(user.getId(), server.getLocalUser().getId());
+    }
+
 
     // Methods for callbacks
 
@@ -1139,6 +1166,21 @@ public class ServerScreenTest extends ApplicationTest {
                                 .add("members", Json.createArrayBuilder()))).build();
     }
 
+    public JsonObject getCategoryAudioChannels(JsonArray audioMembers) {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "idTest1")
+                                .add("name", "channelName1")
+                                .add("type", "audio")
+                                .add("privileged", false)
+                                .add("category", "categoryId1")
+                                .add("members", Json.createArrayBuilder())
+                                .add("audioMembers", audioMembers))).build();
+    }
+
     public JsonObject getServerCategories() {
         return Json.createObjectBuilder()
                 .add("status", "success")
@@ -1163,5 +1205,16 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("status", "failure")
                 .add("message", "")
                 .add("data", Json.createArrayBuilder()).build();
+    }
+
+    public JsonObject joinOrLeaveAudioChannel(String userId, String categoryId, String channelId) {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", userId)
+                                .add("category", categoryId)
+                                .add("channel", channelId))).build();
     }
 }
