@@ -46,6 +46,9 @@ public class JSON {
     public static final String CHANNEL_UPDATED = "channelUpdated";
     public static final String CHANNEL_DELETED = "channelDeleted";
     public static final String INVITE_EXPIRED = "inviteExpired";
-
+    public static final String MESSAGE_UPDATED = "messageUpdated";
+    public static final String MESSAGE_DELETED = "messageDeleted";
+    public static final String AUDIO_JOINED = "audioJoined";
+    public static final String AUDIO_LEFT = "audioLeft";
 
 }
