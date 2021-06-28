@@ -159,7 +159,7 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.setEditable(true);
 
         // load list view
-        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>();
+        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>(editor);
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(user.getName());
         Collections.reverse(oldMessages);

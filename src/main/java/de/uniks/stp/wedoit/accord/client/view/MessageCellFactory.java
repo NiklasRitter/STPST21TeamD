@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.geometry.Pos;
@@ -18,15 +19,21 @@ import java.util.Date;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_ID;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
+
+    private final Editor editor;
+
     @Override
     public ListCell<T> call(ListView<T> param) {
         return new MessageCell<>(param);
     }
 
-    private static class MessageCell<S extends Message> extends ListCell<S> {
+    public MessageCellFactory(Editor editor) {
+        this.editor = editor;
+    }
+
+    private class MessageCell<S extends Message> extends ListCell<S> {
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
@@ -42,7 +49,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             super.updateItem(item, empty);
             setItem(item);
             this.setText(null);
-            this.getStyleClass().removeAll("font_size");
+            this.getStyleClass().removeAll("font_size", "marked_message");
             this.setGraphic(null);
 
             if (!empty) {
@@ -59,14 +66,14 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
 
-                if(setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)){
+                if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     label.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
-                    if(!vBox.getChildren().contains(imageView)){
+                    if (!vBox.getChildren().contains(imageView)) {
                         vBox.getChildren().addAll(imageView, label);
                     }
 
 
-                }else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
@@ -86,16 +93,21 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
 
                 if (item instanceof PrivateMessage) {
-                    if(item.getText().startsWith("###game### System")){
+                    if (item.getText().startsWith("###game### System")) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
-                    }else if(item.getText().startsWith(GAME_PREFIX)) {
+                    } else if (item.getText().startsWith(GAME_PREFIX)) {
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                    }
+                }
+                else {
+                    if (containsMarking(item.getText())){
+                        this.getStyleClass().add("marked_message");
                     }
                 }
             }
         }
 
-        private boolean isValid(String url){
+        private boolean isValid(String url) {
             try {
                 //img check
                 URL Url = new URL(url);
@@ -107,10 +119,18 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
         }
 
+        private boolean containsMarking(String message) {
+            if (message.contains("@" + editor.getLocalUser().getName())) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         private boolean setImgGraphic(String url) {
-            if(isValid(url)){
-                Image image = new Image(url, 370,Integer.MAX_VALUE,true,false,true);
-                if(!image.isError()){
+            if (isValid(url)) {
+                Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
+                if (!image.isError()) {
                     imageView.setImage(image);
                     imageView.setPreserveRatio(true);
                     setGraphic(vBox);

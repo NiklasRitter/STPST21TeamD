@@ -4,12 +4,10 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Message;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,9 +15,11 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Popup;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -27,6 +27,7 @@ import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -60,6 +61,10 @@ public class ServerChatController implements Controller {
     private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
     private ContextMenu localUserMessageContextMenu;
     private ContextMenu userMessageContextMenu;
+    private Popup popup;
+    private ObservableList<User> selectUserObservableList;
+    private ArrayList<User> availableUsers;
+    private ListView<User> lvSelectUser;
 
 
     /**
@@ -99,11 +104,50 @@ public class ServerChatController implements Controller {
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
+        this.tfInputMessage.setOnKeyTyped(this::isMarking);
+
+
         quoteVisible.getChildren().clear();
         addUserMessageContextMenu();
         addLocalUserMessageContextMenu();
 
         initToolTip();
+    }
+
+    private void isMarking(KeyEvent keyEvent) {
+
+        if (keyEvent.getCharacter().equals("@")){
+            lvSelectUser = new ListView<User>();
+            this.popup = new Popup();
+            popup.getContent().add(lvSelectUser);
+
+            initLwSelectUser(lvSelectUser);
+            Bounds pos = tfInputMessage.localToScreen(tfInputMessage.getBoundsInLocal());
+
+            popup.setX(pos.getMinX());
+            popup.setAnchorY(pos.getMinY());
+            popup.show(editor.getStageManager().getStage());
+
+        }
+        if (keyEvent.getCharacter().equals("x") && popup != null){
+           popup.hide();
+        }
+
+    }
+
+    private void initLwSelectUser(ListView<User> lvSelectUser) {
+
+        // init list view
+        lvSelectUser.setCellFactory(new SelectUserCellFactory());
+        availableUsers = new ArrayList<>(currentChannel.getMembers());
+
+        this.selectUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus)
+                .collect(Collectors.toList()));
+
+        this.selectUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
+                .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
+
+        this.lvSelectUser.setItems(selectUserObservableList);
     }
 
     public void initToolTip() {
@@ -327,7 +371,7 @@ public class ServerChatController implements Controller {
         this.lbChannelName.setText(this.currentChannel.getName());
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory<>());
+        lvTextChat.setCellFactory(new MessageCellFactory<>(editor));
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
