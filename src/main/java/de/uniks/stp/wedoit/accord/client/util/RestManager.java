@@ -86,7 +86,6 @@ public class RestManager {
             } else {
                 JsonObject loginAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
                 String userKey = loginAnswer.getString(USER_KEY);
-                System.out.println(userKey);
                 LocalUser localUser = editor.haveLocalUser(username, userKey);
                 localUser.setPassword(password);
                 editor.getWebSocketManager().start();
@@ -647,6 +646,7 @@ public class RestManager {
         restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             System.out.println(response.getBody());
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.getLocalUser().setAudioChannel(channel);
                 controller.handleJoinAudioChannel(channel.getCategory());
                 // TODO here?
                 // controller.getController().initAudioChannelSubView(channel);
@@ -660,7 +660,20 @@ public class RestManager {
     public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
         restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.getLocalUser().setAudioChannel(null);
                 controller.handleLeaveAudioChannel(channel.getCategory());
+            }
+            else{
+                controller.handleLeaveAudioChannel(null);
+            }
+        });
+    }
+
+    public void leaveAndJoinNewAudioChannel(String userKey, Server server, Category oldCategory, Category newCategory, Channel oldChannel, Channel newChannel, CategoryTreeViewController controller){
+        restClient.leaveAudioChannel(userKey, server.getId(), oldCategory.getId(), oldChannel.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.getLocalUser().setAudioChannel(null);
+                joinAudioChannel(userKey, server, newCategory, newChannel, controller);
             }
             else{
                 controller.handleLeaveAudioChannel(null);

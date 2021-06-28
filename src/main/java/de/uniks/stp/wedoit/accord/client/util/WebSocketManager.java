@@ -215,10 +215,21 @@ public class WebSocketManager {
             Channel channel = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build(), Json.createArrayBuilder().build());
             channel.removeYou();
         }
-
         // change invitation
         if (action.equals(INVITE_EXPIRED)) {
             editor.deleteInvite(data.getString(ID), server);
+        }
+        if (action.equals(AUDIO_JOINED)) {
+            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+            Channel channel = editor.getChannelManager().getChannel(data.getString(CHANNEL), category);
+            User user = editor.getServerUserById(server, data.getString(ID));
+            channel.withAudioMembers(user);
+        }
+        if (action.equals(AUDIO_LEFT)) {
+            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+            Channel channel = editor.getChannelManager().getChannel(data.getString(CHANNEL), category);
+            User user = editor.getServerUserById(server, data.getString(ID));
+            channel.withoutAudioMembers(user);
         }
 
         if (action.equals(MESSAGE_UPDATED)) {

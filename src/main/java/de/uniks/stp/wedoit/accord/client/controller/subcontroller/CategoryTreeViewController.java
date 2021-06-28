@@ -148,16 +148,15 @@ public class CategoryTreeViewController implements Controller {
                 }
                 else if (mouseEvent.getClickCount() == 2) {
                     if (channel.getType().equals(AUDIO)){
-                        for(User user : channel.getAudioMembers()){
-                            if(user.getId().equals(localUser.getId())){
-                                editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                                controller.getAudioChannelSubViewContainer().getChildren().clear();
-                                return;
-                            }
+                        if(localUser.getAudioChannel() == null){
+                            editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
                         }
-                        editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                        // TODO here?
-                        // controller.initAudioChannelSubView(channel);
+                        else if(localUser.getAudioChannel() == channel){
+                            editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+                        }
+                        else {
+                            editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory() ,channel.getCategory(), localUser.getAudioChannel(), channel, this);
+                        }
                     }
                 }
             }
@@ -273,7 +272,8 @@ public class CategoryTreeViewController implements Controller {
         TreeItem<Object> channelItem = getTreeItemChannel(channel);
         if(channelItem != null){
             if(oldValue == null && newValue != null){
-                addAudioMemberToTreeView(channel, channelItem);
+                channelItem.setExpanded(true);
+                addAudioMemberToTreeView(newValue, channelItem);
             }
             else if (oldValue != null && newValue == null) {
                 channelItem.getChildren().removeIf(objectTreeItem -> objectTreeItem.getValue().equals(oldValue));
@@ -296,15 +296,20 @@ public class CategoryTreeViewController implements Controller {
         TreeItem<Object> channelItem = new TreeItem<>(channel);
         categoryItem.getChildren().add(channelItem);
         if(!channel.getAudioMembers().isEmpty()){
-            addAudioMemberToTreeView(channel, channelItem);
+            channelItem.setExpanded(true);
+            addAudioMembersToTreeView(channel, channelItem);
         }
     }
 
-    private void addAudioMemberToTreeView(Channel channel, TreeItem<Object> channelItem) {
+    private void addAudioMembersToTreeView(Channel channel, TreeItem<Object> channelItem) {
         for(User user : channel.getAudioMembers()){
-            TreeItem<Object> audioMemberItem = new TreeItem<>(user);
-            channelItem.getChildren().add(audioMemberItem);
+            addAudioMemberToTreeView(user, channelItem);
         }
+    }
+
+    private void addAudioMemberToTreeView(User user, TreeItem<Object> channelItem) {
+        TreeItem<Object> audioMemberItem = new TreeItem<>(user);
+        channelItem.getChildren().add(audioMemberItem);
     }
 
     /**

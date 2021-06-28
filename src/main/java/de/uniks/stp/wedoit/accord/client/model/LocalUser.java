@@ -17,6 +17,7 @@ public class LocalUser
    public static final String PROPERTY_SERVERS = "servers";
    public static final String PROPERTY_USERS = "users";
    public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
+   public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
    private String password;
    private String name;
    private String userKey;
@@ -27,6 +28,7 @@ public class LocalUser
    private List<User> users;
    private AccordClient accordClient;
    protected PropertyChangeSupport listeners;
+   private Channel audioChannel;
 
    public String getPassword()
    {
@@ -382,6 +384,24 @@ public class LocalUser
          value.setLocalUser(this);
       }
       this.firePropertyChange(PROPERTY_ACCORD_CLIENT, oldValue, value);
+      return this;
+   }
+
+   public Channel getAudioChannel()
+   {
+      return this.audioChannel;
+   }
+
+   public LocalUser setAudioChannel(Channel value)
+   {
+      if (Objects.equals(value, this.audioChannel))
+      {
+         return this;
+      }
+
+      final Channel oldValue = this.audioChannel;
+      this.audioChannel = value;
+      this.firePropertyChange(PROPERTY_AUDIO_CHANNEL, oldValue, value);
       return this;
    }
 

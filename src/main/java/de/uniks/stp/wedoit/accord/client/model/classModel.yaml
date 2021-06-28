@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -648,6 +648,15 @@
   propertyStyle: 	Bean
   type: 	User
   typeSignature: 	User
+
+- localUser_audioChannel: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_audioChannel
+  modified: 	false
+  name: 	audioChannel
+  propertyStyle: 	Bean
+  type: 	Channel
+  typeSignature: 	Channel
 
 - localUser_servers: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
