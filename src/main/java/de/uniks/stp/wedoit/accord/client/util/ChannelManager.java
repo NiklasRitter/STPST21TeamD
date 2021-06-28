@@ -49,7 +49,7 @@ public class ChannelManager {
         }
         channel.setName(name).setPrivileged(privileged).setType(type).setId(id).setCategory(category).setRead(true);
         channel.withoutMembers(new ArrayList<>(channel.getMembers()));
-        channel.withoutAudioMembers(channel.getAudioMembers());
+        channel.withoutAudioMembers(new ArrayList<>(channel.getAudioMembers()));
 
         if(members != null){
             List<String> membersIds = new ArrayList<>();
@@ -103,30 +103,19 @@ public class ChannelManager {
     public void haveChannels(Category category, JsonArray categoriesChannelResponse) {
         Objects.requireNonNull(category);
         Objects.requireNonNull(categoriesChannelResponse);
-
-//        List<String> channelIds = new ArrayList<>();
-//        for (Channel channel : category.getChannels()) {
-//            channelIds.add(channel.getId());
-//        }
         for (int index = 0; index < categoriesChannelResponse.toArray().length; index++) {
             JsonObject channel = categoriesChannelResponse.getJsonObject(index);
             haveChannel(channel.getString(ID), channel.getString(NAME), channel.getString(TYPE), channel.getBoolean(PRIVILEGED), category, channel.getJsonArray(MEMBERS), channel.getJsonArray(AUDIOMEMBERS));
-//            if (!channelIds.contains(categoriesChannelResponse.getJsonObject(index).getString(ID))) {
-//                Channel channel = JsonUtil.parseChannel(categoriesChannelResponse.getJsonObject(index)).setRead(true);
-//                channel.setCategory(category);
-//                List<String> memberIds = JsonUtil.parseMembers(categoriesChannelResponse.getJsonObject(index));
-//                List<String> audioMemberIds = JsonUtil.parseAudioMembers(categoriesChannelResponse.getJsonObject(index));
-//                for (String memberId : memberIds) {
-//                    User user = editor.getServerUserById(category.getServer(), memberId);
-//                    channel.withMembers(user);
-//                }
-//                for(String audioMemberId : audioMemberIds){
-//                    User user = editor.getServerUserById(category.getServer(), audioMemberId);
-//                    channel.withAudioMembers(user);
-//                }
-//            }
         }
-//        category.getChannels();
+    }
+
+    public Channel getChannel(String channelId, Category category){
+        for(Channel channel : category.getChannels()){
+            if(channel.getId().equals(channelId)){
+                return channel;
+            }
+        }
+        return null;
     }
 
 }

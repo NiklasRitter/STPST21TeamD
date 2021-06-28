@@ -36,6 +36,7 @@ public class GenModel implements ClassModelDecorator {
         String id;
         List<User> gameInvites;
         List<User> gameRequests;
+        Channel audioChannel;
 
         @Link("localUser")
         List<User> users;
