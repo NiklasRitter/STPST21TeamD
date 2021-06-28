@@ -33,10 +33,11 @@ public class LoginScreenController implements Controller {
     private Button btnLogin;
     private Button btnRegister;
     private Button btnOptions;
+    private Button btnGuestLogin;
     private CheckBox btnRememberMe;
     private TextField tfUserName;
     private TextField pwUserPw;
-    private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe;
+    private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe, lblUserValid, lblGuestPassword;
 
     /**
      * Create a new Controller
@@ -66,11 +67,14 @@ public class LoginScreenController implements Controller {
         this.lblEnterUserName = (Label) view.lookup("#lblEnterUserName");
         this.lblEnterPw = (Label) view.lookup("#lblEnterPw");
         this.lblRememberMe = (Label) view.lookup("#lblRememberMe");
+        this.lblUserValid = (Label) view.lookup("#lblUserValid");
+        this.lblGuestPassword = (Label) view.lookup("#lblGuestPassword");
 
         this.btnLogin = (Button) view.lookup("#btnLogin");
         this.btnRegister = (Button) view.lookup("#btnRegister");
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnRememberMe = (CheckBox) view.lookup("#btnRememberMe");
+        this.btnGuestLogin = (Button) view.lookup("#btnGuestLogin");
 
         this.view.requestFocus();
         this.setComponentsText();
@@ -101,8 +105,13 @@ public class LoginScreenController implements Controller {
         this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
         this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
+        // TODO Query whether the labels should be enabled
+        this.lblUserValid.setText(LanguageResolver.getString("USER_VALID_FOR_24H"));
+        this.lblGuestPassword.setText(LanguageResolver.getString("GUEST_USER_PASSWORD"));
+
         this.btnLogin.setText(LanguageResolver.getString("LOGIN"));
         this.btnRegister.setText(LanguageResolver.getString("REGISTER"));
+        this.btnGuestLogin.setText(LanguageResolver.getString("GUEST_LOGIN"));
     }
 
     private void initTooltips() {

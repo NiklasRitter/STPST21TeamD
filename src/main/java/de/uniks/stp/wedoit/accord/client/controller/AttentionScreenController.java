@@ -50,6 +50,7 @@ public class AttentionScreenController implements Controller {
         btnDiscard = (Button) this.view.lookup("#btnDiscard");
         btnDelete = (Button) this.view.lookup("#btnDelete");
 
+        this.editor.getStageManager().getPopupStage().sizeToScene();
         this.setComponentsText();
 
         this.lblError.setVisible(false);
