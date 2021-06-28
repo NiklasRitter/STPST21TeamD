@@ -44,6 +44,7 @@ public class CreateCategoryScreenController implements Controller {
         this.lblCategoryName = (Label) view.lookup("#lblCategoryName");
         this.btnCreateCategory = (Button) view.lookup("#btnCreateCategory");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         // Add action listeners
