@@ -142,10 +142,7 @@ public class Editor {
                 return user;
             }
         }
-        User user = haveUser(id, name);
-        user.setOnlineStatus(online);
-        user.withServers(server);
-        return user;
+        return haveUser(id, name).setOnlineStatus(online).withServers(server);
     }
 
     /**
