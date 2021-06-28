@@ -301,10 +301,6 @@ public class ServerScreenController implements Controller {
         categoryTreeViewController.initCategoryChannelList();
 
         // load list view
-        /* TODO resolve!
-        ServerUserListView serverUserListView = new ServerUserListView(this.editor.getStageManager(), this.server);
-        lvServerUsers.setCellFactory(serverUserListView);
-         */
         lvServerUsers.setCellFactory(new OnlineUsersCellFactory(this.editor.getStageManager(), this.server));
         this.refreshLvUsers(new Channel());
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
