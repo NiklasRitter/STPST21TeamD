@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeVi
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.network.AudioStream;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
@@ -644,8 +645,11 @@ public class RestManager {
 
     public void joinAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
         restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
+            System.out.println(response.getBody());
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 controller.handleJoinAudioChannel(channel.getCategory());
+                // TODO here?
+                controller.getController().initAudioChannelSubView(channel);
             }
             else{
                 controller.handleJoinAudioChannel(null);

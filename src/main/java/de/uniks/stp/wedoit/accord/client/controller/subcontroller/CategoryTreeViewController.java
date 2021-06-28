@@ -155,8 +155,9 @@ public class CategoryTreeViewController implements Controller {
                                 return;
                             }
                         }
+                        // editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+                        // TODO here?
                         controller.initAudioChannelSubView(channel);
-                        editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
                     }
                 }
             }
@@ -358,9 +359,11 @@ public class CategoryTreeViewController implements Controller {
     public void handleJoinAudioChannel(Category category) {
         if(category != null){
             loadCategoryChannels(category, getTreeItemCategory(category));
+            //TODO here?
+            // controller.initAudioChannelSubView(channel);
         }
         else{
-            System.out.println("Join Problem");
+            System.err.println("Join Problem");
         }
     }
 
@@ -369,7 +372,11 @@ public class CategoryTreeViewController implements Controller {
             loadCategoryChannels(category, getTreeItemCategory(category));
         }
         else{
-            System.out.println("Join Problem");
+            System.err.println("Join Problem");
         }
+    }
+
+    public ServerScreenController getController() {
+        return controller;
     }
 }

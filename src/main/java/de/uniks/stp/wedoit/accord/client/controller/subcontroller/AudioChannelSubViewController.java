@@ -1,8 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.controller.CreateChannelScreenController;
-import de.uniks.stp.wedoit.accord.client.controller.EditChannelScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -10,11 +8,7 @@ import de.uniks.stp.wedoit.accord.client.network.AudioStream;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-
-import javax.sound.sampled.AudioSystem;
 
 
 /**
@@ -29,6 +23,7 @@ public class AudioChannelSubViewController implements Controller {
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
+    private AudioStream audioStream;
 
     public AudioChannelSubViewController(LocalUser localUser, Parent view, ServerScreenController controller, Channel channel) {
         this.localUser = localUser;
@@ -52,7 +47,7 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
 
-        initAudioChannel();
+        // initAudioChannel();
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
@@ -64,10 +59,16 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     private void btnLeaveOnClick(ActionEvent actionEvent) {
+        closeAudioChannel();
     }
 
     public void initAudioChannel() {
-        // AudioStream.connecting();
+        audioStream = new AudioStream();
+        audioStream.connecting();
+    }
+
+    public void closeAudioChannel() {
+        // audioStream.close();
     }
 
     @Override

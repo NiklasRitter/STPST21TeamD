@@ -12,6 +12,8 @@ public class AudioStream {
     private final int sampleSize = 16;
     private final int channels = 1;
     private final String address = "cranberry.uniks.de";
+    private MulticastSocket sendSocket;
+    private MulticastSocket receiveSocketGroup;
 
     public void connecting() {
 
@@ -42,16 +44,19 @@ public class AudioStream {
             byte[] data = new byte[1279]; //1024?
 
             InetAddress inetAddress = InetAddress.getByName(this.address);
-            MulticastSocket socket = new MulticastSocket();
+            // ? DatagramSocket
+            this.sendSocket = new MulticastSocket();
             while (true) {
                 line.read(data, 0, data.length);
                 datagramPacket = new DatagramPacket(data, data.length, inetAddress, port);
-                socket.send(datagramPacket);
+                this.sendSocket.send(datagramPacket);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     public void receiving() {
         // audio once decoded from packet - send to speaker
@@ -63,8 +68,8 @@ public class AudioStream {
         try {
             // create multicast group - multiple listeners possible
             InetAddress inetAddress = InetAddress.getByName(this.address);
-            MulticastSocket socket = new MulticastSocket(this.port);
-            socket.joinGroup(inetAddress);
+            this.receiveSocketGroup = new MulticastSocket(this.port);
+            this.receiveSocketGroup.joinGroup(inetAddress);
 
             byte[] receiveData = new byte[1279]; //1024? (or 4096, 1024)
 
@@ -83,7 +88,7 @@ public class AudioStream {
 
             while(true){
                 // blocking call - will not precede until received packet
-                socket.receive(receivePacket);
+                this.receiveSocketGroup.receive(receivePacket);
                 audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
                 toSpeaker(receivePacket.getData(), sourceDataLine);
             }
@@ -98,6 +103,16 @@ public class AudioStream {
             sourceDataLine.write(soundBytes, 0, soundBytes.length);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void close() {
+        // close connection
+        if (sendSocket != null) {
+            this.sendSocket.close();
+        }
+        if (receiveSocketGroup != null) {
+            this.receiveSocketGroup.close();
         }
     }
 }
