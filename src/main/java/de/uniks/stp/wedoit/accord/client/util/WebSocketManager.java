@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -17,8 +18,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class WebSocketManager {
 
@@ -135,11 +139,7 @@ public class WebSocketManager {
      */
     public void handlePrivateChatMessage(JsonStructure msg) {
         JsonObject jsonObject = (JsonObject) msg;
-        PrivateMessage message = new PrivateMessage();
-        message.setTimestamp(jsonObject.getJsonNumber(TIMESTAMP).longValue());
-        message.setText(jsonObject.getString(MESSAGE));
-        message.setFrom(jsonObject.getString(FROM));
-        message.setTo(jsonObject.getString(TO));
+        PrivateMessage message = JsonUtil.parsePrivateMessage(jsonObject);
         editor.getMessageManager().addNewPrivateMessage(message);
     }
 
@@ -176,6 +176,7 @@ public class WebSocketManager {
                     user.setOnlineStatus(data.getBoolean(ONLINE));
                 }
             }
+            return;
         }
 
         // change data of the server
@@ -183,7 +184,7 @@ public class WebSocketManager {
             server.setName(data.getString(NAME));
         }
         if (action.equals(SERVER_DELETED)) {
-            Platform.runLater(editor.getStageManager()::showMainScreen);
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         }
 
         //change category
@@ -193,7 +194,7 @@ public class WebSocketManager {
         if (action.equals(CATEGORY_CREATED)) {
             editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
         }
-        if (action.equals(CATEGORY_DELETED)){
+        if (action.equals(CATEGORY_DELETED)) {
             Category category = editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
             category.removeYou();
         }
@@ -202,14 +203,14 @@ public class WebSocketManager {
         if (action.equals(CHANNEL_UPDATED)) {
             Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
             if (channel == null) {
-                Platform.runLater(() -> editor.getStageManager().showServerScreen(server));
+                Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
             }
         }
         if (action.equals(CHANNEL_CREATED)) {
             Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
             editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS));
         }
-        if (action.equals(CHANNEL_DELETED)){
+        if (action.equals(CHANNEL_DELETED)) {
             Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
             Channel channel = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build());
             channel.removeYou();
@@ -219,6 +220,28 @@ public class WebSocketManager {
         if (action.equals(INVITE_EXPIRED)) {
             editor.deleteInvite(data.getString(ID), server);
         }
+
+        if (action.equals(MESSAGE_UPDATED)) {
+            Message messageToUpdate = JsonUtil.parseMessageUpdated(data);
+            Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
+            if (channelUpdatedMessage == null) {
+                Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                System.err.println("Error from message updated");
+                return;
+            }
+            editor.getMessageManager().updateMessage(channelUpdatedMessage, messageToUpdate);
+        }
+
+        if (action.equals(MESSAGE_DELETED)) {
+            Channel channelDeleteMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
+            if (channelDeleteMessage == null) {
+                Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                System.err.println("Error from message delete");
+                return;
+            }
+            editor.getMessageManager().deleteMessage(channelDeleteMessage, data.getString(ID));
+        }
+
 
     }
 

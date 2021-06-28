@@ -89,7 +89,7 @@
   roles: 	accordClient_localUser 	accordClient_options
 
 - options: 	org.fulib.classmodel.Clazz
-  attributes: 	options_darkmode 	options_rememberMe
+  attributes: 	options_darkmode 	options_rememberMe 	options_language
   model: 	c
   modified: 	false
   name: 	Options
@@ -698,6 +698,15 @@
   propertyStyle: 	Bean
   type: 	boolean
   typeSignature: 	boolean
+
+- options_language: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_language
+  modified: 	false
+  name: 	language
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
 
 - options_accordClient: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

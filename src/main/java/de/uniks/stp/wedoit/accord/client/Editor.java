@@ -1,16 +1,21 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class Editor {
 
@@ -46,9 +51,6 @@ public class Editor {
         this.currentServer = currentServer;
     }
 
-    public SqliteDB getDb(){
-        return db;
-    }
 
     /**
      * create localUser without initialisation and set localUser in Editor
@@ -63,6 +65,7 @@ public class Editor {
 
     /**
      * creates a new AccordClient
+     *
      * @return new Accord client
      */
     public AccordClient haveAccordClient() {
@@ -128,7 +131,6 @@ public class Editor {
     }
 
     /**
-     *
      * @return a user with given id, onlineStatus and name who is member of the given server
      */
     public User haveUserWithServer(String name, String id, boolean online, Server server) {
@@ -265,13 +267,14 @@ public class Editor {
 
     /**
      * redirect to the LoginScreen if success
+     *
      * @param success of the logout request
      */
     public void handleLogoutUser(boolean success) {
         if (!success) {
             System.err.println("Error while logging out");
         }
-        Platform.runLater(() -> stageManager.showLoginScreen());
+        Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
     }
 
     /**
@@ -374,6 +377,7 @@ public class Editor {
 
     /**
      * copies a given text to the system clip board
+     *
      * @param text text which should be copied
      */
     public void copyToSystemClipBoard(String text) {
@@ -390,7 +394,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.showLoginScreen();
+            stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null);
             stageManager.getStage().show();
         }
     }
@@ -400,11 +404,45 @@ public class Editor {
      */
     public void handleAutomaticLogin(boolean success) {
         if (success) {
-            Platform.runLater(stageManager::showMainScreen);
+            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         } else {
-            Platform.runLater(stageManager::showLoginScreen);
+            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
         Platform.runLater(() -> stageManager.getStage().show());
+    }
+
+    /**
+     * returns channel by its id
+     *
+     * @param server     server of the channel
+     * @param channelId  id of the searched channel
+     * @param categoryId category of the channel
+     * @return the channel with the given id
+     */
+    public Channel getChannelById(Server server, String categoryId, String channelId) {
+        Category category = getCategoryById(server, categoryId);
+        for (Channel channel : category.getChannels()) {
+            if (channel.getId().equals(channelId)) {
+                return channel;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * returns category by its id
+     *
+     * @param server server of the channel
+     * @param id     id of the searched category
+     * @return the category with the given id
+     */
+    public Category getCategoryById(Server server, String id) {
+        for (Category category : server.getCategories()) {
+            if (category.getId().equals(id)) {
+                return category;
+            }
+        }
+        return null;
     }
 
 

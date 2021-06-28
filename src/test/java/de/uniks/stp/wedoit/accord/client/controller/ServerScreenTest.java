@@ -9,14 +9,10 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -35,13 +31,19 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.util.List;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_SUFFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -90,6 +92,7 @@ public class ServerScreenTest extends ApplicationTest {
     private ArgumentCaptor<WSCallback> chatCallbackArgumentCaptorWebSocket;
     private Options oldOptions;
 
+
     @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
@@ -99,6 +102,7 @@ public class ServerScreenTest extends ApplicationTest {
         System.setProperty("java.awt.headless", "true");
     }
 
+
     @Override
     public void start(Stage stage) {
         // start application
@@ -107,6 +111,7 @@ public class ServerScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 
         this.stageManager.start(stage);
         this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
@@ -119,7 +124,7 @@ public class ServerScreenTest extends ApplicationTest {
                 getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.showServerScreen(server);
+        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -134,6 +139,7 @@ public class ServerScreenTest extends ApplicationTest {
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -158,6 +164,26 @@ public class ServerScreenTest extends ApplicationTest {
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
         verify(restMock).getExplicitServerInformation(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockPutUpdateMessageRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).updateMessage(anyString(), anyString(), any(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockDeleteMessageRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+
+        verify(restMock).deleteMessage(anyString(), any(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -389,19 +415,12 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         TreeItem<Object> treeRoot = tvServerChannels.getRoot();
         Category categoryOne = (Category) treeRoot.getChildren().get(0).getValue();
-        Category categoryTwo = (Category) treeRoot.getChildren().get(1).getValue();
-        Category categoryThree = (Category) treeRoot.getChildren().get(2).getValue();
         Assert.assertEquals("Category1", categoryOne.getName());
-        Assert.assertEquals("Category2", categoryTwo.getName());
-        Assert.assertEquals("Category3", categoryThree.getName());
 
         Assert.assertEquals(3, categoryOne.getChannels().size());
-        Assert.assertEquals(3, categoryTwo.getChannels().size());
-        Assert.assertEquals(3, categoryThree.getChannels().size());
 
         // click on one channel and check if messages loaded correctly
-        Bounds lwBounds = (lookup("#tvServerChannels").query()).localToScreen((lookup("#tvServerChannels").query().getBoundsInLocal()));
-        clickOn(lwBounds.getCenterX(),lwBounds.getCenterY()-70);
+        clickOn("Channel_3");
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
         when(res.getBody()).thenReturn(new JsonNode(getChannelMessage(channel).toString()));
@@ -444,15 +463,8 @@ public class ServerScreenTest extends ApplicationTest {
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
         WaitForAsyncUtils.waitForFxEvents();
 
+        clickOn("Channel_3");
 
-        Bounds lwBounds = (lookup("#tvServerChannels").query()).localToScreen((lookup("#tvServerChannels").query().getBoundsInLocal()));
-        clickOn(lwBounds.getCenterX(),lwBounds.getCenterY()-70);
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
         when(res.getBody()).thenReturn(new JsonNode(getChannelMessagesFailure().toString()));
@@ -490,8 +502,7 @@ public class ServerScreenTest extends ApplicationTest {
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
         WaitForAsyncUtils.waitForFxEvents();
 
-        Bounds lwBounds = (lookup("#tvServerChannels").query()).localToScreen((lookup("#tvServerChannels").query().getBoundsInLocal()));
-        clickOn(lwBounds.getCenterX(),lwBounds.getCenterY()-70);
+        clickOn("Channel_3");
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
         when(res.getBody()).thenReturn(new JsonNode(build50Messages(channel).toString()));
@@ -507,10 +518,9 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(items.get(0).getText(), "Load more...");
 
         lvTextChat.scrollTo(0);
-        lvTextChat.getSelectionModel().select(0);
-        Bounds bounds = lvTextChat.localToScreen(lvTextChat.getBoundsInLocal());
+
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn(bounds.getMinX() + 1, bounds.getMinY() + 1);
+        clickOn("Load more...");
 
         when(res.getBody()).thenReturn(new JsonNode(getChannelMessage(channel).toString()));
         verify(restMock, atLeastOnce()).getChannelMessages(anyString(), anyString(), anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
@@ -554,8 +564,8 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn(emoji);
 
         //send message
+        ((TextField) lookup("#tfInputMessage").query()).setText(((TextField) lookup("#tfInputMessage").query()).getText() + "Test Message");
         clickOn("#tfInputMessage");
-        write("Test Message");
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message" + emoji.getText());
@@ -832,9 +842,10 @@ public class ServerScreenTest extends ApplicationTest {
 
     private void openAttentionScreen() {
         Platform.runLater(() -> {
-            this.stageManager.showAttentionLeaveServerScreen(this.server);
+            this.stageManager.initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
         });
     }
+
     @Test
     public void testQuote() {
         //init channel list and select first channel
@@ -857,17 +868,17 @@ public class ServerScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfInputMessage");
-        write("Test Message");
+        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
-        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message" );
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
         mockChatWebSocket(getTestMessageServerAnswer(test_message, 1616935874));
         WaitForAsyncUtils.waitForFxEvents();
 
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
 
-        clickOn(lvTextChat.getContextMenu());
+        clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
         HBox quoteVisible = lookup("#quoteVisible").query();
 
@@ -883,7 +894,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
-        clickOn(lvTextChat.getContextMenu());
+        clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
         lblQuote = (Label) lookup("#lblQuote").query();
         btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
@@ -907,6 +918,186 @@ public class ServerScreenTest extends ApplicationTest {
 
     }
 
+    @Test
+    public void testUpdateMessage() {
+        //init channel list and select first channel
+
+        initUserListView();
+        initChannelListView();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        Button btnEmoji = lookup("#btnEmoji").query();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //send message
+        clickOn("#tfInputMessage");
+
+        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        press(KeyCode.ENTER);
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message, 1616935874));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn("- update message");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ((TextField) lookup("#tfUpdateMessage").query()).setText("");
+        clickOn("#btnEmoji");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(emojiPickerStage.isShowing());
+        Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
+
+        GridPane panelForEmojis = (GridPane) emojiPickerStage.getScene().getRoot().lookup("#panelForEmojis");
+        EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
+        clickOn(emoji);
+
+        ((TextField) lookup("#tfUpdateMessage").query()).setText(((TextField) lookup("#tfUpdateMessage").query()).getText() + "update");
+
+        clickOn("#btnUpdateMessage");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        String message = ((TextField) lookup("#tfUpdateMessage").query()).getText();
+        mockWebSocket(webSocketCallbackMessageUpdated(message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Message newMessage = lvTextChat.getItems().get(0);
+        Assert.assertEquals(message, newMessage.getText());
+    }
+
+    @Test
+    public void testDeleteMessage() {
+        //init channel list and select first channel
+
+        initUserListView();
+        initChannelListView();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        Button btnEmoji = lookup("#btnEmoji").query();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //send message
+        clickOn("#tfInputMessage");
+
+        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        press(KeyCode.ENTER);
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message, 1616935874));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn("- delete message");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#btnDelete");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        mockDeleteMessageRest(deleteMessageFailure());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Label lblError = lookup("#lblError").query();
+        Assert.assertEquals("Error. Delete Message was not successful!", lblError.getText());
+
+        clickOn("#btnDiscard");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn("- delete message");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#btnDelete");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        mockWebSocket(webSocketCallbackMessageDeleted());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(0, lvTextChat.getItems().size());
+    }
+
+    @Test
+    public void updateMessageFailureTest() {
+        initUserListView();
+        initChannelListView();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //send message
+        clickOn("#tfInputMessage");
+
+        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        press(KeyCode.ENTER);
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message, 1616935874));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn("- update message");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ((TextField) lookup("#tfUpdateMessage").query()).setText("update");
+        clickOn("#btnUpdateMessage");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        mockPutUpdateMessageRest(putUpdateMessageFailure());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Label errorLabel = lookup("#lblError").query();
+        Assert.assertEquals("An error occurred, please try again later!", errorLabel.getText());
+
+        clickOn("#btnDiscard");
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn("- update message");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ((TextField) lookup("#tfUpdateMessage").query()).setText("");
+        clickOn("#btnUpdateMessage");
+        WaitForAsyncUtils.waitForFxEvents();
+        errorLabel = lookup("#lblError").query();
+        Assert.assertEquals("Updated message needs at least 1 character!", errorLabel.getText());
+    }
 
     // Methods for callbacks
 
@@ -985,6 +1176,25 @@ public class ServerScreenTest extends ApplicationTest {
                 Json.createObjectBuilder().add("id", "cat1").add("name", "CatUpdated")).build();
     }
 
+    public JsonObject webSocketCallbackMessageUpdated(String text) {
+        return Json.createObjectBuilder().add("action", "messageUpdated").add("data",
+                Json.createObjectBuilder()
+                        .add("id", "5e2ffbd8770dd077d03dr458")
+                        .add("category", "idTest")
+                        .add("channel", "idTest1")
+                        .add("text", text))
+                .build();
+    }
+
+    public JsonObject webSocketCallbackMessageDeleted() {
+        return Json.createObjectBuilder().add("action", "messageDeleted").add("data",
+                Json.createObjectBuilder()
+                        .add("id", "5e2ffbd8770dd077d03dr458")
+                        .add("category", "idTest")
+                        .add("channel", "idTest1"))
+                .build();
+    }
+
     // rest callbacks
 
     public JsonObject getServerIdSuccessful() {
@@ -1005,6 +1215,16 @@ public class ServerScreenTest extends ApplicationTest {
 
     public JsonObject getServerIdFailure() {
         return Json.createObjectBuilder().add("status", "failure").add("message", "")
+                .add("data", Json.createObjectBuilder()).build();
+    }
+
+    public JsonObject putUpdateMessageFailure() {
+        return Json.createObjectBuilder().add("status", "failure").add("message", "You can not edit a chat message which do not belong to you")
+                .add("data", Json.createObjectBuilder()).build();
+    }
+
+    public JsonObject deleteMessageFailure() {
+        return Json.createObjectBuilder().add("status", "failure").add("message", "You can not delete a chat message which do not belong to you")
                 .add("data", Json.createObjectBuilder()).build();
     }
 
@@ -1031,16 +1251,6 @@ public class ServerScreenTest extends ApplicationTest {
                         .add(Json.createObjectBuilder()
                                 .add("id", "5e2ffbd8770dd077d03df505")
                                 .add("name", "Category1")
-                                .add("server", "123").add("channels", Json.createArrayBuilder())
-                        )
-                        .add(Json.createObjectBuilder()
-                                .add("id", "5e2ffbd8770dd077d03df506")
-                                .add("name", "Category2")
-                                .add("server", "123").add("channels", Json.createArrayBuilder())
-                        )
-                        .add(Json.createObjectBuilder()
-                                .add("id", "5e2ffbd8770dd077d03df507")
-                                .add("name", "Category3")
                                 .add("server", "123").add("channels", Json.createArrayBuilder())
                         )).build();
     }
@@ -1125,6 +1335,7 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("text", test_message.getString(MESSAGE))
                 .build();
     }
+
     public JsonObject getTestMessageServerAnswer(JsonObject test_message, long timestamp) {
         return Json.createObjectBuilder()
                 .add("id", "5e2ffbd8770dd077d03dr458")

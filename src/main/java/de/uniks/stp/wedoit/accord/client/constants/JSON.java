@@ -16,8 +16,6 @@ public class JSON {
     public static final String CATEGORY = "category";
     public static final String MEMBERS = "members";
     public static final String ONLINE = "online";
-    public static final String SERVER = "server";
-    public static final String CHANNELS = "channels";
     public static final String CHANNEL = "channel";
     public static final String TYPE = "type";
     public static final String PRIVILEGED = "privileged";
@@ -34,9 +32,6 @@ public class JSON {
     public static final String LINK = "link";
     public static final String CURRENT = "current";
 
-
-
-
     // Constants for system messages
     public static final String USER_JOINED = "userJoined";
     public static final String USER_LEFT = "userLeft";
@@ -51,6 +46,9 @@ public class JSON {
     public static final String CHANNEL_UPDATED = "channelUpdated";
     public static final String CHANNEL_DELETED = "channelDeleted";
     public static final String INVITE_EXPIRED = "inviteExpired";
-
+    public static final String MESSAGE_UPDATED = "messageUpdated";
+    public static final String MESSAGE_DELETED = "messageDeleted";
+    public static final String AUDIO_JOINED = "audioJoined";
+    public static final String AUDIO_LEFT = "audioLeft";
 
 }
