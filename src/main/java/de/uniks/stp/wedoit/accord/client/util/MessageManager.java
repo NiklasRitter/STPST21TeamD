@@ -35,7 +35,8 @@ public class MessageManager {
         if (message.getText().startsWith(GAME_PREFIX) && handleGameMessages(message)) return;
 
         if (message.getFrom().equals(editor.getLocalUser().getName())) {
-            editor.getUser(message.getTo()).getPrivateChat().withMessages(message);
+            User user = editor.getUser(message.getTo());
+            user.getPrivateChat().withMessages(message);
         } else {
             SystemTrayController systemTrayController = editor.getStageManager().getSystemTrayController();
             if (systemTrayController != null) {

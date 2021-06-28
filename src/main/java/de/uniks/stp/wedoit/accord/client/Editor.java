@@ -142,7 +142,7 @@ public class Editor {
                 return user;
             }
         }
-        return new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
+        return haveUser(id, name).setOnlineStatus(online).withServers(server);
     }
 
     /**
@@ -152,14 +152,19 @@ public class Editor {
      * @param name name of the user
      * @return localUser
      */
-    public LocalUser haveUser(String id, String name) {
+    public User haveUser(String id, String name) {
         LocalUser localUser = accordClient.getLocalUser();
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
         Objects.requireNonNull(name);
 
         if (name.equals(localUser.getName())) {
-            return localUser;
+            User user = getUser(name);
+            if (user == null) {
+                user = new User().setName(name);
+            }
+            user.setId(id);
+            return user;
         }
 
         if (localUser.getUsers() != null) {
@@ -167,14 +172,14 @@ public class Editor {
                 if (user.getId().equals(id)) {
                     user.setOnlineStatus(true);
                     user.setChatRead(true);
-                    return localUser;
+                    return user;
                 }
             }
         }
 
         User user = new User().setId(id).setName(name).setOnlineStatus(true).setChatRead(true);
         localUser.withUsers(user);
-        return localUser;
+        return user;
     }
 
     /**
@@ -411,6 +416,17 @@ public class Editor {
         Platform.runLater(() -> stageManager.getStage().show());
     }
 
+    /**
+     * Adds members to datamodel if they not exist already and sets link to server
+     *
+     * @param members The users that have to be added
+     * @param server  The server the users have to be added to
+     */
+    public void serverWithMembers(List<User> members, Server server) {
+        for (User member : members) {
+            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
+        }
+    }
     /**
      * returns channel by its id
      *
