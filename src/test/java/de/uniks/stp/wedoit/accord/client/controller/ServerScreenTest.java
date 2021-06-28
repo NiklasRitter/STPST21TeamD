@@ -539,6 +539,7 @@ public class ServerScreenTest extends ApplicationTest {
         //init channel list and select first channel
         initUserListView();
         initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         Button btnEmoji = lookup("#btnEmoji").query();
@@ -612,6 +613,7 @@ public class ServerScreenTest extends ApplicationTest {
         //init user list and select first user
         initUserListView();
         initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
         Label lbChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();

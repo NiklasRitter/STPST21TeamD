@@ -12,10 +12,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -24,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 
 public class CreateChannelScreenController implements Controller {
 
@@ -39,6 +36,8 @@ public class CreateChannelScreenController implements Controller {
     private VBox vBoxMemberNameAndCheckBox;
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList = new LinkedList<>();
+    private RadioButton radioBtnText;
+    private RadioButton radioBtnAudio;
 
     /**
      * Create a new Controller
@@ -72,6 +71,9 @@ public class CreateChannelScreenController implements Controller {
         this.lblPrivileged = (Label) view.lookup("#lblPrivileged");
         this.lblChannelName = (Label) view.lookup("#lblChannelName");
 
+        this.radioBtnText = (RadioButton) view.lookup("#radioBtnText");
+        this.radioBtnAudio = (RadioButton) view.lookup("#radioBtnAudio");
+
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
@@ -79,12 +81,24 @@ public class CreateChannelScreenController implements Controller {
         this.setComponentsText();
 
         checkIfIsPrivileged();
+        initTextVoiceOption();
 
         btnDeleteChannel.setVisible(false);
 
         // Add action listeners
         this.btnCreateChannel.setOnAction(this::createChannelButtonOnClick);
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
+    }
+
+    /**
+     * creates toggle group for audio/text channel option
+     */
+    private void initTextVoiceOption() {
+        ToggleGroup toggleGroup = new ToggleGroup();
+        this.radioBtnText.setToggleGroup(toggleGroup);
+        this.radioBtnAudio.setToggleGroup(toggleGroup);
+
+        radioBtnText.setSelected(true);
     }
 
     private void setComponentsText() {
@@ -94,6 +108,8 @@ public class CreateChannelScreenController implements Controller {
         this.lblMembers.setText(LanguageResolver.getString("MEMBERS"));
         this.btnCreateChannel.setText(LanguageResolver.getString("SAVE"));
         this.btnDeleteChannel.setText(LanguageResolver.getString("DELETE"));
+        this.radioBtnText.setText(LanguageResolver.getString("TEXT"));
+        this.radioBtnAudio.setText(LanguageResolver.getString("AUDIO"));
     }
 
     /**
@@ -171,15 +187,17 @@ public class CreateChannelScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
+            String channelType = this.radioBtnText.isSelected() ? TEXT: AUDIO;
+
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
-                        TEXT, checkBoxPrivileged.isSelected(), null, this);
+                        channelType, checkBoxPrivileged.isSelected(), null, this);
             } else if (checkBoxPrivileged.isSelected()) {
                 if (userList.size() <= 0) {
                     userList.add(this.localUser.getId());
                 }
                 editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),
-                        TEXT, checkBoxPrivileged.isSelected(), userList, this);
+                        channelType, checkBoxPrivileged.isSelected(), userList, this);
             }
         }
     }
