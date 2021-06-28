@@ -327,7 +327,7 @@ public class ServerChatController implements Controller {
         this.lbChannelName.setText(this.currentChannel.getName());
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory(editor, this));
+        lvTextChat.setCellFactory(new MessageCellFactory<>());
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 

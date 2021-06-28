@@ -146,7 +146,7 @@ public class GenModel implements ClassModelDecorator {
         Channel channel;
     }
 
-    class PrivateMessage {
+    class PrivateMessage extends Message {
         String id;
         long timestamp;
         String text;
