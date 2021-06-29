@@ -286,6 +286,10 @@ public class StageManager extends Application {
         return stage;
     }
 
+    public AccordClient getModel() {
+        return model;
+    }
+
     public Stage getPopupStage() {
         return popupStage;
     }

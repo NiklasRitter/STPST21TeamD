@@ -330,9 +330,10 @@ public class RestManager {
                 boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
+                JsonArray channelAudioMembers = createChannelAnswer.getJsonArray(AUDIOMEMBERS);
 
                 if (category.getId().equals(channelCategoryId)) {
-                    Channel channel = editor.getChannelManager().haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers);
+                    Channel channel = editor.getChannelManager().haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers, channelAudioMembers);
                     controller.handleCreateChannel(channel);
                 } else {
                     controller.handleCreateChannel(null);
@@ -373,9 +374,10 @@ public class RestManager {
                 boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
+                JsonArray channelAudioMembers = createChannelAnswer.getJsonArray(AUDIOMEMBERS);
 
                 if (category.getId().equals(channelCategoryId)) {
-                    Channel newChannel = editor.getChannelManager().updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers);
+                    Channel newChannel = editor.getChannelManager().updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers, channelAudioMembers);
                     controller.handleEditChannel(newChannel);
                 } else {
                     controller.handleEditChannel(null);
@@ -635,6 +637,42 @@ public class RestManager {
                 localUser.setPassword(password);
                 editor.getWebSocketManager().start();
                 editor.handleAutomaticLogin(true);
+            }
+        });
+    }
+
+    public void joinAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
+        restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.getLocalUser().setAudioChannel(channel);
+                controller.handleJoinAudioChannel(channel.getCategory());
+            }
+            else{
+                controller.handleJoinAudioChannel(null);
+            }
+        });
+    }
+
+    public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
+        restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.getLocalUser().setAudioChannel(null);
+                controller.handleLeaveAudioChannel(channel.getCategory());
+            }
+            else{
+                controller.handleLeaveAudioChannel(null);
+            }
+        });
+    }
+
+    public void leaveAndJoinNewAudioChannel(String userKey, Server server, Category oldCategory, Category newCategory, Channel oldChannel, Channel newChannel, CategoryTreeViewController controller){
+        restClient.leaveAudioChannel(userKey, server.getId(), oldCategory.getId(), oldChannel.getId(), response -> {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.getLocalUser().setAudioChannel(null);
+                joinAudioChannel(userKey, server, newCategory, newChannel, controller);
+            }
+            else{
+                controller.handleLeaveAudioChannel(null);
             }
         });
     }
