@@ -253,6 +253,10 @@ public class PrivateChatController implements Controller {
                     }
                 }
             }
+            if (mouseEvent.getClickCount() == 2) {
+                editor.copyToSystemClipBoard(selectedMessage.getText());
+            }
+
         }
     }
 

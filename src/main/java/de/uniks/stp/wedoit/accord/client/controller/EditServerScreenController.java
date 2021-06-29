@@ -296,7 +296,7 @@ public class EditServerScreenController implements Controller {
                 lblInvitationStatusText.setText("invitation status:");
                 Invitation invitation = lvInvitation.getSelectionModel().getSelectedItem();
                 if (invitation.getType().equals(COUNT)) {
-                    lblInvitationStatus.setText("usable " + (invitation.getMax() - invitation.getCurrent() + 1) + " more times");
+                    lblInvitationStatus.setText("usable " + (invitation.getMax() - invitation.getCurrent()) + " more times");
                 }
                 if (invitation.getType().equals(TEMPORAL)) {
                     lblInvitationStatus.setText("valid for less than 24 hours");

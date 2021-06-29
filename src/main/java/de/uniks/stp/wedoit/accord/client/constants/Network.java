@@ -4,7 +4,7 @@ package de.uniks.stp.wedoit.accord.client.constants;
  * includes constants to handle operations concerning Network, means rest and websocket connection.
  */
 public class Network {
-    public static final String REST_SERVER_URL = "https://ac.uniks.de";
+    public static final String REST_SERVER_URL = "https://ac-pres.uniks.de";
     public static final String USERS_PATH = "/users";
     public static final String LOGIN_PATH = "/login";
     public static final String LOGOUT_PATH = "/logout";
@@ -16,7 +16,7 @@ public class Network {
     public static final String EQUALS = "=";
     public static final String CHAT_PATH = "/ws/chat";
 
-    public static final String WS_SERVER_URL = "wss://ac.uniks.de";
+    public static final String WS_SERVER_URL = "wss://ac-pres.uniks.de";
     public static final String SYSTEM_SOCKET_URL = WS_SERVER_URL + "/ws/system";
     public static final String WS_SERVER_ID_URL = "/ws/system?serverId=";
     public static final String CHAT_USER_URL = WS_SERVER_URL + "/ws/chat?user=";
