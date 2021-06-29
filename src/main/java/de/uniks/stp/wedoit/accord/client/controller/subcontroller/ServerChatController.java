@@ -256,8 +256,10 @@ public class ServerChatController implements Controller {
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
-        Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
+        if (this.currentChannel != null) {
+            Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
+            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, LanguageResolver.getString("EMOJI_PICKER"), "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
+        }
     }
 
     /**
@@ -325,9 +327,11 @@ public class ServerChatController implements Controller {
         channel.setRead(true);
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
+        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+        this.tfInputMessage.setEditable(this.currentChannel!=null);
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory(editor, this));
+        lvTextChat.setCellFactory(new MessageCellFactory<>());
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 

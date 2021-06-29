@@ -72,6 +72,7 @@ public class LoginScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnRememberMe = (CheckBox) view.lookup("#btnRememberMe");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         // Add necessary action listeners
@@ -96,6 +97,7 @@ public class LoginScreenController implements Controller {
      * Sets texts of all GUI components like buttons, labels etc. in the selected language.
      */
     private void setComponentsText() {
+        this.tfUserName.setPromptText(LanguageResolver.getString("YOUR_USERNAME"));
         this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
         this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));

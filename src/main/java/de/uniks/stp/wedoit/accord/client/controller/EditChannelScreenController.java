@@ -35,7 +35,7 @@ public class EditChannelScreenController implements Controller {
     private Button btnSave;
     private CheckBox checkBoxPrivileged;
     private Button btnDeleteChannel;
-    private Label errorLabel, lblMembers,lblChannelName, lblPrivileged;
+    private Label errorLabel, lblMembers, lblChannelName, lblPrivileged;
     private VBox vBoxMemberNameAndCheckBox;
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList;
@@ -80,6 +80,7 @@ public class EditChannelScreenController implements Controller {
         this.lblChannelName = (Label) view.lookup("#lblChannelName");
         this.lblPrivileged = (Label) view.lookup("#lblPrivileged");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         if (channel.isPrivileged()) {
@@ -132,6 +133,7 @@ public class EditChannelScreenController implements Controller {
             channel.setPrivileged(false);
             lblMembers.setVisible(false);
         }
+        this.editor.getStageManager().getPopupStage().sizeToScene();
     }
 
     /**

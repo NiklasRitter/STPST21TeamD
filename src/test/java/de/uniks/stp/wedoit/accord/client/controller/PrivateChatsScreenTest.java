@@ -363,6 +363,41 @@ public class PrivateChatsScreenTest extends ApplicationTest {
     }
 
     @Test
+    public void testImageMessage() {
+        initUserListView();
+
+        Label lblSelectedUser = lookup("#lblSelectedUser").query();
+        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+
+        lwOnlineUsers.getSelectionModel().select(0);
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
+
+        clickOn("#lwOnlineUsers");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(user.getName(), lblSelectedUser.getText());
+
+        clickOn("#tfEnterPrivateChat");
+        String message = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Eopsaltria_australis_-_Mogo_Campground.jpg/1200px-Eopsaltria_australis_-_Mogo_Campground.jpg";
+        ((TextField) lookup("#tfEnterPrivateChat").query()).setText(message);
+        press(KeyCode.ENTER);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), message);
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+
+        WaitForAsyncUtils.waitForFxEvents();
+        int lwNewestItem = lwPrivateChat.getItems().size() - 1;
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
+        Assert.assertEquals(message, lwPrivateChat.getItems().get(lwNewestItem).getText());
+
+    }
+
+    @Test
     public void testChatIncomingMessage() {
         initUserListView();
         Label lblSelectedUser = lookup("#lblSelectedUser").query();

@@ -35,7 +35,8 @@ public class MessageManager {
         if (message.getText().startsWith(GAME_PREFIX) && handleGameMessages(message)) return;
 
         if (message.getFrom().equals(editor.getLocalUser().getName())) {
-            editor.getUser(message.getTo()).getPrivateChat().withMessages(message);
+            User user = editor.getUser(message.getTo());
+            user.getPrivateChat().withMessages(message);
         } else {
             SystemTrayController systemTrayController = editor.getStageManager().getSystemTrayController();
             if (systemTrayController != null) {
@@ -70,12 +71,8 @@ public class MessageManager {
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
-            } else {
-                System.out.println("this is: " + editor.getLocalUser().getName());
-                System.out.println(editor.getStageManager().getGameStage().getTitle());
-                System.out.println(!editor.getStageManager().getGameStage().isShowing());
-                System.out.println(!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result"));
-                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo() : message.getFrom(), GAME_INGAME);
+            }else{
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo(): message.getFrom(), GAME_INGAME);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
@@ -178,7 +175,7 @@ public class MessageManager {
      */
     public String getMessageFormatted(PrivateMessage message) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
-
+        if(message.getText().startsWith(GAME_PREFIX)) message.setText(message.getText().substring(GAME_PREFIX.length()));
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 

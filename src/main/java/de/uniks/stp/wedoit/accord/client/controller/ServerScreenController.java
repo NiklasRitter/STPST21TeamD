@@ -6,7 +6,8 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatCont
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
-import de.uniks.stp.wedoit.accord.client.view.ServerUserListView;
+import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
+import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -25,7 +26,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
@@ -103,6 +103,7 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
+        this.tfInputMessage.setEditable(false);
 
         // Add server websocket
         editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
@@ -142,7 +143,7 @@ public class ServerScreenController implements Controller {
     private void setComponentsText() {
         this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
-        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+        this.tfInputMessage.setPromptText(LanguageResolver.getString("SELECT_A_CHANNEL"));
     }
 
     /**
@@ -290,24 +291,17 @@ public class ServerScreenController implements Controller {
      * create new users which a member of this server and load user list view with this users,
      * sorted by the online status
      *
-     * @param members JSONArray with users formatted as JSONObject
+     * @param jsonMembers JSONArray with users formatted as JSONObject
      */
-    private void createUserListView(JsonArray members) {
-        for (int index = 0; index < members.toArray().length; index++) {
-
-            String name = members.getJsonObject(index).getString(NAME);
-            String id = members.getJsonObject(index).getString(ID);
-            boolean onlineStatus = members.getJsonObject(index).getBoolean(ONLINE);
-
-            editor.haveUserWithServer(name, id, onlineStatus, server);
-        }
+    private void createUserListView(JsonArray jsonMembers) {
+        List<User> members = JsonUtil.parseUserArray(jsonMembers);
+        editor.serverWithMembers(members, server);
 
         // load categories
         categoryTreeViewController.initCategoryChannelList();
 
         // load list view
-        ServerUserListView serverUserListView = new ServerUserListView();
-        lvServerUsers.setCellFactory(serverUserListView);
+        lvServerUsers.setCellFactory(new OnlineUsersCellFactory(this.editor.getStageManager(), this.server));
         this.refreshLvUsers(new Channel());
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
     }

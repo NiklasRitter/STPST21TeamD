@@ -74,8 +74,9 @@ public class EmojiScreenController implements Controller {
      * added the emoji button text in the chat text field
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
-        Platform.runLater(() -> this.tfForEmoji.setText(this.tfForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource()))
-        );
+        if (this.tfForEmoji.isEditable()) {
+            Platform.runLater(() -> this.tfForEmoji.setText(this.tfForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource())));
+        }
     }
 
     /**

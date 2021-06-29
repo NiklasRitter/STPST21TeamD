@@ -393,7 +393,7 @@ public class ServerContextMenuTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Button button = lookup("#btnSave").query();
-        Assert.assertEquals(button.getText(), "Save");
+        Assert.assertEquals("Save", button.getText());
 
         TextField textField = lookup("#tfChannelName").query();
         textField.setText("testChannel");

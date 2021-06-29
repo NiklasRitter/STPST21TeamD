@@ -5,7 +5,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatCon
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.view.PrivateChatsScreenOnlineUsersCellFactory;
+import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,14 +38,13 @@ public class PrivateChatsScreenController implements Controller {
     private TextField tfPrivateChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
-    //private final PropertyChangeListener usersChatReadListener = this::usersChatReadChanged;
     private ObservableList<User> onlineUserObservableList;
     private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private List<User> availableUsers = new ArrayList<>();
     private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser, lblOnlineUser;
-    private final PrivateChatController privateChatController;
-    private Boolean userIsSelected = false;
+    private PrivateChatController privateChatController;
+    private User selectedUser;
 
 
     /**
@@ -110,11 +109,11 @@ public class PrivateChatsScreenController implements Controller {
         this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
         this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
         this.btnPlay.setText(LanguageResolver.getString("PLAY"));
-        if (userIsSelected) {
+/*        if (userIsSelected) {
             this.tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
-        } else {
-            this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
-        }
+        } else {*/
+        this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
+        //}
     }
 
     /**
@@ -150,6 +149,9 @@ public class PrivateChatsScreenController implements Controller {
         this.btnPlay.setOnAction(null);
         this.btnOptions.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
+
+        privateChatController.stop();
+        privateChatController = null;
     }
 
     /**
@@ -187,7 +189,7 @@ public class PrivateChatsScreenController implements Controller {
      */
     public void handleGetOnlineUsers() {
         // load list view
-        PrivateChatsScreenOnlineUsersCellFactory usersListViewCellFactory = new PrivateChatsScreenOnlineUsersCellFactory();
+        OnlineUsersCellFactory usersListViewCellFactory = new OnlineUsersCellFactory(null, null);
         lwOnlineUsers.setCellFactory(usersListViewCellFactory);
         availableUsers = new ArrayList<>(localUser.getUsers());
 
@@ -229,7 +231,7 @@ public class PrivateChatsScreenController implements Controller {
                     lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    tfPrivateChat.setPromptText(user.getName() + LanguageResolver.getString("IS_OFFLINE"));
+                    tfPrivateChat.setPromptText(user.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
                     tfPrivateChat.setEditable(false);
                 }
             });
@@ -288,20 +290,38 @@ public class PrivateChatsScreenController implements Controller {
      * initPrivateChat when item of userList is clicked twice
      * manages the the Play button
      *
-     * @param mouseEvent occurs when a listitem is clicked
+     * @param mouseEvent occurs when a list item is clicked
      */
     private void onOnlineUserListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
-            User selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
-            if (selectedUser != null) {
-                btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ?
-                        LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
-                privateChatController.initPrivateChat(selectedUser);
-                userIsSelected = true;
-                lwOnlineUsers.refresh();
-                this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
-                this.btnPlay.setVisible(true);
-            }
+            this.selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
+            initPrivateChatView(selectedUser);
         }
+    }
+
+    public void initPrivateChatView(User selectedUser) {
+        if (selectedUser != null) {
+            btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ?
+                    LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
+            privateChatController.initPrivateChat(selectedUser);
+            this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
+            this.btnPlay.setVisible(true);
+        }
+    }
+
+    public void setSelectedUser(User user) {
+        this.selectedUser = user;
+    }
+
+    public ListView<User> getLwOnlineUsers() {
+        return lwOnlineUsers;
+    }
+
+    public Button getBtnOptions() {
+        return btnOptions;
+    }
+
+    public void setTfPrivateChatText(String text) {
+        this.tfPrivateChat.setText(text);
     }
 }

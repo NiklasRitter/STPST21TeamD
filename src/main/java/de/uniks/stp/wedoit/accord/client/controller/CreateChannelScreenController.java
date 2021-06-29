@@ -77,6 +77,7 @@ public class CreateChannelScreenController implements Controller {
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
         this.lblMembers = (Label) view.lookup("#lblMembers");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         checkIfIsPrivileged();
@@ -107,6 +108,8 @@ public class CreateChannelScreenController implements Controller {
         this.lblMembers.setText(LanguageResolver.getString("MEMBERS"));
         this.btnCreateChannel.setText(LanguageResolver.getString("SAVE"));
         this.btnDeleteChannel.setText(LanguageResolver.getString("DELETE"));
+        this.radioBtnText.setText(LanguageResolver.getString("TEXT"));
+        this.radioBtnAudio.setText(LanguageResolver.getString("AUDIO"));
     }
 
     /**

@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -12,7 +13,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -34,8 +34,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.*;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -58,12 +57,17 @@ public class ServerScreenTest extends ApplicationTest {
     WebSocketClient webSocketClient;
     @Mock
     WebSocketClient chatWebSocketClient;
+    @Mock
+    WebSocketClient privateChatWebSocketClient;
+    @Mock
+    WebSocketClient systemWebSocketClient;
 
     private Stage stage;
     private Stage emojiPickerStage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
+
     @Mock
     private RestClient restMock;
     @Mock
@@ -82,11 +86,16 @@ public class ServerScreenTest extends ApplicationTest {
 
 
     @Captor
+    private ArgumentCaptor<WSCallback> privateChatCallbackArgumentCaptor;
+
+    @Captor
     private ArgumentCaptor<WSCallback> callbackArgumentCaptorWebSocket;
+
     private WSCallback wsCallback;
 
     @Captor
     private ArgumentCaptor<WSCallback> chatCallbackArgumentCaptorWebSocket;
+
     private Options oldOptions;
 
 
@@ -113,8 +122,8 @@ public class ServerScreenTest extends ApplicationTest {
         this.stageManager.start(stage);
         this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
         //create localUser to skip the login screen and create server to skip the MainScreen
-        this.localUser = this.stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
-        this.localUser.setId("123");
+        this.localUser = this.stageManager.getEditor().haveLocalUser("JohnDoe", "testKey123");
+        this.localUser.setPassword("secret").setId("123");
         this.server = this.stageManager.getEditor().haveServer(localUser, "testId", "TServer");
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), webSocketClient);
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().
@@ -123,7 +132,6 @@ public class ServerScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
         this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
 
-        this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
 
@@ -149,6 +157,9 @@ public class ServerScreenTest extends ApplicationTest {
         callbackArgumentCaptorWebSocket = null;
         wsCallback = null;
         chatCallbackArgumentCaptorWebSocket = null;
+        privateChatWebSocketClient = null;
+        systemWebSocketClient = null;
+        privateChatCallbackArgumentCaptor = null;
     }
 
     @BeforeEach
@@ -235,6 +246,15 @@ public class ServerScreenTest extends ApplicationTest {
 
         chatWsCallback.handleMessage(webSocketJson);
     }
+
+    public void mockPrivateChatWebSocket(JsonObject webSocketJson) {
+        // mock websocket
+        verify(privateChatWebSocketClient).setCallback(privateChatCallbackArgumentCaptor.capture());
+        WSCallback wsSystemCallback = privateChatCallbackArgumentCaptor.getValue();
+
+        wsSystemCallback.handleMessage(webSocketJson);
+    }
+
 
     @Test
     public void initUserListView() {
@@ -461,7 +481,6 @@ public class ServerScreenTest extends ApplicationTest {
     @Test
     public void getChannelMessageFailure() {
         JsonObject restJson = getServerIdSuccessful();
-        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
         mockRest(restJson);
 
         when(res.getBody()).thenReturn(new JsonNode(getCategories().toString()));
@@ -481,12 +500,9 @@ public class ServerScreenTest extends ApplicationTest {
             callback.completed(res);
         }
 
-        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
         WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("Channel_3");
-
-        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
         when(res.getBody()).thenReturn(new JsonNode(getChannelMessagesFailure().toString()));
         verify(restMock).getChannelMessages(anyString(), anyString(), anyString(), anyString(), anyString(), callbackArgumentCaptor.capture());
@@ -501,7 +517,6 @@ public class ServerScreenTest extends ApplicationTest {
     @Test
     public void loadMoreMessagesTest() {
         JsonObject restJson = getServerIdSuccessful();
-        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
         mockRest(restJson);
 
         when(res.getBody()).thenReturn(new JsonNode(getCategories().toString()));
@@ -560,9 +575,9 @@ public class ServerScreenTest extends ApplicationTest {
         //init channel list and select first channel
         initUserListView();
         initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
-        Button btnEmoji = lookup("#btnEmoji").query();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -633,6 +648,7 @@ public class ServerScreenTest extends ApplicationTest {
         //init user list and select first user
         initUserListView();
         initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
         Label lbChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
@@ -862,9 +878,7 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     private void openAttentionScreen() {
-        Platform.runLater(() -> {
-            this.stageManager.initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
-        });
+        Platform.runLater(() -> this.stageManager.initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null));
     }
 
     @Test
@@ -875,7 +889,6 @@ public class ServerScreenTest extends ApplicationTest {
         initChannelListView();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
-        Button btnEmoji = lookup("#btnEmoji").query();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -901,10 +914,9 @@ public class ServerScreenTest extends ApplicationTest {
 
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
-        HBox quoteVisible = lookup("#quoteVisible").query();
 
-        Label lblQuote = (Label) lookup("#lblQuote").query();
-        Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
+        Label lblQuote = lookup("#lblQuote").query();
+        Button btnCancelQuote = lookup("#btnCancelQuote").query();
 
         String formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0));
         Assert.assertEquals(lblQuote.getText(), formatted);
@@ -917,8 +929,7 @@ public class ServerScreenTest extends ApplicationTest {
         rightClickOn(lvTextChat);
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
-        lblQuote = (Label) lookup("#lblQuote").query();
-        btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
+        lblQuote = lookup("#lblQuote").query();
 
         formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0));
         Assert.assertEquals(lblQuote.getText(), formatted);
@@ -947,7 +958,6 @@ public class ServerScreenTest extends ApplicationTest {
         initChannelListView();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
-        Button btnEmoji = lookup("#btnEmoji").query();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -1007,7 +1017,6 @@ public class ServerScreenTest extends ApplicationTest {
         initChannelListView();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
-        Button btnEmoji = lookup("#btnEmoji").query();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -1121,6 +1130,73 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     @Test
+    public void privateMessageTest() {
+        // some more Mocking that is required to send private Messages
+        stageManager.getEditor().setUpDB();
+
+        System.out.println(PRIVATE_USER_CHAT_PREFIX +
+                this.stageManager.getEditor().getWebSocketManager().getCleanLocalUserName());
+
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX +
+                this.stageManager.getEditor().getWebSocketManager().getCleanLocalUserName(), privateChatWebSocketClient);
+
+        this.stageManager.getEditor().getWebSocketManager().start();
+
+
+        JsonObject restJson = getServerIdSuccessful();
+        ListView<Object> listView = lookup("#lvServerUsers").queryListView();
+        mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        // select certain user
+        clickOn("Phil");
+        User phil = (User) listView.getSelectionModel().getSelectedItem();
+        phil.setPrivateChat(new Chat());
+
+        Assert.assertEquals(phil.getPrivateChat().getMessages().size(), 0);
+
+        Platform.runLater(() -> stageManager.initView(POPUPSTAGE, phil.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, phil));
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(stageManager.getPopupStage().getTitle(), phil.getName());
+
+        TextField tfMessage = lookup("#tfMessage").query();
+
+        Assert.assertEquals(tfMessage.isEditable(), phil.isOnlineStatus());
+        Assert.assertEquals(tfMessage.getPromptText(), phil.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+
+        phil.setOnlineStatus(true);
+
+        Assert.assertEquals(tfMessage.isEditable(), phil.isOnlineStatus());
+        Assert.assertEquals(tfMessage.getPromptText(), "Send Message to " +phil.getName());
+
+        // Assert send message with emoji is working correctly
+        tfMessage.setText("Hello Phil");
+        WaitForAsyncUtils.waitForFxEvents();
+        press(KeyCode.ENTER);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        JsonObject test_message = buildPrivateChatMessage(phil.getName(), "Hello Phil");
+        mockPrivateChatWebSocket(test_message);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(phil.getPrivateChat().getMessages().size(), 1);
+
+        // Assert changing to privateChat works correctly
+        tfMessage.setText("How are you?");
+        clickOn("#btnShowChat");
+
+        TextField tfEnterPrivateChat = lookup("#tfEnterPrivateChat").query();
+        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
+
+        PrivateMessage message = lwPrivateChat.getItems().get(0);
+
+        Assert.assertEquals(message.getText(), "Hello Phil");
+        Assert.assertEquals(tfEnterPrivateChat.getText(), "How are you?");
+    }
+
+    @Test
     public void joinAudioServerTest(){
         initUserListView();
         JsonArray audioMembers = Json.createArrayBuilder().add("I1").build();
@@ -1203,11 +1279,6 @@ public class ServerScreenTest extends ApplicationTest {
                         add("type", "text").add("privileged", false).add("category", "cat1").add("members", Json.createArrayBuilder())).build();
     }
 
-    public JsonObject webSocketCallbackPrivilegedChannelCreated() {
-        return Json.createObjectBuilder().add("action", "channelCreated").add("data",
-                Json.createObjectBuilder().add("id", "ch1").add("name", "TestChannel").
-                        add("type", "text").add("privileged", true).add("category", "categoryOne").add("members", Json.createArrayBuilder())).build();
-    }
 
     public JsonObject webSocketCallbackChannelUpdated() {
         return Json.createObjectBuilder().add("action", "channelUpdated").add("data",
@@ -1467,6 +1538,17 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("message", "")
                 .add("data", Json.createArrayBuilder()).build();
     }
+
+    public JsonObject buildPrivateChatMessage(String to, String message) {
+        return Json.createObjectBuilder()
+                .add(CHANNEL, PRIVATE)
+                .add(TO, to)
+                .add(MESSAGE, message)
+                .add(TIMESTAMP, 1234567)
+                .add(FROM, localUser.getName())
+                .build();
+    }
+
 
     public JsonObject joinOrLeaveAudioChannel(String userId, String categoryId, String channelId) {
         return Json.createObjectBuilder()
