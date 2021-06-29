@@ -31,10 +31,7 @@ import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
@@ -212,7 +209,7 @@ public class ServerScreenTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).getChannels(anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
+        verify(restMock, atLeastOnce()).getChannels(anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -225,6 +222,20 @@ public class ServerScreenTest extends ApplicationTest {
         verify(restMock).getCategories(anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockJoinAudio(JsonObject restClientJson){
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+        verify(restMock).joinAudioChannel(anyString(), anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
+        Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockLeaveAudio(JsonObject restClientJson){
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+        verify(restMock).leaveAudioChannel(anyString(), anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
+        Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
         callback.completed(res);
     }
 
@@ -262,6 +273,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertFalse(listView.getItems().contains(new Server()));
 
         mockWebSocket(webSocketJson);
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     private void initChannelListView() {
@@ -269,6 +281,15 @@ public class ServerScreenTest extends ApplicationTest {
         mockGetCategoryRest(categoriesRestJson);
         JsonObject channelRestJson = getCategoryChannels();
         mockChannelRest(channelRestJson);
+        WaitForAsyncUtils.waitForFxEvents();
+    }
+
+    private void initAudioChannelListView(JsonArray audioMembers) {
+        JsonObject categoriesRestJson = getServerCategories();
+        mockGetCategoryRest(categoriesRestJson);
+        JsonObject channelRestJson = getCategoryAudioChannels(audioMembers);
+        mockChannelRest(channelRestJson);
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     public void initChannelListViewChannelFailure() {
@@ -1175,6 +1196,45 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(tfEnterPrivateChat.getText(), "How are you?");
     }
 
+    @Test
+    public void joinAudioServerTest(){
+        initUserListView();
+        JsonArray audioMembers = Json.createArrayBuilder().add("I1").build();
+        initAudioChannelListView(audioMembers);
+        TreeView<Object> treeView = lookup("#tvServerChannels").query();
+        Assert.assertSame(treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren().get(0).getValue(), server.getMembers().get(0));
+
+        doubleClickOn("channelName1");
+        JsonObject restClientJson = joinOrLeaveAudioChannel("I2", "idTest", "idTest1");
+        audioMembers = Json.createArrayBuilder().add("I1").add("I2").build();
+        JsonObject channelRestJson = getCategoryAudioChannels(audioMembers);
+        mockChannelRest(channelRestJson);
+        mockJoinAudio(restClientJson);
+        WaitForAsyncUtils.waitForFxEvents();
+        User user = (User) treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren().get(1).getValue();
+        Assert.assertEquals(user.getId(), "I2");
+    }
+
+    @Test
+    public void leaveAudioChannelTest(){
+        initUserListView();
+        JsonArray audioMembers = Json.createArrayBuilder().add("I1").build();
+        initAudioChannelListView(audioMembers);
+        localUser.setAudioChannel(server.getCategories().get(0).getChannels().get(0));
+        TreeView<Object> treeView = lookup("#tvServerChannels").query();
+
+        doubleClickOn("channelName1");
+
+        JsonObject restClientJson = joinOrLeaveAudioChannel("I1", "idTest", "idTest1");
+        audioMembers = Json.createArrayBuilder().build();
+        JsonObject channelRestJson = getCategoryAudioChannels(audioMembers);
+        mockChannelRest(channelRestJson);
+        mockLeaveAudio(restClientJson);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren().size(), 0);
+    }
+
+
     // Methods for callbacks
 
     /**
@@ -1438,6 +1498,21 @@ public class ServerScreenTest extends ApplicationTest {
                                 .add("members", Json.createArrayBuilder()))).build();
     }
 
+    public JsonObject getCategoryAudioChannels(JsonArray audioMembers) {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", "idTest1")
+                                .add("name", "channelName1")
+                                .add("type", "audio")
+                                .add("privileged", false)
+                                .add("category", "categoryId1")
+                                .add("members", Json.createArrayBuilder())
+                                .add("audioMembers", audioMembers))).build();
+    }
+
     public JsonObject getServerCategories() {
         return Json.createObjectBuilder()
                 .add("status", "success")
@@ -1474,4 +1549,15 @@ public class ServerScreenTest extends ApplicationTest {
                 .build();
     }
 
+
+    public JsonObject joinOrLeaveAudioChannel(String userId, String categoryId, String channelId) {
+        return Json.createObjectBuilder()
+                .add("status", "success")
+                .add("message", "")
+                .add("data", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("id", userId)
+                                .add("category", categoryId)
+                                .add("channel", channelId))).build();
+    }
 }

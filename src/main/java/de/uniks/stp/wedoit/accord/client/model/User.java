@@ -17,6 +17,7 @@ public class User
    public static final String PROPERTY_PRIVATE_CHAT = "privateChat";
    public static final String PROPERTY_LOCAL_USER = "localUser";
    public static final String PROPERTY_GAME_MOVE = "gameMove";
+   public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
    private String name;
    private boolean onlineStatus;
    private boolean chatRead;
@@ -27,6 +28,7 @@ public class User
    private LocalUser localUser;
    protected PropertyChangeSupport listeners;
    private String gameMove;
+   private Channel audioChannel;
 
    public String getName()
    {
@@ -304,6 +306,33 @@ public class User
       return this;
    }
 
+   public Channel getAudioChannel()
+   {
+      return this.audioChannel;
+   }
+
+   public User setAudioChannel(Channel value)
+   {
+      if (this.audioChannel == value)
+      {
+         return this;
+      }
+
+      final Channel oldValue = this.audioChannel;
+      if (this.audioChannel != null)
+      {
+         this.audioChannel = null;
+         oldValue.withoutAudioMembers(this);
+      }
+      this.audioChannel = value;
+      if (value != null)
+      {
+         value.withAudioMembers(this);
+      }
+      this.firePropertyChange(PROPERTY_AUDIO_CHANNEL, oldValue, value);
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -336,6 +365,7 @@ public class User
    public void removeYou()
    {
       this.withoutChannels(new ArrayList<>(this.getChannels()));
+      this.setAudioChannel(null);
       this.withoutServers(new ArrayList<>(this.getServers()));
       this.setPrivateChat(null);
       this.setLocalUser(null);

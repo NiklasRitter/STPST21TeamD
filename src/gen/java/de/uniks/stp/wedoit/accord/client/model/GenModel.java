@@ -36,6 +36,7 @@ public class GenModel implements ClassModelDecorator {
         String id;
         List<User> gameInvites;
         List<User> gameRequests;
+        Channel audioChannel;
 
         @Link("localUser")
         List<User> users;
@@ -67,6 +68,8 @@ public class GenModel implements ClassModelDecorator {
         @Link("members")
         List<Channel> channels;
 
+        @Link("audioMembers")
+        Channel audioChannel;
     }
 
     class Chat {
@@ -123,6 +126,9 @@ public class GenModel implements ClassModelDecorator {
 
         @Link("channel")
         List<Message> messages;
+
+        @Link("audioChannel")
+        List<User> audioMembers;
     }
 
     class Category {
