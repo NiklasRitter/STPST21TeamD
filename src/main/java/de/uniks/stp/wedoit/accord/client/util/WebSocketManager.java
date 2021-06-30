@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -17,8 +18,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class WebSocketManager {
 
@@ -159,6 +163,9 @@ public class WebSocketManager {
             } else {
                 // create or get a new user with the data
                 User user = editor.haveUserWithServer(name, id, false, server);
+                if (user == null) {
+                    return;
+                }
 
                 if (action.equals(USER_JOINED)) {
                     user.setOnlineStatus(true);
@@ -175,70 +182,80 @@ public class WebSocketManager {
             return;
         }
 
-        switch (action) {
-            case SERVER_UPDATED:
-                server.setName(data.getString(NAME));
-                break;
-            case SERVER_DELETED:
-                Platform.runLater(editor.getStageManager()::showMainScreen);
-                break;
-            case CATEGORY_CREATED:
-                editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
-                break;
-            case CATEGORY_UPDATED:
-                editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
-                break;
-            case CATEGORY_DELETED:
-                editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server).removeYou();
-                break;
-            case CHANNEL_CREATED:
-                Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
-                editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS));
-                break;
-            case CHANNEL_UPDATED:
-                Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS));
-                if (channel == null) {
-                    Platform.runLater(() -> editor.getStageManager().showServerScreen(server));
-                }
-                break;
-            case CHANNEL_DELETED:
-                Category categoryDeleted = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
-                Channel channelDeleted = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, categoryDeleted, Json.createArrayBuilder().build());
-                channelDeleted.removeYou();
-                break;
-            case INVITE_EXPIRED:
-                editor.deleteInvite(data.getString(ID), server);
-                break;
-            case MESSAGE_UPDATED:
-                Message messageToUpdate = JsonUtil.parseMessageUpdated(data);
-                Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
-                if (channelUpdatedMessage == null) {
-                    Platform.runLater(() -> editor.getStageManager().showMainScreen());
-                    System.err.println("Error from message updated");
-                    return;
-                }
-                editor.getMessageManager().updateMessage(channelUpdatedMessage, messageToUpdate);
-                break;
-            case MESSAGE_DELETED:
-                Channel channelDeleteMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
-                if (channelDeleteMessage == null) {
-                    Platform.runLater(() -> editor.getStageManager().showMainScreen());
-                    System.err.println("Error from message delete");
-                    return;
-                }
-                editor.getMessageManager().deleteMessage(channelDeleteMessage, data.getString(ID));
-                break;
-            case AUDIO_JOINED:
-                // TODO: Audio Joined
-                // example: {"action":"audioJoined","data":{"id":"60acfbf4c77d3f78988b27f9","category":"60d216c6313aa83bed147e0e","channel":"60d21c1f313aa83bed147fe9"}}
-                break;
-            case AUDIO_LEFT:
-                // TODO: Audio Left
-                // example: {"action":"audioLeft","data":{"id":"60acfbf4c77d3f78988b27f9","category":"60d216c6313aa83bed147e0e","channel":"60d21c1f313aa83bed147fe9"}}
-                break;
-            default:
-                System.err.println("Unknown Server Action");
+        // change data of the server
+        if (action.equals(SERVER_UPDATED)) {
+            server.setName(data.getString(NAME));
         }
+        if (action.equals(SERVER_DELETED)) {
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+        }
+
+        //change category
+        if (action.equals(CATEGORY_UPDATED)) {
+            editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
+        }
+        if (action.equals(CATEGORY_CREATED)) {
+            editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
+        }
+        if (action.equals(CATEGORY_DELETED)) {
+            Category category = editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
+            category.removeYou();
+        }
+
+        // change channel
+        if (action.equals(CHANNEL_UPDATED)) {
+            Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS), data.getJsonArray(AUDIOMEMBERS));
+            if (channel == null) {
+                Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+            }
+        }
+        if (action.equals(CHANNEL_CREATED)) {
+            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+            editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS), data.getJsonArray(AUDIOMEMBERS));
+        }
+        if (action.equals(CHANNEL_DELETED)) {
+            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+            Channel channel = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, category, Json.createArrayBuilder().build(), Json.createArrayBuilder().build());
+            channel.removeYou();
+        }
+        // change invitation
+        if (action.equals(INVITE_EXPIRED)) {
+            editor.deleteInvite(data.getString(ID), server);
+        }
+        if (action.equals(AUDIO_JOINED)) {
+            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+            Channel channel = editor.getChannelManager().getChannel(data.getString(CHANNEL), category);
+            User user = editor.getServerUserById(server, data.getString(ID));
+            channel.withAudioMembers(user);
+        }
+        if (action.equals(AUDIO_LEFT)) {
+            Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
+            Channel channel = editor.getChannelManager().getChannel(data.getString(CHANNEL), category);
+            User user = editor.getServerUserById(server, data.getString(ID));
+            channel.withoutAudioMembers(user);
+        }
+
+        if (action.equals(MESSAGE_UPDATED)) {
+            Message messageToUpdate = JsonUtil.parseMessageUpdated(data);
+            Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
+            if (channelUpdatedMessage == null) {
+                Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                System.err.println("Error from message updated");
+                return;
+            }
+            editor.getMessageManager().updateMessage(channelUpdatedMessage, messageToUpdate);
+        }
+
+        if (action.equals(MESSAGE_DELETED)) {
+            Channel channelDeleteMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
+            if (channelDeleteMessage == null) {
+                Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                System.err.println("Error from message delete");
+                return;
+            }
+            editor.getMessageManager().deleteMessage(channelDeleteMessage, data.getString(ID));
+        }
+
 
     }
 

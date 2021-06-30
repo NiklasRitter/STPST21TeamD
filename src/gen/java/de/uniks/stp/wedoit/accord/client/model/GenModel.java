@@ -23,6 +23,7 @@ public class GenModel implements ClassModelDecorator {
     class Options {
         boolean darkmode;
         boolean rememberMe;
+        String language;
 
         @Link("options")
         AccordClient accordClient;
@@ -35,6 +36,7 @@ public class GenModel implements ClassModelDecorator {
         String id;
         List<User> gameInvites;
         List<User> gameRequests;
+        Channel audioChannel;
 
         @Link("localUser")
         List<User> users;
@@ -66,6 +68,8 @@ public class GenModel implements ClassModelDecorator {
         @Link("members")
         List<Channel> channels;
 
+        @Link("audioMembers")
+        Channel audioChannel;
     }
 
     class Chat {
@@ -122,6 +126,9 @@ public class GenModel implements ClassModelDecorator {
 
         @Link("channel")
         List<Message> messages;
+
+        @Link("audioChannel")
+        List<User> audioMembers;
     }
 
     class Category {
@@ -145,7 +152,7 @@ public class GenModel implements ClassModelDecorator {
         Channel channel;
     }
 
-    class PrivateMessage {
+    class PrivateMessage extends Message {
         String id;
         long timestamp;
         String text;

@@ -30,7 +30,9 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -72,6 +74,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 
         this.stageManager.start(stage);
 
@@ -83,7 +86,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.showMainScreen();
+        this.stageManager.initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -94,6 +97,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         oldOptions = null;
         rule = null;
         stage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         webSocketClient = null;
@@ -206,7 +210,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         Assert.assertNull(server);
 
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field Error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Something went wrong while creating the server", errorLabel.getText());
@@ -246,7 +250,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         }
         Assert.assertNull(server);
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals("text-input text-field error", textField.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field Error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Name has to be at least 1 symbols long", errorLabel.getText());

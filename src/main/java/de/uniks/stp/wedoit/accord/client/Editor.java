@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
@@ -11,7 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class Editor {
 
@@ -138,7 +142,7 @@ public class Editor {
                 return user;
             }
         }
-        return new User().setName(name).setId(id).setOnlineStatus(online).withServers(server);
+        return haveUser(id, name).setOnlineStatus(online).withServers(server);
     }
 
     /**
@@ -148,14 +152,19 @@ public class Editor {
      * @param name name of the user
      * @return localUser
      */
-    public LocalUser haveUser(String id, String name) {
+    public User haveUser(String id, String name) {
         LocalUser localUser = accordClient.getLocalUser();
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
         Objects.requireNonNull(name);
 
         if (name.equals(localUser.getName())) {
-            return localUser;
+            User user = getUser(name);
+            if (user == null) {
+                user = new User().setName(name);
+            }
+            user.setId(id);
+            return user;
         }
 
         if (localUser.getUsers() != null) {
@@ -163,14 +172,14 @@ public class Editor {
                 if (user.getId().equals(id)) {
                     user.setOnlineStatus(true);
                     user.setChatRead(true);
-                    return localUser;
+                    return user;
                 }
             }
         }
 
         User user = new User().setId(id).setName(name).setOnlineStatus(true).setChatRead(true);
         localUser.withUsers(user);
-        return localUser;
+        return user;
     }
 
     /**
@@ -270,7 +279,7 @@ public class Editor {
         if (!success) {
             System.err.println("Error while logging out");
         }
-        Platform.runLater(() -> stageManager.showLoginScreen());
+        Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
     }
 
     /**
@@ -390,7 +399,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.showLoginScreen();
+            stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null);
             stageManager.getStage().show();
         }
     }
@@ -400,13 +409,24 @@ public class Editor {
      */
     public void handleAutomaticLogin(boolean success) {
         if (success) {
-            Platform.runLater(stageManager::showMainScreen);
+            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         } else {
-            Platform.runLater(stageManager::showLoginScreen);
+            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
         }
         Platform.runLater(() -> stageManager.getStage().show());
     }
 
+    /**
+     * Adds members to datamodel if they not exist already and sets link to server
+     *
+     * @param members The users that have to be added
+     * @param server  The server the users have to be added to
+     */
+    public void serverWithMembers(List<User> members, Server server) {
+        for (User member : members) {
+            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
+        }
+    }
     /**
      * returns channel by its id
      *

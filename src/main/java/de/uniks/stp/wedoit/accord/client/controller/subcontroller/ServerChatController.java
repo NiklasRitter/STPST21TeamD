@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Message;
@@ -31,8 +32,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.*;
 
 public class ServerChatController implements Controller {
 
@@ -55,6 +58,8 @@ public class ServerChatController implements Controller {
 
     private final PropertyChangeListener newMessagesListener = this::newMessage;
     private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
+    private ContextMenu localUserMessageContextMenu;
+    private ContextMenu userMessageContextMenu;
 
 
     /**
@@ -95,10 +100,15 @@ public class ServerChatController implements Controller {
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         quoteVisible.getChildren().clear();
-        addMessageContextMenu();
+        addUserMessageContextMenu();
+        addLocalUserMessageContextMenu();
 
+        initToolTip();
+    }
+
+    public void initToolTip() {
         Tooltip emojiButton = new Tooltip();
-        emojiButton.setText("Emojis");
+        emojiButton.setText(LanguageResolver.getString("EMOJIS"));
         emojiButton.setStyle("-fx-font-size: 10");
         this.btnEmoji.setTooltip(emojiButton);
     }
@@ -114,7 +124,10 @@ public class ServerChatController implements Controller {
         this.lvTextChat.setOnMouseClicked(null);
         this.btnCancelQuote.setOnAction(null);
 
-        for (MenuItem item : messageContextMenu.getItems()) {
+        for (MenuItem item : localUserMessageContextMenu.getItems()) {
+            item.setOnAction(null);
+        }
+        for (MenuItem item : userMessageContextMenu.getItems()) {
             item.setOnAction(null);
         }
         if (this.currentChannel != null) {
@@ -163,13 +176,30 @@ public class ServerChatController implements Controller {
     // Additional methods
 
     /**
+     * adds a context menu for a message from localUser
+     */
+    public void addLocalUserMessageContextMenu() {
+        MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
+        MenuItem updateMessage = new MenuItem("- " + LanguageResolver.getString("UPDATE_MESSAGE_CONTEXT"));
+        MenuItem deleteMessage = new MenuItem("- " + LanguageResolver.getString("DELETE_MESSAGE"));
+        localUserMessageContextMenu = new ContextMenu();
+        localUserMessageContextMenu.setId("localUserMessageContextMenu");
+        localUserMessageContextMenu.getItems().add(quote);
+        localUserMessageContextMenu.getItems().add(updateMessage);
+        localUserMessageContextMenu.getItems().add(deleteMessage);
+        quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
+        updateMessage.setOnAction((event) -> handleContextMenuClicked(UPDATE, lvTextChat.getSelectionModel().getSelectedItem()));
+        deleteMessage.setOnAction((event) -> handleContextMenuClicked(DELETE, lvTextChat.getSelectionModel().getSelectedItem()));
+    }
+
+    /**
      * adds a context menu for a message
      */
-    private void addMessageContextMenu() {
+    public void addUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- quote");
-        messageContextMenu = new ContextMenu();
-        messageContextMenu.setId("messageContextMenu");
-        messageContextMenu.getItems().add(quote);
+        userMessageContextMenu = new ContextMenu();
+        userMessageContextMenu.setId("userMessageContextMenu");
+        userMessageContextMenu.getItems().add(quote);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
@@ -190,6 +220,16 @@ public class ServerChatController implements Controller {
                 lblQuote.setAccessibleHelp(message.getId());
                 quoteVisible.getChildren().add(lblQuote);
                 quoteVisible.getChildren().add(btnCancelQuote);
+            }
+            if (menu.equals(UPDATE)) {
+                this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("UPDATE_MESSAGE"),
+                        "UpdateMessageScreen", UPDATE_MESSAGE_SCREEN_CONTROLLER,
+                        false, message, null);
+            }
+            if (menu.equals(DELETE)) {
+                this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"),
+                        "AttentionScreen", ATTENTION_SCREEN_CONTROLLER,
+                        false, message, null);
             }
         }
     }
@@ -216,8 +256,10 @@ public class ServerChatController implements Controller {
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
-        Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().showEmojiScreen(tfInputMessage, pos);
+        if (this.currentChannel != null) {
+            Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
+            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, LanguageResolver.getString("EMOJI_PICKER"), "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
+        }
     }
 
     /**
@@ -234,8 +276,13 @@ public class ServerChatController implements Controller {
         }
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
             if (lvTextChat.getSelectionModel().getSelectedItem() != null && !editor.getMessageManager().isQuote(lvTextChat.getSelectionModel().getSelectedItem())) {
-                lvTextChat.setContextMenu(messageContextMenu);
-                messageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                if (lvTextChat.getSelectionModel().getSelectedItem().getFrom().equals(editor.getLocalUser().getName())) {
+                    lvTextChat.setContextMenu(localUserMessageContextMenu);
+                    localUserMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                } else {
+                    lvTextChat.setContextMenu(userMessageContextMenu);
+                    userMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                }
             }
         }
     }
@@ -252,7 +299,8 @@ public class ServerChatController implements Controller {
         if (message != null && !message.isEmpty() && currentChannel != null) {
 
             if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
+                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText()
+                        + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
                 JsonObject jsonMessage = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
                 removeQuote();
 
@@ -279,9 +327,11 @@ public class ServerChatController implements Controller {
         channel.setRead(true);
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
+        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+        this.tfInputMessage.setEditable(this.currentChannel!=null);
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory());
+        lvTextChat.setCellFactory(new MessageCellFactory<>());
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
@@ -309,7 +359,7 @@ public class ServerChatController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().showMainScreen());
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 

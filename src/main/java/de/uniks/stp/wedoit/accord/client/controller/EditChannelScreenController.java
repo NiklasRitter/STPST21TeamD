@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -10,10 +11,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -21,6 +20,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 
 
 public class EditChannelScreenController implements Controller {
@@ -33,11 +35,12 @@ public class EditChannelScreenController implements Controller {
     private Button btnSave;
     private CheckBox checkBoxPrivileged;
     private Button btnDeleteChannel;
-    private Label errorLabel, lblMembers;
+    private Label errorLabel, lblMembers, lblChannelName, lblPrivileged;
     private VBox vBoxMemberNameAndCheckBox;
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList;
     private Boolean isPrivilegedUser = false;
+    private HBox hBoxChannelType;
 
     /**
      * Create a new Controller
@@ -70,8 +73,15 @@ public class EditChannelScreenController implements Controller {
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
         this.errorLabel = (Label) view.lookup("#lblError");
 
+        this.hBoxChannelType = (HBox) view.lookup("#hBoxChannelType");
+
         this.vBoxMemberNameAndCheckBox = (VBox) view.lookup("#vBoxMemberNameAndCheckBox");
         this.lblMembers = (Label) view.lookup("#lblMembers");
+        this.lblChannelName = (Label) view.lookup("#lblChannelName");
+        this.lblPrivileged = (Label) view.lookup("#lblPrivileged");
+
+        this.view.requestFocus();
+        this.setComponentsText();
 
         if (channel.isPrivileged()) {
             this.checkBoxPrivileged.setSelected(true);
@@ -82,13 +92,23 @@ public class EditChannelScreenController implements Controller {
 
         checkIfIsPrivileged();
 
-        tfChannelName.setText(channel.getName());
+        this.tfChannelName.setText(channel.getName());
+
+        this.hBoxChannelType.setVisible(false);
 
         // Add action listeners
         this.btnSave.setOnAction(this::btnSaveOnClick);
         this.btnDeleteChannel.setOnAction(this::deleteChannelButtonOnClick);
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
 
+    }
+
+    private void setComponentsText() {
+        this.lblChannelName.setText(LanguageResolver.getString("CHANNEL_NAME"));
+        this.lblPrivileged.setText(LanguageResolver.getString("PRIVILEGED"));
+        this.lblMembers.setText(LanguageResolver.getString("MEMBERS"));
+        this.btnSave.setText(LanguageResolver.getString("SAVE"));
+        this.btnDeleteChannel.setText(LanguageResolver.getString("DELETE"));
     }
 
     /**
@@ -113,6 +133,7 @@ public class EditChannelScreenController implements Controller {
             channel.setPrivileged(false);
             lblMembers.setVisible(false);
         }
+        this.editor.getStageManager().getPopupStage().sizeToScene();
     }
 
     /**
@@ -148,6 +169,8 @@ public class EditChannelScreenController implements Controller {
         btnSave.setOnAction(null);
         btnDeleteChannel.setOnAction(null);
         checkBoxPrivileged.setOnAction(null);
+
+
     }
 
 
@@ -159,9 +182,9 @@ public class EditChannelScreenController implements Controller {
      */
     private void btnSaveOnClick(ActionEvent actionEvent) {
         if (tfChannelName.getText().length() < 1 || tfChannelName.getText() == null) {
-            tfChannelName.getStyleClass().add("error");
+            tfChannelName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText("Name has to be at least 1 symbols long"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getRestManager().updateChannel(editor.getCurrentServer(), channel.getCategory(), channel, tfChannelName.getText(), checkBoxPrivileged.isSelected(), null, this);
@@ -188,8 +211,8 @@ public class EditChannelScreenController implements Controller {
             Platform.runLater(stage::close);
             stop();
         } else {
-            tfChannelName.getStyleClass().add("error");
-            Platform.runLater(() -> errorLabel.setText("Something went wrong while updating the channel"));
+            tfChannelName.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("SOMETHING_WRONG_WHILE_UPDATE_CHANNEL")));
         }
     }
 
@@ -199,7 +222,7 @@ public class EditChannelScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteChannelButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().showAttentionScreen(channel);
+        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"), "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, channel, null);
     }
 
     /**

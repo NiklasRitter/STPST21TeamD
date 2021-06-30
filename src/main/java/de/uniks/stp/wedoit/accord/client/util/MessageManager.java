@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
 
@@ -10,8 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_RESULT_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
 
 public class MessageManager {
 
@@ -31,7 +35,8 @@ public class MessageManager {
         if (message.getText().startsWith(GAME_PREFIX) && handleGameMessages(message)) return;
 
         if (message.getFrom().equals(editor.getLocalUser().getName())) {
-            editor.getUser(message.getTo()).getPrivateChat().withMessages(message);
+            User user = editor.getUser(message.getTo());
+            user.getPrivateChat().withMessages(message);
         } else {
             SystemTrayController systemTrayController = editor.getStageManager().getSystemTrayController();
             if (systemTrayController != null) {
@@ -66,12 +71,8 @@ public class MessageManager {
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
-            } else {
-                System.out.println("this is: " + editor.getLocalUser().getName());
-                System.out.println(editor.getStageManager().getGameStage().getTitle());
-                System.out.println(!editor.getStageManager().getGameStage().isShowing());
-                System.out.println(!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result"));
-                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo() : message.getFrom(), GAME_INGAME);
+            }else{
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo(): message.getFrom(), GAME_INGAME);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
@@ -83,13 +84,14 @@ public class MessageManager {
 
             Platform.runLater(() -> {
                 if (message.getFrom().equals(editor.getLocalUser().getName()))
-                    editor.getStageManager().showGameScreen(editor.getUser(message.getTo()));
+                    editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("ROCK_PAPER_SCISSORS"), "GameScreen", GAME_SCREEN_CONTROLLER, true, editor.getUser(message.getTo()), null);
                 else
-                    editor.getStageManager().showGameScreen(editor.getUser(message.getFrom()));
+                    editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("ROCK_PAPER_SCISSORS"), "GameScreen", GAME_SCREEN_CONTROLLER, true, editor.getUser(message.getFrom()), null);
             });
 
         } else if (message.getText().equals(GAME_CLOSE) && editor.getStageManager().getGameStage().isShowing()) {
-            Platform.runLater(() -> editor.getStageManager().showGameResultScreen(editor.getUser(message.getFrom()), null));
+            Platform.runLater(() -> editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, editor.getUser(message.getFrom()), null));
+
         }
 
         if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {
@@ -151,10 +153,15 @@ public class MessageManager {
      * @param messageToDeleteId id of the message to delete
      */
     public void deleteMessage(Channel channel, String messageToDeleteId) {
+        Message foundMessage = null;
         for (Message message : channel.getMessages()) {
             if (message.getId().equals(messageToDeleteId)) {
-                channel.withoutMessages(message);
+                foundMessage = message;
+                break;
             }
+        }
+        if (foundMessage != null) {
+            channel.withoutMessages(foundMessage);
         }
     }
 
@@ -168,7 +175,7 @@ public class MessageManager {
      */
     public String getMessageFormatted(PrivateMessage message) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
-
+        if(message.getText().startsWith(GAME_PREFIX)) message.setText(message.getText().substring(GAME_PREFIX.length()));
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 

@@ -1,15 +1,18 @@
 package de.uniks.stp.wedoit.accord.client.model;
 import java.beans.PropertyChangeSupport;
+import java.util.Objects;
 
 public class Options
 {
    public static final String PROPERTY_DARKMODE = "darkmode";
    public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
    public static final String PROPERTY_REMEMBER_ME = "rememberMe";
+   public static final String PROPERTY_LANGUAGE = "language";
    private boolean darkmode;
    private AccordClient accordClient;
    protected PropertyChangeSupport listeners;
    private boolean rememberMe;
+   private String language;
 
    public boolean isDarkmode()
    {
@@ -74,6 +77,24 @@ public class Options
       return this;
    }
 
+   public String getLanguage()
+   {
+      return this.language;
+   }
+
+   public Options setLanguage(String value)
+   {
+      if (Objects.equals(value, this.language))
+      {
+         return this;
+      }
+
+      final String oldValue = this.language;
+      this.language = value;
+      this.firePropertyChange(PROPERTY_LANGUAGE, oldValue, value);
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -96,5 +117,13 @@ public class Options
    public void removeYou()
    {
       this.setAccordClient(null);
+   }
+
+   @Override
+   public String toString()
+   {
+      final StringBuilder result = new StringBuilder();
+      result.append(' ').append(this.getLanguage());
+      return result.substring(1);
    }
 }
