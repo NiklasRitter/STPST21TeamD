@@ -94,6 +94,23 @@ public class JsonUtil {
     }
 
     /**
+     * Get the MemberIDs of a given JsonObject Channel.
+     * <p>
+     * Used for the Channels returned when getting category Channels.
+     *
+     * @param channelJson The JsonObject of the Channel containing the MemberIDs.
+     * @return The MemberID List.
+     */
+    public static List<String> parseAudioMembers(JsonObject channelJson) {
+        JsonArray audioMembers = channelJson.getJsonArray(AUDIOMEMBERS);
+        List<String> audioMemberIds = new ArrayList<>();
+        for (Object audioMemberId : audioMembers) {
+            audioMemberIds.add(audioMemberId.toString().substring(1, audioMemberId.toString().length() - 1));
+        }
+        return audioMemberIds;
+    }
+
+    /**
      * Parse given JsonObject to a PrivateMessage
      *
      * @param jsonObject jsonObject to parse
@@ -211,4 +228,21 @@ public class JsonUtil {
                 .add(MESSAGE, message)
                 .build();
     }
+
+    public static User parseUser(JsonObject jsonUser) {
+        return new User()
+                .setId(jsonUser.getString(ID))
+                .setName(jsonUser.getString(NAME))
+                .setOnlineStatus(jsonUser.getBoolean(ONLINE));
+    }
+
+    public static List<User> parseUserArray(JsonArray jsonUsers) {
+        ArrayList<User> users = new ArrayList<>();
+        for (JsonValue jsonUser : jsonUsers) {
+            User user = parseUser(jsonUser.asJsonObject());
+            users.add(user);
+        }
+        return users;
+    }
+
 }

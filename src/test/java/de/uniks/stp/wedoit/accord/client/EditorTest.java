@@ -75,7 +75,7 @@ public class EditorTest {
 
     @Test
     public void testHaveUser() {
-        localUser = editor.haveUser(user.getId(), user.getName());
+        editor.haveUser(user.getId(), user.getName());
         localUser.withUsers(user);
 
         Assert.assertEquals(localUser.getUsers().get(0).getName(), user.getName());
@@ -144,7 +144,7 @@ public class EditorTest {
             }
         }
 
-        channel = editor.getChannelManager().haveChannel("ch01", "tasks", "text", false, category, memberJson.build());
+        channel = editor.getChannelManager().haveChannel("ch01", "tasks", "text", false, category, memberJson.build(), null);
         user.withChannels(channel);
 
         Assert.assertTrue(category.getChannels().contains(channel));
@@ -153,7 +153,7 @@ public class EditorTest {
         Assert.assertTrue(channel.getMembers().contains(user));
         Assert.assertEquals(channel.getName(), "tasks");
 
-        channel = editor.getChannelManager().updateChannel(server, "ch01", "Discussion", "text", true, category.getId(), memberJson.build());
+        channel = editor.getChannelManager().updateChannel(server, "ch01", "Discussion", "text", true, category.getId(), memberJson.build(), null);
 
         Assert.assertNotEquals(channel.getName(), "tasks");
         Assert.assertEquals(category.getChannels().get(0).isPrivileged(), true);

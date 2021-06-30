@@ -16,6 +16,7 @@ public class Channel
    public static final String PROPERTY_CATEGORY = "category";
    public static final String PROPERTY_MEMBERS = "members";
    public static final String PROPERTY_READ = "read";
+   public static final String PROPERTY_AUDIO_MEMBERS = "audioMembers";
    private String id;
    private String name;
    private String type;
@@ -25,6 +26,7 @@ public class Channel
    private List<User> members;
    protected PropertyChangeSupport listeners;
    private boolean read;
+   private List<User> audioMembers;
 
    public String getId()
    {
@@ -275,6 +277,72 @@ public class Channel
       return this;
    }
 
+   public List<User> getAudioMembers()
+   {
+      return this.audioMembers != null ? Collections.unmodifiableList(this.audioMembers) : Collections.emptyList();
+   }
+
+   public Channel withAudioMembers(User value)
+   {
+      if (this.audioMembers == null)
+      {
+         this.audioMembers = new ArrayList<>();
+      }
+      if (!this.audioMembers.contains(value))
+      {
+         this.audioMembers.add(value);
+         value.setAudioChannel(this);
+         this.firePropertyChange(PROPERTY_AUDIO_MEMBERS, null, value);
+      }
+      return this;
+   }
+
+   public Channel withAudioMembers(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withAudioMembers(item);
+      }
+      return this;
+   }
+
+   public Channel withAudioMembers(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withAudioMembers(item);
+      }
+      return this;
+   }
+
+   public Channel withoutAudioMembers(User value)
+   {
+      if (this.audioMembers != null && this.audioMembers.remove(value))
+      {
+         value.setAudioChannel(null);
+         this.firePropertyChange(PROPERTY_AUDIO_MEMBERS, value, null);
+      }
+      return this;
+   }
+
+   public Channel withoutAudioMembers(User... value)
+   {
+      for (final User item : value)
+      {
+         this.withoutAudioMembers(item);
+      }
+      return this;
+   }
+
+   public Channel withoutAudioMembers(Collection<? extends User> value)
+   {
+      for (final User item : value)
+      {
+         this.withoutAudioMembers(item);
+      }
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -309,5 +377,6 @@ public class Channel
       this.withoutMessages(new ArrayList<>(this.getMessages()));
       this.setCategory(null);
       this.withoutMembers(new ArrayList<>(this.getMembers()));
+      this.withoutAudioMembers(new ArrayList<>(this.getAudioMembers()));
    }
 }
