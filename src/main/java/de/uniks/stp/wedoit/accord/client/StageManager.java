@@ -367,4 +367,5 @@ public class StageManager extends Application {
         this.resourceManager = null;
         this.prefManager = null;
     }
+
 }

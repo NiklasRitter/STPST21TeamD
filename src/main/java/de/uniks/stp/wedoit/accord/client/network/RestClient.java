@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.network;
 
+import de.uniks.stp.wedoit.accord.client.controller.LoginScreenController;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -419,6 +420,18 @@ public class RestClient {
                 message.getChannel().getId() + MESSAGES +
                 SLASH + message.getId())
                 .header(USER_KEY, userKey);
+
+        sendRequest(req, callback);
+    }
+
+    /**
+     * Login the guest user with given name, password and temp key.
+     *
+     * @param callback The Callback to be called after the Request.
+     */
+    public void guestLogin(Callback<JsonNode> callback) {
+        // Use UniRest to make guest login request
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + TEMP);
 
         sendRequest(req, callback);
     }

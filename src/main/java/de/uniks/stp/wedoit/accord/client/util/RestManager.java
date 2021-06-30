@@ -653,4 +653,24 @@ public class RestManager {
     private void deleteMessage(LocalUser localUser, Message message, AttentionScreenController controller) {
         restClient.deleteMessage(localUser.getUserKey(), message, (response) -> controller.handleDeleteMessage(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
     }
+
+    /**
+     * does a rest request to login a guest user and handles the response.
+     * <p>
+     * Adds the guest user to the data if successful.
+     *
+     * @param loginScreenController  in which the response need handled
+     */
+    public void guestLogin(LoginScreenController loginScreenController) {
+        restClient.guestLogin((response) -> {
+            if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                loginScreenController.handleGuestLogin("", "", false);
+            } else {
+                JsonObject guestLoginAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+                String userName = guestLoginAnswer.getString(NAME);
+                String password = guestLoginAnswer.getString(PASSWORD);
+                loginScreenController.handleGuestLogin(userName, password, true);
+            }
+        });
+    }
 }
