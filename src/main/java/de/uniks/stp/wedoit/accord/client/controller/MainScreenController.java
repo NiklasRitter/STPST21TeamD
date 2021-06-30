@@ -96,14 +96,7 @@ public class MainScreenController implements Controller {
         this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
 
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("MAIN"));
-            }
-        });
+        this.refreshStage();
     }
 
     private void setComponentsText() {
@@ -268,6 +261,21 @@ public class MainScreenController implements Controller {
                 }
             }
         }
+    }
+
+    /**
+     * Refreshes the stage after closing the option screen,
+     * so that the component texts are displayed in the correct language.
+     */
+    private void refreshStage() {
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("MAIN"));
+            }
+        });
     }
 
 }

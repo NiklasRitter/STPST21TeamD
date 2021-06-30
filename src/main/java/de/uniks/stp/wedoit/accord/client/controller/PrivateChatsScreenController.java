@@ -92,26 +92,13 @@ public class PrivateChatsScreenController implements Controller {
 
         this.btnPlay.setVisible(false);
 
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
-                privateChatController.initToolTip();
-                privateChatController.addMessageContextMenu();
-            }
-        });
-
+        this.refreshStage();
     }
 
     private void setComponentsText() {
         this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
         this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
         this.btnPlay.setText(LanguageResolver.getString("PLAY"));
-/*        if (userIsSelected) {
-            this.tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
-        } else {*/
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         //}
     }
@@ -297,6 +284,23 @@ public class PrivateChatsScreenController implements Controller {
             this.selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
             initPrivateChatView(selectedUser);
         }
+    }
+
+    /**
+     * Refreshes the stage after closing the option screen,
+     * so that the component texts are displayed in the correct language.
+     */
+    private void refreshStage() {
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
+                privateChatController.initToolTip();
+                privateChatController.addMessageContextMenu();
+            }
+        });
     }
 
     public void initPrivateChatView(User selectedUser) {

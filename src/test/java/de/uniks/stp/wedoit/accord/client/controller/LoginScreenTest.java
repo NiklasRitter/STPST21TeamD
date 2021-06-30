@@ -4,7 +4,6 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -15,7 +14,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -27,8 +25,10 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
@@ -57,6 +57,9 @@ public class LoginScreenTest extends ApplicationTest {
 
     @Mock
     private HttpResponse<JsonNode> res;
+
+    @Mock
+    private HttpResponse<JsonNode> resGuestLogin;
 
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
@@ -137,10 +140,12 @@ public class LoginScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void startWithRememberMeOption() {}
+    public void startWithRememberMeOption() {
+    }
 
     @Test
-    public void startWithoutRememberMeOption() {}
+    public void startWithoutRememberMeOption() {
+    }
 
     @Test
     public void testBtnOptions() {
@@ -154,11 +159,11 @@ public class LoginScreenTest extends ApplicationTest {
     @Test
     public void testSuccessfulLogin() {
 
-        String returnMessage = Json.createObjectBuilder().add("status", "success").add("message", "").add("data", Json.createObjectBuilder().add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")).build().toString();
+        String returnMessage = Json.createObjectBuilder().add("status", "success").add("message", "")
+                .add("data", Json.createObjectBuilder().add("userKey", "c653b568-d987-4331-8d62-26ae617847bf")).build().toString();
 
         //Mocking of RestClient login function
         when(res.getBody()).thenReturn(new JsonNode(returnMessage));
-
         //TestFX
         String username = "username";
         String password = "password";
@@ -183,6 +188,40 @@ public class LoginScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
+    }
+
+    @Test
+    public void testGuestLogin() {
+        JsonObject returnMessage = Json.createObjectBuilder().add("status", "success").add("message", "")
+                .add("data", Json.createObjectBuilder().add("name", "Amir Ziaiyan").add("password", "Amir Ziaiyan")).build();
+
+        //Mocking of RestClient guest login function
+        when(resGuestLogin.getBody()).thenReturn(new JsonNode(returnMessage.toString()));
+
+        //Shows that the labels for guest user data are empty
+        Assert.assertEquals("", ((Label)lookup("#lblGuestPassword").query()).getText());
+        Assert.assertEquals("", ((Label)lookup("#lblUserValid").query()).getText());
+
+        clickOn("#btnGuestLogin");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        ((TextField) lookup("#tfUserName").query()).setText(returnMessage.getJsonObject(DATA).getString(NAME));
+        ((TextField) lookup("#pwUserPw").query()).setText(returnMessage.getJsonObject(DATA).getString(NAME));
+
+        verify(restMock).guestLogin(callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
+        callback.completed(resGuestLogin);
+
+        //Shows that the data will be updated after creating the guest user via Guest Login button.
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("This user is valid for 24 hours", ((Label)lookup("#lblUserValid").query()).getText());
+        Assert.assertEquals("with the password: Amir Ziaiyan", ((Label)lookup("#lblGuestPassword").query()).getText());
+        Assert.assertEquals("success", resGuestLogin.getBody().getObject().getString(STATUS));
+        Assert.assertEquals("", resGuestLogin.getBody().getObject().getString(MESSAGE));
+        Assert.assertEquals("Amir Ziaiyan", resGuestLogin.getBody().getObject().getJSONObject(DATA).getString(NAME));
+        Assert.assertEquals("Amir Ziaiyan", resGuestLogin.getBody().getObject().getJSONObject(DATA).getString(PASSWORD));
+
     }
 
 
