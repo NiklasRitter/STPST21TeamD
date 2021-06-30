@@ -83,11 +83,11 @@ public class PrivateChatController implements Controller {
         this.quoteVisible.getChildren().clear();
 
         addMessageContextMenu();
+
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         this.tfPrivateChat.setEditable(false);
 
         initToolTip();
-
     }
 
     public void initToolTip() {
