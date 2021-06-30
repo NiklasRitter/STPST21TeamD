@@ -560,7 +560,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         write("\n");
 
         WaitForAsyncUtils.waitForFxEvents();
-        JsonObject quote = JsonUtil.buildPrivateChatMessage(user.getName(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        JsonObject quote = JsonUtil.buildPrivateChatMessage(user.getName(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
         JsonObject quote_message = JsonUtil.buildPrivateChatMessage(user.getName(), "quote");
         mockChatWebSocket(getTestMessageServerAnswer(quote));
         mockChatWebSocket(getTestMessageServerAnswer(quote_message));
@@ -568,7 +568,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
 
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
-        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem-1).getText(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem-1).getText(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), "quote");
 
         lwPrivateChat.getSelectionModel().select(lwNewestItem);

@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
 
 public class UpdateMessageScreenController implements Controller {
@@ -42,7 +43,13 @@ public class UpdateMessageScreenController implements Controller {
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
         errorLabel = (Label) view.lookup("#lblError");
 
-        tfUpdateMessage.setText(message.getText());
+        String messageText = "";
+        if (editor.getMessageManager().isQuote(message)) {
+            messageText = editor.getMessageManager().cleanQuoteMessage(message);
+        } else {
+            messageText = message.getText();
+        }
+        tfUpdateMessage.setText(messageText);
 
         setComponentsText();
 
@@ -62,7 +69,14 @@ public class UpdateMessageScreenController implements Controller {
         if (newMessage.equals(message.getText())) {
             this.editor.getStageManager().getPopupStage().close();
         } else if (newMessage.length() >= 1) {
-            editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
+            if (!editor.getMessageManager().isQuote(message)) {
+                editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
+            } else {
+                newMessage = QUOTE_PREFIX + editor.getMessageManager().cleanQuote(message)
+                        + QUOTE_MESSAGE + newMessage + QUOTE_SUFFIX;
+                editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
+
+            }
         } else {
             Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE_CHAR_COUNT")));
         }

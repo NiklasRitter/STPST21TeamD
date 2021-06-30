@@ -77,16 +77,27 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
-                } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
-                        && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+                } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_MESSAGE)
+                        && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
+
+                    VBox messageVBox = new VBox();
+                    Label quoteLabel = new Label();
+                    Label messageLabel = new Label();
 
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
-                    String[] messages = quoteMessage.split(QUOTE_ID);
+                    String[] messages = quoteMessage.split(QUOTE_MESSAGE);
 
-                    this.getStyleClass().add("font_size");
-                    this.setText(">>>" + messages[0] + "\n");
+                    if (messages.length != 2) {
+                        this.setText(item.getText());
+                    } else {
+                        quoteLabel.setText(">>>" + messages[0]);
+                        quoteLabel.getStyleClass().add("font_size");
+                        messageLabel.setText("[" + time + "] " + item.getFrom() + ": " + messages[1]);
+                        setGraphic(messageVBox);
+                        messageVBox.getChildren().addAll(quoteLabel, messageLabel);
+                    }
 
                 } else {
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
@@ -98,9 +109,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     } else if (item.getText().startsWith(GAME_PREFIX)) {
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                     }
-                }
-                else {
-                    if (containsMarking(item.getText())){
+                } else {
+                    if (containsMarking(item.getText())) {
                         this.getStyleClass().add("marked_message");
                     }
                 }

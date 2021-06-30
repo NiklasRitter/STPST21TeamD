@@ -918,7 +918,7 @@ public class ServerScreenTest extends ApplicationTest {
         Label lblQuote = lookup("#lblQuote").query();
         Button btnCancelQuote = lookup("#btnCancelQuote").query();
 
-        String formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0));
+        String formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0), lvTextChat.getItems().get(0).getText());
         Assert.assertEquals(lblQuote.getText(), formatted);
         clickOn(btnCancelQuote);
         WaitForAsyncUtils.waitForFxEvents();
@@ -931,7 +931,7 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         lblQuote = lookup("#lblQuote").query();
 
-        formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0));
+        formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0), lvTextChat.getItems().get(0).getText());
         Assert.assertEquals(lblQuote.getText(), formatted);
 
         ((TextField) lookup("#tfInputMessage").query()).setText("quote");
@@ -939,13 +939,13 @@ public class ServerScreenTest extends ApplicationTest {
         write("\n");
 
         WaitForAsyncUtils.waitForFxEvents();
-        JsonObject quote = JsonUtil.buildServerChatMessage(channel.getId(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        JsonObject quote = JsonUtil.buildServerChatMessage(channel.getId(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
         JsonObject quote_message = JsonUtil.buildServerChatMessage(channel.getId(), "quote");
         mockChatWebSocket(getTestMessageServerAnswer(quote, 1616935875));
         mockChatWebSocket(getTestMessageServerAnswer(quote_message, 1616935876));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(lvTextChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);
+        Assert.assertEquals(lvTextChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
         Assert.assertEquals(lvTextChat.getItems().get(2).getText(), "quote");
 
     }

@@ -15,14 +15,11 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Popup;
-import javafx.stage.Stage;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -51,7 +48,6 @@ public class ServerChatController implements Controller {
     private final ServerScreenController controller;
 
     private HBox quoteVisible;
-    private ContextMenu messageContextMenu;
     private Label lbChannelName;
     private Label lblQuote;
     private TextField tfInputMessage;
@@ -59,16 +55,17 @@ public class ServerChatController implements Controller {
     private Button btnEmoji;
     private ListView<Message> lvTextChat;
     private ObservableList<Message> observableMessageList;
-
     private final PropertyChangeListener newMessagesListener = this::newMessage;
     private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
     private ContextMenu localUserMessageContextMenu;
     private ContextMenu userMessageContextMenu;
-    private Popup popup;
+
     private ObservableList<User> selectUserObservableList;
     private ArrayList<User> availableUsers;
     private ListView<User> lvSelectUser;
     private VBox boxTextfield;
+    private int activeAt;
+    private final ArrayList activeAts = new ArrayList<Integer>();
 
 
     /**
@@ -122,35 +119,62 @@ public class ServerChatController implements Controller {
         initToolTip();
     }
 
+    private void lvSelectUserOnClick(MouseEvent mouseEvent) {
+
+        if (mouseEvent.getClickCount() == 1) {
+            User selectedUser = lvSelectUser.getSelectionModel().getSelectedItem();
+            String currentText = tfInputMessage.getText();
+            String firstPart = currentText.substring(0, activeAt + 1);
+            String secondPart = currentText.substring(activeAt + 1, currentText.length());
+            tfInputMessage.setText(firstPart + selectedUser.getName() + secondPart);
+            removeSelectionMenu();
+        }
+    }
+
     private void isMarking(KeyEvent keyEvent) {
 
-        if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible()){
+        if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null){
+
+            this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
+
+
+
             boxTextfield.getChildren().add(lvSelectUser);
 
-            lvSelectUser.setMinHeight(30);
-            lvSelectUser.setPrefHeight(80);
+            lvSelectUser.setMinHeight(45);
+            lvSelectUser.setPrefHeight(45);
             lvSelectUser.setVisible(true);
 
             initLwSelectUser(lvSelectUser);
         }
 
         else if (keyEvent.getCharacter().equals("\b")){
+
             if (!tfInputMessage.getText().contains("@")) {
-                boxTextfield.getChildren().remove(lvSelectUser);
-                lvSelectUser.setVisible(false);
+               removeSelectionMenu();
             }
         }
+    }
 
+    private void removeSelectionMenu(){
+        boxTextfield.getChildren().remove(lvSelectUser);
+        lvSelectUser.setVisible(false);
+        this.lvSelectUser.setOnMousePressed(null);
     }
 
     private void initLwSelectUser(ListView<User> lvSelectUser) {
 
+
         // init list view
         lvSelectUser.setCellFactory(new SelectUserCellFactory());
-        availableUsers = new ArrayList<>(currentChannel.getMembers());
 
-        this.selectUserObservableList = FXCollections.observableList(availableUsers.stream().filter(User::isOnlineStatus)
-                .collect(Collectors.toList()));
+        if (currentChannel!= null && currentChannel.isPrivileged()){
+            availableUsers = new ArrayList<>(currentChannel.getMembers());
+        } else {
+            availableUsers = new ArrayList<>(server.getMembers());
+        }
+
+        this.selectUserObservableList = FXCollections.observableList(availableUsers);
 
         this.selectUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
                 .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
@@ -266,7 +290,10 @@ public class ServerChatController implements Controller {
         lvTextChat.getSelectionModel().select(null);
         if (message != null) {
             if (menu.equals(QUOTE)) {
-                String formatted = editor.getMessageManager().getMessageFormatted(message);
+                String messageText = editor.getMessageManager().isQuote(message) ?
+                        editor.getMessageManager().cleanQuoteMessage(message) : message.getText();
+
+                String formatted = editor.getMessageManager().getMessageFormatted(message, messageText);
                 removeQuote();
                 lblQuote.setText(formatted);
                 lblQuote.setAccessibleHelp(message.getId());
@@ -318,6 +345,7 @@ public class ServerChatController implements Controller {
      * Checks if "Load more..." is clicked and if yes, then it loads new messages
      */
     private void lvTextChatOnClick(MouseEvent mouseEvent) {
+        lvTextChat.setContextMenu(null);
         Message selectedMessage = lvTextChat.getSelectionModel().getSelectedItem();
         if (selectedMessage != null && selectedMessage.getId() != null && selectedMessage.getId().equals("idLoadMore")) {
             this.observableMessageList.remove(0);
@@ -327,7 +355,8 @@ public class ServerChatController implements Controller {
             this.editor.getRestManager().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
         }
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            if (lvTextChat.getSelectionModel().getSelectedItem() != null && !editor.getMessageManager().isQuote(lvTextChat.getSelectionModel().getSelectedItem())) {
+            System.out.println(lvTextChat.getSelectionModel().getSelectedItem().getText());
+            if (lvTextChat.getSelectionModel().getSelectedItem() != null) {
                 if (lvTextChat.getSelectionModel().getSelectedItem().getFrom().equals(editor.getLocalUser().getName())) {
                     lvTextChat.setContextMenu(localUserMessageContextMenu);
                     localUserMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -352,12 +381,10 @@ public class ServerChatController implements Controller {
 
             if (!lblQuote.getText().isEmpty()) {
                 JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText()
-                        + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
-                JsonObject jsonMessage = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
+                        + QUOTE_MESSAGE + message + QUOTE_SUFFIX);
                 removeQuote();
 
                 editor.getWebSocketManager().sendChannelChatMessage(JsonUtil.stringify(quoteMsg));
-                editor.getWebSocketManager().sendChannelChatMessage(JsonUtil.stringify(jsonMessage));
             } else {
 
                 JsonObject jsonMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
