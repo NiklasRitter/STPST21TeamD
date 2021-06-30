@@ -72,10 +72,12 @@ public class AudioSend extends Thread{
             // copy metadata into readData
             System.arraycopy(metaData, 0, readData, 0, 255);
 
+            line.start();
+
             InetAddress inetAddress = InetAddress.getByName(this.address);
 
             // this.sendSocket = new MulticastSocket();
-            this.sendSocket = new DatagramSocket();
+            //this.sendSocket = new DatagramSocket();
             while(true) {
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
@@ -84,7 +86,7 @@ public class AudioSend extends Thread{
 
                 byte[] testData = new byte[1024];
                 System.arraycopy(readData, 255, testData, 0, 1024);
-                // System.out.println(Arrays.toString(testData));
+                System.out.println(Arrays.toString(testData));
             }
         } catch (Exception e) {
             e.printStackTrace();

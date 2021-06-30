@@ -84,7 +84,7 @@ public class AudioReceive extends Thread{
 
     private void toSpeaker (byte[] soundBytes, SourceDataLine sourceDataLine) {
         try {
-            System.out.println(Arrays.toString(soundBytes));
+            //System.out.println(Arrays.toString(soundBytes));
             sourceDataLine.write(soundBytes, 0, soundBytes.length);
         } catch (Exception e) {
             e.printStackTrace();
