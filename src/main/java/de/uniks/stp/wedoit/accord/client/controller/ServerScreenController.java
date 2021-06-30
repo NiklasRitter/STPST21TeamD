@@ -124,19 +124,7 @@ public class ServerScreenController implements Controller {
         // add PropertyChangeListener
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
 
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
-                lbServerName.setContextMenu(createContextMenuLeaveServer());
-                serverChatController.initToolTip();
-                serverChatController.addUserMessageContextMenu();
-                serverChatController.addLocalUserMessageContextMenu();
-                categoryTreeViewController.initContextMenu();
-            }
-        });
+        this.refreshStage();
     }
 
     private void setComponentsText() {
@@ -347,6 +335,26 @@ public class ServerScreenController implements Controller {
         this.lvServerUsers.getItems().removeAll();
         this.lvServerUsers.setItems(FXCollections.observableList(users));
         this.lvServerUsers.refresh();
+    }
+
+    /**
+     * Refreshes the stage after closing the option screen,
+     * so that the component texts are displayed in the correct language.
+     */
+    private void refreshStage() {
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
+                lbServerName.setContextMenu(createContextMenuLeaveServer());
+                serverChatController.initToolTip();
+                serverChatController.addUserMessageContextMenu();
+                serverChatController.addLocalUserMessageContextMenu();
+                categoryTreeViewController.initContextMenu();
+            }
+        });
     }
 
     public CategoryTreeViewController getCategoryTreeViewController() {

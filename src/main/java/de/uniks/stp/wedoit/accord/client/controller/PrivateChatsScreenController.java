@@ -92,17 +92,7 @@ public class PrivateChatsScreenController implements Controller {
 
         this.btnPlay.setVisible(false);
 
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
-                privateChatController.initToolTip();
-                privateChatController.addMessageContextMenu();
-            }
-        });
-
+        this.refreshStage();
     }
 
     private void setComponentsText() {
@@ -302,5 +292,22 @@ public class PrivateChatsScreenController implements Controller {
                 this.btnPlay.setVisible(true);
             }
         }
+    }
+
+    /**
+     * Refreshes the stage after closing the option screen,
+     * so that the component texts are displayed in the correct language.
+     */
+    private void refreshStage() {
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
+                privateChatController.initToolTip();
+                privateChatController.addMessageContextMenu();
+            }
+        });
     }
 }
