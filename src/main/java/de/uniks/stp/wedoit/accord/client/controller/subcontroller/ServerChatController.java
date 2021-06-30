@@ -68,7 +68,7 @@ public class ServerChatController implements Controller {
     private ArrayList<Integer> Ats = new ArrayList<Integer>();
 
     private ArrayList<Integer> markings = new ArrayList<Integer>();
-    private int head = 0;
+    private int caret = 0;
 
 
     /**
@@ -127,16 +127,29 @@ public class ServerChatController implements Controller {
         if (mouseEvent.getClickCount() == 1) {
             User selectedUser = lvSelectUser.getSelectionModel().getSelectedItem();
             String currentText = tfInputMessage.getText();
-            String firstPart = currentText.substring(0, activeAt + 1);
-            String secondPart = currentText.substring(activeAt + 1, currentText.length());
-            tfInputMessage.setText(firstPart + selectedUser.getName() + secondPart);
-            removeSelectionMenu();
+
+            Integer correspondingAt = null;
+
+            for (int i = caret - 1; i >= 0 ; i--) {
+                if (currentText.charAt(i) == '@') {
+                    correspondingAt = i;
+                    break;
+                }
+            }
+            if (!(correspondingAt == null)) {
+
+                String firstPart = currentText.substring(0, correspondingAt);
+                String secondPart = currentText.substring(caret);
+                tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
+                removeSelectionMenu();
+            }
         }
     }
 
     private void isMarking(KeyEvent keyEvent) {
+        caret = tfInputMessage.getCaretPosition();
+        System.out.println(caret);
 
-        System.out.println(tfInputMessage.getCaretPosition());
 
         if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null){
 
@@ -156,6 +169,16 @@ public class ServerChatController implements Controller {
         }
 
         else if (keyEvent.getCharacter().equals("\b")){
+
+            String currentText = tfInputMessage.getText();
+            Integer correspondingAt = null;
+
+            for (int i = caret - 1; i >= 0 ; i--) {
+                if (currentText.charAt(i) == '@') {
+                    correspondingAt = i;
+                    break;
+                }
+            }
 
             tfInputMessage.getCaretPosition();
             if (!tfInputMessage.getText().contains("@")) {
