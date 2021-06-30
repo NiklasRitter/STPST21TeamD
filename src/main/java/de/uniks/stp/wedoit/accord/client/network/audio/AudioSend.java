@@ -77,7 +77,7 @@ public class AudioSend extends Thread{
             InetAddress inetAddress = InetAddress.getByName(this.address);
 
             // this.sendSocket = new MulticastSocket();
-            //this.sendSocket = new DatagramSocket();
+            // this.sendSocket = new DatagramSocket();
             while(true) {
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
