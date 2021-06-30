@@ -99,9 +99,6 @@ public class PrivateChatsScreenController implements Controller {
         this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
         this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
         this.btnPlay.setText(LanguageResolver.getString("PLAY"));
-/*        if (userIsSelected) {
-            this.tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
-        } else {*/
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         //}
     }
