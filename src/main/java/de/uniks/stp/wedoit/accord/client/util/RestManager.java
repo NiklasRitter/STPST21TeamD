@@ -648,8 +648,6 @@ public class RestManager {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getLocalUser().setAudioChannel(channel);
                 controller.handleJoinAudioChannel(channel);
-                // TODO here?
-                // controller.getController().initAudioChannelSubView(channel);
             }
             else{
                 controller.handleJoinAudioChannel(null);

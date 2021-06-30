@@ -9,6 +9,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatCont
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
@@ -195,6 +196,11 @@ public class ServerScreenController implements Controller {
 
             audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, this, channel);
             audioChannelSubViewController.init();
+
+            //TODO start with property change listener
+            AudioConnection audioConnection = new AudioConnection(localUser, channel);
+            audioConnection.startConnection();
+            //TODO
 
             Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().add(view));
         } catch (Exception e) {

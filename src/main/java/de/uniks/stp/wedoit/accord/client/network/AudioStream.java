@@ -24,7 +24,7 @@ public class AudioStream {
 
     public void connecting(LocalUser localUser, Channel channel) {
 
-        createMetaData(localUser, channel);
+        byte[] metaData = createMetaData(localUser, channel);
 
         // default IPv6, but UPD multicasting not available at IPv6
         System.setProperty("java.net.preferIPv4Stack", "true");
@@ -50,13 +50,14 @@ public class AudioStream {
             // open thread - sample microphone
             line.open(audioFormat);
             // save it into byte array
-            byte[] readData = new byte[1024]; //1279?
+            byte[] readData = new byte[1279]; //1024?
+            System.arraycopy(metaData, 0, readData, 0, 255);
 
             InetAddress inetAddress = InetAddress.getByName(this.address);
             // ? DatagramSocket
             this.sendSocket = new MulticastSocket();
             while (true) {
-                line.read(readData, 0, readData.length);
+                line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
                 this.sendSocket.send(datagramPacket);
             }
@@ -90,6 +91,9 @@ public class AudioStream {
             SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
             sourceDataLine.open(audioFormat);
 
+            // own source data line for every user?
+            // get metadata for every user - into map
+
             sourceDataLine.start();
 
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -108,6 +112,7 @@ public class AudioStream {
     }
 
     //------------------------------------------------------------------------------------------------------------------
+    // .join to stop thread
 
     private byte[] createMetaData(LocalUser localUser, Channel channel) {
         JsonObject metaData = Json.createObjectBuilder()
@@ -115,9 +120,10 @@ public class AudioStream {
                 .add(NAME, localUser.getName())
                 .build();
 
-        //TODO MetaData to bytes
+        byte[] metaDataByte = new byte[255];
+        System.arraycopy(metaData.toString().getBytes(), 0, metaDataByte, 0, metaData.toString().getBytes().length);
 
-        return new byte[25];
+        return metaDataByte;
     }
 
     private void toSpeaker (byte[] soundBytes, SourceDataLine sourceDataLine) {
@@ -128,6 +134,7 @@ public class AudioStream {
         }
     }
 
+    //TODO join?
     public void close() {
         // close connection
         if (sendSocket != null) {

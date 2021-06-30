@@ -47,7 +47,7 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
 
-        initAudioChannel(localUser, channel);
+        // initAudioChannel(localUser, channel);
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
