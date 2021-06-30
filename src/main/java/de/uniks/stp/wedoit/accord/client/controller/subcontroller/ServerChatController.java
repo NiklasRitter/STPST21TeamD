@@ -64,8 +64,11 @@ public class ServerChatController implements Controller {
     private ArrayList<User> availableUsers;
     private ListView<User> lvSelectUser;
     private VBox boxTextfield;
-    private int activeAt;
-    private final ArrayList activeAts = new ArrayList<Integer>();
+    private Integer activeAt;
+    private ArrayList<Integer> Ats = new ArrayList<Integer>();
+
+    private ArrayList<Integer> markings = new ArrayList<Integer>();
+    private int head = 0;
 
 
     /**
@@ -133,27 +136,42 @@ public class ServerChatController implements Controller {
 
     private void isMarking(KeyEvent keyEvent) {
 
+        System.out.println(tfInputMessage.getCaretPosition());
+
         if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null){
 
-            this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
+            activeAt = this.getNewAt(tfInputMessage.getText());
 
+            if (activeAt != null){
+                this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
 
+                boxTextfield.getChildren().add(lvSelectUser);
 
-            boxTextfield.getChildren().add(lvSelectUser);
+                lvSelectUser.setMinHeight(45);
+                lvSelectUser.setPrefHeight(45);
+                lvSelectUser.setVisible(true);
 
-            lvSelectUser.setMinHeight(45);
-            lvSelectUser.setPrefHeight(45);
-            lvSelectUser.setVisible(true);
-
-            initLwSelectUser(lvSelectUser);
+                initLwSelectUser(lvSelectUser);
+            }
         }
 
         else if (keyEvent.getCharacter().equals("\b")){
 
+            tfInputMessage.getCaretPosition();
             if (!tfInputMessage.getText().contains("@")) {
                removeSelectionMenu();
             }
         }
+    }
+
+    private Integer getNewAt(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '@' && !Ats.contains(i)){
+                Ats.add(i);
+                return i;
+            }
+        }
+        return null;
     }
 
     private void removeSelectionMenu(){
