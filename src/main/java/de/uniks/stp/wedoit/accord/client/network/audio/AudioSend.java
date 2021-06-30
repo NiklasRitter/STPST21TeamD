@@ -13,6 +13,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Arrays;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
@@ -25,7 +26,7 @@ public class AudioSend extends Thread{
     private final int sampleSize = 16;
     private final int channels = 1;
     private final String address = "cranberry.uniks.de";
-    private DatagramSocket sendSocket;
+    private MulticastSocket sendSocket;
 
     private final LocalUser localUser;
     private final Channel channel;
@@ -69,13 +70,17 @@ public class AudioSend extends Thread{
             System.arraycopy(metaData, 0, readData, 0, 255);
 
             InetAddress inetAddress = InetAddress.getByName(this.address);
-            // ? DatagramSocket
-            // this.sendSocket = new MulticastSocket();
-            this.sendSocket = new DatagramSocket();
+
+            this.sendSocket = new MulticastSocket();
+            // this.sendSocket = new DatagramSocket();
             while(true) {
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
                 this.sendSocket.send(datagramPacket);
+
+                byte[] testData = new byte[1024];
+                System.arraycopy(readData, 255, testData, 0, 1024);
+                System.out.println(Arrays.toString(testData));
             }
         } catch (Exception e) {
             e.printStackTrace();

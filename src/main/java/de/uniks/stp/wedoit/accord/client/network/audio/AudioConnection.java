@@ -17,7 +17,7 @@ public class AudioConnection {
     }
 
     public void startConnection(){
-        startSendingAudio();
+        // startSendingAudio();
         startReceivingAudio();
     }
 

@@ -18,7 +18,7 @@ public class AudioReceive extends Thread{
     private final int sampleSize = 16;
     private final int channels = 1;
     private final String address = "cranberry.uniks.de";
-    private DatagramSocket receiveSocketGroup;
+    private MulticastSocket receiveSocketGroup;
 
     private final LocalUser localUser;
     private final Channel channel;
@@ -39,9 +39,9 @@ public class AudioReceive extends Thread{
         try {
             // create multicast group - multiple listeners possible
             InetAddress inetAddress = InetAddress.getByName(this.address);
-            // this.receiveSocketGroup = new MulticastSocket(this.port);
+            this.receiveSocketGroup = new MulticastSocket(this.port);
             // this.receiveSocketGroup.joinGroup(inetAddress);
-            this.receiveSocketGroup = new DatagramSocket(this.port);
+            // this.receiveSocketGroup = new DatagramSocket(this.port);
 
             byte[] receiveData = new byte[1279]; //1024? (or 4096, 1024)
 
@@ -65,7 +65,7 @@ public class AudioReceive extends Thread{
                 // blocking call - will not precede until received packet
                 this.receiveSocketGroup.receive(receivePacket);
                 audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
-                toSpeaker(receivePacket.getData(), sourceDataLine);
+                // toSpeaker(receivePacket.getData(), sourceDataLine);
             }
         } catch (Exception e) {
             e.printStackTrace();
