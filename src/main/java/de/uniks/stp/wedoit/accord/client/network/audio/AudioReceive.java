@@ -9,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Arrays;
 
 public class AudioReceive extends Thread{
 
@@ -18,14 +19,17 @@ public class AudioReceive extends Thread{
     private final int sampleSize = 16;
     private final int channels = 1;
     private final String address = "cranberry.uniks.de";
-    private MulticastSocket receiveSocketGroup;
+    private DatagramSocket receiveSocketGroup;
+
+    private DatagramSocket testSocket;
 
     private final LocalUser localUser;
     private final Channel channel;
 
-    public AudioReceive(LocalUser localUser, Channel channel) {
+    public AudioReceive(LocalUser localUser, Channel channel, DatagramSocket testSocket) {
         this.localUser = localUser;
         this.channel = channel;
+        this.testSocket = testSocket;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class AudioReceive extends Thread{
         try {
             // create multicast group - multiple listeners possible
             InetAddress inetAddress = InetAddress.getByName(this.address);
-            this.receiveSocketGroup = new MulticastSocket(this.port);
+            // this.receiveSocketGroup = new MulticastSocket(this.port);
             // this.receiveSocketGroup.joinGroup(inetAddress);
             // this.receiveSocketGroup = new DatagramSocket(this.port);
 
@@ -63,9 +67,15 @@ public class AudioReceive extends Thread{
 
             while(true){
                 // blocking call - will not precede until received packet
-                this.receiveSocketGroup.receive(receivePacket);
+                // this.receiveSocketGroup.receive(receivePacket);
+                this.testSocket.receive(receivePacket);
                 audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
-                // toSpeaker(receivePacket.getData(), sourceDataLine);
+
+                byte[] receivedAudio = new byte[1024];
+
+                System.arraycopy(receivePacket.getData(), 255, receivedAudio, 0, 1024);
+
+                toSpeaker(receivedAudio, sourceDataLine);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,6 +84,7 @@ public class AudioReceive extends Thread{
 
     private void toSpeaker (byte[] soundBytes, SourceDataLine sourceDataLine) {
         try {
+            System.out.println(Arrays.toString(soundBytes));
             sourceDataLine.write(soundBytes, 0, soundBytes.length);
         } catch (Exception e) {
             e.printStackTrace();

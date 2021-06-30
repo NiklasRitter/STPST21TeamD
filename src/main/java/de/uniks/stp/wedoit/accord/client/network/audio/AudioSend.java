@@ -26,15 +26,18 @@ public class AudioSend extends Thread{
     private final int sampleSize = 16;
     private final int channels = 1;
     private final String address = "cranberry.uniks.de";
-    private MulticastSocket sendSocket;
+    private DatagramSocket sendSocket;
+
+    private DatagramSocket testSocket;
 
     private final LocalUser localUser;
     private final Channel channel;
     private boolean shouldSend;
 
-    public AudioSend(LocalUser localUser, Channel channel) {
+    public AudioSend(LocalUser localUser, Channel channel, DatagramSocket testSocket) {
         this.localUser = localUser;
         this.channel = channel;
+        this.testSocket = testSocket;
     }
 
     @Override
@@ -71,16 +74,17 @@ public class AudioSend extends Thread{
 
             InetAddress inetAddress = InetAddress.getByName(this.address);
 
-            this.sendSocket = new MulticastSocket();
-            // this.sendSocket = new DatagramSocket();
+            // this.sendSocket = new MulticastSocket();
+            this.sendSocket = new DatagramSocket();
             while(true) {
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
-                this.sendSocket.send(datagramPacket);
+                // this.sendSocket.send(datagramPacket);
+                this.testSocket.send(datagramPacket);
 
                 byte[] testData = new byte[1024];
                 System.arraycopy(readData, 255, testData, 0, 1024);
-                System.out.println(Arrays.toString(testData));
+                // System.out.println(Arrays.toString(testData));
             }
         } catch (Exception e) {
             e.printStackTrace();
