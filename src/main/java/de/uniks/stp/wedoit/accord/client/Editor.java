@@ -317,7 +317,7 @@ public class Editor {
     }
 
     public void setUpDB() {
-        db = new SqliteDB(getLocalUser().getName());
+        db = new SqliteDB(webSocketManager.getCleanLocalUserName());
     }
 
     public void savePrivateMessage(PrivateMessage message) {
