@@ -91,14 +91,14 @@ public class AudioReceive extends Thread{
                 JSONObject metaDataJson = new JSONObject(metaDataString);
                 String audioSender = metaDataJson.getString("name");
 
-//                if (!sourceDataLineMap.containsKey(audioSender)) {
-//                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-//
-//                    sourceDataLineMap.put(audioSender, membersSourceDataLine);
-//
-//                    membersSourceDataLine.open(audioFormat);
-//                    membersSourceDataLine.start();
-//                }
+                if (!sourceDataLineMap.containsKey(audioSender)) {
+                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+
+                    sourceDataLineMap.put(audioSender, membersSourceDataLine);
+
+                    membersSourceDataLine.open(audioFormat);
+                    membersSourceDataLine.start();
+                }
 
                 this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
 
