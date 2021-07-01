@@ -827,6 +827,36 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
 
+        channel = server.getCategories().get(0).getChannels().get(0);
+        new Message().setText("Test Message").setChannel(channel).setId("5e2ffbd8770dd077d03dr458");
+        Message message = channel.getMessages().get(0);
+        Assert.assertEquals(message.getText(), "Test Message");
+        mockWebSocket(webSocketCallbackMessageUpdated("New Message"));
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(message.getText(), "New Message");
+
+        mockWebSocket(webSocketCallbackMessageUpdatedError());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
+        mockWebSocket(webSocketCallbackMessageDeleted());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getMessages().size(), 0);
+
+        mockWebSocket(webSocketCallbackMessageDeleteError());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Main", stage.getTitle());
+
+        phil.withServers(server);
+        Assert.assertEquals(channel.getAudioMembers().size(), 0);
+        mockWebSocket(webSocketCallbackAudioJoined());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getAudioMembers().size(), 1);
+        Assert.assertEquals(channel.getAudioMembers().get(0), phil);
+
+        mockWebSocket(webSocketCallbackAudioLeft());
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getAudioMembers().size(), 0);
     }
 
     @Test
@@ -1323,6 +1353,44 @@ public class ServerScreenTest extends ApplicationTest {
                         .add("id", "5e2ffbd8770dd077d03dr458")
                         .add("category", "idTest")
                         .add("channel", "idTest1"))
+                .build();
+    }
+
+    public JsonObject webSocketCallbackMessageUpdatedError() {
+        return Json.createObjectBuilder().add("action", "messageUpdated").add("data",
+                Json.createObjectBuilder()
+                        .add("id", "5e2ffbd8770dd077d03dr458")
+                        .add("category", "idTest")
+                        .add("channel", "idInvalid")
+                        .add("text", "error"))
+                .build();
+    }
+
+    public JsonObject webSocketCallbackMessageDeleteError() {
+        return Json.createObjectBuilder().add("action", "messageDeleted").add("data",
+                Json.createObjectBuilder()
+                        .add("id", "5e2ffbd8770dd077d03dr458")
+                        .add("category", "idTest")
+                        .add("channel", "idInvalid")
+                        .add("text", "error"))
+                .build();
+    }
+
+    public JsonObject webSocketCallbackAudioJoined() {
+        return Json.createObjectBuilder().add("action", "audioJoined").add("data",
+                Json.createObjectBuilder()
+                        .add("category", "idTest")
+                        .add("channel", "idTest1")
+                        .add("id", "123456"))
+                .build();
+    }
+
+    public JsonObject webSocketCallbackAudioLeft() {
+        return Json.createObjectBuilder().add("action", "audioLeft").add("data",
+                Json.createObjectBuilder()
+                        .add("category", "idTest")
+                        .add("channel", "idTest1")
+                        .add("id", "123456"))
                 .build();
     }
 

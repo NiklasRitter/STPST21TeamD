@@ -10,6 +10,7 @@ public class Network {
     public static final String LOGOUT_PATH = "/logout";
     public static final String SERVER_PATH = "/servers";
     public static final String API_PREFIX = "/api";
+    public static final String TEMP = "/temp";
 
     public static final String SLASH = "/";
     public static final String QUESTION_MARK = "?";
