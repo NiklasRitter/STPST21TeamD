@@ -1,10 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
-import com.sun.javafx.application.HostServicesDelegate;
-import de.uniks.stp.wedoit.accord.client.Launcher;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -17,9 +15,7 @@ import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
 import java.awt.*;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,8 +50,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.setText(null);
             this.getStyleClass().removeAll("font_size");
             this.setGraphic(null);
-            this.vBox.getChildren().removeAll(List.of(label, imageView, webView, hyperlink));
+            this.vBox.getChildren().clear();
             webView.getEngine().load(null);
+            hyperlink.setOnAction(null);
 
 
 
@@ -76,15 +73,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     label.setText("[" + time + "] " + item.getFrom() + ": ");
                     hyperlink.setText(item.getText());
-                    hyperlink.setOnAction(e->{
-                        if(Desktop.isDesktopSupported()){
-                            try {
-                                Desktop.getDesktop().browse(new URI(item.getText()));
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                    });
+                    hyperlink.setOnAction(this::openHyperLink);
                     if (!item.getText().startsWith("https://www.youtube.")) {
                         vBox.getChildren().addAll(label, imageView, hyperlink);
 
@@ -124,7 +113,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private boolean isValidURL(String url) {
             try {
-
                 URL Url = new URL(url);
                 Url.toURI();
                 return true;
@@ -146,15 +134,22 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             return false;
         }
 
-
-
-
         private void setUpWebView(String url){
             url = url.replace("/watch?v=","/embed/");
             webView.setMaxWidth(400);
             webView.setMaxHeight(270);
             webView.getEngine().load(url);
 
+        }
+
+        private void openHyperLink(ActionEvent actionEvent) {
+            if(Desktop.isDesktopSupported()){
+                try {
+                    Desktop.getDesktop().browse(new URI(hyperlink.getText()));
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 }
