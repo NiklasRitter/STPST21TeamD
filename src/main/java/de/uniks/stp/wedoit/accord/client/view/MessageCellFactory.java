@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -9,12 +10,16 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
 import javax.imageio.ImageIO;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
@@ -31,6 +36,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
         private final Label label = new Label();
+        private final WebView webView = new WebView();
 
 
         private MessageCell(ListView<S> param) {
@@ -44,6 +50,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.setText(null);
             this.getStyleClass().removeAll("font_size");
             this.setGraphic(null);
+            this.vBox.getChildren().removeAll(List.of(label,imageView,webView));
+
+            System.out.println(this.getListView());
 
             if (!empty) {
 
@@ -59,12 +68,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
 
-                if(setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)){
+                if(setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     label.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
-                    if(!vBox.getChildren().contains(imageView)){
-                        vBox.getChildren().addAll(imageView, label);
-                    }
 
+                    if(!item.getText().startsWith("https://www.youtube.")) {
+                       vBox.getChildren().addAll(imageView, label);
+
+                    }else if(item.getText().startsWith("https://www.youtube.")){
+                        setUpWebView(item.getText());
+                        vBox.getChildren().addAll(webView, label);
+                    }
 
                 }else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
@@ -118,6 +131,14 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
             }
             return false;
+        }
+
+        private void setUpWebView(String url){
+            url = url.replace("/watch?v=","/embed/");
+            webView.setMaxWidth(400);
+            webView.setMaxHeight(270);
+            webView.getEngine().load(url);
+
         }
     }
 }
