@@ -2,8 +2,11 @@ package de.uniks.stp.wedoit.accord.client.network.audio;
 
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.User;
 
 import java.net.DatagramSocket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AudioConnection {
 
@@ -36,7 +39,12 @@ public class AudioConnection {
     }
 
     private void startReceivingAudio() {
-        this.receivingThread = new AudioReceive(localUser, channel, testSocket);
+        List<User> audioMembers = channel.getAudioMembers();
+        ArrayList<String> connectedUser = new ArrayList<>();
+        for (User member: audioMembers) {
+            connectedUser.add(member.getName());
+        }
+        this.receivingThread = new AudioReceive(localUser, channel, testSocket, connectedUser);
         this.receivingThread.start();
     }
 

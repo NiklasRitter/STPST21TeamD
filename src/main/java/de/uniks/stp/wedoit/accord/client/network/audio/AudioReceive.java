@@ -11,9 +11,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class AudioReceive extends Thread{
 
@@ -30,12 +28,15 @@ public class AudioReceive extends Thread{
     private final LocalUser localUser;
     private final Channel channel;
     private Map<String, SourceDataLine> sourceDataLineMap;
+    private ArrayList<String> connectedUser;
 
-    public AudioReceive(LocalUser localUser, Channel channel, DatagramSocket testSocket) {
+    public AudioReceive(LocalUser localUser, Channel channel, DatagramSocket testSocket, ArrayList<String> connectedUser) {
         this.localUser = localUser;
         this.channel = channel;
         this.testSocket = testSocket;
         this.sourceDataLineMap = new HashMap<>();
+
+        this.connectedUser = connectedUser;
     }
 
     @Override
@@ -52,20 +53,31 @@ public class AudioReceive extends Thread{
             // how java saves digital version of the audio
             audioFormat = new AudioFormat(this.bitRate, this.sampleSize, this.channels, true, this.bigEndian);
 
-            // datalines to connect to speakers and play sound from them (converting data into sound)
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
-            SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-            sourceDataLine.open(audioFormat);
+
+            for (String memberName: connectedUser) {
+                SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+
+                membersSourceDataLine.open(audioFormat);
+                membersSourceDataLine.start();
+
+                sourceDataLineMap.put(memberName, membersSourceDataLine);
+            }
+
+            // datalines to connect to speakers and play sound from them (converting data into sound)
+
+            // SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+            // sourceDataLine.open(audioFormat);
 
              // own source data line for every user?
              // get metadata for every user - into map
 
-             sourceDataLine.start();
-
-            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
+             // sourceDataLine.start();
 
             while(true){
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
+
                 // blocking call - will not precede until received packet
                 this.testSocket.receive(receivePacket);
                 audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
@@ -87,11 +99,11 @@ public class AudioReceive extends Thread{
 //                    membersSourceDataLine.open(audioFormat);
 //                    membersSourceDataLine.start();
 //                }
-//
-//                this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
+
+                this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
 
                 // toSpeaker(receivedAudio, this.sourceDataLineMap.get(audioSender));
-                toSpeaker(receivedAudio, sourceDataLine);
+                // toSpeaker(receivedAudio, sourceDataLine);
             }
         } catch (Exception e) {
             e.printStackTrace();
