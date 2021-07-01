@@ -1,21 +1,25 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import com.sun.javafx.application.HostServicesDelegate;
+import de.uniks.stp.wedoit.accord.client.Launcher;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import javafx.event.Event;
 import javafx.geometry.Pos;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
-import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,8 +40,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
         private final Label label = new Label();
+        private final Hyperlink hyperlink = new Hyperlink();
         private final WebView webView = new WebView();
-
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -50,9 +54,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.setText(null);
             this.getStyleClass().removeAll("font_size");
             this.setGraphic(null);
-            this.vBox.getChildren().removeAll(List.of(label,imageView,webView));
+            this.vBox.getChildren().removeAll(List.of(label, imageView, webView, hyperlink));
+            webView.getEngine().load(null);
 
-            System.out.println(this.getListView());
+
 
             if (!empty) {
 
@@ -68,18 +73,27 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
 
-                if(setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
-                    label.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
+                    label.setText("[" + time + "] " + item.getFrom() + ": ");
+                    hyperlink.setText(item.getText());
+                    hyperlink.setOnAction(e->{
+                        if(Desktop.isDesktopSupported()){
+                            try {
+                                Desktop.getDesktop().browse(new URI(item.getText()));
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    });
+                    if (!item.getText().startsWith("https://www.youtube.")) {
+                        vBox.getChildren().addAll(label, imageView, hyperlink);
 
-                    if(!item.getText().startsWith("https://www.youtube.")) {
-                       vBox.getChildren().addAll(imageView, label);
-
-                    }else if(item.getText().startsWith("https://www.youtube.")){
+                    } else if (item.getText().startsWith("https://www.youtube.")) {
                         setUpWebView(item.getText());
-                        vBox.getChildren().addAll(webView, label);
+                        vBox.getChildren().addAll(label, webView, hyperlink);
                     }
 
-                }else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
@@ -99,21 +113,20 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
 
                 if (item instanceof PrivateMessage) {
-                    if(item.getText().startsWith("###game### System")){
+                    if (item.getText().startsWith("###game### System")) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
-                    }else if(item.getText().startsWith(GAME_PREFIX)) {
+                    } else if (item.getText().startsWith(GAME_PREFIX)) {
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                     }
                 }
             }
         }
 
-        private boolean isValid(String url){
+        private boolean isValidURL(String url) {
             try {
-                //img check
+
                 URL Url = new URL(url);
                 Url.toURI();
-                ImageIO.read(Url);
                 return true;
             } catch (Exception e) {
                 return false;
@@ -121,7 +134,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private boolean setImgGraphic(String url) {
-            if(isValid(url)){
+            if(isValidURL(url)){
                 Image image = new Image(url, 370,Integer.MAX_VALUE,true,false,true);
                 if(!image.isError()){
                     imageView.setImage(image);
@@ -132,6 +145,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
             return false;
         }
+
+
+
 
         private void setUpWebView(String url){
             url = url.replace("/watch?v=","/embed/");
