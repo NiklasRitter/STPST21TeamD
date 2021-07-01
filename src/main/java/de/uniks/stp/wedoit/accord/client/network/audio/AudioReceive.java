@@ -2,7 +2,9 @@ package de.uniks.stp.wedoit.accord.client.network.audio;
 
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import org.json.JSONObject;
 
+import javax.json.JsonObject;
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.net.DatagramPacket;
@@ -10,6 +12,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AudioReceive extends Thread{
 
@@ -25,11 +29,13 @@ public class AudioReceive extends Thread{
 
     private final LocalUser localUser;
     private final Channel channel;
+    private Map<String, SourceDataLine> sourceDataLineMap;
 
     public AudioReceive(LocalUser localUser, Channel channel, DatagramSocket testSocket) {
         this.localUser = localUser;
         this.channel = channel;
         this.testSocket = testSocket;
+        this.sourceDataLineMap = new HashMap<>();
     }
 
     @Override
@@ -41,12 +47,6 @@ public class AudioReceive extends Thread{
         System.setProperty("java.net.preferIPv4Stack", "true");
 
         try {
-            // create multicast group - multiple listeners possible
-            InetAddress inetAddress = InetAddress.getByName(this.address);
-            // this.receiveSocketGroup = new MulticastSocket(this.port);
-            // this.receiveSocketGroup.joinGroup(inetAddress);
-            // this.receiveSocketGroup = new DatagramSocket(this.port);
-
             byte[] receiveData = new byte[1279]; //1024? (or 4096, 1024)
 
             // how java saves digital version of the audio
@@ -54,13 +54,13 @@ public class AudioReceive extends Thread{
 
             // datalines to connect to speakers and play sound from them (converting data into sound)
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
-            SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-            sourceDataLine.open(audioFormat);
+            // SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+            // sourceDataLine.open(audioFormat);
 
             // own source data line for every user?
             // get metadata for every user - into map
 
-            sourceDataLine.start();
+            // sourceDataLine.start();
 
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
@@ -72,10 +72,26 @@ public class AudioReceive extends Thread{
                 audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
 
                 byte[] receivedAudio = new byte[1024];
-
+                byte[] metaDataByte = new byte[255];
+                System.arraycopy(receivePacket.getData(), 0, metaDataByte, 0, 255);
                 System.arraycopy(receivePacket.getData(), 255, receivedAudio, 0, 1024);
 
-                toSpeaker(receivedAudio, sourceDataLine);
+                String metaDataString = new String(metaDataByte);
+                JSONObject metaDataJson = new JSONObject(metaDataString);
+                String audioSender = metaDataJson.getString("name");
+
+                if (!sourceDataLineMap.containsKey(audioSender)) {
+                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+
+                    sourceDataLineMap.put(audioSender, membersSourceDataLine);
+
+                    membersSourceDataLine.open(audioFormat);
+                    membersSourceDataLine.start();
+                }
+
+                this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
+
+                toSpeaker(receivedAudio, this.sourceDataLineMap.get(audioSender));
             }
         } catch (Exception e) {
             e.printStackTrace();
