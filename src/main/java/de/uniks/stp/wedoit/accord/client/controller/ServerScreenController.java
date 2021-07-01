@@ -1,28 +1,31 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
@@ -55,6 +58,8 @@ public class ServerScreenController implements Controller {
 
     private final CategoryTreeViewController categoryTreeViewController;
     private final ServerChatController serverChatController;
+    private VBox audioChannelSubViewContainer;
+    private AudioChannelSubViewController audioChannelSubViewController;
 
     /**
      * Create a new Controller
@@ -94,6 +99,9 @@ public class ServerScreenController implements Controller {
         this.lblServerUsers = (Label) view.lookup("#lblServerUsers");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
+
+        this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
+        this.audioChannelSubViewContainer.getChildren().clear();
 
         categoryTreeViewController.init();
         serverChatController.init();
@@ -163,6 +171,32 @@ public class ServerScreenController implements Controller {
     }
 
     /**
+     * If audio channel is clicked, then the audioChannelSubView is dynamically added to ServerScreen.
+     * then calls AudioChannelSubViewController:
+     * You can then take actions in an audio channel.
+     */
+    public void initAudioChannelSubView(Channel channel) {
+        if (!this.audioChannelSubViewContainer.getChildren().isEmpty()) {
+            this.audioChannelSubViewContainer.getChildren().clear();
+        }
+        try {
+            Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
+
+            audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, this, channel);
+            audioChannelSubViewController.init();
+
+            //TODO start with property change listener
+            AudioConnection audioConnection = new AudioConnection(localUser, channel);
+            audioConnection.startConnection();
+            //TODO
+
+            Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().add(view));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Called to stop this controller
      * <p>
      * Remove action listeners
@@ -176,16 +210,20 @@ public class ServerScreenController implements Controller {
         this.editor.getWebSocketManager().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + this.server.getId());
 
-        server.listeners().removePropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
+        this.server.listeners().removePropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
 
         this.chatWSCallback = null;
         this.serverWSCallback = null;
 
-        categoryTreeViewController.stop();
-        serverChatController.stop();
-        editor.setCurrentServer(null);
+        this.categoryTreeViewController.stop();
+        this.serverChatController.stop();
+        this.editor.setCurrentServer(null);
         deleteCurrentServer();
+
+        if (audioChannelSubViewController != null) {
+            this.audioChannelSubViewController.stop();
+        }
     }
 
     // ActionEvent Methods
@@ -358,5 +396,9 @@ public class ServerScreenController implements Controller {
 
     public ServerChatController getServerChatController() {
         return serverChatController;
+    }
+
+    public VBox getAudioChannelSubViewContainer() {
+        return audioChannelSubViewContainer;
     }
 }

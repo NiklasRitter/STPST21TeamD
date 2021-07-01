@@ -1,25 +1,25 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
@@ -361,12 +361,13 @@ public class CategoryTreeViewController implements Controller {
         return channelMap;
     }
 
-    public void handleJoinAudioChannel(Category category) {
-        if(category != null){
-            loadCategoryChannels(category, getTreeItemCategory(category));
+    public void handleJoinAudioChannel(Channel channel) {
+        if(channel.getCategory() != null){
+            loadCategoryChannels(channel.getCategory(), getTreeItemCategory(channel.getCategory()));
+            controller.initAudioChannelSubView(channel);
         }
         else{
-            System.out.println("Join Problem");
+            System.err.println("Join Problem");
         }
     }
 
@@ -377,5 +378,9 @@ public class CategoryTreeViewController implements Controller {
         else{
             System.out.println("Leave Problem");
         }
+    }
+
+    public ServerScreenController getController() {
+        return controller;
     }
 }
