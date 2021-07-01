@@ -56,12 +56,14 @@ public class AudioReceive extends Thread{
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
 
             for (String memberName: connectedUser) {
-                SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                if (!memberName.equals(localUser.getName())) {
+                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
 
-                membersSourceDataLine.open(audioFormat);
-                membersSourceDataLine.start();
+                    membersSourceDataLine.open(audioFormat);
+                    membersSourceDataLine.start();
 
-                sourceDataLineMap.put(memberName, membersSourceDataLine);
+                    sourceDataLineMap.put(memberName, membersSourceDataLine);
+                }
             }
 
             // datalines to connect to speakers and play sound from them (converting data into sound)
