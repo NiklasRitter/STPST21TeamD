@@ -37,6 +37,7 @@ public class AudioReceive extends Thread{
 
         this.connectedUser = connectedUser;
 
+        this.shouldReceive = new AtomicBoolean();
         this.shouldReceive.set(true);
     }
 

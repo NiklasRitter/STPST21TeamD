@@ -38,6 +38,7 @@ public class AudioSend extends Thread{
         this.channel = channel;
         this.sendSocket = sendSocket;
 
+        this.shouldSend = new AtomicBoolean();
         this.shouldSend.set(true);
     }
 
