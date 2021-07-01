@@ -86,7 +86,7 @@ public class AudioSend extends Thread{
 
                 byte[] testData = new byte[1024];
                 System.arraycopy(readData, 255, testData, 0, 1024);
-                System.out.println(Arrays.toString(testData));
+                // System.out.println(Arrays.toString(testData));
             }
         } catch (Exception e) {
             e.printStackTrace();

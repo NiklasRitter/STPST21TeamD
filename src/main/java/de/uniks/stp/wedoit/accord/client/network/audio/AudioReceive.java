@@ -54,20 +54,19 @@ public class AudioReceive extends Thread{
 
             // datalines to connect to speakers and play sound from them (converting data into sound)
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
-            // SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-            // sourceDataLine.open(audioFormat);
+            SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+            sourceDataLine.open(audioFormat);
 
-            // own source data line for every user?
-            // get metadata for every user - into map
+             // own source data line for every user?
+             // get metadata for every user - into map
 
-            // sourceDataLine.start();
+             sourceDataLine.start();
 
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
 
             while(true){
                 // blocking call - will not precede until received packet
-                // this.receiveSocketGroup.receive(receivePacket);
                 this.testSocket.receive(receivePacket);
                 audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
 
@@ -80,18 +79,19 @@ public class AudioReceive extends Thread{
                 JSONObject metaDataJson = new JSONObject(metaDataString);
                 String audioSender = metaDataJson.getString("name");
 
-                if (!sourceDataLineMap.containsKey(audioSender)) {
-                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+//                if (!sourceDataLineMap.containsKey(audioSender)) {
+//                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+//
+//                    sourceDataLineMap.put(audioSender, membersSourceDataLine);
+//
+//                    membersSourceDataLine.open(audioFormat);
+//                    membersSourceDataLine.start();
+//                }
+//
+//                this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
 
-                    sourceDataLineMap.put(audioSender, membersSourceDataLine);
-
-                    membersSourceDataLine.open(audioFormat);
-                    membersSourceDataLine.start();
-                }
-
-                this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
-
-                toSpeaker(receivedAudio, this.sourceDataLineMap.get(audioSender));
+                // toSpeaker(receivedAudio, this.sourceDataLineMap.get(audioSender));
+                toSpeaker(receivedAudio, sourceDataLine);
             }
         } catch (Exception e) {
             e.printStackTrace();
