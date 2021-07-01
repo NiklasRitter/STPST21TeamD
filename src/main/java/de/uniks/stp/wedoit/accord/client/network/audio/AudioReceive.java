@@ -4,14 +4,12 @@ import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import org.json.JSONObject;
 
-import javax.json.JsonObject;
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AudioReceive extends Thread{
 
@@ -21,22 +19,25 @@ public class AudioReceive extends Thread{
     private final int sampleSize = 16;
     private final int channels = 1;
     private final String address = "cranberry.uniks.de";
-    private DatagramSocket receiveSocketGroup;
 
-    private DatagramSocket testSocket;
+    private DatagramSocket receiveSocket;
 
     private final LocalUser localUser;
     private final Channel channel;
     private Map<String, SourceDataLine> sourceDataLineMap;
     private ArrayList<String> connectedUser;
 
-    public AudioReceive(LocalUser localUser, Channel channel, DatagramSocket testSocket, ArrayList<String> connectedUser) {
+    AtomicBoolean shouldReceive;
+
+    public AudioReceive(LocalUser localUser, Channel channel, DatagramSocket receiveSocket, ArrayList<String> connectedUser) {
         this.localUser = localUser;
         this.channel = channel;
-        this.testSocket = testSocket;
+        this.receiveSocket = receiveSocket;
         this.sourceDataLineMap = new HashMap<>();
 
         this.connectedUser = connectedUser;
+
+        this.shouldReceive.set(true);
     }
 
     @Override
@@ -57,6 +58,7 @@ public class AudioReceive extends Thread{
 
             for (String memberName: connectedUser) {
                 if (!memberName.equals(localUser.getName())) {
+                    // datalines to connect to speakers and play sound from them (converting data into sound)
                     SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
 
                     membersSourceDataLine.open(audioFormat);
@@ -66,22 +68,12 @@ public class AudioReceive extends Thread{
                 }
             }
 
-            // datalines to connect to speakers and play sound from them (converting data into sound)
-
-            // SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-            // sourceDataLine.open(audioFormat);
-
-             // own source data line for every user?
-             // get metadata for every user - into map
-
-             // sourceDataLine.start();
-
-            while(true){
+            while(this.shouldReceive.get()){
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
 
                 // blocking call - will not precede until received packet
-                this.testSocket.receive(receivePacket);
+                this.receiveSocket.receive(receivePacket);
                 audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
 
                 byte[] receivedAudio = new byte[1024];
@@ -105,9 +97,6 @@ public class AudioReceive extends Thread{
                 if (!audioSender.equals(localUser.getName())) {
                     this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
                 }
-
-                // toSpeaker(receivedAudio, this.sourceDataLineMap.get(audioSender));
-                // toSpeaker(receivedAudio, sourceDataLine);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,5 +110,9 @@ public class AudioReceive extends Thread{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setShouldReceive(boolean value) {
+        this.shouldReceive.set(value);
     }
 }

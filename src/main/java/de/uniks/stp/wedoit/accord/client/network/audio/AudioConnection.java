@@ -15,7 +15,7 @@ public class AudioConnection {
     private AudioSend sendingThread;
     private AudioReceive receivingThread;
 
-    private DatagramSocket testSocket;
+    private DatagramSocket audioSocket;
 
     public AudioConnection(LocalUser localUser, Channel channel) {
         this.localUser = localUser;
@@ -25,7 +25,7 @@ public class AudioConnection {
 
     public void startConnection(){
         try {
-            this.testSocket = new DatagramSocket(33100);
+            this.audioSocket = new DatagramSocket(33100);
             startSendingAudio();
             startReceivingAudio();
         } catch (Exception e) {
@@ -34,7 +34,7 @@ public class AudioConnection {
     }
 
     private void startSendingAudio() {
-        this.sendingThread = new AudioSend(localUser, channel, testSocket);
+        this.sendingThread = new AudioSend(localUser, channel, audioSocket);
         this.sendingThread.start();
     }
 
@@ -44,9 +44,45 @@ public class AudioConnection {
         for (User member: audioMembers) {
             connectedUser.add(member.getName());
         }
-        this.receivingThread = new AudioReceive(localUser, channel, testSocket, connectedUser);
+        this.receivingThread = new AudioReceive(localUser, channel, audioSocket, connectedUser);
         this.receivingThread.start();
     }
 
+    public void close() {
+        stopSendingAudio();
+        stopReceivingAudio();
+
+        if (audioSocket.isConnected()) {
+            audioSocket.close();
+        }
+    }
+
+    private void stopSendingAudio() {
+        if (this.sendingThread != null) {
+            if (this.sendingThread.isAlive()) {
+                try {
+                    sendingThread.setShouldSend(false);
+                    sendingThread.join();
+                } catch (InterruptedException e) {
+                    System.err.println("Error on closing sendConnection");
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void stopReceivingAudio() {
+        if (this.receivingThread != null) {
+            if (this.receivingThread.isAlive()) {
+                try {
+                    receivingThread.setShouldReceive(false);
+                    receivingThread.join();
+                } catch (InterruptedException e) {
+                    System.err.println("Error on closing receivingConnection");
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 }

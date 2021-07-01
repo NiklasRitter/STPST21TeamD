@@ -12,8 +12,8 @@ import javax.sound.sampled.TargetDataLine;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
@@ -26,18 +26,19 @@ public class AudioSend extends Thread{
     private final int sampleSize = 16;
     private final int channels = 1;
     private final String address = "cranberry.uniks.de";
-    private DatagramSocket sendSocket;
 
-    private DatagramSocket testSocket;
+    private DatagramSocket sendSocket;
 
     private final LocalUser localUser;
     private final Channel channel;
-    private boolean shouldSend;
+    AtomicBoolean shouldSend;
 
-    public AudioSend(LocalUser localUser, Channel channel, DatagramSocket testSocket) {
+    public AudioSend(LocalUser localUser, Channel channel, DatagramSocket sendSocket) {
         this.localUser = localUser;
         this.channel = channel;
-        this.testSocket = testSocket;
+        this.sendSocket = sendSocket;
+
+        this.shouldSend.set(true);
     }
 
     @Override
@@ -76,13 +77,11 @@ public class AudioSend extends Thread{
 
             InetAddress inetAddress = InetAddress.getByName(this.address);
 
-            // this.sendSocket = new MulticastSocket();
-            // this.sendSocket = new DatagramSocket();
-            while(true) {
+            while(shouldSend.get()) {
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
                 // this.sendSocket.send(datagramPacket);
-                this.testSocket.send(datagramPacket);
+                this.sendSocket.send(datagramPacket);
 
                 byte[] testData = new byte[1024];
                 System.arraycopy(readData, 255, testData, 0, 1024);
@@ -105,5 +104,7 @@ public class AudioSend extends Thread{
         return metaDataByte;
     }
 
-    //TODO does join also kill socket connection?
+    public void setShouldSend(boolean value) {
+        this.shouldSend.set(value);
+    }
 }
