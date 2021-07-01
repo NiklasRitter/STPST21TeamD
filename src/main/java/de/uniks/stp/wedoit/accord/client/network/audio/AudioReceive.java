@@ -93,7 +93,7 @@ public class AudioReceive extends Thread{
                 JSONObject metaDataJson = new JSONObject(metaDataString);
                 String audioSender = metaDataJson.getString("name");
 
-                if (!sourceDataLineMap.containsKey(audioSender)) {
+                if (!sourceDataLineMap.containsKey(audioSender) && !audioSender.equals(localUser.getName())) {
                     SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
 
                     sourceDataLineMap.put(audioSender, membersSourceDataLine);
@@ -102,7 +102,9 @@ public class AudioReceive extends Thread{
                     membersSourceDataLine.start();
                 }
 
-                this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
+                if (!audioSender.equals(localUser.getName())) {
+                    this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
+                }
 
                 // toSpeaker(receivedAudio, this.sourceDataLineMap.get(audioSender));
                 // toSpeaker(receivedAudio, sourceDataLine);
@@ -114,7 +116,7 @@ public class AudioReceive extends Thread{
 
     private void toSpeaker (byte[] soundBytes, SourceDataLine sourceDataLine) {
         try {
-            //System.out.println(Arrays.toString(soundBytes));
+            // System.out.println(Arrays.toString(soundBytes));
             sourceDataLine.write(soundBytes, 0, soundBytes.length);
         } catch (Exception e) {
             e.printStackTrace();
