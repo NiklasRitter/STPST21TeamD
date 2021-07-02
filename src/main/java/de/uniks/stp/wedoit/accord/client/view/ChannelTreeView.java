@@ -115,11 +115,17 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
     }
 
     public ContextMenu addContextMenuUser(User item){
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("MUTE"));
-        contextMenu.getItems().add(menuItem1);
-        menuItem1.setOnAction((event) -> this.stageManager.getEditor().getAudioManager().muteUser(item));
-        return contextMenu;
+        if(!item.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("MUTE"));
+            MenuItem menuItem2 = new MenuItem("- " + LanguageResolver.getString("UNMUTE"));
+            contextMenu.getItems().add(menuItem1);
+            contextMenu.getItems().add(menuItem2);
+            menuItem1.setOnAction((event) -> this.stageManager.getEditor().getAudioManager().muteUser(item));
+            menuItem2.setOnAction((event) -> this.stageManager.getEditor().getAudioManager().unmuteUser(item));
+            return contextMenu;
+        }
+        return null;
     }
 
 }

@@ -22,4 +22,8 @@ public class AudioManager {
     public void muteUser(User user){
         audioConnection.getAudioReceive().muteUser(user.getName());
     }
+
+    public void unmuteUser(User user){
+        audioConnection.getAudioReceive().unmuteUser(user.getName());
+    }
 }
