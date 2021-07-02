@@ -12,7 +12,6 @@ import javax.sound.sampled.TargetDataLine;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
@@ -76,10 +75,6 @@ public class AudioSend extends Thread{
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
 
                 this.sendSocket.send(datagramPacket);
-
-                byte[] testData = new byte[1024];
-                System.arraycopy(readData, 255, testData, 0, 1024);
-                System.out.println(Arrays.toString(testData));
             }
         } catch (Exception e) {
             e.printStackTrace();
