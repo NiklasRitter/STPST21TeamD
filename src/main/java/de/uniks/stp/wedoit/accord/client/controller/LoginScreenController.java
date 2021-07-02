@@ -3,9 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Options;
-import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,10 +10,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.stage.WindowEvent;
 
-import javax.swing.text.html.Option;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Locale;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
@@ -33,10 +26,13 @@ public class LoginScreenController implements Controller {
     private Button btnLogin;
     private Button btnRegister;
     private Button btnOptions;
+    private Button btnGuestLogin;
     private CheckBox btnRememberMe;
     private TextField tfUserName;
     private TextField pwUserPw;
-    private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe;
+    private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe, lblUserValid, lblGuestPassword;
+
+    private String guestUserPassword;
 
     /**
      * Create a new Controller
@@ -66,11 +62,14 @@ public class LoginScreenController implements Controller {
         this.lblEnterUserName = (Label) view.lookup("#lblEnterUserName");
         this.lblEnterPw = (Label) view.lookup("#lblEnterPw");
         this.lblRememberMe = (Label) view.lookup("#lblRememberMe");
+        this.lblUserValid = (Label) view.lookup("#lblUserValid");
+        this.lblGuestPassword = (Label) view.lookup("#lblGuestPassword");
 
         this.btnLogin = (Button) view.lookup("#btnLogin");
         this.btnRegister = (Button) view.lookup("#btnRegister");
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnRememberMe = (CheckBox) view.lookup("#btnRememberMe");
+        this.btnGuestLogin = (Button) view.lookup("#btnGuestLogin");
 
         this.view.requestFocus();
         this.setComponentsText();
@@ -80,17 +79,11 @@ public class LoginScreenController implements Controller {
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.btnRememberMe.setOnAction(this::btnRememberMeOnClick);
+        this.btnGuestLogin.setOnAction(this::btnGuestLoginOnClick);
 
         this.initTooltips();
 
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("LOGIN"));
-            }
-        });
+        this.refreshStage();
     }
 
     /**
@@ -103,6 +96,20 @@ public class LoginScreenController implements Controller {
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
         this.btnLogin.setText(LanguageResolver.getString("LOGIN"));
         this.btnRegister.setText(LanguageResolver.getString("REGISTER"));
+        this.btnGuestLogin.setText(LanguageResolver.getString("GUEST_LOGIN"));
+        if (guestUserPassword != null) {
+            this.setGuestUserDataLabel();
+        }
+    }
+
+    /**
+     * Sets texts of labels for guest user in the selected language with correct data.
+     */
+    private void setGuestUserDataLabel() {
+        Platform.runLater(() -> {
+            this.lblUserValid.setText(LanguageResolver.getString("USER_VALID_FOR_24H"));
+            this.lblGuestPassword.setText(LanguageResolver.getString("GUEST_USER_PASSWORD") + " " + guestUserPassword);
+        });
     }
 
     private void initTooltips() {
@@ -176,6 +183,24 @@ public class LoginScreenController implements Controller {
         }
     }
 
+    /**
+     * handles a guest login
+     *
+     * @param success success of the login as boolean
+     */
+    public void handleGuestLogin(String userName, String password, boolean success) {
+        if (!success) {
+            tfUserName.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            pwUserPw.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("USERNAME_PASSWORD_WRONG")));
+        } else {
+            guestUserPassword = password;
+            this.tfUserName.setText(userName);
+            this.pwUserPw.setText(password);
+            setGuestUserDataLabel();
+
+        }
+    }
 
     /**
      * register user to server and login, redirect to MainScreen
@@ -239,5 +264,29 @@ public class LoginScreenController implements Controller {
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
         this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+    }
+
+    /**
+     * Sends a request to the server and gets name and password for a guest user
+     *
+     * @param actionEvent occurs when clicking the Guest login button
+     */
+    private void btnGuestLoginOnClick(ActionEvent actionEvent) {
+        editor.getRestManager().guestLogin(this);
+    }
+
+    /**
+     * Refreshes the stage after closing the option screen,
+     * so that the component texts are displayed in the correct language.
+     */
+    private void refreshStage() {
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("LOGIN"));
+            }
+        });
     }
 }

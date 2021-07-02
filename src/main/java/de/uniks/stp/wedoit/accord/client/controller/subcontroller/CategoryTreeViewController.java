@@ -377,7 +377,7 @@ public class CategoryTreeViewController implements Controller {
             loadCategoryChannels(category, getTreeItemCategory(category));
         }
         else{
-            System.err.println("Join Problem");
+            System.err.println("Leave Problem");
         }
     }
 
