@@ -69,7 +69,6 @@ public class OptionsScreenController implements Controller {
             HBox parent = (HBox) logoutButton.getParent();
             parent.getChildren().remove(logoutButton);
         }
-        stage.sizeToScene();
 
         Tooltip logoutButton = new Tooltip();
         logoutButton.setText(LanguageResolver.getString("LOGOUT"));
