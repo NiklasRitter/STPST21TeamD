@@ -72,6 +72,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                 }
                 if(item instanceof User){
                     this.setText("- " + ((User) item).getName());
+                    this.setContextMenu(addContextMenuUser((User) item));
                 }
             } else {
                 this.setText(null);
@@ -110,6 +111,14 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CATEGORY"), "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, item, null));
         menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item, null));
 
+        return contextMenu;
+    }
+
+    public ContextMenu addContextMenuUser(User item){
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("MUTE"));
+        contextMenu.getItems().add(menuItem1);
+        menuItem1.setOnAction((event) -> this.stageManager.getEditor().getAudioManager().muteUser(item));
         return contextMenu;
     }
 

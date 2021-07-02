@@ -85,4 +85,8 @@ public class AudioConnection {
         }
     }
 
+    public AudioReceive getAudioReceive(){
+        return receivingThread;
+    }
+
 }

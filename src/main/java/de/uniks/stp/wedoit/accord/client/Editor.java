@@ -24,6 +24,7 @@ public class Editor {
     private final ChannelManager channelManager = new ChannelManager(this);
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
+    private final AudioManager audioManager = new AudioManager(this);
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
@@ -41,6 +42,13 @@ public class Editor {
      */
     public WebSocketManager getWebSocketManager() {
         return webSocketManager;
+    }
+
+    /**
+     * @return private final AudioManager audioManager
+     */
+    public AudioManager getAudioManager(){
+        return audioManager;
     }
 
     public Server getCurrentServer() {

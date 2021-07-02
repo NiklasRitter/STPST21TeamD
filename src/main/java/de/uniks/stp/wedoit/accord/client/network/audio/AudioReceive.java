@@ -116,4 +116,8 @@ public class AudioReceive extends Thread{
     public void setShouldReceive(boolean value) {
         this.shouldReceive.set(value);
     }
+
+    public void muteUser(String username){
+        sourceDataLineMap.remove(username);
+    }
 }
