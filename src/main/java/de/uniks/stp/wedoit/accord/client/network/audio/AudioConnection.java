@@ -20,7 +20,6 @@ public class AudioConnection {
     public AudioConnection(LocalUser localUser, Channel channel) {
         this.localUser = localUser;
         this.channel = channel;
-        //TODO localUser, channel or only names?
     }
 
     public void startConnection(){
@@ -44,7 +43,7 @@ public class AudioConnection {
         for (User member: audioMembers) {
             connectedUser.add(member.getName());
         }
-        this.receivingThread = new AudioReceive(localUser, channel, audioSocket, connectedUser);
+        this.receivingThread = new AudioReceive(localUser, audioSocket, connectedUser);
         this.receivingThread.start();
     }
 
