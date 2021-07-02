@@ -65,12 +65,8 @@ public class ServerChatController implements Controller {
     private ListView<User> lvSelectUser;
     private VBox boxTextfield;
     private Integer activeAt;
-    private ArrayList<Integer> Ats = new ArrayList<Integer>();
-
-    private ArrayList<Integer> markings = new ArrayList<Integer>();
+    private ArrayList<Integer> ats = new ArrayList<Integer>();
     private int caret = 0;
-    private int countAt = 0;
-
 
     /**
      * Create a new Controller
@@ -131,7 +127,7 @@ public class ServerChatController implements Controller {
 
             Integer correspondingAt = null;
 
-            for (int i = caret - 1; i >= 0 ; i--) {
+            for (int i = caret - 1; i >= 0; i--) {
                 if (currentText.charAt(i) == '@') {
                     correspondingAt = i;
                     break;
@@ -148,59 +144,61 @@ public class ServerChatController implements Controller {
     }
 
     private void isMarking(KeyEvent keyEvent) {
+        String currentText = tfInputMessage.getText();
         caret = tfInputMessage.getCaretPosition();
-        System.out.println(caret);
+
+        if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
+            ats.add(caret - 1);
+
+            activeAt = caret - 1;
+
+            this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
+
+            boxTextfield.getChildren().add(lvSelectUser);
+
+            lvSelectUser.setMinHeight(45);
+            lvSelectUser.setPrefHeight(45);
+            lvSelectUser.setVisible(true);
+
+            initLwSelectUser(lvSelectUser);
 
 
-        if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null){
+        } else if (keyEvent.getCharacter().equals("\b")) {
 
-            countAt += 1;
-
-            activeAt = this.getNewAt(tfInputMessage.getText());
-
-            if (activeAt != null){
-                this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
-
-                boxTextfield.getChildren().add(lvSelectUser);
-
-                lvSelectUser.setMinHeight(45);
-                lvSelectUser.setPrefHeight(45);
-                lvSelectUser.setVisible(true);
-
-                initLwSelectUser(lvSelectUser);
-            }
-        }
-
-        else if (keyEvent.getCharacter().equals("\b")){
-
-            String currentText = tfInputMessage.getText();
-            Integer correspondingAt = null;
-
-            for (int i = caret - 1; i >= 0 ; i--) {
-                if (currentText.charAt(i) == '@') {
-                    correspondingAt = i;
-                    break;
-                }
+            if (ats.contains(caret)) {
+                ats.remove((Object) caret);
+                removeSelectionMenu();
             }
 
-            tfInputMessage.getCaretPosition();
-            if (!tfInputMessage.getText().contains("@")) {
-               removeSelectionMenu();
+        } else if (lvSelectUser.isVisible()) {
+            Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring(activeAt + 1, caret));
+            if (!markingPossible) {
+                removeSelectionMenu();
             }
         }
     }
 
-    private Integer getNewAt(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '@' && !Ats.contains(i)){
-                Ats.add(i);
-                return i;
+    private Boolean checkMarkingPossible(String text) {
+        System.out.println(text);
+
+        ArrayList<User> possibleUsers;
+
+        if (currentChannel != null && currentChannel.isPrivileged()) {
+            possibleUsers = new ArrayList<>(currentChannel.getMembers());
+        } else {
+            possibleUsers = new ArrayList<>(server.getMembers());
+        }
+
+        for (User user : possibleUsers) {
+            if (!user.getName().contains(text)) {
+                selectUserObservableList.remove(user);
             }
         }
-        return null;
+
+        return !selectUserObservableList.isEmpty();
     }
 
-    private void removeSelectionMenu(){
+    private void removeSelectionMenu() {
         boxTextfield.getChildren().remove(lvSelectUser);
         lvSelectUser.setVisible(false);
         this.lvSelectUser.setOnMousePressed(null);
@@ -212,7 +210,7 @@ public class ServerChatController implements Controller {
         // init list view
         lvSelectUser.setCellFactory(new SelectUserCellFactory());
 
-        if (currentChannel!= null && currentChannel.isPrivileged()){
+        if (currentChannel != null && currentChannel.isPrivileged()) {
             availableUsers = new ArrayList<>(currentChannel.getMembers());
         } else {
             availableUsers = new ArrayList<>(server.getMembers());
@@ -451,7 +449,7 @@ public class ServerChatController implements Controller {
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
         this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
-        this.tfInputMessage.setEditable(this.currentChannel!=null);
+        this.tfInputMessage.setEditable(this.currentChannel != null);
 
         // init list view
         lvTextChat.setCellFactory(new MessageCellFactory<>(editor));
