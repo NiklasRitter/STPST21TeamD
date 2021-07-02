@@ -32,7 +32,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final VBox vBox = new VBox();
         private final Label label = new Label();
 
-
         private MessageCell(ListView<S> param) {
             this.param = param;
         }
@@ -58,15 +57,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                 String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
-
-                if(setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)){
+                if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     label.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
-                    if(!vBox.getChildren().contains(imageView)){
+                    if (!vBox.getChildren().contains(imageView)) {
                         vBox.getChildren().addAll(imageView, label);
                     }
 
-
-                }else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
@@ -86,16 +83,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
 
                 if (item instanceof PrivateMessage) {
-                    if(item.getText().startsWith("###game### System")){
+                    if (item.getText().startsWith("###game### System")) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
-                    }else if(item.getText().startsWith(GAME_PREFIX)) {
+                    } else if (item.getText().startsWith(GAME_PREFIX)) {
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                     }
                 }
             }
         }
 
-        private boolean isValid(String url){
+        private boolean isValid(String url) {
             try {
                 //img check
                 URL Url = new URL(url);
@@ -108,9 +105,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private boolean setImgGraphic(String url) {
-            if(isValid(url)){
-                Image image = new Image(url, 370,Integer.MAX_VALUE,true,false,true);
-                if(!image.isError()){
+            if (isValid(url)) {
+                Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
+                if (!image.isError()) {
                     imageView.setImage(image);
                     imageView.setPreserveRatio(true);
                     setGraphic(vBox);

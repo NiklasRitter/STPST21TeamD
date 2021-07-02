@@ -11,7 +11,6 @@ public class InvitationListView implements javafx.util.Callback<ListView<Invitat
         return new InvitationListCell();
     }
 
-
     private class InvitationListCell extends ListCell<Invitation> {
         protected void updateItem(Invitation item, boolean empty) {
             super.updateItem(item, empty);
