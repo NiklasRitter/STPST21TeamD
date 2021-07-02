@@ -33,7 +33,6 @@ public class AudioReceive extends Thread{
 
     @Override
     public void run() {
-        AudioInputStream audioInputStream;
         AudioFormat audioFormat;
 
         System.setProperty("java.net.preferIPv4Stack", "true");
@@ -61,10 +60,8 @@ public class AudioReceive extends Thread{
 
             while(this.shouldReceive.get()){
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
 
                 this.receiveSocket.receive(receivePacket);
-                audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
 
                 byte[] receivedAudio = new byte[1024];
                 byte[] metaDataByte = new byte[255];
