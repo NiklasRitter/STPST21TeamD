@@ -20,6 +20,7 @@ import javafx.util.Duration;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Locale;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
@@ -46,7 +47,7 @@ public class EditServerScreenController implements Controller {
     private TextField tfMaxCountAmountInput;
     private TextField tfInvitationLink;
 
-    private Label labelCopy, lblChangeName, lblInvite, lblOldInvit, lblInvitationStatus, lblDelete, lblInvititation, lblInvitationStatusText;
+    private Label labelCopy, lblChangeName, lblInvite, lblOldInvit, lblInvitationStatus, lblInvitationStatusText;
 
     private Label lblError;
     private ListView<Invitation> lvInvitation;
@@ -98,8 +99,6 @@ public class EditServerScreenController implements Controller {
         this.lblChangeName = (Label) view.lookup("#lblChangeName");
         this.lblInvite = (Label) view.lookup("#lblInvite");
         this.lblOldInvit = (Label) view.lookup("#lblOldInvit");
-        this.lblInvititation = (Label) view.lookup("#lblInvititation");
-        this.lblDelete = (Label) view.lookup("#lblDelete");
         this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
         this.btnDeleteInvitation = (Button) view.lookup("#btnDeleteInvitation");
 
@@ -122,6 +121,7 @@ public class EditServerScreenController implements Controller {
         this.lblChangeName.setText(LanguageResolver.getString("CHANGE_NAME"));
         this.lblInvite.setText(LanguageResolver.getString("INVITE"));
         this.lblOldInvit.setText(LanguageResolver.getString("OLD_INVITATIONS"));
+        this.btnDeleteInvitation.setText(LanguageResolver.getString("DELETE_INVITATION"));
         this.btnDelete.setText(LanguageResolver.getString("DELETE_SERVER"));
         this.btnSave.setText(LanguageResolver.getString("SAVE"));
         this.btnCreateInvitation.setText(LanguageResolver.getString("CREATE_INVITATION"));
