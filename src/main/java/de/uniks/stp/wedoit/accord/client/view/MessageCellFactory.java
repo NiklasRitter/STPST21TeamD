@@ -4,15 +4,19 @@ import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.awt.*;
 import java.net.URI;
@@ -36,7 +40,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
         private final Label label = new Label();
-        private final Hyperlink hyperlink = new Hyperlink();
+        private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();;
         private final WebView webView = new WebView();
 
         private MessageCell(ListView<S> param) {
@@ -52,10 +56,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.setGraphic(null);
             this.vBox.getChildren().clear();
             webView.getEngine().load(null);
+            descBox.setText(null);
             hyperlink.setOnAction(null);
+            hyperlink.getStyleClass().removeAll("link","descBox");
 
-
-
+            
             if (!empty) {
 
                 // set the width (-20 to eliminate overhang in ListView)
@@ -71,16 +76,22 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
 
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
-                    label.setText("[" + time + "] " + item.getFrom() + ": ");
-                    hyperlink.setText(item.getText());
-                    hyperlink.setOnAction(this::openHyperLink);
                     if (!item.getText().startsWith("https://www.youtube.")) {
                         vBox.getChildren().addAll(label, imageView, hyperlink);
+                        if(descBox.getText() != null){
+                            vBox.getChildren().add(descBox);
+                            descBox.setOnAction(this::openHyperLink);
+                        }
 
                     } else if (item.getText().startsWith("https://www.youtube.")) {
                         setUpWebView(item.getText());
                         vBox.getChildren().addAll(label, webView, hyperlink);
                     }
+
+                    label.setText("[" + time + "] " + item.getFrom() + ": ");
+                    hyperlink.setText(item.getText());
+                    hyperlink.getStyleClass().add("link");
+                    hyperlink.setOnAction(this::openHyperLink);
 
                 } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
@@ -115,6 +126,15 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             try {
                 URL Url = new URL(url);
                 Url.toURI();
+
+                if(List.of(".jpg",".gif",".png").contains(url.substring(url.length()-4))) return true;
+
+                Document doc = Jsoup.connect(url).get();
+                if(Url.getHost().equals("drive.google.com") && doc.title() != null){
+                    descBox.setText(doc.title());
+                    descBox.getStyleClass().add("descBox");
+                }
+
                 return true;
             } catch (Exception e) {
                 return false;
@@ -143,9 +163,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private void openHyperLink(ActionEvent actionEvent) {
+            openBrowser(hyperlink.getText());
+        }
+
+        private void openBrowser(String url){
             if(Desktop.isDesktopSupported()){
                 try {
-                    Desktop.getDesktop().browse(new URI(hyperlink.getText()));
+                    Desktop.getDesktop().browse(new URI(url));
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
