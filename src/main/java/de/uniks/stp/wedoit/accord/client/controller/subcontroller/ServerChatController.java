@@ -69,6 +69,7 @@ public class ServerChatController implements Controller {
 
     private ArrayList<Integer> markings = new ArrayList<Integer>();
     private int caret = 0;
+    private int countAt = 0;
 
 
     /**
@@ -152,6 +153,8 @@ public class ServerChatController implements Controller {
 
 
         if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null){
+
+            countAt += 1;
 
             activeAt = this.getNewAt(tfInputMessage.getText());
 
