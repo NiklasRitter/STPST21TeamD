@@ -64,7 +64,7 @@ public class OptionsScreenController implements Controller {
 
         // If current stage is LoginScreen, than OptionScreen should not show logout button
         Stage stage = this.editor.getStageManager().getStage();
-        if (stage.getTitle().equals("Login")) {
+        if (stage.getTitle().equals(LanguageResolver.getString("LOGIN"))) {
             logoutButton.setVisible(false);
             HBox parent = (HBox) logoutButton.getParent();
             parent.getChildren().remove(logoutButton);
