@@ -1,6 +1,5 @@
 package de.uniks.stp.wedoit.accord.client.network.audio;
 
-import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import org.json.JSONObject;
 
@@ -13,55 +12,46 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AudioReceive extends Thread{
 
-    private final boolean bigEndian = false;
-    private final float bitRate = 48000.0f;
-    private final int port = 33100;
-    private final int sampleSize = 16;
-    private final int channels = 1;
-    private final String address = "cranberry.uniks.de";
-
-    private DatagramSocket receiveSocket;
+    private final DatagramSocket receiveSocket;
 
     private final LocalUser localUser;
-    private final Channel channel;
-    private Map<String, SourceDataLine> sourceDataLineMap;
-    private ArrayList<String> connectedUser;
+    private final Map<String, SourceDataLine> sourceDataLineMap;
+    private final ArrayList<String> connectedUser;
 
     AtomicBoolean shouldReceive;
 
-    public AudioReceive(LocalUser localUser, Channel channel, DatagramSocket receiveSocket, ArrayList<String> connectedUser) {
+    public AudioReceive(LocalUser localUser, DatagramSocket receiveSocket, ArrayList<String> connectedUser) {
         this.localUser = localUser;
-        this.channel = channel;
         this.receiveSocket = receiveSocket;
-        this.sourceDataLineMap = new HashMap<>();
-
         this.connectedUser = connectedUser;
 
         this.shouldReceive = new AtomicBoolean();
         this.shouldReceive.set(true);
+
+        this.sourceDataLineMap = new HashMap<>();
     }
 
     @Override
     public void run() {
-        // audio once decoded from packet - send to speaker
         AudioInputStream audioInputStream;
         AudioFormat audioFormat;
 
         System.setProperty("java.net.preferIPv4Stack", "true");
 
         try {
-            byte[] receiveData = new byte[1279]; //1024? (or 4096, 1024)
+            byte[] receiveData = new byte[1279];
 
-            // how java saves digital version of the audio
-            audioFormat = new AudioFormat(this.bitRate, this.sampleSize, this.channels, true, this.bigEndian);
+            int channels = 1;
+            int sampleSize = 16;
+            float bitRate = 48000.0f;
+            boolean bigEndian = false;
+            audioFormat = new AudioFormat(bitRate, sampleSize, channels, true, bigEndian);
 
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
 
             for (String memberName: connectedUser) {
                 if (!memberName.equals(localUser.getName())) {
-                    // datalines to connect to speakers and play sound from them (converting data into sound)
                     SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-
                     membersSourceDataLine.open(audioFormat);
                     membersSourceDataLine.start();
 
@@ -73,7 +63,6 @@ public class AudioReceive extends Thread{
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
 
-                // blocking call - will not precede until received packet
                 this.receiveSocket.receive(receivePacket);
                 audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, receivePacket.getLength());
 
@@ -88,26 +77,16 @@ public class AudioReceive extends Thread{
 
                 if (!sourceDataLineMap.containsKey(audioSender) && !audioSender.equals(localUser.getName())) {
                     SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
-
-                    sourceDataLineMap.put(audioSender, membersSourceDataLine);
-
                     membersSourceDataLine.open(audioFormat);
                     membersSourceDataLine.start();
+
+                    sourceDataLineMap.put(audioSender, membersSourceDataLine);
                 }
 
                 if (!audioSender.equals(localUser.getName())) {
                     this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void toSpeaker (byte[] soundBytes, SourceDataLine sourceDataLine) {
-        try {
-            // System.out.println(Arrays.toString(soundBytes));
-            sourceDataLine.write(soundBytes, 0, soundBytes.length);
         } catch (Exception e) {
             e.printStackTrace();
         }

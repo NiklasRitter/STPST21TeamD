@@ -20,14 +20,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
 
 public class AudioSend extends Thread{
 
-    private final boolean bigEndian = false;
-    private final float bitRate = 48000.0f;
-    private final int port = 33100;
-    private final int sampleSize = 16;
-    private final int channels = 1;
-    private final String address = "cranberry.uniks.de";
-
-    private DatagramSocket sendSocket;
+    private final DatagramSocket sendSocket;
 
     private final LocalUser localUser;
     private final Channel channel;
@@ -53,11 +46,13 @@ public class AudioSend extends Thread{
 
         AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
-        // how java saves digital version of the audio
-        AudioFormat audioFormat = new AudioFormat(encoding, this.bitRate, this.sampleSize, this.channels,
-                (this.sampleSize / 8) * this.channels, this.bitRate, this.bigEndian);
+        int channels = 1;
+        int sampleSize = 16;
+        float bitRate = 48000.0f;
+        boolean bigEndian = false;
+        AudioFormat audioFormat = new AudioFormat(encoding, bitRate, sampleSize, channels,
+                (sampleSize / 8) * channels, bitRate, bigEndian);
 
-        // actual mic connection - format according to audioFormat --- then send as array of bytes (packet) over network
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
 
         if (!AudioSystem.isLineSupported(info)) {
@@ -65,23 +60,21 @@ public class AudioSend extends Thread{
         }
 
         try {
-            // get microphone data from
             TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
-            // open thread - sample microphone
             line.open(audioFormat);
-            // save it into byte array
             byte[] readData = new byte[1279];
-            // copy metadata into readData
             System.arraycopy(metaData, 0, readData, 0, 255);
 
             line.start();
 
-            InetAddress inetAddress = InetAddress.getByName(this.address);
+            String address = "cranberry.uniks.de";
+            InetAddress inetAddress = InetAddress.getByName(address);
 
             while(shouldSend.get()) {
                 line.read(readData, 255, 1024);
+                int port = 33100;
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
-                // this.sendSocket.send(datagramPacket);
+
                 this.sendSocket.send(datagramPacket);
 
                 byte[] testData = new byte[1024];
