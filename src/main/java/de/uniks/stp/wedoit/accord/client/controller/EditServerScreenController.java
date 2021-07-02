@@ -46,15 +46,13 @@ public class EditServerScreenController implements Controller {
     private TextField tfMaxCountAmountInput;
     private TextField tfInvitationLink;
 
-    private Label labelCopy, lblChangeName, lblInvite, lblOldInvit;
+    private Label labelCopy, lblChangeName, lblInvite, lblOldInvit, lblInvitationStatus, lblDelete, lblInvititation, lblInvitationStatusText;
 
     private Label lblError;
     private ListView<Invitation> lvInvitation;
     private Button btnDeleteInvitation;
     private ObservableList<Invitation> invitationsObservableList;
     private PropertyChangeListener invitationsListener = this::invitationsChanged;
-    private Label lblInvitationStatus, lblDelete, lblInvititation;
-    private Label lblInvitationStatusText;
 
 
     /**
@@ -127,7 +125,6 @@ public class EditServerScreenController implements Controller {
         this.btnDelete.setText(LanguageResolver.getString("DELETE_SERVER"));
         this.btnSave.setText(LanguageResolver.getString("SAVE"));
         this.btnCreateInvitation.setText(LanguageResolver.getString("CREATE_INVITATION"));
-        this.btnDeleteInvitation.setText(LanguageResolver.getString("DELETE_INVITATION"));
         this.tfMaxCountAmountInput.setPromptText(LanguageResolver.getString("AMOUNT"));
         this.tfNewServernameInput.setPromptText(LanguageResolver.getString("NEW_SERVERNAME"));
         this.radioBtnTemporal.setText(LanguageResolver.getString("TEMPORAL"));

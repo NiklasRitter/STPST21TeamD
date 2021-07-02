@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox id="mainVBox" alignment="TOP_CENTER">
             <children>
@@ -134,7 +134,7 @@
                         </ListView>
                         <HBox alignment="CENTER_LEFT">
                             <children>
-                                <Button id="btnDeleteInvitation" minWidth="75.0" mnemonicParsing="false" styleClass="styleButton">
+                                <Button id="btnDeleteInvitation" minWidth="75.0" mnemonicParsing="false" styleClass="styleButton" wrapText="true">
                                     <font>
                                         <Font name="System Bold" size="12.0" />
                                     </font>
