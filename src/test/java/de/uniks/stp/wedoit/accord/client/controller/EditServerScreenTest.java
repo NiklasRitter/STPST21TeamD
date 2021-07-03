@@ -352,19 +352,21 @@ public class EditServerScreenTest extends ApplicationTest {
         RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
         TextField tfMaxCountAmountInput = lookup("#tfMaxCountAmountInput").query();
         TextField tfInvitationLink = lookup("#tfInvitationLink").query();
+        Label lblCountWarning = lookup("#lblCountWarning").query();
 
         clickOn(radioBtnMaxCount);
         clickOn("#btnCreateInvitation");
-        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+        Assert.assertEquals("Amount", tfMaxCountAmountInput.getPromptText());
 
         clickOn(radioBtnMaxCount);
         tfMaxCountAmountInput.setText("b");
         clickOn("#btnCreateInvitation");
-        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+        Assert.assertEquals("Amount", tfMaxCountAmountInput.getPromptText());
 
         tfMaxCountAmountInput.setText("0");
         clickOn("#btnCreateInvitation");
-        Assert.assertEquals("Insert Amount > 0", tfMaxCountAmountInput.getPromptText());
+        Assert.assertEquals("Amount", tfMaxCountAmountInput.getPromptText());
+        Assert.assertEquals("Insert Amount > 0", lblCountWarning.getText());
 
         clickOn(radioBtnMaxCount);
         tfMaxCountAmountInput.setText("15");

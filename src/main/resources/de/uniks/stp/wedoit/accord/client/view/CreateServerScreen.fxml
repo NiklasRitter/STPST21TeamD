@@ -6,34 +6,31 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="199.0" prefWidth="411.0" spacing="10.0" xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="199.0" prefWidth="411.0" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label id="lblEnterServerName">
             <font>
-                <Font name="System Bold" size="14.0"/>
+                <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <TextField id="tfServerName" prefHeight="25.0" prefWidth="50.0" promptText="Servername"/>
+        <TextField id="tfServerName" prefHeight="25.0" prefWidth="50.0" />
         <Region prefHeight="37.0" prefWidth="351.0">
             <VBox.margin>
-                <Insets top="5.0"/>
+                <Insets top="5.0" />
             </VBox.margin>
         </Region>
-        <Label id="lblError" textFill="RED"/>
-        <Button id="btnCreateServer" defaultButton="true" mnemonicParsing="false" styleClass="styleButton"
-                text="Create Server">
+        <Label id="lblError" textFill="RED" />
+        <Button id="btnCreateServer" defaultButton="true" mnemonicParsing="false" styleClass="styleButton">
             <font>
-                <Font name="System Bold" size="14.0"/>
+                <Font name="System Bold" size="14.0" />
             </font>
         </Button>
     </children>
     <padding>
-        <Insets left="30.0" right="30.0" top="5.0"/>
+        <Insets left="30.0" right="30.0" top="5.0" />
     </padding>
     <styleClass>
-        <String fx:value="styleBorder"/>
-        <String fx:value="styleBackgroundHighlight"/>
+        <String fx:value="styleBorder" />
+        <String fx:value="styleBackgroundHighlight" />
     </styleClass>
 </VBox>
