@@ -88,6 +88,7 @@ public class StageManager extends Application {
         popupStage.setScene(popupScene);
         popupStage.centerOnScreen();
         popupStage.setResizable(resizable);
+        popupStage.sizeToScene();
         popupStage.show();
     }
 
