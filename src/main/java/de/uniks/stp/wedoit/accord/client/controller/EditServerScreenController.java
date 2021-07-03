@@ -47,7 +47,7 @@ public class EditServerScreenController implements Controller {
     private TextField tfMaxCountAmountInput;
     private TextField tfInvitationLink;
 
-    private Label labelCopy, lblChangeName, lblInvite, lblOldInvit, lblInvitationStatus, lblInvitationStatusText;
+    private Label labelCopy, lblChangeName, lblInvite, lblOldInvit, lblInvitationStatus, lblInvitationStatusText, lblCountWarning;
 
     private Label lblError;
     private ListView<Invitation> lvInvitation;
@@ -84,6 +84,7 @@ public class EditServerScreenController implements Controller {
         this.btnCreateInvitation = (Button) view.lookup("#btnCreateInvitation");
         this.btnDelete = (Button) view.lookup("#btnDelete");
         this.btnSave = (Button) view.lookup("#btnSave");
+        this.btnDeleteInvitation = (Button) view.lookup("#btnDeleteInvitation");
 
         this.radioBtnTemporal = (RadioButton) view.lookup("#radioBtnTemporal");
         this.radioBtnMaxCount = (RadioButton) view.lookup("#radioBtnMaxCount");
@@ -91,16 +92,17 @@ public class EditServerScreenController implements Controller {
         this.tfNewServernameInput = (TextField) view.lookup("#tfNewServernameInput");
         this.tfMaxCountAmountInput = (TextField) view.lookup("#tfMaxCountAmountInput");
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
-        this.labelCopy = (Label) view.lookup("#labelCopy");
 
+        this.labelCopy = (Label) view.lookup("#labelCopy");
         this.lblError = (Label) view.lookup("#lblError");
         this.lblInvitationStatus = (Label) view.lookup("#lblInvitationStatus");
         this.lblInvitationStatusText = (Label) view.lookup("#lblInvitationStatusText");
         this.lblChangeName = (Label) view.lookup("#lblChangeName");
         this.lblInvite = (Label) view.lookup("#lblInvite");
         this.lblOldInvit = (Label) view.lookup("#lblOldInvit");
+        this.lblCountWarning = (Label) view.lookup("#lblCountWarning");
+
         this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
-        this.btnDeleteInvitation = (Button) view.lookup("#btnDeleteInvitation");
 
         this.view.requestFocus();
         this.setComponentsText();
@@ -129,6 +131,8 @@ public class EditServerScreenController implements Controller {
         this.tfNewServernameInput.setPromptText(LanguageResolver.getString("NEW_SERVERNAME"));
         this.radioBtnTemporal.setText(LanguageResolver.getString("TEMPORAL"));
         this.radioBtnMaxCount.setText(LanguageResolver.getString("MAX_COUNT"));
+        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getPopupStage().centerOnScreen();
     }
 
     /**
@@ -161,7 +165,7 @@ public class EditServerScreenController implements Controller {
         this.tfInvitationLink.setOnMouseClicked(null);
         this.lvInvitation.setOnMouseClicked(null);
         this.btnDeleteInvitation.setOnAction(null);
-        server.listeners().removePropertyChangeListener(Server.PROPERTY_INVITATIONS, this.invitationsListener);
+        this.server.listeners().removePropertyChangeListener(Server.PROPERTY_INVITATIONS, this.invitationsListener);
         this.invitationsListener = null;
 
     }
@@ -170,13 +174,11 @@ public class EditServerScreenController implements Controller {
      * Called to load the correct EditorScreen depending on whether the localUser is admin of server or not
      */
     private void loadDefaultSettings() {
-
         lblError.setVisible(false);
         ToggleGroup toggleGroup = new ToggleGroup();
         radioBtnMaxCount.setToggleGroup(toggleGroup);
         radioBtnTemporal.setToggleGroup(toggleGroup);
         radioBtnMaxCount.setSelected(true);
-
     }
 
     /**
@@ -229,7 +231,7 @@ public class EditServerScreenController implements Controller {
                 editor.getRestManager().createInvitation(COUNT, max, server, localUser.getUserKey(), this);
             } else {
                 tfMaxCountAmountInput.setText("");
-                tfMaxCountAmountInput.setPromptText(LanguageResolver.getString("INSERT_AMOUNT_>_0"));
+                lblCountWarning.setText(LanguageResolver.getString("INSERT_AMOUNT_>_0"));
                 tfMaxCountAmountInput.getStyleClass().add("redPromptText");
             }
         } else if (radioBtnTemporal.isSelected()) {
@@ -281,6 +283,7 @@ public class EditServerScreenController implements Controller {
         tfMaxCountAmountInput.setText("");
         tfMaxCountAmountInput.setPromptText(LanguageResolver.getString("AMOUNT"));
         tfMaxCountAmountInput.getStyleClass().removeAll("redPromptText");
+        lblCountWarning.setText(null);
     }
 
     /**
