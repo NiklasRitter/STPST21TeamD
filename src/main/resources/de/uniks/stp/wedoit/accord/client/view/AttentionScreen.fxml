@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label id="lblAttention" alignment="CENTER" contentDisplay="CENTER" styleClass="redLabel">
             <font>
@@ -32,13 +32,13 @@
         </HBox>
         <HBox alignment="CENTER">
             <children>
-                <Button id="btnDiscard" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" styleClass="styleButton" text="Discard">
+                <Button id="btnDiscard" mnemonicParsing="false" styleClass="styleButton">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
                 </Button>
                 <Region minWidth="102.0" prefWidth="102.0" />
-                <Button id="btnDelete" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" styleClass="styleButton" text="Delete">
+                <Button id="btnDelete" mnemonicParsing="false" styleClass="styleButton">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>

@@ -54,6 +54,7 @@ public class AttentionScreenController implements Controller {
         this.lblError.setVisible(false);
 
         addActionListener();
+
     }
 
     private void setComponentsText() {
@@ -61,6 +62,8 @@ public class AttentionScreenController implements Controller {
         this.btnDelete.setText(LanguageResolver.getString("DELETE"));
         this.btnDiscard.setText(LanguageResolver.getString("DISCARD"));
         loadCorrectLabelText(objectToDelete);
+        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getPopupStage().centerOnScreen();
     }
 
     /**
