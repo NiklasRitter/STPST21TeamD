@@ -179,8 +179,8 @@ public class LoginScreenController implements Controller {
      */
     public void handleLogin(boolean success) {
         if (!success) {
-            tfUserName.getStyleClass().add(LanguageResolver.getString("ERROR"));
-            pwUserPw.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_PASSWORD_WRONG";
                 refreshErrLabelText(errorLabelText);
@@ -197,8 +197,8 @@ public class LoginScreenController implements Controller {
      */
     public void handleGuestLogin(String userName, String password, boolean success) {
         if (!success) {
-            tfUserName.getStyleClass().add(LanguageResolver.getString("ERROR"));
-            pwUserPw.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_PASSWORD_WRONG";
                 refreshErrLabelText(errorLabelText);
@@ -224,8 +224,8 @@ public class LoginScreenController implements Controller {
 
             if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
                 //reset name and password fields
-                Objects.requireNonNull(tfUserName).getStyleClass().add(LanguageResolver.getString("ERROR"));
-                Objects.requireNonNull(pwUserPw).getStyleClass().add(LanguageResolver.getString("ERROR"));
+                Objects.requireNonNull(tfUserName).getStyleClass().add("error");
+                Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
                 errorLabelText = "PLEASE_TYPE_USERNAME_PASSWORD";
                 refreshErrLabelText(errorLabelText);
             } else {
@@ -249,8 +249,8 @@ public class LoginScreenController implements Controller {
             //reset name and password fields
             this.tfUserName.setText("");
             this.pwUserPw.setText("");
-            tfUserName.getStyleClass().add(LanguageResolver.getString("ERROR"));
-            pwUserPw.getStyleClass().add(LanguageResolver.getString("ERROR"));
+            tfUserName.getStyleClass().add("error");
+            pwUserPw.getStyleClass().add("error");
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_ALREADY_TAKEN";
                 refreshErrLabelText(errorLabelText);
@@ -290,6 +290,8 @@ public class LoginScreenController implements Controller {
         editor.getRestManager().guestLogin(this);
         errorLabelText = "";
         refreshErrLabelText(errorLabelText);
+        tfUserName.getStyleClass().remove("error");
+        pwUserPw.getStyleClass().remove("error");
     }
 
     /**
