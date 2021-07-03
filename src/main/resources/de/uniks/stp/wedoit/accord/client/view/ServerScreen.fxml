@@ -80,8 +80,7 @@
                 <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="150.0" styleClass="styleBorder"
                       HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lbServerName" prefWidth="200.0" styleClass="styleBorder" text="Server: STP"
-                               VBox.vgrow="ALWAYS">
+                        <Label id="lbServerName" prefWidth="200.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <padding>
                                 <Insets left="2.0"/>
                             </padding>
@@ -94,7 +93,7 @@
                 </VBox>
                 <VBox alignment="CENTER" minWidth="250.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lbChannelName" styleClass="styleBorder" text="select a channel" VBox.vgrow="ALWAYS">
+                        <Label id="lbChannelName" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <font>
                                 <Font name="System Bold Italic" size="13.0"/>
                             </font>
@@ -119,8 +118,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <TextField id="tfInputMessage" promptText="your message" styleClass="styleBorder"
-                                           HBox.hgrow="ALWAYS"/>
+                                <TextField id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS"/>
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false"
                                         style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
@@ -142,8 +140,7 @@
                 <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder"
                       HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lblServerUsers" prefWidth="200.0" styleClass="styleBorder" text="Server users:"
-                               VBox.vgrow="ALWAYS">
+                        <Label id="lblServerUsers" prefWidth="200.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <padding>
                                 <Insets left="2.0"/>
                             </padding>
