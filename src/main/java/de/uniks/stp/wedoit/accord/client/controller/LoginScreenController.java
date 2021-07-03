@@ -33,6 +33,7 @@ public class LoginScreenController implements Controller {
     private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe, lblUserValid, lblGuestPassword;
 
     private String guestUserPassword;
+    private String errorLabelText = "";
 
     /**
      * Create a new Controller
@@ -100,6 +101,7 @@ public class LoginScreenController implements Controller {
         if (guestUserPassword != null) {
             this.setGuestUserDataLabel();
         }
+        this.errorLabel.setText(LanguageResolver.getString(errorLabelText));
     }
 
     /**
@@ -157,12 +159,14 @@ public class LoginScreenController implements Controller {
             if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
                 Objects.requireNonNull(tfUserName).getStyleClass().add("error");
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
-                errorLabel.setText(LanguageResolver.getString("USERNAME_PASSWORD_MISSING"));
+                errorLabelText = "USERNAME_PASSWORD_MISSING";
+                refreshErrLabelText(errorLabelText);
             } else {
                 editor.getRestManager().loginUser(name, password, this);
             }
         } catch (Exception e) {
-            errorLabel.setText(LanguageResolver.getString("ERROR_HAS_BEEN_ENCOUNTERED"));
+            errorLabelText = "ERROR_HAS_BEEN_ENCOUNTERED";
+            refreshErrLabelText(errorLabelText);
             System.err.println(LanguageResolver.getString("ERROR_WHILE_LOGIN_USER"));
             e.printStackTrace();
         }
@@ -177,7 +181,10 @@ public class LoginScreenController implements Controller {
         if (!success) {
             tfUserName.getStyleClass().add(LanguageResolver.getString("ERROR"));
             pwUserPw.getStyleClass().add(LanguageResolver.getString("ERROR"));
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("USERNAME_PASSWORD_WRONG")));
+            Platform.runLater(() -> {
+                errorLabelText = "USERNAME_PASSWORD_WRONG";
+                refreshErrLabelText(errorLabelText);
+            });
         } else {
             Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         }
@@ -192,7 +199,10 @@ public class LoginScreenController implements Controller {
         if (!success) {
             tfUserName.getStyleClass().add(LanguageResolver.getString("ERROR"));
             pwUserPw.getStyleClass().add(LanguageResolver.getString("ERROR"));
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("USERNAME_PASSWORD_WRONG")));
+            Platform.runLater(() -> {
+                errorLabelText = "USERNAME_PASSWORD_WRONG";
+                refreshErrLabelText(errorLabelText);
+            });
         } else {
             guestUserPassword = password;
             this.tfUserName.setText(userName);
@@ -216,12 +226,14 @@ public class LoginScreenController implements Controller {
                 //reset name and password fields
                 Objects.requireNonNull(tfUserName).getStyleClass().add(LanguageResolver.getString("ERROR"));
                 Objects.requireNonNull(pwUserPw).getStyleClass().add(LanguageResolver.getString("ERROR"));
-                errorLabel.setText(LanguageResolver.getString("PLEASE_TYPE_USERNAME_PASSWORD"));
+                errorLabelText = "PLEASE_TYPE_USERNAME_PASSWORD";
+                refreshErrLabelText(errorLabelText);
             } else {
                 editor.getRestManager().registerUser(name, password, this);
             }
         } catch (Exception e) {
-            errorLabel.setText(LanguageResolver.getString("ERROR_WHILE_REGISTERING"));
+            errorLabelText = "ERROR_WHILE_REGISTERING";
+            refreshErrLabelText(errorLabelText);
             System.err.println(LanguageResolver.getString("ERROR_WHILE_REGISTER_USER"));
             e.printStackTrace();
         }
@@ -239,7 +251,10 @@ public class LoginScreenController implements Controller {
             this.pwUserPw.setText("");
             tfUserName.getStyleClass().add(LanguageResolver.getString("ERROR"));
             pwUserPw.getStyleClass().add(LanguageResolver.getString("ERROR"));
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("USERNAME_ALREADY_TAKEN")));
+            Platform.runLater(() -> {
+                errorLabelText = "USERNAME_ALREADY_TAKEN";
+                refreshErrLabelText(errorLabelText);
+            });
         } else {
             //login the user
             login();
@@ -273,6 +288,8 @@ public class LoginScreenController implements Controller {
      */
     private void btnGuestLoginOnClick(ActionEvent actionEvent) {
         editor.getRestManager().guestLogin(this);
+        errorLabelText = "";
+        refreshErrLabelText(errorLabelText);
     }
 
     /**
@@ -288,5 +305,15 @@ public class LoginScreenController implements Controller {
                 editor.getStageManager().getStage().setTitle(LanguageResolver.getString("LOGIN"));
             }
         });
+    }
+
+    /**
+     * Refreshes the errorLabel after closing the option screen,
+     * so that the component text are displayed in the correct language.
+     *
+     * @param errorLabelText is the current text of the error label
+     */
+    private void refreshErrLabelText(String errorLabelText) {
+        errorLabel.setText(LanguageResolver.getString(errorLabelText));
     }
 }
