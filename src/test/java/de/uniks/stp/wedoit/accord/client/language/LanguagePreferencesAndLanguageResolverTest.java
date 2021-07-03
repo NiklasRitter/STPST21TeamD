@@ -31,7 +31,7 @@ public class LanguagePreferencesAndLanguageResolverTest {
     public void testLoad() {
         Locale.setDefault(LanguagePreferences.getLanguagePreferences().getCurrentLocale("language/Language_fa_IR"));
         LanguageResolver.load();
-        Assert.assertEquals(LanguageResolver.getString("NEW_SERVERNAME"), "نام سرور جدید");
+        Assert.assertEquals(LanguageResolver.getString("NEW_SERVERNAME"), "نام جدید سرور");
         Assert.assertEquals(Locale.getDefault().getLanguage(), "fa_ir");
     }
 
