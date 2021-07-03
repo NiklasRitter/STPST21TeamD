@@ -145,6 +145,12 @@ public class ServerChatController implements Controller {
 
     private void isMarking(KeyEvent keyEvent) {
         String currentText = tfInputMessage.getText();
+
+        if (caret > tfInputMessage.getCaretPosition()){
+            //hier prüfen ob Positionen noch passen
+            //check if change is in space were @ is already written
+        }
+
         caret = tfInputMessage.getCaretPosition();
 
         if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
@@ -169,6 +175,7 @@ public class ServerChatController implements Controller {
                 ats.remove((Object) caret);
                 removeSelectionMenu();
             }
+
 
         } else if (lvSelectUser.isVisible()) {
             Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring(activeAt + 1, caret));
