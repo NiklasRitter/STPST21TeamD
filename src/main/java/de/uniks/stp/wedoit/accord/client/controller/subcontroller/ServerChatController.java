@@ -61,12 +61,13 @@ public class ServerChatController implements Controller {
     private ContextMenu userMessageContextMenu;
 
     private ObservableList<User> selectUserObservableList;
-    private ArrayList<User> availableUsers;
     private ListView<User> lvSelectUser;
     private VBox boxTextfield;
     private Integer activeAt;
-    private ArrayList<Integer> ats = new ArrayList<Integer>();
+    private ArrayList<Integer> ats = new ArrayList<>();
     private int caret = 0;
+    private ArrayList<ArrayList<Integer>> atPositions= new ArrayList<>();
+
 
     /**
      * Create a new Controller
@@ -108,7 +109,7 @@ public class ServerChatController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
         this.tfInputMessage.setOnKeyTyped(this::isMarking);
 
-        lvSelectUser = new ListView<User>();
+        lvSelectUser = new ListView<>();
         lvSelectUser.setVisible(false);
 
         quoteVisible.getChildren().clear();
@@ -146,9 +147,13 @@ public class ServerChatController implements Controller {
     private void isMarking(KeyEvent keyEvent) {
         String currentText = tfInputMessage.getText();
 
-        if (caret > tfInputMessage.getCaretPosition()){
-            //hier prüfen ob Positionen noch passen
-            //check if change is in space were @ is already written
+        if (caret >= tfInputMessage.getCaretPosition()) {
+            for (int i : ats) {
+                if (i >= tfInputMessage.getCaretPosition()) {
+                    updateAtPositions(currentText);
+                    break;
+                }
+            }
         }
 
         caret = tfInputMessage.getCaretPosition();
@@ -169,15 +174,23 @@ public class ServerChatController implements Controller {
             initLwSelectUser(lvSelectUser);
 
 
+        } else if (keyEvent.getCharacter().equals("\b") && lvSelectUser.isVisible()) {
+
+            Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring());
+
+            if (!markingPossible) {
+                removeSelectionMenu();
+            }
+
         } else if (keyEvent.getCharacter().equals("\b")) {
 
             if (ats.contains(caret)) {
                 ats.remove((Object) caret);
                 removeSelectionMenu();
             }
+        }
 
-
-        } else if (lvSelectUser.isVisible()) {
+         else if (lvSelectUser.isVisible()) {
             Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring(activeAt + 1, caret));
             if (!markingPossible) {
                 removeSelectionMenu();
@@ -185,8 +198,16 @@ public class ServerChatController implements Controller {
         }
     }
 
+    private void updateAtPositions(String currentText) {
+        ats = new ArrayList<>();
+        for (int i = 0; i < currentText.length(); i++) {
+            if (currentText.charAt(i) == '@') {
+                ats.add(i);
+            }
+        }
+    }
+
     private Boolean checkMarkingPossible(String text) {
-        System.out.println(text);
 
         ArrayList<User> possibleUsers;
 
@@ -199,6 +220,9 @@ public class ServerChatController implements Controller {
         for (User user : possibleUsers) {
             if (!user.getName().contains(text)) {
                 selectUserObservableList.remove(user);
+            }
+            else if (!selectUserObservableList.contains(user)) {
+                selectUserObservableList.add(user);
             }
         }
 
@@ -213,10 +237,10 @@ public class ServerChatController implements Controller {
 
     private void initLwSelectUser(ListView<User> lvSelectUser) {
 
-
         // init list view
         lvSelectUser.setCellFactory(new SelectUserCellFactory());
 
+        ArrayList<User> availableUsers;
         if (currentChannel != null && currentChannel.isPrivileged()) {
             availableUsers = new ArrayList<>(currentChannel.getMembers());
         } else {
