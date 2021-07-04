@@ -13,7 +13,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
@@ -476,7 +476,7 @@ public class Editor {
         pbeCipher.init(Cipher.ENCRYPT_MODE, key);
         AlgorithmParameters parameters = pbeCipher.getParameters();
         IvParameterSpec ivParameterSpec = parameters.getParameterSpec(IvParameterSpec.class);
-        byte[] cryptoText = pbeCipher.doFinal(data.getBytes("UTF-8"));
+        byte[] cryptoText = pbeCipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
         byte[] iv = ivParameterSpec.getIV();
         return base64Encode(iv) + ":" + base64Encode(cryptoText);
     }
@@ -487,8 +487,12 @@ public class Editor {
 
     public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
-                "secret".getBytes(), 65536, 256);
+/*        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
+                "secret".getBytes(), 65536, 256);*/
+        //byte[] iv = Base64.getDecoder().decode(stageManager.getResourceManager().getOrCreateInitializationVector());
+        String ivString = stageManager.getResourceManager().getOrCreateInitializationVector();
+        byte[] iv = new IvParameterSpec(ivString.getBytes(StandardCharsets.UTF_8)).getIV();
+        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),iv ,65536, 256);
         SecretKey key = keyFactory.generateSecret(keySpec);
         return new SecretKeySpec(key.getEncoded(), "AES");
     }
@@ -499,12 +503,10 @@ public class Editor {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         Key key = createEncryptionKey();
         cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(base64Decode(iv)));
-        return new String(cipher.doFinal(base64Decode(property)), "UTF-8");
-        //byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(data));
-        //return Base64.getEncoder().encodeToString(plainText);
+        return new String(cipher.doFinal(base64Decode(property)), StandardCharsets.UTF_8);
     }
 
-    private static byte[] base64Decode(String property) throws IOException {
+    private static byte[] base64Decode(String property) {
         return Base64.getDecoder().decode(property);
     }
 

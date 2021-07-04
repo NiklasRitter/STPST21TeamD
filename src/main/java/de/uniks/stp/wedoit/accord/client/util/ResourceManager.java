@@ -4,8 +4,12 @@ import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 
+import javax.crypto.spec.IvParameterSpec;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Objects;
 
 public class ResourceManager {
@@ -125,5 +129,16 @@ public class ResourceManager {
         Objects.requireNonNull(localUser).setName(preferenceManager.loadUsername());
     }
 
+    public String getOrCreateInitializationVector() throws NoSuchAlgorithmException {
+        String IVString = preferenceManager.loadInitializationVector();
+        if (IVString.isEmpty()) {
+            byte[] iv = new byte[16];
+            SecureRandom.getInstanceStrong().nextBytes(iv);
+            IVString = new String(iv);
+            preferenceManager.saveInitializationVector(IVString);
+        }
+        //IvParameterSpec ivParams = new IvParameterSpec(IVString.getBytes(StandardCharsets.UTF_8));
+        return IVString;
+    }
 
 }
