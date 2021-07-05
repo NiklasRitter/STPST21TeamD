@@ -518,7 +518,7 @@ public class Editor {
             then the password is still saved in plain text and there will be no ":" which would lead to an error
              */
             String encrypted = encrypt(data);
-            stageManager.getPrefManager().savePassword(encrypted);
+            stageManager.getPrefManager().saveEncryptedPassword(encrypted);
             return data;
         }
     }
