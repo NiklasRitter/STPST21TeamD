@@ -310,6 +310,10 @@ public class StageManager extends Application {
         return controllerMap;
     }
 
+    public PreferenceManager getPrefManager() {
+        return prefManager;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;

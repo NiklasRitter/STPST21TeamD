@@ -487,23 +487,36 @@ public class Editor {
 
     public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-/*        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
-                "secret".getBytes(), 65536, 256);*/
+        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
+                "secret".getBytes(), 65536, 256);
         //byte[] iv = Base64.getDecoder().decode(stageManager.getResourceManager().getOrCreateInitializationVector());
-        String ivString = stageManager.getResourceManager().getOrCreateInitializationVector();
-        byte[] iv = new IvParameterSpec(ivString.getBytes(StandardCharsets.UTF_8)).getIV();
-        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),iv ,65536, 256);
+
+        // TODO this part does not work properly since now
+        //String ivString = stageManager.getResourceManager().getOrCreateInitializationVector();
+        //byte[] iv = new IvParameterSpec(ivString.getBytes(StandardCharsets.UTF_8)).getIV();
+        //PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),iv ,65536, 256);
+
         SecretKey key = keyFactory.generateSecret(keySpec);
         return new SecretKeySpec(key.getEncoded(), "AES");
     }
 
     public String decryptData(String data) throws Exception {
-        String iv = data.split(":")[0];
-        String property = data.split(":")[1];
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        Key key = createEncryptionKey();
-        cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(base64Decode(iv)));
-        return new String(cipher.doFinal(base64Decode(property)), StandardCharsets.UTF_8);
+        if (data.contains(":")) {
+            String iv = data.split(":")[0];
+            String property = data.split(":")[1];
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            Key key = createEncryptionKey();
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(base64Decode(iv)));
+            return new String(cipher.doFinal(base64Decode(property)), StandardCharsets.UTF_8);
+        } else {
+            /*
+            this case only appears when starting the application the first time with the new encryption system because
+            then the password is still saved in plain text and there will be no ":" which would lead to an error
+             */
+            String encrypted = encrypt(data);
+            stageManager.getPrefManager().savePassword(encrypted);
+            return data;
+        }
     }
 
     private static byte[] base64Decode(String property) {
