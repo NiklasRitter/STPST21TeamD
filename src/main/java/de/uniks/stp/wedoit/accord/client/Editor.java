@@ -8,13 +8,16 @@ import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.AlgorithmParameters;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -470,6 +473,26 @@ public class Editor {
         return null;
     }
 
+    /**
+     * Creates encryption key based on username of the pc and uses InitializationVector as salt
+     *
+     * @return the created Key
+     */
+    public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
+                stageManager.getResourceManager().getOrCreateInitializationVector().getBytes(StandardCharsets.UTF_8),
+                65536, 256);
+        SecretKey key = keyFactory.generateSecret(keySpec);
+        return new SecretKeySpec(key.getEncoded(), "AES");
+    }
+
+    /**
+     * encrypts the given data
+     *
+     * @param data given data that has to be encrypted
+     * @return encrypted version of data
+     */
     public String encrypt(String data) throws Exception {
         Cipher pbeCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         Key key = createEncryptionKey();
@@ -481,29 +504,11 @@ public class Editor {
         return base64Encode(iv) + ":" + base64Encode(cryptoText);
     }
 
-    private String base64Encode(byte[] bytes) {
-        return Base64.getEncoder().encodeToString(bytes);
-    }
-
-    public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        /*PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
-                "secret".getBytes(), 65536, 256);*/
-        //byte[] iv = Base64.getDecoder().decode(stageManager.getResourceManager().getOrCreateInitializationVector());
-
-        // TODO this part does not work properly since now
-        //String ivString = stageManager.getResourceManager().getOrCreateInitializationVector();
-        //byte[] iv = new IvParameterSpec(ivString.getBytes(StandardCharsets.UTF_8)).getIV();
-        //PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),iv ,65536, 256);
-
-        byte[] ivBytes = stageManager.getResourceManager().getOrCreateInitializationVector().getBytes(StandardCharsets.UTF_8);
-        System.out.println(ivBytes);
-        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
-                ivBytes, 65536, 256);
-        SecretKey key = keyFactory.generateSecret(keySpec);
-        return new SecretKeySpec(key.getEncoded(), "AES");
-    }
-
+    /**
+     * decrypts the given data or encrypts it if its still plain text
+     *
+     * @param data given data that has to be decrypted
+     */
     public String decryptData(String data) throws Exception {
         if (data.contains(":")) {
             String iv = data.split(":")[0];
@@ -523,6 +528,22 @@ public class Editor {
         }
     }
 
+    /**
+     * used to encode the given bytes
+     *
+     * @param bytes given bytes that has to be encoded
+     * @return encoded bytes as string
+     */
+    private String base64Encode(byte[] bytes) {
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    /**
+     * used to decode the given string
+     *
+     * @param property given string that has to be decoded
+     * @return decoded property as bytes
+     */
     private static byte[] base64Decode(String property) {
         return Base64.getDecoder().decode(property);
     }

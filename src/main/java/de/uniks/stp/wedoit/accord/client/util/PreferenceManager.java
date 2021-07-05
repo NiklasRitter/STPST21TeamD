@@ -102,14 +102,8 @@ public class PreferenceManager {
     public String loadPassword() {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-
-            // TODO: Add encryption for saved password and username
             String encrypted = preferences.get(PASSWORD, "");
-            System.out.println("in loadPassword, encrypted: " +encrypted);
-            String password = stageManager.getEditor().decryptData(encrypted);
-            System.out.println("in loadPassword, plain: " +password);
-            return password;
-            //return preferences.get(PASSWORD, "");
+            return stageManager.getEditor().decryptData(encrypted);
         } catch (Exception e) {
             System.err.println("Error while loading password:");
             e.printStackTrace();
@@ -126,7 +120,6 @@ public class PreferenceManager {
         if (password != null) {
             try {
                 String encrypted = stageManager.getEditor().encrypt(password);
-                System.out.println("in savePassword, encrypted: " +encrypted);
                 saveEncryptedPassword(encrypted);
             } catch (Exception e) {
                 System.err.println("Error while saving password:");
