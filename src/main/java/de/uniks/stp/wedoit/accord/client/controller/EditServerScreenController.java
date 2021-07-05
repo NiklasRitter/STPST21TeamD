@@ -319,7 +319,8 @@ public class EditServerScreenController implements Controller {
                 lblInvitationStatusText.setText(LanguageResolver.getString("INVITATION_STATUS"));
                 Invitation invitation = lvInvitation.getSelectionModel().getSelectedItem();
                 if (invitation.getType().equals(COUNT)) {
-                    lblInvitationStatus.setText("usable " + (invitation.getMax() - invitation.getCurrent() + 1) + " more times");
+                    lblInvitationStatus.setText(LanguageResolver.getString("INVITATION_USABLE1") + " " + (invitation.getMax() - invitation.getCurrent() + 1)
+                            + " " + LanguageResolver.getString("INVITATION_USABLE2"));
                 }
                 if (invitation.getType().equals(TEMPORAL)) {
                     lblInvitationStatus.setText(LanguageResolver.getString("VALID_FOR_24"));
@@ -353,7 +354,7 @@ public class EditServerScreenController implements Controller {
         );
         visiblePause.setOnFinished(
                 event -> {
-                    if (((Stage) view.getScene().getWindow()).getTitle().equals("Edit Server")) {
+                    if (((Stage) view.getScene().getWindow()).getTitle().equals(LanguageResolver.getString("EDIT_SERVER"))) {
                         if (!labelCopy.getText().equals("")) {
                             Platform.runLater(() -> labelCopy.setText(""));
                         }
