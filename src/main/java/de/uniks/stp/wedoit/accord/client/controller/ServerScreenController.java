@@ -185,6 +185,10 @@ public class ServerScreenController implements Controller {
             audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, this, channel);
             audioChannelSubViewController.init();
 
+            //TODO move to property change listener
+            AudioConnection audioConnection = new AudioConnection(localUser, channel);
+            audioConnection.startConnection();
+
             Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().add(view));
         } catch (Exception e) {
             e.printStackTrace();
