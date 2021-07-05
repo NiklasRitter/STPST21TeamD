@@ -20,10 +20,12 @@ public class AudioManager {
     }
 
     public void muteUser(User user){
+        user.setMuted(true);
         audioConnection.getAudioReceive().muteUser(user.getName());
     }
 
     public void unmuteUser(User user){
+        user.setMuted(false);
         audioConnection.getAudioReceive().unmuteUser(user.getName());
     }
 

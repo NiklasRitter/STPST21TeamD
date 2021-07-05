@@ -50,10 +50,7 @@ public class AudioConnection {
     public void close() {
         stopSendingAudio();
         stopReceivingAudio();
-
-        if (audioSocket.isConnected()) {
-            audioSocket.close();
-        }
+        audioSocket.close();
     }
 
     private void stopSendingAudio() {
