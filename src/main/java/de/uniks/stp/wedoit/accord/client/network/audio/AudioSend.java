@@ -76,7 +76,11 @@ public class AudioSend extends Thread{
 
                 this.sendSocket.send(datagramPacket);
             }
-            line.close();
+            line.stop();
+            line.flush();
+            if (line.isOpen()) {
+                line.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

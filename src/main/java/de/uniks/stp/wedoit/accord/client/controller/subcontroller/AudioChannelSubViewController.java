@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
@@ -17,15 +18,17 @@ public class AudioChannelSubViewController implements Controller {
 
     private final LocalUser localUser;
     private final Parent view;
-    private final ServerScreenController controller;
+    private final CategoryTreeViewController controller;
     private final Channel channel;
+    private final Editor editor;
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
 
-    public AudioChannelSubViewController(LocalUser localUser, Parent view, ServerScreenController controller, Channel channel) {
+    public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, CategoryTreeViewController controller, Channel channel) {
         this.localUser = localUser;
         this.view = view;
+        this.editor = editor;
         this.controller = controller;
         this.channel = channel;
     }
@@ -44,8 +47,6 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteYou.setOnAction(this::btnMuteYouOnClick);
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
-
-        // initAudioChannel(localUser, channel);
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
@@ -61,7 +62,7 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     public void closeAudioChannel() {
-        // audioStream.close();
+        this.editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, controller);
     }
 
     @Override
