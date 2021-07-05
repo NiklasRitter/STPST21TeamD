@@ -26,11 +26,13 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.util.prefs.Preferences;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Preferences.PASSWORD;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.Mockito.*;
 
@@ -188,6 +190,12 @@ public class LoginScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Main", stage.getTitle());
+
+        // Assert that the password is saved encrypted
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        String savedPassword = preferences.get(PASSWORD, "");
+
+        Assert.assertNotEquals(password, savedPassword);
     }
 
     @Test
