@@ -66,7 +66,7 @@ public class ServerChatController implements Controller {
     private Integer activeAt;
     private ArrayList<Integer> ats = new ArrayList<>();
     private int caret = 0;
-    private ArrayList<ArrayList<Integer>> atPositions= new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> atPositions = new ArrayList<>();
 
 
     /**
@@ -120,37 +120,16 @@ public class ServerChatController implements Controller {
         initToolTip();
     }
 
-    private void lvSelectUserOnClick(MouseEvent mouseEvent) {
-
-        if (mouseEvent.getClickCount() == 1) {
-            User selectedUser = lvSelectUser.getSelectionModel().getSelectedItem();
-            String currentText = tfInputMessage.getText();
-
-            Integer correspondingAt = null;
-
-            for (int i = caret - 1; i >= 0; i--) {
-                if (currentText.charAt(i) == '@') {
-                    correspondingAt = i;
-                    break;
-                }
-            }
-            if (!(correspondingAt == null)) {
-
-                String firstPart = currentText.substring(0, correspondingAt);
-                String secondPart = currentText.substring(caret);
-                tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
-                removeSelectionMenu();
-            }
-        }
-    }
-
     private void isMarking(KeyEvent keyEvent) {
         String currentText = tfInputMessage.getText();
+
+        boolean atsChanged = false;
 
         if (caret >= tfInputMessage.getCaretPosition()) {
             for (int i : ats) {
                 if (i >= tfInputMessage.getCaretPosition()) {
                     updateAtPositions(currentText);
+                    atsChanged = true;
                     break;
                 }
             }
@@ -176,7 +155,8 @@ public class ServerChatController implements Controller {
 
         } else if (keyEvent.getCharacter().equals("\b") && lvSelectUser.isVisible()) {
 
-            Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring());
+
+            Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring(activeAt + 1, caret));
 
             if (!markingPossible) {
                 removeSelectionMenu();
@@ -188,11 +168,54 @@ public class ServerChatController implements Controller {
                 ats.remove((Object) caret);
                 removeSelectionMenu();
             }
-        }
 
-         else if (lvSelectUser.isVisible()) {
+        } else if (lvSelectUser.isVisible()) {
             Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring(activeAt + 1, caret));
             if (!markingPossible) {
+                removeSelectionMenu();
+            }
+        }
+    }
+
+    private void initLwSelectUser(ListView<User> lvSelectUser) {
+
+        // init list view
+        lvSelectUser.setCellFactory(new SelectUserCellFactory());
+
+        ArrayList<User> availableUsers;
+        if (currentChannel != null && currentChannel.isPrivileged()) {
+            availableUsers = new ArrayList<>(currentChannel.getMembers());
+        } else {
+            availableUsers = new ArrayList<>(server.getMembers());
+        }
+
+        this.selectUserObservableList = FXCollections.observableList(availableUsers);
+
+        this.selectUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
+                .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
+
+        this.lvSelectUser.setItems(selectUserObservableList);
+    }
+
+    private void lvSelectUserOnClick(MouseEvent mouseEvent) {
+
+        if (mouseEvent.getClickCount() == 1) {
+            User selectedUser = lvSelectUser.getSelectionModel().getSelectedItem();
+            String currentText = tfInputMessage.getText();
+
+            Integer correspondingAt = null;
+
+            for (int i = caret - 1; i >= 0; i--) {
+                if (currentText.charAt(i) == '@') {
+                    correspondingAt = i;
+                    break;
+                }
+            }
+            if (!(correspondingAt == null)) {
+
+                String firstPart = currentText.substring(0, correspondingAt);
+                String secondPart = currentText.substring(caret);
+                tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
                 removeSelectionMenu();
             }
         }
@@ -220,8 +243,7 @@ public class ServerChatController implements Controller {
         for (User user : possibleUsers) {
             if (!user.getName().contains(text)) {
                 selectUserObservableList.remove(user);
-            }
-            else if (!selectUserObservableList.contains(user)) {
+            } else if (!selectUserObservableList.contains(user)) {
                 selectUserObservableList.add(user);
             }
         }
@@ -233,26 +255,6 @@ public class ServerChatController implements Controller {
         boxTextfield.getChildren().remove(lvSelectUser);
         lvSelectUser.setVisible(false);
         this.lvSelectUser.setOnMousePressed(null);
-    }
-
-    private void initLwSelectUser(ListView<User> lvSelectUser) {
-
-        // init list view
-        lvSelectUser.setCellFactory(new SelectUserCellFactory());
-
-        ArrayList<User> availableUsers;
-        if (currentChannel != null && currentChannel.isPrivileged()) {
-            availableUsers = new ArrayList<>(currentChannel.getMembers());
-        } else {
-            availableUsers = new ArrayList<>(server.getMembers());
-        }
-
-        this.selectUserObservableList = FXCollections.observableList(availableUsers);
-
-        this.selectUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
-                .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
-
-        this.lvSelectUser.setItems(selectUserObservableList);
     }
 
     public void initToolTip() {
