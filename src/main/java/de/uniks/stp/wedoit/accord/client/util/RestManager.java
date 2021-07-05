@@ -80,7 +80,6 @@ public class RestManager {
      */
     public void loginUser(String username, String password, LoginScreenController controller) {
         restClient.login(username, password, (response) -> {
-            System.out.println(response.getBody());
             if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 controller.handleLogin(false);
             } else {

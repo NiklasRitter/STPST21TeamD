@@ -102,7 +102,7 @@ public class CreateChannelScreenController implements Controller {
     }
 
     private void setComponentsText() {
-        this.tfChannelName.setPromptText(LanguageResolver.getString("CHANNEL_NAME"));
+        this.tfChannelName.setPromptText(LanguageResolver.getString("ENTER_YOUR_CHANNEL_NAME"));
         this.lblChannelName.setText(LanguageResolver.getString("CHANNEL_NAME"));
         this.lblPrivileged.setText(LanguageResolver.getString("PRIVILEGED"));
         this.lblMembers.setText(LanguageResolver.getString("MEMBERS"));
@@ -186,7 +186,7 @@ public class CreateChannelScreenController implements Controller {
 
             Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
-            String channelType = this.radioBtnText.isSelected() ? TEXT: AUDIO;
+            String channelType = this.radioBtnText.isSelected() ? TEXT : AUDIO;
 
             if (!checkBoxPrivileged.isSelected()) {
                 editor.getRestManager().createChannel(editor.getCurrentServer(), category, tfChannelName.getText(),

@@ -12,7 +12,6 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
         return new ServerListCell();
     }
 
-
     private class ServerListCell extends ListCell<Server> {
         protected void updateItem(Server item, boolean empty) {
             super.updateItem(item, empty);

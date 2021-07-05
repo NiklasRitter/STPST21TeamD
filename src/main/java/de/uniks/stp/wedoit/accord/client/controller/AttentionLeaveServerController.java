@@ -38,9 +38,11 @@ public class AttentionLeaveServerController implements Controller {
 
     private void setComponentsText() {
         this.lblAttention.setText(LanguageResolver.getString("ATTENTION"));
-        this.lblAreYouSure.setText(LanguageResolver.getString("ATTENTION_DELETE_SERVER"));
+        this.lblAreYouSure.setText(LanguageResolver.getString("ARE_SURE_LEAVE_SERVER"));
         this.btnLeave.setText(LanguageResolver.getString("LEAVE"));
         this.btnCancel.setText(LanguageResolver.getString("CANCEL"));
+        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getPopupStage().centerOnScreen();
     }
 
     /**
