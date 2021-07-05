@@ -115,6 +115,7 @@ public class StageManager extends Application {
         emojiPickerStage.setScene(emojiPickerScene);
         emojiPickerStage.setResizable(resizable);
         emojiPickerStage.sizeToScene();
+        emojiPickerStage.show();
     }
 
     private void openController(Parent root, String controllerName, Object parameter, Object parameterTwo) {
@@ -161,7 +162,8 @@ public class StageManager extends Application {
                 controller = new EditChannelScreenController(root, model.getLocalUser(), editor, (Channel) parameter);
                 break;
             case EMOJI_SCREEN_CONTROLLER:
-                controller = new EmojiScreenController(root, (TextField) parameter, (Bounds) parameterTwo);
+//                controller = new EmojiScreenController(root, (TextField) parameter, (Bounds) parameterTwo);
+                controller = new EmojiSearchListController(root, (TextField) parameter, (Bounds) parameterTwo);
                 break;
             case ATTENTION_SCREEN_CONTROLLER:
                 controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter);

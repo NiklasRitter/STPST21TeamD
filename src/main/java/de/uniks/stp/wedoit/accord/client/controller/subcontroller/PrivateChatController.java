@@ -134,7 +134,8 @@ public class PrivateChatController implements Controller {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (this.selectedUser != null && this.selectedUser.isOnlineStatus()) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfPrivateChat, pos);
+//            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfPrivateChat, pos);
+            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "ExampleEmojiSearchList", EMOJI_SCREEN_CONTROLLER, false, tfPrivateChat, pos);
         }
     }
 
