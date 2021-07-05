@@ -50,7 +50,11 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
-
+        if (localUser.isMuted()) {
+            this.editor.getAudioManager().unmuteYourself(localUser);
+        } else {
+            this.editor.getAudioManager().muteYourself(localUser);
+        }
     }
 
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
