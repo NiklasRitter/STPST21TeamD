@@ -487,8 +487,8 @@ public class Editor {
 
     public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
-                "secret".getBytes(), 65536, 256);
+        /*PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
+                "secret".getBytes(), 65536, 256);*/
         //byte[] iv = Base64.getDecoder().decode(stageManager.getResourceManager().getOrCreateInitializationVector());
 
         // TODO this part does not work properly since now
@@ -496,6 +496,10 @@ public class Editor {
         //byte[] iv = new IvParameterSpec(ivString.getBytes(StandardCharsets.UTF_8)).getIV();
         //PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),iv ,65536, 256);
 
+        byte[] ivBytes = stageManager.getResourceManager().getOrCreateInitializationVector().getBytes(StandardCharsets.UTF_8);
+        System.out.println(ivBytes);
+        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
+                ivBytes, 65536, 256);
         SecretKey key = keyFactory.generateSecret(keySpec);
         return new SecretKeySpec(key.getEncoded(), "AES");
     }
