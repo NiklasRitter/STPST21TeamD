@@ -159,7 +159,6 @@ public class CreateChannelScreenController implements Controller {
         }
     }
 
-
     /**
      * Called to stop this controller
      * <p>
