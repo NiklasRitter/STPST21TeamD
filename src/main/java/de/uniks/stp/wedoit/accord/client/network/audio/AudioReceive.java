@@ -88,6 +88,7 @@ public class AudioReceive extends Thread{
                 SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
                 audioMemberLine.stop();
                 audioMemberLine.flush();
+                audioMemberLine.close();
                 if (audioMemberLine.isOpen()) {
                     audioMemberLine.close();
                 }
