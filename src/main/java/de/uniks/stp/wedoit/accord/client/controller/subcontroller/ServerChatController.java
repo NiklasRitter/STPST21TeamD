@@ -63,10 +63,10 @@ public class ServerChatController implements Controller {
     private ObservableList<User> selectUserObservableList;
     private ListView<User> lvSelectUser;
     private VBox boxTextfield;
-    private Integer activeAt;
+    private AtPositions activeAt;
     private ArrayList<Integer> ats = new ArrayList<>();
     private int caret = 0;
-    private ArrayList<ArrayList<Integer>> atPositions = new ArrayList<>();
+    private ArrayList<AtPositions> atPositions = new ArrayList<>();
 
 
     /**
@@ -120,8 +120,45 @@ public class ServerChatController implements Controller {
         initToolTip();
     }
 
+    public class AtPositions {
+
+        int start;
+        int end;
+        boolean complete;
+
+        public AtPositions(int start, int end) {
+            this.start = start;
+            this.end = end;
+            this.complete = false;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+        public boolean isComplete() {
+            return complete;
+        }
+
+        public void setStart(int start) {
+            this.start = start;
+        }
+
+        public void setEnd(int end) {
+            this.end = end;
+        }
+
+        public void setComplete(boolean complete) {
+            this.complete = complete;
+        }
+    }
+
     private void isMarking(KeyEvent keyEvent) {
-        String currentText = tfInputMessage.getText();
+        /*String currentText = tfInputMessage.getText();
 
         boolean atsChanged = false;
 
@@ -133,14 +170,14 @@ public class ServerChatController implements Controller {
                     break;
                 }
             }
-        }
+        }*/
 
         caret = tfInputMessage.getCaretPosition();
 
         if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
-            ats.add(caret - 1);
+            activeAt = new AtPositions(caret - 1, caret - 1);
+            atPositions.add(activeAt);
 
-            activeAt = caret - 1;
 
             this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
 
@@ -154,15 +191,14 @@ public class ServerChatController implements Controller {
 
 
         } else if (keyEvent.getCharacter().equals("\b") && lvSelectUser.isVisible()) {
+            checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
 
 
-            Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring(activeAt + 1, caret));
+        } else if (keyEvent.getCharacter().equals(" ") && lvSelectUser.isVisible() && !activeAt.isComplete()) {
+            checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
 
-            if (!markingPossible) {
-                removeSelectionMenu();
-            }
 
-        } else if (keyEvent.getCharacter().equals("\b")) {
+        }else if (keyEvent.getCharacter().equals("\b")) {
 
             if (ats.contains(caret)) {
                 ats.remove((Object) caret);
@@ -170,10 +206,7 @@ public class ServerChatController implements Controller {
             }
 
         } else if (lvSelectUser.isVisible()) {
-            Boolean markingPossible = checkMarkingPossible(tfInputMessage.getText().substring(activeAt + 1, caret));
-            if (!markingPossible) {
-                removeSelectionMenu();
-            }
+            checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
         }
     }
 
@@ -230,7 +263,7 @@ public class ServerChatController implements Controller {
         }
     }
 
-    private Boolean checkMarkingPossible(String text) {
+    private void checkMarkingPossible(String text) {
 
         ArrayList<User> possibleUsers;
 
@@ -240,15 +273,30 @@ public class ServerChatController implements Controller {
             possibleUsers = new ArrayList<>(server.getMembers());
         }
 
+        // Was wenn Nutzer gleich heißen nur der andere längeren Namen hat (Eric, EricR)
         for (User user : possibleUsers) {
             if (!user.getName().contains(text)) {
                 selectUserObservableList.remove(user);
+            } else if (user.getName().equals(text)) {
+                activeAt.setComplete(true);
+                activeAt.setEnd(activeAt.getStart() + user.getName().length() + 1);
+                break;
             } else if (!selectUserObservableList.contains(user)) {
                 selectUserObservableList.add(user);
             }
         }
 
-        return !selectUserObservableList.isEmpty();
+        if (selectUserObservableList.isEmpty() && !activeAt.isComplete()) {
+            activeAt.setEnd(activeAt.getEnd() + 1);
+        } else {
+            activeAt.setEnd(activeAt.getEnd() + 1);
+        }
+
+        /*if (selectUserObservableList.isEmpty() || activeAt.isComplete()) {
+            removeSelectionMenu();
+        } else {
+            activeAt.setEnd(activeAt.getEnd() + 1);
+        }*/
     }
 
     private void removeSelectionMenu() {
