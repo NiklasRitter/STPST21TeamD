@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -132,6 +133,16 @@ public class ServerChatController implements Controller {
             this.complete = false;
         }
 
+        public void shiftLeft () {
+            this.start = this.start - 1;
+            this.end = this.end - 1;
+        }
+
+        public void shiftRight () {
+            this.start = this.start + 1;
+            this.end = this.end + 1;
+        }
+
         public int getStart() {
             return start;
         }
@@ -158,19 +169,10 @@ public class ServerChatController implements Controller {
     }
 
     private void isMarking(KeyEvent keyEvent) {
-        /*String currentText = tfInputMessage.getText();
 
-        boolean atsChanged = false;
-
-        if (caret >= tfInputMessage.getCaretPosition()) {
-            for (int i : ats) {
-                if (i >= tfInputMessage.getCaretPosition()) {
-                    updateAtPositions(currentText);
-                    atsChanged = true;
-                    break;
-                }
-            }
-        }*/
+        if (caret >= tfInputMessage.getCaretPosition() && tfInputMessage.getText().contains("@")) {
+           updateAtPositions(keyEvent);
+        }
 
         caret = tfInputMessage.getCaretPosition();
 
@@ -178,17 +180,7 @@ public class ServerChatController implements Controller {
             activeAt = new AtPositions(caret - 1, caret - 1);
             atPositions.add(activeAt);
 
-
-            this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
-
-            boxTextfield.getChildren().add(lvSelectUser);
-
-            lvSelectUser.setMinHeight(45);
-            lvSelectUser.setPrefHeight(45);
-            lvSelectUser.setVisible(true);
-
             initLwSelectUser(lvSelectUser);
-
 
         } else if (keyEvent.getCharacter().equals("\b") && lvSelectUser.isVisible()) {
             checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
@@ -198,7 +190,7 @@ public class ServerChatController implements Controller {
             checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
 
 
-        }else if (keyEvent.getCharacter().equals("\b")) {
+        } else if (keyEvent.getCharacter().equals("\b")) {
 
             if (ats.contains(caret)) {
                 ats.remove((Object) caret);
@@ -211,6 +203,14 @@ public class ServerChatController implements Controller {
     }
 
     private void initLwSelectUser(ListView<User> lvSelectUser) {
+
+        this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
+
+        boxTextfield.getChildren().add(lvSelectUser);
+
+        lvSelectUser.setMinHeight(45);
+        lvSelectUser.setPrefHeight(45);
+        lvSelectUser.setVisible(true);
 
         // init list view
         lvSelectUser.setCellFactory(new SelectUserCellFactory());
@@ -249,16 +249,37 @@ public class ServerChatController implements Controller {
                 String firstPart = currentText.substring(0, correspondingAt);
                 String secondPart = currentText.substring(caret);
                 tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
+                activeAt.setEnd(activeAt.getStart() + selectedUser.getName().length() + 1);
+                activeAt.setComplete(true);
                 removeSelectionMenu();
             }
         }
     }
 
-    private void updateAtPositions(String currentText) {
-        ats = new ArrayList<>();
-        for (int i = 0; i < currentText.length(); i++) {
-            if (currentText.charAt(i) == '@') {
-                ats.add(i);
+    private void updateAtPositions(KeyEvent keyEvent) {
+        String currentText = tfInputMessage.getText();
+        int currentCaret = tfInputMessage.getCaretPosition();
+        boolean isBackspace = keyEvent.getCharacter().equals("\b");
+        for (AtPositions at: atPositions) {
+            if (currentCaret < at.getStart()) {
+                if (isBackspace){
+                    at.shiftLeft();
+                }
+                else {
+                    at.shiftRight();
+                }
+            }
+            else if (currentCaret <= at.getEnd()) {
+                String start = currentText.substring(0, at.getStart());
+                String end;
+                if (isBackspace) {
+                    end = currentText.substring(at.getEnd() - 1);
+                }
+                else {
+                    end = currentText.substring(at.getEnd() + 1);
+                }
+                tfInputMessage.setText(start + end);
+                tfInputMessage.positionCaret(start.length());
             }
         }
     }
