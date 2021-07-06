@@ -23,7 +23,7 @@
             </font>
         </Label>
         <Region HBox.hgrow="ALWAYS"/>
-        <Label id="lbOpponent" maxWidth="120.0" minWidth="120.0" text="Opponent">
+        <Label id="lbOpponent" maxWidth="120.0" minWidth="120.0">
             <font>
                 <Font size="25.0"/>
             </font>
@@ -33,19 +33,19 @@
     <Region minHeight="50.0" prefHeight="70.0" prefWidth="200.0"/>
     <HBox prefHeight="50.0" prefWidth="200.0">
         <Region minHeight="50.0" minWidth="50.0" prefWidth="100.0"/>
-        <Button id="btnRock" mnemonicParsing="false" styleClass="styleButton" text="Rock">
+        <Button id="btnRock" mnemonicParsing="false" styleClass="styleButton">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
         <Region minWidth="70.0" HBox.hgrow="ALWAYS"/>
-        <Button id="btnPaper" mnemonicParsing="false" styleClass="styleButton" text="Paper">
+        <Button id="btnPaper" mnemonicParsing="false" styleClass="styleButton">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
         <Region minWidth="70.0" HBox.hgrow="ALWAYS"/>
-        <Button id="btnScissors" mnemonicParsing="false" styleClass="styleButton" text="Scissors">
+        <Button id="btnScissors" mnemonicParsing="false" styleClass="styleButton">
             <font>
                 <Font size="14.0"/>
             </font>
@@ -56,7 +56,7 @@
     <HBox prefHeight="100.0" prefWidth="200.0">
         <Region minWidth="100.0"/>
         <VBox prefHeight="200.0" prefWidth="100.0">
-            <Label id="lblYouPlayed" text="You Played">
+            <Label id="lblYouPlayed">
                 <VBox.margin>
                     <Insets left="46.0"/>
                 </VBox.margin>
@@ -68,7 +68,7 @@
         <Region minWidth="50.0" HBox.hgrow="ALWAYS"/>
         <VBox prefHeight="200.0" prefWidth="100.0">
 
-            <Label id="lblOpponentPlayed" text="Opponent Played">
+            <Label id="lblOpponentPlayed">
                 <VBox.margin>
                     <Insets left="30.0"/>
                 </VBox.margin>

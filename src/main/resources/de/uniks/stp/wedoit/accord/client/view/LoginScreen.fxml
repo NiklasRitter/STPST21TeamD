@@ -78,6 +78,7 @@
                 <CheckBox id="btnRememberMe" mnemonicParsing="false" styleClass="styleButton" />
             </children>
         </HBox>
+          <Label id="lblError" styleClass="redLabel" />
         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
             <children>
                 <Button id="btnLogin" mnemonicParsing="false" styleClass="styleButton">
@@ -86,7 +87,6 @@
                     </font>
                 </Button>
                 <Region maxWidth="100.0" HBox.hgrow="ALWAYS" />
-                <Label id="lblError" styleClass="redLabel" />
                 <Region maxWidth="100.0" HBox.hgrow="ALWAYS" />
                 <Button id="btnRegister" mnemonicParsing="false" styleClass="styleButton">
                     <font>
