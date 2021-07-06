@@ -265,6 +265,7 @@ public class CategoryTreeViewController implements Controller {
                     }
                 }
             }
+            controller.resetLbChannelName();
         }
     }
 

@@ -396,4 +396,8 @@ public class ServerScreenController implements Controller {
     public VBox getAudioChannelSubViewContainer() {
         return audioChannelSubViewContainer;
     }
+
+    public void resetLbChannelName(){
+        this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
+    }
 }
