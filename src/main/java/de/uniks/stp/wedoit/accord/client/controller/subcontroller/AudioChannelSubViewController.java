@@ -59,10 +59,16 @@ public class AudioChannelSubViewController implements Controller {
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
         if (localUser.isMuted()) {
             this.editor.getAudioManager().unmuteYourself(localUser);
-            this.imgMuteYourself.setImage(new Image(String.valueOf(getClass().getResource("/de/uniks/stp/wedoit/accord/client/view/images/micro.png"))));
+
+            ImageView imgMuteYourself = new ImageView();
+            imgMuteYourself.setImage(new Image("/de/uniks/stp/wedoit/accord/client/view/images/micro.png", btnMuteYou.getWidth()*3/4, btnMuteYou.getHeight(), false, true, true));
+            this.btnMuteYou.setGraphic(imgMuteYourself);
         } else {
             this.editor.getAudioManager().muteYourself(localUser);
-            this.imgMuteYourself.setImage(new Image(String.valueOf(getClass().getResource("/de/uniks/stp/wedoit/accord/client/view/images/nomicro.png"))));
+
+            ImageView imgMuteYourself = new ImageView();
+            imgMuteYourself.setImage(new Image("/de/uniks/stp/wedoit/accord/client/view/images/nomicro.png", btnMuteYou.getWidth()*3/4, btnMuteYou.getHeight(), false, true, true));
+            this.btnMuteYou.setGraphic(imgMuteYourself);
         }
     }
 
