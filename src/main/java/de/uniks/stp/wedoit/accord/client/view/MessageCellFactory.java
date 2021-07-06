@@ -4,35 +4,28 @@ import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.awt.*;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.QUOTE_ID;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
     @Override
@@ -45,7 +38,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
         private final Label label = new Label();
-        private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();;
+        private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
 
