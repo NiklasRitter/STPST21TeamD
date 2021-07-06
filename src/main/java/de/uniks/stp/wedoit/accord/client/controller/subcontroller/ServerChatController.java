@@ -15,7 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -185,17 +184,7 @@ public class ServerChatController implements Controller {
         } else if (keyEvent.getCharacter().equals("\b") && lvSelectUser.isVisible()) {
             checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
 
-
-        } else if (keyEvent.getCharacter().equals(" ") && lvSelectUser.isVisible() && !activeAt.isComplete()) {
-            checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
-
-
         } else if (keyEvent.getCharacter().equals("\b")) {
-
-            if (ats.contains(caret)) {
-                ats.remove((Object) caret);
-                removeSelectionMenu();
-            }
 
         } else if (lvSelectUser.isVisible()) {
             checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
@@ -280,6 +269,8 @@ public class ServerChatController implements Controller {
                 }
                 tfInputMessage.setText(start + end);
                 tfInputMessage.positionCaret(start.length());
+
+                //nur machen wenn at completed
             }
         }
     }
@@ -307,11 +298,7 @@ public class ServerChatController implements Controller {
             }
         }
 
-        if (selectUserObservableList.isEmpty() && !activeAt.isComplete()) {
-            activeAt.setEnd(activeAt.getEnd() + 1);
-        } else {
-            activeAt.setEnd(activeAt.getEnd() + 1);
-        }
+        activeAt.setEnd(caret - 1);
 
         /*if (selectUserObservableList.isEmpty() || activeAt.isComplete()) {
             removeSelectionMenu();
