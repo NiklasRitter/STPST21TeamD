@@ -132,12 +132,12 @@ public class ServerChatController implements Controller {
             this.complete = false;
         }
 
-        public void shiftLeft () {
+        public void shiftLeft() {
             this.start = this.start - 1;
             this.end = this.end - 1;
         }
 
-        public void shiftRight () {
+        public void shiftRight() {
             this.start = this.start + 1;
             this.end = this.end + 1;
         }
@@ -170,7 +170,7 @@ public class ServerChatController implements Controller {
     private void isMarking(KeyEvent keyEvent) {
 
         if (caret >= tfInputMessage.getCaretPosition() && tfInputMessage.getText().contains("@")) {
-           updateAtPositions(keyEvent);
+            updateAtPositions(keyEvent);
         }
 
         caret = tfInputMessage.getCaretPosition();
@@ -181,10 +181,8 @@ public class ServerChatController implements Controller {
 
             initLwSelectUser(lvSelectUser);
 
-        } else if (keyEvent.getCharacter().equals("\b") && lvSelectUser.isVisible()) {
+        } else if (keyEvent.getCharacter().equals("\b") && !activeAt.isComplete()) {
             checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
-
-        } else if (keyEvent.getCharacter().equals("\b")) {
 
         } else if (lvSelectUser.isVisible()) {
             checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
@@ -239,6 +237,8 @@ public class ServerChatController implements Controller {
                 String secondPart = currentText.substring(caret);
                 tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
                 activeAt.setEnd(activeAt.getStart() + selectedUser.getName().length() + 1);
+                caret = activeAt.getEnd();
+                tfInputMessage.positionCaret(caret);
                 activeAt.setComplete(true);
                 removeSelectionMenu();
             }
@@ -246,32 +246,34 @@ public class ServerChatController implements Controller {
     }
 
     private void updateAtPositions(KeyEvent keyEvent) {
+        //akualisiere activeAt in dieser Methode
+
         String currentText = tfInputMessage.getText();
         int currentCaret = tfInputMessage.getCaretPosition();
+        AtPositions atToDelete = null;
         boolean isBackspace = keyEvent.getCharacter().equals("\b");
-        for (AtPositions at: atPositions) {
+        for (AtPositions at : atPositions) {
             if (currentCaret < at.getStart()) {
-                if (isBackspace){
+                if (isBackspace) {
                     at.shiftLeft();
-                }
-                else {
+                } else {
                     at.shiftRight();
                 }
-            }
-            else if (currentCaret <= at.getEnd()) {
+            } else if (currentCaret <= at.getEnd() && at.isComplete()) {
                 String start = currentText.substring(0, at.getStart());
                 String end;
                 if (isBackspace) {
                     end = currentText.substring(at.getEnd() - 1);
-                }
-                else {
+                } else {
                     end = currentText.substring(at.getEnd() + 1);
                 }
                 tfInputMessage.setText(start + end);
                 tfInputMessage.positionCaret(start.length());
-
-                //nur machen wenn at completed
+                atToDelete = at;
             }
+        }
+        if (atToDelete != null) {
+            atPositions.remove(atToDelete);
         }
     }
 
@@ -291,26 +293,34 @@ public class ServerChatController implements Controller {
                 selectUserObservableList.remove(user);
             } else if (user.getName().equals(text)) {
                 activeAt.setComplete(true);
-                activeAt.setEnd(activeAt.getStart() + user.getName().length() + 1);
+                activeAt.setEnd(caret - 1);
                 break;
             } else if (!selectUserObservableList.contains(user)) {
                 selectUserObservableList.add(user);
             }
         }
 
-        activeAt.setEnd(caret - 1);
+        if (!lvSelectUser.isVisible() && !activeAt.isComplete() && !selectUserObservableList.isEmpty()) {
+            showSelectionMenu();
+        }
 
-        /*if (selectUserObservableList.isEmpty() || activeAt.isComplete()) {
+        if (selectUserObservableList.isEmpty() || activeAt.isComplete()) {
             removeSelectionMenu();
         } else {
             activeAt.setEnd(activeAt.getEnd() + 1);
-        }*/
+        }
     }
 
     private void removeSelectionMenu() {
         boxTextfield.getChildren().remove(lvSelectUser);
         lvSelectUser.setVisible(false);
         this.lvSelectUser.setOnMousePressed(null);
+    }
+
+    private void showSelectionMenu() {
+        boxTextfield.getChildren().add(lvSelectUser);
+        lvSelectUser.setVisible(true);
+        this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
     }
 
     public void initToolTip() {
