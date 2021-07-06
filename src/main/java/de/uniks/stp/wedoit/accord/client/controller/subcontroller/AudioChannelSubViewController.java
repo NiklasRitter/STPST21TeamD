@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CHOOSINGIMG;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_IMGURL;
 
 
 /**
