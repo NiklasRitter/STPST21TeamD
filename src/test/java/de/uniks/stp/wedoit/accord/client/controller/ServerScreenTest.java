@@ -1159,6 +1159,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals("Updated message needs at least 1 character!", errorLabel.getText());
     }
 
+
     @Test
     public void privateMessageTest() {
         // some more Mocking that is required to send private Messages
