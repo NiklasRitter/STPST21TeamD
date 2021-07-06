@@ -10,6 +10,8 @@ import java.net.DatagramSocket;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
+
 public class AudioReceive extends Thread{
 
     private final DatagramSocket receiveSocket;
@@ -70,7 +72,7 @@ public class AudioReceive extends Thread{
 
                 String metaDataString = new String(metaDataByte);
                 JSONObject metaDataJson = new JSONObject(metaDataString);
-                String audioSender = metaDataJson.getString("name");
+                String audioSender = metaDataJson.getString(NAME);
 
                 if (!sourceDataLineMap.containsKey(audioSender) && !audioSender.equals(localUser.getName())) {
                     SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);

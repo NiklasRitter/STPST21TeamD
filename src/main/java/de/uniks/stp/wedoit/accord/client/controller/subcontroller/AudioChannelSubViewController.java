@@ -9,6 +9,10 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CHOOSINGIMG;
 
 
 /**
@@ -24,6 +28,7 @@ public class AudioChannelSubViewController implements Controller {
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
+    private ImageView imgMuteYourself;
 
     public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, CategoryTreeViewController controller, Channel channel) {
         this.localUser = localUser;
@@ -40,6 +45,7 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteYou = (Button) this.view.lookup("#btnMuteYou");
         this.btnMuteAll = (Button) this.view.lookup("#btnMuteAll");
         this.btnLeave = (Button) this.view.lookup("#btnLeave");
+        this.imgMuteYourself = (ImageView) view.lookup("#imgMuteYourself");
 
         lblAudioChannelName.setText(channel.getName());
         lblUserName.setText(localUser.getName());
@@ -52,8 +58,10 @@ public class AudioChannelSubViewController implements Controller {
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
         if (localUser.isMuted()) {
             this.editor.getAudioManager().unmuteYourself(localUser);
+            this.imgMuteYourself.setImage(new Image(String.valueOf(getClass().getResource("/de/uniks/stp/wedoit/accord/client/view/images/micro.png"))));
         } else {
             this.editor.getAudioManager().muteYourself(localUser);
+            this.imgMuteYourself.setImage(new Image(String.valueOf(getClass().getResource("/de/uniks/stp/wedoit/accord/client/view/images/nomicro.png"))));
         }
     }
 
