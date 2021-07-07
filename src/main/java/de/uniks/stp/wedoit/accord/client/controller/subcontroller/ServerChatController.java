@@ -236,7 +236,7 @@ public class ServerChatController implements Controller {
                 String firstPart = currentText.substring(0, correspondingAt);
                 String secondPart = currentText.substring(caret);
                 tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
-                activeAt.setEnd(activeAt.getStart() + selectedUser.getName().length() + 1);
+                activeAt.setEnd(activeAt.getStart() + selectedUser.getName().length());
                 caret = activeAt.getEnd();
                 tfInputMessage.positionCaret(caret);
                 activeAt.setComplete(true);
@@ -259,11 +259,16 @@ public class ServerChatController implements Controller {
                 } else {
                     at.shiftRight();
                 }
+            } else if (currentCaret <= at.getStart() && !isBackspace){
+                at.shiftRight();
+                System.out.println("Hello there");
             } else if (currentCaret <= at.getEnd() && at.isComplete()) {
+                System.out.println(currentCaret);
+                System.out.println(at.getEnd());
                 String start = currentText.substring(0, at.getStart());
                 String end;
                 if (isBackspace) {
-                    end = currentText.substring(at.getEnd() - 1);
+                    end = currentText.substring(at.getEnd());
                 } else {
                     end = currentText.substring(at.getEnd() + 1);
                 }
