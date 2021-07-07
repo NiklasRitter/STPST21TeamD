@@ -643,7 +643,6 @@ public class RestManager {
 
     public void joinAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
         restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
-            System.out.println(response.getBody());
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getAudioManager().initAudioConnection(channel);
                 editor.getLocalUser().setAudioChannel(channel);
