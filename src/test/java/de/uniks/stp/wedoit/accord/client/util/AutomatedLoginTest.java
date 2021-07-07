@@ -66,6 +66,8 @@ public class AutomatedLoginTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.oldOptions = new Options();
+        this.stageManager.getResourceManager().getPreferenceManager().setStageManager(this.stageManager);
+        this.stageManager.getEditor().setStageManager(stageManager);
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(true));
         oldLocalUser = new LocalUser();

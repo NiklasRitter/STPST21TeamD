@@ -12,6 +12,7 @@ public class Game {
     public static final String GAME_CLOSE = GAME_PREFIX + "Exited the game!";
     public static final String GAME_INGAME = GAME_PREFIX + "Already in game, try again later!";
     public static final String GAME_START = GAME_PREFIX + "Lets start the Game!";
+    public static final String GAME_SYSTEM = "###game### System";
 
     //game actions
     public static final String GAME_IMGURL = "/de/uniks/stp/wedoit/accord/client/view/images/game/";
