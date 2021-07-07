@@ -253,6 +253,9 @@ public class ServerChatController implements Controller {
         AtPositions atToDelete = null;
         boolean isBackspace = keyEvent.getCharacter().equals("\b");
         for (AtPositions at : atPositions) {
+            System.out.println(currentCaret);
+            System.out.println(at.getStart());
+
             if (currentCaret < at.getStart()) {
                 if (isBackspace) {
                     at.shiftLeft();
@@ -312,6 +315,7 @@ public class ServerChatController implements Controller {
         if (selectUserObservableList.isEmpty() || activeAt.isComplete()) {
             removeSelectionMenu();
         } else {
+            //TODO nochmal anschauen 
             activeAt.setEnd(activeAt.getEnd() + 1);
         }
     }

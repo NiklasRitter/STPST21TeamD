@@ -602,6 +602,8 @@ public class ServerScreenTest extends ApplicationTest {
         //send message
         ((TextField) lookup("#tfInputMessage").query()).setText(((TextField) lookup("#tfInputMessage").query()).getText() + "Test Message");
         clickOn("#tfInputMessage");
+        
+        //TODO add Marking Test here
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message" + emoji.getText());
