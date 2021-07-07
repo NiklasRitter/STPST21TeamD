@@ -1,15 +1,19 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
@@ -92,6 +96,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     this.getStyleClass().add("font_size");
                     this.setText(">>>" + messages[0] + "\n");
 
+                } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
+                    setUpJoinServerView(item);
                 } else {
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
@@ -164,6 +170,39 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.setText(item.getText());
             hyperlink.getStyleClass().add("link");
             hyperlink.setOnAction(this::openHyperLink);
+        }
+
+        private void setUpJoinServerView(S item) {
+            Label enterServerLabel = new Label();
+            enterServerLabel.setText(LanguageResolver.getString("ENTER_SERVER"));
+            Label serverIdLabel = new Label();
+            int indexServer = item.getText().indexOf("servers/");
+            int indexInvite = item.getText().indexOf("/invites");
+            String serverId = item.getText().substring(indexServer + "servers/".length(), indexInvite);
+            serverIdLabel.setText(LanguageResolver.getString("SERVER_ID") + ": " + serverId);
+
+            VBox textVbox = new VBox();
+            textVbox.getChildren().addAll(enterServerLabel, serverIdLabel);
+
+            Button button = new Button();
+            button.setText(LanguageResolver.getString("JOIN"));
+            button.getStyleClass().add("styleButton");
+            //button.setOnAction();
+
+            Region region = new Region();
+            region.setPrefWidth(30);
+
+            HBox hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            hBox.getChildren().addAll(textVbox, region, button);
+
+            label.setText("[" + time + "] " + item.getFrom() + ": ");
+            hyperlink.setText(item.getText());
+            hyperlink.getStyleClass().add("link");
+            //hyperlink.setOnAction(this::openHyperLink);
+            vBox.getChildren().addAll(label, hBox, hyperlink);
+            vBox.getStyleClass().add("styleBorder");
+            setGraphic(this.vBox);
         }
 
         public String expandUrl(String shortenedUrl){
