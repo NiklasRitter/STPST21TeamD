@@ -1,5 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiManager;
+import com.vdurmont.emoji.EmojiParser;
 import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
@@ -7,13 +10,17 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class EmojiScreenController implements Controller {
 
@@ -21,6 +28,8 @@ public class EmojiScreenController implements Controller {
     private GridPane pane;
     private final TextField tfForEmoji;
     private final Bounds pos;
+    private Image img;
+    private ImageView imageView;
 
     private EmojiButton emoji;
     private final HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<>();
@@ -44,11 +53,16 @@ public class EmojiScreenController implements Controller {
         this.pane.setHgap(5);
         this.pane.setVgap(5);
 
+        img = new Image("resources/de/uniks/stp/wedoit/accord/client/view/images/1f575-1f3fb.png");
+        imageView = new ImageView(img);
         createEmojiPicker();
+
         Stage stage = (Stage) view.getScene().getWindow();
         stage.show();
         stage.setX(pos.getMinX() - stage.getWidth());
         stage.setY(pos.getMinY() - stage.getHeight());
+
+
     }
 
     /**
@@ -62,8 +76,9 @@ public class EmojiScreenController implements Controller {
         int gridWidth = 7;
 
         for (int i = 0; i < iconsUnicodeList.size(); i++) {
-            emoji = new EmojiButton(iconsUnicodeList.get(i).toString());
-            hashMapForEmojiButtons.put(emoji, emoji.getText());
+//            emoji = new EmojiButton(iconsUnicodeList.get(i).toString());
+            emoji = new EmojiButton(imageView);
+            hashMapForEmojiButtons.put(emoji, imageView.getImage().toString());
             emoji.setOnAction(this::btnEmojiOnClick);
             this.pane.add(emoji, i % gridWidth, i / gridWidth);
         }

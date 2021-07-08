@@ -17,16 +17,19 @@ version '2.0.0'
 
 repositories {
     mavenCentral()
+    jcenter()
+    mavenLocal()
     flatDir {
         dirs 'libs'
     }
-    jcenter()
-    mavenLocal()
 }
 
 dependencies {
 
-    implementation name: 'JavaFXEmojiTextFlow_twemoji-1.0'
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation group: 'org.json', name: 'json', version: '20210307'
+
+    compile 'com.vdurmont:emoji-java:5.1.1'
 
     // https://mvnrepository.com/artifact/org.sharegov/mjson
     compile group: 'org.sharegov', name: 'mjson', version: '1.3'
