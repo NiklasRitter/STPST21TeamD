@@ -253,21 +253,23 @@ public class ServerChatController implements Controller {
         AtPositions atToDelete = null;
         boolean isBackspace = keyEvent.getCharacter().equals("\b");
         for (AtPositions at : atPositions) {
+            System.out.println("Hello");
             System.out.println(currentCaret);
             System.out.println(at.getStart());
 
-            if (currentCaret < at.getStart()) {
+            if (currentCaret - 1 <= at.getStart() && !isBackspace) {
+                at.shiftRight();
+                System.out.println("Hello there");
+
+            } else if (currentCaret < at.getStart()) {
                 if (isBackspace) {
                     at.shiftLeft();
                 } else {
                     at.shiftRight();
                 }
-            } else if (currentCaret <= at.getStart() && !isBackspace){
-                at.shiftRight();
-                System.out.println("Hello there");
             } else if (currentCaret <= at.getEnd() && at.isComplete()) {
-                System.out.println(currentCaret);
-                System.out.println(at.getEnd());
+                //System.out.println(currentCaret);
+                //System.out.println(at.getEnd());
                 String start = currentText.substring(0, at.getStart());
                 String end;
                 if (isBackspace) {
