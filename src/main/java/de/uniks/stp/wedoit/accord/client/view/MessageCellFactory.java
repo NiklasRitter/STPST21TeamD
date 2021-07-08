@@ -223,9 +223,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             Label enterServerLabel = new Label();
             enterServerLabel.setText(LanguageResolver.getString("ENTER_SERVER"));
             Label serverIdLabel = new Label();
-            int indexServer = item.getText().indexOf("servers/");
-            int indexInvite = item.getText().indexOf("/invites");
-            String serverId = item.getText().substring(indexServer + "servers/".length(), indexInvite);
+            String[] urlSplitted = url.split("/");
+            String serverId = urlSplitted[5];
             serverIdLabel.setText(LanguageResolver.getString("SERVER_ID") + ": " + serverId);
 
             VBox serverInfoVBox = new VBox();
