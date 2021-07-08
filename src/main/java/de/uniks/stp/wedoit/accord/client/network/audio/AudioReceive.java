@@ -93,8 +93,10 @@ public class AudioReceive extends Thread{
     }
 
     public void muteUser(String username){
-        sourceDataLineMap.get(username).stop();
-        sourceDataLineMap.get(username).flush();
+        if(sourceDataLineMap.containsKey(username)){
+            sourceDataLineMap.get(username).stop();
+            sourceDataLineMap.get(username).flush();
+        }
     }
 
     public void unmuteUser(String username){

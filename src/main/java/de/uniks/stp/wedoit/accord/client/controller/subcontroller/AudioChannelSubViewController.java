@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
@@ -8,6 +9,10 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.util.Objects;
 
 
 /**
@@ -17,15 +22,18 @@ public class AudioChannelSubViewController implements Controller {
 
     private final LocalUser localUser;
     private final Parent view;
+    private final Editor editor;
     private final ServerScreenController controller;
     private final Channel channel;
+    private boolean allMuted;
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
 
-    public AudioChannelSubViewController(LocalUser localUser, Parent view, ServerScreenController controller, Channel channel) {
+    public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, ServerScreenController controller, Channel channel) {
         this.localUser = localUser;
         this.view = view;
+        this.editor = editor;
         this.controller = controller;
         this.channel = channel;
     }
@@ -44,8 +52,6 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteYou.setOnAction(this::btnMuteYouOnClick);
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
-
-        // initAudioChannel(localUser, channel);
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
@@ -53,7 +59,15 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
-
+        if(!allMuted){
+            editor.getAudioManager().muteAllUsers(channel.getAudioMembers());
+            controller.getCategoryTreeViewController().getTvServerChannels().refresh();
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            btnMuteAll.setGraphic(icon);
+            allMuted = true;
+        }
     }
 
     private void btnLeaveOnClick(ActionEvent actionEvent) {
@@ -61,7 +75,7 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     public void closeAudioChannel() {
-        // audioStream.close();
+
     }
 
     @Override

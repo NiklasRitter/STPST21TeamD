@@ -379,6 +379,10 @@ public class CategoryTreeViewController implements Controller {
         }
     }
 
+    public TreeView<Object> getTvServerChannels(){
+        return tvServerChannels;
+    }
+
     public ServerScreenController getController() {
         return controller;
     }

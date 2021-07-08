@@ -5,6 +5,8 @@ import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
 
+import java.util.List;
+
 public class AudioManager {
 
     private final Editor editor;
@@ -29,6 +31,14 @@ public class AudioManager {
     public void unmuteUser(User user){
         user.setMuted(false);
         audioConnection.getAudioReceive().unmuteUser(user.getName());
+    }
+
+    public void muteAllUsers(List<User> users){
+        for(User user : users){
+            if(!user.isMuted() && !user.getName().equals(editor.getLocalUser().getName())){
+                muteUser(user);
+            }
+        }
     }
 
     public void closeAudioConnection() {

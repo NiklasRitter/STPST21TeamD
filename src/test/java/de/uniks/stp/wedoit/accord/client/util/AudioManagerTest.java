@@ -165,7 +165,7 @@ public class AudioManagerTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).getCategories(anyString(), anyString(), channelCallbackArgumentCaptor.capture());
+        verify(restMock, atLeastOnce()).getCategories(anyString(), anyString(), channelCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -240,6 +240,24 @@ public class AudioManagerTest extends ApplicationTest {
         Assert.assertTrue(user.isMuted());
         stageManager.getEditor().getAudioManager().unmuteUser(user);
         Assert.assertFalse(user.isMuted());
+        tempAudioCon.close();
+    }
+
+    @Test
+    public void muteAndUnmuteAllTest(){
+        joinAudioServerTest();
+        Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel);
+        stageManager.getEditor().getAudioManager().setAudioConnection(tempAudioCon);
+        tempAudioCon.startConnection("localhost", 33100);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        clickOn("#btnMuteAll");
+        for(User user : channel.getAudioMembers()){
+            if(!user.getName().equals(localUser.getName())){
+                Assert.assertTrue(user.isMuted());
+            }
+        }
+        leaveAudioChannelTest();
     }
 
     public void initUserListView() {
