@@ -13,7 +13,7 @@
    <children>
       <HBox prefHeight="22.0" prefWidth="150.0">
          <children>
-            <Label prefHeight="17.0" prefWidth="82.0" text="Voice channel:">
+            <Label id="lblVoiceChannel" prefHeight="17.0" prefWidth="82.0" text="Voice channel:">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin></Label>

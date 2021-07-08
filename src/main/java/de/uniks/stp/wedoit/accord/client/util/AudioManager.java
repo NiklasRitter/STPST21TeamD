@@ -41,7 +41,9 @@ public class AudioManager {
     }
 
     public void closeAudioConnection() {
-        audioConnection.close();
-        this.audioConnection = null;
+        if (audioConnection != null) {
+            audioConnection.close();
+            this.audioConnection = null;
+        }
     }
 }

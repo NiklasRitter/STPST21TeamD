@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.event.ActionEvent;
@@ -30,6 +31,7 @@ public class AudioChannelSubViewController implements Controller {
     private Button btnMuteAll;
     private Button btnLeave;
     private ImageView imgMuteYourself;
+    private Label lblVoiceChannel;
 
     public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, CategoryTreeViewController controller, Channel channel) {
         this.localUser = localUser;
@@ -41,6 +43,7 @@ public class AudioChannelSubViewController implements Controller {
 
     @Override
     public void init() {
+        this.lblVoiceChannel = (Label) this.view.lookup("#lblVoiceChannel");
         Label lblAudioChannelName = (Label) this.view.lookup("#lblAudioChannelName");
         Label lblUserName = (Label) this.view.lookup("#lblUserName");
         this.btnMuteYou = (Button) this.view.lookup("#btnMuteYou");
@@ -54,6 +57,12 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteYou.setOnAction(this::btnMuteYouOnClick);
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
+
+        this.setComponentsText();
+    }
+
+    private void setComponentsText() {
+        this.lblVoiceChannel.setText(LanguageResolver.getString("VOICE_CHANNEL"));
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
