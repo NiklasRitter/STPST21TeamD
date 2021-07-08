@@ -57,7 +57,7 @@ public class AudioReceive extends Thread{
                 }
             }
 
-            while(this.shouldReceive.get()){
+            while(shouldReceive.get()){
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
                 this.receiveSocket.receive(receivePacket);
@@ -81,6 +81,15 @@ public class AudioReceive extends Thread{
 
                 if (!audioSender.equals(localUser.getName())) {
                     this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
+                }
+            }
+            for (String name: sourceDataLineMap.keySet()) {
+                SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
+                audioMemberLine.stop();
+                audioMemberLine.flush();
+                audioMemberLine.close();
+                if (audioMemberLine.isOpen()) {
+                    audioMemberLine.close();
                 }
             }
         } catch (Exception e) {

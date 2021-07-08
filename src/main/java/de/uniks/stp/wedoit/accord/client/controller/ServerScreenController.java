@@ -184,7 +184,7 @@ public class ServerScreenController implements Controller {
         try {
             Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
 
-            audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, this, channel);
+            audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, categoryTreeViewController, channel);
             audioChannelSubViewController.init();
 
             Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().add(view));

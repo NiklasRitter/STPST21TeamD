@@ -23,14 +23,14 @@ public class AudioChannelSubViewController implements Controller {
     private final LocalUser localUser;
     private final Parent view;
     private final Editor editor;
-    private final ServerScreenController controller;
+    private final CategoryTreeViewController controller;
     private final Channel channel;
     private boolean allMuted;
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
 
-    public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, ServerScreenController controller, Channel channel) {
+    public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, CategoryTreeViewController controller, Channel channel) {
         this.localUser = localUser;
         this.view = view;
         this.editor = editor;
@@ -61,7 +61,7 @@ public class AudioChannelSubViewController implements Controller {
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
         if(!allMuted){
             editor.getAudioManager().muteAllUsers(channel.getAudioMembers());
-            controller.getCategoryTreeViewController().getTvServerChannels().refresh();
+            controller.getTvServerChannels().refresh();
             ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
             icon.setFitHeight(20);
             icon.setFitWidth(20);
@@ -75,7 +75,7 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     public void closeAudioChannel() {
-
+        this.editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, controller);
     }
 
     @Override
