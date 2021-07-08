@@ -257,7 +257,7 @@ public class AudioManagerTest extends ApplicationTest {
                 Assert.assertTrue(user.isMuted());
             }
         }
-        leaveAudioChannelTest();
+        tempAudioCon.close();
     }
 
     public void initUserListView() {
