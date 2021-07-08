@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="67.0" prefWidth="150.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="67.0" prefWidth="150.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox prefHeight="22.0" prefWidth="150.0">
          <children>
-            <Label prefHeight="17.0" prefWidth="82.0" text="Voice channel:">
+            <Label id="lblVoiceChannel" prefHeight="17.0" prefWidth="82.0" text="Voice channel:">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin></Label>
@@ -28,7 +28,7 @@
          <children>
             <Button id="btnMuteYou" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="styleButton">
                <graphic>
-                  <ImageView fitHeight="31.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView id="imgMuteYourself" fitHeight="31.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/micro.png" />
                      </image>

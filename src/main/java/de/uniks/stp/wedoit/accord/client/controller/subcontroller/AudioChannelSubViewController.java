@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.event.ActionEvent;
@@ -11,6 +12,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CHOOSINGIMG;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_IMGURL;
 
 import java.util.Objects;
 
@@ -29,6 +33,8 @@ public class AudioChannelSubViewController implements Controller {
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
+    private ImageView imgMuteYourself;
+    private Label lblVoiceChannel;
 
     public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, CategoryTreeViewController controller, Channel channel) {
         this.localUser = localUser;
@@ -40,11 +46,13 @@ public class AudioChannelSubViewController implements Controller {
 
     @Override
     public void init() {
+        this.lblVoiceChannel = (Label) this.view.lookup("#lblVoiceChannel");
         Label lblAudioChannelName = (Label) this.view.lookup("#lblAudioChannelName");
         Label lblUserName = (Label) this.view.lookup("#lblUserName");
         this.btnMuteYou = (Button) this.view.lookup("#btnMuteYou");
         this.btnMuteAll = (Button) this.view.lookup("#btnMuteAll");
         this.btnLeave = (Button) this.view.lookup("#btnLeave");
+        this.imgMuteYourself = (ImageView) view.lookup("#imgMuteYourself");
 
         lblAudioChannelName.setText(channel.getName());
         lblUserName.setText(localUser.getName());
@@ -52,10 +60,28 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteYou.setOnAction(this::btnMuteYouOnClick);
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
+
+        this.setComponentsText();
+    }
+
+    private void setComponentsText() {
+        this.lblVoiceChannel.setText(LanguageResolver.getString("VOICE_CHANNEL"));
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
+        if (localUser.isMuted()) {
+            this.editor.getAudioManager().unmuteYourself(localUser);
 
+            ImageView imgMuteYourself = new ImageView();
+            imgMuteYourself.setImage(new Image("/de/uniks/stp/wedoit/accord/client/view/images/micro.png", btnMuteYou.getWidth()*3/4, btnMuteYou.getHeight(), false, true, true));
+            this.btnMuteYou.setGraphic(imgMuteYourself);
+        } else {
+            this.editor.getAudioManager().muteYourself(localUser);
+
+            ImageView imgMuteYourself = new ImageView();
+            imgMuteYourself.setImage(new Image("/de/uniks/stp/wedoit/accord/client/view/images/nomicro.png", btnMuteYou.getWidth()*3/4, btnMuteYou.getHeight(), false, true, true));
+            this.btnMuteYou.setGraphic(imgMuteYourself);
+        }
     }
 
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
