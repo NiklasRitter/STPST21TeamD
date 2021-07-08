@@ -13,8 +13,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Objects;
+
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CHOOSINGIMG;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_IMGURL;
+import static de.uniks.stp.wedoit.accord.client.constants.Images.*;
 
 
 /**
@@ -69,14 +72,16 @@ public class AudioChannelSubViewController implements Controller {
         if (localUser.isMuted()) {
             this.editor.getAudioManager().unmuteYourself(localUser);
 
-            ImageView imgMuteYourself = new ImageView();
-            imgMuteYourself.setImage(new Image("/de/uniks/stp/wedoit/accord/client/view/images/micro.png", btnMuteYou.getWidth()*3/4, btnMuteYou.getHeight(), false, true, true));
+            ImageView imgMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_MICRO))));
+            imgMuteYourself.setFitHeight(25);
+            imgMuteYourself.setFitWidth(25);
             this.btnMuteYou.setGraphic(imgMuteYourself);
         } else {
             this.editor.getAudioManager().muteYourself(localUser);
 
-            ImageView imgMuteYourself = new ImageView();
-            imgMuteYourself.setImage(new Image("/de/uniks/stp/wedoit/accord/client/view/images/nomicro.png", btnMuteYou.getWidth()*3/4, btnMuteYou.getHeight(), false, true, true));
+            ImageView imgMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_NOMICRO))));
+            imgMuteYourself.setFitHeight(25);
+            imgMuteYourself.setFitWidth(25);
             this.btnMuteYou.setGraphic(imgMuteYourself);
         }
     }
