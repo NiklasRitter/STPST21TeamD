@@ -48,8 +48,8 @@ public class AudioConnection {
     }
 
     public void close() {
-        stopSendingAudio();
         stopReceivingAudio();
+        stopSendingAudio();
         audioSocket.close();
     }
 
@@ -85,4 +85,7 @@ public class AudioConnection {
         return receivingThread;
     }
 
+    public AudioSend getAudioSend(){
+        return sendingThread;
+    }
 }

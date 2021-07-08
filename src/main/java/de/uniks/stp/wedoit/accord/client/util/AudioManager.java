@@ -2,8 +2,11 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
+
+import java.util.List;
 
 public class AudioManager {
 
@@ -31,8 +34,26 @@ public class AudioManager {
         audioConnection.getAudioReceive().unmuteUser(user.getName());
     }
 
+    public void muteAllUsers(List<User> users){
+        for(User user : users){
+            if(!user.isMuted() && !user.getName().equals(editor.getLocalUser().getName())){
+                muteUser(user);
+            }
+        }
+    }
+
+    public void muteYourself(LocalUser yourself) {
+        yourself.setMuted(true);
+        audioConnection.getAudioSend().stopSending();
+    }
+
+    public void unmuteYourself(LocalUser yourself) {
+        yourself.setMuted(false);
+        audioConnection.getAudioSend().startSending();
+    }
+
     public void closeAudioConnection() {
-        if(audioConnection != null){
+        if (audioConnection != null) {
             audioConnection.close();
             this.audioConnection = null;
         }

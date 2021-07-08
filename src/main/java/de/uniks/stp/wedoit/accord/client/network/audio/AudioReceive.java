@@ -10,6 +10,8 @@ import java.net.DatagramSocket;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
+
 public class AudioReceive extends Thread{
 
     private final DatagramSocket receiveSocket;
@@ -57,7 +59,7 @@ public class AudioReceive extends Thread{
                 }
             }
 
-            while(this.shouldReceive.get()){
+            while(shouldReceive.get()){
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
                 this.receiveSocket.receive(receivePacket);
@@ -69,7 +71,7 @@ public class AudioReceive extends Thread{
 
                 String metaDataString = new String(metaDataByte);
                 JSONObject metaDataJson = new JSONObject(metaDataString);
-                String audioSender = metaDataJson.getString("name");
+                String audioSender = metaDataJson.getString(NAME);
 
                 if (!sourceDataLineMap.containsKey(audioSender) && !audioSender.equals(localUser.getName())) {
                     SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
@@ -83,6 +85,15 @@ public class AudioReceive extends Thread{
                     this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
                 }
             }
+            for (String name: sourceDataLineMap.keySet()) {
+                SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
+                audioMemberLine.stop();
+                audioMemberLine.flush();
+                audioMemberLine.close();
+                if (audioMemberLine.isOpen()) {
+                    audioMemberLine.close();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,8 +104,10 @@ public class AudioReceive extends Thread{
     }
 
     public void muteUser(String username){
-        sourceDataLineMap.get(username).stop();
-        sourceDataLineMap.get(username).flush();
+        if(sourceDataLineMap.containsKey(username)){
+            sourceDataLineMap.get(username).stop();
+            sourceDataLineMap.get(username).flush();
+        }
     }
 
     public void unmuteUser(String username){
