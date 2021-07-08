@@ -58,7 +58,7 @@
   roles: 	server_categories 	server_invitations 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
-  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_gameMove 	user_id
+  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_muted 	user_gameMove 	user_id
   model: 	c
   modified: 	false
   name: 	User
@@ -462,6 +462,15 @@
   id: 	User_chatRead
   modified: 	false
   name: 	chatRead
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
+- user_muted: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_muted
+  modified: 	false
+  name: 	muted
   propertyStyle: 	Bean
   type: 	boolean
   typeSignature: 	boolean

@@ -364,7 +364,6 @@ public class CategoryTreeViewController implements Controller {
     public void handleJoinAudioChannel(Channel channel) {
         if(channel.getCategory() != null){
             loadCategoryChannels(channel.getCategory(), getTreeItemCategory(channel.getCategory()));
-            controller.initAudioChannelSubView(channel);
         }
         else{
             System.err.println("Join Problem");

@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AudioReceive extends Thread{
 
     private final DatagramSocket receiveSocket;
-
     private final LocalUser localUser;
     private final Map<String, SourceDataLine> sourceDataLineMap;
     private final ArrayList<String> connectedUser;
@@ -91,5 +90,16 @@ public class AudioReceive extends Thread{
 
     public void setShouldReceive(boolean value) {
         this.shouldReceive.set(value);
+    }
+
+    public void muteUser(String username){
+        sourceDataLineMap.get(username).stop();
+        sourceDataLineMap.get(username).flush();
+    }
+
+    public void unmuteUser(String username){
+        if(connectedUser.contains((username))){
+            sourceDataLineMap.get(username).start();
+        }
     }
 }
