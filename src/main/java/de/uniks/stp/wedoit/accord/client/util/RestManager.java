@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatCont
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 
@@ -462,6 +463,41 @@ public class RestManager {
      */
     public void joinServer(LocalUser localUser, String invitationLink, JoinServerScreenController controller) {
         restClient.joinServer(localUser, invitationLink, invitationResponse -> {
+            if (!invitationResponse.isSuccess()) {
+                if (invitationResponse.getBody() != null) {
+                    controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));
+                } else {
+                    controller.handleInvitation(null, "No valid invitation link");
+                }
+            } else {
+                if (invitationResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    String[] splitLink = invitationLink.split("/");
+                    String id = null;
+                    if (splitLink.length > 5) {
+                        id = splitLink[5];
+                    }
+                    if (id != null) {
+                        Server server = editor.haveServer(localUser, id, "");
+                        controller.handleInvitation(server, invitationResponse.getBody().getObject().getString(MESSAGE));
+                    } else
+                        controller.handleInvitation(null, "MainScreen");
+                } else {
+                    controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));
+                }
+            }
+        });
+    }
+
+    /**
+     * Try to join a server with the Restclient::joinServer method
+     *
+     * @param localUser      localUser who is logged in
+     * @param invitationLink invitation which is used to join a server
+     * @param controller     controller in which the response is handled
+     */
+    public void joinServer(LocalUser localUser, String invitationLink, MessageCellFactory controller) {
+        restClient.joinServer(localUser, invitationLink, invitationResponse -> {
+            System.out.println(invitationResponse.getBody());
             if (!invitationResponse.isSuccess()) {
                 if (invitationResponse.getBody() != null) {
                     controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));

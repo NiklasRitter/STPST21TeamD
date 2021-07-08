@@ -1,8 +1,11 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import de.uniks.stp.wedoit.accord.client.model.Server;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -27,17 +30,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
+
+    StageManager stageManager;
+
+    public MessageCellFactory(StageManager stageManager) {
+        this.stageManager = stageManager;
+    }
+
     @Override
     public ListCell<T> call(ListView<T> param) {
         return new MessageCell<>(param);
     }
 
-    private static class MessageCell<S extends Message> extends ListCell<S> {
+    private class MessageCell<S extends Message> extends ListCell<S> {
+
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
@@ -61,7 +75,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             webView.getEngine().load(null);
             descBox.setText(null);
             hyperlink.setOnAction(null);
-            hyperlink.getStyleClass().removeAll("link","descBox");
+            hyperlink.getStyleClass().removeAll("link", "descBox");
 
 
             if (!empty) {
@@ -97,7 +111,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     this.setText(">>>" + messages[0] + "\n");
 
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
-                    setUpJoinServerView(item);
+                    String url = containsInviteUrl(item.getText());
+                    if (url != null) {
+                        setUpJoinServerView(item, url);
+                    }
                 } else {
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
@@ -112,15 +129,27 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
         }
 
+        private String containsInviteUrl(String text) {
+            if (text.contains("https://ac.uniks.de/api/servers/") && text.contains("/invites/")) {
+                String[] words = text.split(" ");
+                for (String word : words) {
+                    if (word.contains("https://ac.uniks.de/api/servers/") && word.contains("/invites/")) {
+                        return word;
+                    }
+                }
+            }
+            return null;
+        }
+
         private boolean isValidURL(String url) {
             try {
                 URL Url = new URL(url);
                 Url.toURI();
 
-                if(SUPPORTED_IMG.contains(url.substring(url.length()-4))) return true;
+                if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
 
                 Document doc = Jsoup.connect(url).get();
-                if(Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null){
+                if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
                     descBox.setText(doc.title());
                     descBox.getStyleClass().add("descBox");
                 }
@@ -132,9 +161,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private boolean setImgGraphic(String url) {
-            if(isValidURL(url)){
-                Image image = new Image(url, 370,Integer.MAX_VALUE,true,false,true);
-                if(!image.isError()){
+            if (isValidURL(url)) {
+                Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
+                if (!image.isError()) {
                     imageView.setImage(image);
                     imageView.setPreserveRatio(true);
                     setGraphic(vBox);
@@ -144,24 +173,24 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             return false;
         }
 
-        private void setUpWebView(String url){
-            if(url == null) return;
-            url = url.replace("/watch?v=","/embed/");
+        private void setUpWebView(String url) {
+            if (url == null) return;
+            url = url.replace("/watch?v=", "/embed/");
             webView.setMaxWidth(400);
             webView.setMaxHeight(270);
             webView.getEngine().load(url);
         }
 
-        private void setUpMedia(S item){
+        private void setUpMedia(S item) {
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
                 vBox.getChildren().addAll(label, imageView, hyperlink);
-                if(descBox.getText() != null){
+                if (descBox.getText() != null) {
                     vBox.getChildren().add(descBox);
                     descBox.setOnAction(this::openHyperLink);
                 }
 
             } else if (item.getText().contains(YT_WATCH) || item.getText().contains(YT_SHORT)) {
-                if(item.getText().contains(YT_SHORT)) setUpWebView(expandUrl(item.getText()));
+                if (item.getText().contains(YT_SHORT)) setUpWebView(expandUrl(item.getText()));
                 else setUpWebView(item.getText());
                 vBox.getChildren().addAll(label, webView, hyperlink);
             }
@@ -172,7 +201,25 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.setOnAction(this::openHyperLink);
         }
 
-        private void setUpJoinServerView(S item) {
+        public String expandUrl(String shortenedUrl) {
+            return YT_PREFIX + shortenedUrl.substring(shortenedUrl.lastIndexOf("/") + 1);
+        }
+
+        private void openHyperLink(ActionEvent actionEvent) {
+            openBrowser(hyperlink.getText());
+        }
+
+        private void openBrowser(String url) {
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().browse(new URI(url));
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+
+        private void setUpJoinServerView(Message item, String url) {
             Label enterServerLabel = new Label();
             enterServerLabel.setText(LanguageResolver.getString("ENTER_SERVER"));
             Label serverIdLabel = new Label();
@@ -181,48 +228,53 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             String serverId = item.getText().substring(indexServer + "servers/".length(), indexInvite);
             serverIdLabel.setText(LanguageResolver.getString("SERVER_ID") + ": " + serverId);
 
-            VBox textVbox = new VBox();
-            textVbox.getChildren().addAll(enterServerLabel, serverIdLabel);
+            VBox serverInfoVBox = new VBox();
+            serverInfoVBox.getChildren().addAll(enterServerLabel, serverIdLabel);
 
             Button button = new Button();
             button.setText(LanguageResolver.getString("JOIN"));
             button.getStyleClass().add("styleButton");
-            //button.setOnAction();
+            button.setOnAction((event -> joinButtonOnClick(event, url)));
 
             Region region = new Region();
-            region.setPrefWidth(30);
+            region.setPrefWidth(15);
 
-            HBox hBox = new HBox();
-            hBox.setAlignment(Pos.CENTER_LEFT);
-            hBox.getChildren().addAll(textVbox, region, button);
+            HBox joinServerHBox = new HBox();
+            joinServerHBox.setAlignment(Pos.CENTER_LEFT);
+            joinServerHBox.getChildren().addAll(serverInfoVBox, region, button);
 
             label.setText("[" + time + "] " + item.getFrom() + ": ");
-            hyperlink.setText(item.getText());
+
+            hyperlink.setText(url);
             hyperlink.getStyleClass().add("link");
-            //hyperlink.setOnAction(this::openHyperLink);
-            vBox.getChildren().addAll(label, hBox, hyperlink);
-            vBox.getStyleClass().add("styleBorder");
+            hyperlink.setOnAction((event -> joinButtonOnClick(event, url)));
+
+            VBox joinServerVBox = new VBox(joinServerHBox, hyperlink);
+            joinServerVBox.getStyleClass().add("styleBorder");
+
+            Label textLabel = new Label(item.getText());
+
+            this.vBox.getChildren().addAll(this.label, joinServerVBox, textLabel);
             setGraphic(this.vBox);
         }
 
-        public String expandUrl(String shortenedUrl){
-            return YT_PREFIX + shortenedUrl.substring(shortenedUrl.lastIndexOf("/")+1);
-        }
+    }
 
-        private void openHyperLink(ActionEvent actionEvent) {
-            openBrowser(hyperlink.getText());
-        }
 
-        private void openBrowser(String url){
-            if(Desktop.isDesktopSupported()){
-                try {
-                    Desktop.getDesktop().browse(new URI(url));
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
+    private void joinButtonOnClick(ActionEvent actionEvent, String inviteLink) {
+        stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
+    }
+
+    public void handleInvitation(Server server, String responseMessage) {
+        if (server != null) {
+            Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+        } else {
+            if (responseMessage.equals("MainScreen")) {
+                Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
             }
         }
     }
+
 }
 
 
