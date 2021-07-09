@@ -29,23 +29,23 @@
             <children>
                 <Button id="btnCancel" mnemonicParsing="false" styleClass="styleButton">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="14.0"/>
                     </font>
                 </Button>
-                <Region prefWidth="102.0" />
+                <Region prefWidth="102.0"/>
                 <Button id="btnLeave" mnemonicParsing="false" styleClass="styleButton">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="14.0"/>
                     </font>
                 </Button>
             </children>
         </HBox>
     </children>
     <styleClass>
-        <String fx:value="styleBorder" />
-        <String fx:value="styleBackgroundHighlight" />
+        <String fx:value="styleBorder"/>
+        <String fx:value="styleBackgroundHighlight"/>
     </styleClass>
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
     </padding>
 </VBox>
