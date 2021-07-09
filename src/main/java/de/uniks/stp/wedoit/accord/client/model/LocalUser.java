@@ -18,6 +18,7 @@ public class LocalUser
    public static final String PROPERTY_USERS = "users";
    public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
    public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
+   public static final String PROPERTY_MUTED = "muted";
    private String password;
    private String name;
    private String userKey;
@@ -29,6 +30,7 @@ public class LocalUser
    private AccordClient accordClient;
    protected PropertyChangeSupport listeners;
    private Channel audioChannel;
+   private boolean muted;
 
    public String getPassword()
    {
@@ -402,6 +404,24 @@ public class LocalUser
       final Channel oldValue = this.audioChannel;
       this.audioChannel = value;
       this.firePropertyChange(PROPERTY_AUDIO_CHANNEL, oldValue, value);
+      return this;
+   }
+
+   public boolean isMuted()
+   {
+      return this.muted;
+   }
+
+   public LocalUser setMuted(boolean value)
+   {
+      if (value == this.muted)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.muted;
+      this.muted = value;
+      this.firePropertyChange(PROPERTY_MUTED, oldValue, value);
       return this;
    }
 

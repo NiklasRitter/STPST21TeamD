@@ -365,7 +365,6 @@ public class CategoryTreeViewController implements Controller {
     public void handleJoinAudioChannel(Channel channel) {
         if(channel.getCategory() != null){
             loadCategoryChannels(channel.getCategory(), getTreeItemCategory(channel.getCategory()));
-            controller.initAudioChannelSubView(channel);
         }
         else{
             System.err.println("Join Problem");
@@ -379,6 +378,10 @@ public class CategoryTreeViewController implements Controller {
         else{
             System.err.println("Leave Problem");
         }
+    }
+
+    public TreeView<Object> getTvServerChannels(){
+        return tvServerChannels;
     }
 
     public ServerScreenController getController() {
