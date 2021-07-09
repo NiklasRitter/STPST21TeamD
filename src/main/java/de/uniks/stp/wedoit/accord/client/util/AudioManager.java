@@ -55,6 +55,12 @@ public class AudioManager {
 
     public void closeAudioConnection() {
         if (audioConnection != null) {
+            LocalUser localUser = this.editor.getLocalUser();
+            if (localUser.isMuted()) {
+                // to make sure, localUser receives data, if alone in chat
+                // otherwise .receive will not end
+                unmuteYourself(localUser);
+            }
             audioConnection.close();
             this.audioConnection = null;
         }

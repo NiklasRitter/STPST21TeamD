@@ -67,6 +67,7 @@ public class AudioReceive extends Thread {
             while (shouldReceive.get()) {
                 this.receiveSocket.receive(receivePacket);
 
+                System.out.println("es läuft weiter");
                 byte[] receivedAudio = new byte[1024];
                 byte[] metaDataByte = new byte[255];
                 System.arraycopy(receivePacket.getData(), 0, metaDataByte, 0, 255);
@@ -87,15 +88,16 @@ public class AudioReceive extends Thread {
                     this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
                 }
             }
+            System.out.println("hab ufgehört");
             for (String name : sourceDataLineMap.keySet()) {
                 SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
                 audioMemberLine.stop();
                 audioMemberLine.flush();
-                audioMemberLine.close();
                 if (audioMemberLine.isOpen()) {
                     audioMemberLine.close();
                 }
             }
+            System.out.println("alle raus!");
         } catch (Exception e) {
             e.printStackTrace();
         }
