@@ -96,14 +96,7 @@ public class MainScreenController implements Controller {
         this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
 
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("MAIN"));
-            }
-        });
+        this.refreshStage();
     }
 
     private void setComponentsText() {
@@ -133,7 +126,7 @@ public class MainScreenController implements Controller {
                 editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 
@@ -268,6 +261,21 @@ public class MainScreenController implements Controller {
                 }
             }
         }
+    }
+
+    /**
+     * Refreshes the stage after closing the option screen,
+     * so that the component texts are displayed in the correct language.
+     */
+    private void refreshStage() {
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                setComponentsText();
+                initTooltips();
+                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("MAIN"));
+            }
+        });
     }
 
 }

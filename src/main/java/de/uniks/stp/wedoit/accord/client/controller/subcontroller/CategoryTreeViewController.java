@@ -1,25 +1,25 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
@@ -106,7 +106,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
-            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 
@@ -126,7 +126,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetChannels(List<Channel> channelList) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
-            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 
@@ -265,6 +265,7 @@ public class CategoryTreeViewController implements Controller {
                     }
                 }
             }
+            controller.resetLbChannelName();
         }
     }
 
@@ -361,12 +362,12 @@ public class CategoryTreeViewController implements Controller {
         return channelMap;
     }
 
-    public void handleJoinAudioChannel(Category category) {
-        if(category != null){
-            loadCategoryChannels(category, getTreeItemCategory(category));
+    public void handleJoinAudioChannel(Channel channel) {
+        if(channel.getCategory() != null){
+            loadCategoryChannels(channel.getCategory(), getTreeItemCategory(channel.getCategory()));
         }
         else{
-            System.out.println("Join Problem");
+            System.err.println("Join Problem");
         }
     }
 
@@ -375,7 +376,15 @@ public class CategoryTreeViewController implements Controller {
             loadCategoryChannels(category, getTreeItemCategory(category));
         }
         else{
-            System.out.println("Leave Problem");
+            System.err.println("Leave Problem");
         }
+    }
+
+    public TreeView<Object> getTvServerChannels(){
+        return tvServerChannels;
+    }
+
+    public ServerScreenController getController() {
+        return controller;
     }
 }

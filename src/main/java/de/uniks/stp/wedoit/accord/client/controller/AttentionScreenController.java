@@ -21,7 +21,6 @@ public class AttentionScreenController implements Controller {
     private final Parent view;
     private final Object objectToDelete;
 
-    private Label lblObjectToDelete;
     private Button btnDiscard;
     private Button btnDelete;
     private Label lblError, lblAreYouSure, lblAttention;
@@ -43,26 +42,28 @@ public class AttentionScreenController implements Controller {
 
     @Override
     public void init() {
-        lblObjectToDelete = (Label) this.view.lookup("#lblObjectToDelete");
         lblError = (Label) this.view.lookup("#lblError");
         lblAttention = (Label) this.view.lookup("#lblAttention");
         lblAreYouSure = (Label) this.view.lookup("#lblAreYouSure");
         btnDiscard = (Button) this.view.lookup("#btnDiscard");
         btnDelete = (Button) this.view.lookup("#btnDelete");
 
+        this.editor.getStageManager().getPopupStage().sizeToScene();
         this.setComponentsText();
 
         this.lblError.setVisible(false);
-        loadCorrectLabelText(objectToDelete);
 
         addActionListener();
+
     }
 
     private void setComponentsText() {
         this.lblAttention.setText(LanguageResolver.getString("ATTENTION"));
-        this.lblAreYouSure.setText(LanguageResolver.getString("ATTENTION_DELETE"));
         this.btnDelete.setText(LanguageResolver.getString("DELETE"));
         this.btnDiscard.setText(LanguageResolver.getString("DISCARD"));
+        loadCorrectLabelText(objectToDelete);
+        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getPopupStage().centerOnScreen();
     }
 
     /**
@@ -87,9 +88,13 @@ public class AttentionScreenController implements Controller {
      * @param objectToDelete object which should deleted
      */
     private void loadCorrectLabelText(Object objectToDelete) {
-        String[] strings = objectToDelete.getClass().toString().split("\\.");
-        String objectName = strings[strings.length - 1];
-        this.lblObjectToDelete.setText(objectName);
+        if (objectToDelete instanceof Server) {
+            this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_SERVER"));
+        } else if (objectToDelete instanceof Channel) {
+            this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_CHANNEL"));
+        } else if (objectToDelete instanceof Category) {
+            this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_CATEGORY"));
+        }
     }
 
 

@@ -71,7 +71,20 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                     }
                 }
                 if(item instanceof User){
-                    this.setText("- " + ((User) item).getName());
+                    User user = (User) item;
+                    this.setText(user.getName());
+                    if(stageManager.getEditor().getLocalUser().getAudioChannel() != null && stageManager.getEditor().getLocalUser().getAudioChannel().equals(user.getAudioChannel())) {
+                        if (user.isMuted()) {
+                            this.setContextMenu(addContextMenuUnMute(user, this));
+                            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound-off-red.png"))));
+                            icon.setFitHeight(13);
+                            icon.setFitWidth(13);
+                            this.setGraphic(icon);
+                        } else {
+                            this.setContextMenu(addContextMenuMute(user, this));
+                            this.setGraphic(null);
+                        }
+                    }
                 }
             } else {
                 this.setText(null);
@@ -79,6 +92,8 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                 this.setGraphic(null);
             }
         }
+
+
     }
 
     private ContextMenu addContextMenuChannel(Channel item) {
@@ -111,6 +126,34 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item, null));
 
         return contextMenu;
+    }
+
+    public ContextMenu addContextMenuMute(User user, TreeCell cell){
+        if(!user.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem menuItem = new MenuItem("- " + LanguageResolver.getString("MUTE"));
+            menuItem.setOnAction((event) -> {
+                this.stageManager.getEditor().getAudioManager().muteUser(user);
+                cell.getTreeView().refresh();
+            });
+            contextMenu.getItems().add(menuItem);
+            return contextMenu;
+        }
+        return null;
+    }
+
+    public ContextMenu addContextMenuUnMute(User user, TreeCell cell){
+        if(!user.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem menuItem = new MenuItem("- " + LanguageResolver.getString("UNMUTE"));
+            menuItem.setOnAction((event) -> {
+                this.stageManager.getEditor().getAudioManager().unmuteUser(user);
+                cell.getTreeView().refresh();
+            });
+            contextMenu.getItems().add(menuItem);
+            return contextMenu;
+        }
+        return null;
     }
 
 }

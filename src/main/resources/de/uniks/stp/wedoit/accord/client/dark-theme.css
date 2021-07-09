@@ -66,6 +66,18 @@
     -fx-background-color: rgba(255, 0, 0, 0.75);
 }
 
+.descBox{
+    -fx-border-color: lightgrey;
+    -fx-padding: 5,100,5,0;
+    -fx-border-radius: 3;
+    -fx-font-size: 12pt;
+    -fx-text-fill: lightblue;
+}
+
+.link{
+    -fx-text-fill: lightblue;
+}
+
 .font_size {
     -fx-font-size: 7pt ;
 }

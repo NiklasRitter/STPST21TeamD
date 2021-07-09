@@ -12,7 +12,7 @@
     <children>
         <HBox>
             <children>
-                <Label id="lblCategoryName" prefWidth="160.0" text="Category Name:">
+                <Label id="lblCategoryName" prefWidth="160.0">
                     <font>
                         <Font name="System Bold" size="14.0"/>
                     </font>
@@ -34,7 +34,7 @@
         <HBox>
             <children>
                 <Button id="btnDeleteCategory" defaultButton="true" mnemonicParsing="false" prefWidth="150.0"
-                        styleClass="styleButton" text="Delete" textFill="RED">
+                        styleClass="styleButton" textFill="RED">
                     <font>
                         <Font name="System Bold" size="14.0"/>
                     </font>
@@ -43,7 +43,7 @@
                     </HBox.margin>
                 </Button>
                 <Button id="btnEditCategory" defaultButton="true" mnemonicParsing="false" prefWidth="150.0"
-                        styleClass="styleButton" text="Save">
+                        styleClass="styleButton">
                     <font>
                         <Font name="System Bold" size="14.0"/>
                     </font>

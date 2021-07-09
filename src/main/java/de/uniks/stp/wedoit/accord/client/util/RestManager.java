@@ -644,8 +644,9 @@ public class RestManager {
     public void joinAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
         restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.getAudioManager().initAudioConnection(channel);
                 editor.getLocalUser().setAudioChannel(channel);
-                controller.handleJoinAudioChannel(channel.getCategory());
+                controller.handleJoinAudioChannel(channel);
             }
             else{
                 controller.handleJoinAudioChannel(null);
@@ -654,6 +655,7 @@ public class RestManager {
     }
 
     public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
+        this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getLocalUser().setAudioChannel(null);
@@ -666,6 +668,7 @@ public class RestManager {
     }
 
     public void leaveAndJoinNewAudioChannel(String userKey, Server server, Category oldCategory, Category newCategory, Channel oldChannel, Channel newChannel, CategoryTreeViewController controller){
+        this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), oldCategory.getId(), oldChannel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getLocalUser().setAudioChannel(null);
@@ -690,5 +693,25 @@ public class RestManager {
      */
     private void deleteMessage(LocalUser localUser, Message message, AttentionScreenController controller) {
         restClient.deleteMessage(localUser.getUserKey(), message, (response) -> controller.handleDeleteMessage(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
+    }
+
+    /**
+     * does a rest request to login a guest user and handles the response.
+     * <p>
+     * Adds the guest user to the data if successful.
+     *
+     * @param loginScreenController  in which the response need handled
+     */
+    public void guestLogin(LoginScreenController loginScreenController) {
+        restClient.guestLogin((response) -> {
+            if (!response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                loginScreenController.handleGuestLogin("", "", false);
+            } else {
+                JsonObject guestLoginAnswer = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(DATA);
+                String userName = guestLoginAnswer.getString(NAME);
+                String password = guestLoginAnswer.getString(PASSWORD);
+                loginScreenController.handleGuestLogin(userName, password, true);
+            }
+        });
     }
 }

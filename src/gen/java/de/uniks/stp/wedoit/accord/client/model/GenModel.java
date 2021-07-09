@@ -37,6 +37,7 @@ public class GenModel implements ClassModelDecorator {
         List<User> gameInvites;
         List<User> gameRequests;
         Channel audioChannel;
+        boolean muted;
 
         @Link("localUser")
         List<User> users;
@@ -52,6 +53,7 @@ public class GenModel implements ClassModelDecorator {
         String name;
         boolean onlineStatus;
         boolean chatRead;
+        boolean muted;
         String gameMove;
 
         String id;

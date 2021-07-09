@@ -3,21 +3,29 @@ package de.uniks.stp.wedoit.accord.client.view;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 import javafx.util.Callback;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
-import javax.imageio.ImageIO;
+import java.awt.*;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
@@ -38,7 +46,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
         private final Label label = new Label();
-
+        private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
+        private final WebView webView = new WebView();
+        private String time;
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -51,27 +61,32 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.setText(null);
             this.getStyleClass().removeAll("font_size", "marked_message");
             this.setGraphic(null);
+            this.vBox.getChildren().clear();
+            webView.getEngine().load(null);
+            descBox.setText(null);
+            hyperlink.setOnAction(null);
+            hyperlink.getStyleClass().removeAll("link", "descBox");
+
 
             if (!empty) {
 
                 // set the width (-20 to eliminate overhang in ListView)
+                prefWidthProperty().bind(param.widthProperty().subtract(20));
                 setMinWidth(param.getWidth() - 20);
                 setMaxWidth(param.getWidth() - 20);
-                setPrefWidth(param.getWidth() - 20);
                 setAlignment(Pos.CENTER_LEFT);
 
                 // allow wrapping
                 setWrapText(true);
 
-                String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
-
+                time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     label.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                    setUpMedia(item);
                     if (!vBox.getChildren().contains(imageView)) {
                         vBox.getChildren().addAll(imageView, label);
                     }
-
 
                 } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
@@ -104,7 +119,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
 
                 if (item instanceof PrivateMessage) {
-                    if (item.getText().startsWith("###game### System")) {
+
+                    if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
                     } else if (item.getText().startsWith(GAME_PREFIX)) {
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
@@ -117,12 +133,20 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
         }
 
-        private boolean isValid(String url) {
+
+        private boolean isValidURL(String url) {
             try {
-                //img check
                 URL Url = new URL(url);
                 Url.toURI();
-                ImageIO.read(Url);
+
+                if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
+
+                Document doc = Jsoup.connect(url).get();
+                if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
+                    descBox.setText(doc.title());
+                    descBox.getStyleClass().add("descBox");
+                }
+
                 return true;
             } catch (Exception e) {
                 return false;
@@ -138,7 +162,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private boolean setImgGraphic(String url) {
-            if (isValid(url)) {
+            if (isValidURL(url)) {
                 Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
                 if (!image.isError()) {
                     imageView.setImage(image);
@@ -148,6 +172,52 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
             }
             return false;
+        }
+
+        private void setUpWebView(String url) {
+            if (url == null) return;
+            url = url.replace("/watch?v=", "/embed/");
+            webView.setMaxWidth(400);
+            webView.setMaxHeight(270);
+            webView.getEngine().load(url);
+        }
+
+        private void setUpMedia(S item) {
+            if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
+                vBox.getChildren().addAll(label, imageView, hyperlink);
+                if (descBox.getText() != null) {
+                    vBox.getChildren().add(descBox);
+                    descBox.setOnAction(this::openHyperLink);
+                }
+
+            } else if (item.getText().contains(YT_WATCH) || item.getText().contains(YT_SHORT)) {
+                if (item.getText().contains(YT_SHORT)) setUpWebView(expandUrl(item.getText()));
+                else setUpWebView(item.getText());
+                vBox.getChildren().addAll(label, webView, hyperlink);
+            }
+
+            label.setText("[" + time + "] " + item.getFrom() + ": ");
+            hyperlink.setText(item.getText());
+            hyperlink.getStyleClass().add("link");
+            hyperlink.setOnAction(this::openHyperLink);
+        }
+
+        public String expandUrl(String shortenedUrl) {
+            return YT_PREFIX + shortenedUrl.substring(shortenedUrl.lastIndexOf("/") + 1);
+        }
+
+        private void openHyperLink(ActionEvent actionEvent) {
+            openBrowser(hyperlink.getText());
+        }
+
+        private void openBrowser(String url) {
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().browse(new URI(url));
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 }

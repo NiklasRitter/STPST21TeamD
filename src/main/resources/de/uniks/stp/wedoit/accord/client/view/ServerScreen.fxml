@@ -34,7 +34,7 @@
                                         </Stop>
                                         <Stop offset="1.0">
                                             <color>
-                                                <Color blue="1.0" green="1.0" red="1.0" />
+                                                <Color red="1.0" green="1.0" blue="1.0" />
                                             </color>
                                         </Stop>
                                     </stops>
@@ -82,9 +82,9 @@
                         <String fx:value="styleBackgroundHighlight" />
                     </styleClass>
                 </VBox>
-                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="150.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="150.0" prefHeight="41.0" prefWidth="150.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lbServerName" prefWidth="200.0" styleClass="styleBorder" text="Server: STP" VBox.vgrow="ALWAYS">
+                        <Label id="lbServerName" prefWidth="200.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <padding>
                                 <Insets left="2.0" />
                             </padding>
@@ -92,12 +92,17 @@
                                 <Font name="System Bold Italic" size="13.0" />
                             </font>
                         </Label>
-                        <TreeView id="tvServerChannels" minWidth="150.0" VBox.vgrow="ALWAYS" />
+                        <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="192.0" prefWidth="150.0" VBox.vgrow="ALWAYS" />
+                  <VBox id="audioChannelSubViewContainer" alignment="CENTER" spacing="10.0">
+                     <children>
+                        <fx:include source="subview/AudioChannelSubView.fxml" />
+                     </children>
+                  </VBox>
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" minWidth="250.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lbChannelName" styleClass="styleBorder" text="select a channel" VBox.vgrow="ALWAYS">
+                        <Label id="lbChannelName" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <font>
                                 <Font name="System Bold Italic" size="13.0" />
                             </font>
@@ -126,7 +131,7 @@
                   </VBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <TextField id="tfInputMessage" promptText="your message" styleClass="styleBorder" HBox.hgrow="ALWAYS" />
+                                <TextField id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS"/>
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />
@@ -145,7 +150,7 @@
                 </VBox>
                 <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lblServerUsers" prefWidth="200.0" styleClass="styleBorder" text="Server users:" VBox.vgrow="ALWAYS">
+                        <Label id="lblServerUsers" prefWidth="200.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <padding>
                                 <Insets left="2.0" />
                             </padding>

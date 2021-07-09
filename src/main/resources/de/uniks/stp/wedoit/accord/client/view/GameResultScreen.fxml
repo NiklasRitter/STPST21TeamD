@@ -4,27 +4,29 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="175.0" prefWidth="250.0" scaleZ="5.0" translateZ="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="175.0"
+      prefWidth="250.0" scaleZ="5.0" translateZ="5.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1">
     <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
         <Label id="lbOutcome" textAlignment="CENTER">
             <font>
-                <Font size="43.0" />
+                <Font size="43.0"/>
             </font>
         </Label>
     </HBox>
     <HBox prefHeight="53.0" prefWidth="200.0">
-        <Region HBox.hgrow="ALWAYS" />
-        <Button id="btnQuit" mnemonicParsing="false" styleClass="styleButton" text="Quit">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button id="btnQuit" mnemonicParsing="false" styleClass="styleButton">
             <font>
-                <Font size="15.0" />
+                <Font size="15.0"/>
             </font>
         </Button>
-        <Region HBox.hgrow="ALWAYS" />
-        <Button id="btnPlayAgain" mnemonicParsing="false" styleClass="styleButton" text="Play Again">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button id="btnPlayAgain" mnemonicParsing="false" styleClass="styleButton">
             <font>
-                <Font size="15.0" />
+                <Font size="15.0"/>
             </font>
         </Button>
-        <Region HBox.hgrow="ALWAYS" />
+        <Region HBox.hgrow="ALWAYS"/>
     </HBox>
 </VBox>

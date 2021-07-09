@@ -52,6 +52,7 @@ public class JoinServerScreenController implements Controller {
         this.errorLabel = (Label) view.lookup("#lblError");
         this.lblEnterInvitLink = (Label) view.lookup("#lblEnterInvitLink");
 
+        this.view.requestFocus();
         this.setComponentsText();
 
         // Add action listeners
@@ -60,7 +61,7 @@ public class JoinServerScreenController implements Controller {
 
     private void setComponentsText() {
         this.lblEnterInvitLink.setText(LanguageResolver.getString("ENTER_INVITATION_LINK"));
-        this.tfInvitationLink.setText(LanguageResolver.getString("INVIT_LINK"));
+        this.tfInvitationLink.setPromptText(LanguageResolver.getString("INVIT_LINK"));
         this.btnJoinServer.setText(LanguageResolver.getString("JOIN"));
     }
 

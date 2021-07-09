@@ -8,36 +8,33 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" styleClass="styleBorder"
-      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
             <children>
                 <VBox alignment="CENTER" maxWidth="75.0" minWidth="75.0" spacing="20.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
-                                prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
+                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
                             <textFill>
                                 <LinearGradient endX="1.0" endY="1.0">
                                     <stops>
                                         <Stop>
                                             <color>
-                                                <Color/>
+                                                <Color />
                                             </color>
                                         </Stop>
                                         <Stop offset="1.0">
                                             <color>
-                                                <Color red="1.0" green="1.0" blue="1.0"/>
+                                                <Color red="1.0" green="1.0" blue="1.0" />
                                             </color>
                                         </Stop>
                                     </stops>
                                 </LinearGradient>
                             </textFill>
                             <graphic>
-                                <ImageView id="btnSetting" fitHeight="20.0" fitWidth="24.0" pickOnBounds="true"
-                                           preserveRatio="true">
+                                <ImageView id="btnSetting" fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@images/options.png"/>
+                                        <Image url="@images/options.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -46,88 +43,82 @@
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@images/home.png"/>
+                                        <Image url="@images/home.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Region VBox.vgrow="ALWAYS"/>
+                        <Region VBox.vgrow="ALWAYS" />
                     </children>
                     <padding>
-                        <Insets top="5.0"/>
+                        <Insets top="5.0" />
                     </padding>
                     <HBox.margin>
-                        <Insets/>
+                        <Insets />
                     </HBox.margin>
                     <styleClass>
-                        <String fx:value="styleBackgroundHighlight"/>
-                        <String fx:value="styleBorder"/>
+                        <String fx:value="styleBackgroundHighlight" />
+                        <String fx:value="styleBorder" />
                     </styleClass>
                 </VBox>
-                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="125.0" styleClass="styleBorder"
-                      HBox.hgrow="ALWAYS">
+                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="125.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lblOnlineUser" minHeight="25.0" prefWidth="200.0" styleClass="styleBorder"
-                               text="Online users:" VBox.vgrow="ALWAYS">
+                        <Label id="lblOnlineUser" minHeight="25.0" prefWidth="200.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <font>
-                                <Font name="System Bold Italic" size="13.0"/>
+                                <Font name="System Bold Italic" size="13.0" />
                             </font>
                             <padding>
-                                <Insets left="2.0"/>
+                                <Insets left="2.0" />
                             </padding>
                         </Label>
-                        <ListView id="lwOnlineUsers" VBox.vgrow="ALWAYS"/>
+                        <ListView id="lwOnlineUsers" VBox.vgrow="ALWAYS" />
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
                         <HBox alignment="TOP_CENTER" prefWidth="200.0">
                             <children>
-                                <Label id="lblSelectedUser" minHeight="25.0" styleClass="styleBorder"
-                                       text="No User selected">
+                                <Label id="lblSelectedUser" minHeight="25.0" styleClass="styleBorder">
                                     <font>
-                                        <Font name="System Bold Italic" size="13.0"/>
+                                        <Font name="System Bold Italic" size="13.0" />
                                     </font>
                                 </Label>
-                                <Button id="btnPlay" mnemonicParsing="false" styleClass="styleButton" text="Play">
+                                <Button id="btnPlay" mnemonicParsing="false" styleClass="styleButton">
                                     <HBox.margin>
-                                        <Insets left="70.0"/>
+                                        <Insets left="70.0" />
                                     </HBox.margin>
                                 </Button>
                             </children>
                         </HBox>
-                        <ListView id="lwPrivateChat" VBox.vgrow="ALWAYS"/>
+                        <ListView id="lwPrivateChat" VBox.vgrow="ALWAYS" />
                         <HBox id="quoteVisible" alignment="CENTER_LEFT">
                             <children>
                                 <Label id="lblQuote">
                                     <font>
-                                        <Font size="10.0"/>
+                                        <Font size="10.0" />
                                     </font>
                                     <HBox.margin>
-                                        <Insets right="5.0"/>
+                                        <Insets right="5.0" />
                                     </HBox.margin>
                                 </Label>
                                 <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
                                     <font>
-                                        <Font size="8.0"/>
+                                        <Font size="8.0" />
                                     </font>
                                 </Button>
                             </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <TextField id="tfEnterPrivateChat" prefHeight="27.0" style="-fx-border-color: #3c3f41;"
-                                           HBox.hgrow="ALWAYS"/>
-                                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false"
-                                        style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
+                                <TextField id="tfEnterPrivateChat" prefHeight="27.0" style="-fx-border-color: #3c3f41;" HBox.hgrow="ALWAYS" />
+                                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
-                                        <Font size="4.0"/>
+                                        <Font size="4.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true"
-                                                   preserveRatio="true">
+                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@images/smiley.png"/>
+                                                <Image url="@images/smiley.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -138,7 +129,7 @@
                 </VBox>
             </children>
             <VBox.margin>
-                <Insets/>
+                <Insets />
             </VBox.margin>
         </HBox>
     </children>

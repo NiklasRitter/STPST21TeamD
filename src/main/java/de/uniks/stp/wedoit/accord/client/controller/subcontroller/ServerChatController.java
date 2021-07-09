@@ -573,6 +573,7 @@ public class ServerChatController implements Controller {
         this.tfInputMessage.clear();
 
         if (message != null && !message.isEmpty() && currentChannel != null) {
+            message = message.trim();
 
             if (!lblQuote.getText().isEmpty()) {
                 JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText()

@@ -85,7 +85,7 @@
                 </VBox>
                 <VBox alignment="TOP_CENTER" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lblYourServers" styleClass="styleBorder" text="Your servers" VBox.vgrow="ALWAYS">
+                        <Label id="lblYourServers" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <font>
                                 <Font name="System Bold Italic" size="13.0"/>
                             </font>

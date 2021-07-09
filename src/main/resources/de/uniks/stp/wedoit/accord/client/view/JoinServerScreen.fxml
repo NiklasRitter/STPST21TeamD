@@ -10,19 +10,19 @@
       prefHeight="199.0" prefWidth="411.0" spacing="10.0" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Label id="lblEnterInvitLink" text="Enter a invitation link:">
+        <Label id="lblEnterInvitLink">
             <font>
                 <Font name="System Bold" size="14.0"/>
             </font>
         </Label>
-        <TextField id="tfInvitationLink" prefHeight="25.0" prefWidth="50.0" promptText="Invitation link"/>
+        <TextField id="tfInvitationLink" prefHeight="25.0" prefWidth="50.0"/>
         <Region prefHeight="37.0" prefWidth="351.0">
             <VBox.margin>
                 <Insets top="5.0"/>
             </VBox.margin>
         </Region>
         <Label id="lblError" textFill="RED"/>
-        <Button id="btnJoinServer" defaultButton="true" mnemonicParsing="false" styleClass="styleButton" text="Join">
+        <Button id="btnJoinServer" defaultButton="true" mnemonicParsing="false" styleClass="styleButton">
             <font>
                 <Font name="System Bold" size="14.0"/>
             </font>
