@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -15,11 +14,7 @@ import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CHOOSINGIMG;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_IMGURL;
 import static de.uniks.stp.wedoit.accord.client.constants.Images.*;
-
-import java.util.Objects;
 
 
 /**
@@ -90,7 +85,7 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
-        if(!allMuted){
+        if (!allMuted) {
             editor.getAudioManager().muteAllUsers(channel.getAudioMembers());
             controller.getTvServerChannels().refresh();
             ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));

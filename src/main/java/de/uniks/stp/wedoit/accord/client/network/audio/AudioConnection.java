@@ -22,7 +22,7 @@ public class AudioConnection {
         this.channel = channel;
     }
 
-    public void startConnection(String url, int port){
+    public void startConnection(String url, int port) {
         try {
             this.audioSocket = new DatagramSocket(port);
             startSendingAudio(url, port);
@@ -40,7 +40,7 @@ public class AudioConnection {
     private void startReceivingAudio() {
         List<User> audioMembers = channel.getAudioMembers();
         ArrayList<String> connectedUser = new ArrayList<>();
-        for (User member: audioMembers) {
+        for (User member : audioMembers) {
             connectedUser.add(member.getName());
         }
         this.receivingThread = new AudioReceive(localUser, audioSocket, connectedUser);
@@ -81,11 +81,11 @@ public class AudioConnection {
         }
     }
 
-    public AudioReceive getAudioReceive(){
+    public AudioReceive getAudioReceive() {
         return receivingThread;
     }
 
-    public AudioSend getAudioSend(){
+    public AudioSend getAudioSend() {
         return sendingThread;
     }
 }

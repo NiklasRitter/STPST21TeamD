@@ -14,30 +14,30 @@ public class AudioManager {
     private final Editor editor;
     private AudioConnection audioConnection;
 
-    public AudioManager(Editor editor){
+    public AudioManager(Editor editor) {
         this.editor = editor;
     }
 
-    public void initAudioConnection(Channel channel){
-        if(audioConnection == null){
+    public void initAudioConnection(Channel channel) {
+        if (audioConnection == null) {
             audioConnection = new AudioConnection(editor.getLocalUser(), channel);
         }
         audioConnection.startConnection("cranberry.uniks.de", 33100);
     }
 
-    public void muteUser(User user){
+    public void muteUser(User user) {
         user.setMuted(true);
         audioConnection.getAudioReceive().muteUser(user.getName());
     }
 
-    public void unmuteUser(User user){
+    public void unmuteUser(User user) {
         user.setMuted(false);
         audioConnection.getAudioReceive().unmuteUser(user.getName());
     }
 
-    public void muteAllUsers(List<User> users){
-        for(User user : users){
-            if(!user.isMuted() && !user.getName().equals(editor.getLocalUser().getName())){
+    public void muteAllUsers(List<User> users) {
+        for (User user : users) {
+            if (!user.isMuted() && !user.getName().equals(editor.getLocalUser().getName())) {
                 muteUser(user);
             }
         }

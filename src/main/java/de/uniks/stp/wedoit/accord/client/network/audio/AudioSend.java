@@ -5,7 +5,10 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.TargetDataLine;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -14,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
 
-public class AudioSend extends Thread{
+public class AudioSend extends Thread {
 
     private final DatagramSocket sendSocket;
 
@@ -68,7 +71,7 @@ public class AudioSend extends Thread{
             line.start();
             InetAddress inetAddress = InetAddress.getByName(address);
 
-            while(shouldSend.get()) {
+            while (shouldSend.get()) {
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
 
@@ -104,12 +107,12 @@ public class AudioSend extends Thread{
         this.shouldSend.set(value);
     }
 
-    public void stopSending(){
+    public void stopSending() {
         this.line.stop();
         this.line.flush();
     }
 
-    public void startSending(){
+    public void startSending() {
         this.line.start();
     }
 }
