@@ -79,18 +79,13 @@ public class AudioSend extends Thread {
                     this.sendSocket.send(datagramPacket);
                 }
             }
-            System.out.println("here");
             if (line.isActive()) {
-                System.out.println("active");
                 line.stop();
                 line.flush();
             }
-            System.out.println("2");
             if (line.isOpen()) {
-                System.out.println("open");
                 line.close();
             }
-            System.out.println("komisch");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -49,7 +49,6 @@ public class AudioConnection {
 
     public void close() {
         stopReceivingAudio();
-        System.out.println("rec durch");
         stopSendingAudio();
         audioSocket.close();
     }
