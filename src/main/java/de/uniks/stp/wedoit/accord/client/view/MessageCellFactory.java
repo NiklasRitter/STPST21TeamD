@@ -82,11 +82,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
-                    label.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                     setUpMedia(item);
-                    if (!vBox.getChildren().contains(imageView)) {
-                        vBox.getChildren().addAll(imageView, label);
-                    }
 
                 } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     setAlignment(Pos.CENTER);
@@ -133,16 +129,23 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
         }
 
+        private boolean containsMarking(String message) {
+            if (message.contains("@" + editor.getLocalUser().getName())) {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
         private boolean isValidURL(String url) {
             try {
                 URL Url = new URL(url);
                 Url.toURI();
 
-                if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
+                if(SUPPORTED_IMG.contains(url.substring(url.length()-4))) return true;
 
                 Document doc = Jsoup.connect(url).get();
-                if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
+                if(Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null){
                     descBox.setText(doc.title());
                     descBox.getStyleClass().add("descBox");
                 }
@@ -153,18 +156,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
         }
 
-        private boolean containsMarking(String message) {
-            if (message.contains("@" + editor.getLocalUser().getName())) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
         private boolean setImgGraphic(String url) {
-            if (isValidURL(url)) {
-                Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
-                if (!image.isError()) {
+            if(isValidURL(url)){
+                Image image = new Image(url, 370,Integer.MAX_VALUE,true,false,true);
+                if(!image.isError()){
                     imageView.setImage(image);
                     imageView.setPreserveRatio(true);
                     setGraphic(vBox);
@@ -174,24 +169,24 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             return false;
         }
 
-        private void setUpWebView(String url) {
-            if (url == null) return;
-            url = url.replace("/watch?v=", "/embed/");
+        private void setUpWebView(String url){
+            if(url == null) return;
+            url = url.replace("/watch?v=","/embed/");
             webView.setMaxWidth(400);
             webView.setMaxHeight(270);
             webView.getEngine().load(url);
         }
 
-        private void setUpMedia(S item) {
+        private void setUpMedia(S item){
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
                 vBox.getChildren().addAll(label, imageView, hyperlink);
-                if (descBox.getText() != null) {
+                if(descBox.getText() != null){
                     vBox.getChildren().add(descBox);
                     descBox.setOnAction(this::openHyperLink);
                 }
 
             } else if (item.getText().contains(YT_WATCH) || item.getText().contains(YT_SHORT)) {
-                if (item.getText().contains(YT_SHORT)) setUpWebView(expandUrl(item.getText()));
+                if(item.getText().contains(YT_SHORT)) setUpWebView(expandUrl(item.getText()));
                 else setUpWebView(item.getText());
                 vBox.getChildren().addAll(label, webView, hyperlink);
             }
@@ -202,16 +197,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.setOnAction(this::openHyperLink);
         }
 
-        public String expandUrl(String shortenedUrl) {
-            return YT_PREFIX + shortenedUrl.substring(shortenedUrl.lastIndexOf("/") + 1);
+        public String expandUrl(String shortenedUrl){
+            return YT_PREFIX + shortenedUrl.substring(shortenedUrl.lastIndexOf("/")+1);
         }
 
         private void openHyperLink(ActionEvent actionEvent) {
             openBrowser(hyperlink.getText());
         }
 
-        private void openBrowser(String url) {
-            if (Desktop.isDesktopSupported()) {
+        private void openBrowser(String url){
+            if(Desktop.isDesktopSupported()){
                 try {
                     Desktop.getDesktop().browse(new URI(url));
                 } catch (Exception e1) {
