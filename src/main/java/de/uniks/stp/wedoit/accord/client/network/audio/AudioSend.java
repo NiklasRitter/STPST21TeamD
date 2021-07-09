@@ -23,16 +23,19 @@ public class AudioSend extends Thread{
 
     private final LocalUser localUser;
     private final Channel channel;
+    private final String address;
+    private final int port;
     AtomicBoolean shouldSend;
     private TargetDataLine line;
 
-    public AudioSend(LocalUser localUser, Channel channel, DatagramSocket sendSocket) {
+    public AudioSend(LocalUser localUser, Channel channel, DatagramSocket sendSocket, String address, int port) {
         this.localUser = localUser;
         this.channel = channel;
         this.sendSocket = sendSocket;
-
         this.shouldSend = new AtomicBoolean();
         this.shouldSend.set(true);
+        this.address = address;
+        this.port = port;
     }
 
     @Override
@@ -66,13 +69,10 @@ public class AudioSend extends Thread{
             System.arraycopy(metaData, 0, readData, 0, 255);
 
             line.start();
-
-            String address = "cranberry.uniks.de";
             InetAddress inetAddress = InetAddress.getByName(address);
 
             while(shouldSend.get()) {
                 line.read(readData, 255, 1024);
-                int port = 33100;
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
 
                 this.sendSocket.send(datagramPacket);

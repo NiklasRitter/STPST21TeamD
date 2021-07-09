@@ -314,7 +314,7 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
@@ -410,5 +410,9 @@ public class ServerScreenController implements Controller {
 
     public VBox getAudioChannelSubViewContainer() {
         return audioChannelSubViewContainer;
+    }
+
+    public void resetLbChannelName(){
+        this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
     }
 }

@@ -22,18 +22,18 @@ public class AudioConnection {
         this.channel = channel;
     }
 
-    public void startConnection(){
+    public void startConnection(String url, int port){
         try {
-            this.audioSocket = new DatagramSocket(33100);
-            startSendingAudio();
+            this.audioSocket = new DatagramSocket(port);
+            startSendingAudio(url, port);
             startReceivingAudio();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void startSendingAudio() {
-        this.sendingThread = new AudioSend(localUser, channel, audioSocket);
+    private void startSendingAudio(String url, int port) {
+        this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port);
         this.sendingThread.start();
     }
 
@@ -48,8 +48,8 @@ public class AudioConnection {
     }
 
     public void close() {
-        stopSendingAudio();
         stopReceivingAudio();
+        stopSendingAudio();
         audioSocket.close();
     }
 

@@ -102,8 +102,8 @@ public class PreferenceManager {
     public String loadPassword() {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-
-            return preferences.get(PASSWORD, "");
+            String encrypted = preferences.get(PASSWORD, "");
+            return stageManager.getEditor().decryptData(encrypted);
         } catch (Exception e) {
             System.err.println("Error while loading password:");
             e.printStackTrace();
@@ -114,19 +114,28 @@ public class PreferenceManager {
     /**
      * Saves the login preference to the Registry.
      *
-     * @param password The value of the darkmode preference.
+     * @param password The value of the password preference.
      */
     public void savePassword(String password) {
         if (password != null) {
             try {
-                Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-
-                preferences.put(PASSWORD, password);
+                String encrypted = stageManager.getEditor().encrypt(password);
+                saveEncryptedPassword(encrypted);
             } catch (Exception e) {
                 System.err.println("Error while saving password:");
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Saves the login preference to the Registry.
+     *
+     * @param encrypted The value of the encrypted password.
+     */
+    public void saveEncryptedPassword(String encrypted) {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        preferences.put(PASSWORD, encrypted);
     }
 
     /**

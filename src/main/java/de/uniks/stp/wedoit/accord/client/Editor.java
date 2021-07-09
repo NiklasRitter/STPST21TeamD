@@ -8,7 +8,19 @@ import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.AlgorithmParameters;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -287,7 +299,7 @@ public class Editor {
         if (!success) {
             System.err.println("Error while logging out");
         }
-        Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+        Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
     }
 
     /**
@@ -407,7 +419,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null);
+            stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
             stageManager.getStage().show();
         }
     }
@@ -419,7 +431,7 @@ public class Editor {
         if (success) {
             Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         } else {
-            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
         Platform.runLater(() -> stageManager.getStage().show());
     }
@@ -467,6 +479,81 @@ public class Editor {
             }
         }
         return null;
+    }
+
+    /**
+     * Creates encryption key based on username of the pc and uses InitializationVector as salt
+     *
+     * @return the created Key
+     */
+    public Key createEncryptionKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+        PBEKeySpec keySpec = new PBEKeySpec(System.getProperty("user.name").toCharArray(),
+                stageManager.getResourceManager().getOrCreateInitializationVector().getBytes(StandardCharsets.UTF_8),
+                65536, 256);
+        SecretKey key = keyFactory.generateSecret(keySpec);
+        return new SecretKeySpec(key.getEncoded(), "AES");
+    }
+
+    /**
+     * encrypts the given data
+     *
+     * @param data given data that has to be encrypted
+     * @return encrypted version of data
+     */
+    public String encrypt(String data) throws Exception {
+        Cipher pbeCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        Key key = createEncryptionKey();
+        pbeCipher.init(Cipher.ENCRYPT_MODE, key);
+        AlgorithmParameters parameters = pbeCipher.getParameters();
+        IvParameterSpec ivParameterSpec = parameters.getParameterSpec(IvParameterSpec.class);
+        byte[] cryptoText = pbeCipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        byte[] iv = ivParameterSpec.getIV();
+        return base64Encode(iv) + ":" + base64Encode(cryptoText);
+    }
+
+    /**
+     * decrypts the given data or encrypts it if its still plain text
+     *
+     * @param data given data that has to be decrypted
+     */
+    public String decryptData(String data) throws Exception {
+        if (data.contains(":")) {
+            String iv = data.split(":")[0];
+            String property = data.split(":")[1];
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            Key key = createEncryptionKey();
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(base64Decode(iv)));
+            return new String(cipher.doFinal(base64Decode(property)), StandardCharsets.UTF_8);
+        } else {
+            /*
+            this case only appears when starting the application the first time with the new encryption system because
+            then the password is still saved in plain text and there will be no ":" which would lead to an error
+             */
+            String encrypted = encrypt(data);
+            stageManager.getPrefManager().saveEncryptedPassword(encrypted);
+            return data;
+        }
+    }
+
+    /**
+     * used to encode the given bytes
+     *
+     * @param bytes given bytes that has to be encoded
+     * @return encoded bytes as string
+     */
+    private String base64Encode(byte[] bytes) {
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    /**
+     * used to decode the given string
+     *
+     * @param property given string that has to be decoded
+     * @return decoded property as bytes
+     */
+    private static byte[] base64Decode(String property) {
+        return Base64.getDecoder().decode(property);
     }
 
 

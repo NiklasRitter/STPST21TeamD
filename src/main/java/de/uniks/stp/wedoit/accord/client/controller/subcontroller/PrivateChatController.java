@@ -288,6 +288,7 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.clear();
 
         if (message != null && !message.isEmpty() && currentChat != null) {
+            message = message.trim();
             JsonObject jsonMsg;
 
             if (!lblQuote.getText().isEmpty()) {

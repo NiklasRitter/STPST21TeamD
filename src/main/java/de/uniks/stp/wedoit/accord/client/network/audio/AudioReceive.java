@@ -15,7 +15,6 @@ import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
 public class AudioReceive extends Thread{
 
     private final DatagramSocket receiveSocket;
-
     private final LocalUser localUser;
     private final Map<String, SourceDataLine> sourceDataLineMap;
     private final ArrayList<String> connectedUser;
@@ -105,8 +104,10 @@ public class AudioReceive extends Thread{
     }
 
     public void muteUser(String username){
-        sourceDataLineMap.get(username).stop();
-        sourceDataLineMap.get(username).flush();
+        if(sourceDataLineMap.containsKey(username)){
+            sourceDataLineMap.get(username).stop();
+            sourceDataLineMap.get(username).flush();
+        }
     }
 
     public void unmuteUser(String username){

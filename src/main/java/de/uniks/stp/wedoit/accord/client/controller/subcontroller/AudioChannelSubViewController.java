@@ -19,6 +19,8 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CHOOSINGIMG;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_IMGURL;
 import static de.uniks.stp.wedoit.accord.client.constants.Images.*;
 
+import java.util.Objects;
+
 
 /**
  * SubController for the member list of the Edit- and CreateChannelScreen
@@ -27,9 +29,10 @@ public class AudioChannelSubViewController implements Controller {
 
     private final LocalUser localUser;
     private final Parent view;
+    private final Editor editor;
     private final CategoryTreeViewController controller;
     private final Channel channel;
-    private final Editor editor;
+    private boolean allMuted;
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
@@ -87,7 +90,15 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
-
+        if(!allMuted){
+            editor.getAudioManager().muteAllUsers(channel.getAudioMembers());
+            controller.getTvServerChannels().refresh();
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            btnMuteAll.setGraphic(icon);
+            allMuted = true;
+        }
     }
 
     private void btnLeaveOnClick(ActionEvent actionEvent) {

@@ -6,18 +6,22 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
 
+import java.util.List;
+
 public class AudioManager {
 
     private final Editor editor;
-    AudioConnection audioConnection;
+    private AudioConnection audioConnection;
 
     public AudioManager(Editor editor){
         this.editor = editor;
     }
 
     public void initAudioConnection(Channel channel){
-        audioConnection = new AudioConnection(editor.getLocalUser(), channel);
-        audioConnection.startConnection();
+        if(audioConnection == null){
+            audioConnection = new AudioConnection(editor.getLocalUser(), channel);
+        }
+        audioConnection.startConnection("cranberry.uniks.de", 33100);
     }
 
     public void muteUser(User user){
@@ -28,6 +32,14 @@ public class AudioManager {
     public void unmuteUser(User user){
         user.setMuted(false);
         audioConnection.getAudioReceive().unmuteUser(user.getName());
+    }
+
+    public void muteAllUsers(List<User> users){
+        for(User user : users){
+            if(!user.isMuted() && !user.getName().equals(editor.getLocalUser().getName())){
+                muteUser(user);
+            }
+        }
     }
 
     public void muteYourself(LocalUser yourself) {
@@ -46,4 +58,13 @@ public class AudioManager {
             this.audioConnection = null;
         }
     }
+
+    public AudioConnection getAudioConnection() {
+        return audioConnection;
+    }
+
+    public void setAudioConnection(AudioConnection audioConnection) {
+        this.audioConnection = audioConnection;
+    }
+
 }
