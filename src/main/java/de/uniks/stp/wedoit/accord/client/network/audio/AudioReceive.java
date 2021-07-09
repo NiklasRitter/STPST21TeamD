@@ -59,9 +59,8 @@ public class AudioReceive extends Thread{
                 }
             }
 
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             while(shouldReceive.get()){
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-
                 this.receiveSocket.receive(receivePacket);
 
                 byte[] receivedAudio = new byte[1024];
@@ -80,7 +79,6 @@ public class AudioReceive extends Thread{
 
                     sourceDataLineMap.put(audioSender, membersSourceDataLine);
                 }
-
                 if (!audioSender.equals(localUser.getName())) {
                     this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
                 }

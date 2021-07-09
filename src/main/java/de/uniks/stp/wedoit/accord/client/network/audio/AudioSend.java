@@ -75,7 +75,6 @@ public class AudioSend extends Thread{
                 if (line.isActive()) {
                     this.sendSocket.send(datagramPacket);
                 }
-
             }
             if (line.isActive()) {
                 line.stop();
@@ -108,19 +107,9 @@ public class AudioSend extends Thread{
     public void stopSending(){
         this.line.stop();
         this.line.flush();
-
-//        BooleanControl bc = (BooleanControl) line.getControl(BooleanControl.Type.MUTE);
-//        if (bc != null) {
-//            bc.setValue(true); // true to mute the line, false to unmute
-//        }
     }
 
     public void startSending(){
-//        BooleanControl bc = (BooleanControl) line.getControl(BooleanControl.Type.MUTE);
-//        if (bc != null) {
-//            bc.setValue(false); // true to mute the line, false to unmute
-//        }
-
         this.line.start();
     }
 }
