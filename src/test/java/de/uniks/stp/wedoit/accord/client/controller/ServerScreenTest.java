@@ -571,6 +571,7 @@ public class ServerScreenTest extends ApplicationTest {
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        TextField tfInputMessage = lookup("#tfInputMessage").query();
 
         WaitForAsyncUtils.waitForFxEvents();
         tvServerChannels.getSelectionModel().select(1);
@@ -594,8 +595,7 @@ public class ServerScreenTest extends ApplicationTest {
         //send message
         ((TextField) lookup("#tfInputMessage").query()).setText(((TextField) lookup("#tfInputMessage").query()).getText() + "Test Message");
         clickOn("#tfInputMessage");
-        
-        //TODO add Marking Test here
+
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message" + emoji.getText());
@@ -914,6 +914,7 @@ public class ServerScreenTest extends ApplicationTest {
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        TextField tfInputMessage = lookup("#tfInputMessage").query();
 
         WaitForAsyncUtils.waitForFxEvents();
         tvServerChannels.getSelectionModel().select(1);
@@ -971,6 +972,18 @@ public class ServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lvTextChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
         Assert.assertEquals(lvTextChat.getItems().get(2).getText(), "quote");
+
+        lvTextChat.getSelectionModel().select(1);
+        rightClickOn(lvTextChat);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("- copy");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#tfInputMessage");
+        press(KeyCode.PASTE);
+
+        Assert.assertEquals(tfInputMessage.getText(), lvTextChat.getItems().get(1).getText());
 
     }
 

@@ -357,6 +357,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         int lwNewestItem = lwPrivateChat.getItems().size() -1;
+
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
         Assert.assertEquals("Test Message" + emoji.getText(), lwPrivateChat.getItems().get(lwNewestItem).getText());
@@ -526,9 +527,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         wsSystemCallback.handleMessage(webSocketJson);
     }
 
-
-
-
     @Test
     public void testQuote() {
         //init user list and select first user
@@ -603,8 +601,23 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         lwPrivateChat.getSelectionModel().select(lwNewestItem);
         //clickOn(lwPrivateChat);
         Assert.assertEquals(lwPrivateChat.getSelectionModel().getSelectedItem(), lwPrivateChat.getItems().get(lwNewestItem));
-    }
 
+        //TODO
+        /*TextField tfEnterPrivateChat = lookup("#tfEnterPrivateChat").query();
+
+        lwPrivateChat.getSelectionModel().select(1);
+        rightClickOn(lwPrivateChat);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#copyMenu");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#tfInputMessage");
+        press(KeyCode.PASTE);
+
+        Assert.assertEquals(tfEnterPrivateChat.getText(), lwPrivateChat.getItems().get(1).getText());*/
+
+    }
 
     public JsonObject getOnlineUsers() {
         return Json.createObjectBuilder()

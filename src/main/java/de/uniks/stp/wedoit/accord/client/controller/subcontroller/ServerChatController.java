@@ -255,14 +255,24 @@ public class ServerChatController implements Controller {
             if (!(correspondingAt == null)) {
                 String firstPart = currentText.substring(0, correspondingAt);
                 String secondPart = currentText.substring(caret);
+
                 tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
+
                 activeAt.setEnd(activeAt.getStart() + selectedUser.getName().length());
+
                 caret = activeAt.getEnd();
                 tfInputMessage.positionCaret(caret);
                 activeAt.setComplete(true);
                 removeSelectionMenu();
-                //tfInputMessage.requestFocus();
-                //tfInputMessage.positionCaret(caret + 1);
+
+                for (AtPositions atToShift: atPositions) {
+                    if (atToShift.getStart() > activeAt.getEnd()) {
+                        for (int i = 0; i < selectedUser.getName().length() + 1 - (caret - correspondingAt); i++) {
+                            atToShift.shiftRight();
+                            System.out.println("shift");
+                        }
+                    }
+                }
             }
         }
     }
@@ -451,13 +461,16 @@ public class ServerChatController implements Controller {
      */
     public void addLocalUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
+        MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
         MenuItem updateMessage = new MenuItem("- " + LanguageResolver.getString("UPDATE_MESSAGE_CONTEXT"));
         MenuItem deleteMessage = new MenuItem("- " + LanguageResolver.getString("DELETE_MESSAGE"));
         localUserMessageContextMenu = new ContextMenu();
         localUserMessageContextMenu.setId("localUserMessageContextMenu");
+        localUserMessageContextMenu.getItems().add(copy);
         localUserMessageContextMenu.getItems().add(quote);
         localUserMessageContextMenu.getItems().add(updateMessage);
         localUserMessageContextMenu.getItems().add(deleteMessage);
+        copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         updateMessage.setOnAction((event) -> handleContextMenuClicked(UPDATE, lvTextChat.getSelectionModel().getSelectedItem()));
         deleteMessage.setOnAction((event) -> handleContextMenuClicked(DELETE, lvTextChat.getSelectionModel().getSelectedItem()));
@@ -467,11 +480,15 @@ public class ServerChatController implements Controller {
      * adds a context menu for a message
      */
     public void addUserMessageContextMenu() {
-        MenuItem quote = new MenuItem("- quote");
+        MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
+        MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
         userMessageContextMenu = new ContextMenu();
         userMessageContextMenu.setId("userMessageContextMenu");
+        userMessageContextMenu.getItems().add(copy);
+        copy.setId("copyMenu");
         userMessageContextMenu.getItems().add(quote);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
+        copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -504,6 +521,9 @@ public class ServerChatController implements Controller {
                 this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"),
                         "AttentionScreen", ATTENTION_SCREEN_CONTROLLER,
                         false, message, null);
+            }
+            if (menu.equals(COPY)) {
+                editor.copyToSystemClipBoard(message.getText());
             }
         }
     }

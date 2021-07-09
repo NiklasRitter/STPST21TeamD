@@ -51,6 +51,7 @@ public class PrivateChatController implements Controller {
     private final PropertyChangeListener chatListener = this::newMessage;
     private MenuItem quote;
     private User selectedUser;
+    private MenuItem copy;
 
     /**
      * Create a new Controller
@@ -112,6 +113,8 @@ public class PrivateChatController implements Controller {
         this.currentChat = null;
         messageContextMenu = null;
         btnCancelQuote.setOnAction(null);
+        quote.setOnAction(null);
+        copy.setOnAction(null);
     }
 
     /**
@@ -119,10 +122,13 @@ public class PrivateChatController implements Controller {
      */
     public void addMessageContextMenu() {
         quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
+        copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
+        messageContextMenu.getItems().add(copy);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lwPrivateChat.getSelectionModel().getSelectedItem()));
+        copy.setOnAction((event) -> handleContextMenuClicked(COPY, lwPrivateChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -224,6 +230,9 @@ public class PrivateChatController implements Controller {
                 lblQuote.setAccessibleHelp(message.getTimestamp() + "");
                 quoteVisible.getChildren().add(lblQuote);
                 quoteVisible.getChildren().add(btnCancelQuote);
+            }
+            if (menu.equals(COPY)){
+                editor.copyToSystemClipBoard(message.getText());
             }
         }
     }
