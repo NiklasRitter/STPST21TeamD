@@ -103,7 +103,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null);
+        this.stageManager.initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
         emojiPickerStage = stageManager.getEmojiPickerStage();
