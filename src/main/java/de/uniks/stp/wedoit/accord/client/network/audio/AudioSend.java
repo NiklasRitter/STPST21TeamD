@@ -5,10 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -104,11 +101,21 @@ public class AudioSend extends Thread{
     }
 
     public void stopSending(){
-        this.line.stop();
-        this.line.flush();
+        // this.line.stop();
+        // this.line.flush();
+
+        BooleanControl bc = (BooleanControl) line.getControl(BooleanControl.Type.MUTE);
+        if (bc != null) {
+            bc.setValue(true); // true to mute the line, false to unmute
+        }
     }
 
     public void startSending(){
-        this.line.start();
+        BooleanControl bc = (BooleanControl) line.getControl(BooleanControl.Type.MUTE);
+        if (bc != null) {
+            bc.setValue(false); // true to mute the line, false to unmute
+        }
+        
+        // this.line.start();
     }
 }

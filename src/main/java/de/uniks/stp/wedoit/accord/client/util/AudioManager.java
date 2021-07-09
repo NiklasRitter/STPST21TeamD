@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
 
+import javax.sound.sampled.BooleanControl;
 import java.util.List;
 
 public class AudioManager {
