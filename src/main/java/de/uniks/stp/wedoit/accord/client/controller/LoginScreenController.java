@@ -290,9 +290,9 @@ public class LoginScreenController implements Controller {
      */
     private void btnGuestLoginOnClick(ActionEvent actionEvent) {
         editor.getRestManager().guestLogin(this);
-        errorLabelText = "";
-        refreshErrLabelText(errorLabelText);
         Platform.runLater(() -> {
+            errorLabelText = "";
+            refreshErrLabelText(errorLabelText);
             tfUserName.getStyleClass().remove("error");
             pwUserPw.getStyleClass().remove("error");
         });
