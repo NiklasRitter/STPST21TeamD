@@ -260,19 +260,22 @@ public class ServerChatController implements Controller {
 
                 activeAt.setEnd(activeAt.getStart() + selectedUser.getName().length());
 
-                caret = activeAt.getEnd();
-                tfInputMessage.positionCaret(caret);
+
                 activeAt.setComplete(true);
                 removeSelectionMenu();
 
+
                 for (AtPositions atToShift: atPositions) {
                     if (atToShift.getStart() > activeAt.getEnd()) {
+                        System.out.println(selectedUser.getName().length() + 1 - (caret - correspondingAt));
                         for (int i = 0; i < selectedUser.getName().length() + 1 - (caret - correspondingAt); i++) {
                             atToShift.shiftRight();
-                            System.out.println("shift");
                         }
                     }
                 }
+                caret = activeAt.getEnd();
+                tfInputMessage.positionCaret(caret);
+
             }
         }
     }
@@ -282,7 +285,7 @@ public class ServerChatController implements Controller {
 
 
         for (AtPositions atToShift: atPositions) {
-            System.out.println("Start: "+atToShift.getStart() + "   " + atToShift.getEnd());
+            //System.out.println("Start: "+atToShift.getStart() + "   " + atToShift.getEnd());
         }
 
         String currentText = tfInputMessage.getText();
@@ -309,7 +312,7 @@ public class ServerChatController implements Controller {
             } else if (currentCaret <= at.getEnd() && at.isComplete()) {
 
                 String start = currentText.substring(0, at.getStart());
-                System.out.println(start);
+                //System.out.println(start);
                 
                 String end;
                 if (isBackspace) {
@@ -322,14 +325,12 @@ public class ServerChatController implements Controller {
                 atToDelete = at;
 
                 for (AtPositions atToShift: atPositions) {
-                    System.out.println("Vorher: "+atToShift.getStart() + "   " + atToShift.getEnd());
                     if (atToShift != atToDelete && atToShift.getStart() > atToDelete.getEnd()) {
                         for (int i = 0; i < atToDelete.getLength(); i++) {
                             atToShift.shiftLeft();
                         }
 
                     }
-                    System.out.println("Nachher: "+atToShift.getStart() + "   " + atToShift.getEnd());
                 }
 
             }
@@ -485,7 +486,6 @@ public class ServerChatController implements Controller {
         userMessageContextMenu = new ContextMenu();
         userMessageContextMenu.setId("userMessageContextMenu");
         userMessageContextMenu.getItems().add(copy);
-        copy.setId("copyMenu");
         userMessageContextMenu.getItems().add(quote);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));

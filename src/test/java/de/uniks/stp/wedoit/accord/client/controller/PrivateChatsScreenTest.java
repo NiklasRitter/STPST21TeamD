@@ -79,14 +79,14 @@ public class PrivateChatsScreenTest extends ApplicationTest {
     private Editor editor;
     private Options oldOptions;
 
-    @BeforeClass
+  /* @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
         System.setProperty("testfx.headless", "true");
         System.setProperty("prism.order", "sw");
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
-    }
+    }*/
 
     @Override
     public void start(Stage stage) {
@@ -555,11 +555,12 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Bounds lwBounds = (lookup("#lwPrivateChat").query()).localToScreen((lookup("#lwPrivateChat").query().getBoundsInLocal()));
-        rightClickOn(lwBounds.getMinX()+40,lwBounds.getMinY()+40);
-        Bounds boundsInLocal = (lookup("#messageContextMenu").query()).localToScreen((lookup("#messageContextMenu").query().getBoundsInLocal()));
+
+        lwPrivateChat.getSelectionModel().select(lwPrivateChat.getItems().size() -1);
+        rightClickOn("#lwPrivateChat");
+
         PrivateMessage selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
-        clickOn(boundsInLocal.getCenterX(), boundsInLocal.getCenterY());
+        clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
         Label lblQuote = (Label) lookup("#lblQuote").query();
         Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
@@ -571,11 +572,11 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(lblQuote.getText(), "");
 
 
-        lwPrivateChat.getSelectionModel().select(0);
-        rightClickOn(lwBounds.getMinX()+40,lwBounds.getMinY()+40);
-        boundsInLocal = (lookup("#messageContextMenu").query()).localToScreen((lookup("#messageContextMenu").query().getBoundsInLocal()));
+        lwPrivateChat.getSelectionModel().select(lwPrivateChat.getItems().size() -1);
+        rightClickOn("#lwPrivateChat");
+
         selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
-        clickOn(boundsInLocal.getCenterX(), boundsInLocal.getCenterY());
+        clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
         lblQuote = (Label) lookup("#lblQuote").query();
 
@@ -602,20 +603,22 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         //clickOn(lwPrivateChat);
         Assert.assertEquals(lwPrivateChat.getSelectionModel().getSelectedItem(), lwPrivateChat.getItems().get(lwNewestItem));
 
-        //TODO
-        /*TextField tfEnterPrivateChat = lookup("#tfEnterPrivateChat").query();
 
-        lwPrivateChat.getSelectionModel().select(1);
+        TextField tfEnterPrivateChat = lookup("#tfEnterPrivateChat").query();
+
+        lwNewestItem = lwPrivateChat.getItems().size() -1;
+
+        lwPrivateChat.getSelectionModel().select(lwNewestItem);
         rightClickOn(lwPrivateChat);
         WaitForAsyncUtils.waitForFxEvents();
 
-        clickOn("#copyMenu");
+        clickOn("- copy");
         WaitForAsyncUtils.waitForFxEvents();
 
-        clickOn("#tfInputMessage");
+        clickOn("#tfEnterPrivateChat");
         press(KeyCode.PASTE);
 
-        Assert.assertEquals(tfEnterPrivateChat.getText(), lwPrivateChat.getItems().get(1).getText());*/
+        Assert.assertEquals(tfEnterPrivateChat.getText(), lwPrivateChat.getItems().get(lwNewestItem).getText());
 
     }
 
