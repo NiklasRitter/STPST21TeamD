@@ -26,6 +26,7 @@ public class AudioSend extends Thread{
     private final String address;
     private final int port;
     AtomicBoolean shouldSend;
+    private TargetDataLine line;
 
     public AudioSend(LocalUser localUser, Channel channel, DatagramSocket sendSocket, String address, int port) {
         this.localUser = localUser;
@@ -62,7 +63,7 @@ public class AudioSend extends Thread{
         }
 
         try {
-            TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
+            line = (TargetDataLine) AudioSystem.getLine(info);
             line.open(audioFormat);
             byte[] readData = new byte[1279];
             System.arraycopy(metaData, 0, readData, 0, 255);
@@ -76,7 +77,11 @@ public class AudioSend extends Thread{
 
                 this.sendSocket.send(datagramPacket);
             }
-            line.close();
+            line.stop();
+            line.flush();
+            if (line.isOpen()) {
+                line.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,5 +101,14 @@ public class AudioSend extends Thread{
 
     public void setShouldSend(boolean value) {
         this.shouldSend.set(value);
+    }
+
+    public void stopSending(){
+        this.line.stop();
+        this.line.flush();
+    }
+
+    public void startSending(){
+        this.line.start();
     }
 }

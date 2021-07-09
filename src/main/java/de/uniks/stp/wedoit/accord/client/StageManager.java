@@ -354,6 +354,7 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            this.editor.getAudioManager().closeAudioConnection();
             if (systemTrayController != null) systemTrayController.stop();
             editor.getWebSocketManager().stop();
             LocalUser localUser = model.getLocalUser();
