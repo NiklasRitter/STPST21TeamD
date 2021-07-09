@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
+import com.sun.glass.ui.SystemClipboard;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -16,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -79,14 +81,14 @@ public class PrivateChatsScreenTest extends ApplicationTest {
     private Editor editor;
     private Options oldOptions;
 
-  /* @BeforeClass
+    @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
         System.setProperty("testfx.headless", "true");
         System.setProperty("prism.order", "sw");
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
-    }*/
+    }
 
     @Override
     public void start(Stage stage) {
@@ -606,9 +608,10 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         TextField tfEnterPrivateChat = lookup("#tfEnterPrivateChat").query();
 
-        lwNewestItem = lwPrivateChat.getItems().size() -1;
-
+        lwNewestItem = lwPrivateChat.getItems().size() - 7;
         lwPrivateChat.getSelectionModel().select(lwNewestItem);
+        String copiedText = lwPrivateChat.getSelectionModel().getSelectedItem().getText();
+
         rightClickOn(lwPrivateChat);
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -617,9 +620,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         clickOn("#tfEnterPrivateChat");
         press(KeyCode.PASTE);
-
-        Assert.assertEquals(tfEnterPrivateChat.getText(), lwPrivateChat.getItems().get(lwNewestItem).getText());
-
+        System.out.println(copiedText);
+        Assert.assertEquals(tfEnterPrivateChat.getText(), copiedText);
     }
 
     public JsonObject getOnlineUsers() {
