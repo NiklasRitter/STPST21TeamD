@@ -2,6 +2,9 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Hyperlink;
@@ -63,9 +66,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             if (!empty) {
 
                 // set the width (-20 to eliminate overhang in ListView)
+                prefWidthProperty().bind(param.widthProperty().subtract(20));
                 setMinWidth(param.getWidth() - 20);
                 setMaxWidth(param.getWidth() - 20);
-                setPrefWidth(param.getWidth() - 20);
                 setAlignment(Pos.CENTER_LEFT);
 
                 // allow wrapping
