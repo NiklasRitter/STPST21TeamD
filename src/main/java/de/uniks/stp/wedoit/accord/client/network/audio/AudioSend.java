@@ -72,10 +72,15 @@ public class AudioSend extends Thread{
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
 
-                this.sendSocket.send(datagramPacket);
+                if (line.isActive()) {
+                    this.sendSocket.send(datagramPacket);
+                }
+
             }
-            line.stop();
-            line.flush();
+            if (line.isActive()) {
+                line.stop();
+                line.flush();
+            }
             if (line.isOpen()) {
                 line.close();
             }
@@ -101,21 +106,21 @@ public class AudioSend extends Thread{
     }
 
     public void stopSending(){
-        // this.line.stop();
-        // this.line.flush();
+        this.line.stop();
+        this.line.flush();
 
-        BooleanControl bc = (BooleanControl) line.getControl(BooleanControl.Type.MUTE);
-        if (bc != null) {
-            bc.setValue(true); // true to mute the line, false to unmute
-        }
+//        BooleanControl bc = (BooleanControl) line.getControl(BooleanControl.Type.MUTE);
+//        if (bc != null) {
+//            bc.setValue(true); // true to mute the line, false to unmute
+//        }
     }
 
     public void startSending(){
-        BooleanControl bc = (BooleanControl) line.getControl(BooleanControl.Type.MUTE);
-        if (bc != null) {
-            bc.setValue(false); // true to mute the line, false to unmute
-        }
-        
-        // this.line.start();
+//        BooleanControl bc = (BooleanControl) line.getControl(BooleanControl.Type.MUTE);
+//        if (bc != null) {
+//            bc.setValue(false); // true to mute the line, false to unmute
+//        }
+
+        this.line.start();
     }
 }
