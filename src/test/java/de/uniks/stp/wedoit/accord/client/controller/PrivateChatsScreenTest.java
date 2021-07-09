@@ -424,8 +424,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(lwPrivateChat.getChildrenUnmodifiable().size(),1);
-
-        clickOn("https://youtu.be/NxvQPzrg2Wg");
     }
 
     @Test
