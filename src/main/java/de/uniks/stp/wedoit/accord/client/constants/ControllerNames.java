@@ -22,6 +22,7 @@ public class ControllerNames {
     public static final String EDIT_SERVER_SCREEN_CONTROLLER = "editServerScreenController";
     public static final String ATTENTION_SCREEN_CONTROLLER = "attentionScreenController";
     public static final String ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER = "attentionLeaveServerController";
+    public static final String ATTENTION_LEAVE_SERVER_AS_OWNER_SCREEN_CONTROLLER = "attentionLeaveServerAsOwnerController";
     public static final String UPDATE_MESSAGE_SCREEN_CONTROLLER = "updateMessageScreenController";
     public static final String PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER = "privateMessageServerScreenController";
 }
