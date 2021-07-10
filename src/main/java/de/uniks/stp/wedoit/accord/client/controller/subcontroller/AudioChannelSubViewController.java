@@ -14,6 +14,8 @@ import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.Images.*;
+
 
 /**
  * SubController for the member list of the Edit- and CreateChannelScreen
@@ -52,6 +54,13 @@ public class AudioChannelSubViewController implements Controller {
 
         lblAudioChannelName.setText(channel.getName());
         lblUserName.setText(localUser.getName());
+
+        this.imgUnMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_MICRO))));
+        this.imgUnMuteYourself.setFitHeight(25);
+        this.imgUnMuteYourself.setFitWidth(25);
+        this.imgMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_NOMICRO))));
+        this.imgMuteYourself.setFitHeight(25);
+        this.imgMuteYourself.setFitWidth(25);
 
         this.btnMuteYou.setOnAction(this::btnMuteYouOnClick);
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
