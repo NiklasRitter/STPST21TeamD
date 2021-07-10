@@ -9,10 +9,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -250,6 +248,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             VBox joinServerVBox = new VBox(joinServerHBox, hyperlink);
             joinServerVBox.getStyleClass().add("styleBorder");
+            joinServerVBox.setMaxWidth(530);
 
             Label textLabel = new Label(item.getText());
 
