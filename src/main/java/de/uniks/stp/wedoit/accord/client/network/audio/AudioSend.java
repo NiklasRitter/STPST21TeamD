@@ -72,6 +72,7 @@ public class AudioSend extends Thread {
             InetAddress inetAddress = InetAddress.getByName(address);
 
             while (shouldSend.get()) {
+                //TODO until here if ...
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
 

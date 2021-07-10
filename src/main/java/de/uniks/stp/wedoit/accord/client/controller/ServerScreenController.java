@@ -238,6 +238,12 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void homeButtonOnClick(ActionEvent actionEvent) {
+        //TODO has to be not null
+        // if (categoryTreeViewController != null && )
+        Channel audioChannel = localUser.getAudioChannel();
+        if (audioChannel != null) {
+            this.editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), server, localUser.getAudioChannel().getCategory(), localUser.getAudioChannel(), categoryTreeViewController);
+        }
         this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
     }
 
