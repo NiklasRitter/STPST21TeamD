@@ -10,6 +10,7 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
+import kong.unirest.JsonNode;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -497,7 +498,8 @@ public class RestManager {
      */
     public void joinServer(LocalUser localUser, String invitationLink, MessageCellFactory controller) {
         restClient.joinServer(localUser, invitationLink, invitationResponse -> {
-            System.out.println(invitationResponse.getBody());
+            JsonNode body = invitationResponse.getBody();
+            System.out.println(body);
             if (!invitationResponse.isSuccess()) {
                 if (invitationResponse.getBody() != null) {
                     controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));

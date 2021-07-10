@@ -233,7 +233,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             Button button = new Button();
             button.setText(LanguageResolver.getString("JOIN"));
             button.getStyleClass().add("styleButton");
-            button.setOnAction((event -> joinButtonOnClick(event, url)));
+            button.setOnAction(event -> joinButtonOnClick(url));
 
             Region region = new Region();
             region.setPrefWidth(15);
@@ -246,7 +246,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             hyperlink.setText(url);
             hyperlink.getStyleClass().add("link");
-            hyperlink.setOnAction((event -> joinButtonOnClick(event, url)));
+            hyperlink.setOnAction(event -> joinButtonOnClick(url));
 
             VBox joinServerVBox = new VBox(joinServerHBox, hyperlink);
             joinServerVBox.getStyleClass().add("styleBorder");
@@ -260,7 +260,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
     }
 
 
-    private void joinButtonOnClick(ActionEvent actionEvent, String inviteLink) {
+    private void joinButtonOnClick(String inviteLink) {
         stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
     }
 
