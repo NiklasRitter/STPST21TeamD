@@ -29,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.service.query.NodeQuery;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.*;
@@ -84,6 +85,8 @@ public class ServerScreenTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> categoriesCallbackArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> joinServerCallbackArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<WSCallback> privateChatCallbackArgumentCaptor;
@@ -99,14 +102,14 @@ public class ServerScreenTest extends ApplicationTest {
     private Options oldOptions;
 
 
-    @BeforeClass
+/*    @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
         System.setProperty("testfx.headless", "true");
         System.setProperty("prism.order", "sw");
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
-    }
+    }*/
 
 
     @Override
@@ -222,6 +225,17 @@ public class ServerScreenTest extends ApplicationTest {
         verify(restMock).getCategories(anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockJoinServerRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+        when(res.isSuccess()).thenReturn(true);
+
+        verify(restMock).joinServer(any(), anyString(), joinServerCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = joinServerCallbackArgumentCaptor.getValue();
         callback.completed(res);
     }
 
@@ -1265,6 +1279,52 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren().size(), 0);
     }
 
+    @Test
+    public void joinServerThroughMessage() {
+        initUserListView();
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+
+        Message message = new Message().setId("msgId123")
+                .setText("https://ac.uniks.de/api/servers/5e2ffbd8770dd077d03df505/invites/5e2ffbd8770dd077d445qs900")
+                .setFrom(localUser.getName())
+                .setTimestamp(723978122);
+        channel.withMessages(message);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().
+                getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", chatWebSocketClient);
+
+        Assert.assertEquals(localUser.getServers().size(), 1);
+
+        clickOn(LanguageResolver.getString("JOIN"));
+
+        mockJoinServerRest(joinServer());
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Label lbServerName = lookup("#lbServerName").query();
+        Assert.assertEquals(lbServerName.getText(), "");
+        Assert.assertEquals(localUser.getServers().size(), 2);
+
+        System.out.println();
+    }
+
 
     // Methods for callbacks
 
@@ -1628,5 +1688,10 @@ public class ServerScreenTest extends ApplicationTest {
                                 .add("id", userId)
                                 .add("category", categoryId)
                                 .add("channel", channelId))).build();
+    }
+
+    public JsonObject joinServer() {
+        return Json.createObjectBuilder().add("status", "success").add("message", "Successfully arrived at server")
+                .add("data", Json.createObjectBuilder()).build();
     }
 }
