@@ -14,8 +14,6 @@ import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Images.*;
-
 
 /**
  * SubController for the member list of the Edit- and CreateChannelScreen
@@ -52,15 +50,6 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteAll = (Button) this.view.lookup("#btnMuteAll");
         this.btnLeave = (Button) this.view.lookup("#btnLeave");
 
-        this.imgUnMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_MICRO))));
-        this.imgUnMuteYourself.setFitHeight(25);
-        this.imgUnMuteYourself.setFitWidth(25);
-        this.imgMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_NOMICRO))));
-        this.imgMuteYourself.setFitHeight(25);
-        this.imgMuteYourself.setFitWidth(25);
-
-        setMuteYourself();
-
         lblAudioChannelName.setText(channel.getName());
         lblUserName.setText(localUser.getName());
 
@@ -69,16 +58,6 @@ public class AudioChannelSubViewController implements Controller {
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
 
         this.setComponentsText();
-    }
-
-    private void setMuteYourself() {
-        if (localUser.isMuted()) {
-            this.editor.getAudioManager().muteYourself(localUser);
-            this.btnMuteYou.setGraphic(this.imgMuteYourself);
-        } else {
-            this.editor.getAudioManager().unmuteYourself(localUser);
-            this.btnMuteYou.setGraphic(this.imgUnMuteYourself);
-        }
     }
 
     private void setComponentsText() {
