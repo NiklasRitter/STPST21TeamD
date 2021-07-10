@@ -65,6 +65,7 @@ public class ServerChatController implements Controller {
     private VBox boxTextfield;
     private AtPositions activeAt;
     private int caret = 0;
+    private int textLength = 0;
     private ArrayList<AtPositions> atPositions = new ArrayList<>();
 
 
@@ -124,11 +125,13 @@ public class ServerChatController implements Controller {
         int start;
         int end;
         boolean complete;
+        String content;
 
         public AtPositions(int start, int end) {
             this.start = start;
             this.end = end;
             this.complete = false;
+            this.content = "@";
         }
 
         public void shiftLeft() {
@@ -149,6 +152,10 @@ public class ServerChatController implements Controller {
             return end;
         }
 
+        public String getContent() {
+            return content;
+        }
+
         public boolean isComplete() {
             return complete;
         }
@@ -165,19 +172,79 @@ public class ServerChatController implements Controller {
             this.complete = complete;
         }
 
-        public int getLength(){
-            return (getEnd() - getStart()) + 1;
+        public void setContent(String content) {
+            this.content = content;
         }
+
+        public int getLength() {
+            return content.length();
+        } //Hier evtl. content.length()
     }
 
     private void isMarking(KeyEvent keyEvent) {
 
+        caret = tfInputMessage.getCaretPosition();
+
         if (!tfInputMessage.getText().contains("@")) {
             removeSelectionMenu();
             atPositions = new ArrayList<>();
+            return;
+        }
 
-        } else {
-            updateAtPositions(keyEvent);
+        /*if (tfInputMessage.getText().length() < textLength - 1 || tfInputMessage.getText().length() > textLength + 1) {
+            //Multiple characters changed
+        } else {*/
+            //Single Character changed
+            AtPositions atHit;
+
+            if (tfInputMessage.getText().length() < textLength) {
+                //character deleted
+
+                atHit = checkAtHit(false);
+
+                if (atHit != null) {
+                    deleteOrActivateAt(atHit, false);
+                }
+                else {
+                    shiftAtsLeft();
+                }
+
+            } else if(tfInputMessage.getText().length() > textLength) {
+                //character added
+
+                atHit = checkAtHit(true);
+
+                if (atHit != null) {
+                    deleteOrActivateAt(atHit, true);
+                }
+                else {
+                    //Hier wenn At neu ist
+
+                    AtPositions newAt = null;
+                    if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
+                        activeAt = new AtPositions(tfInputMessage.getCaretPosition() - 1, tfInputMessage.getCaretPosition() - 1);
+                        atPositions.add(activeAt);
+
+                        newAt = activeAt;
+
+                        initLwSelectUser(lvSelectUser);
+                    }
+
+                    shiftAtsRight(newAt);
+                }
+            }
+            /*else {
+                //isCase? character marked and set new character
+                if (atHit != null) {
+
+                }
+                else {
+
+                }
+            }*/
+
+
+            /*updateAtPositions(keyEvent);
 
             caret = tfInputMessage.getCaretPosition();
 
@@ -192,22 +259,83 @@ public class ServerChatController implements Controller {
             } else if ((keyEvent.getCharacter().equals("\b") && !activeAt.isComplete()) || lvSelectUser.isVisible()) {
                 checkMarkingPossible(tfInputMessage.getText().substring(activeAt.getStart() + 1, caret));
 
+            }*/
+
+        //}
+
+        textLength = tfInputMessage.getLength();
+    }
+
+    private void shiftAtsRight(AtPositions newAt) {
+        int caretPosition = caret - 1;
+        for (AtPositions at : atPositions) {
+            if (at.getStart() >= caretPosition && at != newAt) {
+                at.shiftRight();
             }
         }
     }
 
-    private void actualizeActiveAt(int caret) {
+    private void shiftAtsLeft() {
+        int caretPosition = caret;
+        for (AtPositions at : atPositions) {
+            if (at.getStart() > caretPosition) {
+                at.shiftLeft();
+            }
+        }
+    }
+
+    private void deleteOrActivateAt(AtPositions at, boolean contentAdded) {
+        //TODO hier check ob At complete ist
+
         String currentText = tfInputMessage.getText();
-        for (int i = caret; i > 0 ; i--) {
-            if (currentText.charAt(i) == '@') {
-                for (AtPositions at: atPositions){
-                    if (at.getStart() == i) {
-                        activeAt = at;
-                        return;
+        String start = currentText.substring(0, at.getStart());
+
+        //check ob richtiger Start geschnitten
+        String end;
+        if (contentAdded) {
+            end = currentText.substring(at.getEnd() + 2);
+        }
+        else {
+            end = currentText.substring(at.getEnd()); //evtl -1
+        }
+
+        tfInputMessage.setText(start + end);
+        tfInputMessage.positionCaret(start.length());
+
+        for (AtPositions atToShift : atPositions) {
+            if (atToShift != at && atToShift.getStart() > at.getEnd()) {
+                if (contentAdded) {
+                    for (int i = 0; i < at.getLength() + 1; i++) {
+                        atToShift.shiftLeft();
+                    }
+                }
+                else {
+                    for (int i = 0; i < at.getLength() - 1; i++) {
+                        atToShift.shiftLeft();
                     }
                 }
             }
         }
+        atPositions.remove(at);
+    }
+
+    private AtPositions checkAtHit(boolean contentAdded) {
+        int caretPosition = caret - 1;
+        if (contentAdded){
+            for (AtPositions at : atPositions) {
+                if (caretPosition > at.getStart() && caretPosition <= at.getEnd()) {
+                    return at;
+                }
+            }
+        } else {
+            for (AtPositions at : atPositions) {
+                if (caretPosition >= at.getStart() && caretPosition <= at.getEnd() - 1) {
+                    return at;
+                }
+            }
+        }
+
+        return null;
     }
 
     private void initLwSelectUser(ListView<User> lvSelectUser) {
@@ -241,50 +369,58 @@ public class ServerChatController implements Controller {
     private void lvSelectUserOnClick(MouseEvent mouseEvent) {
 
         if (mouseEvent.getClickCount() == 1) {
+
             User selectedUser = lvSelectUser.getSelectionModel().getSelectedItem();
             String currentText = tfInputMessage.getText();
 
-            Integer correspondingAt = null;
+            int correspondingAtPosition = - 1;
 
             for (int i = caret - 1; i >= 0; i--) {
                 if (currentText.charAt(i) == '@') {
-                    correspondingAt = i;
+                    correspondingAtPosition = i;
                     break;
                 }
             }
-            if (!(correspondingAt == null)) {
-                String firstPart = currentText.substring(0, correspondingAt);
-                String secondPart = currentText.substring(caret);
 
-                tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
+            if (correspondingAtPosition != -1) {
 
-                activeAt.setEnd(activeAt.getStart() + selectedUser.getName().length());
-
-
-                activeAt.setComplete(true);
-                removeSelectionMenu();
-
-
-                for (AtPositions atToShift: atPositions) {
-                    if (atToShift.getStart() > activeAt.getEnd()) {
-                        System.out.println(selectedUser.getName().length() + 1 - (caret - correspondingAt));
-                        for (int i = 0; i < selectedUser.getName().length() + 1 - (caret - correspondingAt); i++) {
-                            atToShift.shiftRight();
-                        }
+                AtPositions correspondingAt = null;
+                for (AtPositions at : atPositions) {
+                    if (at.getStart() == correspondingAtPosition) {
+                        correspondingAt = at;
                     }
                 }
-                caret = activeAt.getEnd();
-                tfInputMessage.positionCaret(caret);
 
+                if (correspondingAt != null) {
+
+                    String firstPart = currentText.substring(0, correspondingAtPosition);
+                    String secondPart = currentText.substring(caret);
+
+                    tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
+                    correspondingAt.setEnd(correspondingAt.getStart() + selectedUser.getName().length());
+
+
+                    correspondingAt.setComplete(true);
+                    removeSelectionMenu();
+
+                    for (AtPositions atToShift : atPositions) {
+                        if (atToShift.getStart() > correspondingAt.getStart()) {
+                            for (int i = 0; i < tfInputMessage.getText().length() - currentText.length(); i++) {
+                                atToShift.shiftRight();
+                            }
+                        }
+                    }
+
+                    tfInputMessage.positionCaret(correspondingAt.getEnd() + 1);
+                }
             }
         }
+        textLength = tfInputMessage.getLength();
     }
 
     private void updateAtPositions(KeyEvent keyEvent) {
-        //akualisiere activeAt in dieser Methode
 
-
-        for (AtPositions atToShift: atPositions) {
+        for (AtPositions atToShift : atPositions) {
             //System.out.println("Start: "+atToShift.getStart() + "   " + atToShift.getEnd());
         }
 
@@ -313,7 +449,7 @@ public class ServerChatController implements Controller {
 
                 String start = currentText.substring(0, at.getStart());
                 //System.out.println(start);
-                
+
                 String end;
                 if (isBackspace) {
                     end = currentText.substring(at.getEnd());
@@ -324,7 +460,7 @@ public class ServerChatController implements Controller {
                 tfInputMessage.positionCaret(start.length());
                 atToDelete = at;
 
-                for (AtPositions atToShift: atPositions) {
+                for (AtPositions atToShift : atPositions) {
                     if (atToShift != atToDelete && atToShift.getStart() > atToDelete.getEnd()) {
                         for (int i = 0; i < atToDelete.getLength(); i++) {
                             atToShift.shiftLeft();
