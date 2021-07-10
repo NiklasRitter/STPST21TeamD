@@ -66,7 +66,6 @@ public class AudioReceive extends Thread {
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             while (shouldReceive.get()) {
                 this.receiveSocket.receive(receivePacket);
-
                 byte[] receivedAudio = new byte[1024];
                 byte[] metaDataByte = new byte[255];
                 System.arraycopy(receivePacket.getData(), 0, metaDataByte, 0, 255);
