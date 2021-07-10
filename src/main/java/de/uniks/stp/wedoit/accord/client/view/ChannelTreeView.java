@@ -5,6 +5,8 @@ import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
+import de.uniks.stp.wedoit.accord.client.network.audio.AudioReceive;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
@@ -73,8 +75,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                 if(item instanceof User){
                     User user = (User) item;
                     this.setText(user.getName());
-                    if(stageManager.getEditor().getLocalUser().getAudioChannel() != null && stageManager.getEditor().getLocalUser().getAudioChannel().equals(user.getAudioChannel())) {
-                        if (user.isMuted()) {
+                    if(stageManager.getEditor().getLocalUser().getAudioChannel() != null && stageManager.getEditor().getLocalUser().getAudioChannel().getId().equals(user.getAudioChannel().getId())) {
+                        AudioConnection connection = stageManager.getEditor().getAudioManager().getAudioConnection();
+                        if (connection != null && connection.getAudioReceive().isUserMuted(user.getName())) {
                             this.setContextMenu(addContextMenuUnMute(user, this));
                             ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound-off-red.png"))));
                             icon.setFitHeight(13);

@@ -58,7 +58,7 @@
   roles: 	server_categories 	server_invitations 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
-  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_muted 	user_gameMove 	user_id
+  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_gameMove 	user_id
   model: 	c
   modified: 	false
   name: 	User
@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -466,15 +466,6 @@
   type: 	boolean
   typeSignature: 	boolean
 
-- user_muted: 	org.fulib.classmodel.Attribute
-  clazz: 	user
-  id: 	User_muted
-  modified: 	false
-  name: 	muted
-  propertyStyle: 	Bean
-  type: 	boolean
-  typeSignature: 	boolean
-
 - user_gameMove: 	org.fulib.classmodel.Attribute
   clazz: 	user
   id: 	User_gameMove
@@ -672,6 +663,15 @@
   id: 	LocalUser_muted
   modified: 	false
   name: 	muted
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
+- localUser_allMuted: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_allMuted
+  modified: 	false
+  name: 	allMuted
   propertyStyle: 	Bean
   type: 	boolean
   typeSignature: 	boolean

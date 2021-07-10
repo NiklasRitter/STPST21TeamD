@@ -111,8 +111,12 @@ public class AudioReceive extends Thread{
     }
 
     public void unmuteUser(String username){
-        if(connectedUser.contains((username))){
+        if(sourceDataLineMap.containsKey(username)){
             sourceDataLineMap.get(username).start();
         }
+    }
+
+    public boolean isUserMuted(String name){
+        return sourceDataLineMap.containsKey(name) && !sourceDataLineMap.get(name).isActive();
     }
 }

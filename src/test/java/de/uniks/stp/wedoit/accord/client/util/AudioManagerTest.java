@@ -230,15 +230,16 @@ public class AudioManagerTest extends ApplicationTest {
     @Test
     public void muteAndUnmuteUserAudioTest(){
         joinAudioServerTest();
+        AudioManager audioManager = stageManager.getEditor().getAudioManager();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
         AudioConnection tempAudioCon = new AudioConnection(localUser, channel);
-        stageManager.getEditor().getAudioManager().setAudioConnection(tempAudioCon);
+        audioManager.setAudioConnection(tempAudioCon);
         tempAudioCon.startConnection("localhost", 33100);
         WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
         User user = stageManager.getEditor().getUser("N1");
-        stageManager.getEditor().getAudioManager().muteUser(user);
+        audioManager.muteUser(user);
         Assert.assertTrue(user.isMuted());
-        stageManager.getEditor().getAudioManager().unmuteUser(user);
+        audioManager.unmuteUser(user);
         Assert.assertFalse(user.isMuted());
         tempAudioCon.close();
     }
