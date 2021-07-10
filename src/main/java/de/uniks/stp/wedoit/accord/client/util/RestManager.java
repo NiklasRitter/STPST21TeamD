@@ -680,8 +680,8 @@ public class RestManager {
 
     public void joinAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
         restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
-            System.out.println(response.getBody());
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                editor.getAudioManager().initAudioConnection(channel);
                 editor.getLocalUser().setAudioChannel(channel);
                 controller.handleJoinAudioChannel(channel);
             }
@@ -692,6 +692,7 @@ public class RestManager {
     }
 
     public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
+        this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getLocalUser().setAudioChannel(null);
@@ -704,6 +705,7 @@ public class RestManager {
     }
 
     public void leaveAndJoinNewAudioChannel(String userKey, Server server, Category oldCategory, Category newCategory, Channel oldChannel, Channel newChannel, CategoryTreeViewController controller){
+        this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), oldCategory.getId(), oldChannel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getLocalUser().setAudioChannel(null);

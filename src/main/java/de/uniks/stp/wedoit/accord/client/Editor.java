@@ -36,6 +36,7 @@ public class Editor {
     private final ChannelManager channelManager = new ChannelManager(this);
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
+    private final AudioManager audioManager = new AudioManager(this);
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
@@ -53,6 +54,13 @@ public class Editor {
      */
     public WebSocketManager getWebSocketManager() {
         return webSocketManager;
+    }
+
+    /**
+     * @return private final AudioManager audioManager
+     */
+    public AudioManager getAudioManager(){
+        return audioManager;
     }
 
     public Server getCurrentServer() {
@@ -291,7 +299,7 @@ public class Editor {
         if (!success) {
             System.err.println("Error while logging out");
         }
-        Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+        Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
     }
 
     /**
@@ -411,7 +419,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null);
+            stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
             stageManager.getStage().show();
         }
     }
@@ -423,7 +431,7 @@ public class Editor {
         if (success) {
             Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
         } else {
-            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
         Platform.runLater(() -> stageManager.getStage().show());
     }

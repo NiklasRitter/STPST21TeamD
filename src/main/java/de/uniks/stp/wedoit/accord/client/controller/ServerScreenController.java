@@ -55,6 +55,7 @@ public class ServerScreenController implements Controller {
     // PropertyChangeListener
     private final PropertyChangeListener userListViewListener = this::changeUserList;
     private final PropertyChangeListener serverNameListener = (propertyChangeEvent) -> this.handleServerNameChange();
+    private final PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
 
     private final CategoryTreeViewController categoryTreeViewController;
     private final ServerChatController serverChatController;
@@ -132,6 +133,7 @@ public class ServerScreenController implements Controller {
 
         // add PropertyChangeListener
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
 
         this.refreshStage();
     }
@@ -182,7 +184,7 @@ public class ServerScreenController implements Controller {
         try {
             Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
 
-            audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, this, channel);
+            audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, categoryTreeViewController, channel);
             audioChannelSubViewController.init();
 
             Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().add(view));
@@ -268,6 +270,19 @@ public class ServerScreenController implements Controller {
         }
     }
 
+    private void handleAudioChannelChange(PropertyChangeEvent propertyChangeEvent) {
+        if(propertyChangeEvent.getNewValue() == null){
+            this.audioChannelSubViewController.stop();
+            this.audioChannelSubViewController = null;
+            Platform.runLater(() -> {
+                this.audioChannelSubViewContainer.getChildren().clear();
+            });
+        }
+        else{
+            this.initAudioChannelSubView((Channel) propertyChangeEvent.getNewValue());
+        }
+    }
+
     /**
      * sets the name of a server in the server name label
      */
@@ -299,7 +314,7 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
@@ -395,5 +410,9 @@ public class ServerScreenController implements Controller {
 
     public VBox getAudioChannelSubViewContainer() {
         return audioChannelSubViewContainer;
+    }
+
+    public void resetLbChannelName(){
+        this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
     }
 }

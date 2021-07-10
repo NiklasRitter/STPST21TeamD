@@ -81,9 +81,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             if (!empty) {
 
                 // set the width (-20 to eliminate overhang in ListView)
+                prefWidthProperty().bind(param.widthProperty().subtract(20));
                 setMinWidth(param.getWidth() - 20);
                 setMaxWidth(param.getWidth() - 20);
-                setPrefWidth(param.getWidth() - 20);
                 setAlignment(Pos.CENTER_LEFT);
 
                 // allow wrapping

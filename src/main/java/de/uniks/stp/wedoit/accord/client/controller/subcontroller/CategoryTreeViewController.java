@@ -106,7 +106,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
-            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 
@@ -126,7 +126,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetChannels(List<Channel> channelList) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
-            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, false, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 
@@ -265,6 +265,7 @@ public class CategoryTreeViewController implements Controller {
                     }
                 }
             }
+            controller.resetLbChannelName();
         }
     }
 
@@ -364,7 +365,6 @@ public class CategoryTreeViewController implements Controller {
     public void handleJoinAudioChannel(Channel channel) {
         if(channel.getCategory() != null){
             loadCategoryChannels(channel.getCategory(), getTreeItemCategory(channel.getCategory()));
-            controller.initAudioChannelSubView(channel);
         }
         else{
             System.err.println("Join Problem");
@@ -378,6 +378,10 @@ public class CategoryTreeViewController implements Controller {
         else{
             System.err.println("Leave Problem");
         }
+    }
+
+    public TreeView<Object> getTvServerChannels(){
+        return tvServerChannels;
     }
 
     public ServerScreenController getController() {
