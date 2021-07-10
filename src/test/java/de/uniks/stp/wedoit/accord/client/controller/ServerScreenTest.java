@@ -102,14 +102,14 @@ public class ServerScreenTest extends ApplicationTest {
     private Options oldOptions;
 
 
-/*    @BeforeClass
+    @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
         System.setProperty("testfx.headless", "true");
         System.setProperty("prism.order", "sw");
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
-    }*/
+    }
 
 
     @Override
@@ -174,7 +174,7 @@ public class ServerScreenTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).getExplicitServerInformation(anyString(), anyString(), callbackArgumentCaptor.capture());
+        verify(restMock, atLeastOnce()).getExplicitServerInformation(anyString(), anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -1285,7 +1285,6 @@ public class ServerScreenTest extends ApplicationTest {
         initChannelListView();
         WaitForAsyncUtils.waitForFxEvents();
         Label lblChannelName = lookup("#lbChannelName").query();
-        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -1318,9 +1317,15 @@ public class ServerScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
+        mockRest(getNewServerSuccessful());
+
+        WaitForAsyncUtils.waitForFxEvents();
+
         Label lbServerName = lookup("#lbServerName").query();
-        Assert.assertEquals(lbServerName.getText(), "");
-        Assert.assertEquals(localUser.getServers().size(), 2);
+        Assert.assertEquals(lbServerName.getText(), "new Server");
+        // The size is 1 because when leaving a server screen the server gets deleted from the localUser and by entering the
+        // new one the size should be 1
+        Assert.assertEquals(localUser.getServers().size(), 1);
 
         System.out.println();
     }
@@ -1693,5 +1698,21 @@ public class ServerScreenTest extends ApplicationTest {
     public JsonObject joinServer() {
         return Json.createObjectBuilder().add("status", "success").add("message", "Successfully arrived at server")
                 .add("data", Json.createObjectBuilder()).build();
+    }
+
+    public JsonObject getNewServerSuccessful() {
+        return Json.createObjectBuilder().add("status", "success").add("message", "")
+                .add("data", Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505")
+                        .add("name", "new Server").add("owner", "ow12ner").add("categories",
+                                Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
+                                        .add("online", false))
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", localUser.getId()).add("name", localUser.getName())
+                                        .add("online", false))
+                        )).build();
     }
 }

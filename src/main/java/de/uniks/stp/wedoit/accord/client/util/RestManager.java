@@ -499,7 +499,6 @@ public class RestManager {
     public void joinServer(LocalUser localUser, String invitationLink, MessageCellFactory controller) {
         restClient.joinServer(localUser, invitationLink, invitationResponse -> {
             JsonNode body = invitationResponse.getBody();
-            System.out.println(body);
             if (!invitationResponse.isSuccess()) {
                 if (invitationResponse.getBody() != null) {
                     controller.handleInvitation(null, invitationResponse.getBody().getObject().getString(MESSAGE));
