@@ -641,40 +641,37 @@ public class RestManager {
         });
     }
 
-    public void joinAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
+    public void joinAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller) {
         restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getAudioManager().initAudioConnection(channel);
                 editor.getLocalUser().setAudioChannel(channel);
                 controller.handleJoinAudioChannel(channel);
-            }
-            else{
+            } else {
                 controller.handleJoinAudioChannel(null);
             }
         });
     }
 
-    public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller){
+    public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller) {
         this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getLocalUser().setAudioChannel(null);
                 controller.handleLeaveAudioChannel(channel.getCategory());
-            }
-            else{
+            } else {
                 controller.handleLeaveAudioChannel(null);
             }
         });
     }
 
-    public void leaveAndJoinNewAudioChannel(String userKey, Server server, Category oldCategory, Category newCategory, Channel oldChannel, Channel newChannel, CategoryTreeViewController controller){
+    public void leaveAndJoinNewAudioChannel(String userKey, Server server, Category oldCategory, Category newCategory, Channel oldChannel, Channel newChannel, CategoryTreeViewController controller) {
         this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), oldCategory.getId(), oldChannel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getLocalUser().setAudioChannel(null);
                 joinAudioChannel(userKey, server, newCategory, newChannel, controller);
-            }
-            else{
+            } else {
                 controller.handleLeaveAudioChannel(null);
             }
         });
@@ -700,7 +697,7 @@ public class RestManager {
      * <p>
      * Adds the guest user to the data if successful.
      *
-     * @param loginScreenController  in which the response need handled
+     * @param loginScreenController in which the response need handled
      */
     public void guestLogin(LoginScreenController loginScreenController) {
         restClient.guestLogin((response) -> {

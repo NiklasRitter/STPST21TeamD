@@ -107,11 +107,15 @@ public class AudioSend extends Thread {
     }
 
     public void stopSending() {
-        this.line.stop();
-        this.line.flush();
+        if (line != null) {
+            this.line.stop();
+            this.line.flush();
+        }
     }
 
     public void startSending() {
-        this.line.start();
+        if (line != null) {
+            this.line.start();
+        }
     }
 }

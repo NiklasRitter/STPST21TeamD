@@ -31,8 +31,9 @@ public class AudioChannelSubViewController implements Controller {
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
-    private ImageView imgMuteYourself;
     private Label lblVoiceChannel;
+    private ImageView imgMuteYourself;
+    private ImageView imgUnMuteYourself;
 
     public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, CategoryTreeViewController controller, Channel channel) {
         this.localUser = localUser;
@@ -50,7 +51,15 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteYou = (Button) this.view.lookup("#btnMuteYou");
         this.btnMuteAll = (Button) this.view.lookup("#btnMuteAll");
         this.btnLeave = (Button) this.view.lookup("#btnLeave");
-        this.imgMuteYourself = (ImageView) view.lookup("#imgMuteYourself");
+
+        this.imgUnMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_MICRO))));
+        this.imgUnMuteYourself.setFitHeight(25);
+        this.imgUnMuteYourself.setFitWidth(25);
+        this.imgMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_NOMICRO))));
+        this.imgMuteYourself.setFitHeight(25);
+        this.imgMuteYourself.setFitWidth(25);
+
+        setMuteYourself();
 
         lblAudioChannelName.setText(channel.getName());
         lblUserName.setText(localUser.getName());
@@ -62,6 +71,16 @@ public class AudioChannelSubViewController implements Controller {
         this.setComponentsText();
     }
 
+    private void setMuteYourself() {
+        if (localUser.isMuted()) {
+            this.editor.getAudioManager().muteYourself(localUser);
+            this.btnMuteYou.setGraphic(this.imgMuteYourself);
+        } else {
+            this.editor.getAudioManager().unmuteYourself(localUser);
+            this.btnMuteYou.setGraphic(this.imgUnMuteYourself);
+        }
+    }
+
     private void setComponentsText() {
         this.lblVoiceChannel.setText(LanguageResolver.getString("VOICE_CHANNEL"));
     }
@@ -69,18 +88,10 @@ public class AudioChannelSubViewController implements Controller {
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
         if (localUser.isMuted()) {
             this.editor.getAudioManager().unmuteYourself(localUser);
-
-            ImageView imgMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_MICRO))));
-            imgMuteYourself.setFitHeight(25);
-            imgMuteYourself.setFitWidth(25);
-            this.btnMuteYou.setGraphic(imgMuteYourself);
+            this.btnMuteYou.setGraphic(this.imgUnMuteYourself);
         } else {
             this.editor.getAudioManager().muteYourself(localUser);
-
-            ImageView imgMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_NOMICRO))));
-            imgMuteYourself.setFitHeight(25);
-            imgMuteYourself.setFitWidth(25);
-            this.btnMuteYou.setGraphic(imgMuteYourself);
+            this.btnMuteYou.setGraphic(this.imgMuteYourself);
         }
     }
 
