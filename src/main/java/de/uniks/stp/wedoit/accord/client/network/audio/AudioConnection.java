@@ -24,7 +24,7 @@ public class AudioConnection {
 
     public void startConnection(String url, int port) {
         try {
-            this.audioSocket = new DatagramSocket(port);
+            this.audioSocket = new DatagramSocket();
             startSendingAudio(url, port);
             startReceivingAudio();
         } catch (Exception e) {
