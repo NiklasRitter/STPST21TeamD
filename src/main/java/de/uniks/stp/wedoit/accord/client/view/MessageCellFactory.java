@@ -13,6 +13,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
@@ -96,7 +97,19 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     this.setText(">>>" + messages[0] + "\n");
 
                 } else {
-                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                    VBox vBox = new VBox();
+                    HBox hBox = new HBox();
+                    hBox.setAlignment(Pos.CENTER_LEFT);
+                    Label name = new Label(item.getFrom());
+                    name.getStyleClass().add("yellow");
+                    Label date = new Label(time);
+                    date.getStyleClass().add("date");
+                    Label text = new Label(item.getText());
+                    text.getStyleClass().add("text");
+                    text.setWrapText(true);
+                    hBox.getChildren().addAll(name,date);
+                    vBox.getChildren().addAll(hBox, text);
+                    this.setGraphic(vBox);
                 }
 
                 if (item instanceof PrivateMessage) {
