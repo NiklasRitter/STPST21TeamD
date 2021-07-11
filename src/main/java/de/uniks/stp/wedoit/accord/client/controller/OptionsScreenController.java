@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -22,8 +23,9 @@ public class OptionsScreenController implements Controller {
 
     private CheckBox btnDarkMode;
     private Button logoutButton;
-    private Label lblLanguage, lblDarkMode;
+    private Label lblLanguage, lblDarkMode, lbTextSize;
     private ChoiceBox choiceBoxLanguage;
+    private Slider sliderTextSize;
 
     /**
      * Create a new Controller
@@ -45,11 +47,14 @@ public class OptionsScreenController implements Controller {
      * Load necessary GUI elements
      * Add action listeners
      */
+    @FXML
     public void init() {
         this.btnDarkMode = (CheckBox) view.lookup("#btnDarkMode");
         this.logoutButton = (Button) view.lookup("#btnLogout");
         this.lblLanguage = (Label) view.lookup("#lblLanguage");
         this.lblDarkMode = (Label) view.lookup("#lblDarkMode");
+        this.lbTextSize = (Label) view.lookup("#lbTextSize");
+        this.sliderTextSize = (Slider) view.lookup("#sliderTextSize");
 
         setComponentsText();
 
@@ -93,6 +98,7 @@ public class OptionsScreenController implements Controller {
     private void setComponentsText() {
         this.lblDarkMode.setText(LanguageResolver.getString("DARKMODE"));
         this.lblLanguage.setText(LanguageResolver.getString("LANGUAGE"));
+        this.lbTextSize.setText("Chat Text Size");
         this.editor.getStageManager().getPopupStage().setTitle(LanguageResolver.getString("OPTIONS"));
     }
 

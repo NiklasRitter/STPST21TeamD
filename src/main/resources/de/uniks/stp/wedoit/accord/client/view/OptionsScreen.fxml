@@ -1,53 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-      minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
     <children>
-        <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0"
-              styleClass="styleBackgroundHighlight">
+        <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0" styleClass="styleBackgroundHighlight">
             <children>
                 <Label id="lblDarkMode">
                     <font>
-                        <Font name="System Bold" size="14.0"/>
+                        <Font name="System Bold" size="14.0" />
                     </font>
                 </Label>
-                <CheckBox id="btnDarkMode" mnemonicParsing="false" styleClass="styleButton"/>
+                <CheckBox id="btnDarkMode" mnemonicParsing="false" styleClass="styleButton" />
             </children>
         </HBox>
         <HBox id="hBoxLanguage" alignment="CENTER">
             <children>
                 <Label id="lblLanguage">
                     <font>
-                        <Font size="14.0"/>
+                        <Font size="14.0" />
                     </font>
                 </Label>
-                <Region prefHeight="25.0" prefWidth="153.0"/>
-                <ChoiceBox id="choiceBoxLanguage"/>
+                <Region prefHeight="25.0" prefWidth="153.0" />
+                <ChoiceBox id="choiceBoxLanguage" />
             </children>
             <VBox.margin>
-                <Insets/>
+                <Insets />
             </VBox.margin>
         </HBox>
+        <HBox alignment="CENTER">
+            <Label id="lbTextSize">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+            <Region prefWidth="62.0"/>
+            <Slider id="sliderTextSize" blockIncrement="0.0" majorTickUnit="2.0" max="20.0" maxWidth="200.0" min="12.0"
+                    minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="12.0"/>
+        </HBox>
         <HBox id="hBoxBtns" alignment="CENTER">
-            <children>
-                <Button id="btnLogout" mnemonicParsing="false" styleClass="styleButton">
-                    <graphic>
-                        <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true"
-                                   preserveRatio="true">
-                            <image>
-                                <Image url="@images/log_out.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            </children>
+            <Button id="btnLogout" mnemonicParsing="false" styleClass="styleButton">
+                <graphic>
+                    <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@images/log_out.png"/>
+                    </ImageView>
+                </graphic>
+            </Button>
         </HBox>
     </children>
     <styleClass>
