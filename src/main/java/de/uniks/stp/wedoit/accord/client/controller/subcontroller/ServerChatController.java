@@ -131,6 +131,7 @@ public class ServerChatController implements Controller {
             this.end = end;
             this.complete = false;
             this.content = "@";
+            System.out.println("lenght:" + content.length());
         }
 
         public void shiftLeft() {
@@ -185,16 +186,12 @@ public class ServerChatController implements Controller {
         System.out.println(atPositions.size());
         caret = tfInputMessage.getCaretPosition();
 
-       /* if (!tfInputMessage.getText().contains("@")) {
+       if (!tfInputMessage.getText().contains("@")) {
             removeSelectionMenu();
             atPositions = new ArrayList<>();
             return;
-        }*/
+        }
 
-        /*if (tfInputMessage.getText().length() < textLength - 1 || tfInputMessage.getText().length() > textLength + 1) {
-            //Multiple characters changed
-        } else {*/
-        //Single Character changed
         AtPositions atHit;
 
         if (tfInputMessage.getText().length() < textLength) {
@@ -203,19 +200,16 @@ public class ServerChatController implements Controller {
             atHit = checkAtHit(false);
 
             if (atHit != null) {
-                System.out.println(tfInputMessage.getText().charAt(atHit.getStart()));
-                System.out.println(atHit.getStart());
-                if ((tfInputMessage.getText().charAt(atHit.getStart()) != '@') && !atHit.isComplete()) {
+                if (tfInputMessage.getText().length() - 1 < atHit.getStart()
+                        || ((tfInputMessage.getText().charAt(atHit.getStart()) != '@') && !atHit.isComplete())) {
                     shiftAtsLeft(atHit);
                     atPositions.remove(atHit);
-                    System.out.println("removed");
+                    System.out.println("removed at");
 
                 } else {
-                    System.out.println("else");
                     deleteOrActivateAt(atHit, false);
                 }
             } else {
-                System.out.println("shift");
                 shiftAtsLeft(atHit);
             }
 
@@ -246,8 +240,6 @@ public class ServerChatController implements Controller {
                 shiftAtsRight(newAt);
             }
         }
-        //}
-
         textLength = tfInputMessage.getLength();
     }
 
@@ -275,19 +267,21 @@ public class ServerChatController implements Controller {
                 at.setContent(at.getContent() + tfInputMessage.getText().charAt(caret - 1));
                 at.setEnd(at.getEnd() + 1);
                 shiftAtsRight(at);
-            } else {
+                checkMarkingPossible(at.getContent().substring(1), at);
 
-                if (at.getLength() <= 0) {
-                    
+            } else {
+                System.out.println("lenght:"+ at.getLength() + " " + at.getContent().length());
+                if (at.getLength() - 1<= 0) {
+
                 } else {
                     at.setContent(at.getContent().substring(0, at.getLength() - 1));
                     at.setEnd(at.getEnd() - 1);
                     shiftAtsLeft(at);
+                    System.out.println("Content:"+ at.getContent());
+                    checkMarkingPossible(at.getContent().substring(1), at);
                 }
-
             }
 
-            checkMarkingPossible(at.getContent().substring(1), at);
         } else {
             String currentText = tfInputMessage.getText();
             String start = currentText.substring(0, at.getStart());
@@ -307,7 +301,7 @@ public class ServerChatController implements Controller {
                 if (atToShift != at && atToShift.getStart() > at.getEnd()) {
 
                     if (contentAdded) {
-                        for (int i = 0; i < at.getLength() + 1; i++) {
+                        for (int i = 0; i < at.getLength(); i++) {
                             atToShift.shiftLeft();
                         }
                     } else {
@@ -340,7 +334,7 @@ public class ServerChatController implements Controller {
             for (AtPositions at : atPositions) {
                 if (!at.isComplete()){
                     System.out.println("caret:"+caretPosition);
-                    if (caretPosition + 1 >= at.getStart() && caretPosition - 1 <= at.getEnd()) {
+                    if (caretPosition + 1 >= at.getStart() && caretPosition <= at.getEnd()) {
                         return at;
                     }
                 } else {
