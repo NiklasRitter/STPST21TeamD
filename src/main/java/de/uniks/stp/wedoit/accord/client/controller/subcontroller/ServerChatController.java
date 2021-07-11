@@ -131,7 +131,6 @@ public class ServerChatController implements Controller {
             this.end = end;
             this.complete = false;
             this.content = "@";
-            System.out.println("lenght:" + content.length());
         }
 
         public void shiftLeft() {
@@ -183,12 +182,12 @@ public class ServerChatController implements Controller {
 
     private void isMarking(KeyEvent keyEvent) {
 
-        System.out.println(atPositions.size());
         caret = tfInputMessage.getCaretPosition();
 
-       if (!tfInputMessage.getText().contains("@")) {
+        if (!tfInputMessage.getText().contains("@")) {
             removeSelectionMenu();
             atPositions = new ArrayList<>();
+            textLength = tfInputMessage.getLength();
             return;
         }
 
@@ -200,15 +199,9 @@ public class ServerChatController implements Controller {
             atHit = checkAtHit(false);
 
             if (atHit != null) {
-                if (tfInputMessage.getText().length() - 1 < atHit.getStart()
-                        || ((tfInputMessage.getText().charAt(atHit.getStart()) != '@') && !atHit.isComplete())) {
-                    shiftAtsLeft(atHit);
-                    atPositions.remove(atHit);
-                    System.out.println("removed at");
 
-                } else {
-                    deleteOrActivateAt(atHit, false);
-                }
+                deleteOrActivateAt(atHit, false);
+
             } else {
                 shiftAtsLeft(atHit);
             }
@@ -270,18 +263,16 @@ public class ServerChatController implements Controller {
                 checkMarkingPossible(at.getContent().substring(1), at);
 
             } else {
-                System.out.println("lenght:"+ at.getLength() + " " + at.getContent().length());
-                if (at.getLength() - 1<= 0) {
-
+                if (at.getLength() - 1 <= 0) {
+                    shiftAtsLeft(at);
+                    atPositions.remove(at);
                 } else {
                     at.setContent(at.getContent().substring(0, at.getLength() - 1));
                     at.setEnd(at.getEnd() - 1);
                     shiftAtsLeft(at);
-                    System.out.println("Content:"+ at.getContent());
                     checkMarkingPossible(at.getContent().substring(1), at);
                 }
             }
-
         } else {
             String currentText = tfInputMessage.getText();
             String start = currentText.substring(0, at.getStart());
@@ -332,8 +323,7 @@ public class ServerChatController implements Controller {
             }
         } else {
             for (AtPositions at : atPositions) {
-                if (!at.isComplete()){
-                    System.out.println("caret:"+caretPosition);
+                if (!at.isComplete()) {
                     if (caretPosition + 1 >= at.getStart() && caretPosition <= at.getEnd()) {
                         return at;
                     }
@@ -426,61 +416,6 @@ public class ServerChatController implements Controller {
             }
         }
         textLength = tfInputMessage.getLength();
-    }
-
-    private void updateAtPositions(KeyEvent keyEvent) {
-
-        String currentText = tfInputMessage.getText();
-        int currentCaret = tfInputMessage.getCaretPosition();
-        AtPositions atToDelete = null;
-        boolean isBackspace = keyEvent.getCharacter().equals("\b");
-
-
-        for (AtPositions at : atPositions) {
-            if (currentCaret == 0 && caret == 0 && isBackspace) {
-                continue;
-            }
-
-            if (currentCaret - 1 <= at.getStart() && !isBackspace) { //Hier fehlt Fall isBackspace
-                at.shiftRight();
-
-            } else if (currentCaret < at.getStart()) {
-                if (isBackspace) {
-                    at.shiftLeft();
-                } else {
-                    at.shiftRight();
-                }
-
-            } else if (currentCaret <= at.getEnd() && at.isComplete()) {
-
-                String start = currentText.substring(0, at.getStart());
-                //System.out.println(start);
-
-                String end;
-                if (isBackspace) {
-                    end = currentText.substring(at.getEnd());
-                } else {
-                    end = currentText.substring(at.getEnd() + 2);
-                }
-                tfInputMessage.setText(start + end);
-                tfInputMessage.positionCaret(start.length());
-                atToDelete = at;
-
-                for (AtPositions atToShift : atPositions) {
-                    if (atToShift != atToDelete && atToShift.getStart() > atToDelete.getEnd()) {
-                        for (int i = 0; i < atToDelete.getLength(); i++) {
-                            atToShift.shiftLeft();
-                        }
-
-                    }
-                }
-
-            }
-        }
-
-        if (atToDelete != null) {
-            atPositions.remove(atToDelete);
-        }
     }
 
     private void checkMarkingPossible(String text, AtPositions at) {
