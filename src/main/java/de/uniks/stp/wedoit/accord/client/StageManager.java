@@ -169,6 +169,9 @@ public class StageManager extends Application {
             case ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER:
                 controller = new AttentionLeaveServerController(root, editor, (Server) parameter);
                 break;
+            case ATTENTION_LEAVE_SERVER_AS_OWNER_SCREEN_CONTROLLER:
+                controller = new AttentionLeaveServerAsOwnerController(root, editor);
+                break;
             case EDIT_SERVER_SCREEN_CONTROLLER:
                 controller = new EditServerScreenController(root, model.getLocalUser(), editor, (Server) parameter, popupStage);
                 break;
@@ -176,7 +179,8 @@ public class StageManager extends Application {
                 controller = new UpdateMessageScreenController(root, editor, (Message) parameter, popupStage);
                 break;
             case PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER:
-                controller = new PrivateMessageServerScreenController(root, editor, (Server) parameter, (User) parameterTwo); break;
+                controller = new PrivateMessageServerScreenController(root, editor, (Server) parameter, (User) parameterTwo);
+                break;
         }
         if (controller != null) {
             controller.init();
