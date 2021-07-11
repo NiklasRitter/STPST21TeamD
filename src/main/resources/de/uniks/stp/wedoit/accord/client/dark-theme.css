@@ -74,8 +74,45 @@
     -fx-text-fill: lightblue;
 }
 
+.colorX {
+    -fx-text-fill: yellow lime cyan;
+}
+
+.color0 {
+    -fx-text-fill: #2befed;
+}
+
+.color1 {
+    -fx-text-fill: #ff0049;
+}
+
+.color2 {
+    -fx-text-fill: #f6fc2d;
+}
+
+.color3 {
+    -fx-text-fill: #00ff4e;
+}
+
+.color4 {
+    -fx-text-fill: #ff38d1;
+}
+
+.white {
+    -fx-text-fill: #ADD8e6;
+}
+
+.text {
+    -fx-text-fill: #ADD8e6;
+}
+
+.date {
+    -fx-text-fill: #ADD8e6;
+    -fx-font-size: 10;
+}
+
 .link{
-    -fx-text-fill: lightblue;
+    -fx-text-fill: #ADD8e6;
 }
 
 .font_size {
