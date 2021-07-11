@@ -18,6 +18,7 @@ public class User
    public static final String PROPERTY_LOCAL_USER = "localUser";
    public static final String PROPERTY_GAME_MOVE = "gameMove";
    public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
+   public static final String PROPERTY_MUTED = "muted";
    private String name;
    private boolean onlineStatus;
    private boolean chatRead;
@@ -29,6 +30,7 @@ public class User
    protected PropertyChangeSupport listeners;
    private String gameMove;
    private Channel audioChannel;
+   private boolean muted;
 
    public String getName()
    {
@@ -330,6 +332,24 @@ public class User
          value.withAudioMembers(this);
       }
       this.firePropertyChange(PROPERTY_AUDIO_CHANNEL, oldValue, value);
+      return this;
+   }
+
+   public boolean isMuted()
+   {
+      return this.muted;
+   }
+
+   public User setMuted(boolean value)
+   {
+      if (value == this.muted)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.muted;
+      this.muted = value;
+      this.firePropertyChange(PROPERTY_MUTED, oldValue, value);
       return this;
    }
 

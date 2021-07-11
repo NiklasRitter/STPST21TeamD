@@ -111,7 +111,6 @@ public class AudioManagerTest extends ApplicationTest {
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
-        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -256,6 +255,12 @@ public class AudioManagerTest extends ApplicationTest {
         for(User user : channel.getAudioMembers()){
             if(!user.getName().equals(localUser.getName())){
                 Assert.assertTrue(user.isMuted());
+            }
+        }
+        clickOn("#btnMuteAll");
+        for(User user : channel.getAudioMembers()){
+            if(!user.getName().equals(localUser.getName())){
+                Assert.assertFalse(user.isMuted());
             }
         }
         tempAudioCon.close();

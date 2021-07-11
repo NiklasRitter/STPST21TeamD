@@ -76,8 +76,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                     User user = (User) item;
                     this.setText(user.getName());
                     if(stageManager.getEditor().getLocalUser().getAudioChannel() != null && stageManager.getEditor().getLocalUser().getAudioChannel().getId().equals(user.getAudioChannel().getId())) {
-                        AudioConnection connection = stageManager.getEditor().getAudioManager().getAudioConnection();
-                        if (connection != null && connection.getAudioReceive().isUserMuted(user.getName())) {
+                        if (user.isMuted()) {
                             this.setContextMenu(addContextMenuUnMute(user, this));
                             ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound-off-red.png"))));
                             icon.setFitHeight(13);

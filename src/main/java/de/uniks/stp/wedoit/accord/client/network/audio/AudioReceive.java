@@ -115,8 +115,4 @@ public class AudioReceive extends Thread{
             sourceDataLineMap.get(username).start();
         }
     }
-
-    public boolean isUserMuted(String name){
-        return sourceDataLineMap.containsKey(name) && !sourceDataLineMap.get(name).isActive();
-    }
 }

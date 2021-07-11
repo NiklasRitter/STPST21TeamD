@@ -25,10 +25,12 @@ public class AudioManager {
     }
 
     public void muteUser(User user){
+        user.setMuted(true);
         audioConnection.getAudioReceive().muteUser(user.getName());
     }
 
     public void unmuteUser(User user){
+        user.setMuted(false);
         audioConnection.getAudioReceive().unmuteUser(user.getName());
     }
 
@@ -60,7 +62,9 @@ public class AudioManager {
 
     public void closeAudioConnection() {
         if (audioConnection != null) {
-            unMuteAllUsers(audioConnection.getChannel().getAudioMembers());
+            if(audioConnection.getChannel() != null){
+                unMuteAllUsers(audioConnection.getChannel().getAudioMembers());
+            }
             editor.getLocalUser().setAllMuted(false);
             audioConnection.close();
             this.audioConnection = null;
