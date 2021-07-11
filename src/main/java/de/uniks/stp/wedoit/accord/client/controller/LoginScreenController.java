@@ -74,17 +74,18 @@ public class LoginScreenController implements Controller {
 
         this.view.requestFocus();
         this.setComponentsText();
-
         // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.btnRememberMe.setOnAction(this::btnRememberMeOnClick);
         this.btnGuestLogin.setOnAction(this::btnGuestLoginOnClick);
-
         this.initTooltips();
 
         this.refreshStage();
+
+        Platform.runLater(() -> this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty()));
+
     }
 
     /**
@@ -102,6 +103,7 @@ public class LoginScreenController implements Controller {
             this.setGuestUserDataLabel();
         }
         this.errorLabel.setText(LanguageResolver.getString(errorLabelText));
+//        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
     }
 
     /**
@@ -288,10 +290,12 @@ public class LoginScreenController implements Controller {
      */
     private void btnGuestLoginOnClick(ActionEvent actionEvent) {
         editor.getRestManager().guestLogin(this);
-        errorLabelText = "";
-        refreshErrLabelText(errorLabelText);
-        tfUserName.getStyleClass().remove("error");
-        pwUserPw.getStyleClass().remove("error");
+        Platform.runLater(() -> {
+            errorLabelText = "";
+            refreshErrLabelText(errorLabelText);
+            tfUserName.getStyleClass().remove("error");
+            pwUserPw.getStyleClass().remove("error");
+        });
     }
 
     /**

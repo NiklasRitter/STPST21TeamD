@@ -82,6 +82,7 @@ public class PrivateMessageServerScreenController implements Controller {
 
         if (memberToWrite.isOnlineStatus()) {
             if (message != null && !message.isEmpty()) {
+                message = message.trim();
                 JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(memberToWrite.getName(), message);
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             }
