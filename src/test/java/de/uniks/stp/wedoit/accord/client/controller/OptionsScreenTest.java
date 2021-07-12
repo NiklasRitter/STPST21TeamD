@@ -231,7 +231,7 @@ public class OptionsScreenTest extends ApplicationTest {
         directToOptionsScreen();
         VBox mainVBox = (VBox) lookup("#mainVBox").query();
 
-        Assert.assertEquals(mainVBox.getChildren().size(), 3);
+        Assert.assertEquals(mainVBox.getChildren().size(), 4);
     }
 
     @Test
@@ -246,7 +246,7 @@ public class OptionsScreenTest extends ApplicationTest {
         VBox mainVBox = (VBox) lookup("#mainVBox").query();
         Button btnLogout = (Button) lookup("#btnLogout").query();
 
-        Assert.assertEquals(mainVBox.getChildren().size(), 3);
+        Assert.assertEquals(mainVBox.getChildren().size(), 4);
         Assert.assertTrue(btnLogout.isVisible());
     }
 

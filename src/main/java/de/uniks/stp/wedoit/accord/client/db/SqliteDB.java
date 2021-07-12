@@ -26,28 +26,28 @@ public class SqliteDB {
             Connection c = DriverManager.getConnection(url + username + ".sqlite");
 
             Statement stmt = c.createStatement();
-            stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS messages (
-                    	id integer PRIMARY KEY AUTOINCREMENT,
-                    	text varchar(255) NOT NULL,
-                        times long NOT NULL,
-                    	sender varchar(255) NOT NULL,
-                        receiver varchar(255) NOT NULL );"""
-            );
-            stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS privateChats (
-                    	id integer PRIMARY KEY AUTOINCREMENT,
-                    	user varchar(255) NOT NULL,
-                        read boolean NOT NULL
-                    );"""
+            stmt.execute("CREATE TABLE IF NOT EXISTS messages (\n"
+                    + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
+                    + "	text varchar(255) NOT NULL,\n"
+                    + " times long NOT NULL,\n"
+                    + "	sender varchar(255) NOT NULL,\n"
+                    + " receiver varchar(255) NOT NULL "
+                    + ");"
             );
 
-            stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS settings (
-                    	id integer PRIMARY KEY AUTOINCREMENT,
-                    	fontSize integer DEFAULT 12
-                    );"""
+            stmt.execute("CREATE TABLE IF NOT EXISTS privateChats (\n"
+                    + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
+                    + "	user varchar(255) NOT NULL,\n"
+                    + " read boolean NOT NULL\n"
+                    + ");"
             );
+
+            stmt.execute("CREATE TABLE IF NOT EXISTS settings (\n"
+                    + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
+                    + "	fontSize integer DEFAULT 12"
+                    + ");"
+            );
+
             c.close();
             stmt.close();
 
