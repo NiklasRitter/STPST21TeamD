@@ -161,6 +161,7 @@ public class CategoryTreeViewController implements Controller {
                         } else {
                             editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
                         }
+                        controller.refreshLvUsers(channel);
                     }
                 }
             }
