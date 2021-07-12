@@ -43,7 +43,7 @@ public class Editor {
     private Server currentServer;
     private StageManager stageManager;
     private SqliteDB db;
-    private IntegerProperty chatFontSize = new SimpleIntegerProperty();
+    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
 
     /**
      * @return private final RestManager restManager
