@@ -29,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.service.query.NodeQuery;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.*;
@@ -84,6 +85,8 @@ public class ServerScreenTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> categoriesCallbackArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor<Callback<JsonNode>> joinServerCallbackArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<WSCallback> privateChatCallbackArgumentCaptor;
@@ -171,7 +174,7 @@ public class ServerScreenTest extends ApplicationTest {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
 
-        verify(restMock).getExplicitServerInformation(anyString(), anyString(), callbackArgumentCaptor.capture());
+        verify(restMock, atLeastOnce()).getExplicitServerInformation(anyString(), anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
@@ -222,6 +225,17 @@ public class ServerScreenTest extends ApplicationTest {
         verify(restMock).getCategories(anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+    }
+
+    public void mockJoinServerRest(JsonObject restClientJson) {
+        // mock rest client
+        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
+        when(res.isSuccess()).thenReturn(true);
+
+        verify(restMock).joinServer(any(), anyString(), joinServerCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = joinServerCallbackArgumentCaptor.getValue();
         callback.completed(res);
     }
 
@@ -1217,6 +1231,57 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(tfEnterPrivateChat.getText(), "How are you?");
     }
 
+    @Test
+    public void joinServerThroughMessage() {
+        initUserListView();
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+
+        Message message = new Message().setId("msgId123")
+                .setText("https://ac.uniks.de/api/servers/5e2ffbd8770dd077d03df505/invites/5e2ffbd8770dd077d445qs900")
+                .setFrom(localUser.getName())
+                .setTimestamp(723978122);
+        channel.withMessages(message);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", webSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.stageManager.getEditor().
+                getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + "5e2ffbd8770dd077d03df505", chatWebSocketClient);
+
+        Assert.assertEquals(localUser.getServers().size(), 1);
+
+        clickOn(LanguageResolver.getString("JOIN"));
+
+        mockJoinServerRest(joinServer());
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        mockRest(getNewServerSuccessful());
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Label lbServerName = lookup("#lbServerName").query();
+        Assert.assertEquals(lbServerName.getText(), "new Server");
+        // The size is 1 because when leaving a server screen the server gets deleted from the localUser and by entering the
+        // new one the size should be 1
+        Assert.assertEquals(localUser.getServers().size(), 1);
+
+        System.out.println();
+    }
+
     // Methods for callbacks
 
     /**
@@ -1567,5 +1632,26 @@ public class ServerScreenTest extends ApplicationTest {
                 .add(TIMESTAMP, 1234567)
                 .add(FROM, localUser.getName())
                 .build();
+    }
+
+    public JsonObject joinServer() {
+        return Json.createObjectBuilder().add("status", "success").add("message", "Successfully arrived at server")
+                .add("data", Json.createObjectBuilder()).build();
+    }
+
+    public JsonObject getNewServerSuccessful() {
+        return Json.createObjectBuilder().add("status", "success").add("message", "")
+                .add("data", Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505")
+                        .add("name", "new Server").add("owner", "ow12ner").add("categories",
+                                Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
+                                        .add("online", false))
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", localUser.getId()).add("name", localUser.getName())
+                                        .add("online", false))
+                        )).build();
     }
 }

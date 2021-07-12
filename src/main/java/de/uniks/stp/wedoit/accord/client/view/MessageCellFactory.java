@@ -1,19 +1,21 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import de.uniks.stp.wedoit.accord.client.model.Server;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
@@ -27,17 +29,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
+
+    StageManager stageManager;
+
+    public MessageCellFactory(StageManager stageManager) {
+        this.stageManager = stageManager;
+    }
+
     @Override
     public ListCell<T> call(ListView<T> param) {
         return new MessageCell<>(param);
     }
 
-    private static class MessageCell<S extends Message> extends ListCell<S> {
+    private class MessageCell<S extends Message> extends ListCell<S> {
+
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
         private final VBox vBox = new VBox();
@@ -96,6 +109,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     this.getStyleClass().add("font_size");
                     this.setText(">>>" + messages[0] + "\n");
 
+                } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
+                    String url = containsInviteUrl(item.getText());
+                    if (url != null) {
+                        setUpJoinServerView(item, url);
+                    } else {
+                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                    }
                 } else {
                     VBox vBox = new VBox();
                     HBox hBox = new HBox();
@@ -139,6 +159,18 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
                 }
             }
+        }
+
+        private String containsInviteUrl(String text) {
+            if (text.contains("https://ac.uniks.de/api/servers/") && text.contains("/invites/")) {
+                String[] words = text.split(" ");
+                for (String word : words) {
+                    if (word.contains("https://ac.uniks.de/api/servers/") && word.contains("/invites/")) {
+                        return word;
+                    }
+                }
+            }
+            return null;
         }
 
         private boolean isValidURL(String url) {
@@ -218,7 +250,59 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
             }
         }
+
+        private void setUpJoinServerView(Message item, String url) {
+            Label enterServerLabel = new Label();
+            enterServerLabel.setText(LanguageResolver.getString("ENTER_SERVER"));
+            Label serverIdLabel = new Label();
+            String[] urlSplitted = url.split("/");
+            String serverId = urlSplitted[5];
+            serverIdLabel.setText(LanguageResolver.getString("SERVER_ID") + ": " + serverId);
+            serverIdLabel.setWrapText(true);
+
+            VBox serverInfoVBox = new VBox();
+            serverInfoVBox.getChildren().addAll(enterServerLabel, serverIdLabel);
+
+            Button button = new Button();
+            button.setText(LanguageResolver.getString("JOIN"));
+            button.getStyleClass().add("styleButton");
+            button.setOnAction(event -> joinButtonOnClick(url));
+
+            Region region = new Region();
+            region.setPrefWidth(15);
+
+            HBox joinServerHBox = new HBox();
+            joinServerHBox.setAlignment(Pos.CENTER_LEFT);
+            joinServerHBox.getChildren().addAll(serverInfoVBox, region, button);
+            joinServerHBox.getStyleClass().add("styleBorder");
+            joinServerHBox.setMaxWidth(265);
+
+            label.setText("[" + time + "] " + item.getFrom() + ": ");
+
+            Label textLabel = new Label(item.getText());
+            textLabel.setWrapText(true);
+
+            this.vBox.getChildren().addAll(this.label, joinServerHBox, textLabel);
+            setGraphic(this.vBox);
+        }
+
     }
+
+
+    private void joinButtonOnClick(String inviteLink) {
+        stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
+    }
+
+    public void handleInvitation(Server server, String responseMessage) {
+        if (server != null) {
+            Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+        } else {
+            if (responseMessage.equals("MainScreen")) {
+                Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+            }
+        }
+    }
+
 }
 
 
