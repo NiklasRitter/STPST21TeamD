@@ -112,6 +112,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     String url = containsInviteUrl(item.getText());
                     if (url != null) {
                         setUpJoinServerView(item, url);
+                    } else {
+                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                     }
                 } else {
                     this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
@@ -224,6 +226,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             String[] urlSplitted = url.split("/");
             String serverId = urlSplitted[5];
             serverIdLabel.setText(LanguageResolver.getString("SERVER_ID") + ": " + serverId);
+            serverIdLabel.setWrapText(true);
 
             VBox serverInfoVBox = new VBox();
             serverInfoVBox.getChildren().addAll(enterServerLabel, serverIdLabel);
@@ -239,20 +242,15 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             HBox joinServerHBox = new HBox();
             joinServerHBox.setAlignment(Pos.CENTER_LEFT);
             joinServerHBox.getChildren().addAll(serverInfoVBox, region, button);
+            joinServerHBox.getStyleClass().add("styleBorder");
+            joinServerHBox.setMaxWidth(265);
 
             label.setText("[" + time + "] " + item.getFrom() + ": ");
 
-            hyperlink.setText(url);
-            hyperlink.getStyleClass().add("link");
-            hyperlink.setOnAction(event -> joinButtonOnClick(url));
-
-            VBox joinServerVBox = new VBox(joinServerHBox, hyperlink);
-            joinServerVBox.getStyleClass().add("styleBorder");
-            joinServerVBox.setMaxWidth(530);
-
             Label textLabel = new Label(item.getText());
+            textLabel.setWrapText(true);
 
-            this.vBox.getChildren().addAll(this.label, joinServerVBox, textLabel);
+            this.vBox.getChildren().addAll(this.label, joinServerHBox, textLabel);
             setGraphic(this.vBox);
         }
 
