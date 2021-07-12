@@ -225,14 +225,14 @@ public class ServerScreenTest extends ApplicationTest {
         callback.completed(res);
     }
 
-    public void mockJoinAudio(JsonObject restClientJson){
+    public void mockJoinAudio(JsonObject restClientJson) {
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
         verify(restMock).joinAudioChannel(anyString(), anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
         Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
         callback.completed(res);
     }
 
-    public void mockLeaveAudio(JsonObject restClientJson){
+    public void mockLeaveAudio(JsonObject restClientJson) {
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
         verify(restMock).leaveAudioChannel(anyString(), anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
         Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
@@ -853,12 +853,10 @@ public class ServerScreenTest extends ApplicationTest {
 
     @Test
     public void leaveServerTest() {
-
         openAttentionScreen();
         testBtnCancel();
         openAttentionScreen();
         testBtnLeave();
-
     }
 
     private void testBtnLeave() {
@@ -1191,7 +1189,7 @@ public class ServerScreenTest extends ApplicationTest {
         phil.setOnlineStatus(true);
 
         Assert.assertEquals(tfMessage.isEditable(), phil.isOnlineStatus());
-        Assert.assertEquals(tfMessage.getPromptText(), "Send Message to " +phil.getName());
+        Assert.assertEquals(tfMessage.getPromptText(), "Send Message to " + phil.getName());
 
         // Assert send message with emoji is working correctly
         tfMessage.setText("Hello Phil");
