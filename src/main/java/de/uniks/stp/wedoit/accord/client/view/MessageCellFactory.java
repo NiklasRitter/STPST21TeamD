@@ -13,6 +13,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
@@ -60,7 +61,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             webView.getEngine().load(null);
             descBox.setText(null);
             hyperlink.setOnAction(null);
-            hyperlink.getStyleClass().removeAll("link","descBox");
+            hyperlink.getStyleClass().removeAll("link", "descBox");
 
 
             if (!empty) {
@@ -96,7 +97,38 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     this.setText(">>>" + messages[0] + "\n");
 
                 } else {
-                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                    VBox vBox = new VBox();
+                    HBox hBox = new HBox();
+                    hBox.setAlignment(Pos.CENTER_LEFT);
+                    Label name = new Label(item.getFrom() + " ");
+
+                    int nameLength = item.getFrom().length();
+
+                    switch (nameLength % 5) {
+                        case 0:
+                            name.getStyleClass().add("color0");
+                            break;
+                        case 1:
+                            name.getStyleClass().add("color1");
+                            break;
+                        case 2:
+                            name.getStyleClass().add("color2");
+                            break;
+                        case 3:
+                            name.getStyleClass().add("color3");
+                            break;
+                        case 4:
+                            name.getStyleClass().add("color4");
+                            break;
+                    }
+                    Label date = new Label(time);
+                    date.getStyleClass().add("date");
+                    Label text = new Label(item.getText());
+                    text.getStyleClass().add("text");
+                    text.setWrapText(true);
+                    hBox.getChildren().addAll(name, date);
+                    vBox.getChildren().addAll(hBox, text);
+                    this.setGraphic(vBox);
                 }
 
                 if (item instanceof PrivateMessage) {
@@ -114,10 +146,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 URL Url = new URL(url);
                 Url.toURI();
 
-                if(SUPPORTED_IMG.contains(url.substring(url.length()-4))) return true;
+                if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
 
                 Document doc = Jsoup.connect(url).get();
-                if(Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null){
+                if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
                     descBox.setText(doc.title());
                     descBox.getStyleClass().add("descBox");
                 }
@@ -129,9 +161,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private boolean setImgGraphic(String url) {
-            if(isValidURL(url)){
-                Image image = new Image(url, 370,Integer.MAX_VALUE,true,false,true);
-                if(!image.isError()){
+            if (isValidURL(url)) {
+                Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
+                if (!image.isError()) {
                     imageView.setImage(image);
                     imageView.setPreserveRatio(true);
                     setGraphic(vBox);
@@ -141,24 +173,24 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             return false;
         }
 
-        private void setUpWebView(String url){
-            if(url == null) return;
-            url = url.replace("/watch?v=","/embed/");
+        private void setUpWebView(String url) {
+            if (url == null) return;
+            url = url.replace("/watch?v=", "/embed/");
             webView.setMaxWidth(400);
             webView.setMaxHeight(270);
             webView.getEngine().load(url);
         }
 
-        private void setUpMedia(S item){
+        private void setUpMedia(S item) {
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
                 vBox.getChildren().addAll(label, imageView, hyperlink);
-                if(descBox.getText() != null){
+                if (descBox.getText() != null) {
                     vBox.getChildren().add(descBox);
                     descBox.setOnAction(this::openHyperLink);
                 }
 
             } else if (item.getText().contains(YT_WATCH) || item.getText().contains(YT_SHORT)) {
-                if(item.getText().contains(YT_SHORT)) setUpWebView(expandUrl(item.getText()));
+                if (item.getText().contains(YT_SHORT)) setUpWebView(expandUrl(item.getText()));
                 else setUpWebView(item.getText());
                 vBox.getChildren().addAll(label, webView, hyperlink);
             }
@@ -169,16 +201,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.setOnAction(this::openHyperLink);
         }
 
-        public String expandUrl(String shortenedUrl){
-            return YT_PREFIX + shortenedUrl.substring(shortenedUrl.lastIndexOf("/")+1);
+        public String expandUrl(String shortenedUrl) {
+            return YT_PREFIX + shortenedUrl.substring(shortenedUrl.lastIndexOf("/") + 1);
         }
 
         private void openHyperLink(ActionEvent actionEvent) {
             openBrowser(hyperlink.getText());
         }
 
-        private void openBrowser(String url){
-            if(Desktop.isDesktopSupported()){
+        private void openBrowser(String url) {
+            if (Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().browse(new URI(url));
                 } catch (Exception e1) {
