@@ -46,7 +46,7 @@
                     <Font size="14.0" />
                 </font>
             </Label>
-            <Region prefWidth="62.0"/>
+            <Region prefWidth="50.0"/>
             <Slider id="sliderTextSize" blockIncrement="0.0" majorTickUnit="2.0" max="20.0" maxWidth="200.0" min="12.0"
                     minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="12.0"/>
         </HBox>
