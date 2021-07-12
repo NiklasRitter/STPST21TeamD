@@ -34,10 +34,18 @@ public class AudioManager {
         audioConnection.getAudioReceive().unmuteUser(user.getName());
     }
 
-    public void muteAllUsers(List<User> users) {
-        for (User user : users) {
-            if (!user.isMuted() && !user.getName().equals(editor.getLocalUser().getName())) {
+    public void muteAllUsers(List<User> users){
+        for(User user : users){
+            if(!user.getName().equals(editor.getLocalUser().getName())){
                 muteUser(user);
+            }
+        }
+    }
+
+    public void unMuteAllUsers(List<User> users){
+        for(User user : users){
+            if(!user.getName().equals(editor.getLocalUser().getName())){
+                unmuteUser(user);
             }
         }
     }
@@ -54,6 +62,10 @@ public class AudioManager {
 
     public void closeAudioConnection() {
         if (audioConnection != null) {
+            if(audioConnection.getChannel() != null){
+                unMuteAllUsers(audioConnection.getChannel().getAudioMembers());
+            }
+            editor.getLocalUser().setAllMuted(false);
             LocalUser localUser = this.editor.getLocalUser();
             if (localUser.isMuted()) {
                 // to make sure, localUser receives data, if alone in chat

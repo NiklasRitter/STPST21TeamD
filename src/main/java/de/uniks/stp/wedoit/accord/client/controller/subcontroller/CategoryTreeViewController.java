@@ -76,6 +76,7 @@ public class CategoryTreeViewController implements Controller {
 
     public void stop() {
         this.tvServerChannels.setOnMouseReleased(null);
+        this.tvServerChannels = null;
         for (Channel channel : channelMap.values()) {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
@@ -123,6 +124,12 @@ public class CategoryTreeViewController implements Controller {
      * handles the channels of a server in the view
      */
     public void handleGetChannels(List<Channel> channelList) {
+        if(localUser.getAudioChannel() != null && localUser.getAudioChannel().getCategory().getServer().getId().equals(server.getId()) && controller.getAudioChannelSubViewContainer().getChildren().isEmpty()){
+            Channel channel = editor.getChannelById(server, localUser.getAudioChannel().getCategory().getId(), localUser.getAudioChannel().getId());
+            if(channel != null){
+                localUser.setAudioChannel(channel);
+            }
+        }
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
             Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
@@ -148,7 +155,8 @@ public class CategoryTreeViewController implements Controller {
                     if (channel.getType().equals(AUDIO)) {
                         if (localUser.getAudioChannel() == null) {
                             editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                        } else if (localUser.getAudioChannel() == channel) {
+                        }
+                        else if(localUser.getAudioChannel().getId().equals(channel.getId())){
                             editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
                         } else {
                             editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
@@ -270,6 +278,9 @@ public class CategoryTreeViewController implements Controller {
         if (channelItem != null) {
             if (oldValue == null && newValue != null) {
                 channelItem.setExpanded(true);
+                if(localUser.isAllMuted() && !newValue.getName().equals(localUser.getName())){
+                    editor.getAudioManager().muteUser(newValue);
+                }
                 addAudioMemberToTreeView(newValue, channelItem);
             } else if (oldValue != null && newValue == null) {
                 channelItem.getChildren().removeIf(objectTreeItem -> objectTreeItem.getValue().equals(oldValue));

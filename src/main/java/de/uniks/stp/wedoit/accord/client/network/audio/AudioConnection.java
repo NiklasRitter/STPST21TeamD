@@ -88,4 +88,8 @@ public class AudioConnection {
     public AudioSend getAudioSend() {
         return sendingThread;
     }
+
+    public Channel getChannel(){
+        return  this.channel;
+    }
 }
