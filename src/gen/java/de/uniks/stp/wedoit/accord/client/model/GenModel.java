@@ -38,6 +38,7 @@ public class GenModel implements ClassModelDecorator {
         List<User> gameRequests;
         Channel audioChannel;
         boolean muted;
+        boolean allMuted;
 
         @Link("localUser")
         List<User> users;
