@@ -216,6 +216,7 @@ public class ServerChatController implements Controller {
                     atHit = new AtPositions(tfInputMessage.getCaretPosition() - 1, tfInputMessage.getCaretPosition() - 1);
                     atPositions.add(atHit);
                     checkMarkingPossible(atHit.getContent().substring(1), atHit);
+                    shiftAtsRight(atHit);
                 } else {
                     deleteOrActivateAt(atHit, true);
                 }
