@@ -36,8 +36,16 @@ public class AudioManager {
 
     public void muteAllUsers(List<User> users){
         for(User user : users){
-            if(!user.isMuted() && !user.getName().equals(editor.getLocalUser().getName())){
+            if(!user.getName().equals(editor.getLocalUser().getName())){
                 muteUser(user);
+            }
+        }
+    }
+
+    public void unMuteAllUsers(List<User> users){
+        for(User user : users){
+            if(!user.getName().equals(editor.getLocalUser().getName())){
+                unmuteUser(user);
             }
         }
     }
@@ -54,6 +62,10 @@ public class AudioManager {
 
     public void closeAudioConnection() {
         if (audioConnection != null) {
+            if(audioConnection.getChannel() != null){
+                unMuteAllUsers(audioConnection.getChannel().getAudioMembers());
+            }
+            editor.getLocalUser().setAllMuted(false);
             audioConnection.close();
             this.audioConnection = null;
         }
