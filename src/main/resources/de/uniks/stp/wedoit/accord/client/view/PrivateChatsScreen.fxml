@@ -116,7 +116,7 @@
                                         <Font size="4.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true"
+                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true"
                                                    preserveRatio="true">
                                             <Image url="@images/smiley.png"/>
                                         </ImageView>

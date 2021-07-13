@@ -108,7 +108,7 @@ public class PrivateChatController implements Controller {
         this.lwPrivateChat.setOnMouseClicked(null);
         this.btnCancelQuote.setOnAction(null);
         this.btnEmoji.setOnAction(null);
-        //this.tfPrivateChat.setOnAction(null);
+        this.tfPrivateChat.setOnKeyPressed(null);
         for (MenuItem item : messageContextMenu.getItems()) {
             item.setOnAction(null);
         }
@@ -178,7 +178,6 @@ public class PrivateChatController implements Controller {
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(selectedUser.getName());
         Collections.reverse(oldMessages);
-        System.out.println("test? "+ oldMessages.get(oldMessages.size()-1));
         this.privateMessageObservableList = FXCollections.observableList(oldMessages);
         if (oldMessages.size() == 50) {
             displayLoadMore();
@@ -329,7 +328,6 @@ public class PrivateChatController implements Controller {
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             }
         }
-
     }
 
     /**

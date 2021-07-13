@@ -45,7 +45,7 @@ public class ServerScreenController implements Controller {
     private Button btnHome;
     private Button btnEdit;
     private Label lbServerName, lblServerUsers, lbChannelName;
-    private TextField tfInputMessage;
+    private TextArea tfInputMessage;
     private ListView<User> lvServerUsers;
 
     // Websockets
@@ -92,7 +92,7 @@ public class ServerScreenController implements Controller {
     public void init() {
         // Load all view references
         this.editor.setCurrentServer(server);
-        this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
+        this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEdit = (Button) view.lookup("#btnEdit");
