@@ -1106,7 +1106,7 @@ public class ServerScreenTest extends ApplicationTest {
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
 
-        clickOn("- update message");
+        clickOn("- edit message");
         WaitForAsyncUtils.waitForFxEvents();
 
         ((TextField) lookup("#tfUpdateMessage").query()).setText("");
@@ -1225,7 +1225,7 @@ public class ServerScreenTest extends ApplicationTest {
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
 
-        clickOn("- update message");
+        clickOn("- edit message");
         WaitForAsyncUtils.waitForFxEvents();
 
         ((TextField) lookup("#tfUpdateMessage").query()).setText("update");
@@ -1243,7 +1243,7 @@ public class ServerScreenTest extends ApplicationTest {
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
 
-        clickOn("- update message");
+        clickOn("- edit message");
         WaitForAsyncUtils.waitForFxEvents();
 
         ((TextField) lookup("#tfUpdateMessage").query()).setText("");

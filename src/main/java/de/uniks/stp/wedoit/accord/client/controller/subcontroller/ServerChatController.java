@@ -60,13 +60,8 @@ public class ServerChatController implements Controller {
     private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
     private ContextMenu localUserMessageContextMenu;
     private ContextMenu userMessageContextMenu;
-
-    private ObservableList<User> selectUserObservableList;
-    private ListView<User> lvSelectUser;
     private VBox boxTextfield;
-    private int caret = 0;
-    private int textLength = 0;
-    private ArrayList<AtPositions> atPositions = new ArrayList<>();
+    private MarkingController markingController;
 
 
     /**
@@ -107,11 +102,9 @@ public class ServerChatController implements Controller {
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
-        this.tfInputMessage.setOnKeyTyped(this::isMarking);
 
-        lvSelectUser = new ListView<>();
-        lvSelectUser.setVisible(false);
-        lvSelectUser.setId("lvSelectUser");
+        this.markingController = new MarkingController(tfInputMessage, currentChannel, boxTextfield);
+        this.markingController.init();
 
         quoteVisible.getChildren().clear();
 
@@ -123,338 +116,7 @@ public class ServerChatController implements Controller {
         initToolTip();
     }
 
-    public class AtPositions {
 
-        int start;
-        int end;
-        boolean complete;
-        String content;
-
-        public AtPositions(int start, int end) {
-            this.start = start;
-            this.end = end;
-            this.complete = false;
-            this.content = "@";
-        }
-
-        public void shiftLeft() {
-            this.start = this.start - 1;
-            this.end = this.end - 1;
-        }
-
-        public void shiftRight() {
-            this.start = this.start + 1;
-            this.end = this.end + 1;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public boolean isComplete() {
-            return complete;
-        }
-
-        public void setStart(int start) {
-            this.start = start;
-        }
-
-        public void setEnd(int end) {
-            this.end = end;
-        }
-
-        public void setComplete(boolean complete) {
-            this.complete = complete;
-        }
-
-        public void setContent(String content) {
-            this.content = content;
-        }
-
-        public int getLength() {
-            return content.length();
-        }
-    }
-
-    private void isMarking(KeyEvent keyEvent) {
-
-        caret = tfInputMessage.getCaretPosition();
-
-        if (!tfInputMessage.getText().contains("@")) {
-            removeSelectionMenu();
-            atPositions = new ArrayList<>();
-            textLength = tfInputMessage.getLength();
-            return;
-        }
-
-        AtPositions atHit;
-
-        if (tfInputMessage.getText().length() < textLength) {
-            //character deleted
-
-            atHit = checkAtHit(false);
-
-            if (atHit != null) {
-                deleteOrActivateAt(atHit, false);
-
-            } else {
-                shiftAtsLeft(atHit);
-            }
-
-        } else if (tfInputMessage.getText().length() > textLength) {
-            //character added
-
-            atHit = checkAtHit(true);
-
-            if (atHit != null) {
-                if (keyEvent.getCharacter().equals("@") && currentChannel != null) {
-                    atHit = new AtPositions(tfInputMessage.getCaretPosition() - 1, tfInputMessage.getCaretPosition() - 1);
-                    atPositions.add(atHit);
-                    checkMarkingPossible(atHit.getContent().substring(1), atHit);
-                    shiftAtsRight(atHit);
-                } else {
-                    deleteOrActivateAt(atHit, true);
-                }
-
-            } else {
-
-                AtPositions newAt = null;
-                if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
-                    newAt = new AtPositions(tfInputMessage.getCaretPosition() - 1, tfInputMessage.getCaretPosition() - 1);
-                    atPositions.add(newAt);
-
-                    initLwSelectUser(lvSelectUser);
-                }
-
-                shiftAtsRight(newAt);
-            }
-        }
-        textLength = tfInputMessage.getLength();
-    }
-
-    private void shiftAtsRight(AtPositions currentAt) {
-        int caretPosition = caret - 1;
-        for (AtPositions at : atPositions) {
-            if (at.getStart() >= caretPosition && at != currentAt) {
-                at.shiftRight();
-            }
-        }
-    }
-
-    private void shiftAtsLeft(AtPositions currentAt) {
-        int caretPosition = caret;
-        for (AtPositions at : atPositions) {
-            if (at.getStart() > caretPosition && at != currentAt) {
-                at.shiftLeft();
-            }
-        }
-    }
-
-    private void deleteOrActivateAt(AtPositions at, boolean contentAdded) {
-        if (!at.isComplete()) {
-            if (contentAdded) {
-                at.setContent(at.getContent() + tfInputMessage.getText().charAt(caret - 1));
-                at.setEnd(at.getEnd() + 1);
-                shiftAtsRight(at);
-                checkMarkingPossible(at.getContent().substring(1), at);
-
-            } else {
-                if (at.getLength() - 1 <= 0) {
-                    shiftAtsLeft(at);
-                    atPositions.remove(at);
-                } else {
-                    at.setContent(at.getContent().substring(0, at.getLength() - 1));
-                    at.setEnd(at.getEnd() - 1);
-                    shiftAtsLeft(at);
-                    checkMarkingPossible(at.getContent().substring(1), at);
-                }
-            }
-        } else {
-            String currentText = tfInputMessage.getText();
-            String start = currentText.substring(0, at.getStart());
-
-            //check ob richtiger Start geschnitten
-            String end;
-            if (contentAdded) {
-                end = currentText.substring(at.getEnd() + 2);
-            } else {
-                end = currentText.substring(at.getEnd());
-            }
-
-            tfInputMessage.setText(start + end);
-            tfInputMessage.positionCaret(start.length());
-
-            for (AtPositions atToShift : atPositions) {
-                if (atToShift != at && atToShift.getStart() > at.getEnd()) {
-                    for (int i = 0; i < at.getLength(); i++) {
-                        atToShift.shiftLeft();
-                    }
-                }
-            }
-            atPositions.remove(at);
-        }
-    }
-
-    private AtPositions checkAtHit(boolean contentAdded) {
-        int caretPosition = caret - 1;
-        if (contentAdded) {
-            for (AtPositions at : atPositions) {
-                if (!at.isComplete()) {
-                    if (caretPosition > at.getStart() && caretPosition - 1 <= at.getEnd()) {
-                        return at;
-                    }
-                } else {
-                    if (caretPosition > at.getStart() && caretPosition <= at.getEnd()) {
-                        System.out.println(at.getContent());
-                        return at;
-                    }
-                }
-            }
-        } else {
-            for (AtPositions at : atPositions) {
-                if (!at.isComplete()) {
-                    if (caretPosition + 1 >= at.getStart() && caretPosition <= at.getEnd()) {
-                        return at;
-                    }
-                } else {
-                    if (caretPosition >= at.getStart() && caretPosition <= at.getEnd() - 1) {
-                        return at;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private void initLwSelectUser(ListView<User> lvSelectUser) {
-
-        this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
-
-        boxTextfield.getChildren().add(lvSelectUser);
-
-        lvSelectUser.setMinHeight(45);
-        lvSelectUser.setPrefHeight(45);
-        lvSelectUser.setVisible(true);
-
-        // init list view
-        lvSelectUser.setCellFactory(new SelectUserCellFactory());
-
-        ArrayList<User> availableUsers;
-        if (currentChannel != null && currentChannel.isPrivileged()) {
-            availableUsers = new ArrayList<>(currentChannel.getMembers());
-        } else {
-            availableUsers = new ArrayList<>(server.getMembers());
-        }
-
-        this.selectUserObservableList = FXCollections.observableList(availableUsers);
-
-        this.selectUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
-                .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
-
-        this.lvSelectUser.setItems(selectUserObservableList);
-    }
-
-    private void lvSelectUserOnClick(MouseEvent mouseEvent) {
-
-        if (mouseEvent.getClickCount() == 1) {
-
-            User selectedUser = lvSelectUser.getSelectionModel().getSelectedItem();
-            String currentText = tfInputMessage.getText();
-
-            int correspondingAtPosition = -1;
-
-            for (int i = caret - 1; i >= 0; i--) {
-                if (currentText.charAt(i) == '@') {
-                    correspondingAtPosition = i;
-                    break;
-                }
-            }
-
-            if (correspondingAtPosition != -1) {
-
-                AtPositions correspondingAt = null;
-                for (AtPositions at : atPositions) {
-                    if (at.getStart() == correspondingAtPosition) {
-                        correspondingAt = at;
-                    }
-                }
-
-                if (correspondingAt != null) {
-
-                    String firstPart = currentText.substring(0, correspondingAtPosition);
-                    String secondPart = currentText.substring(caret);
-
-                    tfInputMessage.setText(firstPart + "@" + selectedUser.getName() + secondPart);
-                    correspondingAt.setEnd(correspondingAt.getStart() + selectedUser.getName().length());
-                    correspondingAt.setContent("@" + selectedUser.getName());
-
-                    correspondingAt.setComplete(true);
-                    removeSelectionMenu();
-
-                    for (AtPositions atToShift : atPositions) {
-                        if (atToShift.getStart() > correspondingAt.getStart()) {
-                            for (int i = 0; i < tfInputMessage.getText().length() - currentText.length(); i++) {
-                                atToShift.shiftRight();
-                            }
-                        }
-                    }
-
-                    tfInputMessage.positionCaret(correspondingAt.getEnd() + 1);
-                }
-            }
-        }
-        textLength = tfInputMessage.getLength();
-    }
-
-    private void checkMarkingPossible(String text, AtPositions at) {
-
-        ArrayList<User> possibleUsers;
-
-        if (currentChannel != null && currentChannel.isPrivileged()) {
-            possibleUsers = new ArrayList<>(currentChannel.getMembers());
-        } else {
-            possibleUsers = new ArrayList<>(server.getMembers());
-        }
-
-        for (User user : possibleUsers) {
-            if (!user.getName().contains(text)) {
-                selectUserObservableList.remove(user);
-            } else if (user.getName().equals(text)) {
-                at.setComplete(true);
-                break;
-            } else if (!selectUserObservableList.contains(user)) {
-                selectUserObservableList.add(user);
-            }
-        }
-
-        if (!lvSelectUser.isVisible() && !at.isComplete() && !selectUserObservableList.isEmpty()) {
-            showSelectionMenu();
-        }
-
-        if (selectUserObservableList.isEmpty() || at.isComplete()) {
-            removeSelectionMenu();
-        }
-    }
-
-    private void removeSelectionMenu() {
-        boxTextfield.getChildren().remove(lvSelectUser);
-        lvSelectUser.setVisible(false);
-        this.lvSelectUser.setOnMousePressed(null);
-    }
-
-    private void showSelectionMenu() {
-        boxTextfield.getChildren().add(lvSelectUser);
-        lvSelectUser.setVisible(true);
-        this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
-    }
 
     public void initToolTip() {
         Tooltip emojiButton = new Tooltip();
@@ -473,6 +135,7 @@ public class ServerChatController implements Controller {
         this.btnEmoji.setOnAction(null);
         this.lvTextChat.setOnMouseClicked(null);
         this.btnCancelQuote.setOnAction(null);
+        this.markingController.stop();
 
         for (MenuItem item : localUserMessageContextMenu.getItems()) {
             item.setOnAction(null);
@@ -685,6 +348,7 @@ public class ServerChatController implements Controller {
     public void initChannelChat(Channel channel) {
         if (this.currentChannel != null) {
             this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+            this.markingController.stop();
         }
 
         channel.setRead(true);
@@ -708,6 +372,9 @@ public class ServerChatController implements Controller {
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
+
+        this.markingController = new MarkingController(tfInputMessage, currentChannel, boxTextfield);
+        this.markingController.init();
     }
 
     /**

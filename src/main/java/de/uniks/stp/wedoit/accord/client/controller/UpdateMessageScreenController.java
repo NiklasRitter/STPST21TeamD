@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MarkingController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import javafx.application.Platform;
@@ -10,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
@@ -27,6 +29,8 @@ public class UpdateMessageScreenController implements Controller {
     private Button btnUpdateMessage;
     private Label errorLabel;
     private Button btnEmoji;
+    private MarkingController markingController;
+    private VBox vboxMarkingSelection;
 
     public UpdateMessageScreenController(Parent view, Editor editor, Message message, Stage stage) {
         this.view = view;
@@ -42,6 +46,7 @@ public class UpdateMessageScreenController implements Controller {
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
         errorLabel = (Label) view.lookup("#lblError");
+        vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
 
         String messageText = "";
         if (editor.getMessageManager().isQuote(message)) {
@@ -56,6 +61,9 @@ public class UpdateMessageScreenController implements Controller {
         btnDiscard.setOnAction(this::discardChanges);
         btnUpdateMessage.setOnAction(this::updateMessage);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
+
+        this.markingController = new MarkingController(tfUpdateMessage, message.getChannel(), vboxMarkingSelection);
+        this.markingController.init();
     }
 
     private void setComponentsText() {
@@ -108,6 +116,7 @@ public class UpdateMessageScreenController implements Controller {
         btnDiscard.setOnAction(null);
         btnUpdateMessage.setOnAction(null);
         btnEmoji.setOnAction(null);
+        markingController.stop();
 
         btnEmoji = null;
         tfUpdateMessage = null;
