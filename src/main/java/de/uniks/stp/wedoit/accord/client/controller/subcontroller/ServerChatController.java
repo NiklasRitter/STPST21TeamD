@@ -11,6 +11,7 @@ import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -102,6 +103,8 @@ public class ServerChatController implements Controller {
         quoteVisible.getChildren().clear();
         addUserMessageContextMenu();
         addLocalUserMessageContextMenu();
+
+        this.lvTextChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
 
         initToolTip();
     }
