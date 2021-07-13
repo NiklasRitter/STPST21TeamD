@@ -1138,7 +1138,7 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- update message");
         WaitForAsyncUtils.waitForFxEvents();
 
-        ((TextField) lookup("#tfUpdateMessage").query()).setText("update");
+        ((TextArea) lookup("#tfUpdateMessage").query()).setText("update");
         clickOn("#btnUpdateMessage");
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -1195,7 +1195,7 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(stageManager.getPopupStage().getTitle(), phil.getName());
 
-        TextField tfMessage = lookup("#tfMessage").query();
+        TextArea tfMessage = lookup("#tfMessage").query();
 
         Assert.assertEquals(tfMessage.isEditable(), phil.isOnlineStatus());
         Assert.assertEquals(tfMessage.getPromptText(), phil.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));

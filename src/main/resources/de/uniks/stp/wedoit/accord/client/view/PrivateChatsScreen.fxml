@@ -35,16 +35,15 @@
                                 </LinearGradient>
                             </textFill>
                             <graphic>
-                                <ImageView id="btnSetting" fitHeight="20.0" fitWidth="24.0" pickOnBounds="true"
-                                           preserveRatio="true">
-                                    <Image url="@images/options.png"/>
+                                <ImageView id="btnSetting" fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                    <Image url="@images/options.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
                         <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/home.png"/>
+                                    <Image url="@images/home.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -108,17 +107,16 @@
                                 </Button>
                             </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" prefHeight="10.0" VBox.vgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                             <children>
-                        <TextArea id="tfEnterPrivateChat" prefHeight="10.0" HBox.hgrow="ALWAYS" />
+                        <TextArea id="tfEnterPrivateChat" prefHeight="10.0" wrapText="true" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <Image url="@images/smiley.png"/>
+                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                                            <Image url="@images/smiley.png" />
                                         </ImageView>
                                     </graphic>
                                 </Button>
