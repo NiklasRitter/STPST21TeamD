@@ -113,6 +113,7 @@ public class Editor {
         localUser.setName(username);
         localUser.setUserKey(userKey);
         webSocketManager.setClearUsername();
+        setUpDB();
         return localUser;
     }
 

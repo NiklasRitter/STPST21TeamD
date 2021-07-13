@@ -39,7 +39,6 @@ public class StageManager extends Application {
 
     {
         resourceManager.setPreferenceManager(prefManager);
-        editor.setUpDB();
     }
 
     public void initView(String scene, String title, String fxmlName, String controllerName, boolean resizable, Object parameter, Object parameterTwo) {
