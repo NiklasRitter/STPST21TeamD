@@ -172,7 +172,7 @@ public class PrivateChatController implements Controller {
         }
 
         // load list view
-        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>();
+        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>(this.editor.getStageManager());
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(selectedUser.getName());
         Collections.reverse(oldMessages);
