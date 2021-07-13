@@ -1019,7 +1019,7 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- update message");
         WaitForAsyncUtils.waitForFxEvents();
 
-        ((TextField) lookup("#tfUpdateMessage").query()).setText("");
+        ((TextArea) lookup("#tfUpdateMessage").query()).setText("");
         clickOn("#btnEmoji");
 
         WaitForAsyncUtils.waitForFxEvents();
