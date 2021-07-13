@@ -301,6 +301,7 @@ public class ServerScreenController implements Controller {
         for (Category category : server.getCategories()) {
             for (Channel channel : category.getChannels()) {
                 channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+                channel.withoutAudioMembers((new ArrayList<>(channel.getAudioMembers())));
             }
         }
         server.withoutMembers(new ArrayList<>(server.getMembers()));

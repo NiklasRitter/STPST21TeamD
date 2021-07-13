@@ -10,6 +10,7 @@ import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -87,6 +88,9 @@ public class PrivateChatController implements Controller {
 
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         this.tfPrivateChat.setEditable(false);
+
+
+        this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
 
         initToolTip();
     }
@@ -174,7 +178,8 @@ public class PrivateChatController implements Controller {
         }
 
         // load list view
-        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>(editor);
+        MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>(this.editor.getStageManager());
+
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(selectedUser.getName());
         Collections.reverse(oldMessages);

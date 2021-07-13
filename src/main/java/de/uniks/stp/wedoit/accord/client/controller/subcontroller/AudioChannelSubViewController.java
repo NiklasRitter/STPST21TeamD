@@ -29,7 +29,6 @@ public class AudioChannelSubViewController implements Controller {
     private final Editor editor;
     private final CategoryTreeViewController controller;
     private final Channel channel;
-    private boolean allMuted;
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
@@ -62,6 +61,13 @@ public class AudioChannelSubViewController implements Controller {
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
 
         this.setComponentsText();
+
+        if(localUser.isAllMuted()){
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            btnMuteAll.setGraphic(icon);
+        }
     }
 
     private void setComponentsText() {
@@ -85,14 +91,23 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
-        if(!allMuted){
+        if(!localUser.isAllMuted()){
             editor.getAudioManager().muteAllUsers(channel.getAudioMembers());
             controller.getTvServerChannels().refresh();
             ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
             icon.setFitHeight(20);
             icon.setFitWidth(20);
             btnMuteAll.setGraphic(icon);
-            allMuted = true;
+            localUser.setAllMuted(true);
+        }
+        else{
+            editor.getAudioManager().unMuteAllUsers(channel.getAudioMembers());
+            controller.getTvServerChannels().refresh();
+            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound.png"))));
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            btnMuteAll.setGraphic(icon);
+            localUser.setAllMuted(false);
         }
     }
 

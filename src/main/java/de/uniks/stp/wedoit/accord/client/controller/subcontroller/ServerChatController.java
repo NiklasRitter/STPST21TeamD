@@ -9,6 +9,7 @@ import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -116,6 +117,8 @@ public class ServerChatController implements Controller {
 
         addUserMessageContextMenu();
         addLocalUserMessageContextMenu();
+
+        this.lvTextChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
 
         initToolTip();
     }
@@ -691,7 +694,7 @@ public class ServerChatController implements Controller {
         this.tfInputMessage.setEditable(this.currentChannel != null);
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory<>(editor));
+        lvTextChat.setCellFactory(new MessageCellFactory<>(this.editor.getStageManager()));
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 

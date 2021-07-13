@@ -87,7 +87,6 @@ public class MainScreenController implements Controller {
 
         // load localUserId in order to later be able to edit server
         editor.getRestManager().getLocalUserId(localUser);
-        editor.setUpDB();
 
         // Add action listeners
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);
@@ -111,15 +110,13 @@ public class MainScreenController implements Controller {
     public void handleGetServers(boolean success) {
         if (success) {
             // load list view
-            MainScreenServerListView mainScreenServerListView = new MainScreenServerListView();
+            MainScreenServerListView mainScreenServerListView = new MainScreenServerListView(this.editor);
             serverListView.setCellFactory(mainScreenServerListView);
-            List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
-                    .collect(Collectors.toList());
+            List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName)).collect(Collectors.toList());
             this.serverListView.setItems(FXCollections.observableList(localUserServers));
 
             // Add listener for the loaded listView
             this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
-
             // Add server websockets
             for (Server server : localUser.getServers()) {
                 webSocketServerUrls.add(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());

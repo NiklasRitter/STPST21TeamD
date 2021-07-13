@@ -245,7 +245,7 @@ public class EditServerScreenController implements Controller {
      * @param invitationLink invitation link which is responded by the server
      */
     public void handleInvitation(String invitationLink) {
-        resetAmountPromptText();
+        Platform.runLater(() -> resetAmountPromptText());
         if (invitationLink != null) {
             tfInvitationLink.setText(invitationLink);
         } else {
