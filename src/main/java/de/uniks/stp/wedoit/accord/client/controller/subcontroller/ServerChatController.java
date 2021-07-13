@@ -110,6 +110,7 @@ public class ServerChatController implements Controller {
 
         lvSelectUser = new ListView<>();
         lvSelectUser.setVisible(false);
+        lvSelectUser.setId("lvSelectUser");
 
         quoteVisible.getChildren().clear();
 
@@ -199,7 +200,6 @@ public class ServerChatController implements Controller {
             atHit = checkAtHit(false);
 
             if (atHit != null) {
-
                 deleteOrActivateAt(atHit, false);
 
             } else {
@@ -291,15 +291,8 @@ public class ServerChatController implements Controller {
 
             for (AtPositions atToShift : atPositions) {
                 if (atToShift != at && atToShift.getStart() > at.getEnd()) {
-
-                    if (contentAdded) {
-                        for (int i = 0; i < at.getLength(); i++) {
-                            atToShift.shiftLeft();
-                        }
-                    } else {
-                        for (int i = 0; i < at.getLength(); i++) {
-                            atToShift.shiftLeft();
-                        }
+                    for (int i = 0; i < at.getLength(); i++) {
+                        atToShift.shiftLeft();
                     }
                 }
             }
@@ -335,7 +328,6 @@ public class ServerChatController implements Controller {
                 }
             }
         }
-
         return null;
     }
 

@@ -98,7 +98,6 @@ public class ServerScreenTest extends ApplicationTest {
 
     private Options oldOptions;
 
-
     @BeforeClass
     public static void before() {
         System.setProperty("testfx.robot", "glass");
@@ -107,7 +106,6 @@ public class ServerScreenTest extends ApplicationTest {
         System.setProperty("prism.text", "t2k");
         System.setProperty("java.awt.headless", "true");
     }
-
 
     @Override
     public void start(Stage stage) {
@@ -607,6 +605,83 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
         Assert.assertEquals("Test Message" + emoji.getText(), lvTextChat.getItems().get(0).getText());
+
+    }
+
+    @Test
+    public void markingTest() {
+        initUserListView();
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        TextField tfInputMessage = lookup("#tfInputMessage").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        tfInputMessage.setText("");
+        clickOn("#tfInputMessage");
+
+        write("@N");
+        WaitForAsyncUtils.waitForFxEvents();
+        ListView<User> selectUser = lookup("#lvSelectUser").queryListView();
+
+        Assert.assertEquals(selectUser.getItems().size(), 3);
+
+        tfInputMessage.positionCaret(1);
+        press(KeyCode.DELETE);
+        write('\b');
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(selectUser.getItems().size(), 4);
+        clickOn("#tfInputMessage");
+
+        selectUser.getSelectionModel().select(0);
+        clickOn("#lvSelectUser");
+
+        Assert.assertEquals(tfInputMessage.getText(), "@N1");
+
+        clickOn("#tfInputMessage");
+        write("@N1");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertFalse(selectUser.isVisible());
+
+        Assert.assertEquals(tfInputMessage.getText(), "@N1@N1");
+
+        tfInputMessage.positionCaret(2);
+        write("1");
+        Assert.assertEquals(tfInputMessage.getText(), "@N1");
+        tfInputMessage.positionCaret(3);
+
+        press(KeyCode.BACK_SPACE);
+        write('\b');
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertTrue(tfInputMessage.getText().isEmpty());
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "@JohnDoe");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#tfInputMessage");
+        write("1@@");
+        tfInputMessage.positionCaret(1);
+        WaitForAsyncUtils.waitForFxEvents();
+        write("1");
+        press(KeyCode.BACK_SPACE);
+        write('\b');
+        WaitForAsyncUtils.waitForFxEvents();
+
+        System.out.println(tfInputMessage.getText());
+
     }
 
     @Test
