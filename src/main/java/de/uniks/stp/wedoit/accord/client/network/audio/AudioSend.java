@@ -78,10 +78,12 @@ public class AudioSend extends Thread {
                     this.sendSocket.send(datagramPacket);
                 }
             }
-            if (line.isRunning()) {
-                line.stop();
-                line.flush();
-            }
+//            if (line.isRunning()) {
+//                line.stop();
+//                line.flush();
+//            }
+            line.stop();
+            line.flush();
             if (line.isOpen()) {
                 line.close();
             }
