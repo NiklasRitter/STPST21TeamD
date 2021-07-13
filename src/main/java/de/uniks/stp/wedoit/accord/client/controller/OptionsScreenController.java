@@ -82,7 +82,6 @@ public class OptionsScreenController implements Controller {
             parent1.getChildren().removeAll(sliderTextSize,lbTextSize);
         }else{
             sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
-            System.out.println(editor.getFontSize());
         }
 
         Tooltip logoutButton = new Tooltip();
@@ -92,7 +91,6 @@ public class OptionsScreenController implements Controller {
 
     private void sliderOnChange(MouseEvent e) {
         editor.saveFontSize((int) sliderTextSize.getValue());
-        System.out.println("test");
     }
 
 
