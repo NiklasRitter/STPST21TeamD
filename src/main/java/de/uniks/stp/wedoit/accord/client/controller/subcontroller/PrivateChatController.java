@@ -18,6 +18,8 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -44,7 +46,7 @@ public class PrivateChatController implements Controller {
     private HBox quoteVisible;
     private Label lblQuote;
     private Button btnCancelQuote, btnPlay;
-    private TextField tfPrivateChat;
+    private TextArea tfPrivateChat;
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private ListView<PrivateMessage> lwPrivateChat;
     private Button btnEmoji;
@@ -73,12 +75,12 @@ public class PrivateChatController implements Controller {
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
         this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
         this.lblQuote = (Label) view.lookup("#lblQuote");
-        this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
+        this.tfPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
         this.btnPlay = (Button) view.lookup("#btnPlay");
 
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
         this.lwPrivateChat.setOnMouseClicked(this::onLwPrivatChatClicked);
-        this.tfPrivateChat.setOnAction(this::tfPrivateChatOnEnter);
+        this.tfPrivateChat.setOnKeyPressed(this::tfPrivateChatOnEnter);
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnPlay.setOnAction(this::btnPlayOnClicked);
         this.quoteVisible.getChildren().clear();
@@ -106,7 +108,7 @@ public class PrivateChatController implements Controller {
         this.lwPrivateChat.setOnMouseClicked(null);
         this.btnCancelQuote.setOnAction(null);
         this.btnEmoji.setOnAction(null);
-        this.tfPrivateChat.setOnAction(null);
+        //this.tfPrivateChat.setOnAction(null);
         for (MenuItem item : messageContextMenu.getItems()) {
             item.setOnAction(null);
         }
@@ -176,6 +178,7 @@ public class PrivateChatController implements Controller {
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(selectedUser.getName());
         Collections.reverse(oldMessages);
+        System.out.println("test? "+ oldMessages.get(oldMessages.size()-1));
         this.privateMessageObservableList = FXCollections.observableList(oldMessages);
         if (oldMessages.size() == 50) {
             displayLoadMore();
@@ -283,15 +286,32 @@ public class PrivateChatController implements Controller {
     }
 
     /**
-     * send message in textfield after enter button pressed
+     * send message in textArea after enter button pressed
+     * or
+     * enter linebreak when SHIFT + enter is pressed
      *
-     * @param actionEvent occurs when enter button is pressed
+     * @param keyEvent occurs when key is pressed when text area is focused
      */
-    private void tfPrivateChatOnEnter(ActionEvent actionEvent) {
-        String message = this.tfPrivateChat.getText();
-        this.tfPrivateChat.clear();
+    private void tfPrivateChatOnEnter(KeyEvent keyEvent) {
+        if(keyEvent.getCode() == KeyCode.ENTER){
+            keyEvent.consume();
+            if(keyEvent.isShiftDown()){
+                tfPrivateChat.appendText(System.getProperty("line.separator"));
+            }else{
+                sendMessage(this.tfPrivateChat.getText());
+            }
+        }
 
+    }
+
+    /**
+     * helper methode for sending messages to the current chat
+     *
+     * @param message to be send to currentChat
+     */
+    private void sendMessage(String message){
         if (message != null && !message.isEmpty() && currentChat != null) {
+            this.tfPrivateChat.clear();
             message = message.trim();
             JsonObject jsonMsg;
 
@@ -309,6 +329,7 @@ public class PrivateChatController implements Controller {
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             }
         }
+
     }
 
     /**
@@ -361,7 +382,7 @@ public class PrivateChatController implements Controller {
         return currentChat;
     }
 
-    public TextField getTfPrivateChat() {
+    public TextArea getTfPrivateChat() {
         return tfPrivateChat;
     }
 
