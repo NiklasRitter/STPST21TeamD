@@ -272,7 +272,7 @@ public class AudioManagerTest extends ApplicationTest {
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
         AudioConnection tempAudioCon = new AudioConnection(localUser, channel);
         stageManager.getEditor().getAudioManager().setAudioConnection(tempAudioCon);
-        tempAudioCon.startConnection("localhost", 33100);
+        tempAudioCon.startConnection("localhost" , 33100);
         WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
         stageManager.getEditor().getAudioManager().muteYourself(localUser);
         Assert.assertTrue(localUser.isMuted());

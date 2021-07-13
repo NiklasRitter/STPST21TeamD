@@ -24,7 +24,7 @@ public class AudioConnection {
 
     public void startConnection(String url, int port) {
         try {
-            this.audioSocket = new DatagramSocket();
+            this.audioSocket = new DatagramSocket(33100);
             startSendingAudio(url, port);
             startReceivingAudio();
         } catch (Exception e) {
@@ -48,11 +48,8 @@ public class AudioConnection {
     }
 
     public void close() {
-        System.out.println(0);
         stopReceivingAudio();
-        System.out.println(1);
         stopSendingAudio();
-        System.out.println(2);
         audioSocket.close();
     }
 
@@ -75,7 +72,6 @@ public class AudioConnection {
             if (this.receivingThread.isAlive()) {
                 try {
                     receivingThread.setShouldReceive(false);
-                    System.out.println(11);
                     receivingThread.join();
                 } catch (InterruptedException e) {
                     System.err.println("Error on closing receivingConnection");
