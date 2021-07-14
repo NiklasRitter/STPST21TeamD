@@ -87,7 +87,6 @@ public class MainScreenController implements Controller {
 
         // load localUserId in order to later be able to edit server
         editor.getRestManager().getLocalUserId(localUser);
-        editor.setUpDB();
 
         // Add action listeners
         this.privateChatsButton.setOnAction(this::privateChatsButtonOnClick);

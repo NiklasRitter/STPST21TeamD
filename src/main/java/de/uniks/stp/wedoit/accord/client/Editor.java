@@ -5,6 +5,8 @@ import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
@@ -41,6 +43,7 @@ public class Editor {
     private Server currentServer;
     private StageManager stageManager;
     private SqliteDB db;
+    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
 
     /**
      * @return private final RestManager restManager
@@ -110,6 +113,7 @@ public class Editor {
         localUser.setName(username);
         localUser.setUserKey(userKey);
         webSocketManager.setClearUsername();
+        setUpDB();
         return localUser;
     }
 
@@ -343,6 +347,7 @@ public class Editor {
 
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
+        chatFontSize.setValue(db.getFontSize());
     }
 
     public void savePrivateMessage(PrivateMessage message) {
@@ -375,6 +380,19 @@ public class Editor {
 
     public void getUserChatRead(User user) {
         db.getChatReadForUser(user);
+    }
+
+    public void saveFontSize(int size) {
+        db.updateFontSize(size);
+        chatFontSize.setValue(size);
+    }
+
+    public int getFontSize() {
+        return db.getFontSize();
+    }
+
+    public IntegerProperty getChatFontSizeProperty(){
+        return chatFontSize;
     }
 
     /**
