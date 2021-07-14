@@ -68,7 +68,7 @@ public class CategoryTreeViewController implements Controller {
     }
 
     public void initContextMenu() {
-        ChannelTreeView channelTreeView = new ChannelTreeView(editor.getStageManager());
+        ChannelTreeView channelTreeView = new ChannelTreeView(editor.getStageManager(), this);
         this.tvServerChannels.setCellFactory(channelTreeView);
         this.tvServerChannels.setShowRoot(false);
         this.tvServerChannels.setRoot(tvServerChannelsRoot);

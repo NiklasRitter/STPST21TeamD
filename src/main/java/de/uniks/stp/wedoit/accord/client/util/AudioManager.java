@@ -35,6 +35,7 @@ public class AudioManager {
     }
 
     public void muteAllUsers(List<User> users){
+        editor.getLocalUser().setAllMuted(true);
         for(User user : users){
             if(!user.getName().equals(editor.getLocalUser().getName())){
                 muteUser(user);
@@ -48,6 +49,7 @@ public class AudioManager {
                 unmuteUser(user);
             }
         }
+        editor.getLocalUser().setAllMuted(false);
     }
 
     public void muteYourself(LocalUser yourself) {

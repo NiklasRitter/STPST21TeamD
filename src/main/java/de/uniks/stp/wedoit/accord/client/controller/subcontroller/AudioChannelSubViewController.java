@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CHOOSINGIMG;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_IMGURL;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
 
@@ -62,12 +63,9 @@ public class AudioChannelSubViewController implements Controller {
 
         this.setComponentsText();
 
-        if(localUser.isAllMuted()){
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
-            icon.setFitHeight(20);
-            icon.setFitWidth(20);
-            btnMuteAll.setGraphic(icon);
-        }
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_ALL_MUTED, this::allMuteChanged);
+
+        allMuteChanged(null);
     }
 
     private void setComponentsText() {
@@ -93,22 +91,24 @@ public class AudioChannelSubViewController implements Controller {
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
         if(!localUser.isAllMuted()){
             editor.getAudioManager().muteAllUsers(channel.getAudioMembers());
-            controller.getTvServerChannels().refresh();
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
-            icon.setFitHeight(20);
-            icon.setFitWidth(20);
-            btnMuteAll.setGraphic(icon);
-            localUser.setAllMuted(true);
         }
         else{
             editor.getAudioManager().unMuteAllUsers(channel.getAudioMembers());
-            controller.getTvServerChannels().refresh();
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound.png"))));
-            icon.setFitHeight(20);
-            icon.setFitWidth(20);
-            btnMuteAll.setGraphic(icon);
-            localUser.setAllMuted(false);
         }
+        controller.getTvServerChannels().refresh();
+    }
+
+    private void allMuteChanged(PropertyChangeEvent propertyChangeEvent) {
+        ImageView icon;
+        if(localUser.isAllMuted()){
+            icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
+        }
+        else{
+            icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound.png"))));
+        }
+        icon.setFitHeight(20);
+        icon.setFitWidth(20);
+        btnMuteAll.setGraphic(icon);
     }
 
     private void btnLeaveOnClick(ActionEvent actionEvent) {
