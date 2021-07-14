@@ -583,7 +583,7 @@ public class ServerScreenTest extends ApplicationTest {
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
-        TextField tfInputMessage = lookup("#tfInputMessage").query();
+
 
         WaitForAsyncUtils.waitForFxEvents();
         tvServerChannels.getSelectionModel().select(1);
@@ -630,7 +630,7 @@ public class ServerScreenTest extends ApplicationTest {
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
-        TextField tfInputMessage = lookup("#tfInputMessage").query();
+        TextArea tfInputMessage = lookup("#tfInputMessage").query();
 
         WaitForAsyncUtils.waitForFxEvents();
         tvServerChannels.getSelectionModel().select(1);
@@ -1001,7 +1001,7 @@ public class ServerScreenTest extends ApplicationTest {
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
-        TextField tfInputMessage = lookup("#tfInputMessage").query();
+        TextArea tfInputMessage = lookup("#tfInputMessage").query();
 
         WaitForAsyncUtils.waitForFxEvents();
         tvServerChannels.getSelectionModel().select(1);
@@ -1059,19 +1059,6 @@ public class ServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lvTextChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
         Assert.assertEquals(lvTextChat.getItems().get(2).getText(), "quote");
-
-        lvTextChat.getSelectionModel().select(1);
-        rightClickOn(lvTextChat);
-        WaitForAsyncUtils.waitForFxEvents();
-
-        clickOn("- copy");
-        WaitForAsyncUtils.waitForFxEvents();
-
-        clickOn("#tfInputMessage");
-        press(KeyCode.PASTE);
-
-        Assert.assertEquals(tfInputMessage.getText(), lvTextChat.getItems().get(1).getText());
-
     }
 
     @Test

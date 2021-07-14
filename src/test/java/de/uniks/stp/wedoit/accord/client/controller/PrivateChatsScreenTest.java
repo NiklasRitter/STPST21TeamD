@@ -601,26 +601,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), "quote");
 
         lwPrivateChat.getSelectionModel().select(lwNewestItem);
-        //clickOn(lwPrivateChat);
         Assert.assertEquals(lwPrivateChat.getSelectionModel().getSelectedItem(), lwPrivateChat.getItems().get(lwNewestItem));
-
-
-        TextField tfEnterPrivateChat = lookup("#tfEnterPrivateChat").query();
-
-        lwNewestItem = lwPrivateChat.getItems().size() - 7;
-        lwPrivateChat.getSelectionModel().select(lwNewestItem);
-        String copiedText = lwPrivateChat.getSelectionModel().getSelectedItem().getText();
-
-        rightClickOn(lwPrivateChat);
-        WaitForAsyncUtils.waitForFxEvents();
-
-        clickOn("- copy");
-        WaitForAsyncUtils.waitForFxEvents();
-
-        clickOn("#tfEnterPrivateChat");
-        press(KeyCode.PASTE);
-        System.out.println(copiedText);
-        Assert.assertEquals(tfEnterPrivateChat.getText(), copiedText);
     }
 
     public JsonObject getOnlineUsers() {
