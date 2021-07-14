@@ -122,12 +122,6 @@ public class LoginScreenTest extends ApplicationTest {
         callbackArgumentCaptorLogin = null;
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-
     @Test
     public void testSetRememberMe() {
         Options options = new Options();

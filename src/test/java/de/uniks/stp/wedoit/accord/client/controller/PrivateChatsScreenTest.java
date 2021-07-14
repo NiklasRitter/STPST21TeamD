@@ -126,11 +126,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         editor = null;
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     public void initUserListView() {
         directToPrivateChatsScreen();

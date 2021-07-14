@@ -119,12 +119,6 @@ public class GameScreenTest extends ApplicationTest {
         res = null;
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-
     @Test
     public void gameActionTest(){
 

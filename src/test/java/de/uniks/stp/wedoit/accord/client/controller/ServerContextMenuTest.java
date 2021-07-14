@@ -125,11 +125,6 @@ public class ServerContextMenuTest extends ApplicationTest {
         categoriesCallbackArgumentCaptor = null;
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     public void mockRest(JsonObject restClientJson) {
         // mock rest client
         when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));

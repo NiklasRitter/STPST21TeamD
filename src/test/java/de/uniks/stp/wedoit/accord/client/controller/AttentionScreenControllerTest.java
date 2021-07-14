@@ -92,10 +92,6 @@ public class AttentionScreenControllerTest extends ApplicationTest {
         this.stageManager.initView(POPUPSTAGE, "Edit Server", "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     /**
      * Mock the rest client's getServers method and create a callback

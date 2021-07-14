@@ -128,11 +128,6 @@ public class MainScreenTest extends ApplicationTest {
         wsCallback = null;
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     /**
      * Mock the rest client's getServers method and create a callback
      *

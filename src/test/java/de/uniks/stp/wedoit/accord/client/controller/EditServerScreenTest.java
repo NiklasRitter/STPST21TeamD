@@ -94,10 +94,6 @@ public class EditServerScreenTest extends ApplicationTest {
         this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     /**
      * Mock the rest client's getServers method and create a callback
