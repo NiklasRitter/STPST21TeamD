@@ -5,15 +5,15 @@ package de.uniks.stp.wedoit.accord.client.constants;
  */
 public enum Icons {
 
-    GRINNING("grinning"),
+    /*GRINNING("grinning"),
     GRIN("grin"),
     SMILE("smile"),
     SWEAT_SMILE("sweat_smile"),
     JOY("joy"),
     ROFL("rofl"),
     INNOCENT("innocent"),
-    SLIGHT_SMILE("slight_smile");
-    /*SMILING_EYES("\uD83D\uDE01"),
+    SLIGHT_SMILE("slight_smile");*/
+    SMILING_EYES("\uD83D\uDE01"),
     HAPPY_TEARS("\uD83D\uDE02"),
     SMILE_OPEN_MOUTH("\uD83D\uDE03"),
     SMILE_CLOSED_MOUTH("\uD83D\uDE04"),
@@ -53,7 +53,7 @@ public enum Icons {
     WEARY_FACE("\uD83D\uDE29"),
     FEARFUL_FACE("\uD83D\uDE28"),
     COLD_SWEAT("\uD83D\uDE13"),
-    RECREATIONAL_VEHICLE("\uD83D\uDE99");*/
+    RECREATIONAL_VEHICLE("\uD83D\uDE99");
 
     private final String iconName;
 

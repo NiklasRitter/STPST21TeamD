@@ -105,9 +105,15 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                 time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
-                //if (countOccurence(item.getText(), ':') >= 2) {
-                //    displayEmoji(item.getText());
-                //}
+                if (item instanceof PrivateMessage) {
+                    if (item.getText().startsWith(GAME_SYSTEM)) {
+                        this.setText(item.getText().substring(GAME_PREFIX.length()));
+                        return;
+                    } else if (item.getText().startsWith(GAME_PREFIX)) {
+                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                        return;
+                    }
+                }
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     setUpMedia(item);
 
@@ -131,57 +137,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (url != null) {
                         setUpJoinServerView(item, url);
                     } else {
-                        this.label.setText("[" + time + "] " + item.getFrom() + ": ");
-                        EmojiTextFlow emojiTextFlow = new EmojiTextFlow(parameters);
-                        emojiTextFlow.parseAndAppend(item.getText());
-                        this.vBox.getChildren().addAll(label, emojiTextFlow);
-                        setGraphic(vBox);
-                        //this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                        displayTextWithEmoji(item);
                     }
                 } else {
-                    this.label.setText("[" + time + "] " + item.getFrom() + ": ");
-                    EmojiTextFlow emojiTextFlow = new EmojiTextFlow(parameters);
-                    emojiTextFlow.parseAndAppend(item.getText());
-                    this.vBox.getChildren().addAll(label, emojiTextFlow);
-                    setGraphic(vBox);
-                    //this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
-                }
-
-                if (item instanceof PrivateMessage) {
-                    if (item.getText().startsWith(GAME_SYSTEM)) {
-                        this.setText(item.getText().substring(GAME_PREFIX.length()));
-                    } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
-                    }
+                    displayTextWithEmoji(item);
                 }
             }
-        }
-
-        private void displayEmoji(String text) {
-/*            EmojiTextFlowParameters parameters = new EmojiTextFlowParameters();
-            parameters.setEmojiScaleFactor(1D);
-            parameters.setTextAlignment(TextAlignment.LEFT);
-            parameters.setFont(Font.font("System", FontWeight.NORMAL, 12));
-            parameters.setTextColor(Color.BLACK);*/
-/*            int startOfEmoji = text.indexOf(":");
-            int endOfEmoji = text.indexOf(":", startOfEmoji);
-            String possibleEmoji = text.substring(startOfEmoji, endOfEmoji);*/
-            System.out.println("hier bin ich");
-            EmojiTextFlow emojiTextFlow = new EmojiTextFlow(parameters);
-            emojiTextFlow.parseAndAppend(text);
-            setGraphic(emojiTextFlow);
-        }
-
-        private int countOccurence(String text, char s) {
-            char[] chars = text.toCharArray();
-            int counter = 0;
-            for (char c :chars) {
-                if (s == c) {
-                    counter ++;
-                }
-            }
-            System.out.println(counter);
-            return counter;
         }
 
         private String containsInviteUrl(String text) {
@@ -307,6 +268,14 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             this.vBox.getChildren().addAll(this.label, joinServerHBox, textLabel);
             setGraphic(this.vBox);
+        }
+
+        private void displayTextWithEmoji(Message item) {
+            this.label.setText("[" + time + "] " + item.getFrom() + ": ");
+            EmojiTextFlow emojiTextFlow = new EmojiTextFlow(parameters);
+            emojiTextFlow.parseAndAppend(item.getText());
+            this.vBox.getChildren().addAll(label, emojiTextFlow);
+            setGraphic(vBox);
         }
 
     }
