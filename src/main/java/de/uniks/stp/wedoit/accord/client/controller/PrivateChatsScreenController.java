@@ -35,7 +35,7 @@ public class PrivateChatsScreenController implements Controller {
     private final Editor editor;
     private Button btnOptions, btnPlay;
     private Button btnHome;
-    private TextField tfPrivateChat;
+    private TextArea tfPrivateChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
     private ObservableList<User> onlineUserObservableList;
@@ -76,7 +76,7 @@ public class PrivateChatsScreenController implements Controller {
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
-        this.tfPrivateChat = (TextField) view.lookup("#tfEnterPrivateChat");
+        this.tfPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
 
         this.setComponentsText();
 
@@ -203,7 +203,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param propertyChangeEvent event occurs when a users online status changes
      */
     private void usersOnlineListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-        TextField tfPrivateChat = privateChatController.getTfPrivateChat();
+        TextArea tfPrivateChat = privateChatController.getTfPrivateChat();
         User user = (User) propertyChangeEvent.getSource();
         editor.getUserChatRead(user);
         if (!user.isOnlineStatus()) {
