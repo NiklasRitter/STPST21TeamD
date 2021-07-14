@@ -74,7 +74,7 @@ public class EmojiScreenController implements Controller {
             icon.setFitHeight(30);
             String shortname = EmojiParser.getInstance().unicodeToShortname(unicode);
             emoji = EmojiParser.getInstance().getEmoji(shortname);
-            icon.setImage(new Image(StageManager.class.getResource("emoji_images/test/" + emoji.getHex() + ".png").toString()));
+            icon.setImage(new Image(StageManager.class.getResource("emoji_images/" + emoji.getHex() + ".png").toString()));
             this.emojiButton = new EmojiButton("");
             this.emojiButton.setGraphic(icon);
             hashMapForEmojiButtons.put(this.emojiButton, emoji);
