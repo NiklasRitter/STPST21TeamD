@@ -22,11 +22,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
@@ -50,6 +52,7 @@ import static org.mockito.Mockito.*;
  * - logout test
  * - channel tree view test
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ServerScreenTest extends ApplicationTest {
 
     @Rule
@@ -970,7 +973,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         ((TextArea) lookup("#tfInputMessage").query()).setText("quote");
         clickOn("#tfInputMessage");
-        write("\n");
+        press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
         JsonObject quote = JsonUtil.buildServerChatMessage(channel.getId(), QUOTE_PREFIX + formatted + QUOTE_ID + "123" + QUOTE_SUFFIX);

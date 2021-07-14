@@ -17,11 +17,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -41,6 +43,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ServerContextMenuTest extends ApplicationTest {
 
     @Rule
@@ -259,7 +262,6 @@ public class ServerContextMenuTest extends ApplicationTest {
         TextField textField = lookup("#tfCategoryName").query();
         Assert.assertEquals(textField.getText(), category.getName());
         textField.setText("categoryTest");
-        WaitForAsyncUtils.waitForFxEvents();
         clickOn("#btnEditCategory");
 
         JsonObject json = buildCreateCategory(category.getId(), textField.getText(), server.getId());
@@ -448,19 +450,15 @@ public class ServerContextMenuTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         VBox vBoxMemberNameAndCheckBox = lookup("#vBoxMemberNameAndCheckBox").query();
-        WaitForAsyncUtils.waitForFxEvents();
-
-        WaitForAsyncUtils.waitForFxEvents();
         HBox hBoxPlaceHolder = (HBox) vBoxMemberNameAndCheckBox.getChildren().get(0);
         VBox vBoxLblMemberNames = (VBox) hBoxPlaceHolder.getChildren().get(0);
         VBox vBoxCheckBox = (VBox) hBoxPlaceHolder.getChildren().get(1);
 
-        WaitForAsyncUtils.waitForFxEvents();
         Label lblMemberName = (Label) vBoxLblMemberNames.getChildren().get(0);
 
-        WaitForAsyncUtils.waitForFxEvents();
         CheckBox checkBoxPrivilegedMember = (CheckBox) vBoxCheckBox.getChildren().get(0);
         clickOn(checkBoxPrivilegedMember);
+        WaitForAsyncUtils.waitForFxEvents();
 
         String memberId = "";
         for (User member : server.getMembers()) {
@@ -583,18 +581,15 @@ public class ServerContextMenuTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         VBox vBoxMemberNameAndCheckBox = lookup("#vBoxMemberNameAndCheckBox").query();
-        WaitForAsyncUtils.waitForFxEvents();
 
         HBox hBoxPlaceHolder = (HBox) vBoxMemberNameAndCheckBox.getChildren().get(0);
         VBox vBoxLblMemberNames = (VBox) hBoxPlaceHolder.getChildren().get(0);
         VBox vBoxCheckBox = (VBox) hBoxPlaceHolder.getChildren().get(1);
-
-        WaitForAsyncUtils.waitForFxEvents();
         Label lblMemberName = (Label) vBoxLblMemberNames.getChildren().get(0);
 
-        WaitForAsyncUtils.waitForFxEvents();
         CheckBox checkBoxPrivilegedMember = (CheckBox) vBoxCheckBox.getChildren().get(0);
         clickOn(checkBoxPrivilegedMember);
+        WaitForAsyncUtils.waitForFxEvents();
 
         String memberId = "";
         for (User member : server.getMembers()) {
@@ -603,7 +598,7 @@ public class ServerContextMenuTest extends ApplicationTest {
             }
         }
 
-        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#btnSave");
 
         JsonArray members = Json.createArrayBuilder().add(memberId).build();
