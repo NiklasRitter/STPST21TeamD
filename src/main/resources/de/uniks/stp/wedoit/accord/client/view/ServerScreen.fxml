@@ -37,14 +37,14 @@
                             </textFill>
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/options.png"/>
+                                    <Image url="@images/options.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
                         <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/home.png"/>
+                                    <Image url="@images/home.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -54,7 +54,7 @@
                             </font>
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/edit.png"/>
+                                    <Image url="@images/edit.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -114,7 +114,7 @@
                                 </Button>
                             </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="NEVER">
                             <children>
                         <TextArea id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
@@ -122,9 +122,8 @@
                                         <Font size="4.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <Image url="@images/smiley.png"/>
+                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                                            <Image url="@images/smiley.png" />
                                         </ImageView>
                                     </graphic>
                                 </Button>
