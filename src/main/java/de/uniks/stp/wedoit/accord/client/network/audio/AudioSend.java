@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
 
-public class AudioSend extends Thread{
+public class AudioSend extends Thread {
 
     private final DatagramSocket sendSocket;
 
@@ -71,14 +71,17 @@ public class AudioSend extends Thread{
             line.start();
             InetAddress inetAddress = InetAddress.getByName(address);
 
-            while(shouldSend.get()) {
+            while (shouldSend.get()) {
                 line.read(readData, 255, 1024);
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
-
-                this.sendSocket.send(datagramPacket);
+                if (line.isRunning()) {
+                    this.sendSocket.send(datagramPacket);
+                }
             }
-            line.stop();
-            line.flush();
+            if (line.isRunning()) {
+                line.stop();
+                line.flush();
+            }
             if (line.isOpen()) {
                 line.close();
             }
@@ -103,12 +106,16 @@ public class AudioSend extends Thread{
         this.shouldSend.set(value);
     }
 
-    public void stopSending(){
-        this.line.stop();
-        this.line.flush();
+    public void stopSending() {
+        if (line != null) {
+            this.line.stop();
+            this.line.flush();
+        }
     }
 
-    public void startSending(){
-        this.line.start();
+    public void startSending() {
+        if (line != null) {
+            this.line.start();
+        }
     }
 }

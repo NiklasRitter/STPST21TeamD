@@ -9,6 +9,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -21,7 +22,7 @@ public class UpdateMessageScreenController implements Controller {
     private final Editor editor;
     private final Message message;
     private final Object stage;
-    private TextField tfUpdateMessage;
+    private TextArea tfUpdateMessage;
     private Button btnDiscard;
     private Button btnUpdateMessage;
     private Label errorLabel;
@@ -36,7 +37,7 @@ public class UpdateMessageScreenController implements Controller {
 
     @Override
     public void init() {
-        tfUpdateMessage = (TextField) view.lookup("#tfUpdateMessage");
+        tfUpdateMessage = (TextArea) view.lookup("#tfUpdateMessage");
         btnEmoji = (Button) view.lookup("#btnEmoji");
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
