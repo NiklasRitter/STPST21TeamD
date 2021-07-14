@@ -605,7 +605,7 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn(emoji);
 
         //send message
-        ((TextField) lookup("#tfInputMessage").query()).setText(((TextField) lookup("#tfInputMessage").query()).getText() + "Test Message");
+        ((TextArea) lookup("#tfInputMessage").query()).setText(((TextArea) lookup("#tfInputMessage").query()).getText() + "Test Message");
         clickOn("#tfInputMessage");
 
         press(KeyCode.ENTER);
@@ -747,7 +747,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(channel.getName(), lbChannelName.getText());
 
         //send message
-        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        ((TextArea) lookup("#tfInputMessage").query()).setText("Test Message");
         clickOn("#tfInputMessage");
         press(KeyCode.ENTER);
 
@@ -1014,7 +1014,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfInputMessage");
-        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        ((TextArea) lookup("#tfInputMessage").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
@@ -1046,7 +1046,7 @@ public class ServerScreenTest extends ApplicationTest {
         formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0), lvTextChat.getItems().get(0).getText());
         Assert.assertEquals(lblQuote.getText(), formatted);
 
-        ((TextField) lookup("#tfInputMessage").query()).setText("quote");
+        ((TextArea) lookup("#tfInputMessage").query()).setText("quote");
         clickOn("#tfInputMessage");
         write("\n");
 
@@ -1096,7 +1096,7 @@ public class ServerScreenTest extends ApplicationTest {
         //send message
         clickOn("#tfInputMessage");
 
-        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        ((TextArea) lookup("#tfInputMessage").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
@@ -1109,7 +1109,7 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- edit message");
         WaitForAsyncUtils.waitForFxEvents();
 
-        ((TextField) lookup("#tfUpdateMessage").query()).setText("");
+        ((TextArea) lookup("#tfUpdateMessage").query()).setText("");
         clickOn("#btnEmoji");
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -1120,12 +1120,12 @@ public class ServerScreenTest extends ApplicationTest {
         EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
         clickOn(emoji);
 
-        ((TextField) lookup("#tfUpdateMessage").query()).setText(((TextField) lookup("#tfUpdateMessage").query()).getText() + "update");
+        ((TextArea) lookup("#tfUpdateMessage").query()).setText(((TextArea) lookup("#tfUpdateMessage").query()).getText() + "update");
 
         clickOn("#btnUpdateMessage");
         WaitForAsyncUtils.waitForFxEvents();
 
-        String message = ((TextField) lookup("#tfUpdateMessage").query()).getText();
+        String message = ((TextArea) lookup("#tfUpdateMessage").query()).getText();
         mockWebSocket(webSocketCallbackMessageUpdated(message));
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -1155,7 +1155,7 @@ public class ServerScreenTest extends ApplicationTest {
         //send message
         clickOn("#tfInputMessage");
 
-        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        ((TextArea) lookup("#tfInputMessage").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
@@ -1215,7 +1215,7 @@ public class ServerScreenTest extends ApplicationTest {
         //send message
         clickOn("#tfInputMessage");
 
-        ((TextField) lookup("#tfInputMessage").query()).setText("Test Message");
+        ((TextArea) lookup("#tfInputMessage").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
@@ -1228,7 +1228,7 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- edit message");
         WaitForAsyncUtils.waitForFxEvents();
 
-        ((TextField) lookup("#tfUpdateMessage").query()).setText("update");
+        ((TextArea) lookup("#tfUpdateMessage").query()).setText("update");
         clickOn("#btnUpdateMessage");
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -1246,7 +1246,7 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- edit message");
         WaitForAsyncUtils.waitForFxEvents();
 
-        ((TextField) lookup("#tfUpdateMessage").query()).setText("");
+        ((TextArea) lookup("#tfUpdateMessage").query()).setText("");
         clickOn("#btnUpdateMessage");
         WaitForAsyncUtils.waitForFxEvents();
         errorLabel = lookup("#lblError").query();
@@ -1285,7 +1285,7 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(stageManager.getPopupStage().getTitle(), phil.getName());
 
-        TextField tfMessage = lookup("#tfMessage").query();
+        TextArea tfMessage = lookup("#tfMessage").query();
 
         Assert.assertEquals(tfMessage.isEditable(), phil.isOnlineStatus());
         Assert.assertEquals(tfMessage.getPromptText(), phil.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
@@ -1312,7 +1312,7 @@ public class ServerScreenTest extends ApplicationTest {
         tfMessage.setText("How are you?");
         clickOn("#btnShowChat");
 
-        TextField tfEnterPrivateChat = lookup("#tfEnterPrivateChat").query();
+        TextArea tfEnterPrivateChat = lookup("#tfEnterPrivateChat").query();
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
 
         PrivateMessage message = lwPrivateChat.getItems().get(0);

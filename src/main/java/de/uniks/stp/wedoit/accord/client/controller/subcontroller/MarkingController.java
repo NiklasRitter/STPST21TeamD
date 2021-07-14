@@ -7,7 +7,7 @@ import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -26,9 +26,9 @@ public class MarkingController implements Controller {
     private int caret = 0;
     private int textLength = 0;
     private ArrayList<AtPositions> atPositions = new ArrayList<>();
-    private TextField textField;
+    private TextArea textField;
 
-    public MarkingController(TextField textfield, Channel channel, VBox boxTextfield) {
+    public MarkingController(TextArea textfield, Channel channel, VBox boxTextfield) {
         this.textField = textfield;
         this.currentChannel = channel;
         this.boxTextfield = boxTextfield;
@@ -45,7 +45,7 @@ public class MarkingController implements Controller {
     @Override
     public void stop() {
 
-        this.textField.setOnAction(null);
+        this.textField.setOnKeyTyped(null);
 
         selectUserObservableList = null;
         lvSelectUser = null;

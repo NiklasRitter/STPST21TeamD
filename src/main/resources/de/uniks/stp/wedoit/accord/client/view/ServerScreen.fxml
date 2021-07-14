@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -17,7 +17,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
     <children>
         <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <children>
@@ -25,13 +25,8 @@
                     <children>
                         <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
                             <textFill>
-                                <LinearGradient endX="1.0" endY="1.0">
+                                <LinearGradient>
                                     <stops>
-                                        <Stop>
-                                            <color>
-                                                <Color />
-                                            </color>
-                                        </Stop>
                                         <Stop offset="1.0">
                                             <color>
                                                 <Color red="1.0" green="1.0" blue="1.0" />
@@ -42,18 +37,14 @@
                             </textFill>
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@images/options.png" />
-                                    </image>
+                                    <Image url="@images/options.png"/>
                                 </ImageView>
                             </graphic>
                         </Button>
                         <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@images/home.png" />
-                                    </image>
+                                    <Image url="@images/home.png"/>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -63,9 +54,7 @@
                             </font>
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@images/edit.png" />
-                                    </image>
+                                    <Image url="@images/edit.png"/>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -131,16 +120,15 @@
                   </VBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <TextField id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS"/>
+                        <TextArea id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@images/smiley.png" />
-                                            </image>
+                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true"
+                                                   preserveRatio="true">
+                                            <Image url="@images/smiley.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>

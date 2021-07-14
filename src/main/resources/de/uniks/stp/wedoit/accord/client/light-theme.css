@@ -74,8 +74,45 @@
     -fx-text-fill: blue;
 }
 
+.colorX {
+    -fx-text-fill: darkgreen indigo darkblue;
+}
+
+.color0 {
+    -fx-text-fill: #0a4b78;
+}
+
+.color1 {
+    -fx-text-fill: #005c12;
+}
+
+.color2 {
+    -fx-text-fill: #755100;
+}
+
+.color3 {
+    -fx-text-fill: #8a2424;
+}
+
+.color4 {
+    -fx-text-fill: indigo;
+}
+
+.white {
+    -fx-text-fill: #ADD8e6;
+}
+
+.text {
+    -fx-text-fill: #000000;
+}
+
+.date {
+    -fx-text-fill: #000000;
+    -fx-font-size: 10;
+}
+
 .link{
-    -fx-text-fill: blue;
+    -fx-text-fill: #ADD8e6;
 }
 
 .font_size {

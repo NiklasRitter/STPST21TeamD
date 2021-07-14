@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -51,7 +52,7 @@ public class ServerChatController implements Controller {
     private HBox quoteVisible;
     private Label lbChannelName;
     private Label lblQuote;
-    private TextField tfInputMessage;
+    private TextArea tfInputMessage;
     private Button btnCancelQuote;
     private Button btnEmoji;
     private ListView<Message> lvTextChat;
@@ -89,8 +90,9 @@ public class ServerChatController implements Controller {
      * Add necessary webSocketClients
      */
     public void init() {
-        this.tfInputMessage = (TextField) view.lookup("#tfInputMessage");
         this.boxTextfield = (VBox) view.lookup("#boxTextfield");
+        this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
+
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
@@ -98,7 +100,7 @@ public class ServerChatController implements Controller {
         this.lblQuote = (Label) view.lookup("#lblQuote");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
-        this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
+        this.tfInputMessage.setOnKeyPressed(this::tfInputMessageOnEnter);
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
@@ -131,7 +133,7 @@ public class ServerChatController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        this.tfInputMessage.setOnAction(null);
+        this.tfInputMessage.setOnKeyPressed(null);
         this.btnEmoji.setOnAction(null);
         this.lvTextChat.setOnMouseClicked(null);
         this.btnCancelQuote.setOnAction(null);
@@ -317,10 +319,22 @@ public class ServerChatController implements Controller {
     /**
      * send msg via websocket if enter
      *
-     * @param actionEvent occurs on enter
+     * @param keyEvent occurs on enter
      */
-    private void tfInputMessageOnEnter(ActionEvent actionEvent) {
-        String message = this.tfInputMessage.getText();
+    private void tfInputMessageOnEnter(KeyEvent keyEvent) {
+        if(keyEvent.getCode() == KeyCode.ENTER){
+            keyEvent.consume();
+            if(keyEvent.isShiftDown()){
+                tfInputMessage.appendText(System.getProperty("line.separator"));
+            }else{
+                sendMessage(this.tfInputMessage.getText());
+            }
+        }
+
+
+    }
+
+    private void sendMessage(String message){
         this.tfInputMessage.clear();
 
         if (message != null && !message.isEmpty() && currentChannel != null) {

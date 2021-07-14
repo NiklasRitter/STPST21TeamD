@@ -191,7 +191,7 @@ public class SqliteDB {
         List<PrivateMessage> messages = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE ((sender = ? AND receiver =" +
-                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY times DESC LIMIT ?, 50")) {
+                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY id DESC LIMIT ?, 50")) {
             prep.setString(1, user);
             prep.setString(2, username);
             prep.setString(3, username);
@@ -226,7 +226,7 @@ public class SqliteDB {
         List<PrivateMessage> messages = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE ((sender = ? AND receiver =" +
-                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY times DESC LIMIT 50")) {
+                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY id DESC LIMIT 50")) {
             prep.setString(1, user);
             prep.setString(2, username);
             prep.setString(3, username);
