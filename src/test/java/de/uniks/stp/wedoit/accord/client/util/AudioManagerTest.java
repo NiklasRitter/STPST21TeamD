@@ -111,7 +111,6 @@ public class AudioManagerTest extends ApplicationTest {
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
-        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -230,15 +229,16 @@ public class AudioManagerTest extends ApplicationTest {
     @Test
     public void muteAndUnmuteUserAudioTest(){
         joinAudioServerTest();
+        AudioManager audioManager = stageManager.getEditor().getAudioManager();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
         AudioConnection tempAudioCon = new AudioConnection(localUser, channel);
-        stageManager.getEditor().getAudioManager().setAudioConnection(tempAudioCon);
+        audioManager.setAudioConnection(tempAudioCon);
         tempAudioCon.startConnection("localhost", 33100);
         WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
         User user = stageManager.getEditor().getUser("N1");
-        stageManager.getEditor().getAudioManager().muteUser(user);
+        audioManager.muteUser(user);
         Assert.assertTrue(user.isMuted());
-        stageManager.getEditor().getAudioManager().unmuteUser(user);
+        audioManager.unmuteUser(user);
         Assert.assertFalse(user.isMuted());
         tempAudioCon.close();
     }
@@ -257,6 +257,27 @@ public class AudioManagerTest extends ApplicationTest {
                 Assert.assertTrue(user.isMuted());
             }
         }
+        clickOn("#btnMuteAll");
+        for(User user : channel.getAudioMembers()){
+            if(!user.getName().equals(localUser.getName())){
+                Assert.assertFalse(user.isMuted());
+            }
+        }
+        tempAudioCon.close();
+    }
+
+    @Test
+    public void muteAndUnmuteYourselfTest(){
+        joinAudioServerTest();
+        Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel);
+        stageManager.getEditor().getAudioManager().setAudioConnection(tempAudioCon);
+        tempAudioCon.startConnection("localhost" , 33100);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        stageManager.getEditor().getAudioManager().muteYourself(localUser);
+        Assert.assertTrue(localUser.isMuted());
+        stageManager.getEditor().getAudioManager().unmuteYourself(localUser);
+        Assert.assertFalse(localUser.isMuted());
         tempAudioCon.close();
     }
 

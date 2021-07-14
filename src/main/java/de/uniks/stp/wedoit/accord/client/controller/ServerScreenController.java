@@ -4,12 +4,10 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
-import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
-import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
@@ -271,14 +269,13 @@ public class ServerScreenController implements Controller {
     }
 
     private void handleAudioChannelChange(PropertyChangeEvent propertyChangeEvent) {
-        if(propertyChangeEvent.getNewValue() == null){
+        if (propertyChangeEvent.getNewValue() == null) {
             this.audioChannelSubViewController.stop();
             this.audioChannelSubViewController = null;
             Platform.runLater(() -> {
                 this.audioChannelSubViewContainer.getChildren().clear();
             });
-        }
-        else{
+        } else {
             this.initAudioChannelSubView((Channel) propertyChangeEvent.getNewValue());
         }
     }
@@ -298,6 +295,7 @@ public class ServerScreenController implements Controller {
         for (Category category : server.getCategories()) {
             for (Channel channel : category.getChannels()) {
                 channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+                channel.withoutAudioMembers((new ArrayList<>(channel.getAudioMembers())));
             }
         }
         server.withoutMembers(new ArrayList<>(server.getMembers()));
@@ -412,7 +410,7 @@ public class ServerScreenController implements Controller {
         return audioChannelSubViewContainer;
     }
 
-    public void resetLbChannelName(){
+    public void resetLbChannelName() {
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
     }
 }

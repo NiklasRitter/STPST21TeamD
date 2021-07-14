@@ -3,16 +3,20 @@ package de.uniks.stp.wedoit.accord.client.network.audio;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import org.json.JSONObject;
 
-import javax.sound.sampled.*;
-import java.io.ByteArrayInputStream;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.SourceDataLine;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
 
-public class AudioReceive extends Thread{
+public class AudioReceive extends Thread {
 
     private final DatagramSocket receiveSocket;
     private final LocalUser localUser;
@@ -49,7 +53,7 @@ public class AudioReceive extends Thread{
 
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
 
-            for (String memberName: connectedUser) {
+            for (String memberName : connectedUser) {
                 if (!memberName.equals(localUser.getName())) {
                     SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
                     membersSourceDataLine.open(audioFormat);
@@ -59,11 +63,9 @@ public class AudioReceive extends Thread{
                 }
             }
 
-            while(shouldReceive.get()){
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+            while (shouldReceive.get()) {
                 this.receiveSocket.receive(receivePacket);
-
                 byte[] receivedAudio = new byte[1024];
                 byte[] metaDataByte = new byte[255];
                 System.arraycopy(receivePacket.getData(), 0, metaDataByte, 0, 255);
@@ -80,16 +82,14 @@ public class AudioReceive extends Thread{
 
                     sourceDataLineMap.put(audioSender, membersSourceDataLine);
                 }
-
                 if (!audioSender.equals(localUser.getName())) {
                     this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
                 }
             }
-            for (String name: sourceDataLineMap.keySet()) {
+            for (String name : sourceDataLineMap.keySet()) {
                 SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
                 audioMemberLine.stop();
                 audioMemberLine.flush();
-                audioMemberLine.close();
                 if (audioMemberLine.isOpen()) {
                     audioMemberLine.close();
                 }
@@ -103,15 +103,15 @@ public class AudioReceive extends Thread{
         this.shouldReceive.set(value);
     }
 
-    public void muteUser(String username){
-        if(sourceDataLineMap.containsKey(username)){
+    public void muteUser(String username) {
+        if (sourceDataLineMap.containsKey(username)) {
             sourceDataLineMap.get(username).stop();
             sourceDataLineMap.get(username).flush();
         }
     }
 
     public void unmuteUser(String username){
-        if(connectedUser.contains((username))){
+        if(sourceDataLineMap.containsKey(username)){
             sourceDataLineMap.get(username).start();
         }
     }
