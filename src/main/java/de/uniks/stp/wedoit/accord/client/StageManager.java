@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
@@ -60,8 +61,8 @@ public class StageManager extends Application {
                     initEmojiPickerStage(root, title, resizable);
                     break;
             }
-            updateLanguage();
             updateDarkmode();
+            updateLanguage();
             openController(root, controllerName, parameter, parameterTwo);
         } catch (Exception e) {
             System.err.println("Error on showing " + controllerName);
@@ -255,6 +256,7 @@ public class StageManager extends Application {
                         "light-theme.css")).toExternalForm());
             }
         }
+
     }
 
     public void updateDarkmode() {
