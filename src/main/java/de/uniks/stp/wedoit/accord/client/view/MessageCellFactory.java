@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -116,7 +117,38 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                     }
                 } else {
-                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                    VBox vBox = new VBox();
+                    HBox hBox = new HBox();
+                    hBox.setAlignment(Pos.CENTER_LEFT);
+                    Label name = new Label(item.getFrom() + " ");
+
+                    int nameLength = item.getFrom().length();
+
+                    switch (nameLength % 5) {
+                        case 0:
+                            name.getStyleClass().add("color0");
+                            break;
+                        case 1:
+                            name.getStyleClass().add("color1");
+                            break;
+                        case 2:
+                            name.getStyleClass().add("color2");
+                            break;
+                        case 3:
+                            name.getStyleClass().add("color3");
+                            break;
+                        case 4:
+                            name.getStyleClass().add("color4");
+                            break;
+                    }
+                    Label date = new Label(time);
+                    date.getStyleClass().add("date");
+                    Label text = new Label(item.getText());
+                    text.getStyleClass().add("text");
+                    text.setWrapText(true);
+                    hBox.getChildren().addAll(name, date);
+                    vBox.getChildren().addAll(hBox, text);
+                    this.setGraphic(vBox);
                 }
 
                 if (item instanceof PrivateMessage) {
