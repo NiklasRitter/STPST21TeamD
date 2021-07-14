@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -115,9 +116,9 @@ public class AudioChannelSubViewController implements Controller {
 
     private void localUserMutedChanged(PropertyChangeEvent propertyChangeEvent) {
         if (localUser.isMuted()) {
-            this.btnMuteYou.setGraphic(this.imgMuteYourself);
+            Platform.runLater(() -> this.btnMuteYou.setGraphic(this.imgMuteYourself));
         } else {
-            this.btnMuteYou.setGraphic(this.imgUnMuteYourself);
+            Platform.runLater(() -> this.btnMuteYou.setGraphic(this.imgUnMuteYourself));
         }
     }
 
