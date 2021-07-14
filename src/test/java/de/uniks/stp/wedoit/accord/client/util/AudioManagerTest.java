@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -241,6 +242,18 @@ public class AudioManagerTest extends ApplicationTest {
         audioManager.unmuteUser(user);
         Assert.assertFalse(user.isMuted());
         tempAudioCon.close();
+    }
+
+    public AudioConnection secondAudioConnection() {
+        LocalUser user = new LocalUser().setName("Bill");
+        Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
+        AudioManager audioManager = new AudioManager(new Editor());
+        AudioConnection tempAudioCon2 = new AudioConnection(user, channel);
+        audioManager.setAudioConnection(tempAudioCon2);
+        tempAudioCon2.startConnection("localhost", 33100);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
+        return tempAudioCon2;
     }
 
     @Test
