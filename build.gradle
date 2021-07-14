@@ -65,6 +65,8 @@ dependencies {
     // jsoup HTML parser library @ https://jsoup.org/
     implementation 'org.jsoup:jsoup:1.13.1'
 
+    // Richtext - used for colored emojis
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6'
 
 }
 
