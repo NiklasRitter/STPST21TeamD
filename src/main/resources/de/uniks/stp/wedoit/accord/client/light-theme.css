@@ -30,11 +30,11 @@
 }
 
 .styleBackgroundHighlight {
-    -fx-background-color: #F5F5DC
+    -fx-background-color: #07060E
 }
 
 .styleButton {
-    -fx-background-color: #5f5599;
+    -fx-background-color: transparent;
     -fx-text-fill: #FFFFFF
 }
 
@@ -117,4 +117,42 @@
 
 .font_size {
     -fx-font-size: 7pt ;
+}
+
+
+/* new */
+.list-view{
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+}
+
+.listView1{
+    -fx-background-color: #fafbfc;
+    -fx-border-color: transparent;
+}
+
+.list-cell {
+    -fx-text-fill: #000000 ;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+}
+.tree-cell {
+    -fx-text-fill: #000000 ;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+    -fx-collapsible: #dcddde;
+}
+
+.tree-view {
+    -fx-background-color: #ffffff;
+}
+
+.tree-view > .virtual-flow> .clipped-container > .sheet > .tree-cell .tree-disclosure-node .arrow {
+    -fx-background-color: #dcddde;
+}
+
+.text-field {
+    -fx-text-fill: #000000 ;
+    -fx-background-color: #40444b;
+    -fx-prompt-text-fill: #dcddde;
 }

@@ -25,16 +25,13 @@
     );
 }
 
-.styleBorder {
-    -fx-border-color: #1c1c1f
-}
 
 .styleBackgroundHighlight {
-    -fx-background-color: #555548
+    -fx-background-color: #07060E
 }
 
 .styleButton {
-    -fx-background-color: #8d7dd7;
+    -fx-background-color: transparent;
     -fx-text-fill: #525252
 }
 
@@ -99,22 +96,59 @@
 }
 
 .white {
-    -fx-text-fill: #ADD8e6;
+    -fx-text-fill: #dcddde;
 }
 
 .text {
-    -fx-text-fill: #ADD8e6;
+    -fx-text-fill: #dcddde;
 }
 
 .date {
-    -fx-text-fill: #ADD8e6;
+    -fx-text-fill: #dcddde;
     -fx-font-size: 10;
 }
 
 .link{
-    -fx-text-fill: #ADD8e6;
+    -fx-text-fill: #dcddde;
 }
 
 .font_size {
     -fx-font-size: 7pt ;
+}
+
+/* new */
+.list-view{
+    -fx-background-color: #2C2F33;
+    -fx-border-color: transparent;
+}
+
+.listView1{
+    -fx-background-color: #36393f;
+    -fx-border-color: transparent;
+}
+
+.list-cell {
+    -fx-text-fill: #dcddde ;
+    -fx-background-color: #2f3136;
+    -fx-border-color: transparent;
+}
+.tree-cell {
+    -fx-text-fill: #dcddde ;
+    -fx-background-color: #2f3136;
+    -fx-border-color: transparent;
+    -fx-collapsible: #dcddde;
+}
+
+.tree-view {
+    -fx-background-color: #2C2F33;
+}
+
+.tree-view > .virtual-flow> .clipped-container > .sheet > .tree-cell .tree-disclosure-node .arrow {
+    -fx-background-color: #dcddde;
+}
+
+.text-field {
+    -fx-text-fill: #40444b ;
+    -fx-background-color: #40444b;
+    -fx-prompt-text-fill: #dcddde;
 }

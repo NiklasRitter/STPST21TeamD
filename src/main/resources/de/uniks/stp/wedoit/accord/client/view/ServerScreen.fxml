@@ -17,7 +17,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <children>
@@ -29,7 +29,7 @@
                                     <stops>
                                         <Stop offset="1.0">
                                             <color>
-                                                <Color red="1.0" green="1.0" blue="1.0" />
+                                                <Color blue="1.0" green="1.0" red="1.0" />
                                             </color>
                                         </Stop>
                                     </stops>
@@ -37,14 +37,14 @@
                             </textFill>
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/options.png"/>
+                                    <Image url="@images/options.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
                         <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/home.png"/>
+                                    <Image url="@images/home.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -54,7 +54,7 @@
                             </font>
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/edit.png"/>
+                                    <Image url="@images/edit.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -96,7 +96,7 @@
                                 <Font name="System Bold Italic" size="13.0" />
                             </font>
                         </Label>
-                        <ListView id="lvTextChat" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
+                        <ListView id="lvTextChat" styleClass="listView1" VBox.vgrow="ALWAYS" />
                         <HBox id="quoteVisible" alignment="CENTER_LEFT">
                             <children>
                                 <Label id="lblQuote">
@@ -116,15 +116,14 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
-                        <TextArea id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS" />
+                        <TextArea id="tfInputMessage" styleClass="textfield1" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <Image url="@images/smiley.png"/>
+                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                                            <Image url="@images/smiley.png" />
                                         </ImageView>
                                     </graphic>
                                 </Button>
