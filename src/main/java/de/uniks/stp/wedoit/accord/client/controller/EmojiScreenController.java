@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -19,14 +20,14 @@ public class EmojiScreenController implements Controller {
 
     private final Parent view;
     private GridPane pane;
-    private final TextField tfForEmoji;
+    private final TextArea tfForEmoji;
     private final Bounds pos;
 
     private EmojiButton emoji;
     private final HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<>();
     private final List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
 
-    public EmojiScreenController(Parent view, TextField tfForEmoji, Bounds pos) {
+    public EmojiScreenController(Parent view, TextArea tfForEmoji, Bounds pos) {
         this.view = view;
         this.tfForEmoji = tfForEmoji;
         this.pos = pos;

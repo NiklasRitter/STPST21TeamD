@@ -34,12 +34,20 @@ public class SqliteDB {
                     + " receiver varchar(255) NOT NULL "
                     + ");"
             );
+
             stmt.execute("CREATE TABLE IF NOT EXISTS privateChats (\n"
                     + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
                     + "	user varchar(255) NOT NULL,\n"
                     + " read boolean NOT NULL\n"
                     + ");"
             );
+
+            stmt.execute("CREATE TABLE IF NOT EXISTS settings (\n"
+                    + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
+                    + "	fontSize integer DEFAULT 12"
+                    + ");"
+            );
+
             c.close();
             stmt.close();
 
@@ -69,6 +77,35 @@ public class SqliteDB {
             e.printStackTrace();
         }
         updateOrInsertUserChatRead(message.getChat().getUser());
+    }
+
+    public void updateFontSize(int size){
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,fontSize) VALUES(1,?)")){
+
+            prep.setInt(1, size);
+
+            prep.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getFontSize(){
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
+
+            ResultSet rs = prep.executeQuery();
+
+            if(rs.next()) {
+                return rs.getInt("fontSize");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 12;
     }
 
     public void updateOrInsertUserChatRead(User user) {
@@ -154,7 +191,7 @@ public class SqliteDB {
         List<PrivateMessage> messages = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE ((sender = ? AND receiver =" +
-                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY times DESC LIMIT ?, 50")) {
+                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY id DESC LIMIT ?, 50")) {
             prep.setString(1, user);
             prep.setString(2, username);
             prep.setString(3, username);
@@ -189,7 +226,7 @@ public class SqliteDB {
         List<PrivateMessage> messages = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE ((sender = ? AND receiver =" +
-                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY times DESC LIMIT 50")) {
+                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY id DESC LIMIT 50")) {
             prep.setString(1, user);
             prep.setString(2, username);
             prep.setString(3, username);
