@@ -24,6 +24,7 @@ public class AudioConnection {
 
     public void startConnection(String url, int port) {
         try {
+            //TODO has to be deleted
             this.audioSocket = new DatagramSocket(33100);
             startSendingAudio(url, port);
             startReceivingAudio();

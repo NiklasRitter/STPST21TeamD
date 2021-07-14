@@ -40,7 +40,7 @@ public class CategoryTreeViewController implements Controller {
     private TreeView<Object> tvServerChannels;
     private TreeItem<Object> tvServerChannelsRoot;
 
-    public final PropertyChangeListener userListViewListener = this::changeUserList;
+//    public final PropertyChangeListener userListViewListener = this::changeUserList;
     private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
     private final PropertyChangeListener categoriesListener = this::handleCategoryChange;
     private final PropertyChangeListener channelListener = this::handleChannelChange;
@@ -79,7 +79,7 @@ public class CategoryTreeViewController implements Controller {
         this.tvServerChannels = null;
         for (Channel channel : channelMap.values()) {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
-            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
+//            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         }
         for (Category category : server.getCategories()) {
@@ -179,16 +179,16 @@ public class CategoryTreeViewController implements Controller {
         }
     }
 
-    /**
-     * rebuilds the user list
-     */
-    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            if (propertyChangeEvent.getSource() instanceof Channel) {
-                Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
-            }
-        }
-    }
+//    /**
+//     * rebuilds the user list
+//     */
+//    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
+//        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
+//            if (propertyChangeEvent.getSource() instanceof Channel) {
+//                Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
+//            }
+//        }
+//    }
 
     /**
      * handles a changed category
@@ -298,7 +298,7 @@ public class CategoryTreeViewController implements Controller {
     public void addChannelToTreeView(Channel channel, TreeItem<Object> categoryItem) {
         channelMap.put(channel.getId(), channel);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_READ, this.channelReadListener);
-        channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
+//        channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_AUDIO_MEMBERS, this.audioMemberListener);
         TreeItem<Object> channelItem = new TreeItem<>(channel);

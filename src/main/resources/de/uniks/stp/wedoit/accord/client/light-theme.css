@@ -74,10 +74,6 @@
     -fx-text-fill: blue;
 }
 
-.colorX {
-    -fx-text-fill: darkgreen indigo darkblue;
-}
-
 .color0 {
     -fx-text-fill: #0a4b78;
 }
