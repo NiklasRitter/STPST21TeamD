@@ -1,5 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import com.pavlobu.emojitextflow.EmojiTextFlow;
+import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
+import com.vdurmont.emoji.EmojiManager;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
@@ -16,9 +19,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
+import org.apache.commons.codec.binary.StringUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.internal.StringUtil;
 import org.jsoup.nodes.Document;
 
 import java.awt.*;
@@ -57,6 +66,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
+        EmojiTextFlowParameters parameters = new EmojiTextFlowParameters();
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -75,6 +85,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.setOnAction(null);
             hyperlink.getStyleClass().removeAll("link", "descBox");
 
+            // parameters for emoji
+            parameters.setEmojiScaleFactor(1D);
+            parameters.setTextAlignment(TextAlignment.LEFT);
+            parameters.setFont(Font.font("System", FontWeight.NORMAL, 12));
+            parameters.setTextColor(Color.BLACK);
+
 
             if (!empty) {
 
@@ -89,7 +105,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                 time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
-
+                //if (countOccurence(item.getText(), ':') >= 2) {
+                //    displayEmoji(item.getText());
+                //}
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     setUpMedia(item);
 
@@ -113,10 +131,20 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (url != null) {
                         setUpJoinServerView(item, url);
                     } else {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                        this.label.setText("[" + time + "] " + item.getFrom() + ": ");
+                        EmojiTextFlow emojiTextFlow = new EmojiTextFlow(parameters);
+                        emojiTextFlow.parseAndAppend(item.getText());
+                        this.vBox.getChildren().addAll(label, emojiTextFlow);
+                        setGraphic(vBox);
+                        //this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                     }
                 } else {
-                    this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                    this.label.setText("[" + time + "] " + item.getFrom() + ": ");
+                    EmojiTextFlow emojiTextFlow = new EmojiTextFlow(parameters);
+                    emojiTextFlow.parseAndAppend(item.getText());
+                    this.vBox.getChildren().addAll(label, emojiTextFlow);
+                    setGraphic(vBox);
+                    //this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
                 }
 
                 if (item instanceof PrivateMessage) {
@@ -127,6 +155,33 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
                 }
             }
+        }
+
+        private void displayEmoji(String text) {
+/*            EmojiTextFlowParameters parameters = new EmojiTextFlowParameters();
+            parameters.setEmojiScaleFactor(1D);
+            parameters.setTextAlignment(TextAlignment.LEFT);
+            parameters.setFont(Font.font("System", FontWeight.NORMAL, 12));
+            parameters.setTextColor(Color.BLACK);*/
+/*            int startOfEmoji = text.indexOf(":");
+            int endOfEmoji = text.indexOf(":", startOfEmoji);
+            String possibleEmoji = text.substring(startOfEmoji, endOfEmoji);*/
+            System.out.println("hier bin ich");
+            EmojiTextFlow emojiTextFlow = new EmojiTextFlow(parameters);
+            emojiTextFlow.parseAndAppend(text);
+            setGraphic(emojiTextFlow);
+        }
+
+        private int countOccurence(String text, char s) {
+            char[] chars = text.toCharArray();
+            int counter = 0;
+            for (char c :chars) {
+                if (s == c) {
+                    counter ++;
+                }
+            }
+            System.out.println(counter);
+            return counter;
         }
 
         private String containsInviteUrl(String text) {

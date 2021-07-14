@@ -351,7 +351,31 @@ public class StageManager extends Application {
         }
         stage.setMinHeight(400);
         stage.setMinWidth(600);
+        //showStartScreen();
         editor.automaticLogin(model);
+    }
+
+    public void showStartScreen() {
+        cleanup();
+        // show StartScreen
+        try {
+            // load view
+            Parent root = FXMLLoader.load(StageManager.class.getResource("view/testScreen.fxml"));
+            Scene scene = new Scene(root);
+
+            // init controller
+            TestScreenController startController = new TestScreenController(root, editor);
+            startController.init();
+
+            // display
+            stage.setTitle("Test");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            stage.show();
+        } catch (Exception e) {
+            System.err.println("Error on showing StartScreen");
+            e.printStackTrace();
+        }
     }
 
     @Override

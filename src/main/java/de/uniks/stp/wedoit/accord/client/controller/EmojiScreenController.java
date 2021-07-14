@@ -1,5 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
+import com.vdurmont.emoji.EmojiManager;
+import com.vdurmont.emoji.EmojiParser;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
@@ -8,6 +11,8 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -62,8 +67,16 @@ public class EmojiScreenController implements Controller {
         int gridWidth = 7;
 
         for (int i = 0; i < iconsUnicodeList.size(); i++) {
-            emoji = new EmojiButton(iconsUnicodeList.get(i).toString());
-            hashMapForEmojiButtons.put(emoji, emoji.getText());
+            String hexCode = iconsUnicodeList.get(i).toString();
+            ImageView icon = new ImageView();
+            icon.setFitWidth(40);
+            icon.setFitHeight(40);
+            System.out.println(StageManager.class.getResource("emoji_images/" + hexCode + ".png"));
+            String url = StageManager.class.getResource("emoji_images/" + hexCode + ".png").toString();
+            icon.setImage(new Image(url));
+            emoji = new EmojiButton("");
+            emoji.setGraphic(icon);
+            hashMapForEmojiButtons.put(emoji, hexCode);
             emoji.setOnAction(this::btnEmojiOnClick);
             this.pane.add(emoji, i % gridWidth, i / gridWidth);
         }
@@ -75,7 +88,7 @@ public class EmojiScreenController implements Controller {
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         if (this.tfForEmoji.isEditable()) {
-            Platform.runLater(() -> this.tfForEmoji.setText(this.tfForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource())));
+            Platform.runLater(() -> this.tfForEmoji.setText(this.tfForEmoji.getText() + ":" + hashMapForEmojiButtons.get(actionEvent.getSource()) + ":"));
         }
     }
 
