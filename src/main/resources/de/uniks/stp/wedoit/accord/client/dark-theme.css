@@ -186,3 +186,8 @@
 .audioLabel {
     -fx-text-fill: #ffffff;
 }
+
+.marked_message{
+    -fx-background-color: #F7FE2E;
+}
+

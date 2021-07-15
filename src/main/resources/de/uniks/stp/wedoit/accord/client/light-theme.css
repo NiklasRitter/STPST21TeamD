@@ -117,7 +117,6 @@
     -fx-font-size: 7pt ;
 }
 
-
 /* new */
 .list-view{
     -fx-background-color: #f2f3f5;
@@ -185,5 +184,12 @@
 }
 
 .audioLabel {
+}
 
+.marked_message{
+    -fx-background-color: #fef6e8;
+}
+
+.marked_message:hover{
+    -fx-background-color: #fef6e8;
 }

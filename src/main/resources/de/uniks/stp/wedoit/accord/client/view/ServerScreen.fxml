@@ -96,24 +96,28 @@
                                 <Font name="System Bold Italic" size="13.0" />
                             </font>
                         </Label>
-                        <ListView id="lvTextChat" styleClass="listView1" VBox.vgrow="ALWAYS" />
-                        <HBox id="quoteVisible" alignment="CENTER_LEFT">
-                            <children>
-                                <Label id="lblQuote">
-                                    <font>
-                                        <Font size="10.0" />
-                                    </font>
-                                    <HBox.margin>
-                                        <Insets right="5.0" />
-                                    </HBox.margin>
-                                </Label>
-                                <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
-                                    <font>
-                                        <Font size="8.0" />
-                                    </font>
-                                </Button>
-                            </children>
-                        </HBox>
+                        <ListView id="lvTextChat" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
+                  <VBox id="boxTextfield">
+                     <children>
+                              <HBox id="quoteVisible" alignment="CENTER_LEFT">
+                                  <children>
+                                      <Label id="lblQuote">
+                                          <font>
+                                              <Font size="10.0" />
+                                          </font>
+                                          <HBox.margin>
+                                              <Insets right="5.0" />
+                                          </HBox.margin>
+                                      </Label>
+                                      <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
+                                          <font>
+                                              <Font size="8.0" />
+                                          </font>
+                                      </Button>
+                                  </children>
+                              </HBox>
+                     </children>
+                  </VBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
                         <TextArea id="tfInputMessage" styleClass="textfield1" HBox.hgrow="ALWAYS" />
