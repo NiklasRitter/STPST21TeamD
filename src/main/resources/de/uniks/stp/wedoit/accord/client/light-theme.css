@@ -1,3 +1,20 @@
+.login-linear-grad {
+    -fx-background-color: linear-gradient(to bottom left, #A868A0, #2D75E8);
+}
+
+.login-button-signIn {
+    -fx-background-color: #431FA0;
+    -fx-text-fill: #ffffff;
+}
+
+.login-button-signUp {
+    -fx-background-color: #431FA0;
+    -fx-background-radius: 5;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #008000;
+    -fx-border-radius: 5;
+}
+
 .root {
     -fx-base: #e5e5e5;
     -fx-accent: #56565c;
