@@ -54,6 +54,7 @@ public class PrivateChatController implements Controller {
     private final PropertyChangeListener chatListener = this::newMessage;
     private MenuItem quote;
     private User selectedUser;
+    private MenuItem copy;
 
     /**
      * Create a new Controller
@@ -118,6 +119,8 @@ public class PrivateChatController implements Controller {
         this.currentChat = null;
         messageContextMenu = null;
         btnCancelQuote.setOnAction(null);
+        quote.setOnAction(null);
+        copy.setOnAction(null);
     }
 
     /**
@@ -125,10 +128,13 @@ public class PrivateChatController implements Controller {
      */
     public void addMessageContextMenu() {
         quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
+        copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
         messageContextMenu = new ContextMenu();
         messageContextMenu.setId("messageContextMenu");
         messageContextMenu.getItems().add(quote);
+        messageContextMenu.getItems().add(copy);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lwPrivateChat.getSelectionModel().getSelectedItem()));
+        copy.setOnAction((event) -> handleContextMenuClicked(COPY, lwPrivateChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -175,6 +181,7 @@ public class PrivateChatController implements Controller {
 
         // load list view
         MessageCellFactory<PrivateMessage> chatCellFactory = new MessageCellFactory<>(this.editor.getStageManager());
+
         lwPrivateChat.setCellFactory(chatCellFactory);
         List<PrivateMessage> oldMessages = editor.loadOldMessages(selectedUser.getName());
         Collections.reverse(oldMessages);
@@ -221,12 +228,18 @@ public class PrivateChatController implements Controller {
         lwPrivateChat.getSelectionModel().select(null);
         if (message != null) {
             if (menu.equals(QUOTE)) {
-                String formatted = editor.getMessageManager().getMessageFormatted(message);
+                String messageText = editor.getMessageManager().isQuote(message) ?
+                        editor.getMessageManager().cleanQuoteMessage(message) : message.getText();
+
+                String formatted = editor.getMessageManager().getMessageFormatted(message, messageText);
                 removeQuote();
                 lblQuote.setText(formatted);
                 lblQuote.setAccessibleHelp(message.getTimestamp() + "");
                 quoteVisible.getChildren().add(lblQuote);
                 quoteVisible.getChildren().add(btnCancelQuote);
+            }
+            if (menu.equals(COPY)){
+                editor.copyToSystemClipBoard(message.getText());
             }
         }
     }
@@ -259,7 +272,7 @@ public class PrivateChatController implements Controller {
         lwPrivateChat.setContextMenu(null);
         PrivateMessage selectedMessage = lwPrivateChat.getSelectionModel().getSelectedItem();
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            if (selectedMessage != null && selectedMessage.getId() == null && !editor.getMessageManager().isQuote(selectedMessage)) {
+            if (selectedMessage != null && selectedMessage.getId() == null) {
                 lwPrivateChat.setContextMenu(messageContextMenu);
                 messageContextMenu.show(lwPrivateChat, Side.LEFT, 0, 0);
             }
@@ -271,7 +284,7 @@ public class PrivateChatController implements Controller {
                 Platform.runLater(this::loadMoreMessages);
             }
             if (selectedMessage != null && editor.getMessageManager().isQuote(selectedMessage)) {
-                String cleanMessage = editor.getMessageManager().cleanMessage(selectedMessage);
+                String cleanMessage = editor.getMessageManager().cleanQuote(selectedMessage);
                 for (PrivateMessage msg : privateMessageObservableList) {
                     if (editor.getMessageManager().getMessageFormatted(msg).equals(cleanMessage)) {
                         lwPrivateChat.scrollTo(msg);
@@ -315,11 +328,11 @@ public class PrivateChatController implements Controller {
             JsonObject jsonMsg;
 
             if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
-                JsonObject jsonMessage = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
+                JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_MESSAGE + message + QUOTE_SUFFIX);
+                //JsonObject jsonMessage = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 removeQuote();
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(quoteMsg));
-                editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMessage));
+                //editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMessage));
 
             } else {
                 if (message.equals(GAME_INVITE) || message.equals(GAME_ACCEPTS) || message.equals(GAME_CLOSE) || message.equals(GAME_START) || message.equals(GAME_INGAME))

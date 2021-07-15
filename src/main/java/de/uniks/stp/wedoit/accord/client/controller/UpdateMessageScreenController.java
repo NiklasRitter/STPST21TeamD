@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MarkingController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import javafx.application.Platform;
@@ -11,9 +12,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
 
 public class UpdateMessageScreenController implements Controller {
@@ -27,6 +30,8 @@ public class UpdateMessageScreenController implements Controller {
     private Button btnUpdateMessage;
     private Label errorLabel;
     private Button btnEmoji;
+    private MarkingController markingController;
+    private VBox vboxMarkingSelection;
 
     public UpdateMessageScreenController(Parent view, Editor editor, Message message, Stage stage) {
         this.view = view;
@@ -42,14 +47,24 @@ public class UpdateMessageScreenController implements Controller {
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
         errorLabel = (Label) view.lookup("#lblError");
+        vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
 
-        tfUpdateMessage.setText(message.getText());
+        String messageText = "";
+        if (editor.getMessageManager().isQuote(message)) {
+            messageText = editor.getMessageManager().cleanQuoteMessage(message);
+        } else {
+            messageText = message.getText();
+        }
+        tfUpdateMessage.setText(messageText);
 
         setComponentsText();
 
         btnDiscard.setOnAction(this::discardChanges);
         btnUpdateMessage.setOnAction(this::updateMessage);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
+
+        this.markingController = new MarkingController(tfUpdateMessage, message.getChannel(), vboxMarkingSelection);
+        this.markingController.init();
     }
 
     private void setComponentsText() {
@@ -63,7 +78,14 @@ public class UpdateMessageScreenController implements Controller {
         if (newMessage.equals(message.getText())) {
             this.editor.getStageManager().getPopupStage().close();
         } else if (newMessage.length() >= 1) {
-            editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
+            if (!editor.getMessageManager().isQuote(message)) {
+                editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
+            } else {
+                newMessage = QUOTE_PREFIX + editor.getMessageManager().cleanQuote(message)
+                        + QUOTE_MESSAGE + newMessage + QUOTE_SUFFIX;
+                editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
+
+            }
         } else {
             Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE_CHAR_COUNT")));
         }
@@ -95,6 +117,7 @@ public class UpdateMessageScreenController implements Controller {
         btnDiscard.setOnAction(null);
         btnUpdateMessage.setOnAction(null);
         btnEmoji.setOnAction(null);
+        markingController.stop();
 
         btnEmoji = null;
         tfUpdateMessage = null;

@@ -187,20 +187,51 @@ public class MessageManager {
      * @param message message which should formatted
      * @return the formatted message as string
      */
-    public String getMessageFormatted(Message message) {
+    public String getMessageFormatted(Message message, String text) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
 
-        return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
+        return ("[" + time + "] " + message.getFrom() + ": " + text);
+    }
+
+    /**
+     * creates a clean quote from a quote
+     */
+    /*public String cleanQuote(PrivateMessage item) {
+        if (isQuote(item)) {
+            String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
+            String[] messages = quoteMessage.split(QUOTE_MESSAGE);
+            if (messages.length != 2) {
+                return item.getText();
+            }
+            return messages[0];
+        } else return item.getText();
+    }*/
+
+    /**
+     * creates a clean quote from a quote
+     */
+    public String cleanQuote(Message item) {
+        if (isQuote(item)) {
+            String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
+            String[] messages = quoteMessage.split(QUOTE_MESSAGE);
+            if (messages.length != 2) {
+                return item.getText();
+            }
+            return messages[0];
+        } else return item.getText();
     }
 
     /**
      * creates a clean message from a quote
      */
-    public String cleanMessage(PrivateMessage item) {
+    public String cleanQuoteMessage(Message item) {
         if (isQuote(item)) {
             String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
-            String[] messages = quoteMessage.split(QUOTE_ID);
-            return messages[0];
+            String[] messages = quoteMessage.split(QUOTE_MESSAGE);
+            if (messages.length != 2) {
+                return item.getText();
+            }
+            return messages[1];
         } else return item.getText();
     }
 
@@ -210,11 +241,11 @@ public class MessageManager {
      * @param item item as message
      * @return boolean whether a item is a quote
      */
-    public boolean isQuote(PrivateMessage item) {
-        return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
-                && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+    /*public boolean isQuote(PrivateMessage item) {
+        return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_MESSAGE)
+                && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                 && (item.getText()).startsWith(QUOTE_PREFIX);
-    }
+    }*/
 
     /**
      * checks whether a message is a quote
@@ -223,8 +254,8 @@ public class MessageManager {
      * @return boolean whether a item is a quote
      */
     public boolean isQuote(Message item) {
-        return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
-                && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+        return item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_MESSAGE)
+                && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                 && (item.getText()).startsWith(QUOTE_PREFIX);
     }
 }

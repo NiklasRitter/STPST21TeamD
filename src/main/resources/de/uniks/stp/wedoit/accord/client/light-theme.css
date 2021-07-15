@@ -118,3 +118,7 @@
 .font_size {
     -fx-font-size: 7pt ;
 }
+
+.marked_message{
+    -fx-background-color: #F7FE2E;
+}
