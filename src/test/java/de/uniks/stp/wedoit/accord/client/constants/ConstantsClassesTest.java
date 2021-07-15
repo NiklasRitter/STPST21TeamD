@@ -11,4 +11,9 @@ public class ConstantsClassesTest {
         Assert.assertEquals(controllerNames.LOGIN_SCREEN_CONTROLLER, "loginScreenController");
     }
 
+    @Test
+    public void testChatMedia() {
+        ChatMedia chatMedia = new ChatMedia();
+        Assert.assertEquals(chatMedia.YT_PREFIX, "https://www.youtube.com/watch?v=");
+    }
 }
