@@ -22,11 +22,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.service.query.NodeQuery;
@@ -50,6 +52,7 @@ import static org.mockito.Mockito.*;
  * - logout test
  * - channel tree view test
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ServerScreenTest extends ApplicationTest {
 
     @Rule
@@ -139,13 +142,13 @@ public class ServerScreenTest extends ApplicationTest {
     @Override
     public void stop() {
         stageManager.getResourceManager().saveOptions(this.oldOptions);
+        stageManager.stop();
         oldOptions = null;
         rule = null;
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
-        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -155,17 +158,13 @@ public class ServerScreenTest extends ApplicationTest {
         channelsCallbackArgumentCaptor = null;
         channelCallbackArgumentCaptor = null;
         categoriesCallbackArgumentCaptor = null;
+        joinServerCallbackArgumentCaptor = null;
         callbackArgumentCaptorWebSocket = null;
         wsCallback = null;
         chatCallbackArgumentCaptorWebSocket = null;
         privateChatWebSocketClient = null;
         systemWebSocketClient = null;
         privateChatCallbackArgumentCaptor = null;
-    }
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
     }
 
     public void mockRest(JsonObject restClientJson) {
@@ -1048,7 +1047,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         ((TextArea) lookup("#tfInputMessage").query()).setText("quote");
         clickOn("#tfInputMessage");
-        write("\n");
+        press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
         JsonObject quote = JsonUtil.buildServerChatMessage(channel.getId(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
@@ -1245,9 +1244,6 @@ public class ServerScreenTest extends ApplicationTest {
     public void privateMessageTest() {
         // some more Mocking that is required to send private Messages
         stageManager.getEditor().setUpDB();
-
-        System.out.println(PRIVATE_USER_CHAT_PREFIX +
-                this.stageManager.getEditor().getWebSocketManager().getCleanLocalUserName());
 
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX +
