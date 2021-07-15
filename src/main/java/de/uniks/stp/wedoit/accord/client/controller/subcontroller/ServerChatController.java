@@ -1,5 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
+import com.pavlobu.emojitextflow.EmojiTextFlow;
+import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
@@ -8,6 +10,7 @@ import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
@@ -50,7 +53,6 @@ public class ServerChatController implements Controller {
     private HBox quoteVisible;
     private ContextMenu messageContextMenu;
     private Label lbChannelName;
-    private Label lblQuote;
     private TextField tfInputMessage;
     private Button btnCancelQuote;
     private Button btnEmoji;
@@ -61,6 +63,8 @@ public class ServerChatController implements Controller {
     private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
     private ContextMenu localUserMessageContextMenu;
     private ContextMenu userMessageContextMenu;
+    private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
+    private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
 
 
     /**
@@ -93,8 +97,8 @@ public class ServerChatController implements Controller {
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
         this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
-        this.lblQuote = (Label) view.lookup("#lblQuote");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
+        this.quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(10).createParameters());
 
         this.tfInputMessage.setOnAction(this::tfInputMessageOnEnter);
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
@@ -219,9 +223,12 @@ public class ServerChatController implements Controller {
             if (menu.equals(QUOTE)) {
                 String formatted = editor.getMessageManager().getMessageFormatted(message);
                 removeQuote();
-                lblQuote.setText(formatted);
-                lblQuote.setAccessibleHelp(message.getId());
-                quoteVisible.getChildren().add(lblQuote);
+                EmojiTextFlowParameters parameters = new EmojiTextFlowParameterHelper(10).createParameters();
+                quoteTextFlow = new EmojiTextFlow(parameters);
+                quoteTextFlow.parseAndAppend(formatted);
+                quotedText = formatted;
+                quoteTextFlow.setAccessibleHelp(message.getId());
+                quoteVisible.getChildren().add(quoteTextFlow);
                 quoteVisible.getChildren().add(btnCancelQuote);
             }
             if (menu.equals(UPDATE)) {
@@ -250,7 +257,8 @@ public class ServerChatController implements Controller {
      * removes a quote from the view
      */
     public void removeQuote() {
-        lblQuote.setText("");
+        quoteTextFlow.parseAndAppend("");
+        quotedText = "";
         quoteVisible.getChildren().clear();
     }
 
@@ -302,9 +310,9 @@ public class ServerChatController implements Controller {
         if (message != null && !message.isEmpty() && currentChannel != null) {
             message = message.trim();
 
-            if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText()
-                        + QUOTE_ID + lblQuote.getAccessibleHelp() + QUOTE_SUFFIX);
+            if (!quotedText.isEmpty()) {
+                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + quotedText
+                        + QUOTE_ID + quoteTextFlow.getAccessibleHelp() + QUOTE_SUFFIX);
                 JsonObject jsonMessage = JsonUtil.buildServerChatMessage(currentChannel.getId(), message);
                 removeQuote();
 
