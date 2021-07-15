@@ -91,9 +91,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             parameters.setFont(Font.font("System", FontWeight.NORMAL, fontSize));
             parameters.setTextColor(Color.BLACK);
             emojiTextFlow = new EmojiTextFlow(parameters);
-            //emojiTextFlow.styleProperty().bind(this.styleProperty());
-            vBox.styleProperty().bind(Bindings.concat("-fx-font-size: ", stageManager.getEditor().getChatFontSizeProperty().asString(), ";"));
-
 
 
             if (!empty) {
@@ -133,10 +130,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                     String[] messages = quoteMessage.split(QUOTE_ID);
 
-                    this.getStyleClass().add("font_size");
-
-                    this.setText(">>>" + messages[0] + "\n");
-
+                    parameters.setFont(Font.font("System", FontWeight.NORMAL, stageManager.getEditor().getFontSize() - 3));
+                    this.emojiTextFlow.parseAndAppend(">>>" + messages[0]);
+                    this.vBox.getChildren().addAll(emojiTextFlow);
+                    setGraphic(vBox);
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
                     String url = containsInviteUrl(item.getText());
                     if (url != null) {
