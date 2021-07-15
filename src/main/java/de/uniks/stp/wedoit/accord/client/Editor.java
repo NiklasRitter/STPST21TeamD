@@ -449,7 +449,8 @@ public class Editor {
         if (success) {
             Platform.runLater(() -> {
                 stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
-                stageManager.getStage().setMaximized(true);
+                //stageManager.getStage().setMaximized(true);
+                //stageManager.getStage().setResizable(true);
             });
         } else {
             Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginRegisterScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));

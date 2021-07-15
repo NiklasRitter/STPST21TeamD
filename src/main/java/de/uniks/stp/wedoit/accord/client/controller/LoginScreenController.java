@@ -154,6 +154,7 @@ public class LoginScreenController implements Controller {
         this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
         this.pwConfirmPW.setVisible(false);
+        this.btnGuestLogin.setVisible(true);
 
         Objects.requireNonNull(tfUserName).getStyleClass().remove("error");
         Objects.requireNonNull(pwUserPw).getStyleClass().remove("error");
@@ -184,6 +185,7 @@ public class LoginScreenController implements Controller {
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
         this.pwConfirmPW.setPromptText(LanguageResolver.getString("CONFIRM_PASSWORD"));
         this.pwConfirmPW.setVisible(true);
+        this.btnGuestLogin.setVisible(false);
 
         Objects.requireNonNull(tfUserName).getStyleClass().remove("error");
         Objects.requireNonNull(pwUserPw).getStyleClass().remove("error");
@@ -345,9 +347,8 @@ public class LoginScreenController implements Controller {
             });
         } else {
             Platform.runLater(() -> {
-                editor.getStageManager().getStage().setResizable(true);
-                editor.getStageManager().getStage().setMaximized(true);
-                System.out.println("Hello");
+                //editor.getStageManager().getStage().setResizable(true);
+                //editor.getStageManager().getStage().setMaximized(true);
                 this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
             });
         }

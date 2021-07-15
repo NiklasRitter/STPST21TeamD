@@ -89,7 +89,7 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(STAGE, "Login", "LoginRegisterScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -168,8 +168,8 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Test
     public void testChoiceBoxLanguage() {
-        Label lblEnterUserName = lookup("#lblEnterUserName").query();
-        Assert.assertEquals(lblEnterUserName.getText(), "Enter your username");
+        Label lblEnterUserName = lookup("#lblSignIn").query();
+        Assert.assertEquals(lblEnterUserName.getText(), "Login");
         Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
         // open options screen
         directToOptionsScreen();
