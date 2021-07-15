@@ -23,4 +23,10 @@ public class ConstantsClassesTest {
         Assert.assertEquals(game.GAME_INVITE, game.GAME_PREFIX + "Invites you to Rock - Paper - Scissors!");
     }
 
+    @Test
+    public void testImages() {
+        Images images = new Images();
+        Assert.assertEquals(images.IMAGE_MICRO, "micro.png");
+    }
+
 }
