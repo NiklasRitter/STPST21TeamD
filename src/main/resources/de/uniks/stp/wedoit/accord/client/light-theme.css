@@ -210,7 +210,7 @@
 
 
 .login-linear-grad {
-    -fx-background-color: linear-gradient(to bottom left, #ffffff, #000000);
+    -fx-background-color: linear-gradient(to bottom left, #d9d9d9, #2f3136);
 }
 
 .login-button-signIn {

@@ -78,8 +78,6 @@ public class StageManager extends Application {
         stage.setTitle(title);
         stage.setScene(scene);
         stage.setResizable(resizable);
-        stage.setMinWidth(655);
-        stage.setMinHeight(499);
         stage.show();
     }
 
@@ -351,8 +349,8 @@ public class StageManager extends Application {
             systemTrayController = new SystemTrayController(editor);
             systemTrayController.init();
         }
-        stage.setMinHeight(400);
-        stage.setMinWidth(600);
+        stage.setMinWidth(655);
+        stage.setMinHeight(499);
         editor.automaticLogin(model);
     }
 

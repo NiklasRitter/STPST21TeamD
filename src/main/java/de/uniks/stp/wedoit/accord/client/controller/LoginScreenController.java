@@ -75,9 +75,9 @@ public class LoginScreenController implements Controller {
      */
     public void init() {
         //Load all view references
-        this.pnlSignUp = (Pane) view.lookup("#pnlSignUp");
+        /*this.pnlSignUp = (Pane) view.lookup("#pnlSignUp");
         this.pnlSignIn = (Pane) view.lookup("#pnlSignIn");
-        this.pnlSignIn.toFront();
+        this.pnlSignIn.toFront();*/
 
         this.tfUserName = (TextField) view.lookup("#tfUserName");
         this.pwUserPw = (TextField) view.lookup("#pwUserPw");
@@ -92,7 +92,10 @@ public class LoginScreenController implements Controller {
         this.lblUserValid = (Label) view.lookup("#lblUserValid");
         this.lblGuestPassword = (Label) view.lookup("#lblGuestPassword");
 
-
+        editor.getStageManager().getStage().setWidth(655);
+        editor.getStageManager().getStage().setHeight(499);
+        editor.getStageManager().getStage().centerOnScreen();
+        editor.getStageManager().getStage().setResizable(false);
 
         this.lblSignIn = (Label) view.lookup("#lblSignIn");
 
@@ -341,7 +344,12 @@ public class LoginScreenController implements Controller {
                 refreshErrLabelText(errorLabelText);
             });
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> {
+                editor.getStageManager().getStage().setResizable(true);
+                editor.getStageManager().getStage().setMaximized(true);
+                System.out.println("Hello");
+                this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+            });
         }
     }
 
