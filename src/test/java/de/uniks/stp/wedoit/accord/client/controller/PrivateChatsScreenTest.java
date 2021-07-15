@@ -555,9 +555,17 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
         WaitForAsyncUtils.waitForFxEvents();
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
 
 
-        lwPrivateChat.getSelectionModel().select(lwPrivateChat.getItems().size() -1);
+        lwPrivateChat.getSelectionModel().select(lwPrivateChat.getItems().size());
         rightClickOn("#lwPrivateChat");
 
         PrivateMessage selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
