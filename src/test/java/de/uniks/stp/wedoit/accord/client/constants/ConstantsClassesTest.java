@@ -16,4 +16,11 @@ public class ConstantsClassesTest {
         ChatMedia chatMedia = new ChatMedia();
         Assert.assertEquals(chatMedia.YT_PREFIX, "https://www.youtube.com/watch?v=");
     }
+
+    @Test
+    public void testGame() {
+        Game game = new Game();
+        Assert.assertEquals(game.GAME_INVITE, game.GAME_PREFIX + "Invites you to Rock - Paper - Scissors!");
+    }
+
 }
