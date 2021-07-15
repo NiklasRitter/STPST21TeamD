@@ -51,7 +51,7 @@ public class SqliteDB {
             c.close();
             stmt.close();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -79,9 +79,9 @@ public class SqliteDB {
         updateOrInsertUserChatRead(message.getChat().getUser());
     }
 
-    public void updateFontSize(int size){
+    public void updateFontSize(int size) {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,fontSize) VALUES(1,?)")){
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,fontSize) VALUES(1,?)")) {
 
             prep.setInt(1, size);
 
@@ -92,13 +92,13 @@ public class SqliteDB {
         }
     }
 
-    public int getFontSize(){
+    public int getFontSize() {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
 
             ResultSet rs = prep.executeQuery();
 
-            if(rs.next()) {
+            if (rs.next()) {
                 return rs.getInt("fontSize");
             }
 
@@ -183,7 +183,7 @@ public class SqliteDB {
     /**
      * Query for messages between username (set in constructor) and user, ordered by timestamp
      *
-     * @param user username to find chats with
+     * @param user   username to find chats with
      * @param offset The offset from the start
      * @return list of PrivateMessage that the localUser had with user
      */
@@ -191,7 +191,7 @@ public class SqliteDB {
         List<PrivateMessage> messages = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE ((sender = ? AND receiver =" +
-                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY times DESC LIMIT ?, 50")) {
+                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY id DESC LIMIT ?, 50")) {
             prep.setString(1, user);
             prep.setString(2, username);
             prep.setString(3, username);
@@ -226,7 +226,7 @@ public class SqliteDB {
         List<PrivateMessage> messages = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE ((sender = ? AND receiver =" +
-                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY times DESC LIMIT 50")) {
+                     " ?) OR (sender = ? AND receiver = ?)) ORDER BY id DESC LIMIT 50")) {
             prep.setString(1, user);
             prep.setString(2, username);
             prep.setString(3, username);

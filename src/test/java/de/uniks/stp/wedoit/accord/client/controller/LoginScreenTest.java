@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
+import de.uniks.stp.wedoit.accord.client.Launcher;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -300,6 +301,7 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
+
 
 
     @Test

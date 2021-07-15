@@ -9,7 +9,6 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
-import javafx.scene.control.TreeItem;
 import kong.unirest.JsonNode;
 
 import javax.json.Json;
@@ -260,12 +259,11 @@ public class RestManager {
      * does a rest request to get channels of the given server and handles the response.
      * <p>
      * Adds the channels to the data model.
-     *
-     * @param localUser  logged in local user
+     *  @param localUser  logged in local user
      * @param server     server
      * @param controller controller in which the response need handled
      */
-    public void getChannels(LocalUser localUser, Server server, Category category, TreeItem<Object> categoryItem, CategoryTreeViewController controller) {
+    public void getChannels(LocalUser localUser, Server server, Category category, CategoryTreeViewController controller) {
         restClient.getChannels(server.getId(), category.getId(), localUser.getUserKey(), channelsResponse -> {
             if (channelsResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonArray categoriesChannelResponse = JsonUtil.parse(String.valueOf(channelsResponse.getBody().getObject())).getJsonArray(DATA);
@@ -688,7 +686,7 @@ public class RestManager {
                 editor.getLocalUser().setAudioChannel(channel);
                 controller.handleJoinAudioChannel(channel);
             } else {
-                controller.handleJoinAudioChannel(null);
+                controller.handleJoinAudioChannel(new Channel());
             }
         });
     }
