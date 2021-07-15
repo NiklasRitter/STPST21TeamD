@@ -154,6 +154,20 @@
     -fx-prompt-text-fill: #dcddde;
 }
 
+.createTextField {
+    -fx-text-fill: #000000 ;
+    -fx-background-color: #ebebeb;
+    -fx-prompt-text-fill: #808080;
+
+}
+
+.textAreaInput {
+    -fx-text-fill: #000000 ;
+    -fx-background-color: #ebebeb;
+    -fx-prompt-text-fill: #808080;
+
+}
+
 .item-selected {
     -fx-background-color: #d9d9d9;
 }
@@ -184,6 +198,7 @@
 }
 
 .audioLabel {
+    -fx-text-fill: #ffffff;
 }
 
 .marked_message{
@@ -191,5 +206,11 @@
 }
 
 .marked_message:hover{
-    -fx-background-color: #fef6e8;
+    -fx-background-color: #feeed1;
 }
+
+.logoutButton {
+    -fx-background-color: #232529;
+}
+
+

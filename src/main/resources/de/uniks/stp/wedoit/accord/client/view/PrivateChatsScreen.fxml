@@ -16,7 +16,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
             <children>
@@ -109,7 +109,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                             <children>
-                        <TextArea id="tfEnterPrivateChat" prefHeight="10.0" wrapText="true" HBox.hgrow="ALWAYS" />
+                        <TextArea id="tfEnterPrivateChat" prefHeight="10.0" styleClass="textAreaInput" wrapText="true" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />

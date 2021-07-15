@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="100.0" prefWidth="450.0" spacing="5.0" styleClass="styleBackgroundPopup" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" prefHeight="100.0" prefWidth="450.0" spacing="5.0" styleClass="styleBackgroundPopup" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label id="lblYourAreOwner" styleClass="redLabel">
             <font>

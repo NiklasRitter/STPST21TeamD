@@ -188,6 +188,26 @@
 }
 
 .marked_message{
-    -fx-background-color: #F7FE2E;
+    -fx-background-color: #49443c;
 }
+
+.marked_message:hover{
+    -fx-background-color: #46423c;
+}
+.logoutButton {
+    -fx-background-color: #232529;
+}
+
+.createTextField {
+    -fx-text-fill: #ffffff ;
+    -fx-background-color: #40444b;
+    -fx-prompt-text-fill: #cccccc;
+}
+
+.textAreaInput {
+    -fx-text-fill: #ffffff ;
+    -fx-background-color: #40444b;
+    -fx-prompt-text-fill: #cccccc;
+}
+
 
