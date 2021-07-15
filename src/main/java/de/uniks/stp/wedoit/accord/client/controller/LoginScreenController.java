@@ -145,6 +145,12 @@ public class LoginScreenController implements Controller {
         this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
         this.pwConfirmPW.setVisible(false);
+
+        Objects.requireNonNull(tfUserName).getStyleClass().remove("error");
+        Objects.requireNonNull(pwUserPw).getStyleClass().remove("error");
+        Objects.requireNonNull(pwConfirmPW).getStyleClass().remove("error");
+
+
 //        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
 //        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
@@ -169,6 +175,11 @@ public class LoginScreenController implements Controller {
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
         this.pwConfirmPW.setPromptText(LanguageResolver.getString("CONFIRM_PASSWORD"));
         this.pwConfirmPW.setVisible(true);
+
+        Objects.requireNonNull(tfUserName).getStyleClass().remove("error");
+        Objects.requireNonNull(pwUserPw).getStyleClass().remove("error");
+        Objects.requireNonNull(pwConfirmPW).getStyleClass().remove("error");
+
 //        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
 //        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
@@ -310,11 +321,13 @@ public class LoginScreenController implements Controller {
         try {
             String name = this.tfUserName.getText();
             String password = this.pwUserPw.getText();
+            String confirmedPassword = this.pwConfirmPW.getText();
 
-            if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty()) {
+            if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty() || !password.equals(confirmedPassword)) {
                 //reset name and password fields
                 Objects.requireNonNull(tfUserName).getStyleClass().add("error");
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
+                Objects.requireNonNull(pwConfirmPW).getStyleClass().add("error");
                 errorLabelText = "PLEASE_TYPE_USERNAME_PASSWORD";
                 refreshErrLabelText(errorLabelText);
             } else {

@@ -22,12 +22,12 @@
                <left>
                   <Pane minWidth="320.0" prefHeight="400.0" prefWidth="320.0" styleClass="login-linear-grad" BorderPane.alignment="CENTER">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="85.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="85.0" layoutY="155.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@images/logo_accord_1.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="lblGuestLogin12" layoutX="101.0" layoutY="297.0" prefHeight="35.0" prefWidth="82.0" text="Accord" textFill="#fcfcfc">
+                        <Label fx:id="lblGuestLogin12" layoutX="119.0" layoutY="333.0" prefHeight="35.0" prefWidth="82.0" text="Accord" textFill="#fcfcfc">
                            <font>
                               <Font name="System Bold" size="24.0" />
                            </font>
@@ -40,23 +40,23 @@
                      <children>
                         <Pane id="pnlSignIn" fx:id="pnlSignUp1" minWidth="320.0" prefHeight="200.0" prefWidth="320.0" styleClass="styleBackgroundPopup">
                            <children>
-                              <TextField id="tfUserName" fx:id="tfUsername11" layoutX="36.0" layoutY="114.0" prefHeight="35.0" prefWidth="245.0" styleClass="createTextField" />
-                              <PasswordField id="pwUserPw" fx:id="tfPassword11" layoutX="36.0" layoutY="175.0" prefHeight="35.0" prefWidth="245.0" styleClass="createTextField" />
-                              <Button id="btnLogin" fx:id="btnSignIn11" layoutX="167.0" layoutY="292.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="styleButton" />
-                              <Button id="btnSwitchRegister" fx:id="btnSignUp11" layoutX="53.0" layoutY="395.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="221.0" styleClass="styleButton" />
-                              <Label id="lblSignIn" fx:id="lblGuestLogin111" layoutX="36.0" layoutY="73.0" prefHeight="30.0" prefWidth="242.0" text="Sign In">
+                              <TextField id="tfUserName" fx:id="tfUsername11" layoutX="36.0" layoutY="98.0" prefHeight="35.0" prefWidth="245.0" styleClass="createTextField" />
+                              <PasswordField id="pwUserPw" fx:id="tfPassword11" layoutX="36.0" layoutY="159.0" prefHeight="35.0" prefWidth="245.0" styleClass="createTextField" />
+                              <Button id="btnLogin" fx:id="btnSignIn11" layoutX="167.0" layoutY="276.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="styleButton" />
+                              <Button id="btnSwitchRegister" fx:id="btnSignUp11" layoutX="53.0" layoutY="379.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="221.0" styleClass="styleButton" />
+                              <Label id="lblSignIn" fx:id="lblGuestLogin111" layoutX="36.0" layoutY="57.0" prefHeight="30.0" prefWidth="242.0" text="Sign In">
                                  <font>
                                     <Font name="System Bold" size="20.0" />
                                  </font>
                               </Label>
-                              <Button id="btnGuestLogin" layoutX="29.0" layoutY="292.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="second-button" />
-                              <Label id="lblError" layoutX="36.0" layoutY="227.0" prefHeight="17.0" prefWidth="248.0" textAlignment="CENTER" />
-                              <Label id="lblRememberMe" layoutX="121.0" layoutY="337.0" prefHeight="20.0" prefWidth="185.0">
+                              <Button id="btnGuestLogin" layoutX="29.0" layoutY="276.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="second-button" />
+                              <Label id="lblError" layoutX="53.0" layoutY="422.0" prefHeight="36.0" prefWidth="248.0" textAlignment="CENTER" />
+                              <Label id="lblRememberMe" layoutX="121.0" layoutY="321.0" prefHeight="20.0" prefWidth="185.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <CheckBox id="btnRememberMe" layoutX="98.0" layoutY="338.0" mnemonicParsing="false" />
+                              <CheckBox id="btnRememberMe" layoutX="98.0" layoutY="322.0" mnemonicParsing="false" />
                               <Button id="btnOptions" fx:id="btnSignIn111" layoutX="268.0" layoutY="12.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="38.0" styleClass="sidebar-Button">
                                  <graphic>
                                     <ImageView fx:id="btnOptions2" fitHeight="30.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
@@ -66,9 +66,9 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Label id="lblUserValid" layoutX="55.0" layoutY="360.0" prefHeight="17.0" prefWidth="218.0" />
-                              <Label id="lblGuestPassword" layoutX="55.0" layoutY="377.0" prefHeight="17.0" prefWidth="219.0" />
-                              <PasswordField id="pwConfirmPW" fx:id="tfPassword111" layoutX="36.0" layoutY="236.0" prefHeight="35.0" prefWidth="245.0" styleClass="createTextField" />
+                              <Label id="lblUserValid" layoutX="55.0" layoutY="344.0" prefHeight="17.0" prefWidth="218.0" />
+                              <Label id="lblGuestPassword" layoutX="55.0" layoutY="361.0" prefHeight="17.0" prefWidth="219.0" />
+                              <PasswordField id="pwConfirmPW" fx:id="tfPassword111" layoutX="36.0" layoutY="220.0" prefHeight="35.0" prefWidth="245.0" styleClass="createTextField" />
                            </children>
                         </Pane>
                      </children>
