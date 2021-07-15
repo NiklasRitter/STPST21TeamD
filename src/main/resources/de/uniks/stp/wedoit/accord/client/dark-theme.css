@@ -1,5 +1,5 @@
 .login-linear-grad {
-    -fx-background-color: linear-gradient(to bottom left, #A868A0, #2D75E8);
+    -fx-background-color: linear-gradient(to bottom left, #ffffff, #000000);
 }
 
 .login-button-signIn {
@@ -13,6 +13,12 @@
     -fx-text-fill: #ffffff;
     -fx-border-color: #008000;
     -fx-border-radius: 5;
+}
+
+.second-button{
+    -fx-text-fill: #a1a1a1;
+    -fx-border-color: #a1a1a1;
+    -fx-background-color: #2f3136;
 }
 
 .root {

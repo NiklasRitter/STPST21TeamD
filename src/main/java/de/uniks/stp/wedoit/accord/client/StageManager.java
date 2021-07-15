@@ -78,6 +78,7 @@ public class StageManager extends Application {
         stage.setTitle(title);
         stage.setScene(scene);
         stage.setResizable(resizable);
+        stage.setMinWidth(655);
         stage.show();
     }
 

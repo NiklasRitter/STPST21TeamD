@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.constants.Images;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import javafx.application.Platform;
@@ -12,10 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.WindowEvent;
 
-import javax.swing.text.AttributeSet;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.html.ImageView;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
@@ -45,6 +40,7 @@ public class LoginScreenController implements Controller {
     private Pane pnlSignUp;
     private Pane pnlSignIn;
     private Label lblSignIn;
+    private TextField pwConfirmPW;
     //    private TextField tfUserNameRegister;
 //    private TextField pwUserPwRegister;
 //    private Button btnSwitchLogin;
@@ -83,6 +79,7 @@ public class LoginScreenController implements Controller {
 
         this.tfUserName = (TextField) view.lookup("#tfUserName");
         this.pwUserPw = (TextField) view.lookup("#pwUserPw");
+        this.pwConfirmPW = (TextField) view.lookup("#pwConfirmPW");
         this.btnLogin = (Button) view.lookup("#btnLogin");
         this.btnSwitchRegister = (Button) view.lookup("#btnSwitchRegister");
         this.btnGuestLogin = (Button) view.lookup("#btnGuestLogin");
@@ -92,6 +89,8 @@ public class LoginScreenController implements Controller {
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.lblUserValid = (Label) view.lookup("#lblUserValid");
         this.lblGuestPassword = (Label) view.lookup("#lblGuestPassword");
+
+
 
         this.lblSignIn = (Label) view.lookup("#lblSignIn");
 
@@ -112,7 +111,8 @@ public class LoginScreenController implements Controller {
 //        this.lblEnterUserName = (Label) view.lookup("#lblEnterUserName");
 //        this.lblEnterPw = (Label) view.lookup("#lblEnterPw");
 
-        this.view.requestFocus();
+
+        this.tfUserName.requestFocus();
         this.setComponentsTextSignIn();
 
         // Add necessary action listeners
@@ -134,7 +134,7 @@ public class LoginScreenController implements Controller {
         this.refreshStage();
 
 //TODO what does that?
-//        Platform.runLater(() -> this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty()));
+  //     Platform.runLater(() -> this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty()));
     }
 
     /**
@@ -144,6 +144,7 @@ public class LoginScreenController implements Controller {
         this.lblSignIn.setText(LanguageResolver.getString("LOGIN"));
         this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
+        this.pwConfirmPW.setVisible(false);
 //        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
 //        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
@@ -166,6 +167,8 @@ public class LoginScreenController implements Controller {
         this.lblSignIn.setText(LanguageResolver.getString("REGISTER"));
         this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
+        this.pwConfirmPW.setPromptText(LanguageResolver.getString("CONFIRM_PASSWORD"));
+        this.pwConfirmPW.setVisible(true);
 //        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
 //        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
