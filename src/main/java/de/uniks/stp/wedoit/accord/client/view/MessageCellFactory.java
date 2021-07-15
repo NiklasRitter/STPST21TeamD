@@ -210,6 +210,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                 if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
                 if (url.contains(MP4)) return true;
+                if (url.contains(GIF)) return true;
                 Document doc = Jsoup.connect(url).get();
                 if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
                     descBox.setText(doc.title());
@@ -228,6 +229,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     setUpMediaView(url);
                     setGraphic(vBox);
                     return true;
+                } else if (url.contains(GIF)) {
+                    setUpWebViewGif(url);
+                    System.out.println("ich bin hier");
+                    setGraphic(vBox);
+                    return true;
                 } else {
                     Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
                     if (!image.isError()) {
@@ -239,6 +245,14 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
             }
             return false;
+        }
+
+        private void setUpWebViewGif(String url) {
+            if (url == null) return;
+
+            webView.setMaxWidth(400);
+            webView.setMaxHeight(270);
+            webView.getEngine().load(url);
         }
 
         private void setUpMediaView(String url) {
@@ -265,6 +279,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
                 if (item.getText().contains(MP4)) {
                     vBox.getChildren().addAll(label, mediaView, hyperlink);
+                } else if (item.getText().contains(GIF)) {
+                    vBox.getChildren().addAll(label, webView, hyperlink);
                 } else {
                     vBox.getChildren().addAll(label, imageView, mediaView, hyperlink);
                 }
