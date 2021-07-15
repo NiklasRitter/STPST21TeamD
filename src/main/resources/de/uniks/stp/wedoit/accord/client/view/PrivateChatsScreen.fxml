@@ -89,7 +89,7 @@
                                 </Button>
                             </children>
                         </HBox>
-                        <ListView id="lwPrivateChat" VBox.vgrow="ALWAYS" />
+                        <ListView id="lwPrivateChat" styleClass="listView1" VBox.vgrow="ALWAYS" />
                         <HBox id="quoteVisible" alignment="CENTER_LEFT">
                             <children>
                                 <Label id="lblQuote">

@@ -26,12 +26,14 @@
 }
 
 .styleBackgroundHighlight {
-    -fx-background-color: #07060E
+    -fx-background-color: #212121
 }
 
 .styleButton {
-    -fx-background-color: transparent;
-    -fx-text-fill: #FFFFFF
+    -fx-background-color: #f2f3f5;
+    -fx-text-fill: #000000;
+    -fx-border-color: #000000;
+
 }
 
 .redLabel {
@@ -118,29 +120,29 @@
 
 /* new */
 .list-view{
-    -fx-background-color: #ffffff;
+    -fx-background-color: #f2f3f5;
     -fx-border-color: transparent;
 }
 
 .listView1{
-    -fx-background-color: #fafbfc;
+    -fx-background-color: #ffffff;
     -fx-border-color: transparent;
 }
 
 .list-cell {
     -fx-text-fill: #000000 ;
-    -fx-background-color: #ffffff;
+    -fx-background-color: #f2f3f5;
     -fx-border-color: transparent;
 }
 .tree-cell {
     -fx-text-fill: #000000 ;
-    -fx-background-color: #ffffff;
+    -fx-background-color: #f2f3f5;
     -fx-border-color: transparent;
     -fx-collapsible: #dcddde;
 }
 
 .tree-view {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #f2f3f5;
 }
 
 .tree-view > .virtual-flow> .clipped-container > .sheet > .tree-cell .tree-disclosure-node .arrow {
@@ -167,6 +169,10 @@
 
 .sidebar-Button {
     -fx-background-color: transparent;
+}
+
+.sidebar-Button:hover {
+    -fx-background-color: #2f3136;
 }
 
 .styleBackgroundAudio {
