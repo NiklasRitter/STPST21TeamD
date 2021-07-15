@@ -41,4 +41,10 @@ public class ConstantsClassesTest {
         Assert.assertEquals(messageOperations.QUOTE_MESSAGE, "###quoteMESSAGE###");
     }
 
+    @Test
+    public void testNetwork() {
+        Network network = new Network();
+        Assert.assertEquals(network.AND_SERVER_ID_URL, "&" + network.SERVER_ID_URL);
+    }
+
 }
