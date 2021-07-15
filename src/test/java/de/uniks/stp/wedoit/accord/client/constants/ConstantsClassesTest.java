@@ -34,5 +34,11 @@ public class ConstantsClassesTest {
         JSON json = new JSON();
         Assert.assertEquals(json.MESSAGE, "message");
     }
-    
+
+    @Test
+    public void testMessageOperations() {
+        MessageOperations messageOperations = new MessageOperations();
+        Assert.assertEquals(messageOperations.QUOTE_MESSAGE, "###quoteMESSAGE###");
+    }
+
 }
