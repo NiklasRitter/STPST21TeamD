@@ -14,12 +14,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
 
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
@@ -130,6 +128,10 @@ public class ServerScreenController implements Controller {
 
         initTooltips();
 
+        if(localUser.getAudioChannel() != null && localUser.getAudioChannel().getCategory().getServer().getId().equals(server.getId())){
+            initAudioChannelSubView(localUser.getAudioChannel());
+        }
+
         // add PropertyChangeListener
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
@@ -217,7 +219,6 @@ public class ServerScreenController implements Controller {
         this.categoryTreeViewController.stop();
         this.serverChatController.stop();
         this.editor.setCurrentServer(null);
-        deleteCurrentServer();
 
         if (audioChannelSubViewController != null) {
             this.audioChannelSubViewController.stop();
@@ -275,9 +276,7 @@ public class ServerScreenController implements Controller {
         if (propertyChangeEvent.getNewValue() == null) {
             this.audioChannelSubViewController.stop();
             this.audioChannelSubViewController = null;
-            Platform.runLater(() -> {
-                this.audioChannelSubViewContainer.getChildren().clear();
-            });
+            Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().clear());
         } else {
             this.initAudioChannelSubView((Channel) propertyChangeEvent.getNewValue());
         }
@@ -288,21 +287,6 @@ public class ServerScreenController implements Controller {
      */
     private void handleServerNameChange() {
         Platform.runLater(() -> this.lbServerName.setText(this.server.getName()));
-    }
-
-    /**
-     * deletes the current server with all edges
-     */
-    public void deleteCurrentServer() {
-        // Delete all connection to the server in the data model
-        for (Category category : server.getCategories()) {
-            for (Channel channel : category.getChannels()) {
-                channel.withoutMembers(new ArrayList<>(channel.getMembers()));
-                channel.withoutAudioMembers((new ArrayList<>(channel.getAudioMembers())));
-            }
-        }
-        server.withoutMembers(new ArrayList<>(server.getMembers()));
-        localUser.withoutServers(server);
     }
 
     /**
@@ -386,18 +370,15 @@ public class ServerScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
-                lbServerName.setContextMenu(createContextMenuLeaveServer());
-                serverChatController.initToolTip();
-                serverChatController.addUserMessageContextMenu();
-                serverChatController.addLocalUserMessageContextMenu();
-                categoryTreeViewController.initContextMenu();
-            }
+        this.editor.getStageManager().getPopupStage().setOnCloseRequest(event -> {
+            setComponentsText();
+            initTooltips();
+            editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
+            lbServerName.setContextMenu(createContextMenuLeaveServer());
+            serverChatController.initToolTip();
+            serverChatController.addUserMessageContextMenu();
+            serverChatController.addLocalUserMessageContextMenu();
+            categoryTreeViewController.initContextMenu();
         });
     }
 
@@ -407,10 +388,6 @@ public class ServerScreenController implements Controller {
 
     public ServerChatController getServerChatController() {
         return serverChatController;
-    }
-
-    public VBox getAudioChannelSubViewContainer() {
-        return audioChannelSubViewContainer;
     }
 
     public void resetLbChannelName() {

@@ -1352,9 +1352,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         Label lbServerName = lookup("#lbServerName").query();
         Assert.assertEquals(lbServerName.getText(), "new Server");
-        // The size is 1 because when leaving a server screen the server gets deleted from the localUser and by entering the
-        // new one the size should be 1
-        Assert.assertEquals(localUser.getServers().size(), 1);
+        Assert.assertEquals(localUser.getServers().size(), 2);
 
         System.out.println();
     }
