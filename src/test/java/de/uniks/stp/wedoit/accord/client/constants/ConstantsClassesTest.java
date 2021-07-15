@@ -53,7 +53,7 @@ public class ConstantsClassesTest {
     @Test
     public void testPreferences() {
         Preferences preferences = new Preferences();
-        Assert.assertEquals(Preferences.INITIALIZATION_VECTOR, "initialization_vector");
+        Assert.assertEquals(preferences.INITIALIZATION_VECTOR, "initialization_vector");
     }
 
     @Test
