@@ -27,7 +27,7 @@
                                         <Font name="System Bold" size="14.0" />
                                     </font>
                                 </Label>
-                                <TextField id="tfNewServernameInput" prefHeight="25.0" prefWidth="190.0" />
+                                <TextField id="tfNewServernameInput" prefHeight="25.0" prefWidth="190.0" styleClass="createTextField" />
                                 <Region prefHeight="61.0" prefWidth="30.0" />
                             </children>
                         </HBox>
@@ -63,7 +63,7 @@
                                                                 <Font size="14.0" />
                                                             </font>
                                                         </RadioButton>
-                                                        <TextField id="tfMaxCountAmountInput" />
+                                                        <TextField id="tfMaxCountAmountInput" styleClass="createTextField" />
                                                     </children>
                                                 </HBox>
                                             </children>
@@ -83,7 +83,7 @@
                                             </font>
                                         </Button>
                                         <Region prefHeight="20.0" />
-                                        <TextField id="tfInvitationLink" editable="false" prefHeight="25.0" prefWidth="290.0">
+                                        <TextField id="tfInvitationLink" editable="false" prefHeight="25.0" prefWidth="290.0" styleClass="createTextField">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>

@@ -137,7 +137,7 @@
     -fx-text-fill: #000000 ;
     -fx-background-color: #f2f3f5;
     -fx-border-color: transparent;
-    -fx-collapsible: #dcddde;
+    -fx-collapsible: #000000;
 }
 
 .tree-view {
@@ -145,7 +145,7 @@
 }
 
 .tree-view > .virtual-flow> .clipped-container > .sheet > .tree-cell .tree-disclosure-node .arrow {
-    -fx-background-color: #dcddde;
+    -fx-background-color: #000000;
 }
 
 .text-field {
