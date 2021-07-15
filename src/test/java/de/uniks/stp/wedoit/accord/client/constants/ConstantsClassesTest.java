@@ -53,4 +53,10 @@ public class ConstantsClassesTest {
         Assert.assertEquals(Preferences.INITIALIZATION_VECTOR, "initialization_vector");
     }
 
+    @Test
+    public void testStages() {
+        Stages stages = new Stages();
+        Assert.assertEquals(stages.EMOJIPICKERSTAGE, "emojiPickerStage");
+    }
+
 }
