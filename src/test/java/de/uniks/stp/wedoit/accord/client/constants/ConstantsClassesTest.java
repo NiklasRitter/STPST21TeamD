@@ -3,6 +3,9 @@ package de.uniks.stp.wedoit.accord.client.constants;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ConstantsClassesTest {
 
     @Test
@@ -57,6 +60,12 @@ public class ConstantsClassesTest {
     public void testStages() {
         Stages stages = new Stages();
         Assert.assertEquals(stages.EMOJIPICKERSTAGE, "emojiPickerStage");
+    }
+
+    @Test
+    public void testIcons() {
+        List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
+        Assert.assertEquals(iconsUnicodeList.get(0).toString(), "\uD83D\uDE01");
     }
 
 }
