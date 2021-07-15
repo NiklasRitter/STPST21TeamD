@@ -39,7 +39,6 @@ public class CategoryTreeViewController implements Controller {
     private TreeView<Object> tvServerChannels;
     private TreeItem<Object> tvServerChannelsRoot;
 
-//    public final PropertyChangeListener userListViewListener = this::changeUserList;
     private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
     private final PropertyChangeListener categoriesListener = this::handleCategoryChange;
     private final PropertyChangeListener channelListener = this::handleChannelChange;
@@ -86,7 +85,6 @@ public class CategoryTreeViewController implements Controller {
         this.tvServerChannels.setOnMouseReleased(null);
         for (Channel channel : channelMap.values()) {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
-//            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         }
         for (Category category : server.getCategories()) {
@@ -184,17 +182,6 @@ public class CategoryTreeViewController implements Controller {
             Platform.runLater(() -> tvServerChannels.refresh());
         }
     }
-
-//    /**
-//     * rebuilds the user list
-//     */
-//    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
-//        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-//            if (propertyChangeEvent.getSource() instanceof Channel) {
-//                Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
-//            }
-//        }
-//    }
 
     /**
      * handles a changed category
