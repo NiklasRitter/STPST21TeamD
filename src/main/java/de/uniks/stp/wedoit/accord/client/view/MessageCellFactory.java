@@ -230,8 +230,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     setGraphic(vBox);
                     return true;
                 } else if (url.contains(GIF)) {
-                    setUpWebViewGif(url);
-                    System.out.println("ich bin hier");
+                    setUpWebView(url);
                     setGraphic(vBox);
                     return true;
                 } else {
@@ -247,20 +246,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             return false;
         }
 
-        private void setUpWebViewGif(String url) {
-            if (url == null) return;
-
-            webView.setMaxWidth(400);
-            webView.setMaxHeight(270);
-            webView.getEngine().load(url);
-        }
-
         private void setUpMediaView(String url) {
             Media media = new Media(url);
-
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.setAutoPlay(true);
-
             mediaView.setFitHeight(400);
             mediaView.setFitWidth(270);
             mediaView.setPreserveRatio(true);
