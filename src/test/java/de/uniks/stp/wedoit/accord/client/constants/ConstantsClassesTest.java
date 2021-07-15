@@ -47,4 +47,10 @@ public class ConstantsClassesTest {
         Assert.assertEquals(network.AND_SERVER_ID_URL, "&" + network.SERVER_ID_URL);
     }
 
+    @Test
+    public void testPreferences() {
+        Preferences preferences = new Preferences();
+        Assert.assertEquals(Preferences.INITIALIZATION_VECTOR, "initialization_vector");
+    }
+
 }
