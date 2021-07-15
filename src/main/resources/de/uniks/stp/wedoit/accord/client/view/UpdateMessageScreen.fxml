@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label id="lblError" textFill="RED" />
         <HBox prefHeight="100.0" prefWidth="200.0">
@@ -23,7 +23,7 @@
                     </font>
                     <graphic>
                         <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@images/smiley.png"/>
+                            <Image url="@images/smiley.png" />
                         </ImageView>
                     </graphic>
                 </Button>
@@ -52,6 +52,6 @@
     </padding>
     <styleClass>
         <String fx:value="styleBorder" />
-        <String fx:value="styleBackgroundHighlight" />
+        <String fx:value="styleBackgroundPopup" />
     </styleClass>
 </VBox>

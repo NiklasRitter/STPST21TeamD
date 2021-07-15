@@ -15,14 +15,14 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
     <children>
         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
             <children>
                 <VBox alignment="TOP_CENTER" maxWidth="75.0" minWidth="75.0" spacing="20.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
+                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;" styleClass="sidebar-Button">
                             <graphic>
                                 <ImageView id="btnOptions" fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -47,7 +47,7 @@
                                 </LinearGradient>
                             </textFill>
                         </Button>
-                        <Button id="btnPrivateChats" mnemonicParsing="false" styleClass="styleButton">
+                        <Button id="btnPrivateChats" mnemonicParsing="false" styleClass="sidebar-Button">
                             <graphic>
                                 <ImageView id="btnWelcome" fitHeight="32.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -56,7 +56,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button id="btnAddServer" mnemonicParsing="false" styleClass="styleButton">
+                        <Button id="btnAddServer" mnemonicParsing="false" styleClass="sidebar-Button">
                             <graphic>
                                 <ImageView id="btnAddServer" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -65,7 +65,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button id="btnEnterInvitation" mnemonicParsing="false" styleClass="styleButton">
+                        <Button id="btnEnterInvitation" mnemonicParsing="false" styleClass="sidebar-Button">
                             <graphic>
                                 <ImageView id="btnEnterInvitation" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -84,7 +84,7 @@
                         <Insets top="5.0" />
                     </padding>
                 </VBox>
-                <VBox alignment="CENTER_LEFT" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+                <VBox alignment="CENTER_LEFT" styleClass="styleTop" HBox.hgrow="ALWAYS">
                     <children>
                         <Label id="lblYourServers" VBox.vgrow="ALWAYS">
                             <font>

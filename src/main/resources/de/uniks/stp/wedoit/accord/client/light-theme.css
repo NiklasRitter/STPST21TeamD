@@ -25,10 +25,6 @@
     );
 }
 
-.styleBorder {
-    -fx-border-color: #3c3f41
-}
-
 .styleBackgroundHighlight {
     -fx-background-color: #07060E
 }
@@ -155,4 +151,33 @@
     -fx-text-fill: #000000 ;
     -fx-background-color: #40444b;
     -fx-prompt-text-fill: #dcddde;
+}
+
+.item-selected {
+    -fx-background-color: #d9d9d9;
+}
+
+.styleTop {
+    -fx-background-color: #d9d9d9;
+}
+
+.styleBackgroundPopup {
+    -fx-background-color: #d9d9d9;
+}
+
+.sidebar-Button {
+    -fx-background-color: transparent;
+}
+
+.styleBackgroundAudio {
+    -fx-background-color: #232529;
+}
+
+.playButton{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #2f3136;
+}
+
+.audioLabel {
+
 }

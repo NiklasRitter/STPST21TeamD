@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Region prefHeight="25.0" prefWidth="300.0" />
         <Label id="lblTitle">
@@ -23,16 +23,15 @@
         <HBox id="hBoxTextField" alignment="CENTER" prefHeight="35.0" prefWidth="300.0">
             <children>
                 <Region prefHeight="32.0" prefWidth="15.0" />
-            <TextArea id="tfMessage" prefHeight="30.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
+            <TextArea id="tfMessage" prefHeight="30.0" prefWidth="240.0" styleClass="createTextField" HBox.hgrow="ALWAYS" />
                 <Region prefHeight="32.0" prefWidth="5.0" />
                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" style="-fx-background-radius: 100;">
                     <font>
                         <Font size="4.0" />
                     </font>
                     <graphic>
-                        <ImageView id="btnEmoji" fitHeight="21.0" fitWidth="21.0" pickOnBounds="true"
-                                   preserveRatio="true">
-                            <Image url="@images/smiley.png"/>
+                        <ImageView id="btnEmoji" fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@images/smiley.png" />
                         </ImageView>
                     </graphic>
                 </Button>
@@ -45,6 +44,6 @@
     </children>
     <styleClass>
         <String fx:value="styleBorder" />
-        <String fx:value="styleBackgroundHighlight" />
+        <String fx:value="styleBackgroundPopup" />
     </styleClass>
 </VBox>

@@ -37,6 +37,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
             this.getStyleClass().remove("newMessage");
+            this.getStyleClass().remove("item-selected");
             if (!empty) {
                 if (item instanceof Category) {
                     this.setText(((Category) item).getName());
@@ -46,21 +47,27 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                     Channel channel = (Channel) item;
                     ImageView icon;
                     if(channel.getType().equals(TEXT)){
-                        if(isSelected() && !stageManager.getModel().getOptions().isDarkmode()){
+                        if(stageManager.getModel().getOptions().isDarkmode()){
                             icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit.png"))));
                         }
                         else{
                             icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit_dark.png"))));
                         }
+                        if (isSelected()) {
+                            this.getStyleClass().add("item-selected");
+                        }
                         icon.setFitHeight(13);
                         icon.setFitWidth(13);
                     }
                     else{
-                        if(isSelected() && !stageManager.getModel().getOptions().isDarkmode()){
+                        if(stageManager.getModel().getOptions().isDarkmode()){
                             icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound.png"))));
                         }
                         else{
                             icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound_dark.png"))));
+                        }
+                        if (isSelected()) {
+                            this.getStyleClass().add("item-selected");
                         }
                         icon.setFitHeight(15);
                         icon.setFitWidth(15);

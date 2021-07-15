@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="vBoxMain" alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="vBoxMain" alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
@@ -23,7 +23,7 @@
                   <Insets top="2.0" />
                </HBox.margin>
             </Label>
-            <TextField id="tfChannelName" HBox.hgrow="ALWAYS">
+            <TextField id="tfChannelName" styleClass="createTextField" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -102,6 +102,6 @@
    </padding>
    <styleClass>
       <String fx:value="styleBorder" />
-      <String fx:value="styleBackgroundHighlight" />
+      <String fx:value="styleBackgroundPopup" />
    </styleClass>
 </VBox>

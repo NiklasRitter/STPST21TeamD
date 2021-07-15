@@ -31,8 +31,9 @@
 }
 
 .styleButton {
-    -fx-background-color: transparent;
-    -fx-text-fill: #525252
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-background-color: #2f3136;
 }
 
 .redLabel {
@@ -148,7 +149,35 @@
 }
 
 .text-field {
-    -fx-text-fill: #40444b ;
+    -fx-text-fill: #ffffff ;
     -fx-background-color: #40444b;
-    -fx-prompt-text-fill: #dcddde;
+    -fx-prompt-text-fill: #cccccc;
+}
+
+.item-selected {
+    -fx-background-color: #4a4a4a;
+}
+.styleTop {
+    -fx-background-color: #4a4a4a;
+}
+
+.styleBackgroundPopup {
+    -fx-background-color: #2f3136;
+}
+
+.sidebar-Button {
+    -fx-background-color: transparent;
+}
+
+.styleBackgroundAudio {
+    -fx-background-color: #232529;
+}
+
+.playButton{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #2f3136;
+}
+
+.audioLabel {
+    -fx-text-fill: #ffffff;
 }
