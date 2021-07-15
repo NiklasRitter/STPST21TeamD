@@ -123,7 +123,7 @@ public class MainScreenController implements Controller {
                 editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginRegisterScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
         }
     }
 
