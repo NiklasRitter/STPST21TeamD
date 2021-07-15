@@ -29,4 +29,10 @@ public class ConstantsClassesTest {
         Assert.assertEquals(images.IMAGE_MICRO, "micro.png");
     }
 
+    @Test
+    public void testJSON() {
+        JSON json = new JSON();
+        Assert.assertEquals(json.MESSAGE, "message");
+    }
+    
 }
