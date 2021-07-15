@@ -8,6 +8,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.WindowEvent;
 
@@ -93,6 +95,10 @@ public class LoginScreenController implements Controller {
 
 
         this.lblSignIn = (Label) view.lookup("#lblSignIn");
+
+        this.tfUserName.setOnKeyPressed(this::tfUserNameOnEnter);
+        this.pwUserPw.setOnKeyPressed(this::pwUserPwOnEnter);
+        this.pwConfirmPW.setOnKeyPressed(this::pwConfirmPWPwOnEnter);
 
 //        this.btnRegister = (Button) view.lookup("#btnRegister");
 
@@ -197,6 +203,48 @@ public class LoginScreenController implements Controller {
         //TODO what does that?
 //        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
     }
+    /**
+     * set focus to pwUserPw when enter is pressed
+     *
+     * @param keyEvent occurs when key is pressed when text area is focused
+     */
+    private void tfUserNameOnEnter(KeyEvent keyEvent) {
+        if(keyEvent.getCode() == KeyCode.ENTER){
+            keyEvent.consume();
+            this.pwUserPw.requestFocus();
+        }
+    }
+
+    /**
+     * set focus to pwConfirmPW or press login when enter is pressed
+     *
+     * @param keyEvent occurs when key is pressed when text area is focused
+     */
+    private void pwUserPwOnEnter(KeyEvent keyEvent) {
+        if(keyEvent.getCode() == KeyCode.ENTER){
+            keyEvent.consume();
+            if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
+                loginButtonAction(new ActionEvent());
+            }
+            else if (lblSignIn.getText().equals(LanguageResolver.getString("REGISTER"))) {
+                this.pwConfirmPW.requestFocus();
+            }
+        }
+    }
+
+    /**
+     * set focus to pwConfirmPW or press login when enter is pressed
+     *
+     * @param keyEvent occurs when key is pressed when text area is focused
+     */
+    private void pwConfirmPWPwOnEnter(KeyEvent keyEvent) {
+        if(keyEvent.getCode() == KeyCode.ENTER){
+            keyEvent.consume();
+            if (lblSignIn.getText().equals(LanguageResolver.getString("REGISTER"))) {
+                loginButtonAction(new ActionEvent());
+            }
+        }
+    }
 
     /**
      * Sets texts of labels for guest user in the selected language with correct data.
@@ -229,6 +277,11 @@ public class LoginScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
+
+        this.tfUserName.setOnKeyPressed(null);
+        this.pwUserPw.setOnKeyPressed(null);
+        this.pwConfirmPW.setOnKeyPressed(null);
+
         // Remove all action listeners
         btnLogin.setOnAction(null);
 //        btnRegister.setOnAction(null);
@@ -282,6 +335,7 @@ public class LoginScreenController implements Controller {
         if (!success) {
             tfUserName.getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
+            pwConfirmPW.getStyleClass().add("error");
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_PASSWORD_WRONG";
                 refreshErrLabelText(errorLabelText);
@@ -300,6 +354,7 @@ public class LoginScreenController implements Controller {
         if (!success) {
             tfUserName.getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
+            pwConfirmPW.getStyleClass().add("error");
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_PASSWORD_WRONG";
                 refreshErrLabelText(errorLabelText);
@@ -351,8 +406,10 @@ public class LoginScreenController implements Controller {
             //reset name and password fields
             this.tfUserName.setText("");
             this.pwUserPw.setText("");
+            this.pwConfirmPW.setText("");
             tfUserName.getStyleClass().add("error");
             pwUserPw.getStyleClass().add("error");
+            pwConfirmPW.getStyleClass().add("error");
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_ALREADY_TAKEN";
                 refreshErrLabelText(errorLabelText);
