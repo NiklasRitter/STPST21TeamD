@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.Images;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import javafx.application.Platform;
@@ -8,8 +9,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.stage.WindowEvent;
 
+import javax.swing.text.AttributeSet;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.html.ImageView;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
@@ -24,7 +30,7 @@ public class LoginScreenController implements Controller {
     private final AccordClient model;
 
     private Button btnLogin;
-    private Button btnRegister;
+//    private Button btnRegister;
     private Button btnOptions;
     private Button btnGuestLogin;
     private CheckBox btnRememberMe;
@@ -34,6 +40,20 @@ public class LoginScreenController implements Controller {
 
     private String guestUserPassword;
     private String errorLabelText = "";
+    private Button btnSwitchRegister;
+//    private Button btnGuestRegister;
+    private Pane pnlSignUp;
+    private Pane pnlSignIn;
+    private Label lblSignIn;
+    //    private TextField tfUserNameRegister;
+//    private TextField pwUserPwRegister;
+//    private Button btnSwitchLogin;
+//    private Label lblErrorRegister;
+//    private Label lblRememberMeRegister;
+//    private CheckBox btnRememberMeRegister;
+//    private Button btnOptionsRegister;
+//    private Label lblUserValidRegister;
+//    private Label lblGuestPasswordRegister;
 
     /**
      * Create a new Controller
@@ -57,52 +77,110 @@ public class LoginScreenController implements Controller {
      */
     public void init() {
         //Load all view references
+        this.pnlSignUp = (Pane) view.lookup("#pnlSignUp");
+        this.pnlSignIn = (Pane) view.lookup("#pnlSignIn");
+        this.pnlSignIn.toFront();
+
         this.tfUserName = (TextField) view.lookup("#tfUserName");
         this.pwUserPw = (TextField) view.lookup("#pwUserPw");
+        this.btnLogin = (Button) view.lookup("#btnLogin");
+        this.btnSwitchRegister = (Button) view.lookup("#btnSwitchRegister");
+        this.btnGuestLogin = (Button) view.lookup("#btnGuestLogin");
         this.errorLabel = (Label) view.lookup("#lblError");
-        this.lblEnterUserName = (Label) view.lookup("#lblEnterUserName");
-        this.lblEnterPw = (Label) view.lookup("#lblEnterPw");
         this.lblRememberMe = (Label) view.lookup("#lblRememberMe");
+        this.btnRememberMe = (CheckBox) view.lookup("#btnRememberMe");
+        this.btnOptions = (Button) view.lookup("#btnOptions");
         this.lblUserValid = (Label) view.lookup("#lblUserValid");
         this.lblGuestPassword = (Label) view.lookup("#lblGuestPassword");
 
-        this.btnLogin = (Button) view.lookup("#btnLogin");
-        this.btnRegister = (Button) view.lookup("#btnRegister");
-        this.btnOptions = (Button) view.lookup("#btnOptions");
-        this.btnRememberMe = (CheckBox) view.lookup("#btnRememberMe");
-        this.btnGuestLogin = (Button) view.lookup("#btnGuestLogin");
+        this.lblSignIn = (Label) view.lookup("#lblSignIn");
+
+//        this.btnRegister = (Button) view.lookup("#btnRegister");
+
+
+//        this.tfUserNameRegister = (TextField) view.lookup("#tfUserNameRegister");
+//        this.pwUserPwRegister = (TextField) view.lookup("#pwUserPwRegister");
+//        this.btnSwitchLogin = (Button) view.lookup("#btnSwitchLogin");
+//        this.btnGuestRegister = (Button) view.lookup("#btnGuestRegister");
+//        this.lblErrorRegister = (Label) view.lookup("#lblErrorRegister");
+//        this.lblRememberMeRegister = (Label) view.lookup("#lblRememberMeRegister");
+//        this.btnRememberMeRegister = (CheckBox) view.lookup("#btnRememberMeRegister");
+//        this.btnOptionsRegister = (Button) view.lookup("#btnOptionsRegister");
+//        this.lblUserValidRegister = (Label) view.lookup("#lblUserValidRegister");
+//        this.lblGuestPasswordRegister = (Label) view.lookup("#lblGuestPasswordRegister");
+
+//        this.lblEnterUserName = (Label) view.lookup("#lblEnterUserName");
+//        this.lblEnterPw = (Label) view.lookup("#lblEnterPw");
 
         this.view.requestFocus();
-        this.setComponentsText();
+        this.setComponentsTextSignIn();
+
         // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
-        this.btnRegister.setOnAction(this::btnRegisterOnClicked);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.btnRememberMe.setOnAction(this::btnRememberMeOnClick);
         this.btnGuestLogin.setOnAction(this::btnGuestLoginOnClick);
+
+//        this.btnRegister.setOnAction(this::btnRegisterOnClicked);
+//        this.btnOptionsRegister.setOnAction(this::btnOptionsOnClicked);
+//        this.btnRememberMeRegister.setOnAction(this::btnRememberMeOnClick);
+//        this.btnGuestRegister.setOnAction(this::btnGuestLoginOnClick);
+//
+//        this.btnSwitchLogin.setOnAction();
+        this.btnSwitchRegister.setOnAction(this::btnSwitchRegisterOnClick);
+
         this.initTooltips();
 
         this.refreshStage();
 
-        Platform.runLater(() -> this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty()));
-
+//TODO what does that?
+//        Platform.runLater(() -> this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty()));
     }
 
     /**
      * Sets texts of all GUI components like buttons, labels etc. in the selected language.
      */
-    private void setComponentsText() {
-        this.tfUserName.setPromptText(LanguageResolver.getString("YOUR_USERNAME"));
-        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
-        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
+    private void setComponentsTextSignIn() {
+        this.lblSignIn.setText(LanguageResolver.getString("LOGIN"));
+        this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
+        this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
+//        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
+//        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
         this.btnLogin.setText(LanguageResolver.getString("LOGIN"));
-        this.btnRegister.setText(LanguageResolver.getString("REGISTER"));
+
+        this.btnSwitchRegister.setText(LanguageResolver.getString("NO_ACCOUNT_YET_REGISTER"));
+//        this.btnRegister.setText(LanguageResolver.getString("REGISTER"));
         this.btnGuestLogin.setText(LanguageResolver.getString("GUEST_LOGIN"));
+
         if (guestUserPassword != null) {
             this.setGuestUserDataLabel();
         }
         this.errorLabel.setText(LanguageResolver.getString(errorLabelText));
+
+        //TODO what does that?
+//        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
+    }
+
+    private void setComponentsTextSignUp() {
+        this.lblSignIn.setText(LanguageResolver.getString("REGISTER"));
+        this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
+        this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
+//        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
+//        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
+        this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
+        this.btnLogin.setText(LanguageResolver.getString("REGISTER"));
+
+        this.btnSwitchRegister.setText(LanguageResolver.getString("ALREADY_ACCOUNT_LOGIN"));
+//        this.btnRegister.setText(LanguageResolver.getString("REGISTER"));
+        this.btnGuestLogin.setText(LanguageResolver.getString("GUEST_LOGIN"));
+
+        if (guestUserPassword != null) {
+            this.setGuestUserDataLabel();
+        }
+        this.errorLabel.setText(LanguageResolver.getString(errorLabelText));
+
+        //TODO what does that?
 //        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
     }
 
@@ -120,6 +198,7 @@ public class LoginScreenController implements Controller {
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText(LanguageResolver.getString("OPTIONS"));
         this.btnOptions.setTooltip(optionsButton);
+//        this.btnOptionsRegister.setTooltip(optionsButton);
 
         Tooltip loginButton = new Tooltip();
         loginButton.setText(LanguageResolver.getString("LOGIN"));
@@ -127,7 +206,7 @@ public class LoginScreenController implements Controller {
 
         Tooltip registerButton = new Tooltip();
         registerButton.setText(LanguageResolver.getString("REGISTER"));
-        this.btnRegister.setTooltip(registerButton);
+//        this.btnRegister.setTooltip(registerButton);
     }
 
     /**
@@ -138,9 +217,11 @@ public class LoginScreenController implements Controller {
     public void stop() {
         // Remove all action listeners
         btnLogin.setOnAction(null);
-        btnRegister.setOnAction(null);
+//        btnRegister.setOnAction(null);
         btnOptions.setOnAction(null);
         btnRememberMe.setOnAction(null);
+        btnOptions.setOnAction(null);
+        btnSwitchRegister.setOnAction(null);
     }
 
 
@@ -150,7 +231,11 @@ public class LoginScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void loginButtonAction(ActionEvent actionEvent) {
-        login();
+        if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
+            login();
+        } else {
+            register();
+        }
     }
 
     public void login() {
@@ -217,9 +302,8 @@ public class LoginScreenController implements Controller {
     /**
      * register user to server and login, redirect to MainScreen
      *
-     * @param actionEvent occurs when clicking the register button
      */
-    private void btnRegisterOnClicked(ActionEvent actionEvent) {
+    private void register() {
         try {
             String name = this.tfUserName.getText();
             String password = this.pwUserPw.getText();
@@ -298,6 +382,14 @@ public class LoginScreenController implements Controller {
         });
     }
 
+    private void btnSwitchRegisterOnClick(ActionEvent actionEvent) {
+        if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
+            setComponentsTextSignUp();
+        } else {
+            setComponentsTextSignIn();
+        }
+    }
+
     /**
      * Refreshes the stage after closing the option screen,
      * so that the component texts are displayed in the correct language.
@@ -306,7 +398,11 @@ public class LoginScreenController implements Controller {
         this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                setComponentsText();
+                if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
+                    setComponentsTextSignIn();
+                } else {
+                    setComponentsTextSignUp();
+                }
                 initTooltips();
                 editor.getStageManager().getStage().setTitle(LanguageResolver.getString("LOGIN"));
             }
