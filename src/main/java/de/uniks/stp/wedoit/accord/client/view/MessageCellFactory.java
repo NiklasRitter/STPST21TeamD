@@ -2,13 +2,13 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
-import com.vdurmont.emoji.EmojiManager;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -25,9 +25,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
-import org.apache.commons.codec.binary.StringUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.internal.StringUtil;
 import org.jsoup.nodes.Document;
 
 import java.awt.*;
@@ -67,6 +65,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final WebView webView = new WebView();
         private String time;
         EmojiTextFlowParameters parameters = new EmojiTextFlowParameters();
+        EmojiTextFlow emojiTextFlow;
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -88,8 +87,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             // parameters for emoji
             parameters.setEmojiScaleFactor(1D);
             parameters.setTextAlignment(TextAlignment.LEFT);
-            parameters.setFont(Font.font("System", FontWeight.NORMAL, 12));
+            int fontSize = stageManager.getEditor().getFontSize();
+            parameters.setFont(Font.font("System", FontWeight.NORMAL, fontSize));
             parameters.setTextColor(Color.BLACK);
+            emojiTextFlow = new EmojiTextFlow(parameters);
+            //emojiTextFlow.styleProperty().bind(this.styleProperty());
+            vBox.styleProperty().bind(Bindings.concat("-fx-font-size: ", stageManager.getEditor().getChatFontSizeProperty().asString(), ";"));
+
 
 
             if (!empty) {
@@ -130,6 +134,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     String[] messages = quoteMessage.split(QUOTE_ID);
 
                     this.getStyleClass().add("font_size");
+
                     this.setText(">>>" + messages[0] + "\n");
 
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
@@ -272,8 +277,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private void displayTextWithEmoji(Message item) {
             this.label.setText("[" + time + "] " + item.getFrom() + ": ");
-            EmojiTextFlow emojiTextFlow = new EmojiTextFlow(parameters);
-            emojiTextFlow.parseAndAppend(item.getText());
+            this.emojiTextFlow.parseAndAppend(item.getText());
             this.vBox.getChildren().addAll(label, emojiTextFlow);
             setGraphic(vBox);
         }

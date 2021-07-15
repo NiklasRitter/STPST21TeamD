@@ -30,7 +30,6 @@ public class EmojiScreenController implements Controller {
     private EmojiButton emojiButton;
     private final HashMap<EmojiButton, Emoji> hashMapForEmojiButtons = new HashMap<>();
     private final List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
-    private Emoji emoji;
 
     public EmojiScreenController(Parent view, TextField tfForEmoji, Bounds pos) {
         this.view = view;
@@ -73,7 +72,7 @@ public class EmojiScreenController implements Controller {
             icon.setFitWidth(30);
             icon.setFitHeight(30);
             String shortname = EmojiParser.getInstance().unicodeToShortname(unicode);
-            emoji = EmojiParser.getInstance().getEmoji(shortname);
+            Emoji emoji = EmojiParser.getInstance().getEmoji(shortname);
             icon.setImage(new Image(StageManager.class.getResource("emoji_images/" + emoji.getHex() + ".png").toString()));
             this.emojiButton = new EmojiButton("");
             this.emojiButton.setGraphic(icon);
