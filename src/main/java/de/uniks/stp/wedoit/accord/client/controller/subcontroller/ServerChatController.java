@@ -303,7 +303,6 @@ public class ServerChatController implements Controller {
             this.editor.getRestManager().getChannelMessages(this.localUser, this.server, channel.getCategory(), channel, timestamp, this);
         }
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-            System.out.println(lvTextChat.getSelectionModel().getSelectedItem().getText());
             if (lvTextChat.getSelectionModel().getSelectedItem() != null) {
                 if (lvTextChat.getSelectionModel().getSelectedItem().getFrom().equals(editor.getLocalUser().getName())) {
                     lvTextChat.setContextMenu(localUserMessageContextMenu);

@@ -71,9 +71,7 @@ public class AudioReceive extends Thread {
                 System.arraycopy(receivePacket.getData(), 0, metaDataByte, 0, 255);
                 System.arraycopy(receivePacket.getData(), 255, receivedAudio, 0, 1024);
 
-                String metaDataString = new String(metaDataByte);
-                JSONObject metaDataJson = new JSONObject(metaDataString);
-                String audioSender = metaDataJson.getString(NAME);
+                String audioSender = getAudioSenderName(metaDataByte);
 
                 if (!sourceDataLineMap.containsKey(audioSender) && !audioSender.equals(localUser.getName())) {
                     SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
@@ -101,6 +99,13 @@ public class AudioReceive extends Thread {
 
     public void setShouldReceive(boolean value) {
         this.shouldReceive.set(value);
+    }
+
+    protected String getAudioSenderName (byte[] metaDataByte) {
+        String metaDataString = new String(metaDataByte);
+        JSONObject metaDataJson = new JSONObject(metaDataString.trim());
+
+        return metaDataJson.getString(NAME);
     }
 
     public void muteUser(String username) {

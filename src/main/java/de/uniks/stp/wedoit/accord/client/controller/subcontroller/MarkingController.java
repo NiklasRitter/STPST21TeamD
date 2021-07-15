@@ -244,7 +244,6 @@ public class MarkingController implements Controller {
                     }
                 } else {
                     if (caretPosition > at.getStart() && caretPosition <= at.getEnd()) {
-                        System.out.println(at.getContent());
                         return at;
                     }
                 }

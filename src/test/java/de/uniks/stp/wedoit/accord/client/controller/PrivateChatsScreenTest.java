@@ -28,11 +28,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -53,6 +55,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PrivateChatsScreenTest extends ApplicationTest {
 
     @Rule
@@ -125,11 +128,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         chatWebSocketClient = null;
         callbackArgumentSystemCaptorWebSocket = null;
         editor = null;
-    }
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -545,7 +543,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
-        WaitForAsyncUtils.waitForFxEvents();
 
         //send message
         ((TextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
@@ -594,7 +591,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         ((TextArea) lookup("#tfEnterPrivateChat").query()).setText("quote");
         clickOn("#tfEnterPrivateChat");
-        write("\n");
+        press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
         JsonObject quote = JsonUtil.buildPrivateChatMessage(user.getName(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
@@ -795,7 +792,5 @@ public class PrivateChatsScreenTest extends ApplicationTest {
                                 .add("id", "5e2ffbd8770dd077d03df506")
                                 .add("name", "Clemens"))
                 ).build().toString();
-
-        when(res.getBody()).thenReturn(new JsonNode(returnMessage));
     }
 }
