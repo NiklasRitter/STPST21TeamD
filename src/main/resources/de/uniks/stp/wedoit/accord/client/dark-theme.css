@@ -133,6 +133,7 @@
     -fx-background-color: #2f3136;
     -fx-border-color: transparent;
 }
+
 .tree-cell {
     -fx-text-fill: #dcddde ;
     -fx-background-color: #2f3136;
@@ -167,6 +168,10 @@
 
 .sidebar-Button {
     -fx-background-color: transparent;
+}
+
+.sidebar-Button:hover {
+    -fx-background-color: #2f3136;
 }
 
 .styleBackgroundAudio {
