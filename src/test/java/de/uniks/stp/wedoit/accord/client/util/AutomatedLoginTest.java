@@ -16,11 +16,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -32,6 +34,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_C
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AutomatedLoginTest extends ApplicationTest {
 
     @Rule
@@ -106,12 +109,6 @@ public class AutomatedLoginTest extends ApplicationTest {
         callbackArgumentCaptor = null;
 
     }
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
 
     @Test
     public void startWithRememberMeOption() {
