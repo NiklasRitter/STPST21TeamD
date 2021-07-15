@@ -144,13 +144,13 @@ public class ServerScreenTest extends ApplicationTest {
     @Override
     public void stop() {
         stageManager.getResourceManager().saveOptions(this.oldOptions);
+        stageManager.stop();
         oldOptions = null;
         rule = null;
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
-        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -160,6 +160,7 @@ public class ServerScreenTest extends ApplicationTest {
         channelsCallbackArgumentCaptor = null;
         channelCallbackArgumentCaptor = null;
         categoriesCallbackArgumentCaptor = null;
+        joinServerCallbackArgumentCaptor = null;
         callbackArgumentCaptorWebSocket = null;
         wsCallback = null;
         chatCallbackArgumentCaptorWebSocket = null;
@@ -1166,9 +1167,6 @@ public class ServerScreenTest extends ApplicationTest {
     public void privateMessageTest() {
         // some more Mocking that is required to send private Messages
         stageManager.getEditor().setUpDB();
-
-        System.out.println(PRIVATE_USER_CHAT_PREFIX +
-                this.stageManager.getEditor().getWebSocketManager().getCleanLocalUserName());
 
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX +

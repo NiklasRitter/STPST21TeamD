@@ -390,6 +390,7 @@ public class MainScreenTest extends ApplicationTest {
 
         when(res.getBody()).thenReturn(new JsonNode(buildJoinedFailure().toString()));
 
+        WaitForAsyncUtils.waitForFxEvents();
         verify(restMock).joinServer(any(), anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
