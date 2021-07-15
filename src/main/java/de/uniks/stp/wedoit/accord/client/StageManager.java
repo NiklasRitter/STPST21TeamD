@@ -344,7 +344,7 @@ public class StageManager extends Application {
         editor.haveLocalUser();
         resourceManager.start(model);
         updateLanguage();
-        if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
+        if (!SystemTray.isSupported()) System.err.println("SystemTray not supported on the platform.");
         else {
             systemTrayController = new SystemTrayController(editor);
             systemTrayController.init();
