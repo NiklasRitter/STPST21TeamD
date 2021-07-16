@@ -16,15 +16,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -63,7 +60,6 @@ public class EditServerScreenTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     private Options oldOptions;
-
 
     @Override
     public void start(Stage stage) {
@@ -274,7 +270,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         clickOn(radioBtnMaxCount);
         Assert.assertTrue(tfMaxCountAmountInput.isEditable());
-        tfMaxCountAmountInput. setText("15");
+        tfMaxCountAmountInput.setText("15");
         clickOn("#btnCreateInvitation");
         WaitForAsyncUtils.waitForFxEvents();
 

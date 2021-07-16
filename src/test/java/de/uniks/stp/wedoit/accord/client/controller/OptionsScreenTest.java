@@ -17,7 +17,6 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -162,7 +161,7 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertTrue(stageManager.getScene().getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
-        Assert.assertEquals(stageManager.getPrefManager().loadDarkmode(), true);
+        Assert.assertEquals(stageManager.getPrefManager().loadDarkMode(), true);
     }
 
     @Test

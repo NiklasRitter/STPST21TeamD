@@ -62,7 +62,7 @@ public class Editor {
     /**
      * @return private final AudioManager audioManager
      */
-    public AudioManager getAudioManager(){
+    public AudioManager getAudioManager() {
         return audioManager;
     }
 
@@ -391,7 +391,7 @@ public class Editor {
         return db.getFontSize();
     }
 
-    public IntegerProperty getChatFontSizeProperty(){
+    public IntegerProperty getChatFontSizeProperty() {
         return chatFontSize;
     }
 
@@ -465,6 +465,7 @@ public class Editor {
             haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
         }
     }
+
     /**
      * returns channel by its id
      *

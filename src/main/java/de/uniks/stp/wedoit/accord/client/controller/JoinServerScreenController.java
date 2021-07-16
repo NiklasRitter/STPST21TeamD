@@ -23,7 +23,7 @@ public class JoinServerScreenController implements Controller {
     private final Parent view;
     private TextField tfInvitationLink;
     private Button btnJoinServer;
-    private Label errorLabel, lblEnterInvitLink;
+    private Label lblError, lblEnterInviteLink;
 
     /**
      * Create a new Controller
@@ -49,8 +49,8 @@ public class JoinServerScreenController implements Controller {
         // Load all view references
         this.btnJoinServer = (Button) view.lookup("#btnJoinServer");
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
-        this.errorLabel = (Label) view.lookup("#lblError");
-        this.lblEnterInvitLink = (Label) view.lookup("#lblEnterInvitLink");
+        this.lblError = (Label) view.lookup("#lblError");
+        this.lblEnterInviteLink = (Label) view.lookup("#lblEnterInvitLink");
 
         this.view.requestFocus();
         this.setComponentsText();
@@ -60,7 +60,7 @@ public class JoinServerScreenController implements Controller {
     }
 
     private void setComponentsText() {
-        this.lblEnterInvitLink.setText(LanguageResolver.getString("ENTER_INVITATION_LINK"));
+        this.lblEnterInviteLink.setText(LanguageResolver.getString("ENTER_INVITATION_LINK"));
         this.tfInvitationLink.setPromptText(LanguageResolver.getString("INVIT_LINK"));
         this.btnJoinServer.setText(LanguageResolver.getString("JOIN"));
     }
@@ -86,10 +86,10 @@ public class JoinServerScreenController implements Controller {
 
         if (tfInvitationLink.getText().contains(REST_SERVER_URL + API_PREFIX + SERVER_PATH) && tfInvitationLink.getText()
                 .contains(INVITES) && !tfInvitationLink.getText().contains(" ")) {
-            errorLabel.setText(LanguageResolver.getString("TRY_JOIN_SERVER"));
+            lblError.setText(LanguageResolver.getString("TRY_JOIN_SERVER"));
             editor.getRestManager().joinServer(localUser, tfInvitationLink.getText(), this);
         } else {
-            errorLabel.setText(LanguageResolver.getString("INSERT_VALID_INVIT_LINK"));
+            lblError.setText(LanguageResolver.getString("INSERT_VALID_INVIT_LINK"));
         }
     }
 
@@ -107,7 +107,7 @@ public class JoinServerScreenController implements Controller {
                 Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
             }
 
-            Platform.runLater(() -> errorLabel.setText(responseMessage));
+            Platform.runLater(() -> lblError.setText(responseMessage));
         }
     }
 }

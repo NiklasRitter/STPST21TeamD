@@ -24,7 +24,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.CREATE
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class CategoryTreeViewController implements Controller {
@@ -71,10 +71,10 @@ public class CategoryTreeViewController implements Controller {
     }
 
     private void initTvServerChannels() {
-        for(Category category : server.getCategories()){
+        for (Category category : server.getCategories()) {
             TreeItem<Object> categoryItem = new TreeItem<>(category);
             categoryItem.setExpanded(true);
-            for(Channel channel : category.getChannels()){
+            for (Channel channel : category.getChannels()) {
                 addChannelToTreeView(channel, categoryItem);
             }
             tvServerChannelsRoot.getChildren().add(categoryItem);
@@ -112,9 +112,8 @@ public class CategoryTreeViewController implements Controller {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
             Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
-        }
-        else{
-            for(Category category : categoryList){
+        } else {
+            for (Category category : categoryList) {
                 loadCategoryChannels(category);
             }
         }
@@ -159,8 +158,7 @@ public class CategoryTreeViewController implements Controller {
                     if (channel.getType().equals(AUDIO)) {
                         if (localUser.getAudioChannel() == null) {
                             editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                        }
-                        else if(localUser.getAudioChannel().getId().equals(channel.getId())){
+                        } else if (localUser.getAudioChannel().getId().equals(channel.getId())) {
                             editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
                         } else {
                             editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
@@ -272,7 +270,7 @@ public class CategoryTreeViewController implements Controller {
         if (channelItem != null) {
             if (oldValue == null && newValue != null) {
                 channelItem.setExpanded(true);
-                if(localUser.isAllMuted() && !newValue.getName().equals(localUser.getName())){
+                if (localUser.isAllMuted() && !newValue.getName().equals(localUser.getName())) {
                     editor.getAudioManager().muteUser(newValue);
                 }
                 addAudioMemberToTreeView(newValue, channelItem);
@@ -333,7 +331,7 @@ public class CategoryTreeViewController implements Controller {
      */
     private TreeItem<Object> getTreeItemChannel(Channel channel) {
         TreeItem<Object> categoryItem = getTreeItemCategory(channel.getCategory());
-        if(categoryItem != null){
+        if (categoryItem != null) {
             for (TreeItem<Object> channelItem : categoryItem.getChildren()) {
                 Channel currentChannel = (Channel) channelItem.getValue();
                 if (currentChannel.getId().equals(channel.getId())) {
@@ -353,7 +351,7 @@ public class CategoryTreeViewController implements Controller {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addCategory = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
         contextMenu.getItems().add(addCategory);
-        addCategory.setOnAction((event) -> editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        addCategory.setOnAction((event) -> editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
         return contextMenu;
     }
 
