@@ -9,7 +9,6 @@ import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -20,13 +19,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import org.jsoup.Jsoup;
@@ -63,14 +62,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
-        private MediaView mediaView = new MediaView();
-        private MediaPlayer mediaPlayer;
+        private final MediaView mediaView = new MediaView();
         private final VBox vBox = new VBox();
         private final Label label = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
-        EmojiTextFlowParameters parameters = new EmojiTextFlowParameters();
+        EmojiTextFlowParameters parameters;
         EmojiTextFlow emojiTextFlow;
 
         private MessageCell(ListView<S> param) {
@@ -91,17 +89,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.getStyleClass().removeAll("link", "descBox");
 
             // parameters for emoji
-            parameters.setEmojiScaleFactor(1D);
-            parameters.setTextAlignment(TextAlignment.LEFT);
-            int fontSize = stageManager.getEditor().getFontSize();
-            parameters.setFont(Font.font("System", FontWeight.NORMAL, fontSize));
+            this.parameters = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize()).createParameters();
             if (stageManager.getPrefManager().loadDarkMode()) {
-                parameters.setTextColor(Color.valueOf("#ADD8e6"));
+                this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
             } else {
-                parameters.setTextColor(Color.valueOf("#000000"));
+                this.parameters.setTextColor(Color.valueOf("#000000"));
             }
-
-            emojiTextFlow = new EmojiTextFlow(parameters);
+            emojiTextFlow = new EmojiTextFlow(this.parameters);
 
 
             if (!empty) {
@@ -178,11 +172,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private boolean containsMarking(String message) {
-            if (message.contains("@" + stageManager.getEditor().getLocalUser().getName())) {
-                return true;
-            } else {
-                return false;
-            }
+            return message.contains("@" + stageManager.getEditor().getLocalUser().getName());
         }
 
         private String containsInviteUrl(String text) {
@@ -243,7 +233,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private void setUpMediaView(String url) {
             Media media = new Media(url);
-            mediaPlayer = new MediaPlayer(media);
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
             mediaPlayer.setAutoPlay(true);
             mediaView.setFitHeight(400);
             mediaView.setFitWidth(270);
