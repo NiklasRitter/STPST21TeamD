@@ -19,7 +19,7 @@ import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
 
@@ -49,7 +49,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                     Channel channel = (Channel) item;
                     handleChannel(channel);
                 }
-                if(item instanceof User){
+                if (item instanceof User) {
                     User user = (User) item;
                     handleUser(user);
                 }
@@ -60,12 +60,11 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
             }
         }
 
-        private void handleChannel(Channel channel){
+        private void handleChannel(Channel channel) {
             ImageView icon;
-            if(channel.getType().equals(TEXT)){
+            if (channel.getType().equals(TEXT)) {
                 icon = addIconText();
-            }
-            else{
+            } else {
                 icon = addIconAudio();
             }
             this.setGraphic(icon);
@@ -76,10 +75,10 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
             }
         }
 
-        private void handleUser(User user){
+        private void handleUser(User user) {
             this.setText(user.getName());
-            if(stageManager.getEditor().getLocalUser().getAudioChannel() != null && stageManager.getEditor().getLocalUser().getAudioChannel().getId().equals(user.getAudioChannel().getId())) {
-                if(!user.getId().equals(stageManager.getEditor().getLocalUser().getId())){
+            if (stageManager.getEditor().getLocalUser().getAudioChannel() != null && stageManager.getEditor().getLocalUser().getAudioChannel().getId().equals(user.getAudioChannel().getId())) {
+                if (!user.getId().equals(stageManager.getEditor().getLocalUser().getId())) {
                     if (user.isMuted()) {
                         this.setContextMenu(addContextMenuUnMute(user, this));
                         ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound-off-red.png"))));
@@ -90,33 +89,30 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
                         this.setContextMenu(addContextMenuMute(user, this));
                         this.setGraphic(null);
                     }
-                }
-                else {
+                } else {
                     this.setContextMenu(addContextMenuLocalUser(stageManager.getEditor().getLocalUser(), this));
                 }
             }
         }
 
-        private ImageView addIconText(){
+        private ImageView addIconText() {
             ImageView icon;
-            if(isSelected() && !stageManager.getModel().getOptions().isDarkmode()){
-                icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit.png"))));
-            }
-            else{
-                icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit_dark.png"))));
+            if (isSelected() && !stageManager.getModel().getOptions().isDarkmode()) {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit.png"))));
+            } else {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit_dark.png"))));
             }
             icon.setFitHeight(13);
             icon.setFitWidth(13);
             return icon;
         }
 
-        private ImageView addIconAudio(){
+        private ImageView addIconAudio() {
             ImageView icon;
-            if(isSelected() && !stageManager.getModel().getOptions().isDarkmode()){
-                icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound.png"))));
-            }
-            else{
-                icon =  new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound_dark.png"))));
+            if (isSelected() && !stageManager.getModel().getOptions().isDarkmode()) {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound.png"))));
+            } else {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound_dark.png"))));
             }
             icon.setFitHeight(15);
             icon.setFitWidth(15);
@@ -133,9 +129,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
 
-        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
-        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item.getCategory(), null));
-        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, item, null));
+        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUP_STAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUP_STAGE, LanguageResolver.getString("ADD_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item.getCategory(), null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUP_STAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, item, null));
 
         return contextMenu;
     }
@@ -149,15 +145,15 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
 
-        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
-        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CATEGORY"), "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, item, null));
-        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item, null));
+        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUP_STAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUP_STAGE, LanguageResolver.getString("EDIT_CATEGORY"), "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, item, null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUP_STAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item, null));
 
         return contextMenu;
     }
 
-    public ContextMenu addContextMenuMute(User user, TreeCell<Object> cell){
-        if(!user.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
+    public ContextMenu addContextMenuMute(User user, TreeCell<Object> cell) {
+        if (!user.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
             ContextMenu contextMenu = new ContextMenu();
             MenuItem menuItem = new MenuItem("- " + LanguageResolver.getString("MUTE"));
             menuItem.setOnAction((event) -> {
@@ -170,8 +166,8 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         return null;
     }
 
-    public ContextMenu addContextMenuUnMute(User user, TreeCell<Object> cell){
-        if(!user.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
+    public ContextMenu addContextMenuUnMute(User user, TreeCell<Object> cell) {
+        if (!user.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
             ContextMenu contextMenu = new ContextMenu();
             MenuItem menuItem = new MenuItem("- " + LanguageResolver.getString("UNMUTE"));
             menuItem.setOnAction((event) -> {
@@ -184,34 +180,32 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         return null;
     }
 
-    public ContextMenu addContextMenuLocalUser(LocalUser localUser, TreeCell<Object> cell){
+    public ContextMenu addContextMenuLocalUser(LocalUser localUser, TreeCell<Object> cell) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1;
         MenuItem menuItem2;
         MenuItem menuItem3;
-        if(!localUser.isMuted()){
+        if (!localUser.isMuted()) {
             menuItem1 = new MenuItem("- " + LanguageResolver.getString("MUTE"));
             menuItem1.setOnAction((event) -> {
                 this.stageManager.getEditor().getAudioManager().muteYourself(localUser);
                 cell.getTreeView().refresh();
             });
 
-        }
-        else{
+        } else {
             menuItem1 = new MenuItem("- " + LanguageResolver.getString("UNMUTE"));
             menuItem1.setOnAction((event) -> {
                 this.stageManager.getEditor().getAudioManager().unmuteYourself(localUser);
                 cell.getTreeView().refresh();
             });
         }
-        if(!localUser.isAllMuted()){
+        if (!localUser.isAllMuted()) {
             menuItem2 = new MenuItem("- " + LanguageResolver.getString("MUTE_ALL"));
             menuItem2.setOnAction((event) -> {
                 this.stageManager.getEditor().getAudioManager().muteAllUsers(localUser.getAudioChannel().getAudioMembers());
                 cell.getTreeView().refresh();
             });
-        }
-        else{
+        } else {
             menuItem2 = new MenuItem("- " + LanguageResolver.getString("UNMUTE_ALL"));
             menuItem2.setOnAction((event) -> {
                 this.stageManager.getEditor().getAudioManager().unMuteAllUsers(localUser.getAudioChannel().getAudioMembers());

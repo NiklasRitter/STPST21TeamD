@@ -51,13 +51,13 @@ public class StageManager extends Application {
                     cleanup();
                     initStage(root, title, resizable);
                     break;
-                case POPUPSTAGE:
+                case POPUP_STAGE:
                     initPopupStage(root, title, resizable);
                     break;
-                case GAMESTAGE:
+                case GAME_STAGE:
                     initGameStage(root, title, resizable, controllerName);
                     break;
-                case EMOJIPICKERSTAGE:
+                case EMOJI_PICKER_STAGE:
                     initEmojiPickerStage(root, title, resizable);
                     break;
             }

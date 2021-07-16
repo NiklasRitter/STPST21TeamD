@@ -11,9 +11,8 @@ import static de.uniks.stp.wedoit.accord.client.constants.Preferences.*;
 
 public class PreferenceManager {
 
-
     private StageManager stageManager;
-    public PropertyChangeListener darkmodeListener = this::onDarkmodeChanged;
+    public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
     public PropertyChangeListener languageListener = this::onLanguageChanged;
 
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
@@ -21,23 +20,23 @@ public class PreferenceManager {
     public PropertyChangeListener usernameListener = this::onUsernameChanged;
 
     /**
-     * Loads the darkmode preference from the Registry.
+     * Loads the dark mode preference from the Registry.
      *
-     * @return The value of the darkmode preference.
+     * @return The value of the dark mode preference.
      */
-    public boolean loadDarkmode() {
+    public boolean loadDarkMode() {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-        return preferences.getBoolean(DARKMODE, false);
+        return preferences.getBoolean(DARK_MODE, false);
     }
 
     /**
-     * Saves the darkmode preference to the Registry.
+     * Saves the darkMode preference to the Registry.
      *
-     * @param darkmode The value of the darkmode preference.
+     * @param darkMode The value of the darkMode preference.
      */
-    public void saveDarkmode(boolean darkmode) {
+    public void saveDarkMode(boolean darkMode) {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-        preferences.putBoolean(DARKMODE, darkmode);
+        preferences.putBoolean(DARK_MODE, darkMode);
     }
 
     /**
@@ -61,9 +60,9 @@ public class PreferenceManager {
     }
 
     /**
-     * Loads the darkmode preference from the Registry.
+     * Loads the dark mode preference from the Registry.
      *
-     * @return The value of the darkmode preference.
+     * @return The value of the dark mode preference.
      */
     public String loadUsername() {
         try {
@@ -80,7 +79,7 @@ public class PreferenceManager {
     /**
      * Saves the login preference to the Registry.
      *
-     * @param username The value of the darkmode preference.
+     * @param username The value of the dark mode preference.
      */
     public void saveUsername(String username) {
         if (username != null) {
@@ -96,9 +95,9 @@ public class PreferenceManager {
     }
 
     /**
-     * Loads the darkmode preference from the Registry.
+     * Loads the dark mode preference from the Registry.
      *
-     * @return The value of the darkmode preference.
+     * @return The value of the dark mode preference.
      */
     public String loadPassword() {
         try {
@@ -162,19 +161,19 @@ public class PreferenceManager {
     }
 
     /**
-     * Called when the darkmode preference of the Options change.
+     * Called when the dark mode preference of the Options change.
      * <p>
-     * Sets the darkmode in the StageManager and saves it using saveDarkmode.
+     * Sets the dark mode in the StageManager and saves it using saveDarkMode.
      *
      * @param propertyChangeEvent The called event.
      */
-    public void onDarkmodeChanged(PropertyChangeEvent propertyChangeEvent) {
+    public void onDarkModeChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() instanceof Boolean) {
-            boolean darkmode = (boolean) propertyChangeEvent.getNewValue();
+            boolean darkMode = (boolean) propertyChangeEvent.getNewValue();
 
-            this.stageManager.changeDarkmode(darkmode);
+            this.stageManager.changeDarkmode(darkMode);
 
-            saveDarkmode(darkmode);
+            saveDarkMode(darkMode);
         }
     }
 
