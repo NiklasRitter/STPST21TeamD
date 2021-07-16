@@ -93,6 +93,8 @@ public class AttentionScreenController implements Controller {
             this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_CHANNEL"));
         } else if (objectToDelete instanceof Category) {
             this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_CATEGORY"));
+        } else if (objectToDelete instanceof Message) {
+            this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_MESSAGE"));
         }
     }
 
