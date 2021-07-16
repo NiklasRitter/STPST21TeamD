@@ -432,4 +432,10 @@ public class ServerChatController implements Controller {
             }
         }
     }
+
+    public ListView<Message> getLvTextChat() {
+        return lvTextChat;
+    }
+
+
 }

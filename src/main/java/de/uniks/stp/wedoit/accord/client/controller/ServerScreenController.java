@@ -384,6 +384,7 @@ public class ServerScreenController implements Controller {
             serverChatController.initToolTip();
             serverChatController.addUserMessageContextMenu();
             serverChatController.addLocalUserMessageContextMenu();
+            serverChatController.getLvTextChat().refresh();
             categoryTreeViewController.initContextMenu();
         });
     }
