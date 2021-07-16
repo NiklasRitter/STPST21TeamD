@@ -1,3 +1,4 @@
+
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -137,10 +138,13 @@ public class OptionsScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
+        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#btnLogin");
 
-        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+        WaitForAsyncUtils.waitForFxEvents();
 
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
         callbackLogin.completed(res);
     }
@@ -202,6 +206,8 @@ public class OptionsScreenTest extends ApplicationTest {
         Platform.runLater(() -> {
             popupStage.hide();
         });
+
+        WaitForAsyncUtils.waitForFxEvents();
 
         directToMainScreen();
 
