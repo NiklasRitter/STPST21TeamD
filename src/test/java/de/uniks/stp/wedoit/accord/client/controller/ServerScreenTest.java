@@ -692,9 +692,6 @@ public class ServerScreenTest extends ApplicationTest {
         press(KeyCode.BACK_SPACE);
         write('\b');
         WaitForAsyncUtils.waitForFxEvents();
-
-        System.out.println(tfInputMessage.getText());
-
     }
 
     @Test
@@ -1348,8 +1345,6 @@ public class ServerScreenTest extends ApplicationTest {
         Label lbServerName = lookup("#lbServerName").query();
         Assert.assertEquals(lbServerName.getText(), "new Server");
         Assert.assertEquals(localUser.getServers().size(), 2);
-
-        System.out.println();
     }
 
     // Methods for callbacks
