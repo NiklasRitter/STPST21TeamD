@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -77,7 +79,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -128,7 +130,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "MySuperServer";
@@ -172,7 +174,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "MySuperServer";
@@ -219,7 +221,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "";

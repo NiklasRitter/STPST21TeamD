@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -130,8 +132,8 @@ public class EditServerScreenController implements Controller {
         this.tfNewServernameInput.setPromptText(LanguageResolver.getString("NEW_SERVERNAME"));
         this.radioBtnTemporal.setText(LanguageResolver.getString("TEMPORAL"));
         this.radioBtnMaxCount.setText(LanguageResolver.getString("MAX_COUNT"));
-        this.editor.getStageManager().getPopupStage().sizeToScene();
-        this.editor.getStageManager().getPopupStage().centerOnScreen();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
     }
 
     /**
@@ -201,7 +203,7 @@ public class EditServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("ATTENTION"), "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, this.server, null);
+        this.editor.getStageManager().initView(ControllerEnum.ATTENTION_SCREEN, this.server, null);
     }
 
     /**
