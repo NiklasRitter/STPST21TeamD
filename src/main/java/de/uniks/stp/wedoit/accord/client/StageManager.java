@@ -29,10 +29,7 @@ public class StageManager extends Application {
     private PreferenceManager prefManager = new PreferenceManager();
     private SystemTrayController systemTrayController;
     private AccordClient model;
-
-
-    //private Scene scene, popupScene, gameScene;
-    //private Stage stage, popupStage, emojiPickerStage, gameStage;
+    private final Image logoImage = new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png")));
 
     private final Map<StageEnum,Scene> sceneMap = new HashMap<>();
     private final Map<StageEnum,Stage> stageMap = new HashMap<>();
@@ -124,15 +121,6 @@ public class StageManager extends Application {
         stageMap.forEach((k,v)-> v.hide());
         controllerMap.forEach((k,v)-> v.stop());
 
-    }
-
-    private void stopController() {
-        Iterator<Map.Entry<String, Controller>> iterator = controllerMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, Controller> entry = iterator.next();
-            iterator.remove();
-            entry.getValue().stop();
-        }
     }
 
     /**
@@ -230,15 +218,16 @@ public class StageManager extends Application {
     @Override
     public void start(Stage primaryStage) {
         stageMap.put(StageEnum.STAGE, primaryStage);
-        stageMap.get(StageEnum.STAGE).getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
+
+        stageMap.get(StageEnum.STAGE).getIcons().add(logoImage);
 
         stageMap.put(StageEnum.POPUP_STAGE, new Stage());
-        stageMap.get(StageEnum.POPUP_STAGE).getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
+        stageMap.get(StageEnum.POPUP_STAGE).getIcons().add(logoImage);
         stageMap.get(StageEnum.POPUP_STAGE).initOwner(stageMap.get(StageEnum.STAGE));
 
 
         stageMap.put(StageEnum.GAME_STAGE, new Stage());
-        stageMap.get(StageEnum.GAME_STAGE).getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
+        stageMap.get(StageEnum.GAME_STAGE).getIcons().add(logoImage);
         stageMap.get(StageEnum.GAME_STAGE).initOwner(stageMap.get(StageEnum.STAGE));
 
 
@@ -272,6 +261,7 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            stageMap.forEach((k,v)-> v.getIcons().remove(logoImage));
             this.editor.getAudioManager().closeAudioConnection();
             if (systemTrayController != null) systemTrayController.stop();
             editor.getWebSocketManager().stop();

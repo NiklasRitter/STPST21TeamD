@@ -126,7 +126,7 @@ public class PrivateMessageServerScreenController implements Controller {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (memberToWrite.isOnlineStatus()) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, this.tfMessage, pos);
+            this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, taMessage, pos);
         }
     }
 

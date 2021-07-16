@@ -352,7 +352,7 @@ public class CategoryTreeViewController implements Controller {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addCategory = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
         contextMenu.getItems().add(addCategory);
-        addCategory.setOnAction((event) -> editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        addCategory.setOnAction((event) -> editor.getStageManager().initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
         return contextMenu;
     }
 

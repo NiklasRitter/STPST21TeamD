@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
 
 
 public enum ControllerEnum {
