@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
@@ -15,7 +17,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_R
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAME_STAGE;
 
 public class MessageManager {
 
@@ -66,13 +68,13 @@ public class MessageManager {
         }
 
         if (message.getText().equals(GAME_ACCEPTS)) {
-            if (!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals("Result")) {
+            if (!editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() || editor.getStageManager().getStage(StageEnum.GAME_STAGE).getTitle().equals("Result")) {
                 JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getTo().equals(editor.getLocalUser().getName()) ? message.getFrom() : message.getTo(), GAME_START);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
-            }else{
-                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo(): message.getFrom(), GAME_INGAME);
+            } else {
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo() : message.getFrom(), GAME_INGAME);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
@@ -84,13 +86,13 @@ public class MessageManager {
 
             Platform.runLater(() -> {
                 if (message.getFrom().equals(editor.getLocalUser().getName()))
-                    editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("ROCK_PAPER_SCISSORS"), "GameScreen", GAME_SCREEN_CONTROLLER, true, editor.getUser(message.getTo()), null);
+                    editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_INGAME, editor.getUser(message.getTo()), null);
                 else
-                    editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("ROCK_PAPER_SCISSORS"), "GameScreen", GAME_SCREEN_CONTROLLER, true, editor.getUser(message.getFrom()), null);
+                    editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_INGAME, editor.getUser(message.getFrom()), null);
             });
 
-        } else if (message.getText().equals(GAME_CLOSE) && editor.getStageManager().getGameStage().isShowing()) {
-            Platform.runLater(() -> editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, editor.getUser(message.getFrom()), null));
+        } else if (message.getText().equals(GAME_CLOSE) && editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing()) {
+            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, editor.getUser(message.getFrom()), null));
 
         }
 
@@ -175,7 +177,8 @@ public class MessageManager {
      */
     public String getMessageFormatted(PrivateMessage message) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
-        if(message.getText().startsWith(GAME_PREFIX)) message.setText(message.getText().substring(GAME_PREFIX.length()));
+        if (message.getText().startsWith(GAME_PREFIX))
+            message.setText(message.getText().substring(GAME_PREFIX.length()));
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 

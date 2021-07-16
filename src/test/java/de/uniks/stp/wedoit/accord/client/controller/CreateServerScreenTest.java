@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -14,15 +16,14 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -37,6 +38,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CreateServerScreenTest extends ApplicationTest {
 
     @Rule
@@ -56,15 +58,6 @@ public class CreateServerScreenTest extends ApplicationTest {
     @Captor
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     private Options oldOptions;
-
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
 
     @Override
     public void start(Stage stage) {
@@ -86,7 +79,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -107,10 +100,6 @@ public class CreateServerScreenTest extends ApplicationTest {
         callbackArgumentCaptor = null;
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     /**
      * Mock the rest client's getServers method and create a callback
@@ -141,7 +130,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "MySuperServer";
@@ -185,7 +174,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "MySuperServer";
@@ -232,7 +221,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "";

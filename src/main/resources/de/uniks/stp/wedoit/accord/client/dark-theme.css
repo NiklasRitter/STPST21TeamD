@@ -83,7 +83,7 @@
 }
 
 .redPromptText {
-    -fx-prompt-text-fill: "BLACK";
+    -fx-prompt-text-fill:  #000000;
     -fx-background-color: rgba(255, 0, 0, 0.75);
 }
 

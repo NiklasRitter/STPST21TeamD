@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import javafx.application.Platform;
@@ -17,7 +19,7 @@ import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.OPTIONS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class LoginScreenController implements Controller {
@@ -33,7 +35,7 @@ public class LoginScreenController implements Controller {
     private CheckBox btnRememberMe;
     private TextField tfUserName;
     private TextField pwUserPw;
-    private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe, lblUserValid, lblGuestPassword;
+    private Label lblError, lblEnterUserName, lblEnterPw, lblRememberMe, lblUserValid, lblGuestPassword;
 
     private String guestUserPassword;
     private String errorLabelText = "";
@@ -81,21 +83,23 @@ public class LoginScreenController implements Controller {
 
         this.tfUserName = (TextField) view.lookup("#tfUserName");
         this.pwUserPw = (TextField) view.lookup("#pwUserPw");
+
         this.pwConfirmPW = (TextField) view.lookup("#pwConfirmPW");
         this.btnLogin = (Button) view.lookup("#btnLogin");
         this.btnSwitchRegister = (Button) view.lookup("#btnSwitchRegister");
         this.btnGuestLogin = (Button) view.lookup("#btnGuestLogin");
-        this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblError = (Label) view.lookup("#lblError");
+
         this.lblRememberMe = (Label) view.lookup("#lblRememberMe");
         this.btnRememberMe = (CheckBox) view.lookup("#btnRememberMe");
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.lblUserValid = (Label) view.lookup("#lblUserValid");
         this.lblGuestPassword = (Label) view.lookup("#lblGuestPassword");
 
-        editor.getStageManager().getStage().setWidth(655);
-        editor.getStageManager().getStage().setHeight(499);
-        editor.getStageManager().getStage().centerOnScreen();
-        editor.getStageManager().getStage().setResizable(false);
+        editor.getStageManager().getStage(StageEnum.STAGE).setWidth(655);
+        editor.getStageManager().getStage(StageEnum.STAGE).setHeight(499);
+        editor.getStageManager().getStage(StageEnum.STAGE).centerOnScreen();
+        editor.getStageManager().getStage(StageEnum.STAGE).setResizable(false);
 
         this.lblSignIn = (Label) view.lookup("#lblSignIn");
 
@@ -141,9 +145,6 @@ public class LoginScreenController implements Controller {
         this.initTooltips();
 
         this.refreshStage();
-
-//TODO what does that?
-  //     Platform.runLater(() -> this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty()));
     }
 
     /**
@@ -173,9 +174,9 @@ public class LoginScreenController implements Controller {
         if (guestUserPassword != null) {
             this.setGuestUserDataLabel();
         }
-        this.errorLabel.setText(LanguageResolver.getString(errorLabelText));
 
-        //TODO what does that?
+        this.lblError.setText(LanguageResolver.getString(errorLabelText));
+
 //        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
     }
 
@@ -203,7 +204,7 @@ public class LoginScreenController implements Controller {
         if (guestUserPassword != null) {
             this.setGuestUserDataLabel();
         }
-        this.errorLabel.setText(LanguageResolver.getString(errorLabelText));
+        this.lblError.setText(LanguageResolver.getString(errorLabelText));
 
         //TODO what does that?
 //        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
@@ -344,12 +345,15 @@ public class LoginScreenController implements Controller {
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_PASSWORD_WRONG";
                 refreshErrLabelText(errorLabelText);
+                this.lblUserValid.setText("");
+                this.lblGuestPassword.setText("");
             });
         } else {
             Platform.runLater(() -> {
                 //editor.getStageManager().getStage().setResizable(true);
                 //editor.getStageManager().getStage().setMaximized(true);
-                this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+                this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
+
             });
         }
     }
@@ -373,7 +377,6 @@ public class LoginScreenController implements Controller {
             this.tfUserName.setText(userName);
             this.pwUserPw.setText(password);
             setGuestUserDataLabel();
-
         }
     }
 
@@ -422,6 +425,8 @@ public class LoginScreenController implements Controller {
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_ALREADY_TAKEN";
                 refreshErrLabelText(errorLabelText);
+                this.lblUserValid.setText("");
+                this.lblGuestPassword.setText("");
             });
         } else {
             //login the user
@@ -446,7 +451,7 @@ public class LoginScreenController implements Controller {
      * @param actionEvent occurs when clicking the options button
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
     }
 
     /**
@@ -477,7 +482,7 @@ public class LoginScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
@@ -486,7 +491,7 @@ public class LoginScreenController implements Controller {
                     setComponentsTextSignUp();
                 }
                 initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("LOGIN"));
+                editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("LOGIN"));
             }
         });
     }
@@ -498,6 +503,6 @@ public class LoginScreenController implements Controller {
      * @param errorLabelText is the current text of the error label
      */
     private void refreshErrLabelText(String errorLabelText) {
-        errorLabel.setText(LanguageResolver.getString(errorLabelText));
+        lblError.setText(LanguageResolver.getString(errorLabelText));
     }
 }

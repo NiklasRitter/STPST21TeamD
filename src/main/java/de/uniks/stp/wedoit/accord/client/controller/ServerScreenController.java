@@ -2,34 +2,39 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.model.Channel;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
 
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class ServerScreenController implements Controller {
@@ -130,13 +135,16 @@ public class ServerScreenController implements Controller {
 
         initTooltips();
 
+        if (localUser.getAudioChannel() != null && localUser.getAudioChannel().getCategory().getServer().getId().equals(server.getId())) {
+            initAudioChannelSubView(localUser.getAudioChannel());
+        }
+
         // add PropertyChangeListener
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
 
         this.refreshStage();
     }
-
 
 
     private void setComponentsText() {
@@ -217,7 +225,6 @@ public class ServerScreenController implements Controller {
         this.categoryTreeViewController.stop();
         this.serverChatController.stop();
         this.editor.setCurrentServer(null);
-        deleteCurrentServer();
 
         if (audioChannelSubViewController != null) {
             this.audioChannelSubViewController.stop();
@@ -230,7 +237,7 @@ public class ServerScreenController implements Controller {
      * opens the AttentionLeaveServerScreen
      */
     private void leaveServerAttention(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"), "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
+        this.editor.getStageManager().initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, server, null);
     }
 
     /**
@@ -239,7 +246,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
     }
 
     /**
@@ -248,7 +255,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
     }
 
     /**
@@ -257,7 +264,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void editButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_SERVER"), "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
+        this.editor.getStageManager().initView(ControllerEnum.EDIT_SERVER_SCREEN, server, null);
     }
 
     // PropertyChangeEvent Methods
@@ -275,9 +282,7 @@ public class ServerScreenController implements Controller {
         if (propertyChangeEvent.getNewValue() == null) {
             this.audioChannelSubViewController.stop();
             this.audioChannelSubViewController = null;
-            Platform.runLater(() -> {
-                this.audioChannelSubViewContainer.getChildren().clear();
-            });
+            Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().clear());
         } else {
             this.initAudioChannelSubView((Channel) propertyChangeEvent.getNewValue());
         }
@@ -291,21 +296,6 @@ public class ServerScreenController implements Controller {
     }
 
     /**
-     * deletes the current server with all edges
-     */
-    public void deleteCurrentServer() {
-        // Delete all connection to the server in the data model
-        for (Category category : server.getCategories()) {
-            for (Channel channel : category.getChannels()) {
-                channel.withoutMembers(new ArrayList<>(channel.getMembers()));
-                channel.withoutAudioMembers((new ArrayList<>(channel.getAudioMembers())));
-            }
-        }
-        server.withoutMembers(new ArrayList<>(server.getMembers()));
-        localUser.withoutServers(server);
-    }
-
-    /**
      * handles the explicit server information in the view
      */
     public void handleGetExplicitServerInformation(JsonArray members) {
@@ -315,7 +305,7 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginRegisterScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
@@ -386,18 +376,15 @@ public class ServerScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
-                lbServerName.setContextMenu(createContextMenuLeaveServer());
-                serverChatController.initToolTip();
-                serverChatController.addUserMessageContextMenu();
-                serverChatController.addLocalUserMessageContextMenu();
-                categoryTreeViewController.initContextMenu();
-            }
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
+            setComponentsText();
+            initTooltips();
+            editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("SERVER"));
+            lbServerName.setContextMenu(createContextMenuLeaveServer());
+            serverChatController.initToolTip();
+            serverChatController.addUserMessageContextMenu();
+            serverChatController.addLocalUserMessageContextMenu();
+            categoryTreeViewController.initContextMenu();
         });
     }
 
@@ -407,10 +394,6 @@ public class ServerScreenController implements Controller {
 
     public ServerChatController getServerChatController() {
         return serverChatController;
-    }
-
-    public VBox getAudioChannelSubViewContainer() {
-        return audioChannelSubViewContainer;
     }
 
     public void resetLbChannelName() {

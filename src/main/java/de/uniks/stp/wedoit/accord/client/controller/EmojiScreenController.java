@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.Icons;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -8,7 +10,6 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -20,16 +21,16 @@ public class EmojiScreenController implements Controller {
 
     private final Parent view;
     private GridPane pane;
-    private final TextArea tfForEmoji;
+    private final TextArea txtAreaForEmoji;
     private final Bounds pos;
 
     private EmojiButton emoji;
     private final HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<>();
     private final List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
 
-    public EmojiScreenController(Parent view, TextArea tfForEmoji, Bounds pos) {
+    public EmojiScreenController(Parent view, TextArea txtAreaForEmoji, Bounds pos) {
         this.view = view;
-        this.tfForEmoji = tfForEmoji;
+        this.txtAreaForEmoji = txtAreaForEmoji;
         this.pos = pos;
     }
 
@@ -38,7 +39,6 @@ public class EmojiScreenController implements Controller {
      * call the emoji picker creator
      */
     public void init() {
-
         this.pane = (GridPane) this.view.lookup("#panelForEmojis");
 
         this.pane.setAlignment(Pos.CENTER);
@@ -75,8 +75,8 @@ public class EmojiScreenController implements Controller {
      * added the emoji button text in the chat text field
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
-        if (this.tfForEmoji.isEditable()) {
-            Platform.runLater(() -> this.tfForEmoji.setText(this.tfForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource())));
+        if (this.txtAreaForEmoji.isEditable()) {
+            Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource())));
         }
     }
 

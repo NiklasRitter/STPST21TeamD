@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -44,7 +45,7 @@ public class AttentionLeaveServerAsOwnerController implements Controller {
      * @param actionEvent actionEvent such a when a button is fired
      */
     private void btnCancelOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().getPopupStage().close();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
     }
 
     @Override
