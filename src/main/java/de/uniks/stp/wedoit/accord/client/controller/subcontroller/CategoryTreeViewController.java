@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,11 +296,17 @@ public class CategoryTreeViewController implements Controller {
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_AUDIO_MEMBERS, this.audioMemberListener);
         TreeItem<Object> channelItem = new TreeItem<>(channel);
-        categoryItem.getChildren().add(channelItem);
         if (!channel.getAudioMembers().isEmpty()) {
             channelItem.setExpanded(true);
             addAudioMembersToTreeView(channel, channelItem);
         }
+        for(TreeItem<Object> item : categoryItem.getChildren()){
+            Channel treeChannel = (Channel) item.getValue();
+            if(treeChannel.getId().equals(channel.getId())){
+                return;
+            }
+        }
+        categoryItem.getChildren().add(channelItem);
     }
 
     private void addAudioMembersToTreeView(Channel channel, TreeItem<Object> channelItem) {
