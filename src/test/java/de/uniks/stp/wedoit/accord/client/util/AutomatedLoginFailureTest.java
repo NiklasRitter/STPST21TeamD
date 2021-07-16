@@ -50,15 +50,6 @@ public class AutomatedLoginFailureTest extends ApplicationTest {
     private Options oldOptions;
     private LocalUser oldLocalUser;
 
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Override
     public void start(Stage stage) {
         // start application
