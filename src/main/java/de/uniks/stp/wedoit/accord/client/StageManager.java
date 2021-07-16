@@ -78,29 +78,67 @@ public class StageManager extends Application {
     private void openController(Parent root, String controllerName, Object parameter, Object parameterTwo) {
         Controller controller = null;
         switch (controllerName) {
-            case LOGIN_SCREEN_CONTROLLER -> {
+            case LOGIN_SCREEN_CONTROLLER:
                 editor.haveLocalUser();
                 controller = new LoginScreenController(root, model, editor);
-            }
-            case MAIN_SCREEN_CONTROLLER -> controller = new MainScreenController(root, model.getLocalUser(), editor);
-            case CREATE_SERVER_SCREEN_CONTROLLER -> controller = new CreateServerScreenController(root, editor);
-            case JOIN_SERVER_SCREEN_CONTROLLER -> controller = new JoinServerScreenController(root, model.getLocalUser(), editor);
-            case PRIVATE_CHATS_SCREEN_CONTROLLER -> controller = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
-            case SERVER_SCREEN_CONTROLLER -> controller = new ServerScreenController(root, model.getLocalUser(), editor, (Server) parameter);
-            case GAME_SCREEN_CONTROLLER -> controller = new GameScreenController(root, (User) parameter, editor);
-            case GAME_RESULT_SCREEN_CONTROLLER -> controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter, (boolean) parameterTwo, editor);
-            case OPTIONS_SCREEN_CONTROLLER -> controller = new OptionsScreenController(root, model.getOptions(), editor);
-            case CREATE_CATEGORY_SCREEN_CONTROLLER -> controller = new CreateCategoryScreenController(root, editor);
-            case EDIT_CATEGORY_SCREEN_CONTROLLER -> controller = new EditCategoryScreenController(root, editor, (Category) parameter);
-            case CREATE_CHANNEL_SCREEN_CONTROLLER -> controller = new CreateChannelScreenController(root, model.getLocalUser(), editor, (Category) parameter);
-            case EDIT_CHANNEL_SCREEN_CONTROLLER -> controller = new EditChannelScreenController(root, model.getLocalUser(), editor, (Channel) parameter);
-            case EMOJI_SCREEN_CONTROLLER -> controller = new EmojiScreenController(root, (TextArea) parameter, (Bounds) parameterTwo);
-            case ATTENTION_SCREEN_CONTROLLER -> controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter);
-            case ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER -> controller = new AttentionLeaveServerController(root, editor, (Server) parameter);
-            case ATTENTION_LEAVE_SERVER_AS_OWNER_SCREEN_CONTROLLER -> controller = new AttentionLeaveServerAsOwnerController(root, editor);
-            case EDIT_SERVER_SCREEN_CONTROLLER -> controller = new EditServerScreenController(root, model.getLocalUser(), editor, (Server) parameter, stageMap.get(StageEnum.POPUP_STAGE));
-            case UPDATE_MESSAGE_SCREEN_CONTROLLER -> controller = new UpdateMessageScreenController(root, editor, (Message) parameter, stageMap.get(StageEnum.POPUP_STAGE));
-            case PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER -> controller = new PrivateMessageServerScreenController(root, editor, (Server) parameter, (User) parameterTwo);
+                break;
+            case MAIN_SCREEN_CONTROLLER:
+                controller = new MainScreenController(root, model.getLocalUser(), editor);
+                break;
+            case CREATE_SERVER_SCREEN_CONTROLLER:
+                controller = new CreateServerScreenController(root, editor);
+                break;
+            case JOIN_SERVER_SCREEN_CONTROLLER:
+                controller = new JoinServerScreenController(root, model.getLocalUser(), editor);
+                break;
+            case PRIVATE_CHATS_SCREEN_CONTROLLER:
+                controller = new PrivateChatsScreenController(root, model.getLocalUser(), editor);
+                break;
+            case SERVER_SCREEN_CONTROLLER:
+                controller = new ServerScreenController(root, model.getLocalUser(), editor, (Server) parameter);
+                break;
+            case GAME_SCREEN_CONTROLLER:
+                controller = new GameScreenController(root, (User) parameter, editor);
+                break;
+            case GAME_RESULT_SCREEN_CONTROLLER:
+                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter, (boolean) parameterTwo, editor);
+                break;
+            case OPTIONS_SCREEN_CONTROLLER:
+                controller = new OptionsScreenController(root, model.getOptions(), editor);
+                break;
+            case CREATE_CATEGORY_SCREEN_CONTROLLER:
+                controller = new CreateCategoryScreenController(root, editor);
+                break;
+            case EDIT_CATEGORY_SCREEN_CONTROLLER:
+                controller = new EditCategoryScreenController(root, editor, (Category) parameter);
+                break;
+            case CREATE_CHANNEL_SCREEN_CONTROLLER:
+                controller = new CreateChannelScreenController(root, model.getLocalUser(), editor, (Category) parameter);
+                break;
+            case EDIT_CHANNEL_SCREEN_CONTROLLER:
+                controller = new EditChannelScreenController(root, model.getLocalUser(), editor, (Channel) parameter);
+                break;
+            case EMOJI_SCREEN_CONTROLLER:
+                controller = new EmojiScreenController(root, (TextArea) parameter, (Bounds) parameterTwo);
+                break;
+            case ATTENTION_SCREEN_CONTROLLER:
+                controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter);
+                break;
+            case ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER:
+                controller = new AttentionLeaveServerController(root, editor, (Server) parameter);
+                break;
+            case ATTENTION_LEAVE_SERVER_AS_OWNER_SCREEN_CONTROLLER:
+                controller = new AttentionLeaveServerAsOwnerController(root, editor);
+                break;
+            case EDIT_SERVER_SCREEN_CONTROLLER:
+                controller = new EditServerScreenController(root, model.getLocalUser(), editor, (Server) parameter, stageMap.get(StageEnum.POPUP_STAGE));
+                break;
+            case UPDATE_MESSAGE_SCREEN_CONTROLLER:
+                controller = new UpdateMessageScreenController(root, editor, (Message) parameter, stageMap.get(StageEnum.POPUP_STAGE));
+                break;
+            case PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER:
+                controller = new PrivateMessageServerScreenController(root, editor, (Server) parameter, (User) parameterTwo);
+                break;
         }
         if (controller != null) {
             controller.init();
