@@ -24,7 +24,7 @@ public class AudioConnection {
 
     public void startConnection(String url, int port) {
         try {
-            this.audioSocket = new DatagramSocket(33100);
+            this.audioSocket = createSocket();
             startSendingAudio(url, port);
             startReceivingAudio();
         } catch (Exception e) {
@@ -32,12 +32,12 @@ public class AudioConnection {
         }
     }
 
-    private void startSendingAudio(String url, int port) {
+    public void startSendingAudio(String url, int port) {
         this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port);
         this.sendingThread.start();
     }
 
-    private void startReceivingAudio() {
+    public void startReceivingAudio() {
         List<User> audioMembers = channel.getAudioMembers();
         ArrayList<String> connectedUser = new ArrayList<>();
         for (User member : audioMembers) {
@@ -81,6 +81,16 @@ public class AudioConnection {
         }
     }
 
+    protected DatagramSocket createSocket() {
+        DatagramSocket datagramSocket = null;
+        try {
+            datagramSocket = new DatagramSocket();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return datagramSocket;
+    }
+
     public AudioReceive getAudioReceive() {
         return receivingThread;
     }
@@ -89,7 +99,7 @@ public class AudioConnection {
         return sendingThread;
     }
 
-    public Channel getChannel(){
-        return  this.channel;
+    public Channel getChannel() {
+        return this.channel;
     }
 }

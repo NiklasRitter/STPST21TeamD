@@ -107,7 +107,7 @@
                                 </Button>
                             </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                             <children>
                         <TextArea id="tfEnterPrivateChat" prefHeight="10.0" wrapText="true" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">

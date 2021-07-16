@@ -62,7 +62,7 @@
 }
 
 .redPromptText {
-    -fx-prompt-text-fill: "BLACK";
+    -fx-prompt-text-fill:  #000000;
     -fx-background-color: rgba(255, 0, 0, 0.75);
 }
 
@@ -72,10 +72,6 @@
     -fx-border-radius: 3;
     -fx-font-size: 12pt;
     -fx-text-fill: lightblue;
-}
-
-.colorX {
-    -fx-text-fill: yellow lime cyan;
 }
 
 .color0 {
@@ -117,4 +113,8 @@
 
 .font_size {
     -fx-font-size: 7pt ;
+}
+
+.marked_message{
+    -fx-background-color: #F7FE2E;
 }

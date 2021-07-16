@@ -37,14 +37,14 @@
                             </textFill>
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/options.png"/>
+                                    <Image url="@images/options.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
                         <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/home.png"/>
+                                    <Image url="@images/home.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -54,7 +54,7 @@
                             </font>
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/edit.png"/>
+                                    <Image url="@images/edit.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -97,23 +97,27 @@
                             </font>
                         </Label>
                         <ListView id="lvTextChat" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
-                        <HBox id="quoteVisible" alignment="CENTER_LEFT">
-                            <children>
-                                <Label id="lblQuote">
-                                    <font>
-                                        <Font size="10.0" />
-                                    </font>
-                                    <HBox.margin>
-                                        <Insets right="5.0" />
-                                    </HBox.margin>
-                                </Label>
-                                <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
-                                    <font>
-                                        <Font size="8.0" />
-                                    </font>
-                                </Button>
-                            </children>
-                        </HBox>
+                  <VBox id="boxTextfield">
+                     <children>
+                              <HBox id="quoteVisible" alignment="CENTER_LEFT">
+                                  <children>
+                                      <Label id="lblQuote">
+                                          <font>
+                                              <Font size="10.0" />
+                                          </font>
+                                          <HBox.margin>
+                                              <Insets right="5.0" />
+                                          </HBox.margin>
+                                      </Label>
+                                      <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
+                                          <font>
+                                              <Font size="8.0" />
+                                          </font>
+                                      </Button>
+                                  </children>
+                              </HBox>
+                     </children>
+                  </VBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
                         <TextArea id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS" />
@@ -122,9 +126,8 @@
                                         <Font size="4.0" />
                                     </font>
                                     <graphic>
-                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <Image url="@images/smiley.png"/>
+                                        <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                                            <Image url="@images/smiley.png" />
                                         </ImageView>
                                     </graphic>
                                 </Button>

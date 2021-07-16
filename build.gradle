@@ -9,7 +9,7 @@ plugins {
 
 javafx {
     version = '11'
-    modules = ['javafx.controls', 'javafx.graphics', 'javafx.fxml', 'javafx.base','javafx.web']
+    modules = ['javafx.controls', 'javafx.graphics', 'javafx.fxml', 'javafx.base', 'javafx.web']
 }
 
 group 'de.uniks.stp.wedoit.accord.client'
@@ -88,6 +88,11 @@ application {
 }
 
 test {
+    systemProperty 'testfx.robot', 'glass'
+    systemProperty 'testfx.headless', 'true'
+    systemProperty 'prism.order', 'sw'
+    systemProperty 'prism.text', 't2k'
+    systemProperty 'java.awt.headless', 'true'
     minHeapSize = "128m"
     maxHeapSize = "1024m"
 }
