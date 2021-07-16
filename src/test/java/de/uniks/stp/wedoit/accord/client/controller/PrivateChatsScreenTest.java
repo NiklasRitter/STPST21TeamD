@@ -3,6 +3,8 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
@@ -107,10 +109,10 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
-        emojiPickerStage = stageManager.getEmojiPickerStage();
+        emojiPickerStage = stageManager.getStage(StageEnum.EMOJI_PICKER_STAGE);
     }
 
     @Override
@@ -255,8 +257,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_START));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(this.stageManager.getGameStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getGameStage().getTitle());
+        Assert.assertTrue(this.stageManager.getStage(StageEnum.GAME_STAGE).isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
 
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_ROCK));
@@ -313,8 +315,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         Assert.assertEquals(List.of(),localUser.getGameRequests());
         Assert.assertEquals(List.of(),localUser.getGameInvites());
-        Assert.assertTrue(this.stageManager.getGameStage().isShowing());
-        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getGameStage().getTitle());
+        Assert.assertTrue(this.stageManager.getStage(StageEnum.GAME_STAGE).isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
     }
 
@@ -729,7 +731,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         // testing logout button
         // first have to open optionScreen
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         clickOn("#btnLogout");
 
@@ -757,7 +759,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
     }
 
     @Test

@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.Chat;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
@@ -97,7 +99,7 @@ public class GameScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -135,11 +137,11 @@ public class GameScreenTest extends ApplicationTest {
 
         Assert.assertEquals("Private Chats",stage.getTitle());
 
-        Platform.runLater(() -> this.stageManager.initView(GAMESTAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, user, null));
+        Platform.runLater(() -> this.stageManager.initView(ControllerEnum.GAME_SCREEN_INGAME, user, null));
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertTrue(this.stageManager.getGameStage().isShowing());
+        Assert.assertTrue(this.stageManager.getStage(StageEnum.GAME_STAGE).isShowing());
         Label score = lookup("#lbScore").query();
         Assert.assertEquals("0:0", score.getText());
         Assert.assertEquals(user.getName(), ((Label) lookup("#lbOpponent").query()).getText());
@@ -188,7 +190,7 @@ public class GameScreenTest extends ApplicationTest {
         user.setLocalUser(localUser);
 
         //got to result screen
-        Assert.assertEquals("Result",this.stageManager.getGameStage().getTitle());
+        Assert.assertEquals("Result",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
         clickOn("#btnPlayAgain");
         mockChatWebSocket(getTestMessageServerAnswer(user, GAME_INVITE));
@@ -196,14 +198,14 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Platform.runLater(() -> this.stageManager.initView(GAMESTAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, user, null));
+        Platform.runLater(() -> this.stageManager.initView(ControllerEnum.GAME_SCREEN_INGAME, user, null));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getGameStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
-        Platform.runLater(() -> this.stageManager.initView(GAMESTAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, user, false));
+        Platform.runLater(() -> this.stageManager.initView(ControllerEnum.GAME_SCREEN_RESULT, user, false));
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Result",this.stageManager.getGameStage().getTitle());
+        Assert.assertEquals("Result",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
         //accept a replay
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
@@ -217,9 +219,9 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_START));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getGameStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
-        Platform.runLater(() -> this.stageManager.initView(GAMESTAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, user, true));
+        Platform.runLater(() -> this.stageManager.initView(ControllerEnum.GAME_SCREEN_RESULT, user, true));
         WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#btnQuit");

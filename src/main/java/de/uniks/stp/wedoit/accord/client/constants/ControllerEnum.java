@@ -34,6 +34,7 @@ public enum ControllerEnum {
     UPDATE_MESSAGE_SCREEN(StageEnum.POPUP_STAGE, "UPDATE_MESSAGE", "UpdateMessageScreen", UPDATE_MESSAGE_SCREEN_CONTROLLER, false),
     LEAVE_SERVER_AS_OWNER_SCREEN(StageEnum.POPUP_STAGE, LanguageResolver.getString("ATTENTION"), "AttentionLeaveServerAsOwnerScreen", ATTENTION_LEAVE_SERVER_AS_OWNER_SCREEN_CONTROLLER, false),
     PRIVATE_MESSAGE_SERVER_SCREEN(StageEnum.POPUP_STAGE, "PRIVATE MESSAGE", "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false),
+    CREATE_CHANNEL_SCREEN(StageEnum.POPUP_STAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true),
 
 
     EMOJI_PICKER_SCREEN(StageEnum.EMOJI_PICKER_STAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false);
@@ -41,9 +42,10 @@ public enum ControllerEnum {
 
 
     public final StageEnum stage;
+    public final String controllerName;
+
     private final String title;
     private final String fxmlName;
-    public final String controllerName;
     private final boolean resizable;
 
 

@@ -5,13 +5,13 @@ import javafx.stage.Stage;
 
 
 public enum StageEnum {
-    STAGE(){
+    STAGE{
         @Override
         public void setUpStage(Stage currentStage) {
 
         }
     },
-    GAME_STAGE() {
+    GAME_STAGE {
         @Override
         public void setUpStage(Stage currentStage) {
             currentStage.centerOnScreen();
@@ -27,7 +27,7 @@ public enum StageEnum {
 
         }
     },
-    POPUP_STAGE() {
+    POPUP_STAGE {
         @Override
         public void setUpStage(Stage currentStage) {
             currentStage.centerOnScreen();

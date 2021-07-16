@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MarkingController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
@@ -77,7 +78,7 @@ public class UpdateMessageScreenController implements Controller {
         String newMessage = tfUpdateMessage.getText();
 
         if (newMessage.equals(message.getText())) {
-            this.editor.getStageManager().getPopupStage().close();
+            this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
         } else if (newMessage.length() >= 1) {
             if (!editor.getMessageManager().isQuote(message)) {
                 editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
@@ -93,12 +94,12 @@ public class UpdateMessageScreenController implements Controller {
     }
 
     private void discardChanges(ActionEvent actionEvent) {
-        this.editor.getStageManager().getPopupStage().close();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
     }
 
     public void handleUpdateMessage(Boolean status) {
         if (status) {
-            Platform.runLater(editor.getStageManager().getPopupStage()::close);
+            Platform.runLater(editor.getStageManager().getStage(StageEnum.POPUP_STAGE)::close);
         } else {
             Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE")));
         }

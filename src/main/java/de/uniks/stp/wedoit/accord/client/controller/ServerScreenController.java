@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
@@ -371,10 +372,10 @@ public class ServerScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(event -> {
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
             setComponentsText();
             initTooltips();
-            editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
+            editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("SERVER"));
             lbServerName.setContextMenu(createContextMenuLeaveServer());
             serverChatController.initToolTip();
             serverChatController.addUserMessageContextMenu();

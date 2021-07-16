@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -97,7 +98,7 @@ public class AudioManagerTest extends ApplicationTest {
                 getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
+        this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null);
         this.stageManager.getEditor().getAudioManager().setAudioConnection(audioConnection);
         this.stage.setAlwaysOnTop(true);
     }

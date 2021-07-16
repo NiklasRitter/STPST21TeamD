@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import javafx.application.Platform;
 
@@ -47,9 +48,9 @@ public class SystemTrayController {
 
     public void handleClickTrayIcon(ActionEvent actionEvent) {
         Platform.runLater(() -> {
-            this.editor.getStageManager().getStage().setIconified(false);
-            this.editor.getStageManager().getStage().setAlwaysOnTop(true);
-            this.editor.getStageManager().getStage().setAlwaysOnTop(false);
+            this.editor.getStageManager().getStage(StageEnum.STAGE).setIconified(false);
+            this.editor.getStageManager().getStage(StageEnum.STAGE).setAlwaysOnTop(true);
+            this.editor.getStageManager().getStage(StageEnum.STAGE).setAlwaysOnTop(false);
         });
     }
 

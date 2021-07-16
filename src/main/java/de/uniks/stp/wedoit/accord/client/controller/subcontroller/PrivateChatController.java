@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Chat;
@@ -381,10 +382,10 @@ public class PrivateChatController implements Controller {
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         } else if ((currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals(LanguageResolver.getString("ACCEPT")))
                 &&
-                (!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals(LanguageResolver.getString("RESULT")))) {
+                (!editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() || editor.getStageManager().getStage(StageEnum.GAME_STAGE).getTitle().equals(LanguageResolver.getString("RESULT")))) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPTS);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
-        } else if (currentChat != null && currentChat.getUser() != null && editor.getStageManager().getGameStage().isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())) {
+        } else if (currentChat != null && currentChat.getUser() != null && editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())) {
             privateMessageObservableList.add(new PrivateMessage().setText("###game### System: Cant play two games at once."));
         }
 

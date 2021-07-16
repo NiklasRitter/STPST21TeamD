@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -266,12 +267,12 @@ public class MainScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 setComponentsText();
                 initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("MAIN"));
+                editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("MAIN"));
             }
         });
     }

@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -132,8 +133,8 @@ public class EditServerScreenController implements Controller {
         this.tfNewServernameInput.setPromptText(LanguageResolver.getString("NEW_SERVERNAME"));
         this.radioBtnTemporal.setText(LanguageResolver.getString("TEMPORAL"));
         this.radioBtnMaxCount.setText(LanguageResolver.getString("MAX_COUNT"));
-        this.editor.getStageManager().getPopupStage().sizeToScene();
-        this.editor.getStageManager().getPopupStage().centerOnScreen();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
     }
 
     /**

@@ -135,7 +135,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem3);
 
         menuItem1.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
-        menuItem2.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CATEGORY_SCREEN, item.getCategory(), null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CHANNEL_SCREEN, item.getCategory(), null));
         menuItem3.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CHANNEL_SCREEN, item, null));
 
         return contextMenu;
@@ -152,7 +152,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
 
         menuItem1.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
         menuItem2.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CATEGORY_SCREEN, item, null));
-        menuItem3.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CHANNEL_SCREEN, item, null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CHANNEL_SCREEN, item, null));
 
         return contextMenu;
     }

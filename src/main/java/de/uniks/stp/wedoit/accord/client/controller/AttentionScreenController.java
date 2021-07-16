@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
@@ -49,7 +50,7 @@ public class AttentionScreenController implements Controller {
         btnDiscard = (Button) this.view.lookup("#btnDiscard");
         btnDelete = (Button) this.view.lookup("#btnDelete");
 
-        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
         this.setComponentsText();
 
         this.lblError.setVisible(false);
@@ -63,8 +64,8 @@ public class AttentionScreenController implements Controller {
         this.btnDelete.setText(LanguageResolver.getString("DELETE"));
         this.btnDiscard.setText(LanguageResolver.getString("DISCARD"));
         loadCorrectLabelText(objectToDelete);
-        this.editor.getStageManager().getPopupStage().sizeToScene();
-        this.editor.getStageManager().getPopupStage().centerOnScreen();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
     }
 
     /**
@@ -131,7 +132,7 @@ public class AttentionScreenController implements Controller {
         } else if (objectToDelete.getClass().equals(Category.class)) {
             this.editor.getStageManager().initView(ControllerEnum.EDIT_CATEGORY_SCREEN, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Message.class)) {
-            this.editor.getStageManager().getPopupStage().close();
+            this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
         }
     }
 

@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -62,7 +63,7 @@ public class GameScreenController implements Controller {
      * setup score listener
      */
     public void init() {
-        editor.getStageManager().getGameStage().setOnCloseRequest((e) -> {
+        editor.getStageManager().getStage(StageEnum.GAME_STAGE).setOnCloseRequest((e) -> {
             stop();
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_CLOSE);
             editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
