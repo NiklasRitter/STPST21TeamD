@@ -22,9 +22,9 @@ public class AudioConnection {
         this.channel = channel;
     }
 
-    public void startConnection(String url, int port){
+    public void startConnection(String url, int port) {
         try {
-            this.audioSocket = new DatagramSocket(port);
+            this.audioSocket = createSocket();
             startSendingAudio(url, port);
             startReceivingAudio();
         } catch (Exception e) {
@@ -32,15 +32,15 @@ public class AudioConnection {
         }
     }
 
-    private void startSendingAudio(String url, int port) {
+    public void startSendingAudio(String url, int port) {
         this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port);
         this.sendingThread.start();
     }
 
-    private void startReceivingAudio() {
+    public void startReceivingAudio() {
         List<User> audioMembers = channel.getAudioMembers();
         ArrayList<String> connectedUser = new ArrayList<>();
-        for (User member: audioMembers) {
+        for (User member : audioMembers) {
             connectedUser.add(member.getName());
         }
         this.receivingThread = new AudioReceive(localUser, audioSocket, connectedUser);
@@ -81,15 +81,25 @@ public class AudioConnection {
         }
     }
 
-    public AudioReceive getAudioReceive(){
+    protected DatagramSocket createSocket() {
+        DatagramSocket datagramSocket = null;
+        try {
+            datagramSocket = new DatagramSocket();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return datagramSocket;
+    }
+
+    public AudioReceive getAudioReceive() {
         return receivingThread;
     }
 
-    public AudioSend getAudioSend(){
+    public AudioSend getAudioSend() {
         return sendingThread;
     }
 
-    public Channel getChannel(){
-        return  this.channel;
+    public Channel getChannel() {
+        return this.channel;
     }
 }

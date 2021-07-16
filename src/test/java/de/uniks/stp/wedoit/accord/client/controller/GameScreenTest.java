@@ -18,15 +18,14 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -38,11 +37,12 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAME_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GameScreenTest extends ApplicationTest {
 
     @Rule
@@ -68,15 +68,6 @@ public class GameScreenTest extends ApplicationTest {
     @Mock
     private HttpResponse<JsonNode> res;
     private Options oldOptions;
-
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
 
     @Override
     public void start(Stage stage) {
@@ -116,14 +107,8 @@ public class GameScreenTest extends ApplicationTest {
         res = null;
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-
     @Test
-    public void gameActionTest(){
+    public void gameActionTest() {
 
         initUserListView();
 
@@ -136,9 +121,9 @@ public class GameScreenTest extends ApplicationTest {
 
         User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
 
-        Assert.assertEquals("Private Chats",stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
 
-        Platform.runLater(() -> this.stageManager.initView(GAMESTAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, user, null));
+        Platform.runLater(() -> this.stageManager.initView(GAME_STAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, user, null));
 
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -191,7 +176,7 @@ public class GameScreenTest extends ApplicationTest {
         user.setLocalUser(localUser);
 
         //got to result screen
-        Assert.assertEquals("Result",this.stageManager.getGameStage().getTitle());
+        Assert.assertEquals("Result", this.stageManager.getGameStage().getTitle());
 
         clickOn("#btnPlayAgain");
         mockChatWebSocket(getTestMessageServerAnswer(user, GAME_INVITE));
@@ -199,14 +184,14 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_ACCEPT));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Platform.runLater(() -> this.stageManager.initView(GAMESTAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, user, null));
+        Platform.runLater(() -> this.stageManager.initView(GAME_STAGE, "Rock - Paper - Scissors", "GameScreen", GAME_SCREEN_CONTROLLER, true, user, null));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getGameStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getGameStage().getTitle());
 
-        Platform.runLater(() -> this.stageManager.initView(GAMESTAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, user, false));
+        Platform.runLater(() -> this.stageManager.initView(GAME_STAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, user, false));
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Result",this.stageManager.getGameStage().getTitle());
+        Assert.assertEquals("Result", this.stageManager.getGameStage().getTitle());
 
         //accept a replay
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
@@ -220,14 +205,14 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_START));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getGameStage().getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getGameStage().getTitle());
 
-        Platform.runLater(() -> this.stageManager.initView(GAMESTAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, user, true));
+        Platform.runLater(() -> this.stageManager.initView(GAME_STAGE, "Result", "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, user, true));
         WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#btnQuit");
 
-        Assert.assertEquals("Private Chats",stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
 
     }
 

@@ -31,7 +31,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_ID_URL;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_URL;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class MainScreenController implements Controller {
@@ -44,7 +44,7 @@ public class MainScreenController implements Controller {
     private Button addServerButton;
     private Button enterInvitationButton;
     private Label lblYourServers;
-    private ListView<Server> serverListView;
+    private ListView<Server> lvServer;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
@@ -75,7 +75,7 @@ public class MainScreenController implements Controller {
         this.optionsButton = (Button) view.lookup("#btnOptions");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
         this.enterInvitationButton = (Button) view.lookup("#btnEnterInvitation");
-        this.serverListView = (ListView<Server>) view.lookup("#lwServerList");
+        this.lvServer = (ListView<Server>) view.lookup("#lwServerList");
         this.lblYourServers = (Label) view.lookup("#lblYourServers");
 
         this.setComponentsText();
@@ -93,7 +93,7 @@ public class MainScreenController implements Controller {
         this.optionsButton.setOnAction(this::optionsButtonOnClick);
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
         this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
-        this.serverListView.setOnMouseReleased(this::onServerListViewClicked);
+        this.lvServer.setOnMouseReleased(this::onServerListViewClicked);
 
         this.refreshStage();
     }
@@ -111,9 +111,9 @@ public class MainScreenController implements Controller {
         if (success) {
             // load list view
             MainScreenServerListView mainScreenServerListView = new MainScreenServerListView(this.editor);
-            serverListView.setCellFactory(mainScreenServerListView);
+            lvServer.setCellFactory(mainScreenServerListView);
             List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName)).collect(Collectors.toList());
-            this.serverListView.setItems(FXCollections.observableList(localUserServers));
+            this.lvServer.setItems(FXCollections.observableList(localUserServers));
 
             // Add listener for the loaded listView
             this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
@@ -181,7 +181,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
@@ -191,7 +191,7 @@ public class MainScreenController implements Controller {
      */
     private void onServerListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
-            Server server = serverListView.getSelectionModel().getSelectedItem();
+            Server server = lvServer.getSelectionModel().getSelectedItem();
             if (server != null) {
                 this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
             }
@@ -204,7 +204,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("CREATE_SERVER"), "CreateServerScreen", CREATE_SERVER_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("CREATE_SERVER"), "CreateServerScreen", CREATE_SERVER_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
@@ -213,7 +213,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void enterInvitationButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("JOIN_SERVER"), "JoinServerScreen", JOIN_SERVER_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("JOIN_SERVER"), "JoinServerScreen", JOIN_SERVER_SCREEN_CONTROLLER, false, null, null);
     }
 
     /**
@@ -223,11 +223,11 @@ public class MainScreenController implements Controller {
      */
     private void serverListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
-            serverListView.getItems().removeAll();
+            lvServer.getItems().removeAll();
             List<Server> localUserServers = localUser.getServers().stream().sorted(Comparator.comparing(Server::getName))
                     .collect(Collectors.toList());
-            Platform.runLater(() -> this.serverListView.setItems(FXCollections.observableList(localUserServers)));
-            serverListView.refresh();
+            Platform.runLater(() -> this.lvServer.setItems(FXCollections.observableList(localUserServers)));
+            lvServer.refresh();
         }
     }
 
@@ -244,16 +244,16 @@ public class MainScreenController implements Controller {
 
         if (action.equals(SERVER_UPDATED)) {
             editor.haveServer(localUser, data.getString(ID), data.getString(NAME));
-            serverListView.refresh();
+            lvServer.refresh();
         }
         if (action.equals(SERVER_DELETED)) {
             for (Server server : localUser.getServers()) {
                 if (server.getId().equals(data.getString(ID))) {
                     Platform.runLater(() -> {
-                        this.serverListView.getItems().remove(server);
+                        this.lvServer.getItems().remove(server);
                         server.removeYou();
-                        serverListView.getItems().sort(Comparator.comparing(Server::getName));
-                        serverListView.refresh();
+                        lvServer.getItems().sort(Comparator.comparing(Server::getName));
+                        lvServer.refresh();
                     });
                 }
             }

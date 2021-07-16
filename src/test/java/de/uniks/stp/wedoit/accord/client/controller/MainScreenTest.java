@@ -17,15 +17,14 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -37,11 +36,12 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENT
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MainScreenTest extends ApplicationTest {
 
     @Rule
@@ -70,15 +70,6 @@ public class MainScreenTest extends ApplicationTest {
     private ArgumentCaptor<WSCallback> callbackArgumentCaptorWebSocket;
     private WSCallback wsCallback;
     private Options oldOptions;
-
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
 
     @Override
     public void start(Stage stage) {
@@ -123,11 +114,6 @@ public class MainScreenTest extends ApplicationTest {
         callbackArgumentCaptor = null;
         callbackArgumentCaptorWebSocket = null;
         wsCallback = null;
-    }
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
     }
 
     /**
@@ -392,6 +378,7 @@ public class MainScreenTest extends ApplicationTest {
 
         when(res.getBody()).thenReturn(new JsonNode(buildJoinedFailure().toString()));
 
+        WaitForAsyncUtils.waitForFxEvents();
         verify(restMock).joinServer(any(), anyString(), callbackArgumentCaptor.capture());
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
@@ -442,22 +429,7 @@ public class MainScreenTest extends ApplicationTest {
 
     @Test
     public void leaveServerTest() {
-        JsonObject json = buildGetServersSuccessWithTwoServers();
-
-        mockRestClient(json);
-
-        ListView<Server> listView = lookup("#lwServerList").queryListView();
-
-        Assert.assertEquals(2, listView.getItems().toArray().length);
-
-        for (Object server : listView.getItems()) {
-            Assert.assertTrue(server instanceof Server);
-        }
-
-        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
-        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
-
-        Platform.runLater(() -> this.stageManager.initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, listView.getItems().get(0), null));
+        openAttentionLeaverServerScreen();
 
         JsonObject json1 = Json.createObjectBuilder()
                 .add("status", "success")
@@ -465,7 +437,6 @@ public class MainScreenTest extends ApplicationTest {
                 .add("data", "{}")
                 .build();
         when(res.getBody()).thenReturn(new JsonNode(json1.toString()));
-
 
         Assert.assertEquals("success", res.getBody().getObject().getString("status"));
 
@@ -484,8 +455,62 @@ public class MainScreenTest extends ApplicationTest {
         Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
     }
 
-    // Help methods to create response for mocked rest client
+    @Test
+    public void leaveServerAsOwnerTest() {
+        openAttentionLeaverServerScreen();
 
+        JsonObject json = Json.createObjectBuilder()
+                .add("status", "failure")
+                .add("message", "You can not leave a server as owner")
+                .add("data", "{}")
+                .build();
+        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
+
+        Assert.assertEquals("failure", res.getBody().getObject().getString("status"));
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Button btnLeave = lookup("#btnLeave").query();
+        Assert.assertEquals(btnLeave.getText(), "Leave");
+
+        clickOn(btnLeave);
+
+        verify(restMock).leaveServer(anyString(), anyString(), callbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callbackLeaveServer = callbackArgumentCaptor.getValue();
+        callbackLeaveServer.completed(res);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
+
+        Button btnCancel = lookup("#btnCancel").query();
+        Assert.assertEquals(btnCancel.getText(), "Cancel");
+
+        clickOn(btnCancel);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
+    }
+
+
+    public void openAttentionLeaverServerScreen() {
+        JsonObject json = buildGetServersSuccessWithTwoServers();
+
+        mockRestClient(json);
+
+        ListView<Server> listView = lookup("#lwServerList").queryListView();
+
+        Assert.assertEquals(2, listView.getItems().toArray().length);
+
+        for (Object server : listView.getItems()) {
+            Assert.assertTrue(server instanceof Server);
+        }
+
+        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
+        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
+
+        Platform.runLater(() -> this.stageManager.initView(POPUP_STAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, listView.getItems().get(0), null));
+    }
+    // Help methods to create response for mocked rest client
 
     public JsonObject buildJoinedSuccessful() {
         return Json.createObjectBuilder().add("status", "success").add("message", "Successfully arrived at server")

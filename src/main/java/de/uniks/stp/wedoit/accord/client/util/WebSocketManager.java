@@ -200,10 +200,10 @@ public class WebSocketManager {
                 break;
             case CHANNEL_CREATED:
                 Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
-                editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS), data.getJsonArray(AUDIOMEMBERS));
+                editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), category, data.getJsonArray(MEMBERS), data.getJsonArray(AUDIO_MEMBERS));
                 break;
             case CHANNEL_UPDATED:
-                Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS), data.getJsonArray(AUDIOMEMBERS));
+                Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS), data.getJsonArray(AUDIO_MEMBERS));
                 if (channel == null) {
                     Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
                 }

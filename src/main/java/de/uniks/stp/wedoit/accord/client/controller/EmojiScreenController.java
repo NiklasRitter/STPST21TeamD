@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,16 +25,16 @@ public class EmojiScreenController implements Controller {
 
     private final Parent view;
     private GridPane pane;
-    private final TextField tfForEmoji;
+    private final TextArea txtAreaForEmoji;
     private final Bounds pos;
 
     private EmojiButton emojiButton;
     private final HashMap<EmojiButton, Emoji> hashMapForEmojiButtons = new HashMap<>();
     private final List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
 
-    public EmojiScreenController(Parent view, TextField tfForEmoji, Bounds pos) {
+    public EmojiScreenController(Parent view, TextArea txtAreaForEmoji, Bounds pos) {
         this.view = view;
-        this.tfForEmoji = tfForEmoji;
+        this.txtAreaForEmoji = txtAreaForEmoji;
         this.pos = pos;
     }
 
@@ -87,9 +88,9 @@ public class EmojiScreenController implements Controller {
      * added the emoji button text in the chat text field
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
-        if (this.tfForEmoji.isEditable()) {
+        if (this.txtAreaForEmoji.isEditable()) {
             Emoji selectedEmoji = hashMapForEmojiButtons.get(actionEvent.getSource());
-            Platform.runLater(() -> this.tfForEmoji.setText(this.tfForEmoji.getText() + selectedEmoji.getShortname()));
+            Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + selectedEmoji.getShortname()));
         }
     }
 

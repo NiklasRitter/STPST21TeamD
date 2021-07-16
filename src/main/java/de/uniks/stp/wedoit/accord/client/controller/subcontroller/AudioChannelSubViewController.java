@@ -2,10 +2,10 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -13,10 +13,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CHOOSINGIMG;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_IMGURL;
-
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Objects;
+
+import static de.uniks.stp.wedoit.accord.client.constants.Images.*;
 
 
 /**
@@ -32,8 +33,11 @@ public class AudioChannelSubViewController implements Controller {
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
-    private ImageView imgMuteYourself;
     private Label lblVoiceChannel;
+    private ImageView imgViewMuteYourself;
+    private ImageView imgViewUnMuteYourself;
+    private final PropertyChangeListener allMute = this::allMuteChanged;
+    private final PropertyChangeListener localUserMute = this::localUserMutedChanged;
 
     public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, CategoryTreeViewController controller, Channel channel) {
         this.localUser = localUser;
@@ -51,10 +55,16 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteYou = (Button) this.view.lookup("#btnMuteYou");
         this.btnMuteAll = (Button) this.view.lookup("#btnMuteAll");
         this.btnLeave = (Button) this.view.lookup("#btnLeave");
-        this.imgMuteYourself = (ImageView) view.lookup("#imgMuteYourself");
 
         lblAudioChannelName.setText(channel.getName());
         lblUserName.setText(localUser.getName());
+
+        this.imgViewUnMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_MICRO))));
+        this.imgViewUnMuteYourself.setFitHeight(25);
+        this.imgViewUnMuteYourself.setFitWidth(25);
+        this.imgViewMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_NO_MICRO))));
+        this.imgViewMuteYourself.setFitHeight(25);
+        this.imgViewMuteYourself.setFitWidth(25);
 
         this.btnMuteYou.setOnAction(this::btnMuteYouOnClick);
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
@@ -62,12 +72,11 @@ public class AudioChannelSubViewController implements Controller {
 
         this.setComponentsText();
 
-        if(localUser.isAllMuted()){
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
-            icon.setFitHeight(20);
-            icon.setFitWidth(20);
-            btnMuteAll.setGraphic(icon);
-        }
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_ALL_MUTED, allMute);
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_MUTED, localUserMute);
+
+        allMuteChanged(null);
+        localUserMutedChanged(null);
     }
 
     private void setComponentsText() {
@@ -77,37 +86,37 @@ public class AudioChannelSubViewController implements Controller {
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
         if (localUser.isMuted()) {
             this.editor.getAudioManager().unmuteYourself(localUser);
-
-            ImageView imgMuteYourself = new ImageView();
-            imgMuteYourself.setImage(new Image("/de/uniks/stp/wedoit/accord/client/view/images/micro.png", btnMuteYou.getWidth()*3/4, btnMuteYou.getHeight(), false, true, true));
-            this.btnMuteYou.setGraphic(imgMuteYourself);
         } else {
             this.editor.getAudioManager().muteYourself(localUser);
-
-            ImageView imgMuteYourself = new ImageView();
-            imgMuteYourself.setImage(new Image("/de/uniks/stp/wedoit/accord/client/view/images/nomicro.png", btnMuteYou.getWidth()*3/4, btnMuteYou.getHeight(), false, true, true));
-            this.btnMuteYou.setGraphic(imgMuteYourself);
         }
     }
 
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
-        if(!localUser.isAllMuted()){
+        if (!localUser.isAllMuted()) {
             editor.getAudioManager().muteAllUsers(channel.getAudioMembers());
-            controller.getTvServerChannels().refresh();
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
-            icon.setFitHeight(20);
-            icon.setFitWidth(20);
-            btnMuteAll.setGraphic(icon);
-            localUser.setAllMuted(true);
-        }
-        else{
+        } else {
             editor.getAudioManager().unMuteAllUsers(channel.getAudioMembers());
-            controller.getTvServerChannels().refresh();
-            ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound.png"))));
-            icon.setFitHeight(20);
-            icon.setFitWidth(20);
-            btnMuteAll.setGraphic(icon);
-            localUser.setAllMuted(false);
+        }
+        controller.getTvServerChannels().refresh();
+    }
+
+    private void allMuteChanged(PropertyChangeEvent propertyChangeEvent) {
+        ImageView icon;
+        if (localUser.isAllMuted()) {
+            icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
+        } else {
+            icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound.png"))));
+        }
+        icon.setFitHeight(20);
+        icon.setFitWidth(20);
+        btnMuteAll.setGraphic(icon);
+    }
+
+    private void localUserMutedChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (localUser.isMuted()) {
+            Platform.runLater(() -> this.btnMuteYou.setGraphic(this.imgViewMuteYourself));
+        } else {
+            Platform.runLater(() -> this.btnMuteYou.setGraphic(this.imgViewUnMuteYourself));
         }
     }
 
@@ -124,5 +133,7 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteYou.setOnAction(null);
         this.btnMuteAll.setOnAction(null);
         this.btnLeave.setOnAction(null);
+        this.localUser.listeners().removePropertyChangeListener(allMute);
+        this.localUser.listeners().removePropertyChangeListener(localUserMute);
     }
 }

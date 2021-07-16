@@ -39,7 +39,7 @@
 }
 
 .redLabel {
-    -fx-text-fill: "RED"
+    -fx-text-fill: #ff0000
 }
 
 .error {
@@ -62,7 +62,7 @@
 }
 
 .redPromptText {
-    -fx-prompt-text-fill: "BLACK";
+    -fx-prompt-text-fill: #000000;
     -fx-background-color: rgba(255, 0, 0, 0.75);
 }
 
@@ -74,10 +74,47 @@
     -fx-text-fill: blue;
 }
 
+.color0 {
+    -fx-text-fill: #0a4b78;
+}
+
+.color1 {
+    -fx-text-fill: #005c12;
+}
+
+.color2 {
+    -fx-text-fill: #755100;
+}
+
+.color3 {
+    -fx-text-fill: #8a2424;
+}
+
+.color4 {
+    -fx-text-fill: indigo;
+}
+
+.white {
+    -fx-text-fill: #ADD8e6;
+}
+
+.text {
+    -fx-text-fill: #000000;
+}
+
+.date {
+    -fx-text-fill: #000000;
+    -fx-font-size: 10;
+}
+
 .link{
-    -fx-text-fill: blue;
+    -fx-text-fill: #ADD8e6;
 }
 
 .font_size {
     -fx-font-size: 7pt ;
+}
+
+.marked_message{
+    -fx-background-color: #F7FE2E;
 }

@@ -10,7 +10,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -19,10 +21,7 @@ import java.util.Map;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJI_PICKER_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class PrivateMessageServerScreenController implements Controller {
@@ -32,7 +31,7 @@ public class PrivateMessageServerScreenController implements Controller {
     private final Server server;
     private final User memberToWrite;
 
-    private TextField tfMessage;
+    private TextArea taMessage;
     private Button btnShowChat;
     private Button btnEmoji;
 
@@ -48,15 +47,15 @@ public class PrivateMessageServerScreenController implements Controller {
     @Override
     public void init() {
         Label lblTitle = (Label) view.lookup("#lblTitle");
-        this.tfMessage = (TextField) view.lookup("#tfMessage");
+        this.taMessage = (TextArea) view.lookup("#tfMessage");
         this.btnShowChat = (Button) view.lookup("#btnShowChat");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
-        lblTitle.setText(LanguageResolver.getString("SEND_MESSAGE_TO") +" " + memberToWrite.getName());
+        lblTitle.setText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
         this.setCorrectPromptText(memberToWrite.isOnlineStatus());
         this.btnShowChat.setText(LanguageResolver.getString("SHOW_CHAT"));
 
-        this.tfMessage.setOnAction(this::tfMessageOnEnter);
+        this.taMessage.setOnKeyPressed(this::tfMessageOnEnter);
         this.btnShowChat.setOnAction(this::btnShowChatOnClick);
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
 
@@ -65,20 +64,38 @@ public class PrivateMessageServerScreenController implements Controller {
 
     @Override
     public void stop() {
-        this.tfMessage.setOnAction(null);
+        this.taMessage.setOnKeyPressed(null);
         this.btnShowChat.setOnAction(null);
         this.btnEmoji.setOnAction(null);
         this.memberToWrite.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
     }
 
     /**
-     * send message in textfield after enter button pressed
+     * send message in textArea after enter button pressed
+     * or
+     * enter linebreak when SHIFT + enter is pressed
      *
-     * @param actionEvent occurs when enter button is pressed
+     * @param keyEvent occurs when key is pressed when text area is focused
      */
-    private void tfMessageOnEnter(ActionEvent actionEvent) {
-        String message = this.tfMessage.getText();
-        this.tfMessage.clear();
+    private void tfMessageOnEnter(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            keyEvent.consume();
+            if (keyEvent.isShiftDown()) {
+                taMessage.appendText(System.getProperty("line.separator"));
+            } else {
+                sendMessage(this.taMessage.getText());
+            }
+        }
+
+    }
+
+    /**
+     * helper methode for sending messages to the current chat
+     *
+     * @param message to be send to currentChat
+     */
+    private void sendMessage(String message) {
+        this.taMessage.clear();
 
         if (memberToWrite.isOnlineStatus()) {
             if (message != null && !message.isEmpty()) {
@@ -101,14 +118,14 @@ public class PrivateMessageServerScreenController implements Controller {
         privateChatsScreenController.setSelectedUser(memberToWrite);
         privateChatsScreenController.initPrivateChatView(memberToWrite);
         privateChatsScreenController.getLwOnlineUsers().getSelectionModel().select(memberToWrite);
-        privateChatsScreenController.setTfPrivateChatText(this.tfMessage.getText());
+        privateChatsScreenController.setTfPrivateChatText(this.taMessage.getText());
     }
 
     private void btnEmojiOnClicked(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (memberToWrite.isOnlineStatus()) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, this.tfMessage, pos);
+            this.editor.getStageManager().initView(EMOJI_PICKER_STAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, this.taMessage, pos);
         }
     }
 
@@ -127,12 +144,12 @@ public class PrivateMessageServerScreenController implements Controller {
      * @param onlineStatus online status of the selected User
      */
     private void setCorrectPromptText(boolean onlineStatus) {
-        this.tfMessage.setEditable(onlineStatus);
+        this.taMessage.setEditable(onlineStatus);
         if (!onlineStatus) {
-            this.tfMessage.clear();
-            this.tfMessage.setPromptText(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+            this.taMessage.clear();
+            this.taMessage.setPromptText(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
         } else {
-            this.tfMessage.setPromptText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
+            this.taMessage.setPromptText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
         }
     }
 

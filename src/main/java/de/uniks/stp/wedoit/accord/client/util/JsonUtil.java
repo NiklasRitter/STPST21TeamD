@@ -102,7 +102,7 @@ public class JsonUtil {
      * @return The MemberID List.
      */
     public static List<String> parseAudioMembers(JsonObject channelJson) {
-        JsonArray audioMembers = channelJson.getJsonArray(AUDIOMEMBERS);
+        JsonArray audioMembers = channelJson.getJsonArray(AUDIO_MEMBERS);
         List<String> audioMemberIds = new ArrayList<>();
         for (Object audioMemberId : audioMembers) {
             audioMemberIds.add(audioMemberId.toString().substring(1, audioMemberId.toString().length() - 1));

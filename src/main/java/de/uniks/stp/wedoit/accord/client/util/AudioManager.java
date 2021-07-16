@@ -13,41 +13,43 @@ public class AudioManager {
     private final Editor editor;
     private AudioConnection audioConnection;
 
-    public AudioManager(Editor editor){
+    public AudioManager(Editor editor) {
         this.editor = editor;
     }
 
-    public void initAudioConnection(Channel channel){
-        if(audioConnection == null){
+    public void initAudioConnection(Channel channel) {
+        if (audioConnection == null) {
             audioConnection = new AudioConnection(editor.getLocalUser(), channel);
         }
         audioConnection.startConnection("cranberry.uniks.de", 33100);
     }
 
-    public void muteUser(User user){
+    public void muteUser(User user) {
         user.setMuted(true);
         audioConnection.getAudioReceive().muteUser(user.getName());
     }
 
-    public void unmuteUser(User user){
+    public void unmuteUser(User user) {
         user.setMuted(false);
         audioConnection.getAudioReceive().unmuteUser(user.getName());
     }
 
-    public void muteAllUsers(List<User> users){
-        for(User user : users){
-            if(!user.getName().equals(editor.getLocalUser().getName())){
+    public void muteAllUsers(List<User> users) {
+        editor.getLocalUser().setAllMuted(true);
+        for (User user : users) {
+            if (!user.getName().equals(editor.getLocalUser().getName())) {
                 muteUser(user);
             }
         }
     }
 
-    public void unMuteAllUsers(List<User> users){
-        for(User user : users){
-            if(!user.getName().equals(editor.getLocalUser().getName())){
+    public void unMuteAllUsers(List<User> users) {
+        for (User user : users) {
+            if (!user.getName().equals(editor.getLocalUser().getName())) {
                 unmuteUser(user);
             }
         }
+        editor.getLocalUser().setAllMuted(false);
     }
 
     public void muteYourself(LocalUser yourself) {
@@ -62,10 +64,14 @@ public class AudioManager {
 
     public void closeAudioConnection() {
         if (audioConnection != null) {
-            if(audioConnection.getChannel() != null){
+            if (audioConnection.getChannel() != null) {
                 unMuteAllUsers(audioConnection.getChannel().getAudioMembers());
             }
             editor.getLocalUser().setAllMuted(false);
+            LocalUser localUser = this.editor.getLocalUser();
+            if (localUser.isMuted()) {
+                unmuteYourself(localUser);
+            }
             audioConnection.close();
             this.audioConnection = null;
         }

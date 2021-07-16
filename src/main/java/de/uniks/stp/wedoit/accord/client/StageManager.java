@@ -9,7 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -50,13 +50,13 @@ public class StageManager extends Application {
                     cleanup();
                     initStage(root, title, resizable);
                     break;
-                case POPUPSTAGE:
+                case POPUP_STAGE:
                     initPopupStage(root, title, resizable);
                     break;
-                case GAMESTAGE:
+                case GAME_STAGE:
                     initGameStage(root, title, resizable, controllerName);
                     break;
-                case EMOJIPICKERSTAGE:
+                case EMOJI_PICKER_STAGE:
                     initEmojiPickerStage(root, title, resizable);
                     break;
             }
@@ -161,7 +161,7 @@ public class StageManager extends Application {
                 controller = new EditChannelScreenController(root, model.getLocalUser(), editor, (Channel) parameter);
                 break;
             case EMOJI_SCREEN_CONTROLLER:
-                controller = new EmojiScreenController(root, (TextField) parameter, (Bounds) parameterTwo);
+                controller = new EmojiScreenController(root, (TextArea) parameter, (Bounds) parameterTwo);
                 break;
             case ATTENTION_SCREEN_CONTROLLER:
                 controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter);
@@ -344,38 +344,14 @@ public class StageManager extends Application {
         editor.haveLocalUser();
         resourceManager.start(model);
         updateLanguage();
-        if (!SystemTray.isSupported()) System.out.println("SystemTray not supported on the platform.");
+        if (!SystemTray.isSupported()) System.err.println("SystemTray not supported on the platform.");
         else {
             systemTrayController = new SystemTrayController(editor);
             systemTrayController.init();
         }
         stage.setMinHeight(400);
         stage.setMinWidth(600);
-        //showStartScreen();
         editor.automaticLogin(model);
-    }
-
-    public void showStartScreen() {
-        cleanup();
-        // show StartScreen
-        try {
-            // load view
-            Parent root = FXMLLoader.load(StageManager.class.getResource("view/testScreen.fxml"));
-            Scene scene = new Scene(root);
-
-            // init controller
-            TestScreenController startController = new TestScreenController(root, editor);
-            startController.init();
-
-            // display
-            stage.setTitle("Test");
-            stage.setScene(scene);
-            stage.centerOnScreen();
-            stage.show();
-        } catch (Exception e) {
-            System.err.println("Error on showing StartScreen");
-            e.printStackTrace();
-        }
     }
 
     @Override

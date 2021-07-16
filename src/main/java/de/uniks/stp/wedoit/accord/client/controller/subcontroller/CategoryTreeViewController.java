@@ -1,31 +1,30 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.CREATE_CATEGORY_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class CategoryTreeViewController implements Controller {
@@ -36,12 +35,10 @@ public class CategoryTreeViewController implements Controller {
     private final Server server;
     private final ServerScreenController controller;
     private final Map<String, Channel> channelMap = new HashMap<>();
-    private Channel channel;
 
     private TreeView<Object> tvServerChannels;
     private TreeItem<Object> tvServerChannelsRoot;
 
-    public final PropertyChangeListener userListViewListener = this::changeUserList;
     private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
     private final PropertyChangeListener categoriesListener = this::handleCategoryChange;
     private final PropertyChangeListener channelListener = this::handleChannelChange;
@@ -53,34 +50,41 @@ public class CategoryTreeViewController implements Controller {
         this.editor = editor;
         this.server = server;
         this.controller = controller;
-        this.channel = new Channel();
     }
 
     public void init() {
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
-
         this.tvServerChannelsRoot = new TreeItem<>();
         initContextMenu();
 
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
-
+        initTvServerChannels();
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
     }
 
     public void initContextMenu() {
-        ChannelTreeView channelTreeView = new ChannelTreeView(editor.getStageManager());
+        ChannelTreeView channelTreeView = new ChannelTreeView(editor.getStageManager(), this);
         this.tvServerChannels.setCellFactory(channelTreeView);
         this.tvServerChannels.setShowRoot(false);
         this.tvServerChannels.setRoot(tvServerChannelsRoot);
         this.tvServerChannels.setContextMenu(createContextMenuCategory());
     }
 
+    private void initTvServerChannels() {
+        for (Category category : server.getCategories()) {
+            TreeItem<Object> categoryItem = new TreeItem<>(category);
+            categoryItem.setExpanded(true);
+            for (Channel channel : category.getChannels()) {
+                addChannelToTreeView(channel, categoryItem);
+            }
+            tvServerChannelsRoot.getChildren().add(categoryItem);
+        }
+    }
+
     public void stop() {
         this.tvServerChannels.setOnMouseReleased(null);
-        this.tvServerChannels = null;
         for (Channel channel : channelMap.values()) {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
-            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         }
         for (Category category : server.getCategories()) {
@@ -108,6 +112,10 @@ public class CategoryTreeViewController implements Controller {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
             Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
+        } else {
+            for (Category category : categoryList) {
+                loadCategoryChannels(category);
+            }
         }
     }
 
@@ -116,8 +124,8 @@ public class CategoryTreeViewController implements Controller {
      *
      * @param category of which the channels should be loaded
      */
-    private void loadCategoryChannels(Category category, TreeItem<Object> categoryItem) {
-        editor.getRestManager().getChannels(localUser, server, category, categoryItem, this);
+    private void loadCategoryChannels(Category category) {
+        editor.getRestManager().getChannels(localUser, server, category, this);
     }
 
 
@@ -125,12 +133,6 @@ public class CategoryTreeViewController implements Controller {
      * handles the channels of a server in the view
      */
     public void handleGetChannels(List<Channel> channelList) {
-        if(localUser.getAudioChannel() != null && localUser.getAudioChannel().getCategory().getServer().getId().equals(server.getId()) && controller.getAudioChannelSubViewContainer().getChildren().isEmpty()){
-            Channel channel = editor.getChannelById(server, localUser.getAudioChannel().getCategory().getId(), localUser.getAudioChannel().getId());
-            if(channel != null){
-                localUser.setAudioChannel(channel);
-            }
-        }
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
             Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
@@ -152,18 +154,16 @@ public class CategoryTreeViewController implements Controller {
                         controller.getServerChatController().initChannelChat(channel);
                         controller.refreshLvUsers(channel);
                     }
-                }
-                else if (mouseEvent.getClickCount() == 2) {
-                    if (channel.getType().equals(AUDIO)){
-                        if(localUser.getAudioChannel() == null){
+                } else if (mouseEvent.getClickCount() == 2) {
+                    if (channel.getType().equals(AUDIO)) {
+                        if (localUser.getAudioChannel() == null) {
                             editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                        }
-                        else if(localUser.getAudioChannel().getId().equals(channel.getId())){
+                        } else if (localUser.getAudioChannel().getId().equals(channel.getId())) {
                             editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+                        } else {
+                            editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
                         }
-                        else {
-                            editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory() ,channel.getCategory(), localUser.getAudioChannel(), channel, this);
-                        }
+                        controller.refreshLvUsers(channel);
                     }
                 }
             }
@@ -178,17 +178,6 @@ public class CategoryTreeViewController implements Controller {
     private void handleChannelReadChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
             Platform.runLater(() -> tvServerChannels.refresh());
-        }
-    }
-
-    /**
-     * rebuilds the user list
-     */
-    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
-            if (propertyChangeEvent.getSource() instanceof Channel) {
-                Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
-            }
         }
     }
 
@@ -239,7 +228,7 @@ public class CategoryTreeViewController implements Controller {
             TreeItem<Object> categoryItem = new TreeItem<>(newValue);
             categoryItem.setExpanded(true);
             tvServerChannelsRoot.getChildren().add(categoryItem);
-            loadCategoryChannels(newValue, categoryItem);
+            loadCategoryChannels(newValue);
             newValue.listeners().addPropertyChangeListener(Category.PROPERTY_NAME, categoriesListener);
             newValue.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, categoriesListener);
         } else if (oldValue != null && newValue == null) {
@@ -276,17 +265,16 @@ public class CategoryTreeViewController implements Controller {
         }
     }
 
-    private void updateAudioChannelMembers(Channel channel, User oldValue, User newValue){
+    private void updateAudioChannelMembers(Channel channel, User oldValue, User newValue) {
         TreeItem<Object> channelItem = getTreeItemChannel(channel);
-        if(channelItem != null){
-            if(oldValue == null && newValue != null){
+        if (channelItem != null) {
+            if (oldValue == null && newValue != null) {
                 channelItem.setExpanded(true);
-                if(localUser.isAllMuted() && !newValue.getName().equals(localUser.getName())){
+                if (localUser.isAllMuted() && !newValue.getName().equals(localUser.getName())) {
                     editor.getAudioManager().muteUser(newValue);
                 }
                 addAudioMemberToTreeView(newValue, channelItem);
-            }
-            else if (oldValue != null && newValue == null) {
+            } else if (oldValue != null && newValue == null) {
                 channelItem.getChildren().removeIf(objectTreeItem -> objectTreeItem.getValue().equals(oldValue));
             }
         }
@@ -301,19 +289,19 @@ public class CategoryTreeViewController implements Controller {
     public void addChannelToTreeView(Channel channel, TreeItem<Object> categoryItem) {
         channelMap.put(channel.getId(), channel);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_READ, this.channelReadListener);
-        channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
+//        channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_AUDIO_MEMBERS, this.audioMemberListener);
         TreeItem<Object> channelItem = new TreeItem<>(channel);
         categoryItem.getChildren().add(channelItem);
-        if(!channel.getAudioMembers().isEmpty()){
+        if (!channel.getAudioMembers().isEmpty()) {
             channelItem.setExpanded(true);
             addAudioMembersToTreeView(channel, channelItem);
         }
     }
 
     private void addAudioMembersToTreeView(Channel channel, TreeItem<Object> channelItem) {
-        for(User user : channel.getAudioMembers()){
+        for (User user : channel.getAudioMembers()) {
             addAudioMemberToTreeView(user, channelItem);
         }
     }
@@ -343,10 +331,12 @@ public class CategoryTreeViewController implements Controller {
      */
     private TreeItem<Object> getTreeItemChannel(Channel channel) {
         TreeItem<Object> categoryItem = getTreeItemCategory(channel.getCategory());
-        for (TreeItem<Object> channelItem : categoryItem.getChildren()) {
-            Channel currentChannel = (Channel) channelItem.getValue();
-            if (currentChannel.getId().equals(channel.getId())) {
-                return channelItem;
+        if (categoryItem != null) {
+            for (TreeItem<Object> channelItem : categoryItem.getChildren()) {
+                Channel currentChannel = (Channel) channelItem.getValue();
+                if (currentChannel.getId().equals(channel.getId())) {
+                    return channelItem;
+                }
             }
         }
         return null;
@@ -361,7 +351,7 @@ public class CategoryTreeViewController implements Controller {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addCategory = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
         contextMenu.getItems().add(addCategory);
-        addCategory.setOnAction((event) -> editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
+        addCategory.setOnAction((event) -> editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
         return contextMenu;
     }
 
@@ -373,24 +363,22 @@ public class CategoryTreeViewController implements Controller {
     }
 
     public void handleJoinAudioChannel(Channel channel) {
-        if(channel.getCategory() != null){
-            loadCategoryChannels(channel.getCategory(), getTreeItemCategory(channel.getCategory()));
-        }
-        else{
+        if (channel.getCategory() != null) {
+            loadCategoryChannels(channel.getCategory());
+        } else {
             System.err.println("Join Problem");
         }
     }
 
     public void handleLeaveAudioChannel(Category category) {
-        if(category != null){
-            loadCategoryChannels(category, getTreeItemCategory(category));
-        }
-        else{
+        if (category != null) {
+            loadCategoryChannels(category);
+        } else {
             System.err.println("Leave Problem");
         }
     }
 
-    public TreeView<Object> getTvServerChannels(){
+    public TreeView<Object> getTvServerChannels() {
         return tvServerChannels;
     }
 

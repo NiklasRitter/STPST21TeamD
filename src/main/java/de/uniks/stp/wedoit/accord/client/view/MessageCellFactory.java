@@ -23,6 +23,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import org.jsoup.Jsoup;
@@ -59,6 +62,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
+        private MediaView mediaView = new MediaView();
+        private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
         private final Label label = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
@@ -76,7 +81,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             super.updateItem(item, empty);
             setItem(item);
             this.setText(null);
-            this.getStyleClass().removeAll("font_size");
+            this.getStyleClass().removeAll("font_size", "marked_message");
             this.setGraphic(null);
             this.vBox.getChildren().clear();
             webView.getEngine().load(null);
@@ -122,18 +127,32 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
-                } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
-                        && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+                } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_MESSAGE)
+                        && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
+
+                    VBox messageVBox = new VBox();
+                    Label quoteLabel = new Label();
+                    Label messageLabel = new Label();
 
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
-                    String[] messages = quoteMessage.split(QUOTE_ID);
+                    String[] messages = quoteMessage.split(QUOTE_MESSAGE);
+                    //TODO: Clean up here
+                    if (messages.length != 2) {
+                        this.setText(item.getText());
+                    } else {
+                        quoteLabel.setText(">>>" + messages[0]);
+                        quoteLabel.getStyleClass().add("font_size");
+                        messageLabel.setText("[" + time + "] " + item.getFrom() + ": " + messages[1]);
+                        setGraphic(messageVBox);
+                        messageVBox.getChildren().addAll(quoteLabel, messageLabel);
+                    }
 
-                    parameters.setFont(Font.font("System", FontWeight.NORMAL, stageManager.getEditor().getFontSize() - 3));
+                    /*parameters.setFont(Font.font("System", FontWeight.NORMAL, stageManager.getEditor().getFontSize() - 3));
                     this.emojiTextFlow.parseAndAppend(">>>" + messages[0]);
                     this.vBox.getChildren().addAll(emojiTextFlow);
-                    setGraphic(vBox);
+                    setGraphic(vBox);*/
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
                     String url = containsInviteUrl(item.getText());
                     if (url != null) {
@@ -142,8 +161,61 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayTextWithEmoji(item);
                     }
                 } else {
-                    displayTextWithEmoji(item);
+                    VBox vBox = new VBox();
+                    HBox hBox = new HBox();
+                    hBox.setAlignment(Pos.CENTER_LEFT);
+                    Label name = new Label(item.getFrom() + " ");
+
+                    int nameLength = item.getFrom().length();
+
+                    switch (nameLength % 5) {
+                        case 0:
+                            name.getStyleClass().add("color0");
+                            break;
+                        case 1:
+                            name.getStyleClass().add("color1");
+                            break;
+                        case 2:
+                            name.getStyleClass().add("color2");
+                            break;
+                        case 3:
+                            name.getStyleClass().add("color3");
+                            break;
+                        case 4:
+                            name.getStyleClass().add("color4");
+                            break;
+                    }
+                    Label date = new Label(time);
+                    date.getStyleClass().add("date");
+                    Label text = new Label(item.getText());
+                    text.getStyleClass().add("text");
+                    text.setWrapText(true);
+                    hBox.getChildren().addAll(name, date);
+                    vBox.getChildren().addAll(hBox, text);
+                    this.setGraphic(vBox);
                 }
+
+                if (item instanceof PrivateMessage) {
+
+                    if (item.getText().startsWith(GAME_SYSTEM)) {
+                        this.setText(item.getText().substring(GAME_PREFIX.length()));
+                    } else if (item.getText().startsWith(GAME_PREFIX)) {
+                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                    }
+                } else {
+                    if (containsMarking(item.getText())) {
+                        this.getStyleClass().add("marked_message");
+                    }
+                    //displayTextWithEmoji(item);
+                }
+            }
+        }
+
+        private boolean containsMarking(String message) {
+            if (message.contains("@" + stageManager.getEditor().getLocalUser().getName())) {
+                return true;
+            } else {
+                return false;
             }
         }
 
@@ -157,6 +229,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
             }
             return null;
+
         }
 
         private boolean isValidURL(String url) {
@@ -165,7 +238,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 Url.toURI();
 
                 if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
-
+                if (url.contains(MP4)) return true;
+                if (url.contains(GIF)) return true;
                 Document doc = Jsoup.connect(url).get();
                 if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
                     descBox.setText(doc.title());
@@ -180,15 +254,35 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private boolean setImgGraphic(String url) {
             if (isValidURL(url)) {
-                Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
-                if (!image.isError()) {
-                    imageView.setImage(image);
-                    imageView.setPreserveRatio(true);
+                if (url.contains(MP4)) {
+                    setUpMediaView(url);
                     setGraphic(vBox);
                     return true;
+                } else if (url.contains(GIF)) {
+                    setUpWebView(url);
+                    setGraphic(vBox);
+                    return true;
+                } else {
+                    Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
+                    if (!image.isError()) {
+                        imageView.setImage(image);
+                        imageView.setPreserveRatio(true);
+                        setGraphic(vBox);
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+
+        private void setUpMediaView(String url) {
+            Media media = new Media(url);
+            mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.setAutoPlay(true);
+            mediaView.setFitHeight(400);
+            mediaView.setFitWidth(270);
+            mediaView.setPreserveRatio(true);
+            mediaView.setMediaPlayer(mediaPlayer);
         }
 
         private void setUpWebView(String url) {
@@ -201,7 +295,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private void setUpMedia(S item) {
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
-                vBox.getChildren().addAll(label, imageView, hyperlink);
+                if (item.getText().contains(MP4)) {
+                    vBox.getChildren().addAll(label, mediaView, hyperlink);
+                } else if (item.getText().contains(GIF)) {
+                    vBox.getChildren().addAll(label, webView, hyperlink);
+                } else {
+                    vBox.getChildren().addAll(label, imageView, mediaView, hyperlink);
+                }
                 if (descBox.getText() != null) {
                     vBox.getChildren().add(descBox);
                     descBox.setOnAction(this::openHyperLink);
