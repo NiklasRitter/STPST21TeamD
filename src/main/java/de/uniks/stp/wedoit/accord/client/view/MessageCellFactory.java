@@ -328,7 +328,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             joinServerHBox.setAlignment(Pos.CENTER_LEFT);
             joinServerHBox.getChildren().addAll(serverInfoVBox, region, button);
             joinServerHBox.getStyleClass().add("styleBorder");
-            joinServerHBox.setMaxWidth(265);
+            joinServerHBox.setMaxWidth(vBox.getMaxWidth());
 
             label.setText("[" + time + "] " + item.getFrom() + ": ");
 
