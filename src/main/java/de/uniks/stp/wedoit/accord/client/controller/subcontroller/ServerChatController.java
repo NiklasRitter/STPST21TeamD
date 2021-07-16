@@ -7,6 +7,10 @@ import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.richtext.LinkedImage;
+import de.uniks.stp.wedoit.accord.client.richtext.ParStyle;
+import de.uniks.stp.wedoit.accord.client.richtext.RichText;
+import de.uniks.stp.wedoit.accord.client.richtext.TextStyle;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
@@ -25,6 +29,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.fxmisc.richtext.GenericStyledArea;
+import org.reactfx.util.Either;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -54,7 +60,8 @@ public class ServerChatController implements Controller {
     private HBox quoteVisible;
     private Label lbChannelName;
     //private Label lblQuote;
-    private TextArea tfInputMessage;
+    //private TextArea tfInputMessage;
+    private GenericStyledArea tfInputMessage;
     private Button btnCancelQuote;
     private Button btnEmoji;
     private ListView<Message> lvTextChat;
@@ -67,6 +74,7 @@ public class ServerChatController implements Controller {
     private MarkingController markingController;
     private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
     private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
+    private RichText richText;
 
 
     /**
@@ -95,7 +103,18 @@ public class ServerChatController implements Controller {
      */
     public void init() {
         this.vBoxTextField = (VBox) view.lookup("#boxTextfield");
-        this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
+        //this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
+
+        this.vBoxTextField = (VBox) view.lookup("#boxTextfield");
+        this.lbChannelName = (Label) view.lookup("#lbChannelName");
+        //this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
+
+        this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
+        richText = new RichText();
+        GenericStyledArea<ParStyle, Either<String, LinkedImage>, TextStyle> area = richText.getArea();
+        VBox v = (VBox) this.lvTextChat.getParent();
+        v.getChildren().add(area);
+        this.tfInputMessage = area;
 
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
@@ -109,8 +128,8 @@ public class ServerChatController implements Controller {
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
 
-        this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
-        this.markingController.init();
+        //this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
+        //this.markingController.init();
 
         quoteVisible.getChildren().clear();
 
@@ -140,7 +159,7 @@ public class ServerChatController implements Controller {
         this.btnEmoji.setOnAction(null);
         this.lvTextChat.setOnMouseClicked(null);
         this.btnCancelQuote.setOnAction(null);
-        this.markingController.stop();
+        //this.markingController.stop();
 
         for (MenuItem item : contextMenuLocalUserMessage.getItems()) {
             item.setOnAction(null);
@@ -294,7 +313,7 @@ public class ServerChatController implements Controller {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (this.currentChannel != null) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(EMOJI_PICKER_STAGE, LanguageResolver.getString("EMOJI_PICKER"), "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
+            this.editor.getStageManager().initView(EMOJI_PICKER_STAGE, LanguageResolver.getString("EMOJI_PICKER"), "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, richText, pos);
         }
     }
 
@@ -376,7 +395,7 @@ public class ServerChatController implements Controller {
         channel.setRead(true);
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
-        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+        //this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
         this.tfInputMessage.setEditable(this.currentChannel != null);
 
         // init list view
@@ -397,8 +416,8 @@ public class ServerChatController implements Controller {
         this.editor.getChatFontSizeProperty().addListener(this::onDarkmodeChanged);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
 
-        this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
-        this.markingController.init();
+        //this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
+        //this.markingController.init();
     }
 
     /**

@@ -95,6 +95,7 @@ public class ServerScreenController implements Controller {
         // Load all view references
         this.editor.setCurrentServer(server);
         this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
+
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEdit = (Button) view.lookup("#btnEdit");

@@ -4,6 +4,7 @@ import com.pavlobu.emojitextflow.Emoji;
 import com.pavlobu.emojitextflow.EmojiParser;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.Icons;
+import de.uniks.stp.wedoit.accord.client.richtext.RichText;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -16,25 +17,29 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import org.fxmisc.richtext.GenericStyledArea;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class EmojiScreenController implements Controller {
 
     private final Parent view;
+    private final RichText richText;
     private GridPane pane;
-    private final TextArea txtAreaForEmoji;
+    private final GenericStyledArea txtAreaForEmoji;
     private final Bounds pos;
 
     private EmojiButton emojiButton;
     private final HashMap<EmojiButton, Emoji> hashMapForEmojiButtons = new HashMap<>();
     private final List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
 
-    public EmojiScreenController(Parent view, TextArea txtAreaForEmoji, Bounds pos) {
+    public EmojiScreenController(Parent view, RichText richText, Bounds pos) {
         this.view = view;
-        this.txtAreaForEmoji = txtAreaForEmoji;
+        this.richText = richText;
+        this.txtAreaForEmoji = richText.getArea();
         this.pos = pos;
     }
 
@@ -74,7 +79,8 @@ public class EmojiScreenController implements Controller {
             icon.setFitHeight(30);
             String shortname = EmojiParser.getInstance().unicodeToShortname(unicode);
             Emoji emoji = EmojiParser.getInstance().getEmoji(shortname);
-            icon.setImage(new Image(StageManager.class.getResource("emoji_images/" + emoji.getHex() + ".png").toString()));
+            String imagePath = StageManager.class.getResource("emoji_images/" + emoji.getHex() + ".png").toString();
+            icon.setImage(new Image(imagePath));
             this.emojiButton = new EmojiButton("");
             this.emojiButton.setGraphic(icon);
             hashMapForEmojiButtons.put(this.emojiButton, emoji);
@@ -90,7 +96,12 @@ public class EmojiScreenController implements Controller {
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         if (this.txtAreaForEmoji.isEditable()) {
             Emoji selectedEmoji = hashMapForEmojiButtons.get(actionEvent.getSource());
-            Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + selectedEmoji.getShortname()));
+            String imagePath = Objects.requireNonNull(StageManager.class.getResource("emoji_images/" + selectedEmoji.getHex() + ".png").toString()).substring(5);
+            System.out.println(imagePath);
+            //RichText richText = new RichText();
+            //Platform.runLater(() -> richText.insertImage());
+            Platform.runLater(() -> richText.insertEmoji(imagePath));
+            //Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + selectedEmoji.getShortname()));
         }
     }
 
