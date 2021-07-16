@@ -20,5 +20,4 @@ public class Game {
     public static final String GAME_ROCK = "Rock";
     public static final String GAME_PAPER = "Paper";
     public static final String GAME_SCISSORS = "Scissors";
-
 }

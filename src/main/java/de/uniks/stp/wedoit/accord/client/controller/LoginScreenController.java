@@ -16,7 +16,7 @@ import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.OPTIONS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class LoginScreenController implements Controller {
@@ -32,7 +32,7 @@ public class LoginScreenController implements Controller {
     private CheckBox btnRememberMe;
     private TextField tfUserName;
     private TextField pwUserPw;
-    private Label errorLabel, lblEnterUserName, lblEnterPw, lblRememberMe, lblUserValid, lblGuestPassword;
+    private Label lblError, lblEnterUserName, lblEnterPw, lblRememberMe, lblUserValid, lblGuestPassword;
 
     private String guestUserPassword;
     private String errorLabelText = "";
@@ -61,7 +61,7 @@ public class LoginScreenController implements Controller {
         //Load all view references
         this.tfUserName = (TextField) view.lookup("#tfUserName");
         this.pwUserPw = (TextField) view.lookup("#pwUserPw");
-        this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblError = (Label) view.lookup("#lblError");
         this.lblEnterUserName = (Label) view.lookup("#lblEnterUserName");
         this.lblEnterPw = (Label) view.lookup("#lblEnterPw");
         this.lblRememberMe = (Label) view.lookup("#lblRememberMe");
@@ -87,7 +87,6 @@ public class LoginScreenController implements Controller {
         this.refreshStage();
 
         Platform.runLater(() -> this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty()));
-
     }
 
     /**
@@ -104,7 +103,7 @@ public class LoginScreenController implements Controller {
         if (guestUserPassword != null) {
             this.setGuestUserDataLabel();
         }
-        this.errorLabel.setText(LanguageResolver.getString(errorLabelText));
+        this.lblError.setText(LanguageResolver.getString(errorLabelText));
 //        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
     }
 
@@ -322,6 +321,6 @@ public class LoginScreenController implements Controller {
      * @param errorLabelText is the current text of the error label
      */
     private void refreshErrLabelText(String errorLabelText) {
-        errorLabel.setText(LanguageResolver.getString(errorLabelText));
+        lblError.setText(LanguageResolver.getString(errorLabelText));
     }
 }

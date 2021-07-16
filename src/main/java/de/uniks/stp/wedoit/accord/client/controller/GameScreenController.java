@@ -23,7 +23,7 @@ import java.beans.PropertyChangeListener;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_RESULT_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAME_STAGE;
 
 public class GameScreenController implements Controller {
 
@@ -114,11 +114,12 @@ public class GameScreenController implements Controller {
      * @param actionEvent occurs when one of the action button is pressed
      */
     private void gameActionOnClick(ActionEvent actionEvent) {
-        if ((Button) actionEvent.getSource() == btnRock) {
+
+        if (actionEvent.getSource() == btnRock) {
             gameAction = "Rock";
-        } else if ((Button) actionEvent.getSource() == btnPaper) {
+        } else if (actionEvent.getSource() == btnPaper) {
             gameAction = "Paper";
-        } else if ((Button) actionEvent.getSource() == btnScissors) {
+        } else if (actionEvent.getSource() == btnScissors) {
             gameAction = "Scissors";
         }
 

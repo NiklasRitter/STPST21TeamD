@@ -22,12 +22,11 @@ import javafx.util.Duration;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.Locale;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 
 
 public class EditServerScreenController implements Controller {
@@ -49,7 +48,7 @@ public class EditServerScreenController implements Controller {
     private TextField tfMaxCountAmountInput;
     private TextField tfInvitationLink;
 
-    private Label labelCopy, lblChangeName, lblInvite, lblOldInvit, lblInvitationStatus, lblInvitationStatusText, lblCountWarning;
+    private Label labelCopy, lblChangeName, lblInvite, lblOldInvite, lblInvitationStatus, lblInvitationStatusText, lblCountWarning;
 
     private Label lblError;
     private ListView<Invitation> lvInvitation;
@@ -101,7 +100,7 @@ public class EditServerScreenController implements Controller {
         this.lblInvitationStatusText = (Label) view.lookup("#lblInvitationStatusText");
         this.lblChangeName = (Label) view.lookup("#lblChangeName");
         this.lblInvite = (Label) view.lookup("#lblInvite");
-        this.lblOldInvit = (Label) view.lookup("#lblOldInvit");
+        this.lblOldInvite = (Label) view.lookup("#lblOldInvit");
         this.lblCountWarning = (Label) view.lookup("#lblCountWarning");
 
         this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
@@ -124,7 +123,7 @@ public class EditServerScreenController implements Controller {
         this.lblError.setText(LanguageResolver.getString(LanguageResolver.getString("SOMETHING_WENT_WRONG")));
         this.lblChangeName.setText(LanguageResolver.getString("CHANGE_NAME"));
         this.lblInvite.setText(LanguageResolver.getString("INVITE"));
-        this.lblOldInvit.setText(LanguageResolver.getString("OLD_INVITATIONS"));
+        this.lblOldInvite.setText(LanguageResolver.getString("OLD_INVITATIONS"));
         this.btnDeleteInvitation.setText(LanguageResolver.getString("DELETE_INVITATION"));
         this.btnDelete.setText(LanguageResolver.getString("DELETE_SERVER"));
         this.btnSave.setText(LanguageResolver.getString("SAVE"));

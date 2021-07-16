@@ -34,8 +34,8 @@ public class AudioChannelSubViewController implements Controller {
     private Button btnMuteAll;
     private Button btnLeave;
     private Label lblVoiceChannel;
-    private ImageView imgMuteYourself;
-    private ImageView imgUnMuteYourself;
+    private ImageView imgViewMuteYourself;
+    private ImageView imgViewUnMuteYourself;
     private final PropertyChangeListener allMute = this::allMuteChanged;
     private final PropertyChangeListener localUserMute = this::localUserMutedChanged;
 
@@ -59,12 +59,12 @@ public class AudioChannelSubViewController implements Controller {
         lblAudioChannelName.setText(channel.getName());
         lblUserName.setText(localUser.getName());
 
-        this.imgUnMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_MICRO))));
-        this.imgUnMuteYourself.setFitHeight(25);
-        this.imgUnMuteYourself.setFitWidth(25);
-        this.imgMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_NOMICRO))));
-        this.imgMuteYourself.setFitHeight(25);
-        this.imgMuteYourself.setFitWidth(25);
+        this.imgViewUnMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_MICRO))));
+        this.imgViewUnMuteYourself.setFitHeight(25);
+        this.imgViewUnMuteYourself.setFitWidth(25);
+        this.imgViewMuteYourself = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(IMAGES_PATH + IMAGE_NO_MICRO))));
+        this.imgViewMuteYourself.setFitHeight(25);
+        this.imgViewMuteYourself.setFitWidth(25);
 
         this.btnMuteYou.setOnAction(this::btnMuteYouOnClick);
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
@@ -92,10 +92,9 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     private void btnMuteAllOnClick(ActionEvent actionEvent) {
-        if(!localUser.isAllMuted()){
+        if (!localUser.isAllMuted()) {
             editor.getAudioManager().muteAllUsers(channel.getAudioMembers());
-        }
-        else{
+        } else {
             editor.getAudioManager().unMuteAllUsers(channel.getAudioMembers());
         }
         controller.getTvServerChannels().refresh();
@@ -103,10 +102,9 @@ public class AudioChannelSubViewController implements Controller {
 
     private void allMuteChanged(PropertyChangeEvent propertyChangeEvent) {
         ImageView icon;
-        if(localUser.isAllMuted()){
+        if (localUser.isAllMuted()) {
             icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound-off-red.png"))));
-        }
-        else{
+        } else {
             icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("../../view/images/sound.png"))));
         }
         icon.setFitHeight(20);
@@ -116,9 +114,9 @@ public class AudioChannelSubViewController implements Controller {
 
     private void localUserMutedChanged(PropertyChangeEvent propertyChangeEvent) {
         if (localUser.isMuted()) {
-            Platform.runLater(() -> this.btnMuteYou.setGraphic(this.imgMuteYourself));
+            Platform.runLater(() -> this.btnMuteYou.setGraphic(this.imgViewMuteYourself));
         } else {
-            Platform.runLater(() -> this.btnMuteYou.setGraphic(this.imgUnMuteYourself));
+            Platform.runLater(() -> this.btnMuteYou.setGraphic(this.imgViewUnMuteYourself));
         }
     }
 

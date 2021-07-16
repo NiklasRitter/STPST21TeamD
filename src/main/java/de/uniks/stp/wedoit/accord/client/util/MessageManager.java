@@ -17,7 +17,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_R
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAME_STAGE;
 
 public class MessageManager {
 
@@ -73,8 +73,8 @@ public class MessageManager {
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
-            }else{
-                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo(): message.getFrom(), GAME_INGAME);
+            } else {
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo() : message.getFrom(), GAME_INGAME);
                 editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
                 return true;
 
@@ -177,7 +177,8 @@ public class MessageManager {
      */
     public String getMessageFormatted(PrivateMessage message) {
         String time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(message.getTimestamp()));
-        if(message.getText().startsWith(GAME_PREFIX)) message.setText(message.getText().substring(GAME_PREFIX.length()));
+        if (message.getText().startsWith(GAME_PREFIX))
+            message.setText(message.getText().substring(GAME_PREFIX.length()));
         return ("[" + time + "] " + message.getFrom() + ": " + message.getText());
     }
 

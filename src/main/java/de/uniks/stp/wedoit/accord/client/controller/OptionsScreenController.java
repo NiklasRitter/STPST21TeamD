@@ -5,14 +5,10 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
-import javafx.beans.Observable;
-import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -66,7 +62,7 @@ public class OptionsScreenController implements Controller {
 
         this.btnDarkMode.setSelected(options.isDarkmode());
 
-        this.btnDarkMode.setOnAction(this::btnDarkmodeOnClick);
+        this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.logoutButton.setOnAction(this::logoutButtonOnClick);
         this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
 
@@ -80,8 +76,8 @@ public class OptionsScreenController implements Controller {
             sliderTextSize.setVisible(false);
             lbTextSize.setVisible(false);
             HBox parent1 = (HBox) sliderTextSize.getParent();
-            parent1.getChildren().removeAll(sliderTextSize,lbTextSize);
-        }else{
+            parent1.getChildren().removeAll(sliderTextSize, lbTextSize);
+        } else {
             sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
         }
 
@@ -93,7 +89,6 @@ public class OptionsScreenController implements Controller {
     private void sliderOnChange(MouseEvent e) {
         editor.saveFontSize((int) sliderTextSize.getValue());
     }
-
 
 
     private void createChoiceBoxItems() {
@@ -156,11 +151,11 @@ public class OptionsScreenController implements Controller {
     }
 
     /**
-     * Change the darkmode to the value of the CheckBox
+     * Change the dark mode to the value of the CheckBox
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
-    private void btnDarkmodeOnClick(ActionEvent actionEvent) {
+    private void btnDarkModeOnClick(ActionEvent actionEvent) {
         options.setDarkmode(btnDarkMode.isSelected());
     }
 

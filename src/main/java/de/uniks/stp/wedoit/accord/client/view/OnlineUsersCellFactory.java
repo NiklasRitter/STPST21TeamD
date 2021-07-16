@@ -13,7 +13,7 @@ import javafx.scene.shape.Circle;
 import javafx.util.Callback;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 
 public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell<User>> {
     private boolean isPrivate;
@@ -39,7 +39,7 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
             this.setGraphic(null);
             Circle circle = new Circle(4);
             circle.setFill(Color.TRANSPARENT);
-            if(isPrivate) this.getStyleClass().removeAll("newMessage");
+            if (isPrivate) this.getStyleClass().removeAll("newMessage");
 
             if (!empty && item != null) {
                 this.setGraphic(circle);
@@ -50,9 +50,9 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
                 if (!isPrivate && !stageManager.getEditor().getLocalUser().getName().equals(item.getName())) {
                     this.setContextMenu(createContextMenuWriteMembers(item));
                 }
-                if(item.isOnlineStatus()){
+                if (item.isOnlineStatus()) {
                     circle.setFill(Color.GREEN);
-                }else{
+                } else {
                     circle.setFill(Color.RED);
                 }
             } else {

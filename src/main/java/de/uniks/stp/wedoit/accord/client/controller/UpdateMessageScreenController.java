@@ -13,13 +13,12 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJI_PICKER_STAGE;
 
 public class UpdateMessageScreenController implements Controller {
 
@@ -30,7 +29,7 @@ public class UpdateMessageScreenController implements Controller {
     private TextArea tfUpdateMessage;
     private Button btnDiscard;
     private Button btnUpdateMessage;
-    private Label errorLabel;
+    private Label lblError;
     private Button btnEmoji;
     private MarkingController markingController;
     private VBox vboxMarkingSelection;
@@ -48,7 +47,7 @@ public class UpdateMessageScreenController implements Controller {
         btnEmoji = (Button) view.lookup("#btnEmoji");
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
-        errorLabel = (Label) view.lookup("#lblError");
+        lblError = (Label) view.lookup("#lblError");
         vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
 
         String messageText = "";
@@ -89,7 +88,7 @@ public class UpdateMessageScreenController implements Controller {
 
             }
         } else {
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE_CHAR_COUNT")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE_CHAR_COUNT")));
         }
     }
 
@@ -101,7 +100,7 @@ public class UpdateMessageScreenController implements Controller {
         if (status) {
             Platform.runLater(editor.getStageManager().getStage(StageEnum.POPUP_STAGE)::close);
         } else {
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE")));
         }
     }
 
@@ -124,7 +123,7 @@ public class UpdateMessageScreenController implements Controller {
         tfUpdateMessage = null;
         btnDiscard = null;
         btnUpdateMessage = null;
-        errorLabel = null;
+        lblError = null;
     }
 
 }

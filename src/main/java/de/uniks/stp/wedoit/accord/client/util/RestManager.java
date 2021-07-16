@@ -21,9 +21,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_AS_OWNER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class RestManager {
@@ -260,7 +261,8 @@ public class RestManager {
      * does a rest request to get channels of the given server and handles the response.
      * <p>
      * Adds the channels to the data model.
-     *  @param localUser  logged in local user
+     *
+     * @param localUser  logged in local user
      * @param server     server
      * @param controller controller in which the response need handled
      */
@@ -332,7 +334,7 @@ public class RestManager {
                 boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
-                JsonArray channelAudioMembers = createChannelAnswer.getJsonArray(AUDIOMEMBERS);
+                JsonArray channelAudioMembers = createChannelAnswer.getJsonArray(AUDIO_MEMBERS);
 
                 if (category.getId().equals(channelCategoryId)) {
                     Channel channel = editor.getChannelManager().haveChannel(channelId, channelName, channelType, channelPrivileged, category, channelMembers, channelAudioMembers);
@@ -376,7 +378,7 @@ public class RestManager {
                 boolean channelPrivileged = createChannelAnswer.getBoolean(PRIVILEGED);
                 String channelCategoryId = createChannelAnswer.getString(CATEGORY);
                 JsonArray channelMembers = createChannelAnswer.getJsonArray(MEMBERS);
-                JsonArray channelAudioMembers = createChannelAnswer.getJsonArray(AUDIOMEMBERS);
+                JsonArray channelAudioMembers = createChannelAnswer.getJsonArray(AUDIO_MEMBERS);
 
                 if (category.getId().equals(channelCategoryId)) {
                     Channel newChannel = editor.getChannelManager().updateChannel(server, channelId, channelName, channelType, channelPrivileged, channelCategoryId, channelMembers, channelAudioMembers);

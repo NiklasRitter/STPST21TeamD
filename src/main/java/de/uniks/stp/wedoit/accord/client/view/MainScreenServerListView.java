@@ -11,7 +11,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 
 public class MainScreenServerListView implements javafx.util.Callback<ListView<Server>, ListCell<Server>> {
 

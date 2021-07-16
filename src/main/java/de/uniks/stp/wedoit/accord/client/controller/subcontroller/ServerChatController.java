@@ -5,10 +5,12 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.model.Channel;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Message;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
-import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -30,7 +32,6 @@ import javax.json.JsonStructure;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -60,11 +61,10 @@ public class ServerChatController implements Controller {
     private ObservableList<Message> observableMessageList;
     private final PropertyChangeListener newMessagesListener = this::newMessage;
     private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
-    private ContextMenu localUserMessageContextMenu;
-    private ContextMenu userMessageContextMenu;
-    private VBox boxTextfield;
+    private ContextMenu contextMenuLocalUserMessage;
+    private ContextMenu contextMenuUserMessage;
+    private VBox vBoxTextField;
     private MarkingController markingController;
-
 
     /**
      * Create a new Controller
@@ -91,7 +91,7 @@ public class ServerChatController implements Controller {
      * Add necessary webSocketClients
      */
     public void init() {
-        this.boxTextfield = (VBox) view.lookup("#boxTextfield");
+        this.vBoxTextField = (VBox) view.lookup("#boxTextfield");
         this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
 
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
@@ -106,7 +106,7 @@ public class ServerChatController implements Controller {
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
 
-        this.markingController = new MarkingController(tfInputMessage, currentChannel, boxTextfield);
+        this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
         this.markingController.init();
 
         quoteVisible.getChildren().clear();
@@ -118,7 +118,6 @@ public class ServerChatController implements Controller {
 
         initToolTip();
     }
-
 
 
     public void initToolTip() {
@@ -140,10 +139,10 @@ public class ServerChatController implements Controller {
         this.btnCancelQuote.setOnAction(null);
         this.markingController.stop();
 
-        for (MenuItem item : localUserMessageContextMenu.getItems()) {
+        for (MenuItem item : contextMenuLocalUserMessage.getItems()) {
             item.setOnAction(null);
         }
-        for (MenuItem item : userMessageContextMenu.getItems()) {
+        for (MenuItem item : contextMenuUserMessage.getItems()) {
             item.setOnAction(null);
         }
         if (this.currentChannel != null) {
@@ -199,12 +198,12 @@ public class ServerChatController implements Controller {
         MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
         MenuItem updateMessage = new MenuItem("- " + LanguageResolver.getString("UPDATE_MESSAGE_CONTEXT"));
         MenuItem deleteMessage = new MenuItem("- " + LanguageResolver.getString("DELETE_MESSAGE"));
-        localUserMessageContextMenu = new ContextMenu();
-        localUserMessageContextMenu.setId("localUserMessageContextMenu");
-        localUserMessageContextMenu.getItems().add(copy);
-        localUserMessageContextMenu.getItems().add(quote);
-        localUserMessageContextMenu.getItems().add(updateMessage);
-        localUserMessageContextMenu.getItems().add(deleteMessage);
+        contextMenuLocalUserMessage = new ContextMenu();
+        contextMenuLocalUserMessage.setId("localUserMessageContextMenu");
+        contextMenuLocalUserMessage.getItems().add(copy);
+        contextMenuLocalUserMessage.getItems().add(quote);
+        contextMenuLocalUserMessage.getItems().add(updateMessage);
+        contextMenuLocalUserMessage.getItems().add(deleteMessage);
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         updateMessage.setOnAction((event) -> handleContextMenuClicked(UPDATE, lvTextChat.getSelectionModel().getSelectedItem()));
@@ -217,10 +216,10 @@ public class ServerChatController implements Controller {
     public void addUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
         MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
-        userMessageContextMenu = new ContextMenu();
-        userMessageContextMenu.setId("userMessageContextMenu");
-        userMessageContextMenu.getItems().add(copy);
-        userMessageContextMenu.getItems().add(quote);
+        contextMenuUserMessage = new ContextMenu();
+        contextMenuUserMessage.setId("userMessageContextMenu");
+        contextMenuUserMessage.getItems().add(copy);
+        contextMenuUserMessage.getItems().add(quote);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
     }
@@ -302,11 +301,11 @@ public class ServerChatController implements Controller {
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
             if (lvTextChat.getSelectionModel().getSelectedItem() != null) {
                 if (lvTextChat.getSelectionModel().getSelectedItem().getFrom().equals(editor.getLocalUser().getName())) {
-                    lvTextChat.setContextMenu(localUserMessageContextMenu);
-                    localUserMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                    lvTextChat.setContextMenu(contextMenuLocalUserMessage);
+                    contextMenuLocalUserMessage.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
                 } else {
-                    lvTextChat.setContextMenu(userMessageContextMenu);
-                    userMessageContextMenu.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                    lvTextChat.setContextMenu(contextMenuUserMessage);
+                    contextMenuUserMessage.show(lvTextChat, mouseEvent.getScreenX(), mouseEvent.getScreenY());
                 }
             }
         }
@@ -318,11 +317,11 @@ public class ServerChatController implements Controller {
      * @param keyEvent occurs on enter
      */
     private void tfInputMessageOnEnter(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.ENTER){
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
-            if(keyEvent.isShiftDown()){
+            if (keyEvent.isShiftDown()) {
                 tfInputMessage.appendText(System.getProperty("line.separator"));
-            }else{
+            } else {
                 sendMessage(this.tfInputMessage.getText());
             }
         }
@@ -330,7 +329,7 @@ public class ServerChatController implements Controller {
 
     }
 
-    private void sendMessage(String message){
+    private void sendMessage(String message) {
         this.tfInputMessage.clear();
 
         if (message != null && !message.isEmpty() && currentChannel != null) {
@@ -383,7 +382,7 @@ public class ServerChatController implements Controller {
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
 
-        this.markingController = new MarkingController(tfInputMessage, currentChannel, boxTextfield);
+        this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
         this.markingController.init();
     }
 

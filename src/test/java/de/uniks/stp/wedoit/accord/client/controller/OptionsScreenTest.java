@@ -19,7 +19,6 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,15 +67,6 @@ public class OptionsScreenTest extends ApplicationTest {
     private Options oldOptions;
     private PreferenceManager preferenceManager;
     private ResourceManager resourceManager;
-
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
 
     @Override
     public void start(Stage stage) {
@@ -173,7 +163,7 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertTrue(stageManager.getScene(StageEnum.STAGE).getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
-        Assert.assertEquals(stageManager.getPrefManager().loadDarkmode(), true);
+        Assert.assertEquals(stageManager.getPrefManager().loadDarkMode(), true);
     }
 
     @Test

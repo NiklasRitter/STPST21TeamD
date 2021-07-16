@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.OPTIONS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class PrivateChatsScreenController implements Controller {
@@ -37,7 +37,7 @@ public class PrivateChatsScreenController implements Controller {
     private final Editor editor;
     private Button btnOptions, btnPlay;
     private Button btnHome;
-    private TextArea tfPrivateChat;
+    private TextArea taPrivateChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
     private ObservableList<User> onlineUserObservableList;
@@ -78,7 +78,7 @@ public class PrivateChatsScreenController implements Controller {
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
-        this.tfPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
+        this.taPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
 
         this.setComponentsText();
 
@@ -101,7 +101,7 @@ public class PrivateChatsScreenController implements Controller {
         this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
         this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
         this.btnPlay.setText(LanguageResolver.getString("PLAY"));
-        this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
+        this.taPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
     }
 
     /**
@@ -327,6 +327,6 @@ public class PrivateChatsScreenController implements Controller {
     }
 
     public void setTfPrivateChatText(String text) {
-        this.tfPrivateChat.setText(text);
+        this.taPrivateChat.setText(text);
     }
 }

@@ -4,7 +4,6 @@ package de.uniks.stp.wedoit.accord.client.constants;
  * includes constants to create and handle incoming quotes
  */
 public class MessageOperations {
-
     // Constants for quote a message
     public static final String QUOTE_PREFIX = "###quoteINIT###";
     public static final String QUOTE_SUFFIX = "###quoteSTOP###";
@@ -14,5 +13,4 @@ public class MessageOperations {
     public static final String UPDATE = "update";
     public static final String DELETE = "delete";
     public static final String COPY = "copy";
-
 }

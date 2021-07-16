@@ -59,7 +59,7 @@ public class ConstantsClassesTest {
     @Test
     public void testStages() {
         Stages stages = new Stages();
-        Assert.assertEquals(stages.EMOJIPICKERSTAGE, "emojiPickerStage");
+        Assert.assertEquals(stages.EMOJI_PICKER_STAGE, "emojiPickerStage");
     }
 
     @Test

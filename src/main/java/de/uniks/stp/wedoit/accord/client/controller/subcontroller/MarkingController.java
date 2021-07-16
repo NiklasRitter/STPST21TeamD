@@ -18,25 +18,24 @@ import java.util.Comparator;
 
 public class MarkingController implements Controller {
 
-
     private final Channel currentChannel;
     private ObservableList<User> selectUserObservableList;
     private ListView<User> lvSelectUser;
-    private VBox boxTextfield;
+    private VBox vBoxTextField;
     private int caret = 0;
     private int textLength = 0;
     private ArrayList<AtPositions> atPositions = new ArrayList<>();
-    private TextArea textField;
+    private TextArea textArea;
 
-    public MarkingController(TextArea textfield, Channel channel, VBox boxTextfield) {
-        this.textField = textfield;
+    public MarkingController(TextArea textArea, Channel channel, VBox vBoxTextField) {
+        this.textArea = textArea;
         this.currentChannel = channel;
-        this.boxTextfield = boxTextfield;
+        this.vBoxTextField = vBoxTextField;
     }
 
     @Override
     public void init() {
-        this.textField.setOnKeyTyped(this::isMarking);
+        this.textArea.setOnKeyTyped(this::isMarking);
         lvSelectUser = new ListView<>();
         lvSelectUser.setVisible(false);
         lvSelectUser.setId("lvSelectUser");
@@ -44,18 +43,15 @@ public class MarkingController implements Controller {
 
     @Override
     public void stop() {
-
-        this.textField.setOnKeyTyped(null);
-
+        this.textArea.setOnKeyTyped(null);
         selectUserObservableList = null;
         lvSelectUser = null;
-        boxTextfield = null;
+        vBoxTextField = null;
         atPositions = null;
-        textField  = null;
+        textArea = null;
     }
 
     public static class AtPositions {
-
         int start;
         int end;
         boolean complete;
@@ -116,19 +112,18 @@ public class MarkingController implements Controller {
     }
 
     private void isMarking(KeyEvent keyEvent) {
+        caret = textArea.getCaretPosition();
 
-        caret = textField.getCaretPosition();
-
-        if (!textField.getText().contains("@")) {
+        if (!textArea.getText().contains("@")) {
             removeSelectionMenu();
             atPositions = new ArrayList<>();
-            textLength = textField.getLength();
+            textLength = textArea.getLength();
             return;
         }
 
         AtPositions atHit;
 
-        if (textField.getText().length() < textLength) {
+        if (textArea.getText().length() < textLength) {
             //character deleted
 
             atHit = checkAtHit(false);
@@ -140,14 +135,14 @@ public class MarkingController implements Controller {
                 shiftAtsLeft(atHit);
             }
 
-        } else if (textField.getText().length() > textLength) {
+        } else if (textArea.getText().length() > textLength) {
             //character added
 
             atHit = checkAtHit(true);
 
             if (atHit != null) {
                 if (keyEvent.getCharacter().equals("@") && currentChannel != null) {
-                    atHit = new AtPositions(textField.getCaretPosition() - 1, textField.getCaretPosition() - 1);
+                    atHit = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1);
                     atPositions.add(atHit);
                     checkMarkingPossible(atHit.getContent().substring(1), atHit);
                     shiftAtsRight(atHit);
@@ -159,7 +154,7 @@ public class MarkingController implements Controller {
 
                 AtPositions newAt = null;
                 if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
-                    newAt = new AtPositions(textField.getCaretPosition() - 1, textField.getCaretPosition() - 1);
+                    newAt = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1);
                     atPositions.add(newAt);
 
                     initLwSelectUser(lvSelectUser);
@@ -168,7 +163,7 @@ public class MarkingController implements Controller {
                 shiftAtsRight(newAt);
             }
         }
-        textLength = textField.getLength();
+        textLength = textArea.getLength();
     }
 
     private void shiftAtsRight(AtPositions currentAt) {
@@ -192,7 +187,7 @@ public class MarkingController implements Controller {
     private void deleteOrActivateAt(AtPositions at, boolean contentAdded) {
         if (!at.isComplete()) {
             if (contentAdded) {
-                at.setContent(at.getContent() + textField.getText().charAt(caret - 1));
+                at.setContent(at.getContent() + textArea.getText().charAt(caret - 1));
                 at.setEnd(at.getEnd() + 1);
                 shiftAtsRight(at);
                 checkMarkingPossible(at.getContent().substring(1), at);
@@ -209,10 +204,10 @@ public class MarkingController implements Controller {
                 }
             }
         } else {
-            String currentText = textField.getText();
+            String currentText = textArea.getText();
             String start = currentText.substring(0, at.getStart());
 
-            //check ob richtiger Start geschnitten
+            //check if correct start is cut
             String end;
             if (contentAdded) {
                 end = currentText.substring(at.getEnd() + 2);
@@ -220,8 +215,8 @@ public class MarkingController implements Controller {
                 end = currentText.substring(at.getEnd());
             }
 
-            textField.setText(start + end);
-            textField.positionCaret(start.length());
+            textArea.setText(start + end);
+            textArea.positionCaret(start.length());
 
             for (AtPositions atToShift : atPositions) {
                 if (atToShift != at && atToShift.getStart() > at.getEnd()) {
@@ -268,7 +263,7 @@ public class MarkingController implements Controller {
 
         this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
 
-        boxTextfield.getChildren().add(lvSelectUser);
+        vBoxTextField.getChildren().add(lvSelectUser);
 
         lvSelectUser.setMinHeight(45);
         lvSelectUser.setPrefHeight(45);
@@ -297,7 +292,7 @@ public class MarkingController implements Controller {
         if (mouseEvent.getClickCount() == 1) {
 
             User selectedUser = lvSelectUser.getSelectionModel().getSelectedItem();
-            String currentText = textField.getText();
+            String currentText = textArea.getText();
 
             int correspondingAtPosition = -1;
 
@@ -322,7 +317,7 @@ public class MarkingController implements Controller {
                     String firstPart = currentText.substring(0, correspondingAtPosition);
                     String secondPart = currentText.substring(caret);
 
-                    textField.setText(firstPart + "@" + selectedUser.getName() + secondPart);
+                    textArea.setText(firstPart + "@" + selectedUser.getName() + secondPart);
                     correspondingAt.setEnd(correspondingAt.getStart() + selectedUser.getName().length());
                     correspondingAt.setContent("@" + selectedUser.getName());
 
@@ -331,17 +326,17 @@ public class MarkingController implements Controller {
 
                     for (AtPositions atToShift : atPositions) {
                         if (atToShift.getStart() > correspondingAt.getStart()) {
-                            for (int i = 0; i < textField.getText().length() - currentText.length(); i++) {
+                            for (int i = 0; i < textArea.getText().length() - currentText.length(); i++) {
                                 atToShift.shiftRight();
                             }
                         }
                     }
 
-                    textField.positionCaret(correspondingAt.getEnd() + 1);
+                    textArea.positionCaret(correspondingAt.getEnd() + 1);
                 }
             }
         }
-        textLength = textField.getLength();
+        textLength = textArea.getLength();
     }
 
     private void checkMarkingPossible(String text, AtPositions at) {
@@ -375,13 +370,13 @@ public class MarkingController implements Controller {
     }
 
     private void removeSelectionMenu() {
-        boxTextfield.getChildren().remove(lvSelectUser);
+        vBoxTextField.getChildren().remove(lvSelectUser);
         lvSelectUser.setVisible(false);
         this.lvSelectUser.setOnMousePressed(null);
     }
 
     private void showSelectionMenu() {
-        boxTextfield.getChildren().add(lvSelectUser);
+        vBoxTextField.getChildren().add(lvSelectUser);
         lvSelectUser.setVisible(true);
         this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
     }

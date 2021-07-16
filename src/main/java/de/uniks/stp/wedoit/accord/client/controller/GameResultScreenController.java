@@ -10,16 +10,15 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+
 import javax.json.JsonObject;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_ACCEPTS;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_INVITE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
-public class GameResultScreenController implements Controller{
+public class GameResultScreenController implements Controller {
 
     private Button btnQuit, btnPlayAgain;
     private Label lbOutcome;
@@ -28,18 +27,17 @@ public class GameResultScreenController implements Controller{
     private final Editor editor;
     private final User opponent;
     private final Boolean isWinner;
-    private final PropertyChangeListener chatListener = this::newMessage;
 
     /**
      * Create a new Controller
      *
-     * @param view   The view this Controller belongs to
-     * @param model  The model this Controller belongs to
+     * @param view     The view this Controller belongs to
+     * @param model    The model this Controller belongs to
      * @param opponent The Opponent who the localUser is playing against
      * @param isWinner indicates if the LocalUser is the winner
-     * @param editor The editor of the Application
+     * @param editor   The editor of the Application
      */
-    public GameResultScreenController(Parent view, LocalUser model, User opponent, Boolean isWinner, Editor editor){
+    public GameResultScreenController(Parent view, LocalUser model, User opponent, Boolean isWinner, Editor editor) {
         this.view = view;
         this.localUser = model;
         this.opponent = opponent;
@@ -60,11 +58,11 @@ public class GameResultScreenController implements Controller{
         btnQuit = (Button) view.lookup("#btnQuit");
 
         this.setComponentsText();
-        if(isWinner == null){
+        if (isWinner == null) {
             lbOutcome.setText(LanguageResolver.getString("OPPONENT_LEFT"));
-        }else if(isWinner){
+        } else if (isWinner) {
             lbOutcome.setText(LanguageResolver.getString("YOU_WON"));
-        }else{
+        } else {
             lbOutcome.setText(LanguageResolver.getString("SECOND_PLACE"));
         }
 
@@ -84,11 +82,11 @@ public class GameResultScreenController implements Controller{
      * @param actionEvent occurs when the Play Again button is pressed
      */
     private void playAgainOnClick(ActionEvent actionEvent) {
-        if(this.localUser.getGameInvites().contains(opponent)){
+        if (this.localUser.getGameInvites().contains(opponent)) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_ACCEPTS);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             stop();
-        }else{
+        } else {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_INVITE);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         }
@@ -101,14 +99,6 @@ public class GameResultScreenController implements Controller{
      */
     private void redirectToPrivateChats(ActionEvent actionEvent) {
         this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
-    }
-
-
-    private void newMessage(PropertyChangeEvent event) {
-        if (event.getNewValue() != null) {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_CLOSE);
-            editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
-        }
     }
 
     /**
