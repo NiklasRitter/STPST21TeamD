@@ -87,7 +87,7 @@ application {
     mainClassName = 'de.uniks.stp.wedoit.accord.client.Launcher'
 }
 
-/*test {
+test {
     systemProperty 'testfx.robot', 'glass'
     systemProperty 'testfx.headless', 'true'
     systemProperty 'prism.order', 'sw'
@@ -95,7 +95,7 @@ application {
     systemProperty 'java.awt.headless', 'true'
     minHeapSize = "128m"
     maxHeapSize = "1024m"
-}*/
+}
 
 /* DO NOT CHANGE THIS PART */
 jacocoTestReport {

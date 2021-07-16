@@ -45,6 +45,7 @@ public class LoginScreenController implements Controller {
     private Pane pnlSignIn;
     private Label lblSignIn;
     private TextField pwConfirmPW;
+    private boolean isLogin;
     //    private TextField tfUserNameRegister;
 //    private TextField pwUserPwRegister;
 //    private Button btnSwitchLogin;
@@ -107,6 +108,10 @@ public class LoginScreenController implements Controller {
         this.pwUserPw.setOnKeyPressed(this::pwUserPwOnEnter);
         this.pwConfirmPW.setOnKeyPressed(this::pwConfirmPWPwOnEnter);
 
+        this.tfUserName.requestFocus();
+
+        this.isLogin = true;
+        this.setComponentsTextSignIn();
 //        this.btnRegister = (Button) view.lookup("#btnRegister");
 
 
@@ -125,8 +130,7 @@ public class LoginScreenController implements Controller {
 //        this.lblEnterPw = (Label) view.lookup("#lblEnterPw");
 
 
-        this.tfUserName.requestFocus();
-        this.setComponentsTextSignIn();
+
 
         // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
@@ -152,6 +156,7 @@ public class LoginScreenController implements Controller {
      */
     private void setComponentsTextSignIn() {
         this.lblSignIn.setText(LanguageResolver.getString("LOGIN"));
+        this.lblSignIn.setTooltip(new Tooltip(LanguageResolver.getString("LOGIN")));
         this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
         this.pwConfirmPW.setVisible(false);
@@ -182,6 +187,7 @@ public class LoginScreenController implements Controller {
 
     private void setComponentsTextSignUp() {
         this.lblSignIn.setText(LanguageResolver.getString("REGISTER"));
+        this.lblSignIn.setTooltip(new Tooltip(LanguageResolver.getString("REGISTER")));
         this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
         this.pwConfirmPW.setPromptText(LanguageResolver.getString("CONFIRM_PASSWORD"));
@@ -229,7 +235,7 @@ public class LoginScreenController implements Controller {
     private void pwUserPwOnEnter(KeyEvent keyEvent) {
         if(keyEvent.getCode() == KeyCode.ENTER){
             keyEvent.consume();
-            if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
+            if (isLogin) {
                 loginButtonAction(new ActionEvent());
             }
             else if (lblSignIn.getText().equals(LanguageResolver.getString("REGISTER"))) {
@@ -304,7 +310,7 @@ public class LoginScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void loginButtonAction(ActionEvent actionEvent) {
-        if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
+        if (isLogin) {
             login();
         } else {
             register();
@@ -470,10 +476,12 @@ public class LoginScreenController implements Controller {
     }
 
     private void btnSwitchRegisterOnClick(ActionEvent actionEvent) {
-        if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
+        if (isLogin) {
             setComponentsTextSignUp();
+            isLogin = false;
         } else {
             setComponentsTextSignIn();
+            isLogin = true;
         }
     }
 
@@ -485,13 +493,13 @@ public class LoginScreenController implements Controller {
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                if (lblSignIn.getText().equals(LanguageResolver.getString("LOGIN"))) {
+                if (isLogin) {
                     setComponentsTextSignIn();
                 } else {
                     setComponentsTextSignUp();
                 }
-                initTooltips();
                 editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("LOGIN"));
+                initTooltips();
             }
         });
     }

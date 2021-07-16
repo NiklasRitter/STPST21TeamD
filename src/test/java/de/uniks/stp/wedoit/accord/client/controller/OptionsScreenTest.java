@@ -174,8 +174,6 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Test
     public void testChoiceBoxLanguage() {
-        Label lblEnterUserName = lookup("#lblSignIn").query();
-        Assert.assertEquals(lblEnterUserName.getText(), "Login");
         Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
         // open options screen
         directToOptionsScreen();
@@ -194,7 +192,7 @@ public class OptionsScreenTest extends ApplicationTest {
         clickOn(choiceBoxLanguage);
 
         Platform.runLater(() -> {
-            //choice german as language
+            //choose german as language
             choiceBoxLanguage.getSelectionModel().select(1);
         });
 
@@ -207,8 +205,6 @@ public class OptionsScreenTest extends ApplicationTest {
             popupStage.hide();
         });
 
-        WaitForAsyncUtils.waitForFxEvents();
-
         directToMainScreen();
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -220,7 +216,7 @@ public class OptionsScreenTest extends ApplicationTest {
         directToOptionsScreen();
 
         Platform.runLater(() -> {
-            //choice english as language
+            //choose english as language
             choiceBoxLanguage.getSelectionModel().select(0);
         });
 
