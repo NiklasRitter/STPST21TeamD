@@ -370,6 +370,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
         clickOn("#tfEnterPrivateChat");
+
         String message = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Eopsaltria_australis_-_Mogo_Campground.jpg/1200px-Eopsaltria_australis_-_Mogo_Campground.jpg";
         ((TextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
         press(KeyCode.ENTER);
@@ -384,8 +385,71 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
         Assert.assertEquals(message, lwPrivateChat.getItems().get(lwNewestItem).getText());
-
     }
+
+    @Test
+    public void testGifMediaMessage() {
+        initUserListView();
+
+        Label lblSelectedUser = lookup("#lblSelectedUser").query();
+        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+
+        lwOnlineUsers.getSelectionModel().select(0);
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
+
+        clickOn("#lwOnlineUsers");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(user.getName(), lblSelectedUser.getText());
+
+        clickOn("#tfEnterPrivateChat");
+
+        String message = "https://media.giphy.com/media/AibXOtCbZgwChaOWcz/source.gif";
+        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
+        press(KeyCode.ENTER);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), message);
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+
+        WaitForAsyncUtils.waitForFxEvents();
+        int lwNewestItem = lwPrivateChat.getItems().size() - 1;
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
+        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
+        Assert.assertEquals(message, lwPrivateChat.getItems().get(lwNewestItem).getText());
+    }
+
+    @Test
+    public void testMp4MediaMessage() {
+        initUserListView();
+
+        Label lblSelectedUser = lookup("#lblSelectedUser").query();
+        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+
+        lwOnlineUsers.getSelectionModel().select(0);
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
+
+        clickOn("#lwOnlineUsers");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(user.getName(), lblSelectedUser.getText());
+
+        clickOn("#tfEnterPrivateChat");
+
+        String message = "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4";
+        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
+        press(KeyCode.ENTER);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), message);
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(lwPrivateChat.getChildrenUnmodifiable().size(),1);
+    }
+
 
     @Test
     public void testYtVideoMessage() {
@@ -404,6 +468,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
         clickOn("#tfEnterPrivateChat");
+
         String message = "https://youtu.be/NxvQPzrg2Wg";
         ((TextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
         press(KeyCode.ENTER);
