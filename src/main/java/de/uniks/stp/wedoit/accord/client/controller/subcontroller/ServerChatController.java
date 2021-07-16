@@ -28,7 +28,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.fxmisc.richtext.GenericStyledArea;
 import org.reactfx.util.Either;
 
@@ -103,20 +105,22 @@ public class ServerChatController implements Controller {
      */
     public void init() {
         this.vBoxTextField = (VBox) view.lookup("#boxTextfield");
-        //this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
-
-        this.vBoxTextField = (VBox) view.lookup("#boxTextfield");
-        this.lbChannelName = (Label) view.lookup("#lbChannelName");
-        //this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
-
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
+        //this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
+
+        HBox textHBox = (HBox) view.lookup("#textHBox");
+
         richText = new RichText();
         GenericStyledArea<ParStyle, Either<String, LinkedImage>, TextStyle> area = richText.getArea();
-        VBox v = (VBox) this.lvTextChat.getParent();
-        v.getChildren().add(area);
         this.tfInputMessage = area;
+        tfInputMessage.setPrefWidth(250);
+        tfInputMessage.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        tfInputMessage.setWrapText(true);
 
-        this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
+        textHBox.getChildren().add(0, this.tfInputMessage);
+
+        //tfInputMessage.getStyleClass().add("emoji");
+
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
         this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");

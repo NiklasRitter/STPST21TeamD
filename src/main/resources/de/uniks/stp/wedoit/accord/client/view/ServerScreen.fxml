@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -17,7 +16,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <children>
@@ -118,9 +117,8 @@
                               </HBox>
                      </children>
                   </VBox>
-                        <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
+                        <HBox id="textHBox" alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
-                        <TextArea id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />

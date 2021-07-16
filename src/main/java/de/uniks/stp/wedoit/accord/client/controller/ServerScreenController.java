@@ -11,6 +11,10 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.richtext.LinkedImage;
+import de.uniks.stp.wedoit.accord.client.richtext.ParStyle;
+import de.uniks.stp.wedoit.accord.client.richtext.RichText;
+import de.uniks.stp.wedoit.accord.client.richtext.TextStyle;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
@@ -19,7 +23,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.fxmisc.richtext.GenericStyledArea;
+import org.reactfx.util.Either;
 
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
@@ -47,7 +55,7 @@ public class ServerScreenController implements Controller {
     private Button btnHome;
     private Button btnEdit;
     private Label lbServerName, lblServerUsers, lbChannelName;
-    private TextArea tfInputMessage;
+    private GenericStyledArea tfInputMessage;
     private ListView<User> lvServerUsers;
 
     // Websockets
@@ -63,6 +71,7 @@ public class ServerScreenController implements Controller {
     private final ServerChatController serverChatController;
     private VBox audioChannelSubViewContainer;
     private AudioChannelSubViewController audioChannelSubViewController;
+    private RichText richText;
 
     /**
      * Create a new Controller
@@ -94,8 +103,6 @@ public class ServerScreenController implements Controller {
     public void init() {
         // Load all view references
         this.editor.setCurrentServer(server);
-        this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
-
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEdit = (Button) view.lookup("#btnEdit");
@@ -103,6 +110,15 @@ public class ServerScreenController implements Controller {
         this.lblServerUsers = (Label) view.lookup("#lblServerUsers");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
+
+        HBox textHBox = (HBox) view.lookup("#textHBox");
+
+        richText = new RichText();
+        this.tfInputMessage = richText.getArea();
+        tfInputMessage.setPrefWidth(250);
+        tfInputMessage.setPrefHeight(Region.USE_COMPUTED_SIZE);
+
+        textHBox.getChildren().add(0, this.tfInputMessage);
 
         this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
         this.audioChannelSubViewContainer.getChildren().clear();
@@ -149,7 +165,7 @@ public class ServerScreenController implements Controller {
     private void setComponentsText() {
         this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
-        this.tfInputMessage.setPromptText(LanguageResolver.getString("SELECT_A_CHANNEL"));
+        //this.tfInputMessage.setPromptText(LanguageResolver.getString("SELECT_A_CHANNEL"));
     }
 
     /**

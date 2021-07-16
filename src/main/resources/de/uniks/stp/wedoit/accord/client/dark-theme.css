@@ -118,3 +118,7 @@
 .marked_message{
     -fx-background-color: #F7FE2E;
 }
+
+.richTextArea {
+    -fx-font-size: 12pt;
+}
