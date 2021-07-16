@@ -48,7 +48,7 @@ public class StageManager extends Application {
             Scene currentScene = sceneMap.get(controller.stage);
 
             Stage currentStage = stageMap.get(controller.stage);
-            
+
 
             if(currentScene != null) currentScene.setRoot(root);
             else sceneMap.put(controller.stage, new Scene(root));

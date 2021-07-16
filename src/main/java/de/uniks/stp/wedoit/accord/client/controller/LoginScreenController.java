@@ -295,10 +295,9 @@ public class LoginScreenController implements Controller {
             });
         } else {
             Platform.runLater(() -> {
+                this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
                 this.editor.getStageManager().getStage(StageEnum.STAGE).setResizable(true);
                 this.editor.getStageManager().getStage(StageEnum.STAGE).setMaximized(true);
-                this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
-
             });
         }
     }
