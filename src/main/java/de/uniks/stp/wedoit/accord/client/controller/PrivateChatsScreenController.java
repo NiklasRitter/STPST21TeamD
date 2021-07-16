@@ -300,6 +300,7 @@ public class PrivateChatsScreenController implements Controller {
                 editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
                 privateChatController.initToolTip();
                 privateChatController.addMessageContextMenu();
+                privateChatController.getLwPrivateChat().refresh();
             }
         });
     }
