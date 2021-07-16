@@ -96,10 +96,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             int fontSize = stageManager.getEditor().getFontSize();
             parameters.setFont(Font.font("System", FontWeight.NORMAL, fontSize));
             if (stageManager.getPrefManager().loadDarkMode()) {
-                System.out.println("darkmode");
                 parameters.setTextColor(Color.valueOf("#ADD8e6"));
             } else {
-                System.out.println("nicht darkmode");
                 parameters.setTextColor(Color.valueOf("#000000"));
             }
 
