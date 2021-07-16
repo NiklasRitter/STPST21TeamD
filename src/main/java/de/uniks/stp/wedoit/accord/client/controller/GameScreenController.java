@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -61,7 +63,7 @@ public class GameScreenController implements Controller {
      * setup score listener
      */
     public void init() {
-        editor.getStageManager().getGameStage().setOnCloseRequest((e) -> {
+        editor.getStageManager().getStage(StageEnum.GAME_STAGE).setOnCloseRequest((e) -> {
             stop();
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_CLOSE);
             editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
@@ -180,9 +182,9 @@ public class GameScreenController implements Controller {
      * checks weather one of the player has won,
      * in that case they get redirected to the result screen
      */
-    private void handleGameDone() {
-        if (oppScore.get() == 3 || ownScore.get() == 3) {
-            this.editor.getStageManager().initView(GAME_STAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, opponent, ownScore.get() == 3);
+    private void handleGameDone(){
+        if(oppScore.get() == 3 || ownScore.get() == 3){
+            this.editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, opponent, ownScore.get() == 3);
             stop();
         }
     }

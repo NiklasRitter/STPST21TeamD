@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
@@ -245,14 +246,10 @@ public class ServerChatController implements Controller {
                 quoteVisible.getChildren().add(btnCancelQuote);
             }
             if (menu.equals(UPDATE)) {
-                this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("UPDATE_MESSAGE"),
-                        "UpdateMessageScreen", UPDATE_MESSAGE_SCREEN_CONTROLLER,
-                        false, message, null);
+                this.editor.getStageManager().initView(ControllerEnum.UPDATE_MESSAGE_SCREEN, message, null);
             }
             if (menu.equals(DELETE)) {
-                this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("ATTENTION"),
-                        "AttentionScreen", ATTENTION_SCREEN_CONTROLLER,
-                        false, message, null);
+                this.editor.getStageManager().initView(ControllerEnum.ATTENTION_SCREEN, message, null);
             }
             if (menu.equals(COPY)) {
                 editor.copyToSystemClipBoard(message.getText());
@@ -284,7 +281,7 @@ public class ServerChatController implements Controller {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (this.currentChannel != null) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(EMOJI_PICKER_STAGE, LanguageResolver.getString("EMOJI_PICKER"), "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfInputMessage, pos);
+            this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, tfInputMessage, pos);
         }
     }
 
@@ -401,7 +398,7 @@ public class ServerChatController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
         }
     }
 

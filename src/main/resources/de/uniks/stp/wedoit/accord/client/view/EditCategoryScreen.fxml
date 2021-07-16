@@ -20,15 +20,8 @@
                         <Insets top="2.0"/>
                     </HBox.margin>
                 </Label>
-                <TextField id="tfCategoryName" prefWidth="200.0">
-                    <HBox.margin>
-                        <Insets/>
-                    </HBox.margin>
-                </TextField>
+                <TextField id="tfCategoryName" prefWidth="200.0"/>
             </children>
-            <VBox.margin>
-                <Insets/>
-            </VBox.margin>
         </HBox>
         <Label id="lblError" textFill="RED"/>
         <HBox>

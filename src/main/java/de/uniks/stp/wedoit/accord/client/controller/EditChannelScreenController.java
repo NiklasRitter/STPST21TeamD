@@ -2,6 +2,8 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
@@ -119,7 +121,7 @@ public class EditChannelScreenController implements Controller {
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
         //Adjusts the size of the stage to its dynamically added content
-        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
     }
 
     /**
@@ -135,7 +137,7 @@ public class EditChannelScreenController implements Controller {
             channel.setPrivileged(false);
             lblMembers.setVisible(false);
         }
-        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
     }
 
     /**
@@ -224,7 +226,7 @@ public class EditChannelScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void deleteChannelButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("ATTENTION"), "AttentionScreen", ATTENTION_SCREEN_CONTROLLER, false, channel, null);
+        this.editor.getStageManager().initView(ControllerEnum.ATTENTION_SCREEN, channel, null);
     }
 
     /**
