@@ -6,6 +6,8 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -14,6 +16,7 @@ import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class JsonUtilTest {
 
     private JsonUtil jsonUtil;
