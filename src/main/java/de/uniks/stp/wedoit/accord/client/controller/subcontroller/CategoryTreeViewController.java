@@ -44,6 +44,7 @@ public class CategoryTreeViewController implements Controller {
     private final PropertyChangeListener categoriesListener = this::handleCategoryChange;
     private final PropertyChangeListener channelListener = this::handleChannelChange;
     private final PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
+    private final PropertyChangeListener userListViewListener = this::changeUserList;
 
     public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
@@ -87,6 +88,7 @@ public class CategoryTreeViewController implements Controller {
         for (Channel channel : channelMap.values()) {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
+            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         }
         for (Category category : server.getCategories()) {
             category.listeners().removePropertyChangeListener(Category.PROPERTY_NAME, categoriesListener);
@@ -154,8 +156,8 @@ public class CategoryTreeViewController implements Controller {
                     if (channel.getType().equals(TEXT)) {
                         channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
                         controller.getServerChatController().initChannelChat(channel);
-                        controller.refreshLvUsers(channel);
                     }
+                    controller.refreshLvUsers(channel);
                 } else if (mouseEvent.getClickCount() == 2) {
                     if (channel.getType().equals(AUDIO)) {
                         if (localUser.getAudioChannel() == null) {
@@ -166,7 +168,6 @@ public class CategoryTreeViewController implements Controller {
                         } else {
                             editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
                         }
-                        controller.refreshLvUsers(channel);
                     }
                 }
             }
@@ -181,6 +182,17 @@ public class CategoryTreeViewController implements Controller {
     private void handleChannelReadChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
             Platform.runLater(() -> tvServerChannels.refresh());
+        }
+    }
+
+    /**
+     * rebuilds the user list
+     */
+    private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
+            if (propertyChangeEvent.getSource() instanceof Channel) {
+                Platform.runLater(() -> controller.refreshLvUsers((Channel) propertyChangeEvent.getSource()));
+            }
         }
     }
 
@@ -292,7 +304,7 @@ public class CategoryTreeViewController implements Controller {
     public void addChannelToTreeView(Channel channel, TreeItem<Object> categoryItem) {
         channelMap.put(channel.getId(), channel);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_READ, this.channelReadListener);
-//        channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
+        channel.listeners().addPropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
         channel.listeners().addPropertyChangeListener(Channel.PROPERTY_AUDIO_MEMBERS, this.audioMemberListener);
         TreeItem<Object> channelItem = new TreeItem<>(channel);

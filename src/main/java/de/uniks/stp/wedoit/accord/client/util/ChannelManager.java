@@ -48,8 +48,6 @@ public class ChannelManager {
             channel = new Channel();
         }
         channel.setName(name).setPrivileged(privileged).setType(type).setId(id).setCategory(category).setRead(true);
-        channel.withoutMembers(new ArrayList<>(channel.getMembers()));
-        channel.withoutAudioMembers(new ArrayList<>(channel.getAudioMembers()));
 
         if(members != null){
             List<String> membersIds = new ArrayList<>();
@@ -57,23 +55,46 @@ public class ChannelManager {
                 membersIds.add(members.getString(index));
             }
             if (privileged) {
+                for(User user : channel.getMembers()){
+                    if(!membersIds.contains(user.getId())){
+                        // Todo
+//                        if(user.getId().equals(editor.getLocalUser().getId()) && editor.getLocalUser().getAudioChannel() == channel){
+//                            editor.getAudioManager().closeAudioConnection();
+//                        }
+                        channel.withoutMembers(user);
+                    }
+                }
                 for (User user : server.getMembers()) {
                     if (membersIds.contains(user.getId())) {
                         channel.withMembers(user);
                     }
                 }
             }
+            else{
+                channel.withoutMembers(new ArrayList<>(channel.getMembers()));
+            }
+        }
+        else{
+            channel.withoutMembers(new ArrayList<>(channel.getMembers()));
         }
         if(audioMembers != null){
             List<String> membersAudioIds = new ArrayList<>();
             for (int index = 0; index < audioMembers.toArray().length; index++) {
                 membersAudioIds.add(audioMembers.getString(index));
             }
+            for(User user : channel.getAudioMembers()){
+                if(!membersAudioIds.contains(user.getId())){
+                    channel.withoutAudioMembers(user);
+                }
+            }
             for (User user : server.getMembers()) {
                 if (membersAudioIds.contains(user.getId())) {
                     channel.withAudioMembers(user);
                 }
             }
+        }
+        else{
+            channel.withoutAudioMembers(new ArrayList<>(channel.getAudioMembers()));
         }
         return channel;
     }
