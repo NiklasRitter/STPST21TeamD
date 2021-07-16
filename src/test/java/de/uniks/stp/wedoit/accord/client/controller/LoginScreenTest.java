@@ -1,6 +1,5 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
-import de.uniks.stp.wedoit.accord.client.Launcher;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -12,15 +11,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -289,7 +285,6 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
-
 
 
     @Test

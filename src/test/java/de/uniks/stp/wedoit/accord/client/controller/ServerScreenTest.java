@@ -18,20 +18,16 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.service.query.NodeQuery;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.*;
@@ -41,7 +37,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -976,7 +972,7 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     private void openAttentionScreen() {
-        Platform.runLater(() -> this.stageManager.initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null));
+        Platform.runLater(() -> this.stageManager.initView(POPUP_STAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null));
     }
 
     @Test
@@ -1252,7 +1248,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(phil.getPrivateChat().getMessages().size(), 0);
 
-        Platform.runLater(() -> stageManager.initView(POPUPSTAGE, phil.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, phil));
+        Platform.runLater(() -> stageManager.initView(POPUP_STAGE, phil.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, phil));
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(stageManager.getPopupStage().getTitle(), phil.getName());
 

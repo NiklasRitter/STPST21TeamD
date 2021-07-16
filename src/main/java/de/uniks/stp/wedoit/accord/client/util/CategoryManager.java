@@ -27,7 +27,7 @@ public class CategoryManager {
 
         for (Category category : server.getCategories()) {
             if (category.getId().equals(id)) {
-                if(name != null){
+                if (name != null) {
                     category.setName(name);
                 }
                 return category;
@@ -39,7 +39,8 @@ public class CategoryManager {
     /**
      * This method gives the the server categories which are created with the data of the JSONArray
      * The categories dont have channels.
-     *  @param server                  server which gets the categories
+     *
+     * @param server                  server which gets the categories
      * @param serversCategoryResponse server answer for categories of the server
      */
     public void haveCategories(Server server, JsonArray serversCategoryResponse) {

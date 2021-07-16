@@ -11,7 +11,7 @@ public class ControllerNames {
     public static final String PRIVATE_CHATS_SCREEN_CONTROLLER = "privateChatsScreenController";
     public static final String SERVER_SCREEN_CONTROLLER = "serverScreenController";
     public static final String OPTIONS_SCREEN_CONTROLLER = "optionsScreenController";
-    public static final String JOIN_SERVER_SCREEN_CONTROLLER= "joinServerScreenController";
+    public static final String JOIN_SERVER_SCREEN_CONTROLLER = "joinServerScreenController";
     public static final String GAME_SCREEN_CONTROLLER = "gameScreenController";
     public static final String GAME_RESULT_SCREEN_CONTROLLER = "gameResultScreenController";
     public static final String CREATE_CATEGORY_SCREEN_CONTROLLER = "createCategoryScreenController";
