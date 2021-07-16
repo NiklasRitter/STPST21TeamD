@@ -94,7 +94,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 setWrapText(true);
 
                 time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
-
+                if(item.getText().startsWith(GAME_PREFIX)) item.setText(item.getText().substring(GAME_PREFIX.length()));
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     setUpMedia(item);
 
