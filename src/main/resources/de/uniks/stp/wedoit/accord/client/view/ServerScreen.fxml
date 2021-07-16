@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -23,18 +23,13 @@
             <children>
                 <VBox alignment="CENTER" maxWidth="75.0" minWidth="75.0" spacing="20.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
+                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;" styleClass="sidebar-Button">
                             <textFill>
-                                <LinearGradient endX="1.0" endY="1.0">
+                                <LinearGradient>
                                     <stops>
-                                        <Stop>
-                                            <color>
-                                                <Color />
-                                            </color>
-                                        </Stop>
                                         <Stop offset="1.0">
                                             <color>
-                                                <Color red="1.0" green="1.0" blue="1.0" />
+                                                <Color blue="1.0" green="1.0" red="1.0" />
                                             </color>
                                         </Stop>
                                     </stops>
@@ -42,30 +37,24 @@
                             </textFill>
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@images/options.png" />
-                                    </image>
+                                    <Image url="@images/options.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
+                        <Button id="btnHome" mnemonicParsing="false" styleClass="sidebar-Button" VBox.vgrow="ALWAYS">
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@images/home.png" />
-                                    </image>
+                                    <Image url="@images/home.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button id="btnEdit" mnemonicParsing="false" prefHeight="40.0" prefWidth="48.0" styleClass="styleButton" textAlignment="CENTER">
+                        <Button id="btnEdit" mnemonicParsing="false" prefHeight="40.0" prefWidth="48.0" styleClass="sidebar-Button" textAlignment="CENTER">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@images/edit.png" />
-                                    </image>
+                                    <Image url="@images/edit.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -84,7 +73,7 @@
                 </VBox>
                 <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="150.0" prefHeight="41.0" prefWidth="150.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lbServerName" prefWidth="200.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
+                        <Label id="lbServerName" prefWidth="200.0" styleClass="styleTop" VBox.vgrow="ALWAYS">
                             <padding>
                                 <Insets left="2.0" />
                             </padding>
@@ -100,44 +89,45 @@
                   </VBox>
                     </children>
                 </VBox>
-                <VBox alignment="CENTER" minWidth="250.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+                <VBox alignment="CENTER" minWidth="250.0" styleClass="styleTop" HBox.hgrow="ALWAYS">
                     <children>
                         <Label id="lbChannelName" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <font>
                                 <Font name="System Bold Italic" size="13.0" />
                             </font>
                         </Label>
-                        <ListView id="lvTextChat" styleClass="styleBorder" VBox.vgrow="ALWAYS" />
-                        <HBox id="quoteVisible" alignment="CENTER_LEFT">
-                            <children>
-                                <Label id="lblQuote">
-                                    <font>
-                                        <Font size="10.0" />
-                                    </font>
-                                    <HBox.margin>
-                                        <Insets right="5.0" />
-                                    </HBox.margin>
-                                </Label>
-                                <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
-                                    <font>
-                                        <Font size="8.0" />
-                                    </font>
-                                </Button>
-                            </children>
-                        </HBox>
+                        <ListView id="lvTextChat" styleClass="listView1" VBox.vgrow="ALWAYS" />
+                  <VBox id="boxTextfield">
+                     <children>
+                              <HBox id="quoteVisible" alignment="CENTER_LEFT">
+                                  <children>
+                                      <Label id="lblQuote">
+                                          <font>
+                                              <Font size="10.0" />
+                                          </font>
+                                          <HBox.margin>
+                                              <Insets right="5.0" />
+                                          </HBox.margin>
+                                      </Label>
+                                      <Button id="btnCancelQuote" mnemonicParsing="false" text="X">
+                                          <font>
+                                              <Font size="8.0" />
+                                          </font>
+                                      </Button>
+                                  </children>
+                              </HBox>
+                     </children>
+                  </VBox>
                         <HBox alignment="CENTER_LEFT" maxHeight="28.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <TextField id="tfInputMessage" styleClass="styleBorder" HBox.hgrow="ALWAYS"/>
-                                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false"
-                                        style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
+                        <TextArea id="tfInputMessage" styleClass="textAreaInput" HBox.hgrow="ALWAYS" />
+                                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />
                                     </font>
                                     <graphic>
                                         <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@images/smiley.png" />
-                                            </image>
+                                            <Image url="@images/smiley.png" />
                                         </ImageView>
                                     </graphic>
                                 </Button>
@@ -147,7 +137,7 @@
                 </VBox>
                 <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label id="lblServerUsers" prefWidth="200.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
+                        <Label id="lblServerUsers" prefWidth="200.0" styleClass="styleTop" VBox.vgrow="ALWAYS">
                             <padding>
                                 <Insets left="2.0" />
                             </padding>

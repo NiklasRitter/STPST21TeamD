@@ -1,5 +1,5 @@
 .login-linear-grad {
-    -fx-background-color: linear-gradient(to bottom left, #A868A0, #2D75E8);
+    -fx-background-color: linear-gradient(to bottom left, #d9d9d9, #2f3136);
 }
 
 .login-button-signIn {
@@ -13,6 +13,12 @@
     -fx-text-fill: #ffffff;
     -fx-border-color: #008000;
     -fx-border-radius: 5;
+}
+
+.second-button{
+    -fx-text-fill: #a1a1a1;
+    -fx-border-color: #a1a1a1;
+    -fx-background-color: #2f3136;
 }
 
 .root {
@@ -42,17 +48,15 @@
     );
 }
 
-.styleBorder {
-    -fx-border-color: #1c1c1f
-}
 
 .styleBackgroundHighlight {
-    -fx-background-color: #555548
+    -fx-background-color: #212121
 }
 
 .styleButton {
-    -fx-background-color: #8d7dd7;
-    -fx-text-fill: #525252
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-background-color: #2f3136;
 }
 
 .redLabel {
@@ -79,7 +83,7 @@
 }
 
 .redPromptText {
-    -fx-prompt-text-fill: "BLACK";
+    -fx-prompt-text-fill:  #000000;
     -fx-background-color: rgba(255, 0, 0, 0.75);
 }
 
@@ -112,22 +116,167 @@
 }
 
 .white {
-    -fx-text-fill: #ADD8e6;
+    -fx-text-fill: #dcddde;
 }
 
 .text {
-    -fx-text-fill: #ADD8e6;
+    -fx-text-fill: #dcddde;
 }
 
 .date {
-    -fx-text-fill: #ADD8e6;
+    -fx-text-fill: #dcddde;
     -fx-font-size: 10;
 }
 
 .link{
-    -fx-text-fill: #ADD8e6;
+    -fx-text-fill: #dcddde;
 }
 
 .font_size {
     -fx-font-size: 7pt ;
+}
+
+/* new */
+.list-view {
+    -fx-background-color: #2C2F33;
+    -fx-border-color: transparent;
+}
+
+.listView1{
+    -fx-background-color: #36393f;
+    -fx-border-color: transparent;
+}
+
+.list-cell {
+    -fx-text-fill: #dcddde ;
+    -fx-background-color: #2f3136;
+    -fx-border-color: transparent;
+}
+
+.tree-cell {
+    -fx-text-fill: #dcddde ;
+    -fx-background-color: #2f3136;
+    -fx-border-color: transparent;
+    -fx-collapsible: #dcddde;
+}
+
+.tree-view {
+    -fx-background-color: #2C2F33;
+}
+
+.tree-view > .virtual-flow> .clipped-container > .sheet > .tree-cell .tree-disclosure-node .arrow {
+    -fx-background-color: #dcddde;
+}
+
+.text-field {
+    -fx-text-fill: #ffffff ;
+    -fx-background-color: #40444b;
+    -fx-prompt-text-fill: #cccccc;
+}
+
+.item-selected {
+    -fx-background-color: #4a4a4a;
+}
+.styleTop {
+    -fx-background-color: #4a4a4a;
+}
+
+.styleBackgroundPopup {
+    -fx-background-color: #2f3136;
+}
+
+.sidebar-Button {
+    -fx-background-color: transparent;
+}
+
+.sidebar-Button:hover {
+    -fx-background-color: #2f3136;
+}
+
+.styleBackgroundAudio {
+    -fx-background-color: #232529;
+}
+
+.playButton{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #2f3136;
+}
+
+.audioLabel {
+    -fx-text-fill: #ffffff;
+}
+
+.marked_message{
+    -fx-background-color: #49443c;
+}
+
+.marked_message:hover{
+    -fx-background-color: #46423c;
+}
+.logoutButton {
+    -fx-background-color: #232529;
+}
+
+.createTextField {
+    -fx-text-fill: #ffffff ;
+    -fx-background-color: #40444b;
+    -fx-prompt-text-fill: #cccccc;
+}
+
+.textAreaInput {
+    -fx-text-fill: #ffffff ;
+    -fx-background-color: #40444b;
+    -fx-prompt-text-fill: #cccccc;
+}
+
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track{
+    -fx-background-color :transparent;
+    -fx-border-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-border-radius :2.0em;
+}
+
+
+.scroll-bar:horizontal .increment-button ,
+.scroll-bar:horizontal .decrement-button {
+    -fx-background-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 0.0 10.0 0.0;
+
+}
+
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-padding :0.0 10.0 0.0 0.0;
+
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow{
+    -fx-shape : " ";
+    -fx-padding :0.15em 0.0;
+}
+
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow{
+    -fx-shape : " ";
+    -fx-padding :0.0 0.15em;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color :derive(black,90.0%);
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 2.0em;
+}
+
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color :derive(#4D4C4F,10.0%);
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 2.0em;
 }

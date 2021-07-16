@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
@@ -11,7 +13,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class AttentionScreenController implements Controller {
@@ -48,13 +50,12 @@ public class AttentionScreenController implements Controller {
         btnDiscard = (Button) this.view.lookup("#btnDiscard");
         btnDelete = (Button) this.view.lookup("#btnDelete");
 
-        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
         this.setComponentsText();
 
         this.lblError.setVisible(false);
 
         addActionListener();
-
     }
 
     private void setComponentsText() {
@@ -62,8 +63,8 @@ public class AttentionScreenController implements Controller {
         this.btnDelete.setText(LanguageResolver.getString("DELETE"));
         this.btnDiscard.setText(LanguageResolver.getString("DISCARD"));
         loadCorrectLabelText(objectToDelete);
-        this.editor.getStageManager().getPopupStage().sizeToScene();
-        this.editor.getStageManager().getPopupStage().centerOnScreen();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
     }
 
     /**
@@ -94,6 +95,8 @@ public class AttentionScreenController implements Controller {
             this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_CHANNEL"));
         } else if (objectToDelete instanceof Category) {
             this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_CATEGORY"));
+        } else if (objectToDelete instanceof Message) {
+            this.lblAreYouSure.setText(LanguageResolver.getString("SURE_TO_DELETE_MESSAGE"));
         }
     }
 
@@ -124,13 +127,13 @@ public class AttentionScreenController implements Controller {
      */
     private void discardOnClick(ActionEvent actionEvent) {
         if (objectToDelete.getClass().equals(Server.class)) {
-            this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_SERVER"), "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, objectToDelete, null);
+            this.editor.getStageManager().initView(ControllerEnum.EDIT_SERVER_SCREEN, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Channel.class)) {
-            this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, objectToDelete, null);
+            this.editor.getStageManager().initView(ControllerEnum.EDIT_CHANNEL_SCREEN, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Category.class)) {
-            this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CATEGORY"), "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, objectToDelete, null);
+            this.editor.getStageManager().initView(ControllerEnum.EDIT_CATEGORY_SCREEN, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Message.class)) {
-            this.editor.getStageManager().getPopupStage().close();
+            this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
         }
     }
 
@@ -142,7 +145,7 @@ public class AttentionScreenController implements Controller {
     public void handleDeleteServer(boolean status) {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
             stop();
         } else {
             showError();

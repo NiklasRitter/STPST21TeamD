@@ -5,33 +5,29 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AutomatedLoginTest extends ApplicationTest {
 
     @Rule
@@ -50,15 +46,6 @@ public class AutomatedLoginTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     private Options oldOptions;
     private LocalUser oldLocalUser;
-
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
 
     @Override
     public void start(Stage stage) {
@@ -107,18 +94,11 @@ public class AutomatedLoginTest extends ApplicationTest {
 
     }
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-
     @Test
     public void startWithRememberMeOption() {
         Assert.assertEquals(stage.getTitle(), "Main");
         Assert.assertEquals(stageManager.getEditor().getLocalUser().getName(), "username");
     }
-
 
 
 }

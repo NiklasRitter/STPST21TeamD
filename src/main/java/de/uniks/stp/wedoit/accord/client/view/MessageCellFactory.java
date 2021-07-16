@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
@@ -14,9 +16,11 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import org.jsoup.Jsoup;
@@ -53,6 +57,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
+        private MediaView mediaView = new MediaView();
+        private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
         private final Label label = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
@@ -68,14 +74,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             super.updateItem(item, empty);
             setItem(item);
             this.setText(null);
-            this.getStyleClass().removeAll("font_size");
+            this.getStyleClass().removeAll("font_size", "marked_message");
             this.setGraphic(null);
             this.vBox.getChildren().clear();
             webView.getEngine().load(null);
             descBox.setText(null);
             hyperlink.setOnAction(null);
             hyperlink.getStyleClass().removeAll("link", "descBox");
-
 
             if (!empty) {
 
@@ -90,7 +95,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                 time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
 
-
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     setUpMedia(item);
 
@@ -98,16 +102,27 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
-                } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_ID)
-                        && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_ID.length())
+                } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_MESSAGE)
+                        && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
+
+                    VBox messageVBox = new VBox();
+                    Label quoteLabel = new Label();
+                    Label messageLabel = new Label();
 
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
-                    String[] messages = quoteMessage.split(QUOTE_ID);
+                    String[] messages = quoteMessage.split(QUOTE_MESSAGE);
 
-                    this.getStyleClass().add("font_size");
-                    this.setText(">>>" + messages[0] + "\n");
+                    if (messages.length != 2) {
+                        this.setText(item.getText());
+                    } else {
+                        quoteLabel.setText(">>>" + messages[0]);
+                        quoteLabel.getStyleClass().add("font_size");
+                        messageLabel.setText("[" + time + "] " + item.getFrom() + ": " + messages[1]);
+                        setGraphic(messageVBox);
+                        messageVBox.getChildren().addAll(quoteLabel, messageLabel);
+                    }
 
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
                     String url = containsInviteUrl(item.getText());
@@ -152,12 +167,25 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
 
                 if (item instanceof PrivateMessage) {
+
                     if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
                     } else if (item.getText().startsWith(GAME_PREFIX)) {
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                     }
+                } else {
+                    if (containsMarking(item.getText())) {
+                        this.getStyleClass().add("marked_message");
+                    }
                 }
+            }
+        }
+
+        private boolean containsMarking(String message) {
+            if (message.contains("@" + stageManager.getEditor().getLocalUser().getName())) {
+                return true;
+            } else {
+                return false;
             }
         }
 
@@ -171,6 +199,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
             }
             return null;
+
         }
 
         private boolean isValidURL(String url) {
@@ -179,7 +208,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 Url.toURI();
 
                 if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
-
+                if (url.contains(MP4)) return true;
+                if (url.contains(GIF)) return true;
                 Document doc = Jsoup.connect(url).get();
                 if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
                     descBox.setText(doc.title());
@@ -194,15 +224,35 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private boolean setImgGraphic(String url) {
             if (isValidURL(url)) {
-                Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
-                if (!image.isError()) {
-                    imageView.setImage(image);
-                    imageView.setPreserveRatio(true);
+                if (url.contains(MP4)) {
+                    setUpMediaView(url);
                     setGraphic(vBox);
                     return true;
+                } else if (url.contains(GIF)) {
+                    setUpWebView(url);
+                    setGraphic(vBox);
+                    return true;
+                } else {
+                    Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
+                    if (!image.isError()) {
+                        imageView.setImage(image);
+                        imageView.setPreserveRatio(true);
+                        setGraphic(vBox);
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+
+        private void setUpMediaView(String url) {
+            Media media = new Media(url);
+            mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.setAutoPlay(true);
+            mediaView.setFitHeight(400);
+            mediaView.setFitWidth(270);
+            mediaView.setPreserveRatio(true);
+            mediaView.setMediaPlayer(mediaPlayer);
         }
 
         private void setUpWebView(String url) {
@@ -215,7 +265,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private void setUpMedia(S item) {
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
-                vBox.getChildren().addAll(label, imageView, hyperlink);
+                if (item.getText().contains(MP4)) {
+                    vBox.getChildren().addAll(label, mediaView, hyperlink);
+                } else if (item.getText().contains(GIF)) {
+                    vBox.getChildren().addAll(label, webView, hyperlink);
+                } else {
+                    vBox.getChildren().addAll(label, imageView, mediaView, hyperlink);
+                }
                 if (descBox.getText() != null) {
                     vBox.getChildren().add(descBox);
                     descBox.setOnAction(this::openHyperLink);
@@ -295,10 +351,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
     public void handleInvitation(Server server, String responseMessage) {
         if (server != null) {
-            Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+            Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
         } else {
             if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null));
             }
         }
     }

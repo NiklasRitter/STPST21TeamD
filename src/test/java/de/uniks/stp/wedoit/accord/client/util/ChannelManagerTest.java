@@ -7,12 +7,15 @@ import de.uniks.stp.wedoit.accord.client.model.Server;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ChannelManagerTest {
 
     private ChannelManager channelManager;
