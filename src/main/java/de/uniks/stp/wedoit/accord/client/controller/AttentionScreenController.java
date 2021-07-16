@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
@@ -124,11 +125,11 @@ public class AttentionScreenController implements Controller {
      */
     private void discardOnClick(ActionEvent actionEvent) {
         if (objectToDelete.getClass().equals(Server.class)) {
-            this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_SERVER"), "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, objectToDelete, null);
+            this.editor.getStageManager().initView(ControllerEnum.EDIT_SERVER_SCREEN, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Channel.class)) {
-            this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, objectToDelete, null);
+            this.editor.getStageManager().initView(ControllerEnum.EDIT_CHANNEL_SCREEN, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Category.class)) {
-            this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CATEGORY"), "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, objectToDelete, null);
+            this.editor.getStageManager().initView(ControllerEnum.EDIT_CATEGORY_SCREEN, objectToDelete, null);
         } else if (objectToDelete.getClass().equals(Message.class)) {
             this.editor.getStageManager().getPopupStage().close();
         }
@@ -142,7 +143,7 @@ public class AttentionScreenController implements Controller {
     public void handleDeleteServer(boolean status) {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
             stop();
         } else {
             showError();

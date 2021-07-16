@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -123,7 +124,7 @@ public class MainScreenController implements Controller {
                 editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
         }
     }
 
@@ -172,7 +173,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void privateChatsButtonOnClick(ActionEvent actionEvent) {
-        Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("PRIVATE_CHATS"), "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true, null, null));
+        Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
     }
 
     /**
@@ -181,7 +182,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
     }
 
     /**
@@ -193,7 +194,7 @@ public class MainScreenController implements Controller {
         if (mouseEvent.getClickCount() == 2) {
             Server server = serverListView.getSelectionModel().getSelectedItem();
             if (server != null) {
-                this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
+                this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, server, null);
             }
         }
     }
@@ -204,7 +205,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void addServerButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("CREATE_SERVER"), "CreateServerScreen", CREATE_SERVER_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.CREATE_SERVER_SCREEN, null, null);
     }
 
     /**
@@ -213,7 +214,7 @@ public class MainScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void enterInvitationButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("JOIN_SERVER"), "JoinServerScreen", JOIN_SERVER_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.JOIN_SERVER_SCREEN, null, null);
     }
 
     /**

@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.scene.control.ContextMenu;
@@ -41,7 +42,7 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("LEAVE_SERVER"));
         contextMenu.getItems().add(menuItem1);
-        menuItem1.setOnAction((event) -> this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("ATTENTION"), "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, item, null));
+        menuItem1.setOnAction((event) -> this.editor.getStageManager().initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, item, null));
 
         return contextMenu;
     }

@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -181,7 +182,7 @@ public class GameScreenController implements Controller {
      */
     private void handleGameDone(){
         if(oppScore.get() == 3 || ownScore.get() == 3){
-            this.editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, opponent, ownScore.get() == 3);
+            this.editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, opponent, ownScore.get() == 3);
             stop();
         }
     }

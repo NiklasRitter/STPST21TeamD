@@ -1,5 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
@@ -29,13 +31,14 @@ public class StageManager extends Application {
     private PreferenceManager prefManager = new PreferenceManager();
     private SystemTrayController systemTrayController;
     private AccordClient model;
-    private Stage stage;
-    private Scene scene;
-    private Stage popupStage;
-    private Scene popupScene;
-    private Stage emojiPickerStage;
-    private Stage gameStage;
-    private Scene gameScene;
+
+
+    private Scene scene, popupScene, gameScene;
+    private Stage stage, popupStage, emojiPickerStage, gameStage;
+
+    private final Map<StageEnum,Scene> sceneMap = new HashMap<>();
+    private final Map<StageEnum,Stage> stageMap = new HashMap<>();
+
 
     {
         resourceManager.setPreferenceManager(prefManager);
@@ -47,7 +50,7 @@ public class StageManager extends Application {
             Parent root = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource(fxmlSource)));
             switch (scene) {
                 case STAGE:
-                    cleanup();
+                    //cleanup();
                     initStage(root, title, resizable);
                     break;
                 case POPUPSTAGE:
@@ -65,6 +68,42 @@ public class StageManager extends Application {
             openController(root, controllerName, parameter, parameterTwo);
         } catch (Exception e) {
             System.err.println("Error on showing " + controllerName);
+            e.printStackTrace();
+        }
+    }
+
+    public void initView(ControllerEnum controller, Object parameter, Object parameterTwo) {
+        try {
+
+            Parent root = controller.loadScreen();
+            cleanup(controller);
+
+            Scene currentScene = sceneMap.get(controller.stage);
+
+            Stage currentStage = stageMap.get(controller.stage);
+
+
+
+
+            if(currentScene != null) currentScene.setRoot(root);
+            else sceneMap.put(controller.stage, new Scene(root));
+
+
+            controller.setUpStage(currentStage);
+
+            currentStage.setScene(sceneMap.get(controller.stage));
+            currentStage.show();
+
+
+            updateLanguage();
+            updateDarkmode();
+            openController(root, controller.controllerName, parameter, parameterTwo);
+
+
+
+
+        }catch (Exception e) {
+            System.err.println("Error on showing " + controller.controllerName);
             e.printStackTrace();
         }
     }
@@ -188,17 +227,19 @@ public class StageManager extends Application {
         }
     }
 
-    private void cleanup() {
-        stopController();
-        if (popupStage != null) {
-            popupStage.hide();
+    private void cleanup(ControllerEnum c) {
+
+        if (stageMap.get(StageEnum.POPUP_STAGE) != null) {
+            stageMap.get(StageEnum.POPUP_STAGE).hide();
         }
-        if (emojiPickerStage != null) {
-            emojiPickerStage.hide();
+
+        if(controllerMap.get(c.controllerName) != null) controllerMap.get(c.controllerName).stop();
+
+        if (stageMap.get(StageEnum.EMOJI_PICKER_STAGE) != null) {
+            stageMap.get(StageEnum.EMOJI_PICKER_STAGE).hide();
         }
-        if (gameStage != null) {
-            gameStage.hide();
-        }
+
+
     }
 
     private void stopController() {
@@ -216,42 +257,43 @@ public class StageManager extends Application {
      * @param darkmode boolean weather darkmode is enabled or not
      */
     public void changeDarkmode(boolean darkmode) {
+        Scene s = sceneMap.get(StageEnum.STAGE), popup = sceneMap.get(StageEnum.POPUP_STAGE), game = sceneMap.get(StageEnum.POPUP_STAGE);
         if (darkmode) {
-            if (scene != null) {
-                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (s != null) {
+                s.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
-                scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                s.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
-            if (popupScene != null) {
-                popupScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (popup != null) {
+                popup.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
-                popupScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                popup.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
-            if (gameScene != null) {
-                gameScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (game != null) {
+                game.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
-                gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                game.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
         } else {
-            if (scene != null) {
-                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (s != null) {
+                s.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
-                scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                s.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
-            if (popupScene != null) {
-                popupScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (popup != null) {
+                popup.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
-                popupScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                popup.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
-            if (gameScene != null) {
-                gameScene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (game != null) {
+                game.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
-                gameScene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                game.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
         }
@@ -321,12 +363,33 @@ public class StageManager extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         stage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
+        stageMap.put(StageEnum.STAGE, primaryStage);
+        stageMap.get(StageEnum.STAGE).getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
+
         popupStage = new Stage();
         popupStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         popupStage.initOwner(stage);
+        stageMap.put(StageEnum.POPUP_STAGE, new Stage());
+        stageMap.get(StageEnum.POPUP_STAGE).getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
+        stageMap.get(StageEnum.POPUP_STAGE).initOwner(primaryStage);
+
+
         gameStage = new Stage();
         gameStage.getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
         gameStage.initOwner(stage);
+        stageMap.put(StageEnum.GAME_STAGE, new Stage());
+        stageMap.get(StageEnum.GAME_STAGE).getIcons().add(new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png"))));
+        stageMap.get(StageEnum.GAME_STAGE).initOwner(primaryStage);
+
+
+        stageMap.put(StageEnum.EMOJI_PICKER_STAGE,new Stage());
+        stageMap.get(StageEnum.EMOJI_PICKER_STAGE).initOwner(primaryStage);
+        stageMap.get(StageEnum.EMOJI_PICKER_STAGE).initStyle(StageStyle.DECORATED);
+        stageMap.get(StageEnum.EMOJI_PICKER_STAGE).focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                stageMap.get(StageEnum.EMOJI_PICKER_STAGE).close();
+            }
+        });
         emojiPickerStage = new Stage();
         emojiPickerStage.initOwner(stage);
         //Removes title bar of emojiPickerStage including maximize, minimize and close icons.
@@ -337,6 +400,7 @@ public class StageManager extends Application {
                 emojiPickerStage.close();
             }
         });
+
         editor.setStageManager(this);
         prefManager.setStageManager(this);
         model = editor.haveAccordClient();
@@ -368,15 +432,15 @@ public class StageManager extends Application {
                 if (userKey != null && !userKey.isEmpty()) {
                     editor.getRestManager().getRestClient().logout(userKey, response -> {
                         Unirest.shutDown();
-                        cleanup();
+                        //cleanup();
                     });
                 } else {
                     Unirest.shutDown();
-                    cleanup();
+                    //cleanup();
                 }
             } else {
                 Unirest.shutDown();
-                cleanup();
+                //cleanup();
             }
         } catch (Exception e) {
             System.err.println("Error while shutdown program");

@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MarkingController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
@@ -108,8 +109,7 @@ public class UpdateMessageScreenController implements Controller {
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker",
-                "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfUpdateMessage, pos);
+        this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, tfUpdateMessage, pos);
     }
 
     @Override

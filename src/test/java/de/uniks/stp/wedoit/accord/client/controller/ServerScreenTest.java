@@ -722,7 +722,6 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         TreeItem<Object> root = tvServerChannels.getRoot();
         Assert.assertEquals(0, root.getChildren().size());
-
     }
 
     @Test

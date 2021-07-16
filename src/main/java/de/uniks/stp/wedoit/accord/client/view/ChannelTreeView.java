@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
@@ -133,9 +134,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
 
-        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
-        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item.getCategory(), null));
-        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", EDIT_CHANNEL_SCREEN_CONTROLLER, true, item, null));
+        menuItem1.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CATEGORY_SCREEN, item.getCategory(), null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CHANNEL_SCREEN, item, null));
 
         return contextMenu;
     }
@@ -149,9 +150,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
 
-        menuItem1.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false, null, null));
-        menuItem2.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CATEGORY"), "EditCategoryScreen", EDIT_CATEGORY_SCREEN_CONTROLLER, false, item, null));
-        menuItem3.setOnAction((event) -> this.stageManager.initView(POPUPSTAGE, LanguageResolver.getString("EDIT_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true, item, null));
+        menuItem1.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
+        menuItem2.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CATEGORY_SCREEN, item, null));
+        menuItem3.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CHANNEL_SCREEN, item, null));
 
         return contextMenu;
     }

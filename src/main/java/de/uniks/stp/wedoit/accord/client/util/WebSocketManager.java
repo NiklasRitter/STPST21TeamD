@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -187,7 +188,7 @@ public class WebSocketManager {
                 server.setName(data.getString(NAME));
                 break;
             case SERVER_DELETED:
-                Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
                 break;
             case CATEGORY_CREATED:
                 editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
@@ -205,7 +206,7 @@ public class WebSocketManager {
             case CHANNEL_UPDATED:
                 Channel channel = editor.getChannelManager().updateChannel(server, data.getString(ID), data.getString(NAME), data.getString(TYPE), data.getBoolean(PRIVILEGED), data.getString(CATEGORY), data.getJsonArray(MEMBERS), data.getJsonArray(AUDIOMEMBERS));
                 if (channel == null) {
-                    Platform.runLater(() -> editor.getStageManager().initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+                    Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, server, null));
                 }
                 break;
             case CHANNEL_DELETED:
@@ -220,7 +221,7 @@ public class WebSocketManager {
                 Message messageToUpdate = JsonUtil.parseMessageUpdated(data);
                 Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
                 if (channelUpdatedMessage == null) {
-                    Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                    Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
                     System.err.println("Error from message updated");
                     return;
                 }
@@ -229,7 +230,7 @@ public class WebSocketManager {
             case MESSAGE_DELETED:
                 Channel channelDeleteMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
                 if (channelDeleteMessage == null) {
-                    Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                    Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
                     System.err.println("Error from message delete");
                     return;
                 }

@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -116,7 +117,7 @@ public class PrivateMessageServerScreenController implements Controller {
      * @param actionEvent expected actionEvent
      */
     private void btnShowChatOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(STAGE, "Private Chats", "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
         Map<String, Controller> controllerMap = this.editor.getStageManager().getControllerMap();
         PrivateChatsScreenController privateChatsScreenController = (PrivateChatsScreenController) controllerMap.get(PRIVATE_CHATS_SCREEN_CONTROLLER);
         privateChatsScreenController.setSelectedUser(memberToWrite);
@@ -129,7 +130,7 @@ public class PrivateMessageServerScreenController implements Controller {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (memberToWrite.isOnlineStatus()) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, this.tfMessage, pos);
+            this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, this.tfMessage, pos);
         }
     }
 
