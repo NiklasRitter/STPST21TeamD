@@ -112,11 +112,12 @@ public class GameScreenController implements Controller {
      * @param actionEvent occurs when one of the action button is pressed
      */
     private void gameActionOnClick(ActionEvent actionEvent) {
-        if ((Button) actionEvent.getSource() == btnRock) {
+
+        if (actionEvent.getSource() == btnRock) {
             gameAction = "Rock";
-        } else if ((Button) actionEvent.getSource() == btnPaper) {
+        } else if (actionEvent.getSource() == btnPaper) {
             gameAction = "Paper";
-        } else if ((Button) actionEvent.getSource() == btnScissors) {
+        } else if (actionEvent.getSource() == btnScissors) {
             gameAction = "Scissors";
         }
 
