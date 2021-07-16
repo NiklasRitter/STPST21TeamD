@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -57,6 +58,9 @@ public class GameResultScreenController implements Controller {
         btnPlayAgain = (Button) view.lookup("#btnPlayAgain");
         btnQuit = (Button) view.lookup("#btnQuit");
 
+        System.out.println("isWinner");
+        System.out.println(isWinner);
+
         this.setComponentsText();
         if (isWinner == null) {
             lbOutcome.setText(LanguageResolver.getString("OPPONENT_LEFT"));
@@ -99,6 +103,7 @@ public class GameResultScreenController implements Controller {
      */
     private void redirectToPrivateChats(ActionEvent actionEvent) {
         this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
+        this.editor.getStageManager().getStage(StageEnum.GAME_STAGE).hide();
     }
 
     /**
