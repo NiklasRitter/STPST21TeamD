@@ -964,7 +964,6 @@ public class ServerScreenTest extends ApplicationTest {
     }
 
     private void testBtnCancel() {
-
         WaitForAsyncUtils.waitForFxEvents();
         Button btnCancel = lookup("#btnCancel").query();
         Assert.assertEquals(btnCancel.getText(), "Cancel");

@@ -187,6 +187,8 @@ public class LoginScreenController implements Controller {
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_PASSWORD_WRONG";
                 refreshErrLabelText(errorLabelText);
+                this.lblUserValid.setText("");
+                this.lblGuestPassword.setText("");
             });
         } else {
             Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
@@ -211,7 +213,6 @@ public class LoginScreenController implements Controller {
             this.tfUserName.setText(userName);
             this.pwUserPw.setText(password);
             setGuestUserDataLabel();
-
         }
     }
 
@@ -257,6 +258,8 @@ public class LoginScreenController implements Controller {
             Platform.runLater(() -> {
                 errorLabelText = "USERNAME_ALREADY_TAKEN";
                 refreshErrLabelText(errorLabelText);
+                this.lblUserValid.setText("");
+                this.lblGuestPassword.setText("");
             });
         } else {
             //login the user

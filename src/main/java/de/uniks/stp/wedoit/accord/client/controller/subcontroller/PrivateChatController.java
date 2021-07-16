@@ -93,7 +93,6 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         this.tfPrivateChat.setEditable(false);
 
-
         this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
 
         initToolTip();
