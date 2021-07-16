@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -12,15 +14,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -34,7 +33,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EDIT_S
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -59,15 +58,6 @@ public class AttentionScreenControllerTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     private Options oldOptions;
 
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Override
     public void start(Stage stage) {
         this.stageManager = new StageManager();
@@ -88,8 +78,8 @@ public class AttentionScreenControllerTest extends ApplicationTest {
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
 
         // first have to show server screen, so that the members and so on are loaded correctly
-        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
-        this.stageManager.initView(POPUPSTAGE, "Edit Server", "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
+        this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null);
+        this.stageManager.initView(ControllerEnum.EDIT_SERVER_SCREEN, server, null);
     }
 
 
@@ -125,7 +115,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         clickOn("#btnDelete");
 
-        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Attention");
         Assert.assertEquals(localUser.getServers().size(), 1);
 
         clickOn("#btnDelete");
@@ -135,7 +125,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Main");
         Assert.assertEquals(localUser.getServers().size(), 0);
     }
 
@@ -146,7 +136,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         clickOn("#btnDelete");
 
-        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Attention");
         Assert.assertEquals(localUser.getServers().size(), 1);
 
         clickOn("#btnDelete");
@@ -157,7 +147,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Label lblError = lookup("#lblError").query();
-        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Attention");
         Assert.assertTrue(lblError.isVisible());
         Assert.assertEquals(lblError.getText(), "Error. Delete Server was not successful!");
         Assert.assertEquals(localUser.getServers().size(), 1);
@@ -170,14 +160,14 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         clickOn("#btnDelete");
 
-        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Attention");
         Assert.assertEquals(localUser.getServers().size(), 1);
 
         clickOn("#btnDiscard");
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Edit Server");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Edit Server");
         Assert.assertEquals(localUser.getServers().size(), 1);
     }
 

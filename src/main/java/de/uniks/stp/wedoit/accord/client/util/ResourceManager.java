@@ -22,7 +22,7 @@ public class ResourceManager {
     public void start(AccordClient clientModel) {
         if (clientModel.getOptions() != null) {
             loadOptions(clientModel.getOptions());
-            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkModeListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, preferenceManager.languageListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
         }
@@ -41,7 +41,7 @@ public class ResourceManager {
      */
     public void stop(AccordClient clientModel) {
         if (clientModel.getOptions() != null) {
-            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkmodeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkModeListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, preferenceManager.languageListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
         }
@@ -84,7 +84,7 @@ public class ResourceManager {
      * @param options The options to be saved.
      */
     public void saveOptions(Options options) {
-        preferenceManager.saveDarkmode(options.isDarkmode());
+        preferenceManager.saveDarkMode(options.isDarkmode());
         preferenceManager.saveRememberMe(options.isRememberMe());
         preferenceManager.saveLanguage(options.getLanguage());
     }
@@ -106,7 +106,7 @@ public class ResourceManager {
      * @param options The Options the values should be loaded into.
      */
     public void loadOptions(Options options) {
-        Objects.requireNonNull(options).setDarkmode(preferenceManager.loadDarkmode());
+        Objects.requireNonNull(options).setDarkmode(preferenceManager.loadDarkMode());
         Objects.requireNonNull(options).setLanguage(preferenceManager.loadLanguage());
         Objects.requireNonNull(options).setRememberMe(preferenceManager.loadRememberMe());
     }
@@ -133,6 +133,7 @@ public class ResourceManager {
 
     /**
      * If no InitializationVector is available it gets created otherwise the existing vector gets returned
+     *
      * @return InitializationVector string
      */
     public String getOrCreateInitializationVector() throws NoSuchAlgorithmException {

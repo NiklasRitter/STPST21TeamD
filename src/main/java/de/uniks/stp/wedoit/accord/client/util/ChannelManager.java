@@ -18,7 +18,7 @@ public class ChannelManager {
 
     private final Editor editor;
 
-    public ChannelManager(Editor editor){
+    public ChannelManager(Editor editor) {
         this.editor = editor;
     }
 
@@ -51,7 +51,7 @@ public class ChannelManager {
         channel.withoutMembers(new ArrayList<>(channel.getMembers()));
         channel.withoutAudioMembers(new ArrayList<>(channel.getAudioMembers()));
 
-        if(members != null){
+        if (members != null) {
             List<String> membersIds = new ArrayList<>();
             for (int index = 0; index < members.toArray().length; index++) {
                 membersIds.add(members.getString(index));
@@ -64,7 +64,7 @@ public class ChannelManager {
                 }
             }
         }
-        if(audioMembers != null){
+        if (audioMembers != null) {
             List<String> membersAudioIds = new ArrayList<>();
             for (int index = 0; index < audioMembers.toArray().length; index++) {
                 membersAudioIds.add(audioMembers.getString(index));
@@ -97,7 +97,8 @@ public class ChannelManager {
 
     /**
      * This method gives the category channels which are created with the data of the JSONArray
-     *  @param category                  category which gets the channels
+     *
+     * @param category                  category which gets the channels
      * @param categoriesChannelResponse server answer for channels of the category
      */
     public void haveChannels(Category category, JsonArray categoriesChannelResponse) {
@@ -105,13 +106,13 @@ public class ChannelManager {
         Objects.requireNonNull(categoriesChannelResponse);
         for (int index = 0; index < categoriesChannelResponse.toArray().length; index++) {
             JsonObject channel = categoriesChannelResponse.getJsonObject(index);
-            haveChannel(channel.getString(ID), channel.getString(NAME), channel.getString(TYPE), channel.getBoolean(PRIVILEGED), category, channel.getJsonArray(MEMBERS), channel.getJsonArray(AUDIOMEMBERS));
+            haveChannel(channel.getString(ID), channel.getString(NAME), channel.getString(TYPE), channel.getBoolean(PRIVILEGED), category, channel.getJsonArray(MEMBERS), channel.getJsonArray(AUDIO_MEMBERS));
         }
     }
 
-    public Channel getChannel(String channelId, Category category){
-        for(Channel channel : category.getChannels()){
-            if(channel.getId().equals(channelId)){
+    public Channel getChannel(String channelId, Category category) {
+        for (Channel channel : category.getChannels()) {
+            if (channel.getId().equals(channelId)) {
                 return channel;
             }
         }

@@ -1,7 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
-import de.uniks.stp.wedoit.accord.client.Launcher;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -12,15 +13,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -75,15 +73,6 @@ public class LoginScreenTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorLogin;
     private Options oldOptions;
 
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Override
     public void start(Stage stage) {
         // start application
@@ -99,7 +88,7 @@ public class LoginScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -153,7 +142,7 @@ public class LoginScreenTest extends ApplicationTest {
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
     }
 
     @Test
@@ -298,7 +287,6 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
-
 
 
     @Test

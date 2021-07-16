@@ -2,13 +2,12 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -352,10 +351,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
     public void handleInvitation(Server server, String responseMessage) {
         if (server != null) {
-            Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+            Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
         } else {
             if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null));
             }
         }
     }

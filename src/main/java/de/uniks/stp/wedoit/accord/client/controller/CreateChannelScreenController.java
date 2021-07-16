@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
@@ -32,7 +33,7 @@ public class CreateChannelScreenController implements Controller {
     private TextField tfChannelName;
     private Button btnCreateChannel, btnDeleteChannel;
     private CheckBox checkBoxPrivileged;
-    private Label errorLabel, lblMembers, lblChannelName, lblPrivileged;
+    private Label lblError, lblMembers, lblChannelName, lblPrivileged;
     private VBox vBoxMemberNameAndCheckBox;
     private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
     private final List<String> userList = new LinkedList<>();
@@ -67,7 +68,7 @@ public class CreateChannelScreenController implements Controller {
         this.btnDeleteChannel = (Button) view.lookup("#btnDeleteChannel");
         this.tfChannelName = (TextField) view.lookup("#tfChannelName");
         this.checkBoxPrivileged = (CheckBox) view.lookup("#checkBoxPrivileged");
-        this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblError = (Label) view.lookup("#lblError");
         this.lblPrivileged = (Label) view.lookup("#lblPrivileged");
         this.lblChannelName = (Label) view.lookup("#lblChannelName");
 
@@ -120,7 +121,7 @@ public class CreateChannelScreenController implements Controller {
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
         //Adjusts the size of the stage to its dynamically added content
-        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
     }
 
     /**
@@ -184,7 +185,7 @@ public class CreateChannelScreenController implements Controller {
         if (tfChannelName.getText().length() < 1 || tfChannelName.getText() == null) {
             tfChannelName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
             String channelType = this.radioBtnText.isSelected() ? TEXT : AUDIO;
 
@@ -213,7 +214,7 @@ public class CreateChannelScreenController implements Controller {
             stop();
         } else {
             tfChannelName.getStyleClass().add(LanguageResolver.getString("ERROR"));
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("SOMETHING_WRONG_WHILE_CREATING_CHANNEL")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("SOMETHING_WRONG_WHILE_CREATING_CHANNEL")));
         }
     }
 

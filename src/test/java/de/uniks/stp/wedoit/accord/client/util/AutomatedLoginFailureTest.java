@@ -10,15 +10,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -49,15 +46,6 @@ public class AutomatedLoginFailureTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     private Options oldOptions;
     private LocalUser oldLocalUser;
-
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
 
     @Override
     public void start(Stage stage) {
@@ -112,7 +100,6 @@ public class AutomatedLoginFailureTest extends ApplicationTest {
         Assert.assertEquals(stage.getTitle(), "Login");
         Assert.assertNull(stageManager.getEditor().getLocalUser().getName());
     }
-
 
 
 }

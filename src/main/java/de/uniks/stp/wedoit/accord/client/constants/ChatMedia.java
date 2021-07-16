@@ -3,7 +3,7 @@ package de.uniks.stp.wedoit.accord.client.constants;
 import java.util.List;
 
 public class ChatMedia {
-    public static final List<String> SUPPORTED_IMG = List.of(".jpg",".png");
+    public static final List<String> SUPPORTED_IMG = List.of(".jpg", ".png");
     public static final String SUPPORTED_CLOUD = "drive.google.com";
     public static final String YT_WATCH = "youtube.com/watch?v=";
     public static final String MP4 = ".mp4";

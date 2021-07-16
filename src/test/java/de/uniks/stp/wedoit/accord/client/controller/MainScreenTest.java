@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -17,15 +19,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -35,10 +34,11 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -73,15 +73,6 @@ public class MainScreenTest extends ApplicationTest {
     private WSCallback wsCallback;
     private Options oldOptions;
 
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Override
     public void start(Stage stage) {
         // start application
@@ -101,7 +92,7 @@ public class MainScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
         ;
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -155,7 +146,7 @@ public class MainScreenTest extends ApplicationTest {
         // testing logout button
         // first have to open optionScreen
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         clickOn("#btnLogout");
 
@@ -183,7 +174,7 @@ public class MainScreenTest extends ApplicationTest {
     @Test
     public void optionsButtonTest() {
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
     }
 
     // Test: list View load servers correct in the list view and sorted alphabetical
@@ -346,7 +337,7 @@ public class MainScreenTest extends ApplicationTest {
     @Test
     public void enterServerTestSuccessful() {
         clickOn("#btnEnterInvitation");
-        Assert.assertEquals("Join Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Join Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField tfInvitationLink = lookup("#tfInvitationLink").query();
         Label lblError = lookup("#lblError").query();
@@ -375,7 +366,7 @@ public class MainScreenTest extends ApplicationTest {
     @Test
     public void enterServerTestFailure() {
         clickOn("#btnEnterInvitation");
-        Assert.assertEquals("Join Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Join Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField tfInvitationLink = lookup("#tfInvitationLink").query();
         Label lblError = lookup("#lblError").query();
@@ -463,7 +454,7 @@ public class MainScreenTest extends ApplicationTest {
         callbackLeaveServer.completed(res);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Main");
     }
 
     @Test
@@ -491,7 +482,7 @@ public class MainScreenTest extends ApplicationTest {
         callbackLeaveServer.completed(res);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Attention");
 
         Button btnCancel = lookup("#btnCancel").query();
         Assert.assertEquals(btnCancel.getText(), "Cancel");
@@ -499,7 +490,7 @@ public class MainScreenTest extends ApplicationTest {
         clickOn(btnCancel);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Main");
     }
 
 
@@ -519,7 +510,7 @@ public class MainScreenTest extends ApplicationTest {
         Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
         Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());
 
-        Platform.runLater(() -> this.stageManager.initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, listView.getItems().get(0), null));
+        Platform.runLater(() -> this.stageManager.initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, listView.getItems().get(0), null));
     }
     // Help methods to create response for mocked rest client
 
