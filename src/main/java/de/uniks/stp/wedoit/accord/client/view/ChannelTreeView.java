@@ -105,9 +105,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         private ImageView addIconText() {
             ImageView icon;
             if (!stageManager.getModel().getOptions().isDarkmode()) {
-                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit.png"))));
-            } else {
                 icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit_dark.png"))));
+            } else {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit.png"))));
             }
             icon.setFitHeight(13);
             icon.setFitWidth(13);
@@ -117,9 +117,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         private ImageView addIconAudio() {
             ImageView icon;
             if (!stageManager.getModel().getOptions().isDarkmode()) {
-                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound.png"))));
-            } else {
                 icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound_dark.png"))));
+            } else {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound.png"))));
             }
             icon.setFitHeight(15);
             icon.setFitWidth(15);

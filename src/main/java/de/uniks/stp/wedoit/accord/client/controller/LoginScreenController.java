@@ -12,15 +12,9 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.stage.WindowEvent;
 
 import java.util.Objects;
-
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.OPTIONS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class LoginScreenController implements Controller {
 
@@ -29,32 +23,20 @@ public class LoginScreenController implements Controller {
     private final AccordClient model;
 
     private Button btnLogin;
-//    private Button btnRegister;
     private Button btnOptions;
     private Button btnGuestLogin;
     private CheckBox btnRememberMe;
     private TextField tfUserName;
     private TextField pwUserPw;
-    private Label lblError, lblEnterUserName, lblEnterPw, lblRememberMe, lblUserValid, lblGuestPassword;
+    private Label lblError, lblRememberMe, lblUserValid, lblGuestPassword;
 
     private String guestUserPassword;
     private String errorLabelText = "";
     private Button btnSwitchRegister;
-//    private Button btnGuestRegister;
-    private Pane pnlSignUp;
-    private Pane pnlSignIn;
     private Label lblSignIn;
     private TextField pwConfirmPW;
     private boolean isLogin;
-    //    private TextField tfUserNameRegister;
-//    private TextField pwUserPwRegister;
-//    private Button btnSwitchLogin;
-//    private Label lblErrorRegister;
-//    private Label lblRememberMeRegister;
-//    private CheckBox btnRememberMeRegister;
-//    private Button btnOptionsRegister;
-//    private Label lblUserValidRegister;
-//    private Label lblGuestPasswordRegister;
+
 
     /**
      * Create a new Controller
@@ -78,9 +60,6 @@ public class LoginScreenController implements Controller {
      */
     public void init() {
         //Load all view references
-        /*this.pnlSignUp = (Pane) view.lookup("#pnlSignUp");
-        this.pnlSignIn = (Pane) view.lookup("#pnlSignIn");
-        this.pnlSignIn.toFront();*/
 
         this.tfUserName = (TextField) view.lookup("#tfUserName");
         this.pwUserPw = (TextField) view.lookup("#pwUserPw");
@@ -112,25 +91,6 @@ public class LoginScreenController implements Controller {
 
         this.isLogin = true;
         this.setComponentsTextSignIn();
-//        this.btnRegister = (Button) view.lookup("#btnRegister");
-
-
-//        this.tfUserNameRegister = (TextField) view.lookup("#tfUserNameRegister");
-//        this.pwUserPwRegister = (TextField) view.lookup("#pwUserPwRegister");
-//        this.btnSwitchLogin = (Button) view.lookup("#btnSwitchLogin");
-//        this.btnGuestRegister = (Button) view.lookup("#btnGuestRegister");
-//        this.lblErrorRegister = (Label) view.lookup("#lblErrorRegister");
-//        this.lblRememberMeRegister = (Label) view.lookup("#lblRememberMeRegister");
-//        this.btnRememberMeRegister = (CheckBox) view.lookup("#btnRememberMeRegister");
-//        this.btnOptionsRegister = (Button) view.lookup("#btnOptionsRegister");
-//        this.lblUserValidRegister = (Label) view.lookup("#lblUserValidRegister");
-//        this.lblGuestPasswordRegister = (Label) view.lookup("#lblGuestPasswordRegister");
-
-//        this.lblEnterUserName = (Label) view.lookup("#lblEnterUserName");
-//        this.lblEnterPw = (Label) view.lookup("#lblEnterPw");
-
-
-
 
         // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
@@ -138,12 +98,6 @@ public class LoginScreenController implements Controller {
         this.btnRememberMe.setOnAction(this::btnRememberMeOnClick);
         this.btnGuestLogin.setOnAction(this::btnGuestLoginOnClick);
 
-//        this.btnRegister.setOnAction(this::btnRegisterOnClicked);
-//        this.btnOptionsRegister.setOnAction(this::btnOptionsOnClicked);
-//        this.btnRememberMeRegister.setOnAction(this::btnRememberMeOnClick);
-//        this.btnGuestRegister.setOnAction(this::btnGuestLoginOnClick);
-//
-//        this.btnSwitchLogin.setOnAction();
         this.btnSwitchRegister.setOnAction(this::btnSwitchRegisterOnClick);
 
         this.initTooltips();
@@ -166,14 +120,10 @@ public class LoginScreenController implements Controller {
         Objects.requireNonNull(pwUserPw).getStyleClass().remove("error");
         Objects.requireNonNull(pwConfirmPW).getStyleClass().remove("error");
 
-
-//        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
-//        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
         this.btnLogin.setText(LanguageResolver.getString("LOGIN"));
 
         this.btnSwitchRegister.setText(LanguageResolver.getString("NO_ACCOUNT_YET_REGISTER"));
-//        this.btnRegister.setText(LanguageResolver.getString("REGISTER"));
         this.btnGuestLogin.setText(LanguageResolver.getString("GUEST_LOGIN"));
 
         if (guestUserPassword != null) {
@@ -181,8 +131,6 @@ public class LoginScreenController implements Controller {
         }
 
         this.lblError.setText(LanguageResolver.getString(errorLabelText));
-
-//        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
     }
 
     private void setComponentsTextSignUp() {
@@ -198,13 +146,10 @@ public class LoginScreenController implements Controller {
         Objects.requireNonNull(pwUserPw).getStyleClass().remove("error");
         Objects.requireNonNull(pwConfirmPW).getStyleClass().remove("error");
 
-//        this.lblEnterUserName.setText(LanguageResolver.getString("ENTER_YOUR_USERNAME"));
-//        this.lblEnterPw.setText(LanguageResolver.getString("ENTER_YOUR_PASSWORD"));
         this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
         this.btnLogin.setText(LanguageResolver.getString("REGISTER"));
 
         this.btnSwitchRegister.setText(LanguageResolver.getString("ALREADY_ACCOUNT_LOGIN"));
-//        this.btnRegister.setText(LanguageResolver.getString("REGISTER"));
         this.btnGuestLogin.setText(LanguageResolver.getString("GUEST_LOGIN"));
 
         if (guestUserPassword != null) {
@@ -212,16 +157,15 @@ public class LoginScreenController implements Controller {
         }
         this.lblError.setText(LanguageResolver.getString(errorLabelText));
 
-        //TODO what does that?
-//        this.btnLogin.prefWidthProperty().bind(this.btnRegister.widthProperty());
     }
+
     /**
      * set focus to pwUserPw when enter is pressed
      *
      * @param keyEvent occurs when key is pressed when text area is focused
      */
     private void tfUserNameOnEnter(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.ENTER){
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
             this.pwUserPw.requestFocus();
         }
@@ -233,12 +177,11 @@ public class LoginScreenController implements Controller {
      * @param keyEvent occurs when key is pressed when text area is focused
      */
     private void pwUserPwOnEnter(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.ENTER){
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
             if (isLogin) {
                 loginButtonAction(new ActionEvent());
-            }
-            else if (lblSignIn.getText().equals(LanguageResolver.getString("REGISTER"))) {
+            } else if (lblSignIn.getText().equals(LanguageResolver.getString("REGISTER"))) {
                 this.pwConfirmPW.requestFocus();
             }
         }
@@ -250,7 +193,7 @@ public class LoginScreenController implements Controller {
      * @param keyEvent occurs when key is pressed when text area is focused
      */
     private void pwConfirmPWPwOnEnter(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.ENTER){
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
             if (lblSignIn.getText().equals(LanguageResolver.getString("REGISTER"))) {
                 loginButtonAction(new ActionEvent());
@@ -272,7 +215,6 @@ public class LoginScreenController implements Controller {
         Tooltip optionsButton = new Tooltip();
         optionsButton.setText(LanguageResolver.getString("OPTIONS"));
         this.btnOptions.setTooltip(optionsButton);
-//        this.btnOptionsRegister.setTooltip(optionsButton);
 
         Tooltip loginButton = new Tooltip();
         loginButton.setText(LanguageResolver.getString("LOGIN"));
@@ -280,7 +222,6 @@ public class LoginScreenController implements Controller {
 
         Tooltip registerButton = new Tooltip();
         registerButton.setText(LanguageResolver.getString("REGISTER"));
-//        this.btnRegister.setTooltip(registerButton);
     }
 
     /**
@@ -294,9 +235,7 @@ public class LoginScreenController implements Controller {
         this.pwUserPw.setOnKeyPressed(null);
         this.pwConfirmPW.setOnKeyPressed(null);
 
-        // Remove all action listeners
         btnLogin.setOnAction(null);
-//        btnRegister.setOnAction(null);
         btnOptions.setOnAction(null);
         btnRememberMe.setOnAction(null);
         btnOptions.setOnAction(null);
@@ -356,8 +295,8 @@ public class LoginScreenController implements Controller {
             });
         } else {
             Platform.runLater(() -> {
-                //editor.getStageManager().getStage().setResizable(true);
-                //editor.getStageManager().getStage().setMaximized(true);
+                this.editor.getStageManager().getStage(StageEnum.STAGE).setResizable(true);
+                this.editor.getStageManager().getStage(StageEnum.STAGE).setMaximized(true);
                 this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
 
             });
@@ -388,7 +327,6 @@ public class LoginScreenController implements Controller {
 
     /**
      * register user to server and login, redirect to MainScreen
-     *
      */
     private void register() {
         try {

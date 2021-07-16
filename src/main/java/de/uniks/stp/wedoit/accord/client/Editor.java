@@ -443,8 +443,6 @@ public class Editor {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
             stageManager.initView(ControllerEnum.LOGIN_SCREEN,null,null);
-            //stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
-            //stageManager.getStage().show();
         }
     }
 
@@ -455,13 +453,12 @@ public class Editor {
         if (success) {
             Platform.runLater(() -> {
                 stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
-                //stageManager.getStage().setMaximized(true);
-                //stageManager.getStage().setResizable(true);
+                stageManager.getStage(StageEnum.STAGE).setResizable(true);
+                stageManager.getStage(StageEnum.STAGE).setMaximized(true);
             });
         } else {
             Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null)));
         }
-        //Platform.runLater(() -> stageManager.getStage().show());
     }
 
     /**
