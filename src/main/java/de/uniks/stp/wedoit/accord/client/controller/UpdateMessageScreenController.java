@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MarkingController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
@@ -11,13 +13,12 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJI_PICKER_STAGE;
 
 public class UpdateMessageScreenController implements Controller {
 
@@ -28,7 +29,7 @@ public class UpdateMessageScreenController implements Controller {
     private TextArea tfUpdateMessage;
     private Button btnDiscard;
     private Button btnUpdateMessage;
-    private Label errorLabel;
+    private Label lblError;
     private Button btnEmoji;
     private MarkingController markingController;
     private VBox vboxMarkingSelection;
@@ -46,7 +47,7 @@ public class UpdateMessageScreenController implements Controller {
         btnEmoji = (Button) view.lookup("#btnEmoji");
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
-        errorLabel = (Label) view.lookup("#lblError");
+        lblError = (Label) view.lookup("#lblError");
         vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
 
         String messageText = "";
@@ -76,7 +77,7 @@ public class UpdateMessageScreenController implements Controller {
         String newMessage = tfUpdateMessage.getText();
 
         if (newMessage.equals(message.getText())) {
-            this.editor.getStageManager().getPopupStage().close();
+            this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
         } else if (newMessage.length() >= 1) {
             if (!editor.getMessageManager().isQuote(message)) {
                 editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
@@ -87,19 +88,19 @@ public class UpdateMessageScreenController implements Controller {
 
             }
         } else {
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE_CHAR_COUNT")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE_CHAR_COUNT")));
         }
     }
 
     private void discardChanges(ActionEvent actionEvent) {
-        this.editor.getStageManager().getPopupStage().close();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
     }
 
     public void handleUpdateMessage(Boolean status) {
         if (status) {
-            Platform.runLater(editor.getStageManager().getPopupStage()::close);
+            Platform.runLater(editor.getStageManager().getStage(StageEnum.POPUP_STAGE)::close);
         } else {
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE")));
         }
     }
 
@@ -108,8 +109,7 @@ public class UpdateMessageScreenController implements Controller {
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-        this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker",
-                "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfUpdateMessage, pos);
+        this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, tfUpdateMessage, pos);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class UpdateMessageScreenController implements Controller {
         tfUpdateMessage = null;
         btnDiscard = null;
         btnUpdateMessage = null;
-        errorLabel = null;
+        lblError = null;
     }
 
 }

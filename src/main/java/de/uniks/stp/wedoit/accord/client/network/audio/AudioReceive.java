@@ -101,7 +101,7 @@ public class AudioReceive extends Thread {
         this.shouldReceive.set(value);
     }
 
-    protected String getAudioSenderName (byte[] metaDataByte) {
+    protected String getAudioSenderName(byte[] metaDataByte) {
         String metaDataString = new String(metaDataByte);
         JSONObject metaDataJson = new JSONObject(metaDataString.trim());
 
@@ -115,8 +115,8 @@ public class AudioReceive extends Thread {
         }
     }
 
-    public void unmuteUser(String username){
-        if(sourceDataLineMap.containsKey(username)){
+    public void unmuteUser(String username) {
+        if (sourceDataLineMap.containsKey(username)) {
             sourceDataLineMap.get(username).start();
         }
     }

@@ -17,7 +17,7 @@ public class CreateCategoryScreenController implements Controller {
     private final Parent view;
     private TextField tfCategoryName;
     private Button btnCreateCategory;
-    private Label errorLabel, lblCategoryName;
+    private Label lblError, lblCategoryName;
 
     /**
      * Create a new Controller
@@ -40,7 +40,7 @@ public class CreateCategoryScreenController implements Controller {
     public void init() {
         // Load all view references
         this.tfCategoryName = (TextField) view.lookup("#tfCategoryName");
-        this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblError = (Label) view.lookup("#lblError");
         this.lblCategoryName = (Label) view.lookup("#lblCategoryName");
         this.btnCreateCategory = (Button) view.lookup("#btnCreateCategory");
 
@@ -77,7 +77,7 @@ public class CreateCategoryScreenController implements Controller {
         if (tfCategoryName.getText().length() < 1 || tfCategoryName.getText() == null) {
             tfCategoryName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
             editor.getRestManager().createCategory(editor.getCurrentServer(), tfCategoryName.getText(), this);
         }
@@ -95,7 +95,7 @@ public class CreateCategoryScreenController implements Controller {
             stop();
         } else {
             tfCategoryName.getStyleClass().add(LanguageResolver.getString("ERROR"));
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("SOMETHING_WRONG_WHILE_CREATING_CATEGORY")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("SOMETHING_WRONG_WHILE_CREATING_CATEGORY")));
         }
     }
 }

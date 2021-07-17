@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.OPTIONS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class PrivateChatsScreenController implements Controller {
@@ -35,7 +37,7 @@ public class PrivateChatsScreenController implements Controller {
     private final Editor editor;
     private Button btnOptions, btnPlay;
     private Button btnHome;
-    private TextArea tfPrivateChat;
+    private TextArea taPrivateChat;
     private ListView<User> lwOnlineUsers;
     private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
     private ObservableList<User> onlineUserObservableList;
@@ -76,7 +78,7 @@ public class PrivateChatsScreenController implements Controller {
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
-        this.tfPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
+        this.taPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
 
         this.setComponentsText();
 
@@ -99,7 +101,7 @@ public class PrivateChatsScreenController implements Controller {
         this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
         this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
         this.btnPlay.setText(LanguageResolver.getString("PLAY"));
-        this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
+        this.taPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
     }
 
     /**
@@ -146,7 +148,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Home Button is clicked
      */
     private void btnHomeOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
     }
 
 
@@ -156,7 +158,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param actionEvent occurs when Options Button is clicked
      */
     private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUPSTAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
     }
 
     /**
@@ -290,12 +292,12 @@ public class PrivateChatsScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 setComponentsText();
                 initTooltips();
-                editor.getStageManager().getStage().setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
+                editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
                 privateChatController.initToolTip();
                 privateChatController.addMessageContextMenu();
             }
@@ -325,6 +327,6 @@ public class PrivateChatsScreenController implements Controller {
     }
 
     public void setTfPrivateChatText(String text) {
-        this.tfPrivateChat.setText(text);
+        this.taPrivateChat.setText(text);
     }
 }

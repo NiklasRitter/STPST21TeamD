@@ -13,7 +13,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
 

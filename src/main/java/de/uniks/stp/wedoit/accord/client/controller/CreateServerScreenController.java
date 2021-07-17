@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.application.Platform;
@@ -19,7 +20,7 @@ public class CreateServerScreenController implements Controller {
     private final Parent view;
     private TextField tfServerName;
     private Button btnCreateServer;
-    private Label errorLabel, lblEnterServerName;
+    private Label lblError, lblEnterServerName;
 
     /**
      * Create a new Controller
@@ -43,7 +44,7 @@ public class CreateServerScreenController implements Controller {
         // Load all view references
         this.btnCreateServer = (Button) view.lookup("#btnCreateServer");
         this.tfServerName = (TextField) view.lookup("#tfServerName");
-        this.errorLabel = (Label) view.lookup("#lblError");
+        this.lblError = (Label) view.lookup("#lblError");
         this.lblEnterServerName = (Label) view.lookup("#lblEnterServerName");
 
         this.view.requestFocus();
@@ -81,7 +82,7 @@ public class CreateServerScreenController implements Controller {
         if (tfServerName.getText().length() < 1 || tfServerName.getText() == null) {
             tfServerName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("NAME_HAST_BE_1_SYMBOL")));
         } else {
             editor.getRestManager().createServer(tfServerName.getText(), this);
         }
@@ -95,11 +96,11 @@ public class CreateServerScreenController implements Controller {
     public void handleCreateServer(Server server) {
         if (server != null) {
             stop();
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, server, null));
         } else {
             tfServerName.getStyleClass().add(LanguageResolver.getString("ERROR"));
 
-            Platform.runLater(() -> errorLabel.setText(LanguageResolver.getString("SOMETHING_WORNG_WHILE_CREATING_SERVER")));
+            Platform.runLater(() -> lblError.setText(LanguageResolver.getString("SOMETHING_WORNG_WHILE_CREATING_SERVER")));
         }
     }
 }

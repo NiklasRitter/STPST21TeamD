@@ -30,5 +30,4 @@ public class Network {
     public static final String LEAVE = "/leave";
     public static final String JOIN = "/join";
     public static final String PRIVATE_USER_CHAT_PREFIX = WS_SERVER_URL + CHAT_PATH + "?user=";
-
 }

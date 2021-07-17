@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import javafx.event.ActionEvent;
@@ -41,8 +42,8 @@ public class AttentionLeaveServerController implements Controller {
         this.lblAreYouSure.setText(LanguageResolver.getString("ARE_SURE_LEAVE_SERVER"));
         this.btnLeave.setText(LanguageResolver.getString("LEAVE"));
         this.btnCancel.setText(LanguageResolver.getString("CANCEL"));
-        this.editor.getStageManager().getPopupStage().sizeToScene();
-        this.editor.getStageManager().getPopupStage().centerOnScreen();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
     }
 
     /**
@@ -62,7 +63,7 @@ public class AttentionLeaveServerController implements Controller {
      * @param actionEvent actionEvent such a when a button is fired
      */
     private void btnCancelOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().getPopupStage().close();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
     }
 
 

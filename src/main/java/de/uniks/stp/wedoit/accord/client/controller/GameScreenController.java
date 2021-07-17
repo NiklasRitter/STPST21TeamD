@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
@@ -21,7 +23,7 @@ import java.beans.PropertyChangeListener;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_RESULT_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAMESTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAME_STAGE;
 
 public class GameScreenController implements Controller {
 
@@ -61,7 +63,7 @@ public class GameScreenController implements Controller {
      * setup score listener
      */
     public void init() {
-        editor.getStageManager().getGameStage().setOnCloseRequest((e) -> {
+        editor.getStageManager().getStage(StageEnum.GAME_STAGE).setOnCloseRequest((e) -> {
             stop();
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_CLOSE);
             editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
@@ -112,11 +114,12 @@ public class GameScreenController implements Controller {
      * @param actionEvent occurs when one of the action button is pressed
      */
     private void gameActionOnClick(ActionEvent actionEvent) {
-        if ((Button) actionEvent.getSource() == btnRock) {
+
+        if (actionEvent.getSource() == btnRock) {
             gameAction = "Rock";
-        } else if ((Button) actionEvent.getSource() == btnPaper) {
+        } else if (actionEvent.getSource() == btnPaper) {
             gameAction = "Paper";
-        } else if ((Button) actionEvent.getSource() == btnScissors) {
+        } else if (actionEvent.getSource() == btnScissors) {
             gameAction = "Scissors";
         }
 
@@ -181,7 +184,7 @@ public class GameScreenController implements Controller {
      */
     private void handleGameDone(){
         if(oppScore.get() == 3 || ownScore.get() == 3){
-            this.editor.getStageManager().initView(GAMESTAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false, opponent, ownScore.get() == 3);
+            this.editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, opponent, ownScore.get() == 3);
             stop();
         }
     }

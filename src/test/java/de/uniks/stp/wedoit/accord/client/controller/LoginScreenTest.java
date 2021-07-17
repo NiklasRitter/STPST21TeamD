@@ -1,7 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
-import de.uniks.stp.wedoit.accord.client.Launcher;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -12,15 +13,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -75,15 +73,6 @@ public class LoginScreenTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptorLogin;
     private Options oldOptions;
 
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Override
     public void start(Stage stage) {
         // start application
@@ -99,7 +88,7 @@ public class LoginScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -140,20 +129,12 @@ public class LoginScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void startWithRememberMeOption() {
-    }
-
-    @Test
-    public void startWithoutRememberMeOption() {
-    }
-
-    @Test
     public void testBtnOptions() {
         // testing options button
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
     }
 
     @Test
@@ -263,10 +244,10 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username or password is wrong", errorLabel.getText());
@@ -290,15 +271,14 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
     }
-
 
 
     @Test
@@ -317,10 +297,10 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -333,11 +313,15 @@ public class LoginScreenTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
+        clickOn("#btnSwitchRegister");
+
         ((TextField) lookup("#tfUserName").query()).setText(username);
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
-        clickOn("#btnRegister");
+        ((TextField) lookup("#pwConfirmPW").query()).setText(password);
+
+        clickOn("#btnLogin");
 
         String returnMessageRegister = Json.createObjectBuilder()
                 .add("status", "success")
@@ -385,6 +369,8 @@ public class LoginScreenTest extends ApplicationTest {
     @Test
     public void testRegisterUsernameTaken() {
 
+        clickOn("#btnSwitchRegister");
+
         String returnMessage = Json.createObjectBuilder()
                 .add("status", "failure")
                 .add("message", "Name already taken")
@@ -402,7 +388,9 @@ public class LoginScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
-        clickOn("#btnRegister");
+        ((TextField) lookup("#pwConfirmPW").query()).setText(password);
+
+        clickOn("#btnLogin");
 
         verify(restMock).register(anyString(), anyString(), callbackArgumentCaptor.capture());
 
@@ -416,10 +404,10 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username already taken", errorLabel.getText());
@@ -437,16 +425,16 @@ public class LoginScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
-        clickOn("#btnRegister");
+        clickOn("#btnLogin");
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Please type in username and password", errorLabel.getText());
+        Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -462,16 +450,16 @@ public class LoginScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText("");
 
-        clickOn("#btnRegister");
+        clickOn("#btnLogin");
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Please type in username and password", errorLabel.getText());
+        Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -480,7 +468,7 @@ public class LoginScreenTest extends ApplicationTest {
     @Test
     public void testResizable() {
         Assert.assertEquals(stage.getTitle(), "Login");
-        Assert.assertTrue(stage.isResizable());
+        Assert.assertFalse(stage.isResizable());
     }
 
 }
