@@ -32,10 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class ServerScreenController implements Controller {
 

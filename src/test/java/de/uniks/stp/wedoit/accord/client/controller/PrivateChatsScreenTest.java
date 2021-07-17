@@ -1,10 +1,12 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 
+import com.pavlobu.emojitextflow.EmojiTextFlow;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
@@ -38,6 +40,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.List;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
@@ -615,14 +618,15 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         PrivateMessage selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
-        Label lblQuote = (Label) lookup("#lblQuote").query();
         Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
+        PrivateChatsScreenController privateChatsScreenController = (PrivateChatsScreenController) stageManager.getControllerMap().get(PRIVATE_CHATS_SCREEN_CONTROLLER);
+        PrivateChatController privateChatController = privateChatsScreenController.getPrivateChatController();
 
         String formatted = stageManager.getEditor().getMessageManager().getMessageFormatted(selectedItem);
-        Assert.assertEquals(lblQuote.getText(), formatted);
+        Assert.assertEquals(privateChatController.getQuotedText(), formatted);
         clickOn(btnCancelQuote);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(lblQuote.getText(), "");
+        Assert.assertEquals(privateChatController.getQuotedText(), "");
 
 
         lwPrivateChat.getSelectionModel().select(lwPrivateChat.getItems().size() - 1);
@@ -631,10 +635,9 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
-        lblQuote = (Label) lookup("#lblQuote").query();
 
         formatted = stageManager.getEditor().getMessageManager().getMessageFormatted(selectedItem);
-        Assert.assertEquals(lblQuote.getText(), formatted);
+        Assert.assertEquals(privateChatController.getQuotedText(), formatted);
 
         ((TextArea) lookup("#tfEnterPrivateChat").query()).setText("quote");
         clickOn("#tfEnterPrivateChat");

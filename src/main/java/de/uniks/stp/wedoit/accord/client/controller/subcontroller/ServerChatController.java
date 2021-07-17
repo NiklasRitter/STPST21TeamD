@@ -1,14 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
+import com.pavlobu.emojitextflow.EmojiTextFlow;
+import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Message;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
@@ -37,10 +37,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.*;
 
 public class ServerChatController implements Controller {
 
@@ -53,7 +51,6 @@ public class ServerChatController implements Controller {
 
     private HBox quoteVisible;
     private Label lbChannelName;
-    private Label lblQuote;
     private TextArea tfInputMessage;
     private Button btnCancelQuote;
     private Button btnEmoji;
@@ -65,6 +62,8 @@ public class ServerChatController implements Controller {
     private ContextMenu contextMenuUserMessage;
     private VBox vBoxTextField;
     private MarkingController markingController;
+    private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
+    private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
 
     /**
      * Create a new Controller
@@ -98,8 +97,8 @@ public class ServerChatController implements Controller {
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
         this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
-        this.lblQuote = (Label) view.lookup("#lblQuote");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
+        this.quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(10).createParameters());
 
         this.tfInputMessage.setOnKeyPressed(this::tfInputMessageOnEnter);
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
@@ -151,6 +150,10 @@ public class ServerChatController implements Controller {
                 message.listeners().removePropertyChangeListener(Message.PROPERTY_TEXT, this.messageTextChangedListener);
             }
         }
+        if (this.localUser.getAccordClient() != null) {
+            this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        }
+        this.editor.getChatFontSizeProperty().removeListener(this::onDarkmodeChanged);
     }
 
     /**
@@ -240,9 +243,10 @@ public class ServerChatController implements Controller {
 
                 String formatted = editor.getMessageManager().getMessageFormatted(message, messageText);
                 removeQuote();
-                lblQuote.setText(formatted);
-                lblQuote.setAccessibleHelp(message.getId());
-                quoteVisible.getChildren().add(lblQuote);
+                quoteTextFlow.parseAndAppend(formatted);
+                quotedText = formatted;
+                quoteTextFlow.setAccessibleHelp(message.getId());
+                quoteVisible.getChildren().add(quoteTextFlow);
                 quoteVisible.getChildren().add(btnCancelQuote);
             }
             if (menu.equals(UPDATE)) {
@@ -270,7 +274,8 @@ public class ServerChatController implements Controller {
      * removes a quote from the view
      */
     public void removeQuote() {
-        lblQuote.setText("");
+        quoteTextFlow.parseAndAppend("");
+        quotedText = "";
         quoteVisible.getChildren().clear();
     }
 
@@ -335,8 +340,8 @@ public class ServerChatController implements Controller {
         if (message != null && !message.isEmpty() && currentChannel != null) {
             message = message.trim();
 
-            if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + lblQuote.getText()
+            if (!quotedText.isEmpty()) {
+                JsonObject quoteMsg = JsonUtil.buildServerChatMessage(currentChannel.getId(), QUOTE_PREFIX + quotedText
                         + QUOTE_MESSAGE + message + QUOTE_SUFFIX);
                 removeQuote();
 
@@ -380,6 +385,8 @@ public class ServerChatController implements Controller {
 
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
+        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        this.editor.getChatFontSizeProperty().addListener(this::onDarkmodeChanged);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
 
         this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
@@ -432,4 +439,17 @@ public class ServerChatController implements Controller {
             }
         }
     }
+
+    /**
+     * Refreshes chat list in order to update the font and color
+     *
+     */
+    private void onDarkmodeChanged(Object object) {
+        this.lvTextChat.refresh();
+    }
+
+    public String getQuotedText() {
+        return quotedText;
+    }
+
 }

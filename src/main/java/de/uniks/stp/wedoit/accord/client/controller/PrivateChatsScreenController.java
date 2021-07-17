@@ -329,4 +329,8 @@ public class PrivateChatsScreenController implements Controller {
     public void setTfPrivateChatText(String text) {
         this.taPrivateChat.setText(text);
     }
+
+    public PrivateChatController getPrivateChatController() {
+        return privateChatController;
+    }
 }
