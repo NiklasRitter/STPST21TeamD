@@ -1,12 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
-
+import com.pavlobu.emojitextflow.EmojiTextFlow;
+import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
@@ -21,6 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import org.jsoup.Jsoup;
@@ -70,6 +73,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
+        EmojiTextFlowParameters parameters;
+        EmojiTextFlow emojiTextFlow;
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -87,6 +92,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             descBox.setText(null);
             hyperlink.setOnAction(null);
             hyperlink.getStyleClass().removeAll("link", "descBox");
+
+            // parameters for emoji
+            this.parameters = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize()).createParameters();
+            if (stageManager.getPrefManager().loadDarkMode()) {
+                this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
+            } else {
+                this.parameters.setTextColor(Color.valueOf("#000000"));
+            }
+            emojiTextFlow = new EmojiTextFlow(this.parameters);
+
 
             if (!empty) {
 
@@ -112,10 +127,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
 
-                    VBox messageVBox = new VBox();
-                    Label quoteLabel = new Label();
-                    Label messageLabel = new Label();
-
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
                     String[] messages = quoteMessage.split(QUOTE_MESSAGE);
@@ -129,6 +140,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         messageLabel.setText(timeLabel().getText() + item.getFrom() + ": " + messages[1]);
                         setGraphic(messageVBox);
                         messageVBox.getChildren().addAll(quoteLabel, messageLabel);
+                        EmojiTextFlow quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize() -3).createParameters());
+                        quoteTextFlow.parseAndAppend(">>>" + messages[0]);
+                        this.emojiTextFlow.parseAndAppend("[" + time + "] " + item.getFrom() + ": " + messages[1]);
+                        this.vBox.getChildren().addAll(quoteTextFlow, emojiTextFlow);
+                        setGraphic(vBox);
                     }
 
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
@@ -138,41 +154,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     } else {
                         this.setStyle("-fx-font-size: 12");
                         this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText());
+                        displayTextWithEmoji(item);
                     }
                 } else {
-                    VBox vBox = new VBox();
-                    HBox hBox = new HBox();
-                    hBox.setAlignment(Pos.CENTER_LEFT);
-                    Label name = new Label(item.getFrom() + " ");
-
-                    int nameLength = item.getFrom().length();
-
-                    switch (nameLength % 5) {
-                        case 0:
-                            name.getStyleClass().add("color0");
-                            break;
-                        case 1:
-                            name.getStyleClass().add("color1");
-                            break;
-                        case 2:
-                            name.getStyleClass().add("color2");
-                            break;
-                        case 3:
-                            name.getStyleClass().add("color3");
-                            break;
-                        case 4:
-                            name.getStyleClass().add("color4");
-                            break;
-                    }
-                    lblDate.setText(time);
-                    lblDate.getStyleClass().add("date");
-                    initToolTip(item);
-                    Label text = new Label(item.getText());
-                    text.getStyleClass().add("text");
-                    text.setWrapText(true);
-                    hBox.getChildren().addAll(name, lblDate);
-                    vBox.getChildren().addAll(hBox, text);
-                    this.setGraphic(vBox);
+                    displayTextWithEmoji(item);
                 }
 
                 if (item instanceof PrivateMessage) {
@@ -222,11 +207,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private boolean containsMarking(String message) {
-            if (message.contains("@" + stageManager.getEditor().getLocalUser().getName())) {
-                return true;
-            } else {
-                return false;
-            }
+            return message.contains("@" + stageManager.getEditor().getLocalUser().getName());
         }
 
         private String containsInviteUrl(String text) {
@@ -404,6 +385,39 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             this.vBox.getChildren().addAll(this.label, joinServerHBox, textLabel);
             setGraphic(this.vBox);
+        }
+
+        private void displayTextWithEmoji(Message item) {
+            HBox nameAndDateHBox = new HBox();
+            nameAndDateHBox.setAlignment(Pos.CENTER_LEFT);
+            Label name = new Label(item.getFrom() + " ");
+
+            int nameLength = item.getFrom().length();
+
+            switch (nameLength % 5) {
+                case 0:
+                    name.getStyleClass().add("color0");
+                    break;
+                case 1:
+                    name.getStyleClass().add("color1");
+                    break;
+                case 2:
+                    name.getStyleClass().add("color2");
+                    break;
+                case 3:
+                    name.getStyleClass().add("color3");
+                    break;
+                case 4:
+                    name.getStyleClass().add("color4");
+                    break;
+            }
+            Label date = new Label(time);
+            date.getStyleClass().add("date");
+            nameAndDateHBox.getChildren().addAll(name, date);
+
+            this.emojiTextFlow.parseAndAppend(item.getText());
+            this.vBox.getChildren().addAll(nameAndDateHBox, emojiTextFlow);
+            setGraphic(vBox);
         }
 
     }

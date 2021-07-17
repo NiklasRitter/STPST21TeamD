@@ -202,6 +202,7 @@ public class StageManager extends Application {
                         "light-theme.css")).toExternalForm());
             }
         }
+
     }
 
     public void updateDarkmode() {

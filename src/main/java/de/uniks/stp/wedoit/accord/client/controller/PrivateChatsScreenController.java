@@ -312,6 +312,7 @@ public class PrivateChatsScreenController implements Controller {
             privateChatController.initPrivateChat(selectedUser);
             this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
             this.btnPlay.setVisible(true);
+            this.editor.getStageManager().updateDarkmode();
         }
     }
 
@@ -329,5 +330,9 @@ public class PrivateChatsScreenController implements Controller {
 
     public void setTfPrivateChatText(String text) {
         this.taPrivateChat.setText(text);
+    }
+
+    public PrivateChatController getPrivateChatController() {
+        return privateChatController;
     }
 }

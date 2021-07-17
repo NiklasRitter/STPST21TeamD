@@ -1,8 +1,9 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
-import de.uniks.stp.wedoit.accord.client.Editor;
+import com.pavlobu.emojitextflow.Emoji;
+import com.pavlobu.emojitextflow.EmojiParser;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.Icons;
-import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -10,12 +11,15 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class EmojiScreenController implements Controller {
 
@@ -24,8 +28,8 @@ public class EmojiScreenController implements Controller {
     private final TextArea txtAreaForEmoji;
     private final Bounds pos;
 
-    private EmojiButton emoji;
-    private final HashMap<EmojiButton, String> hashMapForEmojiButtons = new HashMap<>();
+    private EmojiButton emojiButton;
+    private final HashMap<EmojiButton, Emoji> hashMapForEmojiButtons = new HashMap<>();
     private final List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
 
     public EmojiScreenController(Parent view, TextArea txtAreaForEmoji, Bounds pos) {
@@ -39,6 +43,7 @@ public class EmojiScreenController implements Controller {
      * call the emoji picker creator
      */
     public void init() {
+
         this.pane = (GridPane) this.view.lookup("#panelForEmojis");
 
         this.pane.setAlignment(Pos.CENTER);
@@ -63,10 +68,18 @@ public class EmojiScreenController implements Controller {
         int gridWidth = 7;
 
         for (int i = 0; i < iconsUnicodeList.size(); i++) {
-            emoji = new EmojiButton(iconsUnicodeList.get(i).toString());
-            hashMapForEmojiButtons.put(emoji, emoji.getText());
-            emoji.setOnAction(this::btnEmojiOnClick);
-            this.pane.add(emoji, i % gridWidth, i / gridWidth);
+            String unicode = iconsUnicodeList.get(i).toString();
+            ImageView icon = new ImageView();
+            icon.setFitWidth(30);
+            icon.setFitHeight(30);
+            String shortname = EmojiParser.getInstance().unicodeToShortname(unicode);
+            Emoji emoji = EmojiParser.getInstance().getEmoji(shortname);
+            icon.setImage(new Image(Objects.requireNonNull(StageManager.class.getResource("emoji_images/" + emoji.getHex() + ".png")).toString()));
+            this.emojiButton = new EmojiButton("");
+            this.emojiButton.setGraphic(icon);
+            hashMapForEmojiButtons.put(this.emojiButton, emoji);
+            this.emojiButton.setOnAction(this::btnEmojiOnClick);
+            this.pane.add(this.emojiButton, i % gridWidth, i / gridWidth);
         }
     }
 
@@ -76,7 +89,8 @@ public class EmojiScreenController implements Controller {
      */
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         if (this.txtAreaForEmoji.isEditable()) {
-            Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + hashMapForEmojiButtons.get(actionEvent.getSource())));
+            Emoji selectedEmoji = hashMapForEmojiButtons.get(actionEvent.getSource());
+            Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + selectedEmoji.getUnicode()));
         }
     }
 
@@ -87,6 +101,6 @@ public class EmojiScreenController implements Controller {
      */
     @Override
     public void stop() {
-        emoji.setOnAction(null);
+        emojiButton.setOnAction(null);
     }
 }

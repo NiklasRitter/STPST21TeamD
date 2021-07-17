@@ -3,6 +3,8 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -1011,24 +1013,25 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
 
-        Label lblQuote = lookup("#lblQuote").query();
         Button btnCancelQuote = lookup("#btnCancelQuote").query();
 
+        ServerScreenController serverScreenController = (ServerScreenController) stageManager.getControllerMap().get(SERVER_SCREEN_CONTROLLER);
+        ServerChatController controller = serverScreenController.getServerChatController();
+
         String formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0), lvTextChat.getItems().get(0).getText());
-        Assert.assertEquals(lblQuote.getText(), formatted);
+        Assert.assertEquals(controller.getQuotedText(), formatted);
         clickOn(btnCancelQuote);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(lblQuote.getText(), "");
+        Assert.assertEquals(controller.getQuotedText(), "");
 
 
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
-        lblQuote = lookup("#lblQuote").query();
 
         formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0), lvTextChat.getItems().get(0).getText());
-        Assert.assertEquals(lblQuote.getText(), formatted);
+        Assert.assertEquals(controller.getQuotedText(), formatted);
 
         ((TextArea) lookup("#tfInputMessage").query()).setText("quote");
         clickOn("#tfInputMessage");

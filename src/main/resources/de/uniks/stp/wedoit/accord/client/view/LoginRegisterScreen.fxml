@@ -39,6 +39,7 @@
                                     </font>
                                 </Label>
                             </children>
+                           <font>
                         </Pane>
                     </left>
                     <center>
