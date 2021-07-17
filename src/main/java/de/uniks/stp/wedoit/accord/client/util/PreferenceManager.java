@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import javafx.application.Platform;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
