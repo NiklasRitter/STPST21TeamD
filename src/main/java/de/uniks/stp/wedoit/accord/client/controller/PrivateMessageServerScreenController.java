@@ -59,6 +59,7 @@ public class PrivateMessageServerScreenController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
 
         this.memberToWrite.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(memberToWrite.getName());
     }
 
     @Override
