@@ -9,6 +9,7 @@ import de.uniks.stp.wedoit.accord.client.model.User;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,11 +56,13 @@ public class ChannelManager {
                 membersIds.add(members.getString(index));
             }
             if (privileged) {
+                ArrayList<User> membersToRemove = new ArrayList<>();
                 for(User user : channel.getMembers()){
                     if(!membersIds.contains(user.getId())){
-                        channel.withoutMembers(user);
+                        membersToRemove.add(user);
                     }
                 }
+                channel.withoutAudioMembers(membersToRemove);
                 for (User user : server.getMembers()) {
                     if (membersIds.contains(user.getId())) {
                         channel.withMembers(user);
@@ -78,11 +81,13 @@ public class ChannelManager {
             for (int index = 0; index < audioMembers.toArray().length; index++) {
                 membersAudioIds.add(audioMembers.getString(index));
             }
+            ArrayList<User> audioMembersToRemove = new ArrayList<>();
             for(User user : channel.getAudioMembers()){
                 if(!membersAudioIds.contains(user.getId())){
-                    channel.withoutAudioMembers(user);
+                    audioMembersToRemove.add(user);
                 }
             }
+            channel.withoutAudioMembers(audioMembersToRemove);
             for (User user : server.getMembers()) {
                 if (membersAudioIds.contains(user.getId())) {
                     channel.withAudioMembers(user);
