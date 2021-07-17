@@ -227,7 +227,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lwPrivateChat.getItems().get(lwNewestItem).getTo());
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(GAME_INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
+        Assert.assertEquals(GAME_INVITE.substring(GAME_PREFIX.length()), lwPrivateChat.getItems().get(lwNewestItem).getText());
 
 
         //receive game accepted message
@@ -279,7 +279,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         int lwNewestItem = lwPrivateChat.getItems().size() - 1;
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals(GAME_INVITE, lwPrivateChat.getItems().get(lwNewestItem).getText());
+        Assert.assertEquals(GAME_INVITE.substring(GAME_PREFIX.length()), lwPrivateChat.getItems().get(lwNewestItem).getText());
 
         clickOn(btnPlay);
 

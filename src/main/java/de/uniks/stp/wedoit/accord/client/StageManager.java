@@ -101,7 +101,7 @@ public class StageManager extends Application {
                 controller = new GameScreenController(root, (User) parameter, editor);
                 break;
             case GAME_RESULT_SCREEN_CONTROLLER:
-                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter, (boolean) parameterTwo, editor);
+                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter,(Boolean) parameterTwo, editor);
                 break;
             case OPTIONS_SCREEN_CONTROLLER:
                 controller = new OptionsScreenController(root, model.getOptions(), editor);
