@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.Invitation;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
@@ -16,15 +18,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -64,15 +63,6 @@ public class EditServerScreenTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     private Options oldOptions;
 
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Override
     public void start(Stage stage) {
         this.stageManager = new StageManager();
@@ -91,7 +81,7 @@ public class EditServerScreenTest extends ApplicationTest {
                 + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClientMock);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
+        this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null);
     }
 
 
@@ -131,7 +121,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
         WaitForAsyncUtils.waitForFxEvents();
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
     }
 
     @Test
@@ -143,7 +133,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         // Assert that Pop-Up Window shows correct widgets
         VBox vBoxAdminOnly = lookup("#vBoxAdminOnly").query();
@@ -198,7 +188,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         Label lblError = lookup("#lblError").query();
 
@@ -227,7 +217,7 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         Label lblError = lookup("#lblError").query();
 
@@ -257,13 +247,13 @@ public class EditServerScreenTest extends ApplicationTest {
         clickOn("#btnEdit");
 
         // Assert Pop-Up Window opens
-        Assert.assertEquals("Edit Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         clickOn("#btnDelete");
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(this.stageManager.getPopupStage().getTitle(), "Attention");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Attention");
     }
 
     @Test
@@ -282,7 +272,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         clickOn(radioBtnMaxCount);
         Assert.assertTrue(tfMaxCountAmountInput.isEditable());
-        tfMaxCountAmountInput. setText("15");
+        tfMaxCountAmountInput.setText("15");
         clickOn("#btnCreateInvitation");
         WaitForAsyncUtils.waitForFxEvents();
 

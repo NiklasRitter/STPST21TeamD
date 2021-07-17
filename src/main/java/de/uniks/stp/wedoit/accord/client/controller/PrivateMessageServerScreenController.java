@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -11,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -20,13 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class PrivateMessageServerScreenController implements Controller {
 
@@ -35,7 +30,7 @@ public class PrivateMessageServerScreenController implements Controller {
     private final Server server;
     private final User memberToWrite;
 
-    private TextArea tfMessage;
+    private TextArea taMessage;
     private Button btnShowChat;
     private Button btnEmoji;
 
@@ -51,27 +46,29 @@ public class PrivateMessageServerScreenController implements Controller {
     @Override
     public void init() {
         Label lblTitle = (Label) view.lookup("#lblTitle");
-        this.tfMessage = (TextArea) view.lookup("#tfMessage");
+        this.taMessage = (TextArea) view.lookup("#tfMessage");
         this.btnShowChat = (Button) view.lookup("#btnShowChat");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
-        lblTitle.setText(LanguageResolver.getString("SEND_MESSAGE_TO") +" " + memberToWrite.getName());
+        lblTitle.setText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
         this.setCorrectPromptText(memberToWrite.isOnlineStatus());
         this.btnShowChat.setText(LanguageResolver.getString("SHOW_CHAT"));
 
-        this.tfMessage.setOnKeyPressed(this::tfMessageOnEnter);
+        this.taMessage.setOnKeyPressed(this::tfMessageOnEnter);
         this.btnShowChat.setOnAction(this::btnShowChatOnClick);
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
 
         this.memberToWrite.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(memberToWrite.getName());
     }
 
     @Override
     public void stop() {
-        this.tfMessage.setOnKeyPressed(null);
+        this.taMessage.setOnKeyPressed(null);
         this.btnShowChat.setOnAction(null);
         this.btnEmoji.setOnAction(null);
         this.memberToWrite.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
     }
 
     /**
@@ -82,12 +79,12 @@ public class PrivateMessageServerScreenController implements Controller {
      * @param keyEvent occurs when key is pressed when text area is focused
      */
     private void tfMessageOnEnter(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.ENTER){
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
-            if(keyEvent.isShiftDown()){
-                tfMessage.appendText(System.getProperty("line.separator"));
-            }else{
-                sendMessage(this.tfMessage.getText());
+            if (keyEvent.isShiftDown()) {
+                taMessage.appendText(System.getProperty("line.separator"));
+            } else {
+                sendMessage(this.taMessage.getText());
             }
         }
 
@@ -99,7 +96,7 @@ public class PrivateMessageServerScreenController implements Controller {
      * @param message to be send to currentChat
      */
     private void sendMessage(String message) {
-        this.tfMessage.clear();
+        this.taMessage.clear();
 
         if (memberToWrite.isOnlineStatus()) {
             if (message != null && !message.isEmpty()) {
@@ -116,20 +113,21 @@ public class PrivateMessageServerScreenController implements Controller {
      * @param actionEvent expected actionEvent
      */
     private void btnShowChatOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(STAGE, "Private Chats", "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
         Map<String, Controller> controllerMap = this.editor.getStageManager().getControllerMap();
         PrivateChatsScreenController privateChatsScreenController = (PrivateChatsScreenController) controllerMap.get(PRIVATE_CHATS_SCREEN_CONTROLLER);
         privateChatsScreenController.setSelectedUser(memberToWrite);
         privateChatsScreenController.initPrivateChatView(memberToWrite);
         privateChatsScreenController.getLwOnlineUsers().getSelectionModel().select(memberToWrite);
-        privateChatsScreenController.setTfPrivateChatText(this.tfMessage.getText());
+        privateChatsScreenController.setTfPrivateChatText(this.taMessage.getText());
+        stop();
     }
 
     private void btnEmojiOnClicked(ActionEvent actionEvent) {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (memberToWrite.isOnlineStatus()) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, this.tfMessage, pos);
+            this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, taMessage, pos);
         }
     }
 
@@ -148,12 +146,12 @@ public class PrivateMessageServerScreenController implements Controller {
      * @param onlineStatus online status of the selected User
      */
     private void setCorrectPromptText(boolean onlineStatus) {
-        this.tfMessage.setEditable(onlineStatus);
+        this.taMessage.setEditable(onlineStatus);
         if (!onlineStatus) {
-            this.tfMessage.clear();
-            this.tfMessage.setPromptText(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+            this.taMessage.clear();
+            this.taMessage.setPromptText(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
         } else {
-            this.tfMessage.setPromptText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
+            this.taMessage.setPromptText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
         }
     }
 

@@ -1,17 +1,15 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
-import javafx.beans.Observable;
-import javafx.beans.property.ObjectProperty;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -65,12 +63,12 @@ public class OptionsScreenController implements Controller {
 
         this.btnDarkMode.setSelected(options.isDarkmode());
 
-        this.btnDarkMode.setOnAction(this::btnDarkmodeOnClick);
+        this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.logoutButton.setOnAction(this::logoutButtonOnClick);
         this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
 
         // If current stage is LoginScreen, than OptionScreen should not show logout button
-        Stage stage = this.editor.getStageManager().getStage();
+        Stage stage = this.editor.getStageManager().getStage(StageEnum.STAGE);
         if (stage.getTitle().equals(LanguageResolver.getString("LOGIN"))) {
             logoutButton.setVisible(false);
             HBox parent = (HBox) logoutButton.getParent();
@@ -79,8 +77,8 @@ public class OptionsScreenController implements Controller {
             sliderTextSize.setVisible(false);
             lbTextSize.setVisible(false);
             HBox parent1 = (HBox) sliderTextSize.getParent();
-            parent1.getChildren().removeAll(sliderTextSize,lbTextSize);
-        }else{
+            parent1.getChildren().removeAll(sliderTextSize, lbTextSize);
+        } else {
             sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
         }
 
@@ -92,7 +90,6 @@ public class OptionsScreenController implements Controller {
     private void sliderOnChange(MouseEvent e) {
         editor.saveFontSize((int) sliderTextSize.getValue());
     }
-
 
 
     private void createChoiceBoxItems() {
@@ -114,7 +111,7 @@ public class OptionsScreenController implements Controller {
         this.lblDarkMode.setText(LanguageResolver.getString("DARKMODE"));
         this.lblLanguage.setText(LanguageResolver.getString("LANGUAGE"));
         this.lbTextSize.setText(LanguageResolver.getString("CHAT_TEXT_SIZE"));
-        this.editor.getStageManager().getPopupStage().setTitle(LanguageResolver.getString("OPTIONS"));
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(LanguageResolver.getString("OPTIONS"));
     }
 
 
@@ -155,12 +152,12 @@ public class OptionsScreenController implements Controller {
     }
 
     /**
-     * Change the darkmode to the value of the CheckBox
+     * Change the dark mode to the value of the CheckBox
      *
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
-    private void btnDarkmodeOnClick(ActionEvent actionEvent) {
-        options.setDarkmode(btnDarkMode.isSelected());
+    private void btnDarkModeOnClick(ActionEvent actionEvent) {
+        Platform.runLater(() -> options.setDarkmode(btnDarkMode.isSelected()));
     }
 
     /**

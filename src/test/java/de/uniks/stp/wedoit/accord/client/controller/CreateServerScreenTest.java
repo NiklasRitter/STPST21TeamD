@@ -1,6 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -14,15 +16,12 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
@@ -60,15 +59,6 @@ public class CreateServerScreenTest extends ApplicationTest {
     private ArgumentCaptor<Callback<JsonNode>> callbackArgumentCaptor;
     private Options oldOptions;
 
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Override
     public void start(Stage stage) {
         // start application
@@ -89,7 +79,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Main", "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -140,7 +130,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "MySuperServer";
@@ -184,7 +174,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "MySuperServer";
@@ -209,7 +199,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         Assert.assertNull(server);
 
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals("text-input text-field Error", textField.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField Error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Something went wrong while creating the server", errorLabel.getText());
@@ -231,7 +221,7 @@ public class CreateServerScreenTest extends ApplicationTest {
 
         clickOn("#btnAddServer");
 
-        Assert.assertEquals("Create Server", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Create Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         TextField serverTextField = lookup("#tfServerName").query();
         String serverName = "";
@@ -249,7 +239,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         }
         Assert.assertNull(server);
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals("text-input text-field Error", textField.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField Error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Name has to be at least 1 symbols long", errorLabel.getText());

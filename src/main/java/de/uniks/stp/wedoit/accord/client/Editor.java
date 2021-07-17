@@ -1,5 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
@@ -62,7 +64,7 @@ public class Editor {
     /**
      * @return private final AudioManager audioManager
      */
-    public AudioManager getAudioManager(){
+    public AudioManager getAudioManager() {
         return audioManager;
     }
 
@@ -303,7 +305,10 @@ public class Editor {
         if (!success) {
             System.err.println("Error while logging out");
         }
-        Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
+        Platform.runLater(() -> {
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN,null, null);
+            stageManager.getStage(StageEnum.POPUP_STAGE).hide();
+        });
     }
 
     /**
@@ -391,7 +396,7 @@ public class Editor {
         return db.getFontSize();
     }
 
-    public IntegerProperty getChatFontSizeProperty(){
+    public IntegerProperty getChatFontSizeProperty() {
         return chatFontSize;
     }
 
@@ -437,8 +442,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
-            stageManager.getStage().show();
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN,null,null);
         }
     }
 
@@ -447,11 +451,14 @@ public class Editor {
      */
     public void handleAutomaticLogin(boolean success) {
         if (success) {
-            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> {
+                stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
+                stageManager.getStage(StageEnum.STAGE).setResizable(true);
+                stageManager.getStage(StageEnum.STAGE).setMaximized(true);
+            });
         } else {
-            Platform.runLater(() -> stageManager.initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null)));
         }
-        Platform.runLater(() -> stageManager.getStage().show());
     }
 
     /**
@@ -465,6 +472,7 @@ public class Editor {
             haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
         }
     }
+
     /**
      * returns channel by its id
      *

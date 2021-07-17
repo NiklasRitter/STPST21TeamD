@@ -12,23 +12,25 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="800.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<HBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="800.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox id="mainVBox" alignment="TOP_CENTER">
             <children>
                 <VBox alignment="CENTER" spacing="5.0">
                     <children>
-                        <Label id="lblError" styleClass="redLabel" />
+                        <Label id="lblError" styleClass="redLabel"/>
                         <HBox alignment="TOP_CENTER">
                             <children>
-                                <Region prefHeight="61.0" prefWidth="30.0" />
+                                <Region prefHeight="61.0" prefWidth="30.0"/>
                                 <Label id="lblChangeName" prefWidth="135.0">
                                     <font>
-                                        <Font name="System Bold" size="14.0" />
+                                        <Font name="System Bold" size="14.0"/>
                                     </font>
                                 </Label>
-                                <TextField id="tfNewServernameInput" prefHeight="25.0" prefWidth="190.0" />
-                                <Region prefHeight="61.0" prefWidth="30.0" />
+                                <TextField id="tfNewServernameInput" prefHeight="25.0" prefWidth="190.0"
+                                           styleClass="createTextField"/>
+                                <Region prefHeight="61.0" prefWidth="30.0"/>
                             </children>
                         </HBox>
                     </children>
@@ -41,7 +43,7 @@
                                     <children>
                                         <Label id="lblInvite">
                                             <font>
-                                                <Font name="System Bold" size="14.0" />
+                                                <Font name="System Bold" size="14.0"/>
                                             </font>
                                         </Label>
                                     </children>
@@ -52,18 +54,19 @@
                                             <children>
                                                 <RadioButton id="radioBtnTemporal" mnemonicParsing="false">
                                                     <font>
-                                                        <Font size="14.0" />
+                                                        <Font size="14.0"/>
                                                     </font>
                                                 </RadioButton>
-                                    <Label id="lblCountWarning" styleClass="redLabel" />
+                                                <Label id="lblCountWarning" styleClass="redLabel"/>
                                                 <HBox spacing="5.0">
                                                     <children>
                                                         <RadioButton id="radioBtnMaxCount" mnemonicParsing="false">
                                                             <font>
-                                                                <Font size="14.0" />
+                                                                <Font size="14.0"/>
                                                             </font>
                                                         </RadioButton>
-                                                        <TextField id="tfMaxCountAmountInput" />
+                                                        <TextField id="tfMaxCountAmountInput"
+                                                                   styleClass="createTextField"/>
                                                     </children>
                                                 </HBox>
                                             </children>
@@ -72,25 +75,27 @@
                                 </HBox>
                             </children>
                         </VBox>
-                        <Region prefHeight="20.0" prefWidth="350.0" />
+                        <Region prefHeight="20.0" prefWidth="350.0"/>
                         <HBox alignment="CENTER">
                             <children>
                                 <VBox alignment="TOP_CENTER">
                                     <children>
-                                        <Button id="btnCreateInvitation" mnemonicParsing="false" styleClass="styleButton">
+                                        <Button id="btnCreateInvitation" mnemonicParsing="false"
+                                                styleClass="styleButton">
                                             <font>
-                                                <Font name="System Bold" size="14.0" />
+                                                <Font name="System Bold" size="14.0"/>
                                             </font>
                                         </Button>
-                                        <Region prefHeight="20.0" />
-                                        <TextField id="tfInvitationLink" editable="false" prefHeight="25.0" prefWidth="290.0">
+                                        <Region prefHeight="20.0"/>
+                                        <TextField id="tfInvitationLink" editable="false" prefHeight="25.0"
+                                                   prefWidth="290.0" styleClass="createTextField">
                                             <font>
-                                                <Font size="14.0" />
+                                                <Font size="14.0"/>
                                             </font>
                                         </TextField>
                                         <Label id="labelCopy">
                                             <font>
-                                                <Font name="System Bold" size="14.0" />
+                                                <Font name="System Bold" size="14.0"/>
                                             </font>
                                         </Label>
                                     </children>
@@ -101,7 +106,7 @@
                 </VBox>
             </children>
             <padding>
-                <Insets left="15.0" right="20.0" />
+                <Insets left="15.0" right="20.0"/>
             </padding>
         </VBox>
         <VBox alignment="TOP_CENTER">
@@ -110,48 +115,50 @@
                     <children>
                         <Button id="btnSave" mnemonicParsing="false" styleClass="styleButton">
                             <font>
-                                <Font name="System Bold" size="14.0" />
+                                <Font name="System Bold" size="14.0"/>
                             </font>
                         </Button>
-                        <Region prefWidth="65.0" />
+                        <Region prefWidth="65.0"/>
                         <Button id="btnDelete" mnemonicParsing="false" styleClass="styleButton">
                             <font>
-                                <Font name="System Bold" size="14.0" />
+                                <Font name="System Bold" size="14.0"/>
                             </font>
                         </Button>
                     </children>
                 </HBox>
-                <Region prefHeight="24.0" prefWidth="30.0" />
+                <Region prefHeight="24.0" prefWidth="30.0"/>
                 <VBox id="vBoxAdminOnly" prefWidth="350.0">
                     <children>
                         <Label id="lblOldInvit">
                             <font>
-                                <Font size="14.0" />
+                                <Font size="14.0"/>
                             </font>
                         </Label>
                         <ListView id="lvInvitation" prefHeight="150.0">
                             <VBox.margin>
-                                <Insets bottom="10.0" top="5.0" />
+                                <Insets bottom="10.0" top="5.0"/>
                             </VBox.margin>
                         </ListView>
                         <HBox alignment="CENTER_LEFT">
                             <children>
-                                <Button id="btnDeleteInvitation" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="styleButton" textAlignment="CENTER" wrapText="true">
+                                <Button id="btnDeleteInvitation" alignment="CENTER" contentDisplay="CENTER"
+                                        mnemonicParsing="false" styleClass="styleButton" textAlignment="CENTER"
+                                        wrapText="true">
                                     <font>
-                                        <Font name="System Bold" size="12.0" />
+                                        <Font name="System Bold" size="12.0"/>
                                     </font>
                                     <HBox.margin>
-                                        <Insets right="10.0" />
+                                        <Insets right="10.0"/>
                                     </HBox.margin>
                                 </Button>
                                 <VBox>
                                     <children>
                                         <Label id="lblInvitationStatusText">
                                             <font>
-                                                <Font name="System Bold" size="14.0" />
+                                                <Font name="System Bold" size="14.0"/>
                                             </font>
                                         </Label>
-                                        <Label id="lblInvitationStatus" />
+                                        <Label id="lblInvitationStatus"/>
                                     </children>
                                 </VBox>
                             </children>
@@ -160,15 +167,15 @@
                 </VBox>
             </children>
             <padding>
-                <Insets left="20.0" right="15.0" />
+                <Insets left="20.0" right="15.0"/>
             </padding>
         </VBox>
     </children>
     <styleClass>
-        <String fx:value="styleBorder" />
-        <String fx:value="styleBackgroundHighlight" />
+        <String fx:value="styleBorder"/>
+        <String fx:value="styleBackgroundPopup"/>
     </styleClass>
-   <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-   </padding>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
 </HBox>

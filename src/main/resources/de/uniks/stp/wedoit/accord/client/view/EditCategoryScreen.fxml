@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx"
@@ -20,15 +23,9 @@
                         <Insets top="2.0"/>
                     </HBox.margin>
                 </Label>
-                <TextField id="tfCategoryName" prefWidth="200.0">
-                    <HBox.margin>
-                        <Insets/>
-                    </HBox.margin>
-                </TextField>
+
+                <TextField id="tfCategoryName" prefWidth="200.0" styleClass="createTextField"/>
             </children>
-            <VBox.margin>
-                <Insets/>
-            </VBox.margin>
         </HBox>
         <Label id="lblError" textFill="RED"/>
         <HBox>
@@ -56,6 +53,6 @@
     </padding>
     <styleClass>
         <String fx:value="styleBorder"/>
-        <String fx:value="styleBackgroundHighlight"/>
+        <String fx:value="styleBackgroundPopup"/>
     </styleClass>
 </VBox>

@@ -1,15 +1,18 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
+import com.pavlobu.emojitextflow.EmojiTextFlow;
+import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.Chat;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,7 +37,7 @@ import java.util.List;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJIPICKERSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJI_PICKER_STAGE;
 
 public class PrivateChatController implements Controller {
 
@@ -43,8 +46,7 @@ public class PrivateChatController implements Controller {
     private final Editor editor;
 
     private ContextMenu messageContextMenu;
-    private HBox quoteVisible;
-    private Label lblQuote;
+    private HBox hBoxQuoteVisible;
     private Button btnCancelQuote, btnPlay;
     private TextArea tfPrivateChat;
     private ObservableList<PrivateMessage> privateMessageObservableList;
@@ -55,6 +57,8 @@ public class PrivateChatController implements Controller {
     private MenuItem quote;
     private User selectedUser;
     private MenuItem copy;
+    private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
+    private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
 
     /**
      * Create a new Controller
@@ -73,24 +77,23 @@ public class PrivateChatController implements Controller {
     public void init() {
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
-        this.quoteVisible = (HBox) view.lookup("#quoteVisible");
+        this.hBoxQuoteVisible = (HBox) view.lookup("#quoteVisible");
         this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
-        this.lblQuote = (Label) view.lookup("#lblQuote");
         this.tfPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
         this.btnPlay = (Button) view.lookup("#btnPlay");
+        this.quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(10).createParameters());
 
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
         this.lwPrivateChat.setOnMouseClicked(this::onLwPrivatChatClicked);
         this.tfPrivateChat.setOnKeyPressed(this::tfPrivateChatOnEnter);
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnPlay.setOnAction(this::btnPlayOnClicked);
-        this.quoteVisible.getChildren().clear();
+        this.hBoxQuoteVisible.getChildren().clear();
 
         addMessageContextMenu();
 
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         this.tfPrivateChat.setEditable(false);
-
 
         this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
 
@@ -116,6 +119,10 @@ public class PrivateChatController implements Controller {
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
+        if (localUser.getAccordClient() != null) {
+            this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        }
+        this.editor.getChatFontSizeProperty().removeListener(this::onDarkmodeChanged);
         this.currentChat = null;
         messageContextMenu = null;
         btnCancelQuote.setOnAction(null);
@@ -146,9 +153,10 @@ public class PrivateChatController implements Controller {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (this.selectedUser != null && this.selectedUser.isOnlineStatus()) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(EMOJIPICKERSTAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfPrivateChat, pos);
+            this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, tfPrivateChat, pos);
         }
     }
+
 
     /**
      * initialize private Chat with user
@@ -194,6 +202,8 @@ public class PrivateChatController implements Controller {
 
         // Add listener for the loaded listView
         this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
+        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        this.editor.getChatFontSizeProperty().addListener(this::onDarkmodeChanged);
         Platform.runLater(() -> this.lwPrivateChat.scrollTo(this.privateMessageObservableList.size()));
     }
 
@@ -208,8 +218,8 @@ public class PrivateChatController implements Controller {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
 
-            if(message.getText().equals(GAME_INVITE.substring(GAME_PREFIX.length())) && !message.getFrom().equals(localUser.getName())){
-                Platform.runLater(()->btnPlay.setText(LanguageResolver.getString("ACCEPT")));
+            if (message.getText().equals(GAME_INVITE.substring(GAME_PREFIX.length())) && !message.getFrom().equals(localUser.getName())) {
+                Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("ACCEPT")));
             }
             if (message.getText().equals(GAME_START) && currentChat != null) {
                 Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("PLAY")));
@@ -233,12 +243,13 @@ public class PrivateChatController implements Controller {
 
                 String formatted = editor.getMessageManager().getMessageFormatted(message, messageText);
                 removeQuote();
-                lblQuote.setText(formatted);
-                lblQuote.setAccessibleHelp(message.getTimestamp() + "");
-                quoteVisible.getChildren().add(lblQuote);
-                quoteVisible.getChildren().add(btnCancelQuote);
+                quoteTextFlow.parseAndAppend(formatted);
+                quotedText = formatted;
+                quoteTextFlow.setAccessibleHelp(message.getTimestamp() + "");
+                hBoxQuoteVisible.getChildren().add(quoteTextFlow);
+                hBoxQuoteVisible.getChildren().add(btnCancelQuote);
             }
-            if (menu.equals(COPY)){
+            if (menu.equals(COPY)) {
                 editor.copyToSystemClipBoard(message.getText());
             }
         }
@@ -257,8 +268,9 @@ public class PrivateChatController implements Controller {
      * removes a quote from the view
      */
     public void removeQuote() {
-        lblQuote.setText("");
-        quoteVisible.getChildren().clear();
+        quoteTextFlow.parseAndAppend("");
+        quotedText = "";
+        hBoxQuoteVisible.getChildren().clear();
     }
 
     /**
@@ -305,11 +317,11 @@ public class PrivateChatController implements Controller {
      * @param keyEvent occurs when key is pressed when text area is focused
      */
     private void tfPrivateChatOnEnter(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.ENTER){
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             keyEvent.consume();
-            if(keyEvent.isShiftDown()){
+            if (keyEvent.isShiftDown()) {
                 tfPrivateChat.appendText(System.getProperty("line.separator"));
-            }else{
+            } else {
                 sendMessage(this.tfPrivateChat.getText());
             }
         }
@@ -321,14 +333,14 @@ public class PrivateChatController implements Controller {
      *
      * @param message to be send to currentChat
      */
-    private void sendMessage(String message){
+    private void sendMessage(String message) {
         if (message != null && !message.isEmpty() && currentChat != null) {
             this.tfPrivateChat.clear();
             message = message.trim();
             JsonObject jsonMsg;
 
-            if (!lblQuote.getText().isEmpty()) {
-                JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + lblQuote.getText() + QUOTE_MESSAGE + message + QUOTE_SUFFIX);
+            if (!quotedText.isEmpty()) {
+                JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + quotedText + QUOTE_MESSAGE + message + QUOTE_SUFFIX);
                 //JsonObject jsonMessage = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 removeQuote();
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(quoteMsg));
@@ -380,13 +392,21 @@ public class PrivateChatController implements Controller {
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         } else if ((currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals(LanguageResolver.getString("ACCEPT")))
                 &&
-                (!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals(LanguageResolver.getString("RESULT")))) {
+                (!editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() || editor.getStageManager().getStage(StageEnum.GAME_STAGE).getTitle().equals(LanguageResolver.getString("RESULT")))) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPTS);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
-        } else if (currentChat != null && currentChat.getUser() != null && editor.getStageManager().getGameStage().isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())) {
+        } else if (currentChat != null && currentChat.getUser() != null && editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())) {
             privateMessageObservableList.add(new PrivateMessage().setText("###game### System: Cant play two games at once."));
         }
 
+    }
+
+    /**
+     * Refreshes chat list in order to update the font and color
+     *
+     */
+    private void onDarkmodeChanged(Object object) {
+        this.lwPrivateChat.refresh();
     }
 
     public Chat getCurrentChat() {
@@ -395,6 +415,14 @@ public class PrivateChatController implements Controller {
 
     public TextArea getTfPrivateChat() {
         return tfPrivateChat;
+    }
+
+    public String getQuotedText() {
+        return quotedText;
+    }
+
+    public ListView<PrivateMessage> getLwPrivateChat() {
+        return lwPrivateChat;
     }
 
 }

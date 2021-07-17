@@ -1,11 +1,14 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
-
+import com.pavlobu.emojitextflow.EmojiTextFlow;
+import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
@@ -15,9 +18,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import org.jsoup.Jsoup;
@@ -26,16 +32,16 @@ import org.jsoup.nodes.Document;
 import java.awt.*;
 import java.net.URI;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
 
@@ -54,11 +60,21 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
+        private final ImageView imgVwBtnHandleMedia = new ImageView();
+        private final Image imagePlay = new Image(Objects.requireNonNull(MessageCellFactory.class.getResourceAsStream("images/play.png")));
+        private final Image imageStop = new Image(Objects.requireNonNull(MessageCellFactory.class.getResourceAsStream("images/stop.png")));
+        private Button btnHandleMedia = new Button();
+        private Label lblDate = new Label();
+        private MediaView mediaView = new MediaView();
+        private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
         private final Label label = new Label();
+        private Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
+        EmojiTextFlowParameters parameters;
+        EmojiTextFlow emojiTextFlow;
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -77,6 +93,15 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.setOnAction(null);
             hyperlink.getStyleClass().removeAll("link", "descBox");
 
+            // parameters for emoji
+            this.parameters = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize()).createParameters();
+            if (stageManager.getPrefManager().loadDarkMode()) {
+                this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
+            } else {
+                this.parameters.setTextColor(Color.valueOf("#000000"));
+            }
+            emojiTextFlow = new EmojiTextFlow(this.parameters);
+
 
             if (!empty) {
 
@@ -89,7 +114,19 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 // allow wrapping
                 setWrapText(true);
 
-                time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
+                if(item.getText().startsWith(GAME_PREFIX)) item.setText(item.getText().substring(GAME_PREFIX.length()));
+
+                time = checkTime(item);
+
+                if (item instanceof PrivateMessage) {
+                    if (item.getText().startsWith(GAME_SYSTEM)) {
+                        this.setText(item.getText().substring(GAME_PREFIX.length()));
+                        return;
+                    } else if (item.getText().startsWith(GAME_PREFIX)) {
+                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                        return;
+                    }
+                }
 
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     setUpMedia(item);
@@ -102,10 +139,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
 
-                    VBox messageVBox = new VBox();
-                    Label quoteLabel = new Label();
-                    Label messageLabel = new Label();
-
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
                     String[] messages = quoteMessage.split(QUOTE_MESSAGE);
@@ -113,11 +146,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (messages.length != 2) {
                         this.setText(item.getText());
                     } else {
-                        quoteLabel.setText(">>>" + messages[0]);
-                        quoteLabel.getStyleClass().add("font_size");
-                        messageLabel.setText("[" + time + "] " + item.getFrom() + ": " + messages[1]);
-                        setGraphic(messageVBox);
-                        messageVBox.getChildren().addAll(quoteLabel, messageLabel);
+                        EmojiTextFlow quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize() -3).createParameters());
+                        quoteTextFlow.parseAndAppend(">>>" + messages[0]);
+                        this.emojiTextFlow.parseAndAppend("[" + time + "] " + item.getFrom() + ": " + messages[1]);
+                        this.vBox.getChildren().addAll(quoteTextFlow, emojiTextFlow);
+                        setGraphic(vBox);
                     }
 
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
@@ -125,41 +158,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (url != null) {
                         setUpJoinServerView(item, url);
                     } else {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                        this.setStyle("-fx-font-size: 12");
+                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText());
+                        displayTextWithEmoji(item);
                     }
                 } else {
-                    VBox vBox = new VBox();
-                    HBox hBox = new HBox();
-                    hBox.setAlignment(Pos.CENTER_LEFT);
-                    Label name = new Label(item.getFrom() + " ");
-
-                    int nameLength = item.getFrom().length();
-
-                    switch (nameLength % 5) {
-                        case 0:
-                            name.getStyleClass().add("color0");
-                            break;
-                        case 1:
-                            name.getStyleClass().add("color1");
-                            break;
-                        case 2:
-                            name.getStyleClass().add("color2");
-                            break;
-                        case 3:
-                            name.getStyleClass().add("color3");
-                            break;
-                        case 4:
-                            name.getStyleClass().add("color4");
-                            break;
-                    }
-                    Label date = new Label(time);
-                    date.getStyleClass().add("date");
-                    Label text = new Label(item.getText());
-                    text.getStyleClass().add("text");
-                    text.setWrapText(true);
-                    hBox.getChildren().addAll(name, date);
-                    vBox.getChildren().addAll(hBox, text);
-                    this.setGraphic(vBox);
+                    displayTextWithEmoji(item);
                 }
 
                 if (item instanceof PrivateMessage) {
@@ -167,7 +171,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
                     } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                        this.setStyle("-fx-font-size: 12");
+                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                     }
                 } else {
                     if (containsMarking(item.getText())) {
@@ -177,12 +182,38 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
         }
 
-        private boolean containsMarking(String message) {
-            if (message.contains("@" + stageManager.getEditor().getLocalUser().getName())) {
-                return true;
-            } else {
-                return false;
+        private Label timeLabel() {
+            lblTime.setText(time + ": ");
+            lblTime.setStyle("-fx-font-size: 12");
+            return lblTime;
+        }
+
+        public void initToolTip(S item) {
+            Tooltip toolTipDate = new Tooltip();
+            toolTipDate.setText(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(item.getTimestamp())));
+            toolTipDate.setStyle("-fx-font-size: 10");
+            this.lblDate.setTooltip(toolTipDate);
+            this.label.setTooltip(toolTipDate);
+        }
+
+        private String checkTime(S item) {
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            if (new SimpleDateFormat("dd.MM.yyyy").format(new Date(item.getTimestamp())).equals(dateFormat.format(yesterday()))) {
+                return LanguageResolver.getString("YESTERDAY") + " " + new SimpleDateFormat("HH:mm").format(new Date(item.getTimestamp()));
+            } else if (new SimpleDateFormat("dd.MM.yyyy").format(new Date(item.getTimestamp())).equals(new SimpleDateFormat("dd.MM.yyyy").format(new Date()))) {
+                return LanguageResolver.getString("TODAY") + " " + new SimpleDateFormat("HH:mm").format(new Date(item.getTimestamp()));
             }
+            return new SimpleDateFormat("dd.MM.yyyy").format(new Date(item.getTimestamp()));
+        }
+
+        private Date yesterday() {
+            final Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            return cal.getTime();
+        }
+
+        private boolean containsMarking(String message) {
+            return message.contains("@" + stageManager.getEditor().getLocalUser().getName());
         }
 
         private String containsInviteUrl(String text) {
@@ -204,7 +235,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 Url.toURI();
 
                 if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
-
+                if (url.contains(MP4)) return true;
+                if (url.contains(MP3)) return true;
+                if (url.contains(GIF)) return true;
                 Document doc = Jsoup.connect(url).get();
                 if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
                     descBox.setText(doc.title());
@@ -219,15 +252,34 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private boolean setImgGraphic(String url) {
             if (isValidURL(url)) {
-                Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
-                if (!image.isError()) {
-                    imageView.setImage(image);
-                    imageView.setPreserveRatio(true);
+                if (url.contains(MP4) || url.contains(MP3)) {
+                    setUpMediaView(url);
                     setGraphic(vBox);
                     return true;
+                } else if (url.contains(GIF)) {
+                    setUpWebView(url);
+                    setGraphic(vBox);
+                    return true;
+                } else {
+                    Image image = new Image(url, 370, Integer.MAX_VALUE, true, false, true);
+                    if (!image.isError()) {
+                        imageView.setImage(image);
+                        imageView.setPreserveRatio(true);
+                        setGraphic(vBox);
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+
+        private void setUpMediaView(String url) {
+            Media media = new Media(url);
+            mediaPlayer = new MediaPlayer(media);
+            mediaView.setFitHeight(400);
+            mediaView.setFitWidth(270);
+            mediaView.setPreserveRatio(true);
+            mediaView.setMediaPlayer(mediaPlayer);
         }
 
         private void setUpWebView(String url) {
@@ -240,7 +292,14 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private void setUpMedia(S item) {
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
-                vBox.getChildren().addAll(label, imageView, hyperlink);
+                if (item.getText().contains(MP4) || item.getText().contains(MP3)) {
+                    setUpBtnMedia(imagePlay);
+                    vBox.getChildren().addAll(label, mediaView, btnHandleMedia, hyperlink);
+                } else if (item.getText().contains(GIF)) {
+                    vBox.getChildren().addAll(label, webView, hyperlink);
+                } else {
+                    vBox.getChildren().addAll(label, imageView, mediaView, hyperlink);
+                }
                 if (descBox.getText() != null) {
                     vBox.getChildren().add(descBox);
                     descBox.setOnAction(this::openHyperLink);
@@ -252,10 +311,32 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 vBox.getChildren().addAll(label, webView, hyperlink);
             }
 
-            label.setText("[" + time + "] " + item.getFrom() + ": ");
+            label.setStyle("-fx-font-size: 12");
+            label.setText(timeLabel().getText() + item.getFrom() + ": ");
+            initToolTip(item);
             hyperlink.setText(item.getText());
             hyperlink.getStyleClass().add("link");
             hyperlink.setOnAction(this::openHyperLink);
+        }
+
+        private void setUpBtnMedia(Image image) {
+            imgVwBtnHandleMedia.setImage(image);
+            imgVwBtnHandleMedia.setFitHeight(20);
+            imgVwBtnHandleMedia.setFitWidth(20);
+            imgVwBtnHandleMedia.setPreserveRatio(true);
+            btnHandleMedia.setGraphic(imgVwBtnHandleMedia);
+            btnHandleMedia.setOnAction(this::btnHandleMediaOnClick);
+        }
+
+        private void btnHandleMediaOnClick(ActionEvent actionEvent) {
+            boolean playing = mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING);
+            if (!playing) {
+                setUpBtnMedia(imageStop);
+                mediaPlayer.play();
+            } else {
+                setUpBtnMedia(imagePlay);
+                mediaPlayer.stop();
+            }
         }
 
         public String expandUrl(String shortenedUrl) {
@@ -300,10 +381,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             joinServerHBox.setAlignment(Pos.CENTER_LEFT);
             joinServerHBox.getChildren().addAll(serverInfoVBox, region, button);
             joinServerHBox.getStyleClass().add("styleBorder");
-            joinServerHBox.setMaxWidth(265);
+            joinServerHBox.setMaxWidth(vBox.getMaxWidth());
 
-            label.setText("[" + time + "] " + item.getFrom() + ": ");
-
+            label.setStyle("-fx-font-size: 12");
+            label.setText(timeLabel().getText() + item.getFrom() + ": ");
+            initToolTip((S) item);
             Label textLabel = new Label(item.getText());
             textLabel.setWrapText(true);
 
@@ -311,8 +393,40 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             setGraphic(this.vBox);
         }
 
-    }
+        private void displayTextWithEmoji(Message item) {
+            HBox nameAndDateHBox = new HBox();
+            nameAndDateHBox.setAlignment(Pos.CENTER_LEFT);
+            Label name = new Label(item.getFrom() + " ");
 
+            int nameLength = item.getFrom().length();
+
+            switch (nameLength % 5) {
+                case 0:
+                    name.getStyleClass().add("color0");
+                    break;
+                case 1:
+                    name.getStyleClass().add("color1");
+                    break;
+                case 2:
+                    name.getStyleClass().add("color2");
+                    break;
+                case 3:
+                    name.getStyleClass().add("color3");
+                    break;
+                case 4:
+                    name.getStyleClass().add("color4");
+                    break;
+            }
+            Label date = new Label(time);
+            date.getStyleClass().add("date");
+            nameAndDateHBox.getChildren().addAll(name, date);
+
+            this.emojiTextFlow.parseAndAppend(item.getText());
+            this.vBox.getChildren().addAll(nameAndDateHBox, emojiTextFlow);
+            setGraphic(vBox);
+        }
+
+    }
 
     private void joinButtonOnClick(String inviteLink) {
         stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
@@ -320,10 +434,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
     public void handleInvitation(Server server, String responseMessage) {
         if (server != null) {
-            Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+            Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
         } else {
             if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null));
             }
         }
     }

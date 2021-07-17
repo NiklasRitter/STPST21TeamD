@@ -1,6 +1,10 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -18,20 +22,16 @@ import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.service.query.NodeQuery;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.*;
@@ -41,7 +41,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUPSTAGE;
+import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -104,15 +104,6 @@ public class ServerScreenTest extends ApplicationTest {
 
     private Options oldOptions;
 
-    @BeforeClass
-    public static void before() {
-        System.setProperty("testfx.robot", "glass");
-        System.setProperty("testfx.headless", "true");
-        System.setProperty("prism.order", "sw");
-        System.setProperty("prism.text", "t2k");
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Override
     public void start(Stage stage) {
         // start application
@@ -124,7 +115,7 @@ public class ServerScreenTest extends ApplicationTest {
         stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 
         this.stageManager.start(stage);
-        this.emojiPickerStage = this.stageManager.getEmojiPickerStage();
+        this.emojiPickerStage = this.stageManager.getStage(StageEnum.EMOJI_PICKER_STAGE);
         //create localUser to skip the login screen and create server to skip the MainScreen
         this.localUser = this.stageManager.getEditor().haveLocalUser("JohnDoe", "testKey123");
         this.localUser.setPassword("secret").setId("123");
@@ -134,7 +125,7 @@ public class ServerScreenTest extends ApplicationTest {
                 getWebSocketManager().getCleanLocalUserName() + AND_SERVER_ID_URL + this.server.getId(), chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Server", "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null);
+        this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null);
 
         this.stage.setAlwaysOnTop(true);
     }
@@ -379,7 +370,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         // first have to open optionScreen
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         clickOn("#btnLogout");
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
@@ -401,7 +392,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         // first have to open optionScreen
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
 
         clickOn("#btnLogout");
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
@@ -422,7 +413,7 @@ public class ServerScreenTest extends ApplicationTest {
     @Test
     public void optionsButtonTest() {
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", this.stageManager.getPopupStage().getTitle());
+        Assert.assertEquals("Options", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
     }
 
     @Test
@@ -719,7 +710,6 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         TreeItem<Object> root = tvServerChannels.getRoot();
         Assert.assertEquals(0, root.getChildren().size());
-
     }
 
     @Test
@@ -938,6 +928,7 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(channel.getAudioMembers().size(), 0);
     }
 
+
     @Test
     public void leaveServerTest() {
         openAttentionScreen();
@@ -970,22 +961,21 @@ public class ServerScreenTest extends ApplicationTest {
         callbackLeaveServer.completed(res);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Main");
 
     }
 
     private void testBtnCancel() {
-
         WaitForAsyncUtils.waitForFxEvents();
         Button btnCancel = lookup("#btnCancel").query();
         Assert.assertEquals(btnCancel.getText(), "Cancel");
         clickOn(btnCancel);
-        Assert.assertEquals(this.stageManager.getStage().getTitle(), "Server");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Server");
 
     }
 
     private void openAttentionScreen() {
-        Platform.runLater(() -> this.stageManager.initView(POPUPSTAGE, "Attention", "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null));
+        Platform.runLater(() -> this.stageManager.initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, server, null));
     }
 
     @Test
@@ -1023,24 +1013,25 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
 
-        Label lblQuote = lookup("#lblQuote").query();
         Button btnCancelQuote = lookup("#btnCancelQuote").query();
 
+        ServerScreenController serverScreenController = (ServerScreenController) stageManager.getControllerMap().get(SERVER_SCREEN_CONTROLLER);
+        ServerChatController controller = serverScreenController.getServerChatController();
+
         String formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0), lvTextChat.getItems().get(0).getText());
-        Assert.assertEquals(lblQuote.getText(), formatted);
+        Assert.assertEquals(controller.getQuotedText(), formatted);
         clickOn(btnCancelQuote);
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(lblQuote.getText(), "");
+        Assert.assertEquals(controller.getQuotedText(), "");
 
 
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
-        lblQuote = lookup("#lblQuote").query();
 
         formatted = this.stageManager.getEditor().getMessageManager().getMessageFormatted(lvTextChat.getItems().get(0), lvTextChat.getItems().get(0).getText());
-        Assert.assertEquals(lblQuote.getText(), formatted);
+        Assert.assertEquals(controller.getQuotedText(), formatted);
 
         ((TextArea) lookup("#tfInputMessage").query()).setText("quote");
         clickOn("#tfInputMessage");
@@ -1092,18 +1083,18 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- edit message");
         WaitForAsyncUtils.waitForFxEvents();
 
-        ((TextArea) lookup("#tfUpdateMessage").query()).setText("");
+        ((TextArea) lookup("#tfUpdateMessage").query()).setText("update");
         clickOn("#btnEmoji");
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(emojiPickerStage.isShowing());
         Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
 
+
         GridPane panelForEmojis = (GridPane) emojiPickerStage.getScene().getRoot().lookup("#panelForEmojis");
         EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
         clickOn(emoji);
 
-        ((TextArea) lookup("#tfUpdateMessage").query()).setText(((TextArea) lookup("#tfUpdateMessage").query()).getText() + "update");
 
         clickOn("#btnUpdateMessage");
         WaitForAsyncUtils.waitForFxEvents();
@@ -1261,9 +1252,9 @@ public class ServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(phil.getPrivateChat().getMessages().size(), 0);
 
-        Platform.runLater(() -> stageManager.initView(POPUPSTAGE, phil.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, phil));
+        Platform.runLater(() -> stageManager.initView(ControllerEnum.PRIVATE_MESSAGE_SERVER_SCREEN, server, phil));
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(stageManager.getPopupStage().getTitle(), phil.getName());
+        //Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), phil.getName());
 
         TextArea tfMessage = lookup("#tfMessage").query();
 
