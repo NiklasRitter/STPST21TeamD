@@ -23,7 +23,7 @@
                   <Insets top="2.0" />
                </HBox.margin>
             </Label>
-            <TextField id="tfChannelName" HBox.hgrow="ALWAYS">
+            <TextField id="tfChannelName" styleClass="createTextField" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -102,6 +102,6 @@
    </padding>
    <styleClass>
       <String fx:value="styleBorder" />
-      <String fx:value="styleBackgroundHighlight" />
+      <String fx:value="styleBackgroundPopup" />
    </styleClass>
 </VBox>

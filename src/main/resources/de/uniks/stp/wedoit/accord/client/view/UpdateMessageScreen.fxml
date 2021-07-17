@@ -58,6 +58,6 @@
     </padding>
     <styleClass>
         <String fx:value="styleBorder" />
-        <String fx:value="styleBackgroundHighlight" />
+        <String fx:value="styleBackgroundPopup" />
     </styleClass>
 </VBox>
