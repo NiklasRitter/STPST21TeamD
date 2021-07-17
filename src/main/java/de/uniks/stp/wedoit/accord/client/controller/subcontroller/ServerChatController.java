@@ -440,6 +440,12 @@ public class ServerChatController implements Controller {
         }
     }
 
+    public ListView<Message> getLvTextChat() {
+        return lvTextChat;
+    }
+
+
+
     /**
      * Refreshes chat list in order to update the font and color
      *

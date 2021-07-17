@@ -32,7 +32,9 @@ import org.jsoup.nodes.Document;
 import java.awt.*;
 import java.net.URI;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -62,10 +64,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Image imagePlay = new Image(Objects.requireNonNull(MessageCellFactory.class.getResourceAsStream("images/play.png")));
         private final Image imageStop = new Image(Objects.requireNonNull(MessageCellFactory.class.getResourceAsStream("images/stop.png")));
         private Button btnHandleMedia = new Button();
+        private Label lblDate = new Label();
         private MediaView mediaView = new MediaView();
         private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
         private final Label label = new Label();
+        private Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
@@ -110,8 +114,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 // allow wrapping
                 setWrapText(true);
 
-                time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
                 if(item.getText().startsWith(GAME_PREFIX)) item.setText(item.getText().substring(GAME_PREFIX.length()));
+
+                time = checkTime(item);
 
                 if (item instanceof PrivateMessage) {
                     if (item.getText().startsWith(GAME_SYSTEM)) {
@@ -122,6 +127,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         return;
                     }
                 }
+
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     setUpMedia(item);
 
@@ -152,6 +158,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (url != null) {
                         setUpJoinServerView(item, url);
                     } else {
+                        this.setStyle("-fx-font-size: 12");
+                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText());
                         displayTextWithEmoji(item);
                     }
                 } else {
@@ -163,7 +171,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
                     } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                        this.setStyle("-fx-font-size: 12");
+                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                     }
                 } else {
                     if (containsMarking(item.getText())) {
@@ -171,6 +180,36 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
                 }
             }
+        }
+
+        private Label timeLabel() {
+            lblTime.setText(time + ": ");
+            lblTime.setStyle("-fx-font-size: 12");
+            return lblTime;
+        }
+
+        public void initToolTip(S item) {
+            Tooltip toolTipDate = new Tooltip();
+            toolTipDate.setText(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(item.getTimestamp())));
+            toolTipDate.setStyle("-fx-font-size: 10");
+            this.lblDate.setTooltip(toolTipDate);
+            this.label.setTooltip(toolTipDate);
+        }
+
+        private String checkTime(S item) {
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            if (new SimpleDateFormat("dd.MM.yyyy").format(new Date(item.getTimestamp())).equals(dateFormat.format(yesterday()))) {
+                return LanguageResolver.getString("YESTERDAY") + " " + new SimpleDateFormat("HH:mm").format(new Date(item.getTimestamp()));
+            } else if (new SimpleDateFormat("dd.MM.yyyy").format(new Date(item.getTimestamp())).equals(new SimpleDateFormat("dd.MM.yyyy").format(new Date()))) {
+                return LanguageResolver.getString("TODAY") + " " + new SimpleDateFormat("HH:mm").format(new Date(item.getTimestamp()));
+            }
+            return new SimpleDateFormat("dd.MM.yyyy").format(new Date(item.getTimestamp()));
+        }
+
+        private Date yesterday() {
+            final Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            return cal.getTime();
         }
 
         private boolean containsMarking(String message) {
@@ -272,7 +311,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 vBox.getChildren().addAll(label, webView, hyperlink);
             }
 
-            label.setText("[" + time + "] " + item.getFrom() + ": ");
+            label.setStyle("-fx-font-size: 12");
+            label.setText(timeLabel().getText() + item.getFrom() + ": ");
+            initToolTip(item);
             hyperlink.setText(item.getText());
             hyperlink.getStyleClass().add("link");
             hyperlink.setOnAction(this::openHyperLink);
@@ -340,10 +381,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             joinServerHBox.setAlignment(Pos.CENTER_LEFT);
             joinServerHBox.getChildren().addAll(serverInfoVBox, region, button);
             joinServerHBox.getStyleClass().add("styleBorder");
-            joinServerHBox.setMaxWidth(265);
+            joinServerHBox.setMaxWidth(vBox.getMaxWidth());
 
-            label.setText("[" + time + "] " + item.getFrom() + ": ");
-
+            label.setStyle("-fx-font-size: 12");
+            label.setText(timeLabel().getText() + item.getFrom() + ": ");
+            initToolTip((S) item);
             Label textLabel = new Label(item.getText());
             textLabel.setWrapText(true);
 

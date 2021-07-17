@@ -14,56 +14,59 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0" styleClass="styleBackgroundPopup">
+        <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0"
+              styleClass="styleBackgroundPopup">
             <children>
                 <Label id="lblDarkMode">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="14.0"/>
                     </font>
                 </Label>
-                <CheckBox id="btnDarkMode" mnemonicParsing="false" />
+                <CheckBox id="btnDarkMode" mnemonicParsing="false"/>
             </children>
         </HBox>
         <HBox id="hBoxLanguage" alignment="CENTER">
             <children>
                 <Label id="lblLanguage">
                     <font>
-                        <Font size="14.0" />
+                        <Font size="14.0"/>
                     </font>
                 </Label>
-                <Region prefHeight="25.0" prefWidth="153.0" />
-                <ChoiceBox id="choiceBoxLanguage" />
+                <Region prefHeight="25.0" prefWidth="153.0"/>
+                <ChoiceBox id="choiceBoxLanguage"/>
             </children>
             <VBox.margin>
-                <Insets />
+                <Insets/>
             </VBox.margin>
         </HBox>
         <HBox alignment="CENTER">
             <Label id="lbTextSize">
                 <font>
-                    <Font size="14.0" />
+                    <Font size="14.0"/>
                 </font>
             </Label>
-            <Region prefWidth="50.0" />
-            <Slider id="sliderTextSize" blockIncrement="0.0" majorTickUnit="2.0" max="20.0" maxWidth="200.0" min="12.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="12.0" />
+            <Region prefWidth="50.0"/>
+            <Slider id="sliderTextSize" blockIncrement="0.0" majorTickUnit="2.0" max="20.0" maxWidth="200.0" min="12.0"
+                    minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="12.0"/>
         </HBox>
         <HBox id="hBoxBtns" alignment="CENTER">
             <Button id="btnLogout" mnemonicParsing="false" styleClass="logoutButton">
                 <graphic>
                     <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@images/log_out.png" />
+                        <Image url="@images/log_out.png"/>
                     </ImageView>
                 </graphic>
             </Button>
         </HBox>
     </children>
     <styleClass>
-        <String fx:value="styleBackgroundPopup" />
-        <String fx:value="styleBorder" />
+        <String fx:value="styleBackgroundPopup"/>
+        <String fx:value="styleBorder"/>
     </styleClass>
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" />
+        <Insets bottom="5.0" left="5.0" right="5.0"/>
     </padding>
 </VBox>

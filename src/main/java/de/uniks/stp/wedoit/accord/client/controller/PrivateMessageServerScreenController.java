@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
@@ -58,6 +59,7 @@ public class PrivateMessageServerScreenController implements Controller {
         this.btnEmoji.setOnAction(this::btnEmojiOnClicked);
 
         this.memberToWrite.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(memberToWrite.getName());
     }
 
     @Override
@@ -66,6 +68,7 @@ public class PrivateMessageServerScreenController implements Controller {
         this.btnShowChat.setOnAction(null);
         this.btnEmoji.setOnAction(null);
         this.memberToWrite.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
     }
 
     /**
@@ -117,6 +120,7 @@ public class PrivateMessageServerScreenController implements Controller {
         privateChatsScreenController.initPrivateChatView(memberToWrite);
         privateChatsScreenController.getLwOnlineUsers().getSelectionModel().select(memberToWrite);
         privateChatsScreenController.setTfPrivateChatText(this.taMessage.getText());
+        stop();
     }
 
     private void btnEmojiOnClicked(ActionEvent actionEvent) {

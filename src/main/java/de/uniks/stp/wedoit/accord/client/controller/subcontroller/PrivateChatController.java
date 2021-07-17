@@ -157,6 +157,7 @@ public class PrivateChatController implements Controller {
         }
     }
 
+
     /**
      * initialize private Chat with user
      * <p>
@@ -418,6 +419,10 @@ public class PrivateChatController implements Controller {
 
     public String getQuotedText() {
         return quotedText;
+    }
+
+    public ListView<PrivateMessage> getLwPrivateChat() {
+        return lwPrivateChat;
     }
 
 }
