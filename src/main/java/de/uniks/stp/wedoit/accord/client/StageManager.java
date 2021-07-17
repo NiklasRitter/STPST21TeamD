@@ -66,9 +66,6 @@ public class StageManager extends Application {
             updateDarkmode();
             openController(root, controller.controllerName, parameter, parameterTwo);
 
-
-
-
         }catch (Exception e) {
             System.err.println("Error on showing " + controller.controllerName);
             e.printStackTrace();
