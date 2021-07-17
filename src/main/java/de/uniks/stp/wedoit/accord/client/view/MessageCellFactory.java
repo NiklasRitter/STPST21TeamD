@@ -114,7 +114,19 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 // allow wrapping
                 setWrapText(true);
 
+                if(item.getText().startsWith(GAME_PREFIX)) item.setText(item.getText().substring(GAME_PREFIX.length()));
+
                 time = checkTime(item);
+
+                if (item instanceof PrivateMessage) {
+                    if (item.getText().startsWith(GAME_SYSTEM)) {
+                        this.setText(item.getText().substring(GAME_PREFIX.length()));
+                        return;
+                    } else if (item.getText().startsWith(GAME_PREFIX)) {
+                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                        return;
+                    }
+                }
 
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     setUpMedia(item);
