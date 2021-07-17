@@ -90,7 +90,7 @@ public class EmojiScreenController implements Controller {
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         if (this.txtAreaForEmoji.isEditable()) {
             Emoji selectedEmoji = hashMapForEmojiButtons.get(actionEvent.getSource());
-            Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + selectedEmoji.getShortname()));
+            Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + selectedEmoji.getUnicode()));
         }
     }
 
