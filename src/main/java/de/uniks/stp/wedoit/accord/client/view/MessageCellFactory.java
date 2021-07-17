@@ -417,9 +417,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     name.getStyleClass().add("color4");
                     break;
             }
-            Label date = new Label(time);
-            date.getStyleClass().add("date");
-            nameAndDateHBox.getChildren().addAll(name, date);
+            lblDate.setText(time);
+            lblDate.getStyleClass().add("date");
+            initToolTip((S) item);
+            lblDate.getStyleClass().add("date");
+            nameAndDateHBox.getChildren().addAll(name, lblDate);
 
             this.emojiTextFlow.parseAndAppend(item.getText());
             this.vBox.getChildren().addAll(nameAndDateHBox, emojiTextFlow);
