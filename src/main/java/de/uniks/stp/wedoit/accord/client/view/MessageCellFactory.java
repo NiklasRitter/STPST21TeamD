@@ -66,6 +66,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
         private final Label label = new Label();
+        private Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
@@ -124,7 +125,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     } else {
                         quoteLabel.setText(">>>" + messages[0]);
                         quoteLabel.getStyleClass().add("font_size");
-                        messageLabel.setText("[" + time + "] " + item.getFrom() + ": " + messages[1]);
+                        messageLabel.setStyle("-fx-font-size: 12");
+                        messageLabel.setText(timeLabel().getText() + item.getFrom() + ": " + messages[1]);
                         setGraphic(messageVBox);
                         messageVBox.getChildren().addAll(quoteLabel, messageLabel);
                     }
@@ -134,7 +136,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (url != null) {
                         setUpJoinServerView(item, url);
                     } else {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText());
+                        this.setStyle("-fx-font-size: 12");
+                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText());
                     }
                 } else {
                     VBox vBox = new VBox();
@@ -177,7 +180,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
                     } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                        this.setStyle("-fx-font-size: 12");
+                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                     }
                 } else {
                     if (containsMarking(item.getText())) {
@@ -185,6 +189,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
                 }
             }
+        }
+
+        private Label timeLabel() {
+            lblTime.setText(time + ": ");
+            lblTime.setStyle("-fx-font-size: 12");
+            return lblTime;
         }
 
         public void initToolTip(S item) {
@@ -314,7 +324,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 vBox.getChildren().addAll(label, webView, hyperlink);
             }
 
-            label.setText("[" + time + "] " + item.getFrom() + ": ");
+            label.setStyle("-fx-font-size: 12");
+            label.setText(timeLabel().getText() + item.getFrom() + ": ");
             initToolTip(item);
             hyperlink.setText(item.getText());
             hyperlink.getStyleClass().add("link");
@@ -385,7 +396,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             joinServerHBox.getStyleClass().add("styleBorder");
             joinServerHBox.setMaxWidth(265);
 
-            label.setText("[" + time + "] " + item.getFrom() + ": ");
+            label.setStyle("-fx-font-size: 12");
+            label.setText(timeLabel().getText() + item.getFrom() + ": ");
             initToolTip((S) item);
             Label textLabel = new Label(item.getText());
             textLabel.setWrapText(true);
