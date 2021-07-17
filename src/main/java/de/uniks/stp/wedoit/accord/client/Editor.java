@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client;
 
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
@@ -304,7 +305,10 @@ public class Editor {
         if (!success) {
             System.err.println("Error while logging out");
         }
-        Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN,null, null));
+        Platform.runLater(() -> {
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN,null, null);
+            stageManager.getStage(StageEnum.POPUP_STAGE).hide();
+        });
     }
 
     /**
@@ -439,8 +443,6 @@ public class Editor {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
             stageManager.initView(ControllerEnum.LOGIN_SCREEN,null,null);
-            //stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
-            //stageManager.getStage().show();
         }
     }
 
@@ -449,11 +451,14 @@ public class Editor {
      */
     public void handleAutomaticLogin(boolean success) {
         if (success) {
-            Platform.runLater(() -> stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null));
+            Platform.runLater(() -> {
+                stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
+                stageManager.getStage(StageEnum.STAGE).setResizable(true);
+                stageManager.getStage(StageEnum.STAGE).setMaximized(true);
+            });
         } else {
-            Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null));
+            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null)));
         }
-        //Platform.runLater(() -> stageManager.getStage().show());
     }
 
     /**

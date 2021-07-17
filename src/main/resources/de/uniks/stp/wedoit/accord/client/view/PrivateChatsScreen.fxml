@@ -16,19 +16,19 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<VBox minHeight="350.0" minWidth="600.0" prefHeight="350.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
             <children>
                 <VBox alignment="CENTER" maxWidth="75.0" minWidth="75.0" spacing="20.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;">
+                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;" styleClass="sidebar-Button">
                             <textFill>
                                 <LinearGradient>
                                     <stops>
                                         <Stop offset="1.0">
                                             <color>
-                                                <Color red="1.0" green="1.0" blue="1.0" />
+                                                <Color blue="1.0" green="1.0" red="1.0" />
                                             </color>
                                         </Stop>
                                     </stops>
@@ -40,7 +40,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button id="btnHome" mnemonicParsing="false" styleClass="styleButton" VBox.vgrow="ALWAYS">
+                        <Button id="btnHome" mnemonicParsing="false" styleClass="sidebar-Button" VBox.vgrow="ALWAYS">
                             <graphic>
                                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                                     <Image url="@images/home.png" />
@@ -60,7 +60,7 @@
                         <String fx:value="styleBorder" />
                     </styleClass>
                 </VBox>
-                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="125.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="125.0" styleClass="styleTop" HBox.hgrow="ALWAYS">
                     <children>
                         <Label id="lblOnlineUser" minHeight="25.0" prefWidth="200.0" styleClass="styleBorder" VBox.vgrow="ALWAYS">
                             <font>
@@ -75,21 +75,21 @@
                 </VBox>
                 <VBox alignment="CENTER" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                        <HBox alignment="TOP_CENTER" prefWidth="200.0">
+                        <HBox alignment="TOP_CENTER" prefWidth="200.0" styleClass="styleTop">
                             <children>
                                 <Label id="lblSelectedUser" minHeight="25.0" styleClass="styleBorder">
                                     <font>
                                         <Font name="System Bold Italic" size="13.0" />
                                     </font>
                                 </Label>
-                                <Button id="btnPlay" mnemonicParsing="false" styleClass="styleButton">
+                                <Button id="btnPlay" mnemonicParsing="false" styleClass="playButton">
                                     <HBox.margin>
                                         <Insets left="70.0" />
                                     </HBox.margin>
                                 </Button>
                             </children>
                         </HBox>
-                        <ListView id="lwPrivateChat" VBox.vgrow="ALWAYS" />
+                        <ListView id="lwPrivateChat" styleClass="listView1" VBox.vgrow="ALWAYS" />
                         <HBox id="quoteVisible" alignment="CENTER_LEFT">
                             <children>
                                 <Label id="lblQuote">
@@ -109,7 +109,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                             <children>
-                        <TextArea id="tfEnterPrivateChat" prefHeight="10.0" wrapText="true" HBox.hgrow="ALWAYS" />
+                        <TextArea id="tfEnterPrivateChat" prefHeight="10.0" styleClass="textAreaInput" wrapText="true" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />

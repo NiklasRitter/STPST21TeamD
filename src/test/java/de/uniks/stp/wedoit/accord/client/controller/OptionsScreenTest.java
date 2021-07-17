@@ -1,3 +1,4 @@
+
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -87,7 +88,9 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
+
         this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
+
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -135,10 +138,13 @@ public class OptionsScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
+        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#btnLogin");
 
-        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+        WaitForAsyncUtils.waitForFxEvents();
 
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
         callbackLogin.completed(res);
     }
@@ -168,8 +174,6 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Test
     public void testChoiceBoxLanguage() {
-        Label lblEnterUserName = lookup("#lblEnterUserName").query();
-        Assert.assertEquals(lblEnterUserName.getText(), "Enter your username");
         Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
         // open options screen
         directToOptionsScreen();
@@ -188,7 +192,7 @@ public class OptionsScreenTest extends ApplicationTest {
         clickOn(choiceBoxLanguage);
 
         Platform.runLater(() -> {
-            //choice german as language
+            //choose german as language
             choiceBoxLanguage.getSelectionModel().select(1);
         });
 
@@ -212,7 +216,7 @@ public class OptionsScreenTest extends ApplicationTest {
         directToOptionsScreen();
 
         Platform.runLater(() -> {
-            //choice english as language
+            //choose english as language
             choiceBoxLanguage.getSelectionModel().select(0);
         });
 

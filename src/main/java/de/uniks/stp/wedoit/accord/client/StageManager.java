@@ -50,8 +50,6 @@ public class StageManager extends Application {
             Stage currentStage = stageMap.get(controller.stage);
 
 
-
-
             if(currentScene != null) currentScene.setRoot(root);
             else sceneMap.put(controller.stage, new Scene(root));
 
@@ -287,8 +285,8 @@ public class StageManager extends Application {
             systemTrayController = new SystemTrayController(editor);
             systemTrayController.init();
         }
-        stageMap.get(StageEnum.STAGE).setMinHeight(400);
-        stageMap.get(StageEnum.STAGE).setMinWidth(600);
+        stageMap.get(StageEnum.STAGE).setMinHeight(499);
+        stageMap.get(StageEnum.STAGE).setMinWidth(655);
         editor.automaticLogin(model);
     }
 

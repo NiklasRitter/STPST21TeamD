@@ -38,14 +38,12 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.MESSAGE;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TO;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -93,6 +91,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
         this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
+
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
         emojiPickerStage = stageManager.getStage(StageEnum.EMOJI_PICKER_STAGE);
@@ -294,8 +293,8 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(gameStart));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(List.of(),localUser.getGameRequests());
-        Assert.assertEquals(List.of(),localUser.getGameInvites());
+        Assert.assertEquals(List.of(), localUser.getGameRequests());
+        Assert.assertEquals(List.of(), localUser.getGameInvites());
         Assert.assertTrue(this.stageManager.getStage(StageEnum.GAME_STAGE).isShowing());
         Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
