@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
@@ -31,8 +32,8 @@ public class StageManager extends Application {
     private AccordClient model;
     private final Image logoImage = new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png")));
 
-    private final Map<StageEnum,Scene> sceneMap = new HashMap<>();
-    private final Map<StageEnum,Stage> stageMap = new HashMap<>();
+    private final Map<StageEnum, Scene> sceneMap = new HashMap<>();
+    private final Map<StageEnum, Stage> stageMap = new HashMap<>();
 
 
     {
@@ -49,22 +50,19 @@ public class StageManager extends Application {
 
             Stage currentStage = stageMap.get(controller.stage);
 
-
-            if(currentScene != null) currentScene.setRoot(root);
+            if (currentScene != null) currentScene.setRoot(root);
             else sceneMap.put(controller.stage, new Scene(root));
-
 
             controller.setUpStage(currentStage);
 
             currentStage.setScene(sceneMap.get(controller.stage));
-            if(controller.stage != StageEnum.EMOJI_PICKER_STAGE) currentStage.show();
-
+            if (controller.stage != StageEnum.EMOJI_PICKER_STAGE) currentStage.show();
 
             updateLanguage();
             updateDarkmode();
             openController(root, controller.controllerName, parameter, parameterTwo);
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("Error on showing " + controller.controllerName);
             e.printStackTrace();
         }
@@ -96,7 +94,7 @@ public class StageManager extends Application {
                 controller = new GameScreenController(root, (User) parameter, editor);
                 break;
             case GAME_RESULT_SCREEN_CONTROLLER:
-                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter,(Boolean) parameterTwo, editor);
+                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter, (Boolean) parameterTwo, editor);
                 break;
             case OPTIONS_SCREEN_CONTROLLER:
                 controller = new OptionsScreenController(root, model.getOptions(), editor);
@@ -143,17 +141,16 @@ public class StageManager extends Application {
 
     private void cleanup(ControllerEnum c) {
 
-        if(controllerMap.get(c.controllerName) != null) controllerMap.get(c.controllerName).stop();
+        if (controllerMap.get(c.controllerName) != null) controllerMap.get(c.controllerName).stop();
 
         if (stageMap.get(StageEnum.EMOJI_PICKER_STAGE) != null) {
             stageMap.get(StageEnum.EMOJI_PICKER_STAGE).hide();
         }
     }
 
-    private void cleanup(){
-        stageMap.forEach((k,v)-> v.hide());
-        controllerMap.forEach((k,v)-> v.stop());
-
+    private void cleanup() {
+        stageMap.forEach((k, v) -> v.hide());
+        controllerMap.forEach((k, v) -> v.stop());
     }
 
     /**
@@ -258,12 +255,12 @@ public class StageManager extends Application {
         stageMap.put(StageEnum.POPUP_STAGE, new Stage());
         stageMap.get(StageEnum.POPUP_STAGE).getIcons().add(logoImage);
         stageMap.get(StageEnum.POPUP_STAGE).initOwner(stageMap.get(StageEnum.STAGE));
-
+        stageMap.get(StageEnum.POPUP_STAGE).initModality(Modality.APPLICATION_MODAL);
+        ;
 
         stageMap.put(StageEnum.GAME_STAGE, new Stage());
         stageMap.get(StageEnum.GAME_STAGE).getIcons().add(logoImage);
         stageMap.get(StageEnum.GAME_STAGE).initOwner(stageMap.get(StageEnum.STAGE));
-
 
         stageMap.put(StageEnum.EMOJI_PICKER_STAGE, new Stage());
         stageMap.get(StageEnum.EMOJI_PICKER_STAGE).initOwner(stageMap.get(StageEnum.STAGE));
@@ -295,11 +292,11 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
-            stageMap.forEach((k,v)-> v.getIcons().remove(logoImage));
+            stageMap.forEach((k, v) -> v.getIcons().remove(logoImage));
             this.editor.getAudioManager().closeAudioConnection();
             if (systemTrayController != null) systemTrayController.stop();
             editor.getWebSocketManager().stop();
-            if(this.model != null) {
+            if (this.model != null) {
                 LocalUser localUser = model.getLocalUser();
                 resourceManager.stop(model);
                 if (localUser != null) {

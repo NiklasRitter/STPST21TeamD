@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -55,6 +56,7 @@ public class AttentionLeaveServerController implements Controller {
         this.editor.leaveServer(this.editor.getLocalUser().getUserKey(), this.server);
         this.editor.getLocalUser().withoutServers(this.server);
         this.server.setLocalUser(null);
+        Platform.runLater(() -> editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close());
     }
 
     /**

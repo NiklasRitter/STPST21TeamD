@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
@@ -562,7 +563,7 @@ public class RestManager {
      * @param controller controller in which the response is handled
      */
     private void deleteChannel(LocalUser localUser, Channel channel, AttentionScreenController controller) {
-        if(localUser.getAudioChannel() != null && localUser.getAudioChannel() == channel){
+        if (localUser.getAudioChannel() != null && localUser.getAudioChannel() == channel) {
             leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, null);
         }
         restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> {
@@ -599,7 +600,7 @@ public class RestManager {
      * @param controller controller in which the response is handled
      */
     private void deleteCategory(LocalUser localUser, Category category, AttentionScreenController controller) {
-        if(localUser.getAudioChannel() != null && category.getChannels().contains(localUser.getAudioChannel())){
+        if (localUser.getAudioChannel() != null && category.getChannels().contains(localUser.getAudioChannel())) {
             leaveAudioChannel(localUser.getUserKey(), category.getServer(), category, localUser.getAudioChannel(), null);
         }
         restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) ->
@@ -704,7 +705,7 @@ public class RestManager {
     public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller) {
         this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
-            if(controller != null){
+            if (controller != null) {
                 if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                     controller.handleLeaveAudioChannel(channel.getCategory());
                 } else {

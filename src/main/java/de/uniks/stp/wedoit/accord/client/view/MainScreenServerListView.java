@@ -38,7 +38,7 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
         }
     }
 
-    private ContextMenu addContextMenu(Server item) {
+    public ContextMenu addContextMenu(Server item) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("LEAVE_SERVER"));
         contextMenu.getItems().add(menuItem1);
