@@ -50,8 +50,6 @@ public class StageManager extends Application {
             Stage currentStage = stageMap.get(controller.stage);
 
 
-
-
             if(currentScene != null) currentScene.setRoot(root);
             else sceneMap.put(controller.stage, new Scene(root));
 
@@ -65,9 +63,6 @@ public class StageManager extends Application {
             updateLanguage();
             updateDarkmode();
             openController(root, controller.controllerName, parameter, parameterTwo);
-
-
-
 
         }catch (Exception e) {
             System.err.println("Error on showing " + controller.controllerName);
@@ -101,7 +96,7 @@ public class StageManager extends Application {
                 controller = new GameScreenController(root, (User) parameter, editor);
                 break;
             case GAME_RESULT_SCREEN_CONTROLLER:
-                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter, (boolean) parameterTwo, editor);
+                controller = new GameResultScreenController(root, model.getLocalUser(), (User) parameter,(Boolean) parameterTwo, editor);
                 break;
             case OPTIONS_SCREEN_CONTROLLER:
                 controller = new OptionsScreenController(root, model.getOptions(), editor);
@@ -290,8 +285,8 @@ public class StageManager extends Application {
             systemTrayController = new SystemTrayController(editor);
             systemTrayController.init();
         }
-        stageMap.get(StageEnum.STAGE).setMinHeight(400);
-        stageMap.get(StageEnum.STAGE).setMinWidth(600);
+        stageMap.get(StageEnum.STAGE).setMinHeight(499);
+        stageMap.get(StageEnum.STAGE).setMinWidth(655);
         editor.automaticLogin(model);
     }
 

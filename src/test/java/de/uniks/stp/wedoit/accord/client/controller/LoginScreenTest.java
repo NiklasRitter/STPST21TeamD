@@ -129,14 +129,6 @@ public class LoginScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void startWithRememberMeOption() {
-    }
-
-    @Test
-    public void startWithoutRememberMeOption() {
-    }
-
-    @Test
     public void testBtnOptions() {
         // testing options button
         clickOn("#btnOptions");
@@ -252,10 +244,10 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username or password is wrong", errorLabel.getText());
@@ -279,10 +271,10 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -305,10 +297,10 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -321,11 +313,15 @@ public class LoginScreenTest extends ApplicationTest {
         String username = "username";
         String password = "password";
 
+        clickOn("#btnSwitchRegister");
+
         ((TextField) lookup("#tfUserName").query()).setText(username);
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
-        clickOn("#btnRegister");
+        ((TextField) lookup("#pwConfirmPW").query()).setText(password);
+
+        clickOn("#btnLogin");
 
         String returnMessageRegister = Json.createObjectBuilder()
                 .add("status", "success")
@@ -373,6 +369,8 @@ public class LoginScreenTest extends ApplicationTest {
     @Test
     public void testRegisterUsernameTaken() {
 
+        clickOn("#btnSwitchRegister");
+
         String returnMessage = Json.createObjectBuilder()
                 .add("status", "failure")
                 .add("message", "Name already taken")
@@ -390,7 +388,9 @@ public class LoginScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
-        clickOn("#btnRegister");
+        ((TextField) lookup("#pwConfirmPW").query()).setText(password);
+
+        clickOn("#btnLogin");
 
         verify(restMock).register(anyString(), anyString(), callbackArgumentCaptor.capture());
 
@@ -404,10 +404,10 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertTrue(res.getBody().getObject().getJSONObject("data").isEmpty());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Username already taken", errorLabel.getText());
@@ -425,16 +425,16 @@ public class LoginScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
-        clickOn("#btnRegister");
+        clickOn("#btnLogin");
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Please type in username and password", errorLabel.getText());
+        Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -450,16 +450,16 @@ public class LoginScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText("");
 
-        clickOn("#btnRegister");
+        clickOn("#btnLogin");
 
         Label errorLabel = lookup("#lblError").query();
-        Assert.assertEquals("Please type in username and password", errorLabel.getText());
+        Assert.assertEquals("Username or password is missing", errorLabel.getText());
 
         TextField tfUserName = lookup("#tfUserName").query();
-        Assert.assertEquals("text-input text-field error", tfUserName.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField error", tfUserName.getStyleClass().toString());
 
         TextField pwUserPw = lookup("#pwUserPw").query();
-        Assert.assertEquals("text-input text-field password-field error", pwUserPw.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field password-field createTextField error", pwUserPw.getStyleClass().toString());
 
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getName());
         Assert.assertNull(this.stageManager.getEditor().getLocalUser().getUserKey());
@@ -468,7 +468,7 @@ public class LoginScreenTest extends ApplicationTest {
     @Test
     public void testResizable() {
         Assert.assertEquals(stage.getTitle(), "Login");
-        Assert.assertTrue(stage.isResizable());
+        Assert.assertFalse(stage.isResizable());
     }
 
 }

@@ -199,7 +199,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         Assert.assertNull(server);
 
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals("text-input text-field Error", textField.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField Error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Something went wrong while creating the server", errorLabel.getText());
@@ -239,7 +239,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         }
         Assert.assertNull(server);
         TextField textField = lookup("#tfServerName").query();
-        Assert.assertEquals("text-input text-field Error", textField.getStyleClass().toString());
+        Assert.assertEquals("text-input text-field createTextField Error", textField.getStyleClass().toString());
 
         Label errorLabel = lookup("#lblError").query();
         Assert.assertEquals("Name has to be at least 1 symbols long", errorLabel.getText());
