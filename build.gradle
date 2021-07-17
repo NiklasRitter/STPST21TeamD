@@ -25,24 +25,6 @@ repositories {
 }
 
 dependencies {
-
-    //// MUST INCLUDE THESE DEPENDENCIES START
-    implementation name: 'JavaFXEmojiTextFlow_emojitwo-1.0'
-//    implementation name: 'JavaFXEmojiTextFlow_openmoji-1.0'
-//    implementation name: 'JavaFXEmojiTextFlow_twemoji-1.0'
-
-    // https://mvnrepository.com/artifact/org.sharegov/mjson
-    compile group: 'org.sharegov', name: 'mjson', version: '1.3'
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
-    //// MUST INCLUDE THESE DEPENDENCIES END
-
-    compile 'com.vdurmont:emoji-java:5.1.1'
-
-
-
     // https://mvnrepository.com/artifact/org.fulib/fulibScenarios
     fulibScenarios group: 'org.fulib', name: 'fulibScenarios', version: '1.7.0'
 
@@ -85,8 +67,20 @@ dependencies {
     // jsoup HTML parser library @ https://jsoup.org/
     implementation 'org.jsoup:jsoup:1.13.1'
 
-    // Richtext - used for colored emojis
+    // Richtext - used for colored emojis in TextAreas
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.6'
+
+    // Dependencies for Emojis
+    implementation name: 'JavaFXEmojiTextFlow_emojitwo-1.0'
+
+    // https://mvnrepository.com/artifact/org.sharegov/mjson
+    compile group: 'org.sharegov', name: 'mjson', version: '1.3'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+    compile 'com.vdurmont:emoji-java:5.1.1'
 
 }
 
