@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import javafx.scene.control.ContextMenu;
@@ -69,7 +70,7 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemWriteMembers = new MenuItem("Private Message");
         contextMenu.getItems().add(menuItemWriteMembers);
-        menuItemWriteMembers.setOnAction((event) -> stageManager.initView(POPUP_STAGE, user.getName(), "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false, server, user));
+        menuItemWriteMembers.setOnAction((event) -> stageManager.initView(ControllerEnum.PRIVATE_MESSAGE_SERVER_SCREEN, server, user));
         return contextMenu;
     }
 }

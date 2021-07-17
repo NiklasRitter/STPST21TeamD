@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
@@ -10,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -77,10 +79,32 @@ public class AudioChannelSubViewController implements Controller {
 
         allMuteChanged(null);
         localUserMutedChanged(null);
+
+        this.initTooltips();
+
+        this.refreshStage();
     }
 
     private void setComponentsText() {
         this.lblVoiceChannel.setText(LanguageResolver.getString("VOICE_CHANNEL"));
+    }
+
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
+    private void initTooltips() {
+        Tooltip toolTipBtnMuteYou = new Tooltip();
+        toolTipBtnMuteYou.setText(LanguageResolver.getString("MUTE"));
+        btnMuteYou.setTooltip(toolTipBtnMuteYou);
+
+        Tooltip toolTipBtnMuteAll = new Tooltip();
+        toolTipBtnMuteAll.setText(LanguageResolver.getString("MUTE_ALL"));
+        btnMuteAll.setTooltip(toolTipBtnMuteAll);
+
+        Tooltip toolTipBtnLeave = new Tooltip();
+        toolTipBtnLeave.setText(LanguageResolver.getString("LEAVE"));
+        toolTipBtnLeave.setStyle("-fx-font-size: 10");
+        btnLeave.setTooltip(toolTipBtnLeave);
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
@@ -126,6 +150,17 @@ public class AudioChannelSubViewController implements Controller {
 
     public void closeAudioChannel() {
         this.editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, controller);
+    }
+
+    /**
+     * Refreshes the stage after closing the option screen,
+     * so that the component texts are displayed in the correct language.
+     */
+    private void refreshStage() {
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
+            setComponentsText();
+            initTooltips();
+        });
     }
 
     @Override

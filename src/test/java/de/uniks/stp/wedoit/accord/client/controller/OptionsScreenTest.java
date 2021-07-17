@@ -1,6 +1,9 @@
+
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -76,7 +79,7 @@ public class OptionsScreenTest extends ApplicationTest {
         stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
         stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
         this.stageManager.start(stage);
-        this.popupStage = this.stageManager.getPopupStage();
+        this.popupStage = this.stageManager.getStage(StageEnum.POPUP_STAGE);
 
         //create localUser to skip the login screen
         stageManager.getEditor().haveLocalUser("John_Doe", "testKey123");
@@ -85,7 +88,9 @@ public class OptionsScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(STAGE, "Login", "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null);
+
+        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
+
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -133,10 +138,13 @@ public class OptionsScreenTest extends ApplicationTest {
 
         ((TextField) lookup("#pwUserPw").query()).setText(password);
 
+        WaitForAsyncUtils.waitForFxEvents();
+
         clickOn("#btnLogin");
 
-        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
+        WaitForAsyncUtils.waitForFxEvents();
 
+        verify(restMock).login(anyString(), anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> callbackLogin = callbackArgumentCaptor.getValue();
         callbackLogin.completed(res);
     }
@@ -150,7 +158,7 @@ public class OptionsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(popupStage.isShowing());
         Assert.assertEquals("Options", popupStage.getTitle());
-        Assert.assertTrue(stageManager.getScene().getStylesheets()
+        Assert.assertTrue(stageManager.getScene(StageEnum.STAGE).getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("light-theme.css")).toExternalForm()));
 
         // test darkmode button
@@ -158,7 +166,7 @@ public class OptionsScreenTest extends ApplicationTest {
 
         // check if stylesheets contain dark theme
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(stageManager.getScene().getStylesheets()
+        Assert.assertTrue(stageManager.getScene(StageEnum.STAGE).getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
         Assert.assertEquals(stageManager.getPrefManager().loadDarkMode(), true);
@@ -166,8 +174,6 @@ public class OptionsScreenTest extends ApplicationTest {
 
     @Test
     public void testChoiceBoxLanguage() {
-        Label lblEnterUserName = lookup("#lblEnterUserName").query();
-        Assert.assertEquals(lblEnterUserName.getText(), "Enter your username");
         Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
         // open options screen
         directToOptionsScreen();
@@ -186,7 +192,7 @@ public class OptionsScreenTest extends ApplicationTest {
         clickOn(choiceBoxLanguage);
 
         Platform.runLater(() -> {
-            //choice german as language
+            //choose german as language
             choiceBoxLanguage.getSelectionModel().select(1);
         });
 
@@ -210,7 +216,7 @@ public class OptionsScreenTest extends ApplicationTest {
         directToOptionsScreen();
 
         Platform.runLater(() -> {
-            //choice english as language
+            //choose english as language
             choiceBoxLanguage.getSelectionModel().select(0);
         });
 

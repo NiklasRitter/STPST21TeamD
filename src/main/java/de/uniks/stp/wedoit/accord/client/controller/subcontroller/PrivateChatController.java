@@ -3,6 +3,8 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
@@ -93,7 +95,6 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
         this.tfPrivateChat.setEditable(false);
 
-
         this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
 
         initToolTip();
@@ -150,7 +151,7 @@ public class PrivateChatController implements Controller {
         //get the position of Emoji Button and pass it to showEmojiScreen
         if (this.selectedUser != null && this.selectedUser.isOnlineStatus()) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
-            this.editor.getStageManager().initView(EMOJI_PICKER_STAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false, tfPrivateChat, pos);
+            this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, tfPrivateChat, pos);
         }
     }
 
@@ -390,10 +391,10 @@ public class PrivateChatController implements Controller {
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         } else if ((currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals(LanguageResolver.getString("ACCEPT")))
                 &&
-                (!editor.getStageManager().getGameStage().isShowing() || editor.getStageManager().getGameStage().getTitle().equals(LanguageResolver.getString("RESULT")))) {
+                (!editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() || editor.getStageManager().getStage(StageEnum.GAME_STAGE).getTitle().equals(LanguageResolver.getString("RESULT")))) {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPTS);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
-        } else if (currentChat != null && currentChat.getUser() != null && editor.getStageManager().getGameStage().isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())) {
+        } else if (currentChat != null && currentChat.getUser() != null && editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())) {
             privateMessageObservableList.add(new PrivateMessage().setText("###game### System: Cant play two games at once."));
         }
 

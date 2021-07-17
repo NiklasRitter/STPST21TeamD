@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.view;
 import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
@@ -33,14 +34,12 @@ import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
 
@@ -59,7 +58,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private final ListView<S> param;
         private final ImageView imageView = new ImageView();
-        private final MediaView mediaView = new MediaView();
+        private final ImageView imgVwBtnHandleMedia = new ImageView();
+        private final Image imagePlay = new Image(Objects.requireNonNull(MessageCellFactory.class.getResourceAsStream("images/play.png")));
+        private final Image imageStop = new Image(Objects.requireNonNull(MessageCellFactory.class.getResourceAsStream("images/stop.png")));
+        private Button btnHandleMedia = new Button();
+        private MediaView mediaView = new MediaView();
+        private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
         private final Label label = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
@@ -107,6 +111,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 setWrapText(true);
 
                 time = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(item.getTimestamp()));
+                if(item.getText().startsWith(GAME_PREFIX)) item.setText(item.getText().substring(GAME_PREFIX.length()));
 
                 if (item instanceof PrivateMessage) {
                     if (item.getText().startsWith(GAME_SYSTEM)) {
@@ -192,6 +197,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                 if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
                 if (url.contains(MP4)) return true;
+                if (url.contains(MP3)) return true;
                 if (url.contains(GIF)) return true;
                 Document doc = Jsoup.connect(url).get();
                 if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
@@ -207,7 +213,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private boolean setImgGraphic(String url) {
             if (isValidURL(url)) {
-                if (url.contains(MP4)) {
+                if (url.contains(MP4) || url.contains(MP3)) {
                     setUpMediaView(url);
                     setGraphic(vBox);
                     return true;
@@ -230,8 +236,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private void setUpMediaView(String url) {
             Media media = new Media(url);
-            MediaPlayer mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setAutoPlay(true);
+            mediaPlayer = new MediaPlayer(media);
             mediaView.setFitHeight(400);
             mediaView.setFitWidth(270);
             mediaView.setPreserveRatio(true);
@@ -248,8 +253,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private void setUpMedia(S item) {
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
-                if (item.getText().contains(MP4)) {
-                    vBox.getChildren().addAll(label, mediaView, hyperlink);
+                if (item.getText().contains(MP4) || item.getText().contains(MP3)) {
+                    setUpBtnMedia(imagePlay);
+                    vBox.getChildren().addAll(label, mediaView, btnHandleMedia, hyperlink);
                 } else if (item.getText().contains(GIF)) {
                     vBox.getChildren().addAll(label, webView, hyperlink);
                 } else {
@@ -270,6 +276,26 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.setText(item.getText());
             hyperlink.getStyleClass().add("link");
             hyperlink.setOnAction(this::openHyperLink);
+        }
+
+        private void setUpBtnMedia(Image image) {
+            imgVwBtnHandleMedia.setImage(image);
+            imgVwBtnHandleMedia.setFitHeight(20);
+            imgVwBtnHandleMedia.setFitWidth(20);
+            imgVwBtnHandleMedia.setPreserveRatio(true);
+            btnHandleMedia.setGraphic(imgVwBtnHandleMedia);
+            btnHandleMedia.setOnAction(this::btnHandleMediaOnClick);
+        }
+
+        private void btnHandleMediaOnClick(ActionEvent actionEvent) {
+            boolean playing = mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING);
+            if (!playing) {
+                setUpBtnMedia(imageStop);
+                mediaPlayer.play();
+            } else {
+                setUpBtnMedia(imagePlay);
+                mediaPlayer.stop();
+            }
         }
 
         public String expandUrl(String shortenedUrl) {
@@ -360,17 +386,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
     }
 
-
     private void joinButtonOnClick(String inviteLink) {
         stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
     }
 
     public void handleInvitation(Server server, String responseMessage) {
         if (server != null) {
-            Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("SERVER"), "ServerScreen", SERVER_SCREEN_CONTROLLER, true, server, null));
+            Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
         } else {
             if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> this.stageManager.initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null));
+                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null));
             }
         }
     }

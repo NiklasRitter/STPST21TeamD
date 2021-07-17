@@ -2,6 +2,8 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
@@ -235,7 +237,7 @@ public class ServerScreenController implements Controller {
      * opens the AttentionLeaveServerScreen
      */
     private void leaveServerAttention(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("ATTENTION"), "AttentionLeaveServerScreen", ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER, false, server, null);
+        this.editor.getStageManager().initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, server, null);
     }
 
     /**
@@ -244,7 +246,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void homeButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("MAIN"), "MainScreen", MAIN_SCREEN_CONTROLLER, true, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
     }
 
     /**
@@ -253,7 +255,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void optionsButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("OPTIONS"), "OptionsScreen", OPTIONS_SCREEN_CONTROLLER, false, null, null);
+        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
     }
 
     /**
@@ -262,7 +264,7 @@ public class ServerScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void editButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(POPUP_STAGE, LanguageResolver.getString("EDIT_SERVER"), "EditServerScreen", EDIT_SERVER_SCREEN_CONTROLLER, false, server, null);
+        this.editor.getStageManager().initView(ControllerEnum.EDIT_SERVER_SCREEN, server, null);
     }
 
     // PropertyChangeEvent Methods
@@ -303,7 +305,7 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(STAGE, LanguageResolver.getString("LOGIN"), "LoginScreen", LOGIN_SCREEN_CONTROLLER, true, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
@@ -374,10 +376,10 @@ public class ServerScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getPopupStage().setOnCloseRequest(event -> {
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
             setComponentsText();
             initTooltips();
-            editor.getStageManager().getStage().setTitle(LanguageResolver.getString("SERVER"));
+            editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("SERVER"));
             lbServerName.setContextMenu(createContextMenuLeaveServer());
             serverChatController.initToolTip();
             serverChatController.addUserMessageContextMenu();

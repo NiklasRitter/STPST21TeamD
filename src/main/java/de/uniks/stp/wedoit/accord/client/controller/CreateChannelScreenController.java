@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MemberListSubViewController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
@@ -120,7 +121,7 @@ public class CreateChannelScreenController implements Controller {
     private void checkBoxPrivilegedOnClick(ActionEvent actionEvent) {
         checkIfIsPrivileged();
         //Adjusts the size of the stage to its dynamically added content
-        this.editor.getStageManager().getPopupStage().sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
     }
 
     /**
