@@ -562,7 +562,12 @@ public class RestManager {
      * @param controller controller in which the response is handled
      */
     private void deleteChannel(LocalUser localUser, Channel channel, AttentionScreenController controller) {
-        restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> controller.handleDeleteChannel(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
+        if(localUser.getAudioChannel() != null && localUser.getAudioChannel() == channel){
+            leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, null);
+        }
+        restClient.deleteChannel(localUser.getUserKey(), channel.getId(), channel.getCategory().getId(), channel.getCategory().getServer().getId(), (response) -> {
+            controller.handleDeleteChannel(response.getBody().getObject().getString(STATUS).equals(SUCCESS));
+        });
     }
 
     /**
@@ -594,6 +599,9 @@ public class RestManager {
      * @param controller controller in which the response is handled
      */
     private void deleteCategory(LocalUser localUser, Category category, AttentionScreenController controller) {
+        if(localUser.getAudioChannel() != null && category.getChannels().contains(localUser.getAudioChannel())){
+            leaveAudioChannel(localUser.getUserKey(), category.getServer(), category, localUser.getAudioChannel(), null);
+        }
         restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) ->
                 controller.handleDeleteCategory(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
     }
@@ -686,7 +694,6 @@ public class RestManager {
         restClient.joinAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 editor.getAudioManager().initAudioConnection(channel);
-                editor.getLocalUser().setAudioChannel(channel);
                 controller.handleJoinAudioChannel(channel);
             } else {
                 controller.handleJoinAudioChannel(new Channel());
@@ -697,11 +704,12 @@ public class RestManager {
     public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller) {
         this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
-            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                editor.getLocalUser().setAudioChannel(null);
-                controller.handleLeaveAudioChannel(channel.getCategory());
-            } else {
-                controller.handleLeaveAudioChannel(null);
+            if(controller != null){
+                if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                    controller.handleLeaveAudioChannel(channel.getCategory());
+                } else {
+                    controller.handleLeaveAudioChannel(null);
+                }
             }
         });
     }
@@ -710,7 +718,6 @@ public class RestManager {
         this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), oldCategory.getId(), oldChannel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                editor.getLocalUser().setAudioChannel(null);
                 joinAudioChannel(userKey, server, newCategory, newChannel, controller);
             } else {
                 controller.handleLeaveAudioChannel(null);

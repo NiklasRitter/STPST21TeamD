@@ -21,6 +21,7 @@ public class AudioManager {
         if (audioConnection == null) {
             audioConnection = new AudioConnection(editor.getLocalUser(), channel);
         }
+        editor.getLocalUser().setAudioChannel(channel);
         audioConnection.startConnection("cranberry.uniks.de", 33100);
     }
 
@@ -72,6 +73,7 @@ public class AudioManager {
             if (localUser.isMuted()) {
                 unmuteYourself(localUser);
             }
+            localUser.setAudioChannel(null);
             audioConnection.close();
             this.audioConnection = null;
         }

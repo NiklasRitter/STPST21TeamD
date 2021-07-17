@@ -149,7 +149,12 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     public void closeAudioChannel() {
-        this.editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, controller);
+        if(channel.getCategory() != null){
+            this.editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, controller);
+        }
+        else{
+            this.editor.getAudioManager().closeAudioConnection();
+        }
     }
 
     /**
