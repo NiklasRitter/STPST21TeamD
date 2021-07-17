@@ -134,12 +134,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (messages.length != 2) {
                         this.setText(item.getText());
                     } else {
-                        quoteLabel.setText(">>>" + messages[0]);
-                        quoteLabel.getStyleClass().add("font_size");
-                        messageLabel.setStyle("-fx-font-size: 12");
-                        messageLabel.setText(timeLabel().getText() + item.getFrom() + ": " + messages[1]);
-                        setGraphic(messageVBox);
-                        messageVBox.getChildren().addAll(quoteLabel, messageLabel);
                         EmojiTextFlow quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize() -3).createParameters());
                         quoteTextFlow.parseAndAppend(">>>" + messages[0]);
                         this.emojiTextFlow.parseAndAppend("[" + time + "] " + item.getFrom() + ": " + messages[1]);
