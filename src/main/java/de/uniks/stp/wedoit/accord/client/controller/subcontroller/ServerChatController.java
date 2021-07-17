@@ -150,7 +150,9 @@ public class ServerChatController implements Controller {
                 message.listeners().removePropertyChangeListener(Message.PROPERTY_TEXT, this.messageTextChangedListener);
             }
         }
-        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        if (this.localUser.getAccordClient() != null) {
+            this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        }
         this.editor.getChatFontSizeProperty().removeListener(this::onDarkmodeChanged);
     }
 

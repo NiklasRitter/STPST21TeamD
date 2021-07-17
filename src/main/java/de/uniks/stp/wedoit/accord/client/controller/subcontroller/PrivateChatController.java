@@ -119,7 +119,9 @@ public class PrivateChatController implements Controller {
         if (this.currentChat != null) {
             this.currentChat.listeners().removePropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
         }
-        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        if (localUser.getAccordClient() != null) {
+            this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        }
         this.editor.getChatFontSizeProperty().removeListener(this::onDarkmodeChanged);
         this.currentChat = null;
         messageContextMenu = null;
