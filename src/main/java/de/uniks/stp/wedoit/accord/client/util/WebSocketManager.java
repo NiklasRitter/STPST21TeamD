@@ -210,20 +210,12 @@ public class WebSocketManager {
                 break;
             case CHANNEL_DELETED:
                 Category categoryDeleted = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
-                Channel channelDeleted = editor.getChannelManager().haveChannel(data.getString(ID), data.getString(NAME), null, false, categoryDeleted, Json.createArrayBuilder().build(), Json.createArrayBuilder().build());
-                // Todo
-                if(editor.getLocalUser().getAudioChannel() != null && editor.getLocalUser().getAudioChannel() == channelDeleted){
+                Channel channelDeleted = editor.getChannelManager().getChannel(data.getString(ID), categoryDeleted);
+                if(editor.getLocalUser().getAudioChannel() != null && editor.getLocalUser().getAudioChannel().getId().equals(channelDeleted.getId())){
+//                    editor.getRestManager().leaveAudioChannel(editor.getLocalUser().getUserKey(), server, categoryDeleted, channelDeleted, null);
                     editor.getAudioManager().closeAudioConnection();
-                    editor.getRestManager().getRestClient().leaveAudioChannel(editor.getLocalUser().getUserKey(), server.getId(), categoryDeleted.getId(), categoryDeleted.getId(), response -> {
-                        if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
-                            editor.getLocalUser().setAudioChannel(null);
-                            channelDeleted.removeYou();
-                        }
-                    });
                 }
-                else{
-                    channelDeleted.removeYou();
-                }
+                channelDeleted.removeYou();
                 break;
             case INVITE_EXPIRED:
                 editor.deleteInvite(data.getString(ID), server);

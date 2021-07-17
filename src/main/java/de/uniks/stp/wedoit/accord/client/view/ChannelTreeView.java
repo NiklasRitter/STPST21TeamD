@@ -62,17 +62,19 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
 
         private void handleChannel(Channel channel){
             ImageView icon;
-            if(channel.getType().equals(TEXT)){
-                icon = addIconText();
-            }
-            else{
-                icon = addIconAudio();
-            }
-            this.setGraphic(icon);
-            this.setText(channel.getName());
-            this.setContextMenu(addContextMenuChannel(channel));
-            if (!channel.isRead()) {
-                this.getStyleClass().add("newMessage");
+            if(channel != null){
+                if(channel.getType().equals(TEXT)){
+                    icon = addIconText();
+                }
+                else{
+                    icon = addIconAudio();
+                }
+                this.setGraphic(icon);
+                this.setText(channel.getName());
+                this.setContextMenu(addContextMenuChannel(channel));
+                if (!channel.isRead()) {
+                    this.getStyleClass().add("newMessage");
+                }
             }
         }
 

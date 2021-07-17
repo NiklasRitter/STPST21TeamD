@@ -57,10 +57,6 @@ public class ChannelManager {
             if (privileged) {
                 for(User user : channel.getMembers()){
                     if(!membersIds.contains(user.getId())){
-                        // Todo
-//                        if(user.getId().equals(editor.getLocalUser().getId()) && editor.getLocalUser().getAudioChannel() == channel){
-//                            editor.getAudioManager().closeAudioConnection();
-//                        }
                         channel.withoutMembers(user);
                     }
                 }

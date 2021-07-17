@@ -339,7 +339,7 @@ public class CategoryTreeViewController implements Controller {
     private TreeItem<Object> getTreeItemCategory(Category category) {
         for (TreeItem<Object> categoryItem : tvServerChannelsRoot.getChildren()) {
             Category currentCategory = (Category) categoryItem.getValue();
-            if (currentCategory.getId().equals(category.getId())) {
+            if (category != null && currentCategory.getId().equals(category.getId())) {
                 return categoryItem;
             }
         }
