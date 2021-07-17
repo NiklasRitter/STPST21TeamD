@@ -65,7 +65,6 @@ public class ServerChatController implements Controller {
     private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
     private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
 
-
     /**
      * Create a new Controller
      *
@@ -447,6 +446,10 @@ public class ServerChatController implements Controller {
      */
     private void onDarkmodeChanged(Object object) {
         this.lvTextChat.refresh();
+    }
+
+    public String getQuotedText() {
+        return quotedText;
     }
 
 }

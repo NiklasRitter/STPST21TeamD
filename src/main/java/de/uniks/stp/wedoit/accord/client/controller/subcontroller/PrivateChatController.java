@@ -416,4 +416,8 @@ public class PrivateChatController implements Controller {
         return tfPrivateChat;
     }
 
+    public String getQuotedText() {
+        return quotedText;
+    }
+
 }
