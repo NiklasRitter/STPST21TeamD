@@ -9,46 +9,50 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox>
             <children>
                 <Label id="lblCategoryName" prefWidth="160.0">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="14.0"/>
                     </font>
                     <HBox.margin>
-                        <Insets top="2.0" />
+                        <Insets top="2.0"/>
                     </HBox.margin>
                 </Label>
 
                 <TextField id="tfCategoryName" prefWidth="200.0" styleClass="createTextField"/>
             </children>
         </HBox>
-        <Label id="lblError" textFill="RED" />
+        <Label id="lblError" textFill="RED"/>
         <HBox>
             <children>
-                <Button id="btnDeleteCategory" defaultButton="true" mnemonicParsing="false" prefWidth="150.0" styleClass="styleButton" textFill="RED">
+                <Button id="btnDeleteCategory" defaultButton="true" mnemonicParsing="false" prefWidth="150.0"
+                        styleClass="styleButton" textFill="RED">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="14.0"/>
                     </font>
                     <HBox.margin>
-                        <Insets right="70.0" />
+                        <Insets right="70.0"/>
                     </HBox.margin>
                 </Button>
-                <Button id="btnEditCategory" defaultButton="true" mnemonicParsing="false" prefWidth="150.0" styleClass="styleButton">
+                <Button id="btnEditCategory" defaultButton="true" mnemonicParsing="false" prefWidth="150.0"
+                        styleClass="styleButton">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="14.0"/>
                     </font>
                 </Button>
             </children>
         </HBox>
     </children>
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
     <styleClass>
-        <String fx:value="styleBorder" />
-        <String fx:value="styleBackgroundPopup" />
+        <String fx:value="styleBorder"/>
+        <String fx:value="styleBackgroundPopup"/>
     </styleClass>
 </VBox>
