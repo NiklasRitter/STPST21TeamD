@@ -596,6 +596,9 @@ public class RestManager {
      * @param controller controller in which the response is handled
      */
     private void deleteCategory(LocalUser localUser, Category category, AttentionScreenController controller) {
+        if(localUser.getAudioChannel() != null && category.getChannels().contains(localUser.getAudioChannel())){
+            leaveAudioChannel(localUser.getUserKey(), category.getServer(), category, localUser.getAudioChannel(), null);
+        }
         restClient.deleteCategory(localUser.getUserKey(), category.getId(), category.getServer().getId(), (response) ->
                 controller.handleDeleteCategory(response.getBody().getObject().getString(STATUS).equals(SUCCESS)));
     }

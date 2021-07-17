@@ -196,7 +196,11 @@ public class WebSocketManager {
                 editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
                 break;
             case CATEGORY_DELETED:
-                editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server).removeYou();
+                Category categoryToDelete = editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
+                if(editor.getLocalUser().getAudioChannel() != null && categoryToDelete.getChannels().contains(editor.getLocalUser().getAudioChannel())){
+                    editor.getAudioManager().closeAudioConnection();
+                }
+                categoryToDelete.removeYou();
                 break;
             case CHANNEL_CREATED:
                 Category category = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
@@ -212,7 +216,6 @@ public class WebSocketManager {
                 Category categoryDeleted = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
                 Channel channelDeleted = editor.getChannelManager().getChannel(data.getString(ID), categoryDeleted);
                 if(editor.getLocalUser().getAudioChannel() != null && editor.getLocalUser().getAudioChannel().getId().equals(channelDeleted.getId())){
-//                    editor.getRestManager().leaveAudioChannel(editor.getLocalUser().getUserKey(), server, categoryDeleted, channelDeleted, null);
                     editor.getAudioManager().closeAudioConnection();
                 }
                 channelDeleted.removeYou();
