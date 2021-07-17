@@ -148,6 +148,7 @@ public class ServerScreenController implements Controller {
         this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
         this.tfInputMessage.setPromptText(LanguageResolver.getString("SELECT_A_CHANNEL"));
+        this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("SERVER"));
     }
 
     /**
@@ -376,7 +377,6 @@ public class ServerScreenController implements Controller {
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
             setComponentsText();
             initTooltips();
-            editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("SERVER"));
             lbServerName.setContextMenu(createContextMenuLeaveServer());
             serverChatController.initToolTip();
             serverChatController.addUserMessageContextMenu();
