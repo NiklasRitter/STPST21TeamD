@@ -50,7 +50,7 @@ public class RealLinkedImage implements LinkedImage {
 
     @Override
     public Node createNode() {
-        Image image = new Image("file:" + imagePath); // XXX: No need to create new Image objects each time -
+        Image image = new Image(imagePath); // XXX: No need to create new Image objects each time -
                                                       // could be cached in the model layer
         ImageView result = new ImageView(image);
         result.setFitWidth(25);

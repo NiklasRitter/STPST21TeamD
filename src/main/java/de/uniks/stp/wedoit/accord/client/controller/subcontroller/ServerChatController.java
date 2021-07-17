@@ -7,15 +7,11 @@ import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.richtext.LinkedImage;
-import de.uniks.stp.wedoit.accord.client.richtext.ParStyle;
 import de.uniks.stp.wedoit.accord.client.richtext.RichText;
-import de.uniks.stp.wedoit.accord.client.richtext.TextStyle;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,7 +28,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.fxmisc.richtext.GenericStyledArea;
-import org.reactfx.util.Either;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -61,7 +56,6 @@ public class ServerChatController implements Controller {
 
     private HBox quoteVisible;
     private Label lbChannelName;
-    //private Label lblQuote;
     //private TextArea tfInputMessage;
     private GenericStyledArea tfInputMessage;
     private Button btnCancelQuote;
@@ -111,15 +105,15 @@ public class ServerChatController implements Controller {
         HBox textHBox = (HBox) view.lookup("#textHBox");
 
         richText = new RichText();
-        GenericStyledArea<ParStyle, Either<String, LinkedImage>, TextStyle> area = richText.getArea();
-        this.tfInputMessage = area;
+        this.tfInputMessage = richText.getArea();
+        //this.tfInputMessage.setPlaceholder(new Text("Your Message"));
         tfInputMessage.setPrefWidth(250);
-        tfInputMessage.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        tfInputMessage.setPrefHeight(23);
         tfInputMessage.setWrapText(true);
 
         textHBox.getChildren().add(0, this.tfInputMessage);
 
-        //tfInputMessage.getStyleClass().add("emoji");
+        tfInputMessage.getStyleClass().add("richTextArea");
 
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
@@ -358,15 +352,16 @@ public class ServerChatController implements Controller {
             if (keyEvent.isShiftDown()) {
                 tfInputMessage.appendText(System.getProperty("line.separator"));
             } else {
-                sendMessage(this.tfInputMessage.getText());
+                System.out.println("converted: " + richText.getConvertedText());
+                sendMessage(richText.getConvertedText());
             }
         }
-
-
     }
 
     private void sendMessage(String message) {
         this.tfInputMessage.clear();
+
+        System.out.println("message: " +message);
 
         if (message != null && !message.isEmpty() && currentChannel != null) {
             message = message.trim();
@@ -393,7 +388,7 @@ public class ServerChatController implements Controller {
     public void initChannelChat(Channel channel) {
         if (this.currentChannel != null) {
             this.currentChannel.listeners().removePropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
-            this.markingController.stop();
+            //this.markingController.stop();
         }
 
         channel.setRead(true);

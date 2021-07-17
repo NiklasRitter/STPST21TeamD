@@ -96,11 +96,11 @@ public class EmojiScreenController implements Controller {
     private void btnEmojiOnClick(ActionEvent actionEvent) {
         if (this.txtAreaForEmoji.isEditable()) {
             Emoji selectedEmoji = hashMapForEmojiButtons.get(actionEvent.getSource());
-            String imagePath = Objects.requireNonNull(StageManager.class.getResource("emoji_images/" + selectedEmoji.getHex() + ".png").toString()).substring(5);
+            String imagePath = Objects.requireNonNull(StageManager.class.getResource("emoji_images/" + selectedEmoji.getHex() + ".png").toString());
             System.out.println(imagePath);
             //RichText richText = new RichText();
             //Platform.runLater(() -> richText.insertImage());
-            Platform.runLater(() -> richText.insertEmoji(imagePath));
+            Platform.runLater(() -> richText.insertEmoji(selectedEmoji));
             //Platform.runLater(() -> this.txtAreaForEmoji.setText(this.txtAreaForEmoji.getText() + selectedEmoji.getShortname()));
         }
     }
