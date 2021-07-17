@@ -241,8 +241,6 @@ public class ServerChatController implements Controller {
 
                 String formatted = editor.getMessageManager().getMessageFormatted(message, messageText);
                 removeQuote();
-                EmojiTextFlowParameters parameters = new EmojiTextFlowParameterHelper(10).createParameters();
-                quoteTextFlow = new EmojiTextFlow(parameters);
                 quoteTextFlow.parseAndAppend(formatted);
                 quotedText = formatted;
                 quoteTextFlow.setAccessibleHelp(message.getId());
