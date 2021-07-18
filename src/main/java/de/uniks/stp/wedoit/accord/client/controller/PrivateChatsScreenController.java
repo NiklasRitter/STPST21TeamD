@@ -102,6 +102,7 @@ public class PrivateChatsScreenController implements Controller {
         this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
         this.btnPlay.setText(LanguageResolver.getString("PLAY"));
         this.taPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
+        this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
     }
 
     /**
@@ -297,7 +298,6 @@ public class PrivateChatsScreenController implements Controller {
             public void handle(WindowEvent event) {
                 setComponentsText();
                 initTooltips();
-                editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
                 privateChatController.initToolTip();
                 privateChatController.addMessageContextMenu();
                 privateChatController.getLwPrivateChat().refresh();

@@ -145,7 +145,10 @@ public class AttentionScreenController implements Controller {
     public void handleDeleteServer(boolean status) {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
-            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
+            Platform.runLater(() -> {
+                this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
+                Platform.runLater(() -> editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close());
+            });
             stop();
         } else {
             showError();

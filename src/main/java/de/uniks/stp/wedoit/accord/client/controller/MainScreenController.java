@@ -102,6 +102,7 @@ public class MainScreenController implements Controller {
 
     private void setComponentsText() {
         this.lblYourServers.setText(LanguageResolver.getString("YOUR_SERVERS"));
+        this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("MAIN"));
     }
 
     /**
@@ -267,13 +268,9 @@ public class MainScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("MAIN"));
-            }
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
+            setComponentsText();
+            initTooltips();
         });
     }
 
