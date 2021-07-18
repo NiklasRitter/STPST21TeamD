@@ -93,9 +93,7 @@ public class OptionsScreenController implements Controller {
 
 
     private void createChoiceBoxItems() {
-        this.choiceBoxLanguage.getItems().add("English");
-        this.choiceBoxLanguage.getItems().add("Deutsch");
-        this.choiceBoxLanguage.getItems().add("فارسی");
+        this.choiceBoxLanguage.getItems().addAll("English","Deutsch","فارسی");
 
         if (Locale.getDefault().getLanguage().equals("fa_ir")) {
             this.choiceBoxLanguage.getSelectionModel().select(2);

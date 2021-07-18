@@ -123,8 +123,11 @@ public class PrivateMessageServerScreenController implements Controller {
         stop();
     }
 
+    /**
+     * gets the position of Emoji Button and pass it to showEmojiScreen
+     * @param actionEvent is triggered when emoji button is clicked
+     */
     private void btnEmojiOnClicked(ActionEvent actionEvent) {
-        //get the position of Emoji Button and pass it to showEmojiScreen
         if (memberToWrite.isOnlineStatus()) {
             Bounds pos = btnEmoji.localToScreen(btnEmoji.getBoundsInLocal());
             this.editor.getStageManager().initView(ControllerEnum.EMOJI_PICKER_SCREEN, taMessage, pos);
@@ -137,8 +140,6 @@ public class PrivateMessageServerScreenController implements Controller {
     private void onOnlineChanged(PropertyChangeEvent propertyChangeEvent) {
         this.setCorrectPromptText((Boolean) propertyChangeEvent.getNewValue());
     }
-
-    // additional helper Methods
 
     /**
      * A small helper Method that sets the correct promptText

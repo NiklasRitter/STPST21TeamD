@@ -48,7 +48,7 @@ public class UpdateMessageScreenController implements Controller {
         lblError = (Label) view.lookup("#lblError");
         vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
 
-        String messageText = "";
+        String messageText;
         if (editor.getMessageManager().isQuote(message)) {
             messageText = editor.getMessageManager().cleanQuoteMessage(message);
         } else {
@@ -77,14 +77,11 @@ public class UpdateMessageScreenController implements Controller {
         if (newMessage.equals(message.getText())) {
             this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
         } else if (newMessage.length() >= 1) {
-            if (!editor.getMessageManager().isQuote(message)) {
-                editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
-            } else {
+            if (editor.getMessageManager().isQuote(message)) {
                 newMessage = QUOTE_PREFIX + editor.getMessageManager().cleanQuote(message)
                         + QUOTE_MESSAGE + newMessage + QUOTE_SUFFIX;
-                editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
-
             }
+            editor.getRestManager().updateMessage(editor.getLocalUser(), newMessage, message, this);
         } else {
             Platform.runLater(() -> lblError.setText(LanguageResolver.getString("ERROR_UPDATE_MESSAGE_CHAR_COUNT")));
         }

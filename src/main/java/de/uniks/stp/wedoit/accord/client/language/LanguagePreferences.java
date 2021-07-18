@@ -14,7 +14,7 @@ public class LanguagePreferences {
 
     private static LanguagePreferences instance = null;
 
-    private String language = "language/Language";
+    private String language;
 
     String s = "English";
 
@@ -49,7 +49,7 @@ public class LanguagePreferences {
     /**
      * Sets the language used
      *
-     * @param language
+     * @param language to be set
      */
     public void setLanguage(String language) {
         this.language = language;

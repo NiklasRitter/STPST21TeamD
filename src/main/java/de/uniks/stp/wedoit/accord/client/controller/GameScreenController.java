@@ -21,9 +21,7 @@ import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_RESULT_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAME_STAGE;
 
 public class GameScreenController implements Controller {
 
@@ -177,7 +175,7 @@ public class GameScreenController implements Controller {
     }
 
     /**
-     * Called when both players have choosen a action
+     * Called when both players have chosen a action
      * <p>
      * checks weather one of the player has won,
      * in that case they get redirected to the result screen

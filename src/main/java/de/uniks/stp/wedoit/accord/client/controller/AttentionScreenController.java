@@ -12,10 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
-
 public class AttentionScreenController implements Controller {
 
     private final LocalUser localUser;

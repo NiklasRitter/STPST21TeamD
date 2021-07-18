@@ -165,13 +165,8 @@ public class ServerScreenController implements Controller {
      * Initializes the Tooltips for the Buttons
      */
     private void initTooltips() {
-        Tooltip homeButton = new Tooltip();
-        homeButton.setText(LanguageResolver.getString("HOME"));
-        btnHome.setTooltip(homeButton);
-
-        Tooltip optionsButton = new Tooltip();
-        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
-        btnOptions.setTooltip(optionsButton);
+        btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
+        btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));
 
         Tooltip editButton = new Tooltip();
         editButton.setText(LanguageResolver.getString("EDIT_SERVER"));
