@@ -116,10 +116,6 @@ public class CategoryTreeViewController implements Controller {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
             Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
-        } else {
-            for(Category category : categoryList){
-                loadCategoryChannels(category);
-            }
         }
     }
 
