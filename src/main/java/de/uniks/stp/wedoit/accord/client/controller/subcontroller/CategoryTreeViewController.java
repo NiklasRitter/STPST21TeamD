@@ -196,7 +196,6 @@ public class CategoryTreeViewController implements Controller {
      */
     private void handleCategoryChange(PropertyChangeEvent propertyChangeEvent) {
         Platform.runLater(() -> {
-            System.out.println(propertyChangeEvent.getPropertyName());
             if (propertyChangeEvent.getPropertyName().equals(Server.PROPERTY_CATEGORIES)) {
                 updateCategoryTreeView((Category) propertyChangeEvent.getOldValue(), (Category) propertyChangeEvent.getNewValue());
             } else if (propertyChangeEvent.getPropertyName().equals(Category.PROPERTY_CHANNELS)) {
