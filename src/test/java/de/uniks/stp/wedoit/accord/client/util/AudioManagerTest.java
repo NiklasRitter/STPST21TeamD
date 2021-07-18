@@ -7,6 +7,8 @@ import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -177,15 +179,19 @@ public class AudioManagerTest extends ApplicationTest {
 
         doubleClickOn("channelName1");
         JsonObject restClientJson = joinOrLeaveAudioChannel("I2", "idTest", "idTest1");
-        audioMembers = Json.createArrayBuilder().add("I1").add("I2").build();
+        audioMembers = Json.createArrayBuilder().add("I2").build();
         JsonObject channelRestJson = getCategoryAudioChannels(audioMembers);
         mockChannelRest(channelRestJson);
         WaitForAsyncUtils.waitForFxEvents();
         mockJoinAudio(restClientJson);
         mockAudioInit();
         WaitForAsyncUtils.waitForFxEvents();
-        User user = (User) treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren().get(1).getValue();
-        Assert.assertEquals(user.getId(), "I2");
+        ObservableList<TreeItem<Object>> treeItems = treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren();
+        User user = (User) treeItems.get(0).getValue();
+        if(user.getId().equals("I1")) {
+            user = (User) treeItems.get(1).getValue();
+        }
+        Assert.assertEquals("I2", user.getId());
         Assert.assertNotNull(stageManager.getEditor().getAudioManager().getAudioConnection());
     }
 
