@@ -10,6 +10,7 @@ import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import javafx.application.Platform;
+import javafx.css.Style;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -34,6 +35,7 @@ import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -73,8 +75,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
-        EmojiTextFlowParameters parameters;
-        EmojiTextFlow emojiTextFlow;
+        private EmojiTextFlowParameters parameters;
+        private EmojiTextFlowParameters parametersQuote;
+        private EmojiTextFlow emojiTextFlow;
+        private EmojiTextFlow quoteTextFlow;
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -94,14 +98,21 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.getStyleClass().removeAll("link", "descBox");
 
             // parameters for emoji
+            this.parametersQuote = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize() -3).createParameters();
             this.parameters = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize()).createParameters();
             if (stageManager.getPrefManager().loadDarkMode()) {
                 this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
+                this.parametersQuote.setTextColor(Color.valueOf("#ADD8e6"));
+                this.hyperlink.setStyle("-fx-text-fill: #ADD8e6");
+                this.label.setStyle("-fx-text-fill: #ADD8e6");
             } else {
                 this.parameters.setTextColor(Color.valueOf("#000000"));
+                this.parametersQuote.setTextColor(Color.valueOf("#000000"));
+                this.hyperlink.setStyle("-fx-text-fill: #000000");
+                this.label.setStyle("-fx-text-fill: #000000");
             }
             emojiTextFlow = new EmojiTextFlow(this.parameters);
-
+            quoteTextFlow = new EmojiTextFlow(this.parametersQuote);
 
             if (!empty) {
 
@@ -146,10 +157,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (messages.length != 2) {
                         this.setText(item.getText());
                     } else {
-                        EmojiTextFlow quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize() -3).createParameters());
-                        quoteTextFlow.parseAndAppend(">>>" + messages[0]);
-                        this.emojiTextFlow.parseAndAppend("[" + time + "] " + item.getFrom() + ": " + messages[1]);
-                        this.vBox.getChildren().addAll(quoteTextFlow, emojiTextFlow);
+                        displayNameAndDate(item);
+                        quoteTextFlow.parseAndAppend(">>> " + messages[0]);
+                        this.vBox.getChildren().add(quoteTextFlow);
+                        this.emojiTextFlow.parseAndAppend(messages[1]);
+                        this.vBox.getChildren().add(emojiTextFlow);
                         setGraphic(vBox);
                     }
 
@@ -159,10 +171,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         setUpJoinServerView(item, url);
                     } else {
                         this.setStyle("-fx-font-size: 12");
-                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText());
+                        displayNameAndDate(item);
                         displayTextWithEmoji(item);
                     }
                 } else {
+                    displayNameAndDate(item);
                     displayTextWithEmoji(item);
                 }
 
@@ -291,6 +304,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private void setUpMedia(S item) {
+            displayNameAndDate(item);
             if (!item.getText().contains(YT_WATCH) && !item.getText().contains(YT_SHORT)) {
                 if (item.getText().contains(MP4) || item.getText().contains(MP3)) {
                     setUpBtnMedia(imagePlay);
@@ -310,9 +324,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 else setUpWebView(item.getText());
                 vBox.getChildren().addAll(label, webView, hyperlink);
             }
-
-            label.setStyle("-fx-font-size: 12");
-            label.setText(timeLabel().getText() + item.getFrom() + ": ");
             initToolTip(item);
             hyperlink.setText(item.getText());
             hyperlink.getStyleClass().add("link");
@@ -359,8 +370,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private void setUpJoinServerView(Message item, String url) {
             Label enterServerLabel = new Label();
+            enterServerLabel.setStyle(this.label.getStyle());
             enterServerLabel.setText(LanguageResolver.getString("ENTER_SERVER"));
             Label serverIdLabel = new Label();
+            serverIdLabel.setStyle(this.label.getStyle());
             String[] urlSplitted = url.split("/");
             String serverId = urlSplitted[5];
             serverIdLabel.setText(LanguageResolver.getString("SERVER_ID") + ": " + serverId);
@@ -383,17 +396,28 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             joinServerHBox.getStyleClass().add("styleBorder");
             joinServerHBox.setMaxWidth(vBox.getMaxWidth());
 
-            label.setStyle("-fx-font-size: 12");
-            label.setText(timeLabel().getText() + item.getFrom() + ": ");
+            displayNameAndDate(item);
             initToolTip((S) item);
-            Label textLabel = new Label(item.getText());
-            textLabel.setWrapText(true);
+            label.setText(item.getText());
 
-            this.vBox.getChildren().addAll(this.label, joinServerHBox, textLabel);
+            this.vBox.getChildren().addAll(joinServerHBox, label);
             setGraphic(this.vBox);
         }
 
         private void displayTextWithEmoji(Message item) {
+            if(item.getText().contains("https://") || item.getText().contains("http://")){
+                Label label = new Label(item.getText());
+                label.setStyle(this.label.getStyle());
+                this.vBox.getChildren().add(label);
+            }
+            else{
+                this.emojiTextFlow.parseAndAppend(item.getText());
+                this.vBox.getChildren().add(emojiTextFlow);
+            }
+            setGraphic(vBox);
+        }
+
+        private void displayNameAndDate(Message item){
             HBox nameAndDateHBox = new HBox();
             nameAndDateHBox.setAlignment(Pos.CENTER_LEFT);
             Label name = new Label(item.getFrom() + " ");
@@ -422,14 +446,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             initToolTip((S) item);
             lblDate.getStyleClass().add("date");
             nameAndDateHBox.getChildren().addAll(name, lblDate);
-
-            this.emojiTextFlow.parseAndAppend(item.getText());
-            this.vBox.getChildren().addAll(nameAndDateHBox, emojiTextFlow);
+            this.vBox.getChildren().add(nameAndDateHBox);
             setGraphic(vBox);
         }
-
     }
-
     private void joinButtonOnClick(String inviteLink) {
         stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
     }
