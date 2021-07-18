@@ -15,13 +15,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -30,11 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.OPTIONS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class PrivateChatsScreenController implements Controller {
 
@@ -127,17 +120,9 @@ public class PrivateChatsScreenController implements Controller {
      * Initializes the Tooltips for the Buttons
      */
     private void initTooltips() {
-        Tooltip homeButton = new Tooltip();
-        homeButton.setText(LanguageResolver.getString("HOME"));
-        btnHome.setTooltip(homeButton);
-
-        Tooltip optionsButton = new Tooltip();
-        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
-        btnOptions.setTooltip(optionsButton);
-
-        Tooltip playButton = new Tooltip();
-        playButton.setText(LanguageResolver.getString("ROCK_PAPER_SCISSORS"));
-        btnPlay.setTooltip(playButton);
+        btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
+        btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));
+        btnPlay.setTooltip(new Tooltip(LanguageResolver.getString("ROCK_PAPER_SCISSORS")));
     }
 
     /**
@@ -187,7 +172,6 @@ public class PrivateChatsScreenController implements Controller {
      * Set CellFactory and build lwOnlineUsers.
      */
     private void initOnlineUsersList() {
-        // load online Users
         editor.getRestManager().getOnlineUsers(localUser, this);
     }
 
@@ -342,15 +326,12 @@ public class PrivateChatsScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                setComponentsText();
-                initTooltips();
-                privateChatController.initToolTip();
-                privateChatController.addMessageContextMenu();
-                privateChatController.getLwPrivateChat().refresh();
-            }
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
+            setComponentsText();
+            initTooltips();
+            privateChatController.initToolTip();
+            privateChatController.addMessageContextMenu();
+            privateChatController.getLwPrivateChat().refresh();
         });
     }
 

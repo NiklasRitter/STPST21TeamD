@@ -350,15 +350,29 @@ public class Editor {
         }
     }
 
+
+    /**
+     * creates a instance of the sqlite databank and loads the font size
+     * right after log in since the username is needed
+     */
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
         chatFontSize.setValue(db.getFontSize());
     }
 
+    /**
+     * @param message to be saved
+     */
     public void savePrivateMessage(PrivateMessage message) {
         db.save(message);
     }
 
+
+    /**
+     * loads old offline chats that the local users has a history with
+     *
+     * @return list of offline users with a chat history
+     */
     public List<User> loadOldChats() {
         List<User> offlineUser = new ArrayList<>();
         for (String s : db.getOpenChats(getLocalUser().getName())) {
@@ -371,10 +385,19 @@ public class Editor {
         return offlineUser;
     }
 
+    /**
+     * @param user specific user to load 50 old messages
+     * @return the last 50 or less messages between local user and user
+     */
     public List<PrivateMessage> loadOldMessages(String user) {
         return db.getLastFiftyMessagesBetweenUsers(user);
     }
 
+    /**
+     * @param user specific user to load 50 old messages
+     * @param offset current offset to load the next 50
+     * @return the next 50 or less messages
+     */
     public List<PrivateMessage> loadOlderMessages(String user, int offset) {
         return db.getLastFiftyMessagesBetweenUsers(user, offset);
     }
@@ -387,6 +410,10 @@ public class Editor {
         db.getChatReadForUser(user);
     }
 
+    /**
+     * Updates fontsize in settings databank and updates the property
+     * @param size to be set
+     */
     public void saveFontSize(int size) {
         db.updateFontSize(size);
         chatFontSize.setValue(size);

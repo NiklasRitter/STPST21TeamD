@@ -23,10 +23,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.COUNT;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEMPORAL;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
 
 
 public class EditServerScreenController implements Controller {
@@ -37,22 +35,15 @@ public class EditServerScreenController implements Controller {
     private final Server server;
     private final Stage stage;
 
-    private Button btnCreateInvitation;
-    private Button btnDelete;
-    private Button btnSave;
+    private Button btnCreateInvitation, btnDelete, btnSave, btnDeleteInvitation;
 
-    private RadioButton radioBtnTemporal;
-    private RadioButton radioBtnMaxCount;
+    private RadioButton radioBtnTemporal,radioBtnMaxCount;
 
-    private TextField tfNewServernameInput;
-    private TextField tfMaxCountAmountInput;
-    private TextField tfInvitationLink;
+    private TextField tfNewServernameInput, tfMaxCountAmountInput, tfInvitationLink;
 
-    private Label labelCopy, lblChangeName, lblInvite, lblOldInvite, lblInvitationStatus, lblInvitationStatusText, lblCountWarning;
+    private Label labelCopy, lblChangeName, lblInvite, lblOldInvite, lblInvitationStatus, lblInvitationStatusText, lblCountWarning, lblError;
 
-    private Label lblError;
     private ListView<Invitation> lvInvitation;
-    private Button btnDeleteInvitation;
     private ObservableList<Invitation> invitationsObservableList;
     private PropertyChangeListener invitationsListener = this::invitationsChanged;
 
@@ -246,13 +237,11 @@ public class EditServerScreenController implements Controller {
      * @param invitationLink invitation link which is responded by the server
      */
     public void handleInvitation(String invitationLink) {
-        Platform.runLater(() -> resetAmountPromptText());
+        Platform.runLater(this::resetAmountPromptText);
         if (invitationLink != null) {
             tfInvitationLink.setText(invitationLink);
         } else {
-            Platform.runLater(() -> {
-                tfInvitationLink.setPromptText(LanguageResolver.getString("GENERATION_FAILED"));
-            });
+            Platform.runLater(() -> tfInvitationLink.setPromptText(LanguageResolver.getString("GENERATION_FAILED")));
         }
     }
 

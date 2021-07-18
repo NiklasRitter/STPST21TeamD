@@ -40,6 +40,14 @@ public class StageManager extends Application {
         resourceManager.setPreferenceManager(prefManager);
     }
 
+    /**
+     * inits the view using the ControllerEnum
+     * set up in a strategy design Pattern
+     *
+     * @param controller Enum with information which stage should be loaded
+     * @param parameter for controller
+     * @param parameterTwo for controller
+     */
     public void initView(ControllerEnum controller, Object parameter, Object parameterTwo) {
         try {
 
@@ -68,6 +76,14 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * loads the right controller when changing the scene
+     *
+     * @param root fxml root object
+     * @param controllerName for switch case to load right controller
+     * @param parameter for controller
+     * @param parameterTwo for controller
+     */
     private void openController(Parent root, String controllerName, Object parameter, Object parameterTwo) {
         Controller controller = null;
         switch (controllerName) {
@@ -139,6 +155,10 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * clean up a specific controller
+     * @param c the controller to be cleaned up
+     */
     private void cleanup(ControllerEnum c) {
 
         if (controllerMap.get(c.controllerName) != null) controllerMap.get(c.controllerName).stop();
@@ -148,6 +168,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * clean up all controller
+     */
     private void cleanup() {
         stageMap.forEach((k, v) -> v.hide());
         controllerMap.forEach((k, v) -> v.stop());
@@ -246,6 +269,12 @@ public class StageManager extends Application {
         return prefManager;
     }
 
+    /**
+     * start message for the initial screen,
+     * overrides the start method from javafx.application </p>
+     * sets up the stageMap with all needed stages
+     * @param primaryStage from javafx
+     */
     @Override
     public void start(Stage primaryStage) {
         stageMap.put(StageEnum.STAGE, primaryStage);
@@ -256,7 +285,6 @@ public class StageManager extends Application {
         stageMap.get(StageEnum.POPUP_STAGE).getIcons().add(logoImage);
         stageMap.get(StageEnum.POPUP_STAGE).initOwner(stageMap.get(StageEnum.STAGE));
         stageMap.get(StageEnum.POPUP_STAGE).initModality(Modality.APPLICATION_MODAL);
-        ;
 
         stageMap.put(StageEnum.GAME_STAGE, new Stage());
         stageMap.get(StageEnum.GAME_STAGE).getIcons().add(logoImage);
@@ -288,6 +316,9 @@ public class StageManager extends Application {
         editor.automaticLogin(model);
     }
 
+    /**
+     * stop all controller, cleanup and stop rest of application
+     */
     @Override
     public void stop() {
         try {

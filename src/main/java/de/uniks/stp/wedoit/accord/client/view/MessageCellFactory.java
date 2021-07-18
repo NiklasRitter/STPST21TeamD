@@ -65,13 +65,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final ImageView imgVwBtnHandleMedia = new ImageView();
         private final Image imagePlay = new Image(Objects.requireNonNull(MessageCellFactory.class.getResourceAsStream("images/play.png")));
         private final Image imageStop = new Image(Objects.requireNonNull(MessageCellFactory.class.getResourceAsStream("images/stop.png")));
-        private Button btnHandleMedia = new Button();
-        private Label lblDate = new Label();
-        private MediaView mediaView = new MediaView();
+        private final Button btnHandleMedia = new Button();
+        private final Label lblDate = new Label();
+        private final MediaView mediaView = new MediaView();
         private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
         private final Label label = new Label();
-        private Label lblTime = new Label();
+        private final Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
         private String time;
@@ -84,6 +84,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.param = param;
         }
 
+        /**
+         * determinants how Message cell is constructed
+         * @param item of PrivateMessage or Message
+         * @param empty if cell is empty
+         */
         @Override
         protected void updateItem(S item, boolean empty) {
             super.updateItem(item, empty);
@@ -209,6 +214,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.label.setTooltip(toolTipDate);
         }
 
+        /**
+         * checks time and determines if time was today, yesterday
+         * @param item message item
+         * @return String with correct description of time
+         */
         private String checkTime(S item) {
             DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
             if (new SimpleDateFormat("dd.MM.yyyy").format(new Date(item.getTimestamp())).equals(dateFormat.format(yesterday()))) {
@@ -225,10 +235,18 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             return cal.getTime();
         }
 
+        /**
+         * @param message to be checked for @localUserName
+         * @return True if message contains localUserName else false
+         */
         private boolean containsMarking(String message) {
             return message.contains("@" + stageManager.getEditor().getLocalUser().getName());
         }
 
+        /**
+         * @param text to be checked for server invite
+         * @return invite url if is valid url else null
+         */
         private String containsInviteUrl(String text) {
             if (text.contains("https://ac.uniks.de/api/servers/") && text.contains("/invites/")) {
                 String[] words = text.split(" ");
@@ -242,6 +260,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         }
 
+        /**
+         * check for a valid url in general
+         * @param url string to be checked
+         * @return true if is valid else false
+         */
         private boolean isValidURL(String url) {
             try {
                 URL Url = new URL(url);
@@ -263,6 +286,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
         }
 
+        /**
+         *
+         * @param url a string that might be a url
+         * @return true image could be set
+         */
         private boolean setImgGraphic(String url) {
             if (isValidURL(url)) {
                 if (url.contains(MP4) || url.contains(MP3)) {
@@ -286,6 +314,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             return false;
         }
 
+        /**
+         * @param url to be loaded into a media view
+         */
         private void setUpMediaView(String url) {
             Media media = new Media(url);
             mediaPlayer = new MediaPlayer(media);
@@ -295,6 +326,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             mediaView.setMediaPlayer(mediaPlayer);
         }
 
+        /**
+         * @param url to be set up in webView (for youtube videos)
+         */
         private void setUpWebView(String url) {
             if (url == null) return;
             url = url.replace("/watch?v=", "/embed/");
@@ -358,6 +392,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             openBrowser(hyperlink.getText());
         }
 
+        /**
+         * opens standard browser
+         * @param url that the browser opens
+         */
         private void openBrowser(String url) {
             if (Desktop.isDesktopSupported()) {
                 try {

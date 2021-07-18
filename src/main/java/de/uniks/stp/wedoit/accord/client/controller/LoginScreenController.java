@@ -7,12 +7,10 @@ import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.WindowEvent;
 
 import java.util.Objects;
 
@@ -133,6 +131,9 @@ public class LoginScreenController implements Controller {
         this.lblError.setText(LanguageResolver.getString(errorLabelText));
     }
 
+    /**
+     * Sets texts of all GUI components like buttons, labels etc. in the selected language.
+     */
     private void setComponentsTextSignUp() {
         this.lblSignIn.setText(LanguageResolver.getString("REGISTER"));
         this.lblSignIn.setTooltip(new Tooltip(LanguageResolver.getString("REGISTER")));
@@ -218,10 +219,15 @@ public class LoginScreenController implements Controller {
 
         Tooltip loginButton = new Tooltip();
         loginButton.setText(LanguageResolver.getString("LOGIN"));
-        this.btnLogin.setTooltip(loginButton);
 
         Tooltip registerButton = new Tooltip();
         registerButton.setText(LanguageResolver.getString("REGISTER"));
+
+        if (isLogin) {
+            this.btnLogin.setTooltip(loginButton);
+        } else {
+            this.btnLogin.setTooltip(registerButton);
+        }
     }
 
     /**
@@ -333,12 +339,18 @@ public class LoginScreenController implements Controller {
             String password = this.pwUserPw.getText();
             String confirmedPassword = this.pwConfirmPW.getText();
 
-            if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty() || !password.equals(confirmedPassword)) {
+            if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty() || pwConfirmPW == null ||confirmedPassword.isEmpty()) {
                 //reset name and password fields
                 Objects.requireNonNull(tfUserName).getStyleClass().add("error");
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
                 Objects.requireNonNull(pwConfirmPW).getStyleClass().add("error");
                 errorLabelText = "PLEASE_TYPE_USERNAME_PASSWORD";
+                refreshErrLabelText(errorLabelText);
+            } else if (!password.equals(confirmedPassword)){
+                Objects.requireNonNull(tfUserName).getStyleClass().add("error");
+                Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
+                Objects.requireNonNull(pwConfirmPW).getStyleClass().add("error");
+                errorLabelText = "PASSWORDS_DO_NOT_MATCH";
                 refreshErrLabelText(errorLabelText);
             } else {
                 editor.getRestManager().registerUser(name, password, this);
@@ -427,17 +439,14 @@ public class LoginScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage() {
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                if (isLogin) {
-                    setComponentsTextSignIn();
-                } else {
-                    setComponentsTextSignUp();
-                }
-                editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("LOGIN"));
-                initTooltips();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
+            if (isLogin) {
+                setComponentsTextSignIn();
+            } else {
+                setComponentsTextSignUp();
             }
+            editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("LOGIN"));
+            initTooltips();
         });
     }
 
