@@ -406,15 +406,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private void displayTextWithEmoji(Message item) {
-            if(item.getText().contains("https://") || item.getText().contains("http://")){
-                Label label = new Label(item.getText());
-                label.setStyle(this.label.getStyle());
-                this.vBox.getChildren().add(label);
-            }
-            else{
-                this.emojiTextFlow.parseAndAppend(item.getText());
-                this.vBox.getChildren().add(emojiTextFlow);
-            }
+            this.emojiTextFlow.parseAndAppend(item.getText());
+            this.vBox.getChildren().add(emojiTextFlow);
             setGraphic(vBox);
         }
 

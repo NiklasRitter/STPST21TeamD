@@ -25,6 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -64,6 +65,7 @@ public class ServerChatController implements Controller {
     private MarkingController markingController;
     private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
     private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
+    private EmojiTextFlowParameters quoteParameter;
 
     /**
      * Create a new Controller
@@ -98,7 +100,6 @@ public class ServerChatController implements Controller {
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
         this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
-        this.quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(10).createParameters());
 
         this.tfInputMessage.setOnKeyPressed(this::tfInputMessageOnEnter);
         this.lvTextChat.setOnMousePressed(this::lvTextChatOnClick);
@@ -114,6 +115,9 @@ public class ServerChatController implements Controller {
         addLocalUserMessageContextMenu();
 
         this.lvTextChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
+
+        setQuoteParameter();
+        this.quoteTextFlow = new EmojiTextFlow(quoteParameter);
 
         initToolTip();
     }
@@ -274,9 +278,19 @@ public class ServerChatController implements Controller {
      * removes a quote from the view
      */
     public void removeQuote() {
-        quoteTextFlow.parseAndAppend("");
+        setQuoteParameter();
+        quoteTextFlow = new EmojiTextFlow(quoteParameter);
         quotedText = "";
         quoteVisible.getChildren().clear();
+    }
+
+    private void setQuoteParameter(){
+        quoteParameter = new EmojiTextFlowParameterHelper(10).createParameters();
+        if (editor.getStageManager().getPrefManager().loadDarkMode()) {
+            quoteParameter.setTextColor(Color.valueOf("#ADD8e6"));
+        } else {
+            quoteParameter.setTextColor(Color.valueOf("#000000"));
+        }
     }
 
     /**
