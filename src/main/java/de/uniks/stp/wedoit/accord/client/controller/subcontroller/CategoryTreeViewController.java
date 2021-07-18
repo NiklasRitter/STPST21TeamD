@@ -387,9 +387,7 @@ public class CategoryTreeViewController implements Controller {
     }
 
     public void handleLeaveAudioChannel(Category category) {
-        if (category != null) {
-            loadCategoryChannels(category);
-        } else {
+        if (category == null) {
             System.err.println("Leave Problem");
         }
     }

@@ -70,7 +70,7 @@ to your friends in voice channels on any server you have joined.
 
 
 ## Authors and acknowledgment
-<img src="src/main/resources/de/uniks/stp/wedoit/accord/client/view/images/WeDoIT_Rounded.png" width="75" align="right"/>
+<img src="src/main/resources/de/uniks/stp/wedoit/accord/client/view/images/WeDoIT.png" width="75" align="right"/>
 This project is under development as part of a university assignment concentrating on the usage of the agile 
 developing framework called scrum.
 <br/>

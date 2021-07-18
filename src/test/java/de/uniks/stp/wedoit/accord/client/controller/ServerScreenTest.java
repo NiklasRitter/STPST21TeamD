@@ -1126,6 +1126,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfInputMessage");
+        WaitForAsyncUtils.waitForFxEvents();
 
         ((TextArea) lookup("#tfInputMessage").query()).setText("Test Message");
         press(KeyCode.ENTER);
@@ -1136,6 +1137,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
+        WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("- delete message");
         WaitForAsyncUtils.waitForFxEvents();
@@ -1154,6 +1156,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         lvTextChat.getSelectionModel().select(0);
         rightClickOn(lvTextChat);
+        WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("- delete message");
         WaitForAsyncUtils.waitForFxEvents();

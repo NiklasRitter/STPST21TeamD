@@ -276,9 +276,13 @@ public class RestManager {
 
                 List<Channel> channelList = category.getChannels().stream().sorted(Comparator.comparing(Channel::getName))
                         .collect(Collectors.toList());
-                controller.handleGetChannels(channelList);
+                if(controller != null){
+                    controller.handleGetChannels(channelList);
+                }
             } else {
-                controller.handleGetChannels(null);
+                if(controller != null){
+                    controller.handleGetChannels(null);
+                }
             }
         });
     }
@@ -705,10 +709,13 @@ public class RestManager {
     public void leaveAudioChannel(String userKey, Server server, Category category, Channel channel, CategoryTreeViewController controller) {
         this.editor.getAudioManager().closeAudioConnection();
         restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
-            if (controller != null) {
-                if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                getChannels(editor.getLocalUser(), server, category, null);
+                if(controller != null){
                     controller.handleLeaveAudioChannel(channel.getCategory());
-                } else {
+                }
+            } else {
+                if(controller != null){
                     controller.handleLeaveAudioChannel(null);
                 }
             }

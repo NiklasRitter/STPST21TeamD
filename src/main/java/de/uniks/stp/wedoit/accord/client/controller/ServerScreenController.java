@@ -132,7 +132,7 @@ public class ServerScreenController implements Controller {
 
         initTooltips();
 
-        if (localUser.getAudioChannel() != null && localUser.getAudioChannel().getCategory().getServer().getId().equals(server.getId())) {
+        if (localUser.getAudioChannel() != null) {
             initAudioChannelSubView(localUser.getAudioChannel());
         }
 
@@ -185,8 +185,12 @@ public class ServerScreenController implements Controller {
         }
         try {
             Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
-
-            audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, categoryTreeViewController, channel);
+            if(channel.getCategory().getServer() == server){
+                audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, categoryTreeViewController, channel);
+            }
+            else{
+                audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, null, channel);
+            }
             audioChannelSubViewController.init();
 
             Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().add(view));
