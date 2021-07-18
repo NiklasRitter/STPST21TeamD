@@ -15,9 +15,10 @@ public class SqliteDB {
     private final String url = "jdbc:sqlite::resource:" + getClass().getResource("/data/");
 
     /**
-     * When creating a SqliteDB object
+     * When creating a SqliteDB object </p>
+     * creates three tables: messages, privateChats, settings
      *
-     * @param username wants username for creating the DB
+     * @param username for creating the DB
      */
     public SqliteDB(String username) {
         this.username = username;
@@ -79,6 +80,9 @@ public class SqliteDB {
         updateOrInsertUserChatRead(message.getChat().getUser());
     }
 
+    /**
+     * @param size to be updated in the databank
+     */
     public void updateFontSize(int size) {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,fontSize) VALUES(1,?)")) {
@@ -92,6 +96,9 @@ public class SqliteDB {
         }
     }
 
+    /**
+     * @return current fontsize according to fontsize slider
+     */
     public int getFontSize() {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
@@ -108,6 +115,11 @@ public class SqliteDB {
         return 12;
     }
 
+    /**
+     * Updates or inserts the read status in userChats
+     *
+     * @param user that the status should be changed
+     */
     public void updateOrInsertUserChatRead(User user) {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO privateChats (id, user, read) " +
@@ -157,6 +169,7 @@ public class SqliteDB {
         List<PrivateMessage> messages = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
              PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY times")) {
+
             prep.setString(1, user);
             prep.setString(2, username);
             prep.setString(3, username);

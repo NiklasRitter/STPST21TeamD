@@ -14,10 +14,8 @@ import javafx.scene.control.Label;
 
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_ACCEPTS;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_INVITE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class GameResultScreenController implements Controller {
 

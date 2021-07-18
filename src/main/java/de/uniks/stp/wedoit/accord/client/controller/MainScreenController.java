@@ -11,14 +11,12 @@ import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.WindowEvent;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
@@ -29,12 +27,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_ID_URL;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_URL;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class MainScreenController implements Controller {
 
