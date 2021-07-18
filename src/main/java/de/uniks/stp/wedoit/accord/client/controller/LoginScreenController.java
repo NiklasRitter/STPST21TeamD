@@ -133,6 +133,9 @@ public class LoginScreenController implements Controller {
         this.lblError.setText(LanguageResolver.getString(errorLabelText));
     }
 
+    /**
+     * Sets texts of all GUI components like buttons, labels etc. in the selected language.
+     */
     private void setComponentsTextSignUp() {
         this.lblSignIn.setText(LanguageResolver.getString("REGISTER"));
         this.lblSignIn.setTooltip(new Tooltip(LanguageResolver.getString("REGISTER")));
