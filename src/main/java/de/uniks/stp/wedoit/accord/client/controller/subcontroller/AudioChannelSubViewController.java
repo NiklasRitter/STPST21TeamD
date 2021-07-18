@@ -121,7 +121,9 @@ public class AudioChannelSubViewController implements Controller {
         } else {
             editor.getAudioManager().unMuteAllUsers(channel.getAudioMembers());
         }
-        controller.getTvServerChannels().refresh();
+        if (controller != null){
+            controller.getTvServerChannels().refresh();
+        }
     }
 
     private void allMuteChanged(PropertyChangeEvent propertyChangeEvent) {

@@ -77,6 +77,11 @@
                             </padding>
                         </Label>
                         <ListView id="lwOnlineUsers" VBox.vgrow="ALWAYS"/>
+                        <VBox id="audioChannelSubViewContainer" alignment="CENTER" spacing="10.0">
+                            <children>
+                                <fx:include source="subview/AudioChannelSubView.fxml"/>
+                            </children>
+                        </VBox>
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" styleClass="styleBorder" HBox.hgrow="ALWAYS">

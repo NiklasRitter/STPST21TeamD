@@ -1,10 +1,13 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
+import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
@@ -13,9 +16,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -23,6 +28,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
@@ -47,6 +53,9 @@ public class PrivateChatsScreenController implements Controller {
     private Label lblSelectedUser, lblOnlineUser;
     private PrivateChatController privateChatController;
     private User selectedUser;
+    private VBox audioChannelSubViewContainer;
+    private AudioChannelSubViewController audioChannelSubViewController;
+    private final PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
 
 
     /**
@@ -80,6 +89,9 @@ public class PrivateChatsScreenController implements Controller {
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
         this.taPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
 
+        this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
+        this.audioChannelSubViewContainer.getChildren().clear();
+
         this.setComponentsText();
 
         privateChatController.init();
@@ -93,6 +105,12 @@ public class PrivateChatsScreenController implements Controller {
         this.initOnlineUsersList();
 
         this.btnPlay.setVisible(false);
+
+        if (localUser.getAudioChannel() != null) {
+            initAudioChannelSubView(localUser.getAudioChannel());
+        }
+
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
 
         this.refreshStage();
     }
@@ -285,6 +303,37 @@ public class PrivateChatsScreenController implements Controller {
         if (mouseEvent.getClickCount() == 1) {
             this.selectedUser = lwOnlineUsers.getSelectionModel().getSelectedItem();
             initPrivateChatView(selectedUser);
+        }
+    }
+
+    /**
+     * If audio channel is clicked, then the audioChannelSubView is dynamically added to ServerScreen.
+     * then calls AudioChannelSubViewController:
+     * You can then take actions in an audio channel.
+     */
+    public void initAudioChannelSubView(Channel channel) {
+        if (!this.audioChannelSubViewContainer.getChildren().isEmpty()) {
+            this.audioChannelSubViewContainer.getChildren().clear();
+        }
+        try {
+            Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
+
+            audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, null, channel);
+            audioChannelSubViewController.init();
+
+            Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().add(view));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleAudioChannelChange(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() == null) {
+            this.audioChannelSubViewController.stop();
+            this.audioChannelSubViewController = null;
+            Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().clear());
+        } else {
+            this.initAudioChannelSubView((Channel) propertyChangeEvent.getNewValue());
         }
     }
 

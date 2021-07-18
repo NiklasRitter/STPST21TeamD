@@ -399,6 +399,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             displayNameAndDate(item);
             initToolTip((S) item);
             label.setText(item.getText());
+            label.setWrapText(true);
 
             this.vBox.getChildren().addAll(joinServerHBox, label);
             setGraphic(this.vBox);
