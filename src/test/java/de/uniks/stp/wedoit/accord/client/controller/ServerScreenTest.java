@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
-import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
@@ -41,8 +40,6 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -1083,9 +1080,10 @@ public class ServerScreenTest extends ApplicationTest {
         clickOn("- edit message");
         WaitForAsyncUtils.waitForFxEvents();
 
-        ((TextArea) lookup("#tfUpdateMessage").query()).setText("update");
-        clickOn("#btnEmoji");
-
+        TextArea tArea = lookup("#tfUpdateMessage").query();
+        tArea.setText("update");
+        Button btn = (Button) tArea.getParent().lookup("#btnEmoji");
+        clickOn(btn);
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(emojiPickerStage.isShowing());
         Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
