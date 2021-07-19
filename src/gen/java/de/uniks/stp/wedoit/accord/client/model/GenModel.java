@@ -39,6 +39,7 @@ public class GenModel implements ClassModelDecorator {
         Channel audioChannel;
         boolean muted;
         boolean allMuted;
+        float systemVolume;
 
         @Link("localUser")
         List<User> users;
