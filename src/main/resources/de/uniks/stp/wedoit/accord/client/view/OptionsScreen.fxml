@@ -6,67 +6,203 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-      minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <HBox alignment="CENTER" minHeight="80.0" minWidth="267.0" prefHeight="80.0" prefWidth="300.0" spacing="20.0"
-              styleClass="styleBackgroundPopup">
-            <children>
-                <Label id="lblDarkMode">
-                    <font>
-                        <Font name="System Bold" size="14.0"/>
-                    </font>
-                </Label>
-                <CheckBox id="btnDarkMode" mnemonicParsing="false"/>
-            </children>
-        </HBox>
-        <HBox id="hBoxLanguage" alignment="CENTER">
-            <children>
-                <Label id="lblLanguage">
-                    <font>
-                        <Font size="14.0"/>
-                    </font>
-                </Label>
-                <Region prefHeight="25.0" prefWidth="153.0"/>
-                <ChoiceBox id="choiceBoxLanguage"/>
-            </children>
-            <VBox.margin>
-                <Insets/>
-            </VBox.margin>
-        </HBox>
-        <HBox alignment="CENTER">
-            <Label id="lbTextSize">
-                <font>
-                    <Font size="14.0"/>
-                </font>
-            </Label>
-            <Region prefWidth="50.0"/>
-            <Slider id="sliderTextSize" blockIncrement="0.0" majorTickUnit="2.0" max="20.0" maxWidth="200.0" min="12.0"
-                    minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="12.0"/>
-        </HBox>
-        <HBox id="hBoxBtns" alignment="CENTER">
-            <Button id="btnLogout" mnemonicParsing="false" styleClass="logoutButton">
-                <graphic>
-                    <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@images/log_out.png"/>
-                    </ImageView>
-                </graphic>
-            </Button>
-        </HBox>
-    </children>
-    <styleClass>
-        <String fx:value="styleBackgroundPopup"/>
-        <String fx:value="styleBorder"/>
-    </styleClass>
-    <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0"/>
-    </padding>
-</VBox>
+<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0">
+          <children>
+              <HBox alignment="CENTER_LEFT" spacing="100.0" styleClass="styleBackgroundPopup">
+                  <children>
+                      <Label id="lblDarkMode" text="%DARKMODE">
+                          <font>
+                              <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <CheckBox id="btnDarkMode" mnemonicParsing="false" />
+                  </children>
+              </HBox>
+              <HBox id="hBoxLanguage" alignment="CENTER_LEFT" spacing="91.0">
+                  <children>
+                      <Label id="lblLanguage" text="%LANGUAGE">
+                          <font>
+                              <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <ChoiceBox id="choiceBoxLanguage" />
+                  </children>
+                  <VBox.margin>
+                      <Insets />
+                  </VBox.margin>
+              </HBox>
+            <VBox id="vBoxExtraSettings" spacing="20.0">
+               <children>
+                    <HBox alignment="CENTER" spacing="25.0">
+                        <Label id="lbTextSize" text="%CHAT_TEXT_SIZE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Slider id="sliderTextSize" blockIncrement="0.0" majorTickUnit="2.0" max="20.0" min="12.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="12.0" />
+                    </HBox>
+                  <HBox>
+                     <children>
+                        <Label id="lbConnections" text="%CONNECTIONS">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <Button id="btnSpotify" mnemonicParsing="false">
+                           <graphic>
+                              <ImageView fitHeight="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/spotify.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button id="btnSteam" mnemonicParsing="false">
+                           <graphic>
+                              <ImageView fitHeight="50.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/steam.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                    <HBox id="hBoxBtns" alignment="CENTER_LEFT" spacing="115.0">
+                     <Label id="lbLogout" text="%LOGOUT">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                     </Label>
+                        <Button id="btnLogout" mnemonicParsing="false" styleClass="logoutButton">
+                            <graphic>
+                                <ImageView id="btnLogOut" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                    <Image url="@images/log_out.png" />
+                                </ImageView>
+                            </graphic>
+                        <tooltip>
+                           <Tooltip text="%LOGOUT" />
+                        </tooltip>
+                        </Button>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                    </HBox>
+               </children>
+            </VBox>
+          </children>
+          <styleClass>
+              <String fx:value="styleBackgroundPopup" />
+              <String fx:value="styleBorder" />
+          </styleClass>
+          <padding>
+              <Insets bottom="5.0" left="5.0" right="5.0" />
+          </padding>
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+      </VBox>
+      <VBox id="vBoxSoundSettings" spacing="20.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
+               <children>
+                  <Label text="%OUTPUT_DEVICE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox id="choiceBoxOutputDevice" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/speaker-with-no-sound.png" />
+                     </image>
+                  </ImageView>
+                  <Slider id="sliderOutputVolume" blockIncrement="5.0" value="50.0" />
+                  <ImageView fitHeight="20.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/speaker-with-sound.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="42.0">
+               <children>
+                  <Label text="%INPUT_DEVICE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox id="choiceBoxInputDevice" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/speaker-with-no-sound.png" />
+                     </image>
+                  </ImageView>
+                  <Slider id="sliderInputVolume" blockIncrement="5.0" value="50.0" />
+                  <ImageView fitHeight="20.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/speaker-with-sound.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
+               <children>
+                  <Label text="%INPUT_SENSITIVITY">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <Slider id="sliderInputSensitivity" blockIncrement="5.0" value="50.0" />
+               </children>
+            </HBox>
+            <VBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <Button id="btnTestSetup" alignment="CENTER" mnemonicParsing="false" text="%TEST_SETUP" />
+                  <ProgressBar id="prgBarSetupTest" prefWidth="200.0" progress="0.0" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets left="40.0" />
+         </padding>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <styleClass>
+      <String fx:value="styleBackgroundPopup" />
+      <String fx:value="styleBorder" />
+   </styleClass>
+</HBox>
