@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -117,9 +118,9 @@ public class OptionsScreenController implements Controller {
                 setLanguage("language/Language_fa_IR");
                 break;
         }
-        Stage stage = (Stage) this.view.getScene().getWindow();
+        Scene scene = this.view.getScene();
         this.view = ControllerEnum.OPTION_SCREEN.loadScreen();
-        stage.getScene().setRoot(this.view);
+        scene.setRoot(this.view);
         this.init();
     }
 
