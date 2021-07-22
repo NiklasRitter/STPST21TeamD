@@ -29,7 +29,7 @@ public class OptionsScreenController implements Controller {
     private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
     private ChoiceBox choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
     private Slider sliderTextSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
-    private ProgressBar progressBarTest, progressBarTestBot, one;
+    private ProgressBar progressBarTest, progressBarTestBot;
     private VBox vBoxSoundSettings, vBoxExtraSettings;
     private Recorder recorder;
 
@@ -68,7 +68,6 @@ public class OptionsScreenController implements Controller {
         this.choiceBoxOutputDevice = (ChoiceBox) view.lookup("#choiceBoxOutputDevice");
         this.progressBarTest = (ProgressBar) view.lookup("#prgBarSetupTest");
         this.progressBarTestBot = (ProgressBar) view.lookup("#progressBarTestBot");
-        this.one = (ProgressBar) view.lookup("#1");
 
         vBoxSoundSettings = (VBox) view.lookup("#vBoxSoundSettings");
         vBoxExtraSettings = (VBox) view.lookup("#vBoxExtraSettings");
@@ -86,6 +85,8 @@ public class OptionsScreenController implements Controller {
         this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
         this.btnTestSetup.setOnAction(this::btnAudioTest);
         sliderInputSensitivity.setValue(editor.getAudioRMS());
+        progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
+        sliderInputSensitivity.valueProperty().addListener((e,old,n)->editor.saveSensitivity(n.doubleValue()));
     }
 
 

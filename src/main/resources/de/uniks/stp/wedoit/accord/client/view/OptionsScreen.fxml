@@ -172,7 +172,7 @@
             </HBox>
             <HBox alignment="CENTER">
                <children>
-                  <Slider id="sliderInputSensitivity" blockIncrement="5.0" value="50.0" />
+                  <Slider id="sliderInputSensitivity" max="1" />
                </children>
             </HBox>
             <VBox alignment="CENTER" spacing="10.0">
