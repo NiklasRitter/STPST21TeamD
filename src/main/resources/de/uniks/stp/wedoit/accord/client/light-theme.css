@@ -282,3 +282,14 @@
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;
 }
+
+.pbRed {
+    -fx-accent: rgba(255, 0, 0, 0.5);
+}
+
+.pbGreen{
+    -fx-accent: rgba(98, 255, 0, 0.5);
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-text-box-border: transparent;
+}

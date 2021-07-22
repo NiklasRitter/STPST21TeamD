@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.util.Recorder;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -28,8 +29,9 @@ public class OptionsScreenController implements Controller {
     private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
     private ChoiceBox choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
     private Slider sliderTextSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
-    private ProgressBar progressBarTest;
+    private ProgressBar progressBarTest, progressBarTestBot, one;
     private VBox vBoxSoundSettings, vBoxExtraSettings;
+    private Recorder recorder;
 
     /**
      * Create a new Controller
@@ -64,7 +66,9 @@ public class OptionsScreenController implements Controller {
         this.choiceBoxLanguage = (ChoiceBox) view.lookup("#choiceBoxLanguage");
         this.choiceBoxInputDevice = (ChoiceBox) view.lookup("#choiceBoxInputDevice");
         this.choiceBoxOutputDevice = (ChoiceBox) view.lookup("#choiceBoxOutputDevice");
-        this.progressBarTest = (ProgressBar) view.lookup("prgBarSetupTest");
+        this.progressBarTest = (ProgressBar) view.lookup("#prgBarSetupTest");
+        this.progressBarTestBot = (ProgressBar) view.lookup("#progressBarTestBot");
+        this.one = (ProgressBar) view.lookup("#1");
 
         vBoxSoundSettings = (VBox) view.lookup("#vBoxSoundSettings");
         vBoxExtraSettings = (VBox) view.lookup("#vBoxExtraSettings");
@@ -80,7 +84,11 @@ public class OptionsScreenController implements Controller {
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
+        this.btnTestSetup.setOnAction(this::btnAudioTest);
+        sliderInputSensitivity.setValue(editor.getAudioRMS());
     }
+
+
 
     private void sliderOnChange(MouseEvent e) {
         editor.saveFontSize((int) sliderTextSize.getValue());
@@ -149,6 +157,11 @@ public class OptionsScreenController implements Controller {
     public void stop() {
         btnDarkMode.setOnAction(null);
         btnLogout.setOnAction(null);
+        btnTestSetup.setOnAction(null);
+        if(recorder != null){
+            recorder.stop();
+            recorder = null;
+        }
     }
 
     /**
@@ -169,4 +182,18 @@ public class OptionsScreenController implements Controller {
         editor.logoutUser(editor.getLocalUser().getUserKey());
     }
 
+
+    private void btnAudioTest(ActionEvent actionEvent) {
+        if(recorder == null){
+             recorder = new Recorder(progressBarTestBot, editor);
+        }
+        if(btnTestSetup.getText().equals(LanguageResolver.getString("TEST_SETUP"))) {
+            btnTestSetup.setText("STOP");
+            recorder.start();
+        }else{
+            recorder.stop();
+            btnTestSetup.setText(LanguageResolver.getString("TEST_SETUP"));
+            recorder = null;
+        }
+    }
 }

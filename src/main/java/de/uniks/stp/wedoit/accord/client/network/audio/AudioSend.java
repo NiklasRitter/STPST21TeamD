@@ -5,13 +5,15 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
@@ -27,6 +29,8 @@ public class AudioSend extends Thread {
     private final int port;
     AtomicBoolean shouldSend;
     private TargetDataLine line;
+
+
 
     public AudioSend(LocalUser localUser, Channel channel, DatagramSocket sendSocket, String address, int port) {
         this.localUser = localUser;
@@ -56,14 +60,14 @@ public class AudioSend extends Thread {
         AudioFormat audioFormat = new AudioFormat(encoding, bitRate, sampleSize, channels,
                 (sampleSize / 8) * channels, bitRate, bigEndian);
 
-        DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
+        //DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
 
-        if (!AudioSystem.isLineSupported(info)) {
-            System.err.println("Data Line not supported");
-        }
+        //if (!AudioSystem.isLineSupported(audioFormat)) {
+        //    System.err.println("Data Line not supported");
+        //}
 
         try {
-            line = (TargetDataLine) AudioSystem.getLine(info);
+            line = AudioSystem.getTargetDataLine(audioFormat);
             line.open(audioFormat);
             byte[] readData = new byte[1279];
             System.arraycopy(metaData, 0, readData, 0, 255);
@@ -73,7 +77,14 @@ public class AudioSend extends Thread {
 
             while (shouldSend.get()) {
                 line.read(readData, 255, 1024);
+
+                //System.out.println(Arrays.toString(readData));
+                //System.out.println(getRMS(readData,audioFormat,255));
+                //calculatePeakAndRms(Arrays.copyOfRange(readData,255,readData.length));
+
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
+
+
                 if (line.isRunning()) {
                     this.sendSocket.send(datagramPacket);
                 }
@@ -117,5 +128,56 @@ public class AudioSend extends Thread {
         if (line != null) {
             this.line.start();
         }
+    }
+
+    public double getRMS(byte[] audioData, AudioFormat format,int offset) {
+
+        int[] samples = convertByteArray(Arrays.copyOfRange(audioData, offset, audioData.length), format);
+
+        long sumOfSquares = Arrays.stream(samples).mapToLong(i -> (long) i * i).sum();
+        System.out.println(sumOfSquares + ", " + samples.length);
+        return 10*Math.log10((long)(sumOfSquares / samples.length));
+    }
+
+    private int[] convertByteArray(byte[] audioData, AudioFormat format) {
+
+        if (format.getFrameSize() == 2) {
+            IntBuffer samples;
+            if (format.isBigEndian()) {
+                samples = ByteBuffer.wrap(audioData).order(ByteOrder.BIG_ENDIAN).asIntBuffer();
+            } else {
+                samples = ByteBuffer.wrap(audioData).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
+            }
+            int[] array = new int[samples.remaining()];
+            samples.get(array);
+            return array;
+        } else {
+            System.err.println("unsupported frame size: " + format.getFrameSize());
+            return new int[0];
+        }
+
+    }
+
+    public void calculatePeakAndRms(byte[] audioData) {
+        ShortBuffer sBuffer = ByteBuffer.wrap(audioData).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
+        double sumOfSampleSq = 0.0;    // sum of square of normalized samples.
+        double peakSample = 0.0;     // peak sample.
+
+        short[] samples = new short[sBuffer.remaining()];
+        sBuffer.get(samples);
+
+
+        for (short sample : samples) {
+            double normSample = (double) sample / 32767;  // normalized the sample with maximum value.
+            sumOfSampleSq += Math.abs(normSample * normSample);
+            if (Math.abs(sample) > peakSample) {
+                peakSample = Math.abs(sample);
+            }
+        }
+
+        double rms = Math.sqrt(sumOfSampleSq / samples.length);
+        System.out.println("rms: " + rms);
+        double dB = 20*Math.log10(peakSample / 32767);
+        System.out.println("dB : " + dB);
     }
 }

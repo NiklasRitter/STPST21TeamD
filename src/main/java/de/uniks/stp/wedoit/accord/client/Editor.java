@@ -367,6 +367,10 @@ public class Editor {
         db.save(message);
     }
 
+    public double getAudioRMS(){
+        return db.getAudioRMS();
+    }
+
 
     /**
      * loads old offline chats that the local users has a history with
