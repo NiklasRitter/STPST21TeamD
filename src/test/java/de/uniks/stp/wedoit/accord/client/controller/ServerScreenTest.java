@@ -51,7 +51,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ServerScreenTest extends ApplicationTest {
-
+/**/
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
     @Mock

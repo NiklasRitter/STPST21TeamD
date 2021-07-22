@@ -147,6 +147,11 @@
     -fx-border-color: transparent;
 }
 
+.listViewServer{
+    -fx-background-color: #212121;
+    -fx-border-color: transparent;
+}
+
 .list-cell {
     -fx-text-fill: #dcddde ;
     -fx-background-color: #2f3136;

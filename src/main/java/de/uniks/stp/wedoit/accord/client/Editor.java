@@ -469,7 +469,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.initView(ControllerEnum.LOGIN_SCREEN,null,null);
+            stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null);
         }
     }
 
