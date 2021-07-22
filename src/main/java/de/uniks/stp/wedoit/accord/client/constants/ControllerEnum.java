@@ -7,7 +7,9 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 
@@ -48,8 +50,13 @@ public enum ControllerEnum {
     private final boolean resizable;
 
 
-    public Parent loadScreen() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/" + this.fxmlName + ".fxml")));
+    public Parent loadScreen() {
+        try {
+            return FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/" + this.fxmlName + ".fxml")), LanguageResolver.getLanguage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void setUpStage(Stage currentStage){
