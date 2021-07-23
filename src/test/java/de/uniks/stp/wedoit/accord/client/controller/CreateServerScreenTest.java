@@ -79,7 +79,7 @@ public class CreateServerScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + "123", webSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
+        this.stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }

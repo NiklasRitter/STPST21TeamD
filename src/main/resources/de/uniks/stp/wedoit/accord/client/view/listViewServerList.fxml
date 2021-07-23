@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<VBox alignment="TOP_CENTER" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" spacing="20.0" styleClass="styleBackgroundHighlight" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" spacing="20.0" styleClass="styleBackgroundHighlight" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Button id="btnOptions" alignment="CENTER" mnemonicParsing="false" styleClass="sidebar-Button">
          <graphic>
@@ -37,7 +37,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <ListView id="lvServerList" editable="true" prefHeight="68.0" prefWidth="75.0" styleClass="listViewServer" VBox.vgrow="ALWAYS" />
+      <ListView id="lwServerList" editable="true" prefHeight="68.0" prefWidth="75.0" styleClass="listViewServer" VBox.vgrow="ALWAYS" />
       <Button id="btnEnterInvitation" mnemonicParsing="false" styleClass="sidebar-Button">
          <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">

@@ -125,7 +125,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Private Chats");
         Assert.assertEquals(localUser.getServers().size(), 0);
     }
 

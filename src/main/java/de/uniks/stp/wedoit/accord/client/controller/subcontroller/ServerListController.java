@@ -64,7 +64,7 @@ public class ServerListController implements Controller {
         this.btnHome = (Button) view.lookup("#btnHome");
         this.addServerButton = (Button) view.lookup("#btnAddServer");
         this.enterInvitationButton = (Button) view.lookup("#btnEnterInvitation");
-        this.lvServerList = (ListView<Server>) view.lookup("#lvServerList");
+        this.lvServerList = (ListView<Server>) view.lookup("#lwServerList");
 
         // load servers of the localUser
         editor.getRestManager().getServers(editor.getLocalUser(), this);
