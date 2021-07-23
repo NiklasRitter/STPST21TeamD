@@ -171,6 +171,7 @@ public class ServerListController implements Controller {
     private void onServerListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
             Server server = lvServerList.getSelectionModel().getSelectedItem();
+            System.out.println("Servername: " + server.getName());
             if (server != null) {
                 this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, server, null);
             }

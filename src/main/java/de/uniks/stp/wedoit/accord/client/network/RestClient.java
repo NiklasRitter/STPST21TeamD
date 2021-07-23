@@ -11,6 +11,8 @@ import kong.unirest.Unirest;
 import javax.json.Json;
 import javax.json.JsonArray;
 
+import java.sql.SQLOutput;
+
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 

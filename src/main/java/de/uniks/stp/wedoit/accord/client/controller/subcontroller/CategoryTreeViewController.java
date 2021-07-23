@@ -105,6 +105,7 @@ public class CategoryTreeViewController implements Controller {
      * gets Categories from server and calls loadCategoryChannels()
      */
     public void initCategoryChannelList() {
+        System.out.println("initializing categorys");
         editor.getRestManager().getCategories(localUser, server, this);
     }
 
