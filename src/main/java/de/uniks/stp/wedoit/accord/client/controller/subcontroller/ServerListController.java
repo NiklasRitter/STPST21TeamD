@@ -8,16 +8,16 @@ import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.AND_SERVER_ID_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_ID_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_URL;
 
 public class ServerListController implements Controller {
 
@@ -92,6 +92,14 @@ public class ServerListController implements Controller {
         this.btnHome.setOnAction(null);
         this.addServerButton.setOnAction(null);
         this.enterInvitationButton.setOnAction(null);
+    }
+
+    /**
+     * Initializes the Tooltips for the Buttons
+     */
+    private void initTooltips() {
+        btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
+        btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));
     }
 
     /**
@@ -171,7 +179,6 @@ public class ServerListController implements Controller {
     private void onServerListViewClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
             Server server = lvServerList.getSelectionModel().getSelectedItem();
-            System.out.println("Servername: " + server.getName());
             if (server != null) {
                 this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, server, null);
             }

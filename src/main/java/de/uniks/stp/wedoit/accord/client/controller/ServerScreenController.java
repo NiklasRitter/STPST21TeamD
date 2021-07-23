@@ -46,7 +46,6 @@ public class ServerScreenController implements Controller {
     // View Elements
     private Button btnOptions;
     private Button btnHome;
-    private Button btnEdit;
     private Label lbServerName, lblServerUsers, lbChannelName;
     private TextArea tfInputMessage;
     private ListView<User> lvServerUsers;
@@ -124,15 +123,11 @@ public class ServerScreenController implements Controller {
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         this.lbServerName.setContextMenu(createContextMenuLeaveServer());
-        //this.btnEdit.setVisible(false);
 
         // get members of this server
         editor.getRestManager().getExplicitServerInformation(localUser, server, this);
 
-        // add OnActionListeners
-        //addActionListener();
 
-        //initTooltips();
 
         if (localUser.getAudioChannel() != null) {
             initAudioChannelSubView(localUser.getAudioChannel());
@@ -151,29 +146,6 @@ public class ServerScreenController implements Controller {
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
         this.tfInputMessage.setPromptText(LanguageResolver.getString("SELECT_A_CHANNEL"));
         this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("SERVER"));
-    }
-
-    /**
-     * adds action listener
-     */
-    public void addActionListener() {
-        // Add action listeners
-        this.btnOptions.setOnAction(this::optionsButtonOnClick);
-        this.btnHome.setOnAction(this::homeButtonOnClick);
-        this.btnEdit.setOnAction(this::editButtonOnClick);
-    }
-
-    /**
-     * Initializes the Tooltips for the Buttons
-     */
-    private void initTooltips() {
-        btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
-        btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));
-
-        Tooltip editButton = new Tooltip();
-        editButton.setText(LanguageResolver.getString("EDIT_SERVER"));
-        editButton.setStyle("-fx-font-size: 10");
-        btnEdit.setTooltip(editButton);
     }
 
     /**
@@ -235,33 +207,6 @@ public class ServerScreenController implements Controller {
         this.editor.getStageManager().initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, server, null);
     }
 
-    /**
-     * The localUser will be redirect to the HomeScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void homeButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
-    }
-
-    /**
-     * The localUser will be redirect to the OptionsScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void optionsButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
-    }
-
-    /**
-     * The localUser will be redirected to the EditServerScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void editButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.EDIT_SERVER_SCREEN, server, null);
-    }
-
     // PropertyChangeEvent Methods
 
     /**
@@ -294,8 +239,6 @@ public class ServerScreenController implements Controller {
      * handles the explicit server information in the view
      */
     public void handleGetExplicitServerInformation(JsonArray members) {
-
-        System.out.println("members" + members);
         if (members != null) {
             // create users which are member in the server and load user list view
             Platform.runLater(() -> lbServerName.setText(server.getName()));
@@ -306,7 +249,6 @@ public class ServerScreenController implements Controller {
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
-            this.btnEdit.setVisible(true);
         }
 
     }
@@ -320,7 +262,6 @@ public class ServerScreenController implements Controller {
     private void createUserListView(JsonArray jsonMembers) {
         List<User> members = JsonUtil.parseUserArray(jsonMembers);
         editor.serverWithMembers(members, server);
-
         // load categories
         categoryTreeViewController.initCategoryChannelList();
 

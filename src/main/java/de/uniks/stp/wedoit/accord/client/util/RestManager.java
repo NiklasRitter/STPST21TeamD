@@ -246,7 +246,6 @@ public class RestManager {
      */
     public void getCategories(LocalUser localUser, Server server, CategoryTreeViewController controller) {
         restClient.getCategories(server.getId(), localUser.getUserKey(), categoryResponse -> {
-            System.out.println("Fuck");
             if (categoryResponse.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonArray serversCategoryResponse = JsonUtil.parse(String.valueOf(categoryResponse.getBody().getObject())).getJsonArray(DATA);
 
