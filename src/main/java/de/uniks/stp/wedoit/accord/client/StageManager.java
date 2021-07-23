@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
@@ -34,6 +35,7 @@ public class StageManager extends Application {
 
     private final Map<StageEnum, Scene> sceneMap = new HashMap<>();
     private final Map<StageEnum, Stage> stageMap = new HashMap<>();
+    private ServerListController serverListController = null;
 
 
     {
@@ -267,6 +269,10 @@ public class StageManager extends Application {
 
     public PreferenceManager getPrefManager() {
         return prefManager;
+    }
+
+    public void setServerListController(ServerListController serverListController) {
+        this.serverListController = serverListController;
     }
 
     /**

@@ -80,7 +80,7 @@ public class MainScreenController implements Controller {
         this.initTooltips();
 
         // load servers of the localUser
-        editor.getRestManager().getServers(localUser, this);
+        //editor.getRestManager().getServers(localUser, this);
 
         // load localUserId in order to later be able to edit server
         editor.getRestManager().getLocalUserId(localUser);

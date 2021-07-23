@@ -142,7 +142,7 @@ public class AttentionScreenController implements Controller {
         if (status) {
             localUser.withoutServers((Server) objectToDelete);
             Platform.runLater(() -> {
-                this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
+                this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null);
                 Platform.runLater(() -> editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close());
             });
             stop();

@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
@@ -40,6 +41,7 @@ public class ServerScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
+    private final ServerListController serverListController;
 
     // View Elements
     private Button btnOptions;
@@ -65,11 +67,11 @@ public class ServerScreenController implements Controller {
 
     /**
      * Create a new Controller
-     *
-     * @param view   The view this Controller belongs to
+     *  @param view   The view this Controller belongs to
      * @param model  The model this Controller belongs to
      * @param editor The editor of the Application
      * @param server The Server this Screen belongs to
+     * @param serverListController List Controller
      */
     public ServerScreenController(Parent view, LocalUser model, Editor editor, Server server) {
         this.view = view;
@@ -80,6 +82,7 @@ public class ServerScreenController implements Controller {
         serverChatController = new ServerChatController(view, model, editor, server, this);
         this.serverWSCallback = (msg) -> editor.getWebSocketManager().handleServerMessage(msg, server);
         this.chatWSCallback = serverChatController::handleChatMessage;
+        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor);
     }
 
     /**
@@ -94,9 +97,6 @@ public class ServerScreenController implements Controller {
         // Load all view references
         this.editor.setCurrentServer(server);
         this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
-        this.btnOptions = (Button) view.lookup("#btnOptions");
-        this.btnHome = (Button) view.lookup("#btnHome");
-        this.btnEdit = (Button) view.lookup("#btnEdit");
         this.lbServerName = (Label) view.lookup("#lbServerName");
         this.lblServerUsers = (Label) view.lookup("#lblServerUsers");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
@@ -105,8 +105,10 @@ public class ServerScreenController implements Controller {
         this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
         this.audioChannelSubViewContainer.getChildren().clear();
 
-        categoryTreeViewController.init();
-        serverChatController.init();
+        this.categoryTreeViewController.init();
+        this.serverChatController.init();
+        this.serverListController.init();
+
 
         this.setComponentsText();
 
@@ -122,15 +124,15 @@ public class ServerScreenController implements Controller {
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         this.lbServerName.setContextMenu(createContextMenuLeaveServer());
-        this.btnEdit.setVisible(false);
+        //this.btnEdit.setVisible(false);
 
         // get members of this server
         editor.getRestManager().getExplicitServerInformation(localUser, server, this);
 
         // add OnActionListeners
-        addActionListener();
+        //addActionListener();
 
-        initTooltips();
+        //initTooltips();
 
         if (localUser.getAudioChannel() != null) {
             initAudioChannelSubView(localUser.getAudioChannel());
@@ -205,10 +207,6 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-        this.btnOptions.setOnAction(null);
-        this.btnHome.setOnAction(null);
-        this.btnEdit.setOnAction(null);
-
         this.editor.getWebSocketManager().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         this.editor.getWebSocketManager().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
                 + AND_SERVER_ID_URL + this.server.getId());
