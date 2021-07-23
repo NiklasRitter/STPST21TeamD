@@ -5,13 +5,17 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import javafx.scene.Group;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
+
+import java.awt.*;
 
 public class MainScreenServerListView implements javafx.util.Callback<ListView<Server>, ListCell<Server>> {
 
@@ -32,10 +36,10 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
             this.setText(null);
             this.setGraphic(null);
 
-
             if (!empty) {
                 Circle circle = new Circle(20);
                 Text text = new Text(getShortName(item.getName()));
+
                 if (isSelected()) {
                     circle.getStyleClass().add("serverCircleSelected");
                     text.getStyleClass().add("serverCircleTextSelected");
@@ -43,6 +47,7 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
                     circle.getStyleClass().add("serverCircle");
                     text.getStyleClass().add("serverCircleText");
                 }
+
                 this.setTooltip(new Tooltip(item.getName()));
 
                 text.setBoundsType(TextBoundsType.VISUAL);

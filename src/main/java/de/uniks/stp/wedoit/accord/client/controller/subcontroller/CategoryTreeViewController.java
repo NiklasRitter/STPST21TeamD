@@ -113,6 +113,7 @@ public class CategoryTreeViewController implements Controller {
      * handles the categories of a server in the view
      */
     public void handleGetCategories(List<Category> categoryList) {
+        System.out.println("Kategorien: " + categoryList);
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
             Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));

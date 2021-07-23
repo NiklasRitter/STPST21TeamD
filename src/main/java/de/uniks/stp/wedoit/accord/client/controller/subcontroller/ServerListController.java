@@ -83,8 +83,6 @@ public class ServerListController implements Controller {
             lvServerList.getSelectionModel().select(editor.getCurrentServer());
         }
 
-        this.lvServerList.getStylesheets().add("listViewServer");
-
         /*btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
         btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));*/
     }

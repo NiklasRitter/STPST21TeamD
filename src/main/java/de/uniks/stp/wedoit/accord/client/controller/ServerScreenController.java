@@ -294,6 +294,8 @@ public class ServerScreenController implements Controller {
      * handles the explicit server information in the view
      */
     public void handleGetExplicitServerInformation(JsonArray members) {
+
+        System.out.println("members" + members);
         if (members != null) {
             // create users which are member in the server and load user list view
             Platform.runLater(() -> lbServerName.setText(server.getName()));

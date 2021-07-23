@@ -299,8 +299,13 @@
     -fx-text-fill: #000000;
 }
 
+
+.serverCircleText:cell-selection {
+    -fx-text-fill: #ffffff;
+}
+
 .serverCircleSelected {
-    -fx-fill: #123456;
+    -fx-fill: #9e9e9e;
 }
 
 .serverCircleTextSelected {
