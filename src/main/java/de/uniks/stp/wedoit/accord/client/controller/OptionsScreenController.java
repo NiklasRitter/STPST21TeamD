@@ -106,16 +106,16 @@ public class OptionsScreenController implements Controller {
 
         switch (selectedItem.toString()) {
             case "English":
-                options.setLanguage("en_GB");
                 setLanguage("language/Language");
+                options.setLanguage("en_GB");
                 break;
             case "Deutsch":
-                options.setLanguage("de_DE");
                 setLanguage("language/Language_de_DE");
+                options.setLanguage("de_DE");
                 break;
             case "فارسی":
-                options.setLanguage("fa_IR");
                 setLanguage("language/Language_fa_IR");
+                options.setLanguage("fa_IR");
                 break;
         }
         Scene scene = this.view.getScene();

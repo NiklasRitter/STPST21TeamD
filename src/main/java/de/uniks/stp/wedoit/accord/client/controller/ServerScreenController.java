@@ -8,10 +8,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSu
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.Channel;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
-import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
@@ -20,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
@@ -38,7 +36,7 @@ public class ServerScreenController implements Controller {
 
     private final LocalUser localUser;
     private final Editor editor;
-    private final Parent view;
+    private Parent view;
     private final Server server;
 
     // View Elements
@@ -57,6 +55,7 @@ public class ServerScreenController implements Controller {
     private final PropertyChangeListener userListViewListener = this::changeUserList;
     private final PropertyChangeListener serverNameListener = (propertyChangeEvent) -> this.handleServerNameChange();
     private final PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
+    private final PropertyChangeListener languageRefreshed = this::refreshStage;
 
     private final CategoryTreeViewController categoryTreeViewController;
     private final ServerChatController serverChatController;
@@ -108,7 +107,7 @@ public class ServerScreenController implements Controller {
         categoryTreeViewController.init();
         serverChatController.init();
 
-        this.setComponentsText();
+        //this.setComponentsText();
 
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
@@ -139,8 +138,7 @@ public class ServerScreenController implements Controller {
         // add PropertyChangeListener
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
-
-        this.refreshStage();
+        this.editor.getStageManager().getModel().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
     }
 
 
@@ -215,6 +213,7 @@ public class ServerScreenController implements Controller {
 
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
+        this.editor.getStageManager().getModel().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
 
         this.chatWSCallback = null;
         this.serverWSCallback = null;
@@ -372,17 +371,21 @@ public class ServerScreenController implements Controller {
      * Refreshes the stage after closing the option screen,
      * so that the component texts are displayed in the correct language.
      */
-    private void refreshStage() {
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
-            setComponentsText();
-            initTooltips();
-            lbServerName.setContextMenu(createContextMenuLeaveServer());
-            serverChatController.initToolTip();
-            serverChatController.addUserMessageContextMenu();
-            serverChatController.addLocalUserMessageContextMenu();
-            serverChatController.getLvTextChat().refresh();
-            categoryTreeViewController.initContextMenu();
-        });
+    private void refreshStage(PropertyChangeEvent propertyChangeEvent) {
+            //setComponentsText();
+            //initTooltips();
+//            lbServerName.setContextMenu(createContextMenuLeaveServer());
+//            serverChatController.initToolTip();
+//            serverChatController.addUserMessageContextMenu();
+//            serverChatController.addLocalUserMessageContextMenu();
+//            serverChatController.getLvTextChat().refresh();
+//            categoryTreeViewController.initContextMenu();
+//            Scene scene = this.view.getScene();
+//            this.view = ControllerEnum.SERVER_SCREEN.loadScreen();
+//            scene.setRoot(this.view);
+//            this.stop();
+//            this.init();
+            this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, this.server, null);
     }
 
     public CategoryTreeViewController getCategoryTreeViewController() {

@@ -153,6 +153,7 @@ public class ServerChatController implements Controller {
             for (Message message : this.currentChannel.getMessages()) {
                 message.listeners().removePropertyChangeListener(Message.PROPERTY_TEXT, this.messageTextChangedListener);
             }
+            this.currentChannel = null;
         }
         if (this.localUser.getAccordClient() != null) {
             this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);

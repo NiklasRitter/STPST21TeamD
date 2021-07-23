@@ -86,14 +86,17 @@ public class CategoryTreeViewController implements Controller {
 
     public void stop() {
         this.tvServerChannels.setOnMouseReleased(null);
+        this.tvServerChannels = null;
+        this.tvServerChannelsRoot = null;
         for (Channel channel : channelMap.values()) {
-            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, channelReadListener);
+            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, this.channelReadListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_MEMBERS, this.userListViewListener);
+            channel.listeners().removePropertyChangeListener(Channel.PROPERTY_AUDIO_MEMBERS, this.audioMemberListener);
         }
         for (Category category : server.getCategories()) {
-            category.listeners().removePropertyChangeListener(Category.PROPERTY_NAME, categoriesListener);
-            category.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, categoriesListener);
+            category.listeners().removePropertyChangeListener(Category.PROPERTY_NAME, this.categoriesListener);
+            category.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, this.categoriesListener);
         }
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
     }
