@@ -27,7 +27,7 @@
                                 <Font name="System Bold Italic" size="13.0" />
                             </font>
                         </Label>
-                        <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="192.0" prefWidth="150.0" VBox.vgrow="ALWAYS" />
+                        <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="192.0" prefWidth="150.0" styleClass="listView2" VBox.vgrow="ALWAYS" />
                         <VBox id="audioChannelSubViewContainer" alignment="CENTER" spacing="10.0">
                             <children>
                                 <fx:include source="subview/AudioChannelSubView.fxml" />
@@ -91,7 +91,7 @@
                                 <Font name="System Bold Italic" size="13.0" />
                             </font>
                         </Label>
-                        <ListView id="lvServerUsers" VBox.vgrow="ALWAYS" />
+                        <ListView id="lvServerUsers" styleClass="listView2" VBox.vgrow="ALWAYS" />
                     </children>
                 </VBox>
             </children>

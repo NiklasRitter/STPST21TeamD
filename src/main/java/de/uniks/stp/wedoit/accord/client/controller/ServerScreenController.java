@@ -373,7 +373,7 @@ public class ServerScreenController implements Controller {
     private void refreshStage() {
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
             setComponentsText();
-            initTooltips();
+            //initTooltips();
             lbServerName.setContextMenu(createContextMenuLeaveServer());
             serverChatController.initToolTip();
             serverChatController.addUserMessageContextMenu();

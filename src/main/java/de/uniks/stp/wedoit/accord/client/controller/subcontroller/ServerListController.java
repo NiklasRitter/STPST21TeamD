@@ -79,6 +79,12 @@ public class ServerListController implements Controller {
         this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.lvServerList.setOnMouseReleased(this::onServerListViewClicked);
 
+        if (!editor.getStageManager().getStage(StageEnum.STAGE).getTitle().equals("Private Chats")) {
+            lvServerList.getSelectionModel().select(editor.getCurrentServer());
+        }
+
+        this.lvServerList.getStylesheets().add("listViewServer");
+
         /*btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
         btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));*/
     }

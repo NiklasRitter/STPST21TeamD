@@ -11,7 +11,7 @@
 
 <VBox alignment="TOP_CENTER" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" spacing="20.0" styleClass="styleBackgroundHighlight" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button id="btnOptions" alignment="CENTER" mnemonicParsing="false">
+      <Button id="btnOptions" alignment="CENTER" mnemonicParsing="false" styleClass="sidebar-Button">
          <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -28,7 +28,7 @@
             </LinearGradient>
          </textFill>
       </Button>
-      <Button id="btnHome" mnemonicParsing="false">
+      <Button id="btnHome" mnemonicParsing="false" styleClass="sidebar-Button">
          <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -37,8 +37,8 @@
             </ImageView>
          </graphic>
       </Button>
-      <ListView id="lvServerList" prefHeight="68.0" prefWidth="75.0" styleClass="listViewServer" VBox.vgrow="ALWAYS" />
-      <Button id="btnAddServer" mnemonicParsing="false">
+      <ListView id="lvServerList" editable="true" prefHeight="68.0" prefWidth="75.0" styleClass="listViewServer" VBox.vgrow="ALWAYS" />
+      <Button id="btnAddServer" mnemonicParsing="false" styleClass="sidebar-Button">
          <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -47,7 +47,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button id="btnEnterInvitation" mnemonicParsing="false">
+      <Button id="btnEnterInvitation" mnemonicParsing="false" styleClass="sidebar-Button">
          <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                <image>
