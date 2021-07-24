@@ -35,7 +35,6 @@ public class AudioChannelSubViewController implements Controller {
     private Button btnMuteYou;
     private Button btnMuteAll;
     private Button btnLeave;
-    private Label lblVoiceChannel;
     private ImageView imgViewMuteYourself;
     private ImageView imgViewUnMuteYourself;
     private ImageView imgViewAllMute;
@@ -53,7 +52,6 @@ public class AudioChannelSubViewController implements Controller {
 
     @Override
     public void init() {
-        this.lblVoiceChannel = (Label) this.view.lookup("#lblVoiceChannel");
         Label lblAudioChannelName = (Label) this.view.lookup("#lblAudioChannelName");
         Label lblUserName = (Label) this.view.lookup("#lblUserName");
         this.btnMuteYou = (Button) this.view.lookup("#btnMuteYou");
@@ -80,39 +78,11 @@ public class AudioChannelSubViewController implements Controller {
         this.btnMuteAll.setOnAction(this::btnMuteAllOnClick);
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
 
-        this.setComponentsText();
-
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_ALL_MUTED, allMute);
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_MUTED, localUserMute);
 
         allMuteChanged(null);
         localUserMutedChanged(null);
-
-        this.initTooltips();
-
-        this.refreshStage();
-    }
-
-    private void setComponentsText() {
-        this.lblVoiceChannel.setText(LanguageResolver.getString("VOICE_CHANNEL"));
-    }
-
-    /**
-     * Initializes the Tooltips for the Buttons
-     */
-    private void initTooltips() {
-        Tooltip toolTipBtnMuteYou = new Tooltip();
-        toolTipBtnMuteYou.setText(LanguageResolver.getString("MUTE"));
-        btnMuteYou.setTooltip(toolTipBtnMuteYou);
-
-        Tooltip toolTipBtnMuteAll = new Tooltip();
-        toolTipBtnMuteAll.setText(LanguageResolver.getString("MUTE_ALL"));
-        btnMuteAll.setTooltip(toolTipBtnMuteAll);
-
-        Tooltip toolTipBtnLeave = new Tooltip();
-        toolTipBtnLeave.setText(LanguageResolver.getString("LEAVE"));
-        toolTipBtnLeave.setStyle("-fx-font-size: 10");
-        btnLeave.setTooltip(toolTipBtnLeave);
     }
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
@@ -167,17 +137,6 @@ public class AudioChannelSubViewController implements Controller {
         else{
             this.editor.getAudioManager().closeAudioConnection();
         }
-    }
-
-    /**
-     * Refreshes the stage after closing the option screen,
-     * so that the component texts are displayed in the correct language.
-     */
-    private void refreshStage() {
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
-            setComponentsText();
-            initTooltips();
-        });
     }
 
     @Override

@@ -42,8 +42,7 @@ public class ServerScreenController implements Controller {
     private Button btnOptions;
     private Button btnHome;
     private Button btnEdit;
-    private Label lbServerName, lblServerUsers, lbChannelName;
-    private TextArea tfInputMessage;
+    private Label lbServerName, lbChannelName;
     private ListView<User> lvServerUsers;
     private MenuItem menuItemLeaveServer;
 
@@ -92,12 +91,11 @@ public class ServerScreenController implements Controller {
     public void init() {
         // Load all view references
         this.editor.setCurrentServer(server);
-        this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
+        TextArea tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
         this.btnEdit = (Button) view.lookup("#btnEdit");
         this.lbServerName = (Label) view.lookup("#lbServerName");
-        this.lblServerUsers = (Label) view.lookup("#lblServerUsers");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
 
@@ -112,7 +110,7 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
-        this.tfInputMessage.setEditable(false);
+        tfInputMessage.setEditable(false);
 
         // Add server websocket
         editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
@@ -129,8 +127,6 @@ public class ServerScreenController implements Controller {
         // add OnActionListeners
         addActionListener();
 
-        initTooltips();
-
         if (localUser.getAudioChannel() != null) {
             initAudioChannelSubView(localUser.getAudioChannel());
         }
@@ -141,14 +137,6 @@ public class ServerScreenController implements Controller {
         this.editor.getStageManager().getModel().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
     }
 
-
-    private void setComponentsText() {
-        this.lblServerUsers.setText(LanguageResolver.getString("SERVER_USERS"));
-        this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
-        this.tfInputMessage.setPromptText(LanguageResolver.getString("SELECT_A_CHANNEL"));
-        this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("SERVER"));
-    }
-
     /**
      * adds action listener
      */
@@ -157,19 +145,6 @@ public class ServerScreenController implements Controller {
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
         this.btnEdit.setOnAction(this::editButtonOnClick);
-    }
-
-    /**
-     * Initializes the Tooltips for the Buttons
-     */
-    private void initTooltips() {
-        btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
-        btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));
-
-        Tooltip editButton = new Tooltip();
-        editButton.setText(LanguageResolver.getString("EDIT_SERVER"));
-        editButton.setStyle("-fx-font-size: 10");
-        btnEdit.setTooltip(editButton);
     }
 
     /**
@@ -380,19 +355,6 @@ public class ServerScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage(PropertyChangeEvent propertyChangeEvent) {
-            //setComponentsText();
-            //initTooltips();
-//            lbServerName.setContextMenu(createContextMenuLeaveServer());
-//            serverChatController.initToolTip();
-//            serverChatController.addUserMessageContextMenu();
-//            serverChatController.addLocalUserMessageContextMenu();
-//            serverChatController.getLvTextChat().refresh();
-//            categoryTreeViewController.initContextMenu();
-//            Scene scene = this.view.getScene();
-//            this.view = ControllerEnum.SERVER_SCREEN.loadScreen();
-//            scene.setRoot(this.view);
-//            this.stop();
-//            this.init();
             this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, this.server, null);
     }
 

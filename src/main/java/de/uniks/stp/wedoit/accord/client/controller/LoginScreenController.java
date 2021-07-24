@@ -107,22 +107,12 @@ public class LoginScreenController implements Controller {
      * Sets texts of all GUI components like buttons, labels etc. in the selected language.
      */
     private void setComponentsTextSignIn() {
-        this.lblSignIn.setText(LanguageResolver.getString("LOGIN"));
-        this.lblSignIn.setTooltip(new Tooltip(LanguageResolver.getString("LOGIN")));
-        this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
-        this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
         this.pwConfirmPW.setVisible(false);
         this.btnGuestLogin.setVisible(true);
 
         Objects.requireNonNull(tfUserName).getStyleClass().remove("error");
         Objects.requireNonNull(pwUserPw).getStyleClass().remove("error");
         Objects.requireNonNull(pwConfirmPW).getStyleClass().remove("error");
-
-        this.lblRememberMe.setText(LanguageResolver.getString("REMEMBER_ME"));
-        this.btnLogin.setText(LanguageResolver.getString("LOGIN"));
-
-        this.btnSwitchRegister.setText(LanguageResolver.getString("NO_ACCOUNT_YET_REGISTER"));
-        this.btnGuestLogin.setText(LanguageResolver.getString("GUEST_LOGIN"));
 
         if (guestUserPassword != null) {
             this.setGuestUserDataLabel();
@@ -139,7 +129,6 @@ public class LoginScreenController implements Controller {
         this.lblSignIn.setTooltip(new Tooltip(LanguageResolver.getString("REGISTER")));
         this.tfUserName.setPromptText(LanguageResolver.getString("USERNAME"));
         this.pwUserPw.setPromptText(LanguageResolver.getString("PASSWORD"));
-        this.pwConfirmPW.setPromptText(LanguageResolver.getString("CONFIRM_PASSWORD"));
         this.pwConfirmPW.setVisible(true);
         this.btnGuestLogin.setVisible(false);
 

@@ -1,84 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox id="root" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="styleBorder"
-      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
-    <Region prefHeight="60.0"/>
+<VBox id="root" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+    <Region prefHeight="60.0" />
     <HBox prefHeight="39.0" prefWidth="600.0">
-        <Region minWidth="100.0" prefWidth="100.0"/>
-        <Label id="lblYou">
+        <Region minWidth="100.0" prefWidth="100.0" />
+        <Label id="lblYou" text="%YOU">
             <font>
-                <Font size="25.0"/>
+                <Font size="25.0" />
             </font>
         </Label>
-        <Region HBox.hgrow="ALWAYS"/>
+        <Region HBox.hgrow="ALWAYS" />
         <Label id="lbScore" text="0:0">
             <font>
-                <Font size="20.0"/>
+                <Font size="20.0" />
             </font>
         </Label>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label id="lbOpponent" maxWidth="120.0" minWidth="120.0">
+        <Region HBox.hgrow="ALWAYS" />
+        <Label id="lbOpponent" maxWidth="120.0" minWidth="120.0" text="%OPPONENT">
             <font>
-                <Font size="25.0"/>
+                <Font size="25.0" />
             </font>
         </Label>
-        <Region minWidth="60.0"/>
+        <Region minWidth="60.0" />
     </HBox>
-    <Region minHeight="50.0" prefHeight="70.0" prefWidth="200.0"/>
+    <Region minHeight="50.0" prefHeight="70.0" prefWidth="200.0" />
     <HBox prefHeight="50.0" prefWidth="200.0">
-        <Region minHeight="50.0" minWidth="50.0" prefWidth="100.0"/>
-        <Button id="btnRock" mnemonicParsing="false" styleClass="styleButton">
+        <Region minHeight="50.0" minWidth="50.0" prefWidth="100.0" />
+        <Button id="btnRock" mnemonicParsing="false" styleClass="styleButton" text="%ROCK">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
-        <Region minWidth="70.0" HBox.hgrow="ALWAYS"/>
-        <Button id="btnPaper" mnemonicParsing="false" styleClass="styleButton">
+        <Region minWidth="70.0" HBox.hgrow="ALWAYS" />
+        <Button id="btnPaper" mnemonicParsing="false" styleClass="styleButton" text="%PAPER">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
-        <Region minWidth="70.0" HBox.hgrow="ALWAYS"/>
-        <Button id="btnScissors" mnemonicParsing="false" styleClass="styleButton">
+        <Region minWidth="70.0" HBox.hgrow="ALWAYS" />
+        <Button id="btnScissors" mnemonicParsing="false" styleClass="styleButton" text="%SCISSORS">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
-        <Region prefWidth="100.0"/>
+        <Region prefWidth="100.0" />
     </HBox>
-    <Region minHeight="50.0" prefHeight="50.0" prefWidth="200.0"/>
+    <Region minHeight="50.0" prefHeight="50.0" prefWidth="200.0" />
     <HBox prefHeight="100.0" prefWidth="200.0">
-        <Region minWidth="100.0"/>
+        <Region minWidth="100.0" />
         <VBox prefHeight="200.0" prefWidth="100.0">
-            <Label id="lblYouPlayed">
+            <Label id="lblYouPlayed" text="%YOU_PLAYED">
                 <VBox.margin>
-                    <Insets left="46.0"/>
+                    <Insets left="46.0" />
                 </VBox.margin>
             </Label>
             <ImageView id="imgYouPlayed" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                <Image url="@images/game/choosing.png"/>
+                <Image url="@images/game/choosing.png" />
             </ImageView>
         </VBox>
-        <Region minWidth="50.0" HBox.hgrow="ALWAYS"/>
+        <Region minWidth="50.0" HBox.hgrow="ALWAYS" />
         <VBox prefHeight="200.0" prefWidth="100.0">
 
-            <Label id="lblOpponentPlayed">
+            <Label id="lblOpponentPlayed" text="%OPPONENT_PLAYED">
                 <VBox.margin>
-                    <Insets left="30.0"/>
+                    <Insets left="30.0" />
                 </VBox.margin>
             </Label>
             <ImageView id="imgOppPlayed" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                <Image url="@images/game/choosing.png"/>
+                <Image url="@images/game/choosing.png" />
             </ImageView>
 
         </VBox>
-        <Region minWidth="100.0"/>
+        <Region minWidth="100.0" />
 
     </HBox>
 

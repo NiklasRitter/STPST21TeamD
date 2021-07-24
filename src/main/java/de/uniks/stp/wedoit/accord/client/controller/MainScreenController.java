@@ -13,9 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 
 import javax.json.JsonObject;
@@ -40,7 +38,6 @@ public class MainScreenController implements Controller {
     private Button optionsButton;
     private Button addServerButton;
     private Button enterInvitationButton;
-    private Label lblYourServers;
     private ListView<Server> lvServer;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private WSCallback serverWSCallback = this::handleServersMessage;
@@ -73,11 +70,8 @@ public class MainScreenController implements Controller {
         this.addServerButton = (Button) view.lookup("#btnAddServer");
         this.enterInvitationButton = (Button) view.lookup("#btnEnterInvitation");
         this.lvServer = (ListView<Server>) view.lookup("#lwServerList");
-        this.lblYourServers = (Label) view.lookup("#lblYourServers");
 
-        this.setComponentsText();
-
-        this.initTooltips();
+        this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("MAIN"));
 
         // load servers of the localUser
         editor.getRestManager().getServers(localUser, this);
@@ -91,13 +85,6 @@ public class MainScreenController implements Controller {
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
         this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.lvServer.setOnMouseReleased(this::onServerListViewClicked);
-
-        this.refreshStage();
-    }
-
-    private void setComponentsText() {
-        this.lblYourServers.setText(LanguageResolver.getString("YOUR_SERVERS"));
-        this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("MAIN"));
     }
 
     /**
@@ -126,27 +113,6 @@ public class MainScreenController implements Controller {
     }
 
     /**
-     * Initializes the Tooltips for the Buttons
-     */
-    private void initTooltips() {
-        Tooltip privateChatsButton = new Tooltip();
-        privateChatsButton.setText(LanguageResolver.getString("PRIVATE_CHATS"));
-        this.privateChatsButton.setTooltip(privateChatsButton);
-
-        Tooltip optionsButton = new Tooltip();
-        optionsButton.setText(LanguageResolver.getString(LanguageResolver.getString("OPTIONS")));
-        this.optionsButton.setTooltip(optionsButton);
-
-        Tooltip addServerButton = new Tooltip();
-        addServerButton.setText(LanguageResolver.getString("CREATE_SERVER"));
-        this.addServerButton.setTooltip(addServerButton);
-
-        Tooltip joinServerButton = new Tooltip();
-        joinServerButton.setText(LanguageResolver.getString("JOIN_SERVER"));
-        this.enterInvitationButton.setTooltip(joinServerButton);
-    }
-
-    /**
      * Called to stop this controller
      * <p>
      * Remove action listeners
@@ -159,6 +125,7 @@ public class MainScreenController implements Controller {
         privateChatsButton.setOnAction(null);
         optionsButton.setOnAction(null);
         addServerButton.setOnAction(null);
+        enterInvitationButton.setOnAction(null);
 
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
         this.serverListListener = null;
@@ -256,17 +223,6 @@ public class MainScreenController implements Controller {
                 }
             }
         }
-    }
-
-    /**
-     * Refreshes the stage after closing the option screen,
-     * so that the component texts are displayed in the correct language.
-     */
-    private void refreshStage() {
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
-            setComponentsText();
-            initTooltips();
-        });
     }
 
 }

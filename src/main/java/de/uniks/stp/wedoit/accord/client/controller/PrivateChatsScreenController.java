@@ -85,7 +85,7 @@ public class PrivateChatsScreenController implements Controller {
         this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
         this.audioChannelSubViewContainer.getChildren().clear();
 
-        this.setComponentsText();
+        this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
 
         privateChatController.init();
 
@@ -94,7 +94,6 @@ public class PrivateChatsScreenController implements Controller {
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
-        this.initTooltips();
         this.initOnlineUsersList();
 
         this.btnPlay.setVisible(false);
@@ -108,22 +107,6 @@ public class PrivateChatsScreenController implements Controller {
         this.refreshStage();
     }
 
-    private void setComponentsText() {
-        this.lblOnlineUser.setText(LanguageResolver.getString("ONLINE_USERS"));
-        this.lblSelectedUser.setText(LanguageResolver.getString("NO_USER_SELECTED"));
-        this.btnPlay.setText(LanguageResolver.getString("PLAY"));
-        this.taPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
-        this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
-    }
-
-    /**
-     * Initializes the Tooltips for the Buttons
-     */
-    private void initTooltips() {
-        btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
-        btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));
-        btnPlay.setTooltip(new Tooltip(LanguageResolver.getString("ROCK_PAPER_SCISSORS")));
-    }
 
     /**
      * Called to stop this controller
@@ -327,8 +310,6 @@ public class PrivateChatsScreenController implements Controller {
      */
     private void refreshStage() {
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
-            setComponentsText();
-            initTooltips();
             privateChatController.initToolTip();
             privateChatController.addMessageContextMenu();
             privateChatController.getLwPrivateChat().refresh();

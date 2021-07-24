@@ -22,7 +22,7 @@ public class JoinServerScreenController implements Controller {
     private final Parent view;
     private TextField tfInvitationLink;
     private Button btnJoinServer;
-    private Label lblError, lblEnterInviteLink;
+    private Label lblError;
 
     /**
      * Create a new Controller
@@ -49,19 +49,11 @@ public class JoinServerScreenController implements Controller {
         this.btnJoinServer = (Button) view.lookup("#btnJoinServer");
         this.tfInvitationLink = (TextField) view.lookup("#tfInvitationLink");
         this.lblError = (Label) view.lookup("#lblError");
-        this.lblEnterInviteLink = (Label) view.lookup("#lblEnterInvitLink");
 
         this.view.requestFocus();
-        this.setComponentsText();
 
         // Add action listeners
         this.btnJoinServer.setOnAction(this::joinServerButtonOnClick);
-    }
-
-    private void setComponentsText() {
-        this.lblEnterInviteLink.setText(LanguageResolver.getString("ENTER_INVITATION_LINK"));
-        this.tfInvitationLink.setPromptText(LanguageResolver.getString("INVIT_LINK"));
-        this.btnJoinServer.setText(LanguageResolver.getString("JOIN"));
     }
 
     /**

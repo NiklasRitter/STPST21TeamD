@@ -18,7 +18,6 @@ public class AttentionLeaveServerController implements Controller {
 
     private Button btnLeave;
     private Button btnCancel;
-    private Label lblAttention, lblAreYouSure;
 
     public AttentionLeaveServerController(Parent view, Editor editor, Server server) {
         this.editor = editor;
@@ -29,22 +28,12 @@ public class AttentionLeaveServerController implements Controller {
     public void init() {
         this.btnLeave = (Button) view.lookup("#btnLeave");
         this.btnCancel = (Button) view.lookup("#btnCancel");
-        this.lblAttention = (Label) view.lookup("#lblAttention");
-        this.lblAreYouSure = (Label) view.lookup("#lblAreYouSure");
 
-        this.setComponentsText();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
 
         this.btnLeave.setOnAction(this::btnLeaveOnClick);
         this.btnCancel.setOnAction(this::btnCancelOnClick);
-    }
-
-    private void setComponentsText() {
-        this.lblAttention.setText(LanguageResolver.getString("ATTENTION"));
-        this.lblAreYouSure.setText(LanguageResolver.getString("ARE_SURE_LEAVE_SERVER"));
-        this.btnLeave.setText(LanguageResolver.getString("LEAVE"));
-        this.btnCancel.setText(LanguageResolver.getString("CANCEL"));
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
     }
 
     /**
