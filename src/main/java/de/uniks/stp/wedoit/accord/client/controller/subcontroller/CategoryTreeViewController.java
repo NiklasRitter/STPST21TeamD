@@ -9,10 +9,7 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
 import javafx.scene.Parent;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -46,6 +43,7 @@ public class CategoryTreeViewController implements Controller {
     private final PropertyChangeListener channelListener = this::handleChannelChange;
     private final PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
     private final PropertyChangeListener userListViewListener = this::changeUserList;
+    private MenuButton serverMenuButton;
 
     public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
@@ -57,12 +55,21 @@ public class CategoryTreeViewController implements Controller {
 
     public void init() {
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
+        this.serverMenuButton = (MenuButton) view.lookup("#serverMenuButton");
+        addServerMenu();
         this.tvServerChannelsRoot = new TreeItem<>();
         initContextMenu();
 
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
         initTvServerChannels();
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
+    }
+
+    private void addServerMenu() {
+        MenuItem createCategory = new MenuItem(LanguageResolver.getString("ADD_CATEGORY"));
+        serverMenuButton.getItems().add(createCategory);
+        createCategory.setStyle("-fx-font-size:12");
+        createCategory.setOnAction((event) -> editor.getStageManager().initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
     }
 
     public void initContextMenu() {
