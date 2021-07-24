@@ -89,6 +89,7 @@ public class WebSocketClient extends Endpoint {
         super.onClose(session, closeReason);
         this.noopTimer.cancel();
         this.session = null;
+        this.callback = null;
     }
 
     /**

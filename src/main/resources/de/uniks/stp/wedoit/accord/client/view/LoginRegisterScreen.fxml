@@ -69,6 +69,9 @@
                                                     </image>
                                                 </ImageView>
                                             </graphic>
+                                            <tooltip>
+                                                <Tooltip text="%OPTIONS" />
+                                            </tooltip>
                                         </Button>
                                         <Label id="lblUserValid" layoutX="55.0" layoutY="360.0" prefHeight="17.0" prefWidth="218.0" />
                                         <Label id="lblGuestPassword" layoutX="55.0" layoutY="377.0" prefHeight="17.0" prefWidth="219.0" />

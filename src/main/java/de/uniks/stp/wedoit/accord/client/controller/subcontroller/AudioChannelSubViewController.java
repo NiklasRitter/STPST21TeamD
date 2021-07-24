@@ -39,8 +39,8 @@ public class AudioChannelSubViewController implements Controller {
     private ImageView imgViewUnMuteYourself;
     private ImageView imgViewAllMute;
     private ImageView imgViewAllUnMute;
-    private final PropertyChangeListener allMute = this::allMuteChanged;
-    private final PropertyChangeListener localUserMute = this::localUserMutedChanged;
+    private PropertyChangeListener allMute = this::allMuteChanged;
+    private PropertyChangeListener localUserMute = this::localUserMutedChanged;
 
     public AudioChannelSubViewController(LocalUser localUser, Parent view, Editor editor, CategoryTreeViewController controller, Channel channel) {
         this.localUser = localUser;
@@ -146,5 +146,7 @@ public class AudioChannelSubViewController implements Controller {
         this.btnLeave.setOnAction(null);
         this.localUser.listeners().removePropertyChangeListener(allMute);
         this.localUser.listeners().removePropertyChangeListener(localUserMute);
+        this.allMute = null;
+        this.localUserMute = null;
     }
 }

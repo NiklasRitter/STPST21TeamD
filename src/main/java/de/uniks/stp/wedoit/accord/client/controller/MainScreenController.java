@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
@@ -40,6 +41,7 @@ public class MainScreenController implements Controller {
     private Button enterInvitationButton;
     private ListView<Server> lvServer;
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
+    private PropertyChangeListener languageRefreshed = this::refreshStage;
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
 
@@ -85,6 +87,7 @@ public class MainScreenController implements Controller {
         this.addServerButton.setOnAction(this::addServerButtonOnClick);
         this.enterInvitationButton.setOnAction(this::enterInvitationButtonOnClick);
         this.lvServer.setOnMouseReleased(this::onServerListViewClicked);
+        this.editor.getStageManager().getModel().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
     }
 
     /**
@@ -108,7 +111,7 @@ public class MainScreenController implements Controller {
                 editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
     }
 
@@ -126,9 +129,12 @@ public class MainScreenController implements Controller {
         optionsButton.setOnAction(null);
         addServerButton.setOnAction(null);
         enterInvitationButton.setOnAction(null);
+        lvServer.setOnMouseReleased(null);
 
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
+        this.editor.getStageManager().getModel().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
         this.serverListListener = null;
+        this.languageRefreshed = null;
     }
 
     /**
@@ -223,6 +229,10 @@ public class MainScreenController implements Controller {
                 }
             }
         }
+    }
+
+    private void refreshStage(PropertyChangeEvent propertyChangeEvent){
+        this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
     }
 
 }

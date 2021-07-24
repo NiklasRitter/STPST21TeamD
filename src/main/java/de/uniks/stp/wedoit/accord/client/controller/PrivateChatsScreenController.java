@@ -9,6 +9,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatCon
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
@@ -38,17 +39,18 @@ public class PrivateChatsScreenController implements Controller {
     private Button btnHome;
     private TextArea taPrivateChat;
     private ListView<User> lwOnlineUsers;
-    private final PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
     private ObservableList<User> onlineUserObservableList;
-    private final PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
     private List<User> availableUsers = new ArrayList<>();
-    private final PropertyChangeListener newUsersListener = this::newUser;
     private Label lblSelectedUser, lblOnlineUser;
     private PrivateChatController privateChatController;
     private User selectedUser;
     private VBox audioChannelSubViewContainer;
     private AudioChannelSubViewController audioChannelSubViewController;
-    private final PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
+    private PropertyChangeListener usersMessageListListener = this::usersMessageListViewChanged;
+    private PropertyChangeListener usersOnlineListListener = this::usersOnlineListViewChanged;
+    private PropertyChangeListener newUsersListener = this::newUser;
+    private PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
+    private PropertyChangeListener languageRefreshed = this::refreshStage;
 
 
     /**
@@ -103,8 +105,7 @@ public class PrivateChatsScreenController implements Controller {
         }
 
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
-
-        this.refreshStage();
+        this.editor.getStageManager().getModel().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
     }
 
 
@@ -114,12 +115,21 @@ public class PrivateChatsScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_USERS, this.usersOnlineListListener);
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
+        this.editor.getStageManager().getModel().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
 
         for (User user : availableUsers) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
             user.listeners().removePropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
         }
+        this.usersMessageListListener = null;
+        this.usersOnlineListListener = null;
+        this.newUsersListener = null;
+        this.audioChannelChange = null;
+        this.languageRefreshed = null;
+
         this.btnHome.setOnAction(null);
         this.btnPlay.setOnAction(null);
         this.btnOptions.setOnAction(null);
@@ -283,7 +293,7 @@ public class PrivateChatsScreenController implements Controller {
             this.audioChannelSubViewContainer.getChildren().clear();
         }
         try {
-            Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
+            Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")), LanguageResolver.getLanguage());
 
             audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, null, channel);
             audioChannelSubViewController.init();
@@ -308,12 +318,8 @@ public class PrivateChatsScreenController implements Controller {
      * Refreshes the stage after closing the option screen,
      * so that the component texts are displayed in the correct language.
      */
-    private void refreshStage() {
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
-            privateChatController.initToolTip();
-            privateChatController.addMessageContextMenu();
-            privateChatController.getLwPrivateChat().refresh();
-        });
+    private void refreshStage(PropertyChangeEvent propertyChangeEvent) {
+        this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
     }
 
     public void initPrivateChatView(User selectedUser) {

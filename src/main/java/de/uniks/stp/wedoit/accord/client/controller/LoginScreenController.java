@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
@@ -12,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Objects;
 
 public class LoginScreenController implements Controller {
@@ -34,6 +37,7 @@ public class LoginScreenController implements Controller {
     private Label lblSignIn;
     private TextField pwConfirmPW;
     private boolean isLogin;
+    private PropertyChangeListener languageRefreshed = this::refreshStage;
 
 
     /**
@@ -43,10 +47,11 @@ public class LoginScreenController implements Controller {
      * @param model  The model this Controller belongs to
      * @param editor The editor of the Application
      */
-    public LoginScreenController(Parent view, AccordClient model, Editor editor) {
+    public LoginScreenController(Parent view, AccordClient model, Editor editor, boolean isLogin) {
         this.view = view;
         this.model = model;
         this.editor = editor;
+        this.isLogin = isLogin;
     }
 
     /**
@@ -87,20 +92,22 @@ public class LoginScreenController implements Controller {
 
         this.tfUserName.requestFocus();
 
-        this.isLogin = true;
-        this.setComponentsTextSignIn();
+       if(this.isLogin){
+            this.setComponentsTextSignIn();
+        }
+        else{
+            this.setComponentsTextSignUp();
+        }
 
         // Add necessary action listeners
         this.btnLogin.setOnAction(this::loginButtonAction);
         this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.btnRememberMe.setOnAction(this::btnRememberMeOnClick);
         this.btnGuestLogin.setOnAction(this::btnGuestLoginOnClick);
-
         this.btnSwitchRegister.setOnAction(this::btnSwitchRegisterOnClick);
+        this.editor.getStageManager().getModel().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
 
         this.initTooltips();
-
-        this.refreshStage();
     }
 
     /**
@@ -202,9 +209,6 @@ public class LoginScreenController implements Controller {
     }
 
     private void initTooltips() {
-        Tooltip optionsButton = new Tooltip();
-        optionsButton.setText(LanguageResolver.getString("OPTIONS"));
-        this.btnOptions.setTooltip(optionsButton);
 
         Tooltip loginButton = new Tooltip();
         loginButton.setText(LanguageResolver.getString("LOGIN"));
@@ -229,10 +233,13 @@ public class LoginScreenController implements Controller {
         this.tfUserName.setOnKeyPressed(null);
         this.pwUserPw.setOnKeyPressed(null);
         this.pwConfirmPW.setOnKeyPressed(null);
+        this.editor.getStageManager().getModel().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
+        this.languageRefreshed = null;
 
         btnLogin.setOnAction(null);
         btnOptions.setOnAction(null);
         btnRememberMe.setOnAction(null);
+        btnGuestLogin.setOnAction(null);
         btnOptions.setOnAction(null);
         btnSwitchRegister.setOnAction(null);
     }
@@ -418,8 +425,7 @@ public class LoginScreenController implements Controller {
             setComponentsTextSignUp();
             isLogin = false;
         } else {
-            setComponentsTextSignIn();
-            isLogin = true;
+            this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null);
         }
     }
 
@@ -427,16 +433,8 @@ public class LoginScreenController implements Controller {
      * Refreshes the stage after closing the option screen,
      * so that the component texts are displayed in the correct language.
      */
-    private void refreshStage() {
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setOnCloseRequest(event -> {
-            if (isLogin) {
-                setComponentsTextSignIn();
-            } else {
-                setComponentsTextSignUp();
-            }
-            editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("LOGIN"));
-            initTooltips();
-        });
+    private void refreshStage(PropertyChangeEvent propertyChangeEvent) {
+        this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, isLogin, null);
     }
 
     /**

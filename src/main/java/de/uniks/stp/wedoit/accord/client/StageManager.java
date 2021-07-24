@@ -89,7 +89,7 @@ public class StageManager extends Application {
         switch (controllerName) {
             case LOGIN_SCREEN_CONTROLLER:
                 editor.haveLocalUser();
-                controller = new LoginScreenController(root, model, editor);
+                controller = new LoginScreenController(root, model, editor, (boolean) parameter);
                 break;
             case MAIN_SCREEN_CONTROLLER:
                 controller = new MainScreenController(root, model.getLocalUser(), editor);
