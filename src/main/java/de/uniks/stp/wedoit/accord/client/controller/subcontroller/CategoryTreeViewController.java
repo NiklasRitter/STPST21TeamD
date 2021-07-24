@@ -17,17 +17,12 @@ import javafx.scene.input.MouseEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.CREATE_CATEGORY_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class CategoryTreeViewController implements Controller {
 
@@ -35,17 +30,18 @@ public class CategoryTreeViewController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
-    private final ServerScreenController controller;
+    private ServerScreenController controller;
     private final Map<String, Channel> channelMap = new HashMap<>();
 
     private TreeView<Object> tvServerChannels;
     private TreeItem<Object> tvServerChannelsRoot;
+    private MenuItem addCategory;
 
-    private final PropertyChangeListener channelReadListener = this::handleChannelReadChange;
-    private final PropertyChangeListener categoriesListener = this::handleCategoryChange;
-    private final PropertyChangeListener channelListener = this::handleChannelChange;
-    private final PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
-    private final PropertyChangeListener userListViewListener = this::changeUserList;
+    private PropertyChangeListener channelReadListener = this::handleChannelReadChange;
+    private PropertyChangeListener categoriesListener = this::handleCategoryChange;
+    private PropertyChangeListener channelListener = this::handleChannelChange;
+    private PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
+    private PropertyChangeListener userListViewListener = this::changeUserList;
 
     public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
@@ -66,7 +62,7 @@ public class CategoryTreeViewController implements Controller {
     }
 
     public void initContextMenu() {
-        ChannelTreeView channelTreeView = new ChannelTreeView(editor.getStageManager(), this);
+        ChannelTreeView channelTreeView = new ChannelTreeView(editor.getStageManager());
         this.tvServerChannels.setCellFactory(channelTreeView);
         this.tvServerChannels.setShowRoot(false);
         this.tvServerChannels.setRoot(tvServerChannelsRoot);
@@ -88,6 +84,7 @@ public class CategoryTreeViewController implements Controller {
         this.tvServerChannels.setOnMouseReleased(null);
         this.tvServerChannels = null;
         this.tvServerChannelsRoot = null;
+        this.controller = null;
         for (Channel channel : channelMap.values()) {
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_READ, this.channelReadListener);
             channel.listeners().removePropertyChangeListener(Channel.PROPERTY_NAME, this.channelListener);
@@ -99,6 +96,12 @@ public class CategoryTreeViewController implements Controller {
             category.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, this.categoriesListener);
         }
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
+        this.categoriesListener = null;
+        this.channelListener = null;
+        this.userListViewListener = null;
+        this.audioMemberListener = null;
+        this.channelReadListener = null;
+        this.addCategory.setOnAction(null);
     }
 
     // Channel and Category init
@@ -242,8 +245,8 @@ public class CategoryTreeViewController implements Controller {
             categoryItem.setExpanded(true);
             tvServerChannelsRoot.getChildren().add(categoryItem);
             loadCategoryChannels(newValue);
-            newValue.listeners().addPropertyChangeListener(Category.PROPERTY_NAME, categoriesListener);
-            newValue.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, categoriesListener);
+            newValue.listeners().addPropertyChangeListener(Category.PROPERTY_NAME, this.categoriesListener);
+            newValue.listeners().addPropertyChangeListener(Category.PROPERTY_CHANNELS, this.categoriesListener);
         } else if (oldValue != null && newValue == null) {
             TreeItem<Object> categoryItem = getTreeItemCategory(oldValue);
             if (categoryItem != null) {
@@ -368,7 +371,7 @@ public class CategoryTreeViewController implements Controller {
      */
     private ContextMenu createContextMenuCategory() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem addCategory = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
+        addCategory = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
         contextMenu.getItems().add(addCategory);
         addCategory.setOnAction((event) -> editor.getStageManager().initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
         return contextMenu;

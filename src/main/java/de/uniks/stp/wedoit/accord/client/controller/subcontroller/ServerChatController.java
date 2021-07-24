@@ -48,24 +48,27 @@ public class ServerChatController implements Controller {
     private final Parent view;
     private final Server server;
     private Channel currentChannel;
-    private final ServerScreenController controller;
+    private ServerScreenController controller;
 
     private HBox quoteVisible;
     private Label lbChannelName;
     private TextArea tfInputMessage;
     private Button btnCancelQuote;
     private Button btnEmoji;
-    private ListView<Message> lvTextChat;
-    private ObservableList<Message> observableMessageList;
-    private final PropertyChangeListener newMessagesListener = this::newMessage;
-    private final PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
     private ContextMenu contextMenuLocalUserMessage;
     private ContextMenu contextMenuUserMessage;
     private VBox vBoxTextField;
+
+    private ListView<Message> lvTextChat;
+    private ObservableList<Message> observableMessageList;
     private MarkingController markingController;
     private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
-    private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
     private EmojiTextFlowParameters quoteParameter;
+    private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
+
+    private PropertyChangeListener newMessagesListener = this::newMessage;
+    private PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
+    private PropertyChangeListener darkModeListener = this::onDarkmodeChanged;
 
     /**
      * Create a new Controller
@@ -138,9 +141,11 @@ public class ServerChatController implements Controller {
     public void stop() {
         this.tfInputMessage.setOnKeyPressed(null);
         this.btnEmoji.setOnAction(null);
-        this.lvTextChat.setOnMouseClicked(null);
+        this.lvTextChat.setOnMousePressed(null);
         this.btnCancelQuote.setOnAction(null);
         this.markingController.stop();
+        this.controller = null;
+
 
         for (MenuItem item : contextMenuLocalUserMessage.getItems()) {
             item.setOnAction(null);
@@ -159,6 +164,10 @@ public class ServerChatController implements Controller {
             this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         }
         this.editor.getChatFontSizeProperty().removeListener(this::onDarkmodeChanged);
+
+        this.messageTextChangedListener = null;
+        this.newMessagesListener = null;
+        this.darkModeListener = null;
     }
 
     /**

@@ -17,7 +17,6 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
@@ -36,7 +35,7 @@ public class ServerScreenController implements Controller {
 
     private final LocalUser localUser;
     private final Editor editor;
-    private Parent view;
+    private final Parent view;
     private final Server server;
 
     // View Elements
@@ -46,19 +45,20 @@ public class ServerScreenController implements Controller {
     private Label lbServerName, lblServerUsers, lbChannelName;
     private TextArea tfInputMessage;
     private ListView<User> lvServerUsers;
+    private MenuItem menuItemLeaveServer;
 
     // Websockets
     private WSCallback chatWSCallback;
     private WSCallback serverWSCallback;
 
     // PropertyChangeListener
-    private final PropertyChangeListener userListViewListener = this::changeUserList;
-    private final PropertyChangeListener serverNameListener = (propertyChangeEvent) -> this.handleServerNameChange();
-    private final PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
-    private final PropertyChangeListener languageRefreshed = this::refreshStage;
+    private PropertyChangeListener userListViewListener = this::changeUserList;
+    private PropertyChangeListener serverNameListener = this::handleServerNameChange;
+    private PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
+    private PropertyChangeListener languageRefreshed = this::refreshStage;
 
-    private final CategoryTreeViewController categoryTreeViewController;
-    private final ServerChatController serverChatController;
+    private CategoryTreeViewController categoryTreeViewController;
+    private ServerChatController serverChatController;
     private VBox audioChannelSubViewContainer;
     private AudioChannelSubViewController audioChannelSubViewController;
 
@@ -206,6 +206,7 @@ public class ServerScreenController implements Controller {
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.btnEdit.setOnAction(null);
+        this.menuItemLeaveServer.setOnAction(null);
 
         this.editor.getWebSocketManager().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
         this.editor.getWebSocketManager().withOutWebSocket(CHAT_USER_URL + this.localUser.getName()
@@ -213,18 +214,25 @@ public class ServerScreenController implements Controller {
 
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
         this.editor.getStageManager().getModel().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
-
+        this.serverNameListener = null;
+        this.userListViewListener = null;
+        this.languageRefreshed = null;
+        this.audioChannelChange = null;
         this.chatWSCallback = null;
         this.serverWSCallback = null;
 
         this.categoryTreeViewController.stop();
         this.serverChatController.stop();
+        this.categoryTreeViewController = null;
+        this.serverChatController = null;
         this.editor.setCurrentServer(null);
 
         if (audioChannelSubViewController != null) {
             this.audioChannelSubViewController.stop();
         }
+        this.audioChannelSubViewContainer = null;
     }
 
     // ActionEvent Methods
@@ -287,7 +295,7 @@ public class ServerScreenController implements Controller {
     /**
      * sets the name of a server in the server name label
      */
-    private void handleServerNameChange() {
+    private void handleServerNameChange(PropertyChangeEvent propertyChangeEvent) {
         Platform.runLater(() -> this.lbServerName.setText(this.server.getName()));
     }
 
@@ -338,7 +346,7 @@ public class ServerScreenController implements Controller {
      */
     private ContextMenu createContextMenuLeaveServer() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemLeaveServer = new MenuItem(LanguageResolver.getString("LEAVE_SERVER"));
+        menuItemLeaveServer = new MenuItem(LanguageResolver.getString("LEAVE_SERVER"));
         contextMenu.getItems().add(menuItemLeaveServer);
         menuItemLeaveServer.setOnAction(this::leaveServerAttention);
         return contextMenu;
