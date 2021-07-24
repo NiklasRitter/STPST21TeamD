@@ -14,17 +14,12 @@ import javafx.scene.input.MouseEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.CREATE_CATEGORY_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class CategoryTreeViewController implements Controller {
 
@@ -65,6 +60,9 @@ public class CategoryTreeViewController implements Controller {
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
     }
 
+    /**
+     * adds new menu items to the server menu button of the server screen
+     */
     private void addServerMenu() {
         MenuItem createCategory = new MenuItem(LanguageResolver.getString("ADD_CATEGORY"));
         serverMenuButton.getItems().add(createCategory);
@@ -314,9 +312,9 @@ public class CategoryTreeViewController implements Controller {
             channelItem.setExpanded(true);
             addAudioMembersToTreeView(channel, channelItem);
         }
-        for(TreeItem<Object> item : categoryItem.getChildren()){
+        for (TreeItem<Object> item : categoryItem.getChildren()) {
             Channel treeChannel = (Channel) item.getValue();
-            if(treeChannel.getId().equals(channel.getId())){
+            if (treeChannel.getId().equals(channel.getId())) {
                 return;
             }
         }

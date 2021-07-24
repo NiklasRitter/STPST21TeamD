@@ -21,7 +21,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import javax.json.JsonArray;
@@ -183,10 +182,9 @@ public class ServerScreenController implements Controller {
         }
         try {
             Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")));
-            if(channel.getCategory().getServer() == server){
+            if (channel.getCategory().getServer() == server) {
                 audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, categoryTreeViewController, channel);
-            }
-            else{
+            } else {
                 audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, null, channel);
             }
             audioChannelSubViewController.init();
@@ -310,6 +308,9 @@ public class ServerScreenController implements Controller {
 
     }
 
+    /**
+     * adds new menu items depending on the owner to the server menu button of the server screen
+     */
     private void addServerMenu(boolean isOwner) {
         if (isOwner) {
             MenuItem serverSettings = new MenuItem(LanguageResolver.getString("SERVER_SETTINGS"));

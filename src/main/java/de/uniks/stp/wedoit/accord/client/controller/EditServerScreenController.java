@@ -37,7 +37,7 @@ public class EditServerScreenController implements Controller {
 
     private Button btnCreateInvitation, btnDelete, btnSave, btnDeleteInvitation;
 
-    private RadioButton radioBtnTemporal,radioBtnMaxCount;
+    private RadioButton radioBtnTemporal, radioBtnMaxCount;
 
     private TextField tfNewServernameInput, tfMaxCountAmountInput, tfInvitationLink;
 
