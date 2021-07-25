@@ -22,10 +22,7 @@ import javafx.scene.layout.VBox;
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -40,7 +37,6 @@ public class ServerScreenController implements Controller {
     // View Elements
     private Button btnOptions;
     private Button btnHome;
-    private Button btnEdit;
     private Label lbServerName, lbChannelName;
     private ListView<User> lvServerUsers;
     private MenuItem menuItemLeaveServer;
@@ -60,6 +56,7 @@ public class ServerScreenController implements Controller {
     private VBox audioChannelSubViewContainer;
     private AudioChannelSubViewController audioChannelSubViewController;
     private PropertyChangeListener userDescriptionListener = this::userDescriptionChanged;
+    private MenuButton serverMenuButton;
 
 
     /**
@@ -95,10 +92,10 @@ public class ServerScreenController implements Controller {
         TextArea tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
         this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnHome = (Button) view.lookup("#btnHome");
-        this.btnEdit = (Button) view.lookup("#btnEdit");
         this.lbServerName = (Label) view.lookup("#lbServerName");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
+        this.serverMenuButton = (MenuButton) view.lookup("#serverMenuButton");
 
         this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
         this.audioChannelSubViewContainer.getChildren().clear();
@@ -120,7 +117,6 @@ public class ServerScreenController implements Controller {
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);
 
         this.lbServerName.setContextMenu(createContextMenuLeaveServer());
-        this.btnEdit.setVisible(false);
 
         // get members of this server
         editor.getRestManager().getExplicitServerInformation(localUser, server, this);
@@ -151,7 +147,6 @@ public class ServerScreenController implements Controller {
         // Add action listeners
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
         this.btnHome.setOnAction(this::homeButtonOnClick);
-        this.btnEdit.setOnAction(this::editButtonOnClick);
     }
 
     /**
@@ -190,7 +185,10 @@ public class ServerScreenController implements Controller {
         this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
-        this.btnEdit.setOnAction(null);
+        for (MenuItem i: serverMenuButton.getItems()) {
+            i.setOnAction(null);
+        }
+        this.serverMenuButton = null;
         this.menuItemLeaveServer.setOnAction(null);
 
         this.editor.getWebSocketManager().withOutWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
@@ -294,13 +292,32 @@ public class ServerScreenController implements Controller {
 
             createUserListView(members);
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
         if (this.localUser.getId().equals(this.server.getOwner())) {
             this.lbServerName.getContextMenu().getItems().get(0).setVisible(false);
-            this.btnEdit.setVisible(true);
+            addServerMenu(true);
+        } else {
+            addServerMenu(false);
         }
 
+    }
+
+    /**
+     * adds new menu items depending on the owner to the server menu button of the server screen
+     */
+    private void addServerMenu(boolean isOwner) {
+        if (isOwner) {
+            MenuItem serverSettings = new MenuItem(LanguageResolver.getString("SERVER_SETTINGS"));
+            serverSettings.setStyle("-fx-font-size:12");
+            serverMenuButton.getItems().add(0, serverSettings);
+            serverSettings.setOnAction(this::editButtonOnClick);
+        } else {
+            MenuItem leaverServer = new MenuItem(LanguageResolver.getString("LEAVE_SERVER"));
+            leaverServer.setStyle("-fx-font-size:12");
+            serverMenuButton.getItems().add(0, leaverServer);
+            leaverServer.setOnAction(this::leaveServerAttention);
+        }
     }
 
     /**

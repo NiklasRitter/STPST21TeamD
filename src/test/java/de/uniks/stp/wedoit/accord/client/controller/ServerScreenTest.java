@@ -1394,6 +1394,64 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(localUser.getServers().size(), 2);
     }
 
+    @Test
+    public void userServerMenuButtonTest() {
+        JsonObject restJson = getServerIdSuccessful();
+        JsonObject webSocketJson = webSocketCallbackUserJoined();
+        mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
+        mockWebSocket(webSocketJson);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        MenuButton serverMenuButton = lookup("#serverMenuButton").query();
+        Assert.assertEquals(2, serverMenuButton.getItems().size());
+        Assert.assertEquals(LanguageResolver.getString("LEAVE_SERVER"), serverMenuButton.getItems().get(0).getText());
+        Assert.assertEquals(LanguageResolver.getString("ADD_CATEGORY"), serverMenuButton.getItems().get(1).getText());
+        serverMenuButton.getItems().get(0).setId("LEAVE_SERVER");
+        serverMenuButton.getItems().get(1).setId("ADD_CATEGORY");
+        clickOn(serverMenuButton).clickOn("#LEAVE_SERVER");
+
+        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(),"Attention");
+
+        clickOn("#btnCancel");
+
+        clickOn(serverMenuButton).clickOn("#ADD_CATEGORY");
+
+        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(),"Add Category");
+
+    }
+
+    @Test
+    public void ownerServerMenuButtonTest() {
+        JsonObject restJson = getServerIdSuccessfulAsOwner();
+        JsonObject webSocketJson = webSocketCallbackUserJoined();
+        mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
+        mockWebSocket(webSocketJson);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        MenuButton serverMenuButton = lookup("#serverMenuButton").query();
+        Assert.assertEquals(2, serverMenuButton.getItems().size());
+        Assert.assertEquals(LanguageResolver.getString("SERVER_SETTINGS"), serverMenuButton.getItems().get(0).getText());
+        Assert.assertEquals(LanguageResolver.getString("ADD_CATEGORY"), serverMenuButton.getItems().get(1).getText());
+        serverMenuButton.getItems().get(0).setId("SERVER_SETTINGS");
+        serverMenuButton.getItems().get(1).setId("ADD_CATEGORY");
+        clickOn(serverMenuButton).clickOn("#SERVER_SETTINGS");
+
+        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(),"Edit Server");
+
+        clickOn("#btnSave");
+
+        clickOn(serverMenuButton).clickOn("#ADD_CATEGORY");
+
+        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(),"Add Category");
+
+    }
+
     // Methods for callbacks
 
     /**
@@ -1559,6 +1617,22 @@ public class ServerScreenTest extends ApplicationTest {
                                 .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "")
                                         .add("online", true))
                                 .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")
+                                        .add("online", false))
+                        )).build();
+    }
+
+    public JsonObject getServerIdSuccessfulAsOwner() {
+        return Json.createObjectBuilder().add("status", "success").add("message", "")
+                .add("data", Json.createObjectBuilder().add("id", server.getId())
+                        .add("name", server.getName()).add("owner", "123").add("categories",
+                                Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
+                                        .add("online", false))
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil")
                                         .add("online", false))
                         )).build();
     }

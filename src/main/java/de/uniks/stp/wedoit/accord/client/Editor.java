@@ -491,7 +491,7 @@ public class Editor {
                 stageManager.getStage(StageEnum.STAGE).setMaximized(true);
             });
         } else {
-            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null)));
+            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null)));
         }
     }
 
