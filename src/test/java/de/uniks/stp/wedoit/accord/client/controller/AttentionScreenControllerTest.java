@@ -195,7 +195,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
                         .add("owner", "owner123")
                         .add("categories", Json.createArrayBuilder())
                         .add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "owner123").add("name", "Alice")
+                                .add(Json.createObjectBuilder().add("id", "owner123").add("name", "Alice").add("description", "")
                                         .add("online", true))))
                 .build();
     }
