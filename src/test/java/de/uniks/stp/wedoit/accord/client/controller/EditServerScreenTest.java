@@ -118,7 +118,7 @@ public class EditServerScreenTest extends ApplicationTest {
         Label labelServerName = lookup("#lbServerName").query();
         Assert.assertEquals(labelServerName.getText(), server.getName());
 
-        clickOn("#btnEdit");
+        openEditServerScreen();
         WaitForAsyncUtils.waitForFxEvents();
         // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
@@ -130,7 +130,7 @@ public class EditServerScreenTest extends ApplicationTest {
         JsonObject jsonObject = buildServerInformationWithTwoMembers();
         mockRestExplicitServer(jsonObject);
 
-        clickOn("#btnEdit");
+        openEditServerScreen();
 
         // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
@@ -166,17 +166,6 @@ public class EditServerScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void editServerScreenNotVisibleForMember() {
-        localUser.setId("alice123");
-        JsonObject jsonObject = buildServerInformationWithTwoMembers();
-        mockRestExplicitServer(jsonObject);
-
-        Button btnEdit = lookup("#btnEdit").query();
-
-        Assert.assertFalse(btnEdit.isVisible());
-    }
-
-    @Test
     public void changeServerNameSuccessful() {
         localUser.setId("owner123");
         JsonObject serverInfoJson = buildServerInformationWithTwoMembers();
@@ -185,7 +174,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(server.getName(), "AliceServer");
 
-        clickOn("#btnEdit");
+        openEditServerScreen();
 
         // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
@@ -214,7 +203,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(server.getName(), "AliceServer");
 
-        clickOn("#btnEdit");
+        openEditServerScreen();
 
         // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
@@ -244,7 +233,7 @@ public class EditServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals(server.getName(), "AliceServer");
 
-        clickOn("#btnEdit");
+        openEditServerScreen();
 
         // Assert Pop-Up Window opens
         Assert.assertEquals("Edit Server", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
@@ -260,9 +249,8 @@ public class EditServerScreenTest extends ApplicationTest {
     public void createCountInvitationSuccessful() {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
-        clickOn("#btnEdit");
         WaitForAsyncUtils.waitForFxEvents();
-
+        openEditServerScreen();
         when(res.getBody()).thenReturn(new JsonNode(buildInvitationSuccessful().toString()));
 
         RadioButton radioBtnMaxCount = lookup("#radioBtnMaxCount").query();
@@ -298,7 +286,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void createTemporalInvitationSuccessful() {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
-        clickOn("#btnEdit");
+        openEditServerScreen();
         WaitForAsyncUtils.waitForFxEvents();
 
         when(res.getBody()).thenReturn(new JsonNode(buildInvitationSuccessful().toString()));
@@ -333,7 +321,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void createInvitationTestFailure() {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
-        clickOn("#btnEdit");
+        openEditServerScreen();
 
         when(res.getBody()).thenReturn(new JsonNode(buildInvitationFailure().toString()));
 
@@ -393,7 +381,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void loadInvitationsFailureTest() {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
-        clickOn("#btnEdit");
+        openEditServerScreen();
 
         ListView<Invitation> lvInvite = lookup("#lvInvitation").query();
 
@@ -425,7 +413,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void loadAndDeleteInvitationsSuccessfulTest() {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
-        clickOn("#btnEdit");
+        openEditServerScreen();
 
         ListView<Invitation> lvInvite = lookup("#lvInvitation").query();
 
@@ -495,7 +483,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void deleteInvitationsFailureTest() {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
-        clickOn("#btnEdit");
+        openEditServerScreen();
 
         ListView<Invitation> lvInvite = lookup("#lvInvitation").query();
 
@@ -539,8 +527,13 @@ public class EditServerScreenTest extends ApplicationTest {
         Assert.assertFalse(list.contains("invitationId3"));
     }
 
-
     // help methods that build jsonObjects in order to mock RestClient answers.
+
+    public void openEditServerScreen() {
+        MenuButton serverMenuButton = lookup("#serverMenuButton").query();
+        serverMenuButton.getItems().get(0).setId("test");
+        clickOn(serverMenuButton).clickOn("#test");
+    }
 
     private JsonObject loadInvitationSuccessful() {
         return Json.createObjectBuilder().add("status", "success")
@@ -643,6 +636,8 @@ public class EditServerScreenTest extends ApplicationTest {
                         .add("name", newServerName))
                 .build();
     }
+
+
 
     @Override
     public void stop() {
