@@ -179,10 +179,11 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
+        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         for (User user : server.getMembers()) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
         }
-        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
         for (MenuItem i: serverMenuButton.getItems()) {

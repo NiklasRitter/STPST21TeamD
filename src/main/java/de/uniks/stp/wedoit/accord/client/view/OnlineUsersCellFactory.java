@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.util.Callback;
 
 public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell<User>> {
@@ -82,7 +83,8 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
     }
 
     private void setLabelStyle(Label name, Label description) {
-        description.setStyle("-fx-font-size: 10");
+        description.setFont(new Font(9));
+
         if (stageManager.getPrefManager().loadDarkMode()) {
             name.setStyle("-fx-text-fill: #ADD8e6");
             description.setStyle("-fx-text-fill: #ADD8e6");

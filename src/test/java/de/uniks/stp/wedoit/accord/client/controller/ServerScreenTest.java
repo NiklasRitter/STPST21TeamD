@@ -981,6 +981,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         initUserListView();
         initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
