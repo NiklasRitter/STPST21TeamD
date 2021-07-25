@@ -52,4 +52,9 @@ public class JSON {
     public static final String MESSAGE_DELETED = "messageDeleted";
     public static final String AUDIO_JOINED = "audioJoined";
     public static final String AUDIO_LEFT = "audioLeft";
+
+    // COnstants for Steam
+    public static final String RESPONSE = "response";
+    public static final String PLAYERS = "players";
+    public static final String GAME_EXTRA_INfO = "gameextrainfo";
 }

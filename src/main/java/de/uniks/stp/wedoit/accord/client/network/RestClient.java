@@ -450,4 +450,16 @@ public class RestClient {
 
         sendRequest(req, callback);
     }
+
+    public void getCurrentGameForSteamUser(String UserSteamID, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(STEAM_USER_SUMMERY_URL + UserSteamID);
+
+        sendRequest(req, callback);
+    }
+
+    public void getSteamAppList(Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(STEAM_APP_LIST_URL);
+
+        sendRequest(req, callback);
+    }
 }
