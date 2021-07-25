@@ -24,6 +24,7 @@ public class GenModel implements ClassModelDecorator {
         boolean darkmode;
         boolean rememberMe;
         String language;
+        float systemVolume;
 
         @Link("options")
         AccordClient accordClient;

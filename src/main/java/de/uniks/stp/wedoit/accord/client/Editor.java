@@ -37,17 +37,31 @@ public class Editor {
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
+    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
     private SqliteDB db;
-    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
+
+    /**
+     * used to decode the given string
+     *
+     * @param property given string that has to be decoded
+     * @return decoded property as bytes
+     */
+    private static byte[] base64Decode(String property) {
+        return Base64.getDecoder().decode(property);
+    }
 
     /**
      * @return private final RestManager restManager
      */
     public RestManager getRestManager() {
         return restManager;
+    }
+
+    public AccordClient getAccordClient() {
+        return accordClient;
     }
 
     /**
@@ -71,7 +85,6 @@ public class Editor {
     public void setCurrentServer(Server currentServer) {
         this.currentServer = currentServer;
     }
-
 
     /**
      * create localUser without initialisation and set localUser in Editor
@@ -356,7 +369,6 @@ public class Editor {
         }
     }
 
-
     /**
      * creates a instance of the sqlite databank and loads the font size
      * right after log in since the username is needed
@@ -372,7 +384,6 @@ public class Editor {
     public void savePrivateMessage(PrivateMessage message) {
         db.save(message);
     }
-
 
     /**
      * loads old offline chats that the local users has a history with
@@ -606,23 +617,12 @@ public class Editor {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-    /**
-     * used to decode the given string
-     *
-     * @param property given string that has to be decoded
-     * @return decoded property as bytes
-     */
-    private static byte[] base64Decode(String property) {
-        return Base64.getDecoder().decode(property);
+    public StageManager getStageManager() {
+        return stageManager;
     }
-
 
     public void setStageManager(StageManager stageManager) {
         this.stageManager = stageManager;
-    }
-
-    public StageManager getStageManager() {
-        return stageManager;
     }
 
     public ChannelManager getChannelManager() {
