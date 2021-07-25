@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -124,15 +116,15 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
-                  <Label text="%OUTPUT_DEVICE">
+                  <Label minWidth="120.0" text="%OUTPUT_DEVICE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ChoiceBox id="choiceBoxOutputDevice" />
+                  <ChoiceBox id="choiceBoxOutputDevice" minWidth="200.0" />
                </children>
             </HBox>
-            <HBox alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT">
                <children>
                   <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -146,18 +138,21 @@
                      </image>
                   </ImageView>
                </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="42.0">
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
-                  <Label text="%INPUT_DEVICE">
+                  <Label minWidth="120.0" text="%INPUT_DEVICE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ChoiceBox id="choiceBoxInputDevice" />
+                  <ChoiceBox id="choiceBoxInputDevice" minWidth="200.0" />
                </children>
             </HBox>
-            <HBox alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT">
                <children>
                   <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -171,6 +166,9 @@
                      </image>
                   </ImageView>
                </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>

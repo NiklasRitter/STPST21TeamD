@@ -75,8 +75,7 @@ public class OptionsScreenController implements Controller {
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(LanguageResolver.getString("OPTIONS"));
 
         createChoiceBoxItems();
-        createOutputChoiceBox();
-        createInputChoiceBox();
+        createOutputInputChoiceBox();
 
         this.btnDarkMode.setSelected(options.isDarkmode());
 
@@ -87,35 +86,50 @@ public class OptionsScreenController implements Controller {
         this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
     }
 
-    private void createOutputChoiceBox() {
-        for(Mixer.Info m : AudioSystem.getMixerInfo()){
-            if(m.getDescription().contains("Direct Audio Device: DirectSound Playback")){
+    private void createOutputInputChoiceBox() {
+        for(Mixer.Info m : AudioSystem.getMixerInfo()) {
+            if(m.getDescription().equals("Direct Audio Device: DirectSound Playback")) {
                 this.choiceBoxOutputDevice.getItems().add(m.getName());
             }
-        }
-        if(this.options.getOutputDevice() != null){
-            this.choiceBoxOutputDevice.getSelectionModel().select(this.options.getOutputDevice().getDescription());
-        }
-        else{
-            this.choiceBoxOutputDevice.getSelectionModel().select(0);
-        }
-        this.choiceBoxInputDevice.setOnAction(this::choiceBoxOutputSelected);
-    }
-
-    private void choiceBoxOutputSelected(ActionEvent actionEvent) {
-        String info = this.choiceBoxOutputDevice.getSelectionModel().getSelectedItem();
-        for(Mixer.Info m : AudioSystem.getMixerInfo()){
-            if(m.getDescription().contains(info)){
-                this.options.setOutputDevice(m);
-                break;
+            else if(m.getDescription().equals("Direct Audio Device: DirectSound Capture")) {
+                this.choiceBoxInputDevice.getItems().add(m.getName());
             }
         }
+        if(this.options.getOutputDevice() != null) {
+            this.choiceBoxOutputDevice.getSelectionModel().select(this.options.getOutputDevice().getName());
+        }
+        else {
+            this.choiceBoxOutputDevice.getSelectionModel().select(0);
+        }
+        if(this.options.getInputDevice() != null) {
+            this.choiceBoxInputDevice.getSelectionModel().select(this.options.getInputDevice().getName());
+        }
+        else {
+            this.choiceBoxInputDevice.getSelectionModel().select(0);
+        }
+
+        this.choiceBoxOutputDevice.setOnAction(this::choiceBoxOutputInputSelected);
+        this.choiceBoxInputDevice.setOnAction(this::choiceBoxOutputInputSelected);
     }
 
-    private void createInputChoiceBox() {
-        for(Mixer.Info m : AudioSystem.getMixerInfo()){
-            if(m.getDescription().contains("Direct Audio Device: DirectSound Capture")){
-                this.choiceBoxInputDevice.getItems().add(m.getName());
+    private void choiceBoxOutputInputSelected(ActionEvent actionEvent) {
+        String description = "Direct Audio Device: DirectSound Playback";
+        String info = this.choiceBoxOutputDevice.getSelectionModel().getSelectedItem();
+        if(actionEvent.getSource() == this.choiceBoxInputDevice) {
+            description = "Direct Audio Device: DirectSound Capture";
+            info = this.choiceBoxInputDevice.getSelectionModel().getSelectedItem();
+        }
+        for(Mixer.Info m : AudioSystem.getMixerInfo()) {
+            if(m.getName().equals(info) && m.getDescription().equals(description)) {
+                if(actionEvent.getSource() == choiceBoxOutputDevice) {
+                    this.options.setOutputDevice(m);
+                    this.editor.getStageManager().getPrefManager().saveOutputDevice(m.getName());
+                }
+                else {
+                    this.options.setInputDevice(m);
+                    this.editor.getStageManager().getPrefManager().saveInputDevice(m.getName());
+                }
+                break;
             }
         }
     }

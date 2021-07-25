@@ -3,6 +3,8 @@ package de.uniks.stp.wedoit.accord.client.util;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import javafx.application.Platform;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.prefs.Preferences;
@@ -259,6 +261,62 @@ public class PreferenceManager {
             System.err.println("Error while loading language!");
             e.printStackTrace();
             return "";
+        }
+    }
+
+    public Mixer.Info loadOutputDevice() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            String device = preferences.get(OUTPUT_DEVICE, "");
+            for(Mixer.Info m : AudioSystem.getMixerInfo()){
+                if(m.getName().equals(device) && m.getDescription().equals("Direct Audio Device: DirectSound Playback")){
+                    return m;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error while loading output device!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveOutputDevice(String outputDevice) {
+        if (outputDevice != null) {
+            try {
+                Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+                preferences.put(OUTPUT_DEVICE, outputDevice);
+            } catch (Exception e) {
+                System.err.println("Error while saving outputDevice!");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Mixer.Info loadInputDevice() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            String device = preferences.get(INPUT_DEVICE, "");
+            for(Mixer.Info m : AudioSystem.getMixerInfo()){
+                if(m.getName().equals(device) && m.getDescription().equals("Direct Audio Device: DirectSound Capture")){
+                    return m;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error while loading input device!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveInputDevice(String inputDevice) {
+        if (inputDevice != null) {
+            try {
+                Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+                preferences.put(INPUT_DEVICE, inputDevice);
+            } catch (Exception e) {
+                System.err.println("Error while saving inputDevice!");
+                e.printStackTrace();
+            }
         }
     }
 }
