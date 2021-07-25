@@ -13,22 +13,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Locale;
 
 public class OptionsScreenController implements Controller {
 
-    private Parent view;
     private final Options options;
     private final Editor editor;
-
+    private Parent view;
     private CheckBox btnDarkMode;
     private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
     private ChoiceBox choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
-    private Slider sliderTextSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
+    private Slider sliderFontSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
     private ProgressBar progressBarTest;
     private VBox vBoxSoundSettings, vBoxExtraSettings;
 
@@ -58,7 +56,7 @@ public class OptionsScreenController implements Controller {
         this.btnSpotify = (Button) view.lookup("#btnSpotify");
         this.btnSteam = (Button) view.lookup("#btnSteam");
         this.btnTestSetup = (Button) view.lookup("#btnTestSetup");
-        this.sliderTextSize = (Slider) view.lookup("#sliderTextSize");
+        this.sliderFontSize = (Slider) view.lookup("#sliderTextSize");
         this.sliderOutputVolume = (Slider) view.lookup("#sliderOutputVolume");
         this.sliderInputVolume = (Slider) view.lookup("#sliderInputVolume");
         this.sliderInputSensitivity = (Slider) view.lookup("#sliderInputSensitivity");
@@ -80,16 +78,25 @@ public class OptionsScreenController implements Controller {
 
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
+        this.sliderFontSize.setOnMouseReleased(this::fontSizeSliderOnChange);
+        this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
+        editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
+                (PropertyChangeEvent propertyChangeEvent) -> {
+                    System.out.println(propertyChangeEvent.getNewValue());
+                });
     }
 
-    private void sliderOnChange(MouseEvent e) {
-        editor.saveFontSize((int) sliderTextSize.getValue());
+    private void fontSizeSliderOnChange(MouseEvent e) {
+        editor.saveFontSize((int) sliderFontSize.getValue());
+    }
+
+    private void outputVolumeSliderOnChange(MouseEvent e) {
+        editor.getAccordClient().getOptions().setSystemVolume((float) sliderOutputVolume.getValue());
     }
 
 
     private void createChoiceBoxItems() {
-        this.choiceBoxLanguage.getItems().addAll("English","Deutsch","فارسی");
+        this.choiceBoxLanguage.getItems().addAll("English", "Deutsch", "فارسی");
 
         if (Locale.getDefault().getLanguage().equals("fa_ir")) {
             this.choiceBoxLanguage.getSelectionModel().select(2);
@@ -130,7 +137,7 @@ public class OptionsScreenController implements Controller {
         LanguagePreferences.getLanguagePreferences().setLanguage(languageURL);
     }
 
-    private void changeIfLoginScreen(){
+    private void changeIfLoginScreen() {
         // If current stage is LoginScreen, than OptionScreen should not show logout button
         if (editor.getLocalUser().getUserKey() == null) {
             vBoxSoundSettings.getChildren().removeAll(vBoxSoundSettings.getChildren());
@@ -138,7 +145,8 @@ public class OptionsScreenController implements Controller {
             this.view.autosize();
             this.view.getScene().getWindow().sizeToScene();
         } else {
-            sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
+            sliderFontSize.setValue(editor.getChatFontSizeProperty().getValue());
+            sliderOutputVolume.setValue(editor.getAccordClient().getOptions().getSystemVolume());
         }
     }
 

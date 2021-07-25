@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.network.audio;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import org.json.JSONObject;
 
 import javax.sound.sampled.*;
@@ -36,11 +37,13 @@ public class AudioReceive extends Thread {
     }
 
     public void init() {
-        localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_SYSTEM_VOLUME, systemVolumeListener);
+        localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
+                systemVolumeListener);
+        updateVolume();
     }
 
     public void terminate() {
-        localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_SYSTEM_VOLUME, systemVolumeListener);
+        localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME, systemVolumeListener);
     }
 
     @Override
@@ -129,7 +132,12 @@ public class AudioReceive extends Thread {
     }
 
     public void onSystemVolumeChange(Object object) {
-        float systemVolume = localUser.getSystemVolume();
+        updateVolume();
+    }
+
+    public void updateVolume() {
+        float systemVolume = localUser.getAccordClient().getOptions().getSystemVolume();
+        System.out.println("System Volume Change: " + systemVolume);
 
         for (String name : sourceDataLineMap.keySet()) {
             SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
