@@ -13,18 +13,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.util.Locale;
 
 public class OptionsScreenController implements Controller {
 
-    private Parent view;
     private final Options options;
     private final Editor editor;
-
+    private Parent view;
     private CheckBox btnDarkMode;
     private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
     private ChoiceBox choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
@@ -81,6 +78,7 @@ public class OptionsScreenController implements Controller {
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
+        this.btnSteam.setOnAction(this::btnSteamOnClick);
     }
 
     private void sliderOnChange(MouseEvent e) {
@@ -89,7 +87,7 @@ public class OptionsScreenController implements Controller {
 
 
     private void createChoiceBoxItems() {
-        this.choiceBoxLanguage.getItems().addAll("English","Deutsch","فارسی");
+        this.choiceBoxLanguage.getItems().addAll("English", "Deutsch", "فارسی");
 
         if (Locale.getDefault().getLanguage().equals("fa_ir")) {
             this.choiceBoxLanguage.getSelectionModel().select(2);
@@ -130,7 +128,7 @@ public class OptionsScreenController implements Controller {
         LanguagePreferences.getLanguagePreferences().setLanguage(languageURL);
     }
 
-    private void changeIfLoginScreen(){
+    private void changeIfLoginScreen() {
         // If current stage is LoginScreen, than OptionScreen should not show logout button
         if (editor.getLocalUser().getUserKey() == null) {
             vBoxSoundSettings.getChildren().removeAll(vBoxSoundSettings.getChildren());
@@ -150,6 +148,7 @@ public class OptionsScreenController implements Controller {
     public void stop() {
         btnDarkMode.setOnAction(null);
         btnLogout.setOnAction(null);
+        btnSteam.setOnAction(null);
     }
 
     /**
@@ -168,6 +167,10 @@ public class OptionsScreenController implements Controller {
      */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
         editor.logoutUser(editor.getLocalUser().getUserKey());
+    }
+
+    private void btnSteamOnClick(ActionEvent actionEvent) {
+        this.editor.getStageManager().initView(ControllerEnum.CONNECT_TO_STEAM_SCREEN, null, null);
     }
 
 }

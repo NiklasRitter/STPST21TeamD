@@ -18,23 +18,25 @@ import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.StageEnum.POPUP_STAGE;
 
 public class StageManager extends Application {
 
     private final Map<String, Controller> controllerMap = new HashMap<>();
-    private ResourceManager resourceManager = new ResourceManager();
     private final Editor editor = new Editor();
+    private final Image logoImage = new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png")));
+    private final Map<StageEnum, Scene> sceneMap = new HashMap<>();
+    private final Map<StageEnum, Stage> stageMap = new HashMap<>();
+    private ResourceManager resourceManager = new ResourceManager();
     private PreferenceManager prefManager = new PreferenceManager();
     private SystemTrayController systemTrayController;
     private AccordClient model;
-    private final Image logoImage = new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png")));
-
-    private final Map<StageEnum, Scene> sceneMap = new HashMap<>();
-    private final Map<StageEnum, Stage> stageMap = new HashMap<>();
-
 
     {
         resourceManager.setPreferenceManager(prefManager);
@@ -44,8 +46,8 @@ public class StageManager extends Application {
      * inits the view using the ControllerEnum
      * set up in a strategy design Pattern
      *
-     * @param controller Enum with information which stage should be loaded
-     * @param parameter for controller
+     * @param controller   Enum with information which stage should be loaded
+     * @param parameter    for controller
      * @param parameterTwo for controller
      */
     public void initView(ControllerEnum controller, Object parameter, Object parameterTwo) {
@@ -60,6 +62,7 @@ public class StageManager extends Application {
 
             if (currentScene != null) currentScene.setRoot(root);
             else sceneMap.put(controller.stage, new Scene(root));
+            if (controller.stage.equals(POPUP_STAGE)) currentStage.sizeToScene();
 
             controller.setUpStage(currentStage);
 
@@ -79,10 +82,10 @@ public class StageManager extends Application {
     /**
      * loads the right controller when changing the scene
      *
-     * @param root fxml root object
+     * @param root           fxml root object
      * @param controllerName for switch case to load right controller
-     * @param parameter for controller
-     * @param parameterTwo for controller
+     * @param parameter      for controller
+     * @param parameterTwo   for controller
      */
     private void openController(Parent root, String controllerName, Object parameter, Object parameterTwo) {
         Controller controller = null;
@@ -114,6 +117,9 @@ public class StageManager extends Application {
                 break;
             case OPTIONS_SCREEN_CONTROLLER:
                 controller = new OptionsScreenController(root, model.getOptions(), editor);
+                break;
+            case CONNECT_TO_STEAM_SCREEN_CONTROLLER:
+                controller = new ConnectToSteamScreenController(root, model.getLocalUser(), editor);
                 break;
             case CREATE_CATEGORY_SCREEN_CONTROLLER:
                 controller = new CreateCategoryScreenController(root, editor);
@@ -157,6 +163,7 @@ public class StageManager extends Application {
 
     /**
      * clean up a specific controller
+     *
      * @param c the controller to be cleaned up
      */
     private void cleanup(ControllerEnum c) {
@@ -185,12 +192,12 @@ public class StageManager extends Application {
      * @param darkmode boolean weather darkmode is enabled or not
      */
     public void changeDarkmode(boolean darkmode) {
-        Scene s = sceneMap.get(StageEnum.STAGE), popup = sceneMap.get(StageEnum.POPUP_STAGE), game = sceneMap.get(StageEnum.POPUP_STAGE);
+        Scene scene = sceneMap.get(StageEnum.STAGE), popup = sceneMap.get(StageEnum.POPUP_STAGE), game = sceneMap.get(StageEnum.POPUP_STAGE);
         if (darkmode) {
-            if (s != null) {
-                s.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (scene != null) {
+                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
-                s.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
             if (popup != null) {
@@ -206,10 +213,10 @@ public class StageManager extends Application {
                         "dark-theme.css")).toExternalForm());
             }
         } else {
-            if (s != null) {
-                s.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (scene != null) {
+                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
-                s.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
             if (popup != null) {
@@ -276,6 +283,7 @@ public class StageManager extends Application {
      * start message for the initial screen,
      * overrides the start method from javafx.application </p>
      * sets up the stageMap with all needed stages
+     *
      * @param primaryStage from javafx
      */
     @Override
@@ -334,6 +342,7 @@ public class StageManager extends Application {
                 LocalUser localUser = model.getLocalUser();
                 resourceManager.stop(model);
                 if (localUser != null) {
+                    localUser.getSteamGameExtraInfoTimer().cancel();
                     String userKey = localUser.getUserKey();
                     if (userKey != null && !userKey.isEmpty()) {
                         editor.getRestManager().getRestClient().logout(userKey, response -> {

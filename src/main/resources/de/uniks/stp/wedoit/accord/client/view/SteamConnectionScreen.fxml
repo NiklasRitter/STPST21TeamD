@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="217.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="52.0" layoutY="14.0" prefHeight="50.0" prefWidth="261.0" text="%STEAM_ACCOUNT_INFO" wrapText="true" />
+      <Hyperlink id="hlSteamIDLookup" accessibleRoleDescription="https://steamidfinder.com/" layoutX="95.0" layoutY="67.0" text="https://steamidfinder.com/" />
+      <TextField id="tfSteam64ID" layoutX="96.0" layoutY="116.0" promptText="steamID64 (Dec)" />
+      <Button id="btnSave" layoutX="287.0" layoutY="165.0" mnemonicParsing="false" text="%SAVE" />
+      <Button id="btnCancel" layoutX="26.0" layoutY="165.0" mnemonicParsing="false" text="%CANCEL" />
+   </children>
+   <styleClass>
+      <String fx:value="styleBackgroundPopup" />
+      <String fx:value="styleBorder" />
+   </styleClass>
+</AnchorPane>
