@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_systemVolume
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -89,7 +89,7 @@
   roles: 	accordClient_localUser 	accordClient_options
 
 - options: 	org.fulib.classmodel.Clazz
-  attributes: 	options_darkmode 	options_rememberMe 	options_language
+  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_systemVolume
   model: 	c
   modified: 	false
   name: 	Options
@@ -685,15 +685,6 @@
   type: 	boolean
   typeSignature: 	boolean
 
-- localUser_systemVolume: 	org.fulib.classmodel.Attribute
-  clazz: 	localUser
-  id: 	LocalUser_systemVolume
-  modified: 	false
-  name: 	systemVolume
-  propertyStyle: 	Bean
-  type: 	float
-  typeSignature: 	float
-
 - localUser_servers: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	42
@@ -774,6 +765,15 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- options_systemVolume: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_systemVolume
+  modified: 	false
+  name: 	systemVolume
+  propertyStyle: 	Bean
+  type: 	float
+  typeSignature: 	float
 
 - options_accordClient: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

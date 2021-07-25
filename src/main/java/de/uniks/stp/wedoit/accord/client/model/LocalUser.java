@@ -20,7 +20,6 @@ public class LocalUser
    public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
    public static final String PROPERTY_MUTED = "muted";
    public static final String PROPERTY_ALL_MUTED = "allMuted";
-   public static final String PROPERTY_SYSTEM_VOLUME = "systemVolume";
    private String password;
    private String name;
    private String userKey;
@@ -34,7 +33,6 @@ public class LocalUser
    private Channel audioChannel;
    private boolean muted;
    private boolean allMuted;
-   private float systemVolume;
 
    public String getPassword()
    {
@@ -444,24 +442,6 @@ public class LocalUser
       final boolean oldValue = this.allMuted;
       this.allMuted = value;
       this.firePropertyChange(PROPERTY_ALL_MUTED, oldValue, value);
-      return this;
-   }
-
-   public float getSystemVolume()
-   {
-      return this.systemVolume;
-   }
-
-   public LocalUser setSystemVolume(float value)
-   {
-      if (value == this.systemVolume)
-      {
-         return this;
-      }
-
-      final float oldValue = this.systemVolume;
-      this.systemVolume = value;
-      this.firePropertyChange(PROPERTY_SYSTEM_VOLUME, oldValue, value);
       return this;
    }
 

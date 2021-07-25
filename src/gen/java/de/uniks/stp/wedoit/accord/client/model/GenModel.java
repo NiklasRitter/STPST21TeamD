@@ -24,6 +24,7 @@ public class GenModel implements ClassModelDecorator {
         boolean darkmode;
         boolean rememberMe;
         String language;
+        float systemVolume;
 
         @Link("options")
         AccordClient accordClient;
@@ -39,7 +40,6 @@ public class GenModel implements ClassModelDecorator {
         Channel audioChannel;
         boolean muted;
         boolean allMuted;
-        float systemVolume;
 
         @Link("localUser")
         List<User> users;
