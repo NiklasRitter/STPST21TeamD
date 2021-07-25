@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
@@ -28,10 +27,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class Editor {
 
@@ -156,10 +152,14 @@ public class Editor {
         return server;
     }
 
+    public User haveUserWithServer(String name, String id, boolean online, Server server) {
+        return haveUserWithServer(name, id, online, server, "");
+    }
+
     /**
      * @return a user with given id, onlineStatus and name who is member of the given server
      */
-    public User haveUserWithServer(String name, String id, boolean online, Server server) {
+    public User haveUserWithServer(String name, String id, boolean online, Server server, String description) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(id);
         Objects.requireNonNull(server);
@@ -168,7 +168,11 @@ public class Editor {
                 return user;
             }
         }
-        return haveUser(id, name).setOnlineStatus(online).withServers(server);
+        return haveUser(id, name, description).setOnlineStatus(online).withServers(server);
+    }
+
+    public User haveUser(String id, String name) {
+        return haveUser(id, name, "");
     }
 
     /**
@@ -178,7 +182,7 @@ public class Editor {
      * @param name name of the user
      * @return localUser
      */
-    public User haveUser(String id, String name) {
+    public User haveUser(String id, String name, String description) {
         LocalUser localUser = accordClient.getLocalUser();
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
@@ -190,6 +194,7 @@ public class Editor {
                 user = new User().setName(name);
             }
             user.setId(id);
+            user.setDescription(description);
             return user;
         }
 
@@ -205,6 +210,7 @@ public class Editor {
 
         User user = new User().setId(id).setName(name).setOnlineStatus(true).setChatRead(true);
         localUser.withUsers(user);
+        user.setDescription(description);
         return user;
     }
 
@@ -306,7 +312,7 @@ public class Editor {
             System.err.println("Error while logging out");
         }
         Platform.runLater(() -> {
-            stageManager.initView(ControllerEnum.LOGIN_SCREEN,true, null);
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
             stageManager.getStage(StageEnum.POPUP_STAGE).hide();
         });
     }
@@ -394,7 +400,7 @@ public class Editor {
     }
 
     /**
-     * @param user specific user to load 50 old messages
+     * @param user   specific user to load 50 old messages
      * @param offset current offset to load the next 50
      * @return the next 50 or less messages
      */
@@ -412,6 +418,7 @@ public class Editor {
 
     /**
      * Updates fontsize in settings databank and updates the property
+     *
      * @param size to be set
      */
     public void saveFontSize(int size) {
@@ -469,7 +476,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.initView(ControllerEnum.LOGIN_SCREEN,true,null);
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
         }
     }
 
@@ -496,7 +503,7 @@ public class Editor {
      */
     public void serverWithMembers(List<User> members, Server server) {
         for (User member : members) {
-            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
+            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server, member.getDescription());
         }
     }
 
