@@ -82,6 +82,8 @@ dependencies {
 
     compile 'com.vdurmont:emoji-java:5.1.1'
 
+    //Spotify Web API Java - https://github.com/thelinmichael/spotify-web-api-java
+    compile 'se.michaelthelin.spotify:spotify-web-api-java:6.5.4'
 }
 
 generateScenarioSource {

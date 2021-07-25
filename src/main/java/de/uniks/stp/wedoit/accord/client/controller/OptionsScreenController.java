@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.network.spotifyPKCE.Authorization;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -81,6 +82,7 @@ public class OptionsScreenController implements Controller {
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
+        this.btnSpotify.setOnAction(this::authorizeSpotify);
     }
 
     private void sliderOnChange(MouseEvent e) {
@@ -170,4 +172,13 @@ public class OptionsScreenController implements Controller {
         editor.logoutUser(editor.getLocalUser().getUserKey());
     }
 
+    /**
+     * Authorize Spotify Account of localUser
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
+    private void authorizeSpotify(ActionEvent actionEvent) {
+        Authorization authorizationSpotify = new Authorization();
+        authorizationSpotify.authorizationCodeUri_Sync();
+    }
 }
