@@ -28,15 +28,7 @@ public class AttentionLeaveServerAsOwnerController implements Controller {
         this.lblLeaveServerError = (Label) view.lookup("#lblLeaveServerError");
         this.btnCancel = (Button) view.lookup("#btnCancel");
 
-        this.setComponentsText();
-
         this.btnCancel.setOnAction(this::btnCancelOnClick);
-    }
-
-    private void setComponentsText() {
-        lblYourAreOwner.setText(LanguageResolver.getString("YOU_ARE_SERVER_OWNER"));
-        lblLeaveServerError.setText(LanguageResolver.getString("CAN_NO_LEAVE_SERVER_AS_OWNER"));
-        btnCancel.setText(LanguageResolver.getString("CANCEL"));
     }
 
     /**

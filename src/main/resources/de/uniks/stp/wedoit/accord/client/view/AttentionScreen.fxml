@@ -11,7 +11,7 @@
 
 <VBox alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Label id="lblAttention" alignment="CENTER" contentDisplay="CENTER" styleClass="redLabel">
+        <Label id="lblAttention" alignment="CENTER" contentDisplay="CENTER" styleClass="redLabel" text="%ATTENTION">
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>
@@ -32,13 +32,13 @@
         </HBox>
         <HBox alignment="CENTER">
             <children>
-                <Button id="btnDiscard" mnemonicParsing="false" styleClass="styleButton">
+                <Button id="btnDiscard" mnemonicParsing="false" styleClass="styleButton" text="%DISCARD">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
                 </Button>
                 <Region minWidth="102.0" prefWidth="102.0" />
-                <Button id="btnDelete" mnemonicParsing="false" styleClass="styleButton">
+                <Button id="btnDelete" mnemonicParsing="false" styleClass="styleButton" text="%DELETE">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>

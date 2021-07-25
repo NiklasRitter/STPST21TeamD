@@ -8,29 +8,27 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="199.0" prefWidth="411.0" spacing="10.0" styleClass="styleBackgroundPopup"
-      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="199.0" prefWidth="411.0" spacing="10.0" styleClass="styleBackgroundPopup" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Label id="lblEnterServerName">
+        <Label id="lblEnterServerName" text="%ENTER_SERVER_NAME">
             <font>
-                <Font name="System Bold" size="14.0"/>
+                <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <TextField id="tfServerName" prefHeight="25.0" prefWidth="50.0" styleClass="createTextField"/>
+        <TextField id="tfServerName" prefHeight="25.0" prefWidth="50.0" promptText="%SERVERNAME" styleClass="createTextField" />
         <Region prefHeight="37.0" prefWidth="351.0">
             <VBox.margin>
-                <Insets top="5.0"/>
+                <Insets top="5.0" />
             </VBox.margin>
         </Region>
-        <Label id="lblError" textFill="RED"/>
-        <Button id="btnCreateServer" defaultButton="true" mnemonicParsing="false" styleClass="styleButton">
+        <Label id="lblError" textFill="RED" />
+        <Button id="btnCreateServer" defaultButton="true" mnemonicParsing="false" styleClass="styleButton" text="%CREATE_SERVER">
             <font>
-                <Font name="System Bold" size="14.0"/>
+                <Font name="System Bold" size="14.0" />
             </font>
         </Button>
     </children>
     <padding>
-        <Insets left="30.0" right="30.0" top="5.0"/>
+        <Insets left="30.0" right="30.0" top="5.0" />
     </padding>
 </VBox>
