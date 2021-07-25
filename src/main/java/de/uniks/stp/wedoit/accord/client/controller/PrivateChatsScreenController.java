@@ -346,7 +346,7 @@ public class PrivateChatsScreenController implements Controller {
     private void userDescriptionChanged(PropertyChangeEvent propertyChangeEvent) {
         if (!lblDescription.getText().equals(selectedUser.getDescription())) {
             if (!selectedUser.getDescription().equals("") && selectedUser.getDescription() != null)
-                lblDescription.setText("- " + selectedUser.getDescription());
+                Platform.runLater(() -> lblDescription.setText("- " + selectedUser.getDescription()));
         }
     }
 

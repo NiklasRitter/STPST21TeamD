@@ -638,14 +638,26 @@ public class Editor {
     }
 
     public void changeUserDescription(String userId, String newDescription) {
+
         if (this.getLocalUser().getId().equals(userId)) {
             this.getLocalUser().setDescription(newDescription);
+
         }
         for (User user : getLocalUser().getUsers()) {
+
             if (user.getId().equals(userId)) {
                 user.setDescription(newDescription);
                 break;
             }
         }
+        for (Server server : getLocalUser().getServers()) {
+            for (User user : server.getMembers()) {
+                if (user.getId().equals(userId)) {
+                    user.setDescription(newDescription);
+                    break;
+                }
+            }
+        }
+
     }
 }

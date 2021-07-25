@@ -53,5 +53,5 @@ public class JSON {
     public static final String MESSAGE_DELETED = "messageDeleted";
     public static final String AUDIO_JOINED = "audioJoined";
     public static final String AUDIO_LEFT = "audioLeft";
-    public static final String USER_DESCRIPTION_CHANGED = "“userDescriptionChanged”";
+    public static final String USER_DESCRIPTION_CHANGED = "userDescriptionChanged";
 }

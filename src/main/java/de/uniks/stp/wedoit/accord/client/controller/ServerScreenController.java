@@ -62,8 +62,6 @@ public class ServerScreenController implements Controller {
     private PropertyChangeListener userDescriptionListener = this::userDescriptionChanged;
 
 
-
-
     /**
      * Create a new Controller
      *
@@ -187,7 +185,7 @@ public class ServerScreenController implements Controller {
      */
     public void stop() {
         for (User user : server.getMembers()) {
-            this.server.listeners().removePropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
+            user.listeners().removePropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
         }
         this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         this.btnOptions.setOnAction(null);
@@ -323,7 +321,7 @@ public class ServerScreenController implements Controller {
         this.refreshLvUsers(new Channel());
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
         for (User user : server.getMembers()) {
-            this.server.listeners().addPropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
+            user.listeners().addPropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
         }
     }
 
