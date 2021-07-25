@@ -52,12 +52,15 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
                     description.setTooltip(new Tooltip(item.getDescription()));
                     setLabelStyle(name, description);
 
-
                     hBox.setAlignment(Pos.CENTER_LEFT);
                     vBox.setAlignment(Pos.CENTER_LEFT);
-
                     hBox.getChildren().addAll(circle, name);
-                    vBox.getChildren().addAll(hBox, description);
+
+                    if (!item.getDescription().equals("") || !(item.getDescription() == null)) {
+                        vBox.getChildren().addAll(hBox, description);
+                    } else {
+                        vBox.getChildren().addAll(hBox);
+                    }
                     this.setGraphic(vBox);
                 }
 
