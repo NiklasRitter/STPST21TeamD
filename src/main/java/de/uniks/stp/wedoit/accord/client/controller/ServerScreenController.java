@@ -384,4 +384,8 @@ public class ServerScreenController implements Controller {
     public void resetLbChannelName() {
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
     }
+
+    private void userDescriptionChanged(PropertyChangeEvent propertyChangeEvent) {
+        this.lvServerUsers.refresh();
+    }
 }

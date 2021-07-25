@@ -335,8 +335,18 @@ public class PrivateChatsScreenController implements Controller {
                     LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
             privateChatController.initPrivateChat(selectedUser);
             this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
+            if (selectedUser.getDescription() != null && !selectedUser.getDescription().equals("")) {
+                lblDescription.setText("- " + selectedUser.getDescription());
+            }
             this.btnPlay.setVisible(true);
             this.editor.getStageManager().updateDarkmode();
+        }
+    }
+
+    private void userDescriptionChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (!lblDescription.getText().equals(selectedUser.getDescription())) {
+            if (!selectedUser.getDescription().equals("") && selectedUser.getDescription() != null)
+                lblDescription.setText("- " + selectedUser.getDescription());
         }
     }
 

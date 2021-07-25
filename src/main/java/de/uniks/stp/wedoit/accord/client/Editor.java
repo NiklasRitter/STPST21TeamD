@@ -636,4 +636,16 @@ public class Editor {
     public MessageManager getMessageManager() {
         return messageManager;
     }
+
+    public void changeUserDescription(String userId, String newDescription) {
+        if (this.getLocalUser().getId().equals(userId)) {
+            this.getLocalUser().setDescription(newDescription);
+        }
+        for (User user : getLocalUser().getUsers()) {
+            if (user.getId().equals(userId)) {
+                user.setDescription(newDescription);
+                break;
+            }
+        }
+    }
 }
