@@ -5,10 +5,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -63,7 +60,13 @@ public class AudioSend extends Thread {
         }
 
         try {
-            line = (TargetDataLine) AudioSystem.getLine(info);
+            Mixer.Info inputDevice = this.localUser.getAccordClient().getOptions().getInputDevice();
+            if(inputDevice != null){
+                line = (TargetDataLine) AudioSystem.getMixer(inputDevice).getLine(info);
+            }
+            else{
+                line = (TargetDataLine) AudioSystem.getLine(info);
+            }
             line.open(audioFormat);
             byte[] readData = new byte[1279];
             System.arraycopy(metaData, 0, readData, 0, 255);

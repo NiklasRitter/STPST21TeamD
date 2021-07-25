@@ -3,10 +3,7 @@ package de.uniks.stp.wedoit.accord.client.network.audio;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import org.json.JSONObject;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
@@ -53,9 +50,16 @@ public class AudioReceive extends Thread {
 
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
 
+            Mixer.Info outputDevice = this.localUser.getAccordClient().getOptions().getOutputDevice();
             for (String memberName : connectedUser) {
                 if (!memberName.equals(localUser.getName())) {
-                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                    SourceDataLine membersSourceDataLine;
+                    if(outputDevice != null) {
+                        membersSourceDataLine = (SourceDataLine) AudioSystem.getMixer(outputDevice).getLine(dataLineInfo);
+                    }
+                    else {
+                        membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                    }
                     membersSourceDataLine.open(audioFormat);
                     membersSourceDataLine.start();
 
