@@ -57,10 +57,10 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
                     vBox.setAlignment(Pos.CENTER_LEFT);
                     hBox.getChildren().addAll(circle, name);
 
-                    if (!item.getDescription().equals("") || !(item.getDescription() == null)) {
-                        vBox.getChildren().addAll(hBox, description);
-                    } else {
+                    if (item.getDescription().equals("") || item.getDescription() == null || !item.isOnlineStatus()) {
                         vBox.getChildren().addAll(hBox);
+                    } else {
+                        vBox.getChildren().addAll(hBox, description);
                     }
                     this.setGraphic(vBox);
                 }
