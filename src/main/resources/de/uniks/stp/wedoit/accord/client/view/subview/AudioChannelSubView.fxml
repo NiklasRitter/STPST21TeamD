@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -13,7 +14,7 @@
    <children>
       <HBox prefHeight="22.0" prefWidth="150.0">
          <children>
-            <Label id="lblVoiceChannel" prefHeight="17.0" prefWidth="82.0" styleClass="audioLabel" text="Voice channel:">
+            <Label id="lblVoiceChannel" prefHeight="17.0" prefWidth="82.0" styleClass="audioLabel" text="%VOICE_CHANNEL">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin></Label>
@@ -37,6 +38,9 @@
                <HBox.margin>
                   <Insets bottom="5.0" />
                </HBox.margin>
+               <tooltip>
+                  <Tooltip text="%MUTE" />
+               </tooltip>
             </Button>
             <Button id="btnMuteAll" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="sidebar-Button">
                <HBox.margin>
@@ -49,6 +53,9 @@
                      </image>
                   </ImageView>
                </graphic>
+               <tooltip>
+                  <Tooltip text="%MUTE_ALL" />
+               </tooltip>
             </Button>
             <Button id="btnLeave" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="sidebar-Button">
                <HBox.margin>
@@ -60,7 +67,10 @@
                         <Image url="@../images/leaveAudioChannel.png" />
                      </image>
                   </ImageView>
-               </graphic></Button>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%LEAVE" />
+               </tooltip></Button>
          </children>
       </HBox>
    </children>

@@ -28,7 +28,7 @@ public class GameScreenController implements Controller {
     private final Parent view;
     private final Editor editor;
     private final User opponent;
-    private Label lbScore, lblOpponentPlayed, lblYouPlayed, lblYou;
+    private Label lbScore;
     private ImageView imgYouPlayed, imgOppPlayed;
     private Button btnRock, btnPaper, btnScissors;
     private String gameAction;
@@ -76,12 +76,6 @@ public class GameScreenController implements Controller {
         this.btnRock = (Button) view.lookup("#btnRock");
         this.btnScissors = (Button) view.lookup("#btnScissors");
         this.lbScore = (Label) view.lookup("#lbScore");
-        this.lblOpponentPlayed = (Label) view.lookup("#lblOpponentPlayed");
-        this.lblYouPlayed = (Label) view.lookup("#lblYouPlayed");
-        this.lblYou = (Label) view.lookup("#lblYou");
-
-        this.setComponentsText();
-
         lbOpponent.setText(opponent.getName());
 
         this.imgYouPlayed.setImage(choosingIMG);
@@ -94,15 +88,6 @@ public class GameScreenController implements Controller {
         this.opponent.listeners().addPropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
 
         this.lbScore.textProperty().bind(Bindings.createStringBinding(() -> (ownScore.get() + ":" + oppScore.get()), oppScore, ownScore));
-    }
-
-    private void setComponentsText() {
-        this.lblYou.setText(LanguageResolver.getString("YOU"));
-        this.lblYouPlayed.setText(LanguageResolver.getString("YOU_PLAYED"));
-        this.lblOpponentPlayed.setText(LanguageResolver.getString("OPPONENT_PLAYED"));
-        this.btnRock.setText(LanguageResolver.getString("ROCK"));
-        this.btnPaper.setText(LanguageResolver.getString("PAPER"));
-        this.btnScissors.setText(LanguageResolver.getString("SCISSORS"));
     }
 
     /**

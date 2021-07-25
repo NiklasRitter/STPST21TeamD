@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,28 +15,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="460.0" maxWidth="640.0" minHeight="460.0" minWidth="640.0" prefHeight="460.0" prefWidth="640.0"
-      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="460.0" maxWidth="640.0" minHeight="460.0" minWidth="640.0" prefHeight="460.0" prefWidth="640.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <AnchorPane maxHeight="460.0" maxWidth="640.0" minHeight="460.0" minWidth="640.0" prefHeight="460.0"
-                    prefWidth="640.0">
+        <AnchorPane maxHeight="460.0" maxWidth="640.0" minHeight="460.0" minWidth="640.0" prefHeight="460.0" prefWidth="640.0">
             <children>
-                <BorderPane maxHeight="460.0" maxWidth="640.0" minHeight="460.0" minWidth="640.0" prefHeight="460.0"
-                            prefWidth="640.0" style="-fx-background-color: #fff;">
+                <BorderPane maxHeight="460.0" maxWidth="640.0" minHeight="460.0" minWidth="640.0" prefHeight="460.0" prefWidth="640.0" style="-fx-background-color: #fff;">
                     <left>
-                        <Pane minWidth="320.0" prefHeight="400.0" prefWidth="320.0" styleClass="login-linear-grad"
-                              BorderPane.alignment="CENTER">
+                        <Pane minWidth="320.0" prefHeight="400.0" prefWidth="320.0" styleClass="login-linear-grad" BorderPane.alignment="CENTER">
                             <children>
-                                <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="85.0" layoutY="155.0"
-                                           pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="85.0" layoutY="155.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@images/logo_accord_1.png"/>
+                                        <Image url="@images/logo_accord_1.png" />
                                     </image>
                                 </ImageView>
-                                <Label fx:id="lblGuestLogin12" layoutX="119.0" layoutY="315.0" prefHeight="35.0"
-                                       prefWidth="82.0" text="Accord" textFill="#fcfcfc">
+                                <Label fx:id="lblGuestLogin12" layoutX="119.0" layoutY="315.0" prefHeight="35.0" prefWidth="82.0" text="Accord" textFill="#fcfcfc">
                                     <font>
-                                        <Font name="System Bold" size="24.0"/>
+                                        <Font name="System Bold" size="24.0" />
                                     </font>
                                 </Label>
                             </children>
@@ -44,58 +39,43 @@
                     <center>
                         <StackPane fx:id="pnlStack" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                             <children>
-                                <Pane id="pnlSignIn" fx:id="pnlSignUp1" minWidth="320.0" prefHeight="200.0"
-                                      prefWidth="320.0" styleClass="styleBackgroundPopup">
+                                <Pane id="pnlSignIn" fx:id="pnlSignUp1" minWidth="320.0" prefHeight="200.0" prefWidth="320.0" styleClass="styleBackgroundPopup">
                                     <children>
-                                        <TextField id="tfUserName" fx:id="tfUsername11" layoutX="36.0" layoutY="114.0"
-                                                   prefHeight="35.0" prefWidth="245.0" styleClass="createTextField"/>
-                                        <PasswordField id="pwUserPw" fx:id="tfPassword11" layoutX="36.0" layoutY="175.0"
-                                                       prefHeight="35.0" prefWidth="245.0"
-                                                       styleClass="createTextField"/>
-                                        <Button id="btnLogin" fx:id="btnSignIn11" layoutX="167.0" layoutY="292.0"
-                                                mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0"
-                                                styleClass="styleButton"/>
-                                        <Button id="btnSwitchRegister" fx:id="btnSignUp11" layoutX="53.0"
-                                                layoutY="395.0" mnemonicParsing="false" prefHeight="35.0"
-                                                prefWidth="221.0" styleClass="styleButton"/>
-                                        <Label id="lblSignIn" fx:id="lblGuestLogin111" layoutX="36.0" layoutY="73.0"
-                                               prefHeight="30.0" prefWidth="242.0" text="Sign In">
+                                        <TextField id="tfUserName" fx:id="tfUsername11" layoutX="36.0" layoutY="114.0" prefHeight="35.0" prefWidth="245.0" promptText="%USERNAME" styleClass="createTextField" />
+                                        <PasswordField id="pwUserPw" fx:id="tfPassword11" layoutX="36.0" layoutY="175.0" prefHeight="35.0" prefWidth="245.0" promptText="%PASSWORD" styleClass="createTextField" />
+                                        <Button id="btnLogin" fx:id="btnSignIn11" layoutX="167.0" layoutY="292.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="styleButton" text="%LOGIN" />
+                                        <Button id="btnSwitchRegister" fx:id="btnSignUp11" layoutX="53.0" layoutY="395.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="221.0" styleClass="styleButton" text="%NO_ACCOUNT_YET_REGISTER" />
+                                        <Label id="lblSignIn" fx:id="lblGuestLogin111" layoutX="36.0" layoutY="73.0" prefHeight="30.0" prefWidth="242.0" text="%LOGIN">
                                             <font>
-                                                <Font name="System Bold" size="20.0"/>
+                                                <Font name="System Bold" size="20.0" />
+                                            </font>
+                                 <tooltip>
+                                    <Tooltip text="%LOGIN" />
+                                 </tooltip>
+                                        </Label>
+                                        <Button id="btnGuestLogin" layoutX="29.0" layoutY="292.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" styleClass="second-button" text="%GUEST_LOGIN" />
+                                        <Label id="lblError" layoutX="53.0" layoutY="438.0" prefHeight="17.0" prefWidth="248.0" textAlignment="CENTER" />
+                                        <Label id="lblRememberMe" layoutX="121.0" layoutY="337.0" prefHeight="20.0" prefWidth="185.0" text="%REMEMBER_ME">
+                                            <font>
+                                                <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Button id="btnGuestLogin" layoutX="29.0" layoutY="292.0"
-                                                mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0"
-                                                styleClass="second-button"/>
-                                        <Label id="lblError" layoutX="53.0" layoutY="438.0" prefHeight="17.0"
-                                               prefWidth="248.0" textAlignment="CENTER"/>
-                                        <Label id="lblRememberMe" layoutX="121.0" layoutY="337.0" prefHeight="20.0"
-                                               prefWidth="185.0">
-                                            <font>
-                                                <Font size="14.0"/>
-                                            </font>
-                                        </Label>
-                                        <CheckBox id="btnRememberMe" layoutX="98.0" layoutY="338.0"
-                                                  mnemonicParsing="false"/>
-                                        <Button id="btnOptions" fx:id="btnSignIn111" layoutX="268.0" layoutY="12.0"
-                                                mnemonicParsing="false" prefHeight="35.0" prefWidth="38.0"
-                                                styleClass="sidebar-Button">
+                                        <CheckBox id="btnRememberMe" layoutX="98.0" layoutY="338.0" mnemonicParsing="false" />
+                                        <Button id="btnOptions" fx:id="btnSignIn111" layoutX="268.0" layoutY="12.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="38.0" styleClass="sidebar-Button">
                                             <graphic>
-                                                <ImageView fx:id="btnOptions2" fitHeight="30.0" fitWidth="55.0"
-                                                           pickOnBounds="true" preserveRatio="true">
+                                                <ImageView fx:id="btnOptions2" fitHeight="30.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@images/options.png"/>
+                                                        <Image url="@images/options.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
+                                            <tooltip>
+                                                <Tooltip text="%OPTIONS" />
+                                            </tooltip>
                                         </Button>
-                                        <Label id="lblUserValid" layoutX="55.0" layoutY="360.0" prefHeight="17.0"
-                                               prefWidth="218.0"/>
-                                        <Label id="lblGuestPassword" layoutX="55.0" layoutY="377.0" prefHeight="17.0"
-                                               prefWidth="219.0"/>
-                                        <PasswordField id="pwConfirmPW" fx:id="tfPassword111" layoutX="36.0"
-                                                       layoutY="236.0" prefHeight="35.0" prefWidth="245.0"
-                                                       styleClass="createTextField"/>
+                                        <Label id="lblUserValid" layoutX="55.0" layoutY="360.0" prefHeight="17.0" prefWidth="218.0" />
+                                        <Label id="lblGuestPassword" layoutX="55.0" layoutY="377.0" prefHeight="17.0" prefWidth="219.0" />
+                                        <PasswordField id="pwConfirmPW" fx:id="tfPassword111" layoutX="36.0" layoutY="236.0" prefHeight="35.0" prefWidth="245.0" promptText="%CONFIRM_PASSWORD" styleClass="createTextField" />
                                     </children>
                                 </Pane>
                             </children>

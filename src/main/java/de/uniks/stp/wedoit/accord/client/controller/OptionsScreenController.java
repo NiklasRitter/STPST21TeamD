@@ -1,6 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
@@ -9,24 +10,27 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Locale;
 
 public class OptionsScreenController implements Controller {
 
-    private final Parent view;
+    private Parent view;
     private final Options options;
     private final Editor editor;
 
     private CheckBox btnDarkMode;
-    private Button logoutButton;
-    private Label lblLanguage, lblDarkMode, lbTextSize;
-    private ChoiceBox choiceBoxLanguage;
-    private Slider sliderTextSize;
+    private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
+    private ChoiceBox choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
+    private Slider sliderTextSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
+    private ProgressBar progressBarTest;
+    private VBox vBoxSoundSettings, vBoxExtraSettings;
 
     /**
      * Create a new Controller
@@ -50,41 +54,33 @@ public class OptionsScreenController implements Controller {
      */
     public void init() {
         this.btnDarkMode = (CheckBox) view.lookup("#btnDarkMode");
-        this.logoutButton = (Button) view.lookup("#btnLogout");
-        this.lblLanguage = (Label) view.lookup("#lblLanguage");
-        this.lblDarkMode = (Label) view.lookup("#lblDarkMode");
-        this.lbTextSize = (Label) view.lookup("#lbTextSize");
+        this.btnLogout = (Button) view.lookup("#btnLogout");
+        this.btnSpotify = (Button) view.lookup("#btnSpotify");
+        this.btnSteam = (Button) view.lookup("#btnSteam");
+        this.btnTestSetup = (Button) view.lookup("#btnTestSetup");
         this.sliderTextSize = (Slider) view.lookup("#sliderTextSize");
-
-        setComponentsText();
-
+        this.sliderOutputVolume = (Slider) view.lookup("#sliderOutputVolume");
+        this.sliderInputVolume = (Slider) view.lookup("#sliderInputVolume");
+        this.sliderInputSensitivity = (Slider) view.lookup("#sliderInputSensitivity");
         this.choiceBoxLanguage = (ChoiceBox) view.lookup("#choiceBoxLanguage");
+        this.choiceBoxInputDevice = (ChoiceBox) view.lookup("#choiceBoxInputDevice");
+        this.choiceBoxOutputDevice = (ChoiceBox) view.lookup("#choiceBoxOutputDevice");
+        this.progressBarTest = (ProgressBar) view.lookup("prgBarSetupTest");
+
+        vBoxSoundSettings = (VBox) view.lookup("#vBoxSoundSettings");
+        vBoxExtraSettings = (VBox) view.lookup("#vBoxExtraSettings");
+
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(LanguageResolver.getString("OPTIONS"));
+
         createChoiceBoxItems();
 
         this.btnDarkMode.setSelected(options.isDarkmode());
 
+        changeIfLoginScreen();
+
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
-        this.logoutButton.setOnAction(this::logoutButtonOnClick);
+        this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.sliderTextSize.setOnMouseReleased(this::sliderOnChange);
-
-        // If current stage is LoginScreen, than OptionScreen should not show logout button
-        Stage stage = this.editor.getStageManager().getStage(StageEnum.STAGE);
-        if (stage.getTitle().equals(LanguageResolver.getString("LOGIN"))) {
-            logoutButton.setVisible(false);
-            HBox parent = (HBox) logoutButton.getParent();
-            parent.getChildren().remove(logoutButton);
-
-            sliderTextSize.setVisible(false);
-            lbTextSize.setVisible(false);
-            HBox parent1 = (HBox) sliderTextSize.getParent();
-            parent1.getChildren().removeAll(sliderTextSize, lbTextSize);
-        } else {
-            sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
-        }
-
-        Tooltip logoutButton = new Tooltip();
-        logoutButton.setText(LanguageResolver.getString("LOGOUT"));
-        this.logoutButton.setTooltip(logoutButton);
     }
 
     private void sliderOnChange(MouseEvent e) {
@@ -105,38 +101,45 @@ public class OptionsScreenController implements Controller {
         this.choiceBoxLanguage.setOnAction(this::choiceBoxLanguageOnClick);
     }
 
-    private void setComponentsText() {
-        this.lblDarkMode.setText(LanguageResolver.getString("DARKMODE"));
-        this.lblLanguage.setText(LanguageResolver.getString("LANGUAGE"));
-        this.lbTextSize.setText(LanguageResolver.getString("CHAT_TEXT_SIZE"));
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(LanguageResolver.getString("OPTIONS"));
-    }
-
-
     private void choiceBoxLanguageOnClick(Event event) {
         Object selectedItem = this.choiceBoxLanguage.getSelectionModel().getSelectedItem();
 
         switch (selectedItem.toString()) {
             case "English":
-                options.setLanguage("en_GB");
                 setLanguage("language/Language");
+                options.setLanguage("en_GB");
                 break;
             case "Deutsch":
-                options.setLanguage("de_DE");
                 setLanguage("language/Language_de_DE");
+                options.setLanguage("de_DE");
                 break;
             case "فارسی":
-                options.setLanguage("fa_IR");
                 setLanguage("language/Language_fa_IR");
+                options.setLanguage("fa_IR");
                 break;
         }
-        setComponentsText();
+        Scene scene = this.view.getScene();
+        this.view = ControllerEnum.OPTION_SCREEN.loadScreen();
+        scene.setRoot(this.view);
+        this.init();
     }
 
     private void setLanguage(String languageURL) {
         Locale.setDefault(LanguagePreferences.getLanguagePreferences().getCurrentLocale(languageURL));
         LanguageResolver.load();
         LanguagePreferences.getLanguagePreferences().setLanguage(languageURL);
+    }
+
+    private void changeIfLoginScreen(){
+        // If current stage is LoginScreen, than OptionScreen should not show logout button
+        if (editor.getLocalUser().getUserKey() == null) {
+            vBoxSoundSettings.getChildren().removeAll(vBoxSoundSettings.getChildren());
+            vBoxExtraSettings.getChildren().removeAll(vBoxExtraSettings.getChildren());
+            this.view.autosize();
+            this.view.getScene().getWindow().sizeToScene();
+        } else {
+            sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
+        }
     }
 
     /**
@@ -146,7 +149,7 @@ public class OptionsScreenController implements Controller {
      */
     public void stop() {
         btnDarkMode.setOnAction(null);
-        logoutButton.setOnAction(null);
+        btnLogout.setOnAction(null);
     }
 
     /**

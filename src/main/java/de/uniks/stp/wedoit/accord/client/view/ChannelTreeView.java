@@ -2,8 +2,6 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
@@ -22,11 +20,9 @@ import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
 
     private final StageManager stageManager;
-    private final Controller controller;
 
-    public ChannelTreeView(StageManager stageManager, Controller controller) {
+    public ChannelTreeView(StageManager stageManager) {
         this.stageManager = stageManager;
-        this.controller = controller;
     }
 
     @Override
@@ -217,7 +213,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         menuItem3 = new MenuItem("- " + LanguageResolver.getString("CLOSE_CONNECTION"));
         menuItem3.setOnAction((event) -> {
             Channel channel = localUser.getAudioChannel();
-            this.stageManager.getEditor().getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, (CategoryTreeViewController) controller);
+            this.stageManager.getEditor().getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, null);
             cell.getTreeView().refresh();
         });
         contextMenu.getItems().add(menuItem1);

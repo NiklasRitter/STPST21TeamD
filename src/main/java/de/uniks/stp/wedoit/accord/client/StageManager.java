@@ -89,7 +89,7 @@ public class StageManager extends Application {
         switch (controllerName) {
             case LOGIN_SCREEN_CONTROLLER:
                 editor.haveLocalUser();
-                controller = new LoginScreenController(root, model, editor);
+                controller = new LoginScreenController(root, model, editor, (boolean) parameter);
                 break;
             case MAIN_SCREEN_CONTROLLER:
                 controller = new MainScreenController(root, model.getLocalUser(), editor);
@@ -161,7 +161,10 @@ public class StageManager extends Application {
      */
     private void cleanup(ControllerEnum c) {
 
-        if (controllerMap.get(c.controllerName) != null) controllerMap.get(c.controllerName).stop();
+        if (controllerMap.get(c.controllerName) != null) {
+            controllerMap.get(c.controllerName).stop();
+            controllerMap.remove(c.controllerName);
+        }
 
         if (stageMap.get(StageEnum.EMOJI_PICKER_STAGE) != null) {
             stageMap.get(StageEnum.EMOJI_PICKER_STAGE).hide();
