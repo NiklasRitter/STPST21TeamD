@@ -132,7 +132,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
-            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
     }
 
@@ -152,7 +152,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetChannels(List<Channel> channelList) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
-            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
     }
 
