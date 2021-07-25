@@ -8,11 +8,13 @@ public class Options
    public static final String PROPERTY_ACCORD_CLIENT = "accordClient";
    public static final String PROPERTY_REMEMBER_ME = "rememberMe";
    public static final String PROPERTY_LANGUAGE = "language";
+   public static final String PROPERTY_SYSTEM_VOLUME = "systemVolume";
    private boolean darkmode;
    private AccordClient accordClient;
    protected PropertyChangeSupport listeners;
    private boolean rememberMe;
    private String language;
+   private float systemVolume;
 
    public boolean isDarkmode()
    {
@@ -92,6 +94,24 @@ public class Options
       final String oldValue = this.language;
       this.language = value;
       this.firePropertyChange(PROPERTY_LANGUAGE, oldValue, value);
+      return this;
+   }
+
+   public float getSystemVolume()
+   {
+      return this.systemVolume;
+   }
+
+   public Options setSystemVolume(float value)
+   {
+      if (value == this.systemVolume)
+      {
+         return this;
+      }
+
+      final float oldValue = this.systemVolume;
+      this.systemVolume = value;
+      this.firePropertyChange(PROPERTY_SYSTEM_VOLUME, oldValue, value);
       return this;
    }
 

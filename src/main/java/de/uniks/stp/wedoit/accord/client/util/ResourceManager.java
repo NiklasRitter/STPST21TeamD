@@ -25,6 +25,7 @@ public class ResourceManager {
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkModeListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, preferenceManager.languageListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME, preferenceManager.systemVolumeListener);
         }
         if (clientModel.getLocalUser() != null) {
             loadLocalUser(clientModel.getLocalUser());
@@ -44,6 +45,7 @@ public class ResourceManager {
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, preferenceManager.darkModeListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, preferenceManager.languageListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME, preferenceManager.systemVolumeListener);
         }
         if (clientModel.getLocalUser() != null) {
             Objects.requireNonNull(clientModel.getLocalUser()).listeners().removePropertyChangeListener(LocalUser.PROPERTY_PASSWORD, preferenceManager.passwordListener);
@@ -87,15 +89,15 @@ public class ResourceManager {
         preferenceManager.saveDarkMode(options.isDarkmode());
         preferenceManager.saveRememberMe(options.isRememberMe());
         preferenceManager.saveLanguage(options.getLanguage());
-    }
-
-
-    public void setPreferenceManager(PreferenceManager preferenceManager) {
-        this.preferenceManager = preferenceManager;
+        preferenceManager.saveSystemVolume(options.getSystemVolume());
     }
 
     public PreferenceManager getPreferenceManager() {
         return preferenceManager;
+    }
+
+    public void setPreferenceManager(PreferenceManager preferenceManager) {
+        this.preferenceManager = preferenceManager;
     }
 
     /**
@@ -109,6 +111,7 @@ public class ResourceManager {
         Objects.requireNonNull(options).setDarkmode(preferenceManager.loadDarkMode());
         Objects.requireNonNull(options).setLanguage(preferenceManager.loadLanguage());
         Objects.requireNonNull(options).setRememberMe(preferenceManager.loadRememberMe());
+        Objects.requireNonNull(options).setSystemVolume(preferenceManager.loadSystemVolume());
     }
 
     /**

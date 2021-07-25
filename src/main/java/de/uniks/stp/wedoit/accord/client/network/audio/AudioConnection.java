@@ -44,6 +44,7 @@ public class AudioConnection {
             connectedUser.add(member.getName());
         }
         this.receivingThread = new AudioReceive(localUser, audioSocket, connectedUser);
+        this.receivingThread.init();
         this.receivingThread.start();
     }
 
@@ -72,6 +73,7 @@ public class AudioConnection {
             if (this.receivingThread.isAlive()) {
                 try {
                     receivingThread.setShouldReceive(false);
+                    receivingThread.terminate();
                     receivingThread.join();
                 } catch (InterruptedException e) {
                     System.err.println("Error on closing receivingConnection");
