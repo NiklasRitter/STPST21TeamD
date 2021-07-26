@@ -6,7 +6,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
-import de.uniks.stp.wedoit.accord.client.network.spotifyPKCE.Authorization;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -14,9 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.util.Locale;
 
@@ -178,7 +176,7 @@ public class OptionsScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void authorizeSpotify(ActionEvent actionEvent) {
-        Authorization authorizationSpotify = new Authorization();
-        authorizationSpotify.authorizationCodeUri_Sync();
+        this.editor.setSpotifyIntegration(new SpotifyIntegration());
+        this.editor.getSpotifyIntegration().authorize();
     }
 }

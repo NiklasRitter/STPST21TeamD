@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.network.spotify;
+package de.uniks.stp.wedoit.accord.client.network.spotifyOld;
 
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;

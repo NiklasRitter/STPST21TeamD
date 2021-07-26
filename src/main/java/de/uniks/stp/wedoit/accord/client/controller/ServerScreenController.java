@@ -13,6 +13,7 @@ import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
@@ -273,6 +274,10 @@ public class ServerScreenController implements Controller {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
             Platform.runLater(() -> this.refreshLvUsers(null));
         }
+        SpotifyIntegration spotifyIntegration = this.editor.getSpotifyIntegration();
+        if (spotifyIntegration != null) {
+            System.out.println(spotifyIntegration.getUsersCurrentlyPlayingTrack());
+        }
     }
 
     private void handleAudioChannelChange(PropertyChangeEvent propertyChangeEvent) {
@@ -366,6 +371,11 @@ public class ServerScreenController implements Controller {
         this.lvServerUsers.getItems().removeAll();
         this.lvServerUsers.setItems(FXCollections.observableList(users));
         this.lvServerUsers.refresh();
+
+        SpotifyIntegration spotifyIntegration = this.editor.getSpotifyIntegration();
+        if (spotifyIntegration != null) {
+            System.out.println(spotifyIntegration.getUsersCurrentlyPlayingTrack());
+        }
     }
 
     /**

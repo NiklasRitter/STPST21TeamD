@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
@@ -46,6 +47,7 @@ public class Editor {
     private StageManager stageManager;
     private SqliteDB db;
     private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
+    private SpotifyIntegration spotifyIntegration;
 
     /**
      * @return private final RestManager restManager
@@ -628,5 +630,13 @@ public class Editor {
 
     public MessageManager getMessageManager() {
         return messageManager;
+    }
+
+    public void setSpotifyIntegration(SpotifyIntegration spotifyIntegration) {
+        this.spotifyIntegration = spotifyIntegration;
+    }
+
+    public SpotifyIntegration getSpotifyIntegration() {
+        return this.spotifyIntegration;
     }
 }

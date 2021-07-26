@@ -1,4 +1,4 @@
-package de.uniks.stp.wedoit.accord.client.network.spotify;
+package de.uniks.stp.wedoit.accord.client.network.spotifyOld;
 
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
@@ -6,7 +6,6 @@ import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import org.apache.hc.core5.http.ParseException;
-import com.wrapper.spotify.*;
 
 import java.io.IOException;
 import java.net.URI;
