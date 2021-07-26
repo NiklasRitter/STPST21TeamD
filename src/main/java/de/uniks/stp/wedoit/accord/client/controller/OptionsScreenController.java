@@ -88,7 +88,6 @@ public class OptionsScreenController implements Controller {
                     System.out.println(propertyChangeEvent.getNewValue());
                 });
         this.btnTestSetup.setOnAction(this::btnAudioTest);
-        sliderInputSensitivity.setValue(editor.getAudioRMS());
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
         sliderInputSensitivity.valueProperty().addListener((e,old,n)->editor.saveSensitivity(n.doubleValue()));
     }
@@ -152,6 +151,7 @@ public class OptionsScreenController implements Controller {
             this.view.autosize();
             this.view.getScene().getWindow().sizeToScene();
         } else {
+            sliderInputSensitivity.setValue(editor.getAudioRMS());
             sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
             sliderOutputVolume.setValue(editor.getAccordClient().getOptions().getSystemVolume());
         }
@@ -166,6 +166,10 @@ public class OptionsScreenController implements Controller {
         btnDarkMode.setOnAction(null);
         btnLogout.setOnAction(null);
         btnTestSetup.setOnAction(null);
+        sliderTextSize.setOnMouseReleased(null);
+        sliderOutputVolume.setOnMouseReleased(null);
+        btnTestSetup.setOnAction(null);
+        progressBarTest.progressProperty().unbind();
         if(recorder != null){
             recorder.stop();
             recorder = null;
