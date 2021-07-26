@@ -96,12 +96,8 @@ public class PrivateChatsScreenController implements Controller {
         this.privateChatController.init();
         this.serverListController.init();
 
-        //this.btnHome.setOnAction(this::btnHomeOnClicked);
-
-        //this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
-
-        //this.initTooltips();
+        
         this.initOnlineUsersList();
 
         this.btnPlay.setVisible(false);
