@@ -369,6 +369,29 @@ public class Editor {
         }
     }
 
+    public double calculateRMS(byte[] buf, int bytes){
+        float[] samples = new float[1024];
+
+        // convert bytes to samples here
+        for(int i = 0, s = 0; i < bytes;) {
+            int sample = 0;
+
+            sample |= buf[i++] & 0xFF; // (reverse these two lines
+            sample |= buf[i++] << 8;   //  if the format is big endian)
+
+            // normalize to range of +/-1.0f
+            samples[s++] = sample / 32768f;
+        }
+        float rms = 0f;
+        for(float sample : samples) {
+            rms += sample * sample;
+        }
+
+        return (float)Math.sqrt(rms / samples.length);
+
+    }
+
+
     /**
      * creates a instance of the sqlite databank and loads the font size
      * right after log in since the username is needed
@@ -384,6 +407,15 @@ public class Editor {
     public void savePrivateMessage(PrivateMessage message) {
         db.save(message);
     }
+
+    public double getAudioRMS(){
+        return db.getAudioRMS();
+    }
+
+    public void saveSensitivity(double rms){
+        db.updateAudioRMS(rms);
+    }
+
 
     /**
      * loads old offline chats that the local users has a history with

@@ -287,3 +287,15 @@
     -fx-background-color: #4a4a4a;
     -fx-padding :0 0 0 10;
 }
+
+
+.pbRed {
+    -fx-accent: rgba(165, 0, 0, 0.5);
+}
+
+.pbGreen{
+    -fx-accent: rgba(39, 115, 0, 0.5);
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-text-box-border: transparent;
+}

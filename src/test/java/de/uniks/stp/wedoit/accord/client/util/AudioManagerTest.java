@@ -220,7 +220,7 @@ public class AudioManagerTest extends ApplicationTest {
         joinAudioServerTest();
         AudioManager audioManager = stageManager.getEditor().getAudioManager();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
-        AudioConnection tempAudioCon = new AudioConnection(localUser, channel) {
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
             @Override
             protected DatagramSocket createSocket() {
                 DatagramSocket datagramSocket = null;
@@ -248,7 +248,7 @@ public class AudioManagerTest extends ApplicationTest {
     public void muteAndUnmuteAllTest() {
         joinAudioServerTest();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
-        AudioConnection tempAudioCon = new AudioConnection(localUser, channel) {
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
             @Override
             protected DatagramSocket createSocket() {
                 DatagramSocket datagramSocket = null;
@@ -282,7 +282,7 @@ public class AudioManagerTest extends ApplicationTest {
     public void muteAndUnmuteYourselfTest() {
         joinAudioServerTest();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
-        AudioConnection tempAudioCon = new AudioConnection(localUser, channel) {
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
             @Override
             protected DatagramSocket createSocket() {
                 DatagramSocket datagramSocket = null;
