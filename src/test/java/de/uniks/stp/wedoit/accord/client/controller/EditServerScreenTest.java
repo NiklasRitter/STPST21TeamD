@@ -321,6 +321,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void createInvitationTestFailure() {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
+        WaitForAsyncUtils.waitForFxEvents();
         openEditServerScreen();
 
         when(res.getBody()).thenReturn(new JsonNode(buildInvitationFailure().toString()));
@@ -622,9 +623,9 @@ public class EditServerScreenTest extends ApplicationTest {
                         .add("owner", "owner123")
                         .add("categories", Json.createArrayBuilder())
                         .add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "alice123").add("name", "Alice")
+                                .add(Json.createObjectBuilder().add("id", "alice123").add("name", "Alice").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "bob123").add("name", "Bob")
+                                .add(Json.createObjectBuilder().add("id", "bob123").add("name", "Bob").add("description", "")
                                         .add("online", true))))
                 .build();
     }

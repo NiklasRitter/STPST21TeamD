@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
@@ -56,7 +55,9 @@ public class ServerScreenController implements Controller {
     private ServerChatController serverChatController;
     private VBox audioChannelSubViewContainer;
     private AudioChannelSubViewController audioChannelSubViewController;
+    private PropertyChangeListener userDescriptionListener = this::userDescriptionChanged;
     private MenuButton serverMenuButton;
+
 
     /**
      * Create a new Controller
@@ -131,6 +132,12 @@ public class ServerScreenController implements Controller {
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_NAME, this.serverNameListener);
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
         this.editor.getStageManager().getModel().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
+        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+
+    }
+
+    private void onDarkmodeChanged(PropertyChangeEvent propertyChangeEvent) {
+        lvServerUsers.refresh();
     }
 
     /**
@@ -153,7 +160,7 @@ public class ServerScreenController implements Controller {
         }
         try {
             Parent view = FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/AudioChannelSubView.fxml")), LanguageResolver.getLanguage());
-            if(channel.getCategory().getServer() == server){
+            if (channel.getCategory().getServer() == server) {
                 audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, categoryTreeViewController, channel);
             } else {
                 audioChannelSubViewController = new AudioChannelSubViewController(localUser, view, editor, null, channel);
@@ -172,6 +179,11 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
+        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+        for (User user : server.getMembers()) {
+            user.listeners().removePropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
+        }
+
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
         for (MenuItem i: serverMenuButton.getItems()) {
@@ -326,6 +338,9 @@ public class ServerScreenController implements Controller {
         lvServerUsers.setCellFactory(new OnlineUsersCellFactory(this.editor.getStageManager(), this.server));
         this.refreshLvUsers(new Channel());
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
+        for (User user : server.getMembers()) {
+            user.listeners().addPropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
+        }
     }
 
     // Helping Methods
@@ -371,7 +386,7 @@ public class ServerScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage(PropertyChangeEvent propertyChangeEvent) {
-            this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, this.server, null);
+        this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, this.server, null);
     }
 
     public CategoryTreeViewController getCategoryTreeViewController() {
@@ -384,5 +399,9 @@ public class ServerScreenController implements Controller {
 
     public void resetLbChannelName() {
         this.lbChannelName.setText(LanguageResolver.getString("SELECT_A_CHANNEL"));
+    }
+
+    private void userDescriptionChanged(PropertyChangeEvent propertyChangeEvent) {
+        this.lvServerUsers.refresh();
     }
 }

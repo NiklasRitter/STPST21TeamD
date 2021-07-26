@@ -36,7 +36,7 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.*;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -130,13 +130,13 @@ public class ServerScreenTest extends ApplicationTest {
     @Override
     public void stop() {
         stageManager.getResourceManager().saveOptions(this.oldOptions);
-        stageManager.stop();
         oldOptions = null;
         rule = null;
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -981,6 +981,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         initUserListView();
         initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
         Label lblChannelName = lookup("#lbChannelName").query();
         ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
@@ -1044,6 +1045,60 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(lvTextChat.getItems().get(1).getText(), QUOTE_PREFIX + formatted + QUOTE_MESSAGE + "123" + QUOTE_SUFFIX);
         Assert.assertEquals(lvTextChat.getItems().get(2).getText(), "quote");
     }
+
+
+    @Test
+    public void descriptionTest() {
+        //init channel list and select first channel
+
+        JsonObject restJson = getServerIdSuccessfulWithDescriptions();
+        JsonObject webSocketJson = webSocketCallbackUserJoined();
+        ListView<Object> lvServerUsers = lookup("#lvServerUsers").queryListView();
+        mockRest(restJson);
+        WaitForAsyncUtils.waitForFxEvents();
+        mockWebSocket(webSocketJson);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        initChannelListView();
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        User n1 = null;
+        User n2 = null;
+        for (User user : server.getMembers()) {
+            if (user.getName().equals("N1")) {
+                n1 = user;
+            }
+            if (user.getName().equals("N2")) {
+                n2 = user;
+            }
+        }
+        Assert.assertNotNull(n1);
+        Assert.assertNotNull(n2);
+        Assert.assertTrue(n1.getDescription().equals("plays a game"));
+        Assert.assertTrue(n2.getDescription().equals("is afk"));
+
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
+        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX +
+                this.stageManager.getEditor().getWebSocketManager().getCleanLocalUserName(), privateChatWebSocketClient);
+
+        this.stageManager.getEditor().getWebSocketManager().start();
+
+        verify(systemWebSocketClient).setCallback(callbackArgumentCaptorWebSocket.capture());
+        this.wsCallback = callbackArgumentCaptorWebSocket.getValue();
+
+        this.wsCallback.handleMessage(changeDescription());
+        WaitForAsyncUtils.waitForFxEvents();
+
+        for (User user : server.getMembers()) {
+            if (user.getId().equals(n1.getId())) {
+                n1 = user;
+            }
+        }
+        Assert.assertEquals("newTest", n1.getDescription());
+
+    }
+
 
     @Test
     public void testUpdateMessage() {
@@ -1296,12 +1351,12 @@ public class ServerScreenTest extends ApplicationTest {
     @Test
     public void joinServerThroughMessage() {
         initUserListView();
+        WaitForAsyncUtils.waitForFxEvents();
         initChannelListView();
         WaitForAsyncUtils.waitForFxEvents();
         Label lblChannelName = lookup("#lbChannelName").query();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
-        WaitForAsyncUtils.waitForFxEvents();
         tvServerChannels.getSelectionModel().select(1);
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
@@ -1405,7 +1460,13 @@ public class ServerScreenTest extends ApplicationTest {
      */
     public JsonObject webSocketCallbackUserJoined() {
         return Json.createObjectBuilder().add("action", "userJoined").add("data",
-                Json.createObjectBuilder().add("id", "123456").add("name", "Phil")).build();
+                Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")).build();
+    }
+
+    private JsonStructure changeDescription() {
+        return Json.createObjectBuilder().add("action", USER_DESCRIPTION_CHANGED).add("data",
+                Json.createObjectBuilder().add("id", "I1").add("description", "newTest")).build();
+
     }
 
     /**
@@ -1413,7 +1474,7 @@ public class ServerScreenTest extends ApplicationTest {
      */
     public JsonObject webSocketCallbackUserLeft() {
         return Json.createObjectBuilder().add("action", "userLeft").add("data",
-                Json.createObjectBuilder().add("id", "123456").add("name", "Phil")).build();
+                Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")).build();
     }
 
     public JsonObject webSocketCallbackServerUpdated() {
@@ -1428,12 +1489,12 @@ public class ServerScreenTest extends ApplicationTest {
 
     public JsonObject webSocketCallbackUserExited() {
         return Json.createObjectBuilder().add("action", "userExited").add("data",
-                Json.createObjectBuilder().add("id", "123456").add("name", "Phil")).build();
+                Json.createObjectBuilder().add("id", "123456").add("description", "").add("name", "Phil")).build();
     }
 
     public JsonObject webSocketCallbackUserArrived() {
         return Json.createObjectBuilder().add("action", "userArrived").add("data",
-                Json.createObjectBuilder().add("id", "12345678").add("name", "Tom").add("online", true)).build();
+                Json.createObjectBuilder().add("id", "12345678").add("name", "Tom").add("description", "").add("online", true)).build();
     }
 
     public JsonObject webSocketCallbackChannelCreated() {
@@ -1534,13 +1595,29 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder().add("id", server.getId())
                         .add("name", server.getName()).add("owner", "ow12ner").add("categories",
                                 Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2").add("description", "")
                                         .add("online", false))
-                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil")
+                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")
+                                        .add("online", false))
+                        )).build();
+    }
+
+    public JsonObject getServerIdSuccessfulWithDescriptions() {
+        return Json.createObjectBuilder().add("status", "success").add("message", "")
+                .add("data", Json.createObjectBuilder().add("id", server.getId())
+                        .add("name", server.getName()).add("owner", "ow12ner").add("categories",
+                                Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1").add("description", "plays a game")
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2").add("description", "is afk")
+                                        .add("online", false))
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "")
+                                        .add("online", true))
+                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")
                                         .add("online", false))
                         )).build();
     }
@@ -1550,13 +1627,13 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder().add("id", server.getId())
                         .add("name", server.getName()).add("owner", "123").add("categories",
                                 Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2").add("description", "")
                                         .add("online", false))
-                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil")
+                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")
                                         .add("online", false))
                         )).build();
     }
@@ -1776,13 +1853,13 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505")
                         .add("name", "new Server").add("owner", "ow12ner").add("categories",
                                 Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2").add("description", "")
                                         .add("online", false))
-                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", localUser.getId()).add("name", localUser.getName())
+                                .add(Json.createObjectBuilder().add("id", localUser.getId()).add("name", localUser.getName()).add("description", "")
                                         .add("online", false))
                         )).build();
     }
