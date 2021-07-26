@@ -70,7 +70,6 @@ public class ServerScreenController implements Controller {
      * @param model  The model this Controller belongs to
      * @param editor The editor of the Application
      * @param server The Server this Screen belongs to
-     * @param serverListController List Controller
      */
     public ServerScreenController(Parent view, LocalUser model, Editor editor, Server server) {
         this.view = view;

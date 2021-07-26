@@ -82,9 +82,6 @@ public class ServerListController implements Controller {
         if (!editor.getStageManager().getStage(StageEnum.STAGE).getTitle().equals("Private Chats")) {
             lvServerList.getSelectionModel().select(editor.getCurrentServer());
         }
-
-        /*btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
-        btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));*/
     }
 
     public void stop() {
@@ -92,14 +89,6 @@ public class ServerListController implements Controller {
         this.btnHome.setOnAction(null);
         this.addServerButton.setOnAction(null);
         this.enterInvitationButton.setOnAction(null);
-    }
-
-    /**
-     * Initializes the Tooltips for the Buttons
-     */
-    private void initTooltips() {
-        btnHome.setTooltip(new Tooltip(LanguageResolver.getString("HOME")));
-        btnOptions.setTooltip(new Tooltip(LanguageResolver.getString("OPTIONS")));
     }
 
     /**
