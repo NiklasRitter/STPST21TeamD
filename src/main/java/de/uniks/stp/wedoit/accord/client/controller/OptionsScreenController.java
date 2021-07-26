@@ -58,7 +58,7 @@ public class OptionsScreenController implements Controller {
         this.btnSpotify = (Button) view.lookup("#btnSpotify");
         this.btnSteam = (Button) view.lookup("#btnSteam");
         this.btnTestSetup = (Button) view.lookup("#btnTestSetup");
-        this.sliderFontSize = (Slider) view.lookup("#sliderTextSize");
+        this.sliderTextSize = (Slider) view.lookup("#sliderTextSize");
         this.sliderOutputVolume = (Slider) view.lookup("#sliderOutputVolume");
         this.sliderInputVolume = (Slider) view.lookup("#sliderInputVolume");
         this.sliderInputSensitivity = (Slider) view.lookup("#sliderInputSensitivity");
@@ -81,7 +81,7 @@ public class OptionsScreenController implements Controller {
 
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.sliderFontSize.setOnMouseReleased(this::fontSizeSliderOnChange);
+        this.sliderTextSize.setOnMouseReleased(this::fontSizeSliderOnChange);
         this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
         editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
                 (PropertyChangeEvent propertyChangeEvent) -> {
@@ -94,7 +94,7 @@ public class OptionsScreenController implements Controller {
     }
 
     private void fontSizeSliderOnChange(MouseEvent e) {
-        editor.saveFontSize((int) sliderFontSize.getValue());
+        editor.saveFontSize((int) sliderTextSize.getValue());
     }
 
     private void outputVolumeSliderOnChange(MouseEvent e) {
@@ -152,7 +152,7 @@ public class OptionsScreenController implements Controller {
             this.view.autosize();
             this.view.getScene().getWindow().sizeToScene();
         } else {
-            sliderFontSize.setValue(editor.getChatFontSizeProperty().getValue());
+            sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
             sliderOutputVolume.setValue(editor.getAccordClient().getOptions().getSystemVolume());
         }
     }
