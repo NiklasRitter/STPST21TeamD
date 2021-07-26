@@ -6,6 +6,7 @@ package de.uniks.stp.wedoit.accord.client.constants;
 public class Preferences {
     public static final String DARK_MODE = "darkmode";
     public static final String REMEMBER_ME = "remember_me";
+    public static final String SYSTEM_VOLUME = "system_volume";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String LANGUAGE = "language";

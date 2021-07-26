@@ -21,7 +21,7 @@ public class AttentionScreenController implements Controller {
 
     private Button btnDiscard;
     private Button btnDelete;
-    private Label lblError, lblAreYouSure, lblAttention;
+    private Label lblError, lblAreYouSure;
 
     /**
      * Create a new Controller
@@ -41,26 +41,17 @@ public class AttentionScreenController implements Controller {
     @Override
     public void init() {
         lblError = (Label) this.view.lookup("#lblError");
-        lblAttention = (Label) this.view.lookup("#lblAttention");
         lblAreYouSure = (Label) this.view.lookup("#lblAreYouSure");
         btnDiscard = (Button) this.view.lookup("#btnDiscard");
         btnDelete = (Button) this.view.lookup("#btnDelete");
 
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
-        this.setComponentsText();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
+        loadCorrectLabelText(objectToDelete);
 
         this.lblError.setVisible(false);
 
         addActionListener();
-    }
-
-    private void setComponentsText() {
-        this.lblAttention.setText(LanguageResolver.getString("ATTENTION"));
-        this.btnDelete.setText(LanguageResolver.getString("DELETE"));
-        this.btnDiscard.setText(LanguageResolver.getString("DISCARD"));
-        loadCorrectLabelText(objectToDelete);
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
     }
 
     /**

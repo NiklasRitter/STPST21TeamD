@@ -56,19 +56,12 @@ public class UpdateMessageScreenController implements Controller {
         }
         tfUpdateMessage.setText(messageText);
 
-        setComponentsText();
-
         btnDiscard.setOnAction(this::discardChanges);
         btnUpdateMessage.setOnAction(this::updateMessage);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
 
         this.markingController = new MarkingController(tfUpdateMessage, message.getChannel(), vboxMarkingSelection);
         this.markingController.init();
-    }
-
-    private void setComponentsText() {
-        this.btnUpdateMessage.setText(LanguageResolver.getString("SAVE"));
-        this.btnDiscard.setText(LanguageResolver.getString("DISCARD"));
     }
 
     private void updateMessage(ActionEvent actionEvent) {

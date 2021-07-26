@@ -46,16 +46,9 @@ public class CreateServerScreenController implements Controller {
         this.lblEnterServerName = (Label) view.lookup("#lblEnterServerName");
 
         this.view.requestFocus();
-        this.setComponentsText();
 
         // Add action listeners
         this.btnCreateServer.setOnAction(this::createServerButtonOnClick);
-    }
-
-    private void setComponentsText() {
-        this.lblEnterServerName.setText(LanguageResolver.getString("ENTER_SERVER_NAME"));
-        this.tfServerName.setPromptText(LanguageResolver.getString("SERVERNAME"));
-        this.btnCreateServer.setText(LanguageResolver.getString("CREATE_SERVER"));
     }
 
     /**

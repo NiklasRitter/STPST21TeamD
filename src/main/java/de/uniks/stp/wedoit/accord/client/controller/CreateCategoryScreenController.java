@@ -17,7 +17,7 @@ public class CreateCategoryScreenController implements Controller {
     private final Parent view;
     private TextField tfCategoryName;
     private Button btnCreateCategory;
-    private Label lblError, lblCategoryName;
+    private Label lblError;
 
     /**
      * Create a new Controller
@@ -41,20 +41,12 @@ public class CreateCategoryScreenController implements Controller {
         // Load all view references
         this.tfCategoryName = (TextField) view.lookup("#tfCategoryName");
         this.lblError = (Label) view.lookup("#lblError");
-        this.lblCategoryName = (Label) view.lookup("#lblCategoryName");
         this.btnCreateCategory = (Button) view.lookup("#btnCreateCategory");
 
         this.view.requestFocus();
-        this.setComponentsText();
 
         // Add action listeners
         this.btnCreateCategory.setOnAction(this::createCategoryButtonOnClick);
-    }
-
-    private void setComponentsText() {
-        this.tfCategoryName.setPromptText(LanguageResolver.getString("CATEGORY_NAME"));
-        this.lblCategoryName.setText(LanguageResolver.getString("CATEGORY_NAME"));
-        this.btnCreateCategory.setText(LanguageResolver.getString("CREATES"));
     }
 
     /**

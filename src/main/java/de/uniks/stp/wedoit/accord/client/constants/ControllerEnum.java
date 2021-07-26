@@ -52,7 +52,7 @@ public enum ControllerEnum {
 
     public Parent loadScreen() {
         try {
-            return FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/" + this.fxmlName + ".fxml")), ResourceBundle.getBundle("language.Language", Locale.getDefault()));
+            return FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/" + this.fxmlName + ".fxml")), LanguageResolver.getLanguage());
         } catch (IOException e) {
             e.printStackTrace();
             return null;

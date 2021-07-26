@@ -281,6 +281,14 @@
     -fx-background-radius : 2.0em;
 }
 
+.styleTopMenu {
+    -fx-font-size:8;
+    -fx-border-color: #4a4a4a;
+    -fx-background-color: #4a4a4a;
+    -fx-padding :0 0 0 10;
+}
+
+
 .pbRed {
     -fx-accent: rgba(165, 0, 0, 0.5);
 }

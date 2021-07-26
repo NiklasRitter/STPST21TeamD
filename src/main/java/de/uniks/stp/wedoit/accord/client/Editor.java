@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
@@ -28,10 +27,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class Editor {
 
@@ -41,17 +37,31 @@ public class Editor {
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
+    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
     private SqliteDB db;
-    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
+
+    /**
+     * used to decode the given string
+     *
+     * @param property given string that has to be decoded
+     * @return decoded property as bytes
+     */
+    private static byte[] base64Decode(String property) {
+        return Base64.getDecoder().decode(property);
+    }
 
     /**
      * @return private final RestManager restManager
      */
     public RestManager getRestManager() {
         return restManager;
+    }
+
+    public AccordClient getAccordClient() {
+        return accordClient;
     }
 
     /**
@@ -75,7 +85,6 @@ public class Editor {
     public void setCurrentServer(Server currentServer) {
         this.currentServer = currentServer;
     }
-
 
     /**
      * create localUser without initialisation and set localUser in Editor
@@ -306,7 +315,7 @@ public class Editor {
             System.err.println("Error while logging out");
         }
         Platform.runLater(() -> {
-            stageManager.initView(ControllerEnum.LOGIN_SCREEN,null, null);
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
             stageManager.getStage(StageEnum.POPUP_STAGE).hide();
         });
     }
@@ -424,7 +433,7 @@ public class Editor {
     }
 
     /**
-     * @param user specific user to load 50 old messages
+     * @param user   specific user to load 50 old messages
      * @param offset current offset to load the next 50
      * @return the next 50 or less messages
      */
@@ -442,6 +451,7 @@ public class Editor {
 
     /**
      * Updates fontsize in settings databank and updates the property
+     *
      * @param size to be set
      */
     public void saveFontSize(int size) {
@@ -499,7 +509,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.initView(ControllerEnum.LOGIN_SCREEN,null,null);
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
         }
     }
 
@@ -514,7 +524,7 @@ public class Editor {
                 stageManager.getStage(StageEnum.STAGE).setMaximized(true);
             });
         } else {
-            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null)));
+            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null)));
         }
     }
 
@@ -629,23 +639,12 @@ public class Editor {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-    /**
-     * used to decode the given string
-     *
-     * @param property given string that has to be decoded
-     * @return decoded property as bytes
-     */
-    private static byte[] base64Decode(String property) {
-        return Base64.getDecoder().decode(property);
+    public StageManager getStageManager() {
+        return stageManager;
     }
-
 
     public void setStageManager(StageManager stageManager) {
         this.stageManager = stageManager;
-    }
-
-    public StageManager getStageManager() {
-        return stageManager;
     }
 
     public ChannelManager getChannelManager() {
