@@ -90,7 +90,6 @@ public class OptionsScreenController implements Controller {
         this.btnTestSetup.setOnAction(this::btnAudioTest);
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
         sliderInputSensitivity.valueProperty().addListener((e,old,n)->editor.saveSensitivity(n.doubleValue()));
-        this.sliderFontSize.setOnMouseReleased(this::fontSizeSliderOnChange);
         this.btnSteam.setOnAction(this::btnSteamOnClick);
     }
 
