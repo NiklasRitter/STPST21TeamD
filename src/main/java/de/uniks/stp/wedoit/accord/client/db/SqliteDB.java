@@ -43,7 +43,7 @@ public class SqliteDB {
                     + ");"
             );
 
-            stmt.execute("CREATE TABLE IF NOT EXISTS settings (\n"
+            stmt.execute("CREATE TABLE settings (\n"
                     + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
                     + "	fontSize integer DEFAULT 12,\n"
                     + " audioRMS double DEFAULT 0"
