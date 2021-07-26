@@ -36,7 +36,7 @@ public class AudioConnection {
             startSendingAudio(url, port);
             startReceivingAudio();
             this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
-            this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, inputDeviceListener);
+            this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_INPUT_DEVICE, inputDeviceListener);
         } catch (Exception e) {
             e.printStackTrace();
         }

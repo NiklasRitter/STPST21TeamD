@@ -355,7 +355,7 @@ public class ServerScreenController implements Controller {
      * so that the component texts are displayed in the correct language.
      */
     private void refreshStage(PropertyChangeEvent propertyChangeEvent) {
-            this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, this.server, null);
+        this.editor.getStageManager().initView(ControllerEnum.SERVER_SCREEN, this.server, null);
     }
 
     public CategoryTreeViewController getCategoryTreeViewController() {
