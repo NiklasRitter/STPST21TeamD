@@ -8,6 +8,7 @@ import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlaying;
+import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlayingContext;
 import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERequest;
 import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackRequest;
@@ -152,7 +153,7 @@ public class SpotifyIntegration implements HttpHandler {
         }
         String response;
         if (currentlyPlaying != null) {
-            response = "Timestamp: " + currentlyPlaying.getProgress_ms();
+            response = "listens to " + currentlyPlaying.getItem().getName();
         } else {
             response = "no currently playing song";
         }

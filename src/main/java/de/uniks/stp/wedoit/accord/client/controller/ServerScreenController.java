@@ -265,10 +265,6 @@ public class ServerScreenController implements Controller {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue()) {
             Platform.runLater(() -> this.refreshLvUsers(null));
         }
-        SpotifyIntegration spotifyIntegration = this.editor.getSpotifyIntegration();
-        if (spotifyIntegration != null) {
-            System.out.println(spotifyIntegration.getUsersCurrentlyPlayingTrack());
-        }
     }
 
     private void handleAudioChannelChange(PropertyChangeEvent propertyChangeEvent) {
@@ -387,7 +383,7 @@ public class ServerScreenController implements Controller {
 
         SpotifyIntegration spotifyIntegration = this.editor.getSpotifyIntegration();
         if (spotifyIntegration != null) {
-            System.out.println(spotifyIntegration.getUsersCurrentlyPlayingTrack());
+            this.editor.changeUserDescription(this.localUser.getId(), spotifyIntegration.getUsersCurrentlyPlayingTrack());
         }
     }
 
