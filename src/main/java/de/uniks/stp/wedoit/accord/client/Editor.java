@@ -43,7 +43,6 @@ public class Editor {
     private Server currentServer;
     private StageManager stageManager;
     private SqliteDB db;
-    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private SpotifyIntegration spotifyIntegration;
 
     /**

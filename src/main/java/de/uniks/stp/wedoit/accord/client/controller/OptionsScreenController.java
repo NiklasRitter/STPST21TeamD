@@ -171,6 +171,7 @@ public class OptionsScreenController implements Controller {
         sliderTextSize.setOnMouseReleased(null);
         sliderOutputVolume.setOnMouseReleased(null);
         btnTestSetup.setOnAction(null);
+        btnSpotify.setOnAction(null);
         progressBarTest.progressProperty().unbind();
         if(recorder != null){
             recorder.stop();
