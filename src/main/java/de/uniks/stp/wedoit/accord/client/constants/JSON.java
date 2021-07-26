@@ -33,6 +33,7 @@ public class JSON {
     public static final String TEMPORAL = "temporal";
     public static final String LINK = "link";
     public static final String CURRENT = "current";
+    public static final String DESCRIPTION = "description";
 
     // Constants for system messages
     public static final String USER_JOINED = "userJoined";
@@ -52,4 +53,5 @@ public class JSON {
     public static final String MESSAGE_DELETED = "messageDeleted";
     public static final String AUDIO_JOINED = "audioJoined";
     public static final String AUDIO_LEFT = "audioLeft";
+    public static final String USER_DESCRIPTION_CHANGED = "userDescriptionChanged";
 }

@@ -81,7 +81,7 @@ public class OptionsScreenTest extends ApplicationTest {
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
 
-        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
+        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);

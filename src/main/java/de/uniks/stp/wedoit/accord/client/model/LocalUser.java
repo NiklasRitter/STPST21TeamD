@@ -20,6 +20,7 @@ public class LocalUser
    public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
    public static final String PROPERTY_MUTED = "muted";
    public static final String PROPERTY_ALL_MUTED = "allMuted";
+   public static final String PROPERTY_DESCRIPTION = "description";
    private String password;
    private String name;
    private String userKey;
@@ -33,6 +34,7 @@ public class LocalUser
    private Channel audioChannel;
    private boolean muted;
    private boolean allMuted;
+   private String description;
 
    public String getPassword()
    {
@@ -445,6 +447,24 @@ public class LocalUser
       return this;
    }
 
+   public String getDescription()
+   {
+      return this.description;
+   }
+
+   public LocalUser setDescription(String value)
+   {
+      if (Objects.equals(value, this.description))
+      {
+         return this;
+      }
+
+      final String oldValue = this.description;
+      this.description = value;
+      this.firePropertyChange(PROPERTY_DESCRIPTION, oldValue, value);
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -468,6 +488,7 @@ public class LocalUser
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
+      result.append(' ').append(this.getDescription());
       result.append(' ').append(this.getPassword());
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());

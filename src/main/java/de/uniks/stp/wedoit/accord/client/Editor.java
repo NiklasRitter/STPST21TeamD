@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.util.*;
@@ -29,10 +28,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class Editor {
 
@@ -42,6 +38,7 @@ public class Editor {
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
+    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
@@ -50,10 +47,24 @@ public class Editor {
     private SpotifyIntegration spotifyIntegration;
 
     /**
+     * used to decode the given string
+     *
+     * @param property given string that has to be decoded
+     * @return decoded property as bytes
+     */
+    private static byte[] base64Decode(String property) {
+        return Base64.getDecoder().decode(property);
+    }
+
+    /**
      * @return private final RestManager restManager
      */
     public RestManager getRestManager() {
         return restManager;
+    }
+
+    public AccordClient getAccordClient() {
+        return accordClient;
     }
 
     /**
@@ -77,7 +88,6 @@ public class Editor {
     public void setCurrentServer(Server currentServer) {
         this.currentServer = currentServer;
     }
-
 
     /**
      * create localUser without initialisation and set localUser in Editor
@@ -158,10 +168,14 @@ public class Editor {
         return server;
     }
 
+    public User haveUserWithServer(String name, String id, boolean online, Server server) {
+        return haveUserWithServer(name, id, online, server, "");
+    }
+
     /**
      * @return a user with given id, onlineStatus and name who is member of the given server
      */
-    public User haveUserWithServer(String name, String id, boolean online, Server server) {
+    public User haveUserWithServer(String name, String id, boolean online, Server server, String description) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(id);
         Objects.requireNonNull(server);
@@ -170,7 +184,11 @@ public class Editor {
                 return user;
             }
         }
-        return haveUser(id, name).setOnlineStatus(online).withServers(server);
+        return haveUser(id, name, description).setOnlineStatus(online).withServers(server);
+    }
+
+    public User haveUser(String id, String name) {
+        return haveUser(id, name, "");
     }
 
     /**
@@ -180,7 +198,7 @@ public class Editor {
      * @param name name of the user
      * @return localUser
      */
-    public User haveUser(String id, String name) {
+    public User haveUser(String id, String name, String description) {
         LocalUser localUser = accordClient.getLocalUser();
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
@@ -192,6 +210,7 @@ public class Editor {
                 user = new User().setName(name);
             }
             user.setId(id);
+            user.setDescription(description);
             return user;
         }
 
@@ -207,6 +226,7 @@ public class Editor {
 
         User user = new User().setId(id).setName(name).setOnlineStatus(true).setChatRead(true);
         localUser.withUsers(user);
+        user.setDescription(description);
         return user;
     }
 
@@ -308,7 +328,7 @@ public class Editor {
             System.err.println("Error while logging out");
         }
         Platform.runLater(() -> {
-            stageManager.initView(ControllerEnum.LOGIN_SCREEN,null, null);
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
             stageManager.getStage(StageEnum.POPUP_STAGE).hide();
         });
     }
@@ -352,6 +372,28 @@ public class Editor {
         }
     }
 
+    public double calculateRMS(byte[] buf, int bytes){
+        float[] samples = new float[1024];
+
+        // convert bytes to samples here
+        for(int i = 0, s = 0; i < bytes;) {
+            int sample = 0;
+
+            sample |= buf[i++] & 0xFF; // (reverse these two lines
+            sample |= buf[i++] << 8;   //  if the format is big endian)
+
+            // normalize to range of +/-1.0f
+            samples[s++] = sample / 32768f;
+        }
+        float rms = 0f;
+        for(float sample : samples) {
+            rms += sample * sample;
+        }
+
+        return (float)Math.sqrt(rms / samples.length);
+
+    }
+
 
     /**
      * creates a instance of the sqlite databank and loads the font size
@@ -367,6 +409,14 @@ public class Editor {
      */
     public void savePrivateMessage(PrivateMessage message) {
         db.save(message);
+    }
+
+    public double getAudioRMS(){
+        return db.getAudioRMS();
+    }
+
+    public void saveSensitivity(double rms){
+        db.updateAudioRMS(rms);
     }
 
 
@@ -396,7 +446,7 @@ public class Editor {
     }
 
     /**
-     * @param user specific user to load 50 old messages
+     * @param user   specific user to load 50 old messages
      * @param offset current offset to load the next 50
      * @return the next 50 or less messages
      */
@@ -414,6 +464,7 @@ public class Editor {
 
     /**
      * Updates fontsize in settings databank and updates the property
+     *
      * @param size to be set
      */
     public void saveFontSize(int size) {
@@ -471,7 +522,7 @@ public class Editor {
         if (accordClient.getOptions().isRememberMe() && accordClient.getLocalUser() != null && accordClient.getLocalUser().getName() != null && accordClient.getLocalUser().getPassword() != null && !accordClient.getLocalUser().getName().isEmpty() && !accordClient.getLocalUser().getPassword().isEmpty()) {
             restManager.automaticLoginUser(accordClient.getLocalUser().getName(), accordClient.getLocalUser().getPassword(), this);
         } else {
-            stageManager.initView(ControllerEnum.LOGIN_SCREEN,null,null);
+            stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
         }
     }
 
@@ -486,7 +537,7 @@ public class Editor {
                 stageManager.getStage(StageEnum.STAGE).setMaximized(true);
             });
         } else {
-            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null)));
+            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null)));
         }
     }
 
@@ -498,7 +549,7 @@ public class Editor {
      */
     public void serverWithMembers(List<User> members, Server server) {
         for (User member : members) {
-            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
+            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server, member.getDescription());
         }
     }
 
@@ -601,23 +652,12 @@ public class Editor {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-    /**
-     * used to decode the given string
-     *
-     * @param property given string that has to be decoded
-     * @return decoded property as bytes
-     */
-    private static byte[] base64Decode(String property) {
-        return Base64.getDecoder().decode(property);
+    public StageManager getStageManager() {
+        return stageManager;
     }
-
 
     public void setStageManager(StageManager stageManager) {
         this.stageManager = stageManager;
-    }
-
-    public StageManager getStageManager() {
-        return stageManager;
     }
 
     public ChannelManager getChannelManager() {
@@ -630,6 +670,30 @@ public class Editor {
 
     public MessageManager getMessageManager() {
         return messageManager;
+    }
+
+    public void changeUserDescription(String userId, String newDescription) {
+
+        if (this.getLocalUser().getId().equals(userId)) {
+            this.getLocalUser().setDescription(newDescription);
+
+        }
+        for (User user : getLocalUser().getUsers()) {
+
+            if (user.getId().equals(userId)) {
+                user.setDescription(newDescription);
+                break;
+            }
+        }
+        for (Server server : getLocalUser().getServers()) {
+            for (User user : server.getMembers()) {
+                if (user.getId().equals(userId)) {
+                    user.setDescription(newDescription);
+                    break;
+                }
+            }
+        }
+
     }
 
     public void setSpotifyIntegration(SpotifyIntegration spotifyIntegration) {
