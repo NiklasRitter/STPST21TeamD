@@ -315,6 +315,7 @@ public class AudioManagerTest extends ApplicationTest {
     private void initAudioChannelListView(JsonArray audioMembers) {
         JsonObject categoriesRestJson = getServerCategories();
         mockGetCategoryRest(categoriesRestJson);
+        WaitForAsyncUtils.waitForFxEvents();
         JsonObject channelRestJson = getCategoryAudioChannels(audioMembers);
         mockChannelRest(channelRestJson);
         WaitForAsyncUtils.waitForFxEvents();

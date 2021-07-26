@@ -321,6 +321,7 @@ public class EditServerScreenTest extends ApplicationTest {
     public void createInvitationTestFailure() {
         localUser.setId("owner123");
         mockRestExplicitServer(buildServerInformationWithTwoMembers());
+        WaitForAsyncUtils.waitForFxEvents();
         openEditServerScreen();
 
         when(res.getBody()).thenReturn(new JsonNode(buildInvitationFailure().toString()));

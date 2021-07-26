@@ -130,13 +130,13 @@ public class ServerScreenTest extends ApplicationTest {
     @Override
     public void stop() {
         stageManager.getResourceManager().saveOptions(this.oldOptions);
-        stageManager.stop();
         oldOptions = null;
         rule = null;
         webSocketClient = null;
         chatWebSocketClient = null;
         stage = null;
         emojiPickerStage = null;
+        stageManager.stop();
         stageManager = null;
         localUser = null;
         server = null;
@@ -1351,12 +1351,12 @@ public class ServerScreenTest extends ApplicationTest {
     @Test
     public void joinServerThroughMessage() {
         initUserListView();
+        WaitForAsyncUtils.waitForFxEvents();
         initChannelListView();
         WaitForAsyncUtils.waitForFxEvents();
         Label lblChannelName = lookup("#lbChannelName").query();
         TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
 
-        WaitForAsyncUtils.waitForFxEvents();
         tvServerChannels.getSelectionModel().select(1);
         Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
 
