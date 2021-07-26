@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.beans.PropertyChangeSupport;
 import java.util.Timer;
 
-public class LocalUser
+public class LocalUser
 {
    public static final String PROPERTY_PASSWORD = "password";
    public static final String PROPERTY_NAME = "name";
@@ -21,6 +21,7 @@ public class LocalUser
    public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
    public static final String PROPERTY_MUTED = "muted";
    public static final String PROPERTY_ALL_MUTED = "allMuted";
+   public static final String PROPERTY_DESCRIPTION = "description";
    public static final String PROPERTY_STEAM64_ID = "steam64ID";
    public static final String PROPERTY_STEAM_GAME_EXTRA_INFO = "steamGameExtraInfo";
    public static final String PROPERTY_STEAM_GAME_EXTRA_INFO_TIMER = "steamGameExtraInfoTimer";
@@ -37,6 +38,7 @@ public class LocalUser
    private Channel audioChannel;
    private boolean muted;
    private boolean allMuted;
+   private String description;
    private String steam64ID;
    private String steamGameExtraInfo;
    private Timer steamGameExtraInfoTimer;
@@ -452,6 +454,24 @@ public class LocalUser
       return this;
    }
 
+   public String getDescription()
+   {
+      return this.description;
+   }
+
+   public LocalUser setDescription(String value)
+   {
+      if (Objects.equals(value, this.description))
+      {
+         return this;
+      }
+
+      final String oldValue = this.description;
+      this.description = value;
+      this.firePropertyChange(PROPERTY_DESCRIPTION, oldValue, value);
+      return this;
+   }
+
    public String getSteam64ID()
    {
       return this.steam64ID;
@@ -529,6 +549,7 @@ public class LocalUser
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
+      result.append(' ').append(this.getDescription());
       result.append(' ').append(this.getPassword());
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());

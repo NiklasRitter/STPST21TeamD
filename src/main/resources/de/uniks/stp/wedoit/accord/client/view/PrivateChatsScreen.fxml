@@ -29,7 +29,7 @@
                                     <stops>
                                         <Stop offset="1.0">
                                             <color>
-                                                <Color red="1.0" green="1.0" blue="1.0" />
+                                                <Color blue="1.0" green="1.0" red="1.0" />
                                             </color>
                                         </Stop>
                                     </stops>
@@ -94,6 +94,14 @@
                                         <Font name="System Bold Italic" size="13.0" />
                                     </font>
                                 </Label>
+                        <Label id="lblDescription" minHeight="25.0" style="-fx-font-size: 10;" styleClass="styleBorder">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                        </Label>
                                 <Button id="btnPlay" mnemonicParsing="false" styleClass="playButton" text="%PLAY">
                                     <HBox.margin>
                                         <Insets left="70.0" />

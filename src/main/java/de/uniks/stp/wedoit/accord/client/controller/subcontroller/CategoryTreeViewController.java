@@ -9,10 +9,7 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
 import javafx.scene.Parent;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -42,6 +39,7 @@ public class CategoryTreeViewController implements Controller {
     private PropertyChangeListener channelListener = this::handleChannelChange;
     private PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
     private PropertyChangeListener userListViewListener = this::changeUserList;
+    private MenuButton serverMenuButton;
 
     public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
@@ -53,12 +51,24 @@ public class CategoryTreeViewController implements Controller {
 
     public void init() {
         this.tvServerChannels = (TreeView<Object>) view.lookup("#tvServerChannels");
+        this.serverMenuButton = (MenuButton) view.lookup("#serverMenuButton");
+        addServerMenu();
         this.tvServerChannelsRoot = new TreeItem<>();
         initContextMenu();
 
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
         initTvServerChannels();
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
+    }
+
+    /**
+     * adds new menu items to the server menu button of the server screen
+     */
+    private void addServerMenu() {
+        MenuItem createCategory = new MenuItem(LanguageResolver.getString("ADD_CATEGORY"));
+        serverMenuButton.getItems().add(createCategory);
+        createCategory.setStyle("-fx-font-size:12");
+        createCategory.setOnAction((event) -> editor.getStageManager().initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
     }
 
     public void initContextMenu() {
@@ -101,6 +111,7 @@ public class CategoryTreeViewController implements Controller {
         this.userListViewListener = null;
         this.audioMemberListener = null;
         this.channelReadListener = null;
+        this.serverMenuButton = null;
         this.addCategory.setOnAction(null);
     }
 
@@ -121,7 +132,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetCategories(List<Category> categoryList) {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
-            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
     }
 
@@ -141,7 +152,7 @@ public class CategoryTreeViewController implements Controller {
     public void handleGetChannels(List<Channel> channelList) {
         if (channelList == null) {
             System.err.println("Error while loading channels from server");
-            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, null, null));
+            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
     }
 
@@ -313,9 +324,9 @@ public class CategoryTreeViewController implements Controller {
             channelItem.setExpanded(true);
             addAudioMembersToTreeView(channel, channelItem);
         }
-        for(TreeItem<Object> item : categoryItem.getChildren()){
+        for (TreeItem<Object> item : categoryItem.getChildren()) {
             Channel treeChannel = (Channel) item.getValue();
-            if(treeChannel.getId().equals(channel.getId())){
+            if (treeChannel.getId().equals(channel.getId())) {
                 return;
             }
         }

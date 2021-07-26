@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import javafx.application.Platform;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -11,13 +10,13 @@ import static de.uniks.stp.wedoit.accord.client.constants.Preferences.*;
 
 public class PreferenceManager {
 
-    private StageManager stageManager;
-    public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
-    public PropertyChangeListener languageListener = this::onLanguageChanged;
-
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
-    public PropertyChangeListener passwordListener = this::onPasswordChanged;
     public PropertyChangeListener usernameListener = this::onUsernameChanged;
+    private StageManager stageManager;
+    public PropertyChangeListener systemVolumeListener = this::onSystemVolumeChanged;
+    public PropertyChangeListener languageListener = this::onLanguageChanged;
+    public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
+    public PropertyChangeListener passwordListener = this::onPasswordChanged;
 
     /**
      * Loads the dark mode preference from the Registry.
@@ -57,6 +56,26 @@ public class PreferenceManager {
     public boolean loadRememberMe() {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
         return preferences.getBoolean(REMEMBER_ME, false);
+    }
+
+    /**
+     * Saves the SystemVolume preference to the Registry.
+     *
+     * @param systemVolume The value of the SystemVolume preference.
+     */
+    public void saveSystemVolume(float systemVolume) {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        preferences.putFloat(SYSTEM_VOLUME, systemVolume);
+    }
+
+    /**
+     * Loads the SystemVolume preference from the Registry.
+     *
+     * @return The value of the SystemVolume preference.
+     */
+    public float loadSystemVolume() {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        return preferences.getFloat(SYSTEM_VOLUME, 100f);
     }
 
     /**
@@ -184,6 +203,16 @@ public class PreferenceManager {
             this.stageManager.changeLanguage(language);
 
             saveLanguage(language);
+        }
+    }
+
+    private void onSystemVolumeChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Float) {
+            float systemVolume = (float) propertyChangeEvent.getNewValue();
+
+            this.stageManager.getEditor().getAccordClient().getOptions().setSystemVolume(systemVolume);
+
+            saveSystemVolume(systemVolume);
         }
     }
 

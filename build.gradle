@@ -109,7 +109,7 @@ test {
     systemProperty 'prism.text', 't2k'
     systemProperty 'java.awt.headless', 'true'
     minHeapSize = "128m"
-    maxHeapSize = "2048m"
+    maxHeapSize = "2560m"
 }
 
 /* DO NOT CHANGE THIS PART */

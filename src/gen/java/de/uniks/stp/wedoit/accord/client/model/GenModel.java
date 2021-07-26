@@ -25,12 +25,14 @@ public class GenModel implements ClassModelDecorator {
         boolean darkmode;
         boolean rememberMe;
         String language;
+        float systemVolume;
 
         @Link("options")
         AccordClient accordClient;
     }
 
     class LocalUser {
+        String description;
         String password;
         String name;
         String userKey;
@@ -55,6 +57,7 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class User {
+        String description;
         String name;
         boolean onlineStatus;
         boolean chatRead;
