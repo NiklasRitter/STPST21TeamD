@@ -220,6 +220,15 @@ public class ServerScreenController implements Controller {
     // PropertyChangeEvent Methods
 
     /**
+     * The localUser will be redirected to the EditServerScreen
+     *
+     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
+     */
+    private void editButtonOnClick(ActionEvent actionEvent) {
+        this.editor.getStageManager().initView(ControllerEnum.EDIT_SERVER_SCREEN, server, null);
+    }
+
+    /**
      * rebuilds the user list
      */
     private void changeUserList(PropertyChangeEvent propertyChangeEvent) {
