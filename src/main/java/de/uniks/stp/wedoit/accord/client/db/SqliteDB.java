@@ -43,9 +43,10 @@ public class SqliteDB {
                     + ");"
             );
 
-            stmt.execute("CREATE TABLE IF NOT EXISTS settings (\n"
+            stmt.execute("CREATE TABLE settings (\n"
                     + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
-                    + "	fontSize integer DEFAULT 12"
+                    + "	fontSize integer DEFAULT 12,\n"
+                    + " audioRMS double DEFAULT 0"
                     + ");"
             );
 
@@ -113,6 +114,35 @@ public class SqliteDB {
             e.printStackTrace();
         }
         return 12;
+    }
+
+    public double getAudioRMS() {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
+
+            ResultSet rs = prep.executeQuery();
+
+            if (rs.next()) {
+                return rs.getDouble("audioRMS");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void updateAudioRMS(double rms) {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,audioRMS) VALUES(1,?)")) {
+
+            prep.setDouble(1, rms);
+
+            prep.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

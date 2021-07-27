@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.util.Recorder;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -26,9 +27,10 @@ public class OptionsScreenController implements Controller {
     private CheckBox btnDarkMode;
     private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
     private ChoiceBox choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
-    private Slider sliderFontSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
-    private ProgressBar progressBarTest;
+    private Slider sliderTextSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
+    private ProgressBar progressBarTest, progressBarTestBot;
     private VBox vBoxSoundSettings, vBoxExtraSettings;
+    private Recorder recorder;
 
     /**
      * Create a new Controller
@@ -56,14 +58,15 @@ public class OptionsScreenController implements Controller {
         this.btnSpotify = (Button) view.lookup("#btnSpotify");
         this.btnSteam = (Button) view.lookup("#btnSteam");
         this.btnTestSetup = (Button) view.lookup("#btnTestSetup");
-        this.sliderFontSize = (Slider) view.lookup("#sliderTextSize");
+        this.sliderTextSize = (Slider) view.lookup("#sliderTextSize");
         this.sliderOutputVolume = (Slider) view.lookup("#sliderOutputVolume");
         this.sliderInputVolume = (Slider) view.lookup("#sliderInputVolume");
         this.sliderInputSensitivity = (Slider) view.lookup("#sliderInputSensitivity");
         this.choiceBoxLanguage = (ChoiceBox) view.lookup("#choiceBoxLanguage");
         this.choiceBoxInputDevice = (ChoiceBox) view.lookup("#choiceBoxInputDevice");
         this.choiceBoxOutputDevice = (ChoiceBox) view.lookup("#choiceBoxOutputDevice");
-        this.progressBarTest = (ProgressBar) view.lookup("prgBarSetupTest");
+        this.progressBarTest = (ProgressBar) view.lookup("#prgBarSetupTest");
+        this.progressBarTestBot = (ProgressBar) view.lookup("#progressBarTestBot");
 
         vBoxSoundSettings = (VBox) view.lookup("#vBoxSoundSettings");
         vBoxExtraSettings = (VBox) view.lookup("#vBoxExtraSettings");
@@ -78,16 +81,19 @@ public class OptionsScreenController implements Controller {
 
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.sliderFontSize.setOnMouseReleased(this::fontSizeSliderOnChange);
+        this.sliderTextSize.setOnMouseReleased(this::fontSizeSliderOnChange);
         this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
         editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
                 (PropertyChangeEvent propertyChangeEvent) -> {
                     System.out.println(propertyChangeEvent.getNewValue());
                 });
+        this.btnTestSetup.setOnAction(this::btnAudioTest);
+        progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
+        sliderInputSensitivity.valueProperty().addListener((e,old,n)->editor.saveSensitivity(n.doubleValue()));
     }
 
     private void fontSizeSliderOnChange(MouseEvent e) {
-        editor.saveFontSize((int) sliderFontSize.getValue());
+        editor.saveFontSize((int) sliderTextSize.getValue());
     }
 
     private void outputVolumeSliderOnChange(MouseEvent e) {
@@ -145,7 +151,8 @@ public class OptionsScreenController implements Controller {
             this.view.autosize();
             this.view.getScene().getWindow().sizeToScene();
         } else {
-            sliderFontSize.setValue(editor.getChatFontSizeProperty().getValue());
+            sliderInputSensitivity.setValue(editor.getAudioRMS());
+            sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
             sliderOutputVolume.setValue(editor.getAccordClient().getOptions().getSystemVolume());
         }
     }
@@ -158,6 +165,15 @@ public class OptionsScreenController implements Controller {
     public void stop() {
         btnDarkMode.setOnAction(null);
         btnLogout.setOnAction(null);
+        btnTestSetup.setOnAction(null);
+        sliderTextSize.setOnMouseReleased(null);
+        sliderOutputVolume.setOnMouseReleased(null);
+        btnTestSetup.setOnAction(null);
+        progressBarTest.progressProperty().unbind();
+        if(recorder != null){
+            recorder.stop();
+            recorder = null;
+        }
     }
 
     /**
@@ -178,4 +194,18 @@ public class OptionsScreenController implements Controller {
         editor.logoutUser(editor.getLocalUser().getUserKey());
     }
 
+
+    private void btnAudioTest(ActionEvent actionEvent) {
+        if(recorder == null){
+             recorder = new Recorder(progressBarTestBot, editor);
+        }
+        if(btnTestSetup.getText().equals(LanguageResolver.getString("TEST_SETUP"))) {
+            btnTestSetup.setText("STOP");
+            recorder.start();
+        }else{
+            recorder.stop();
+            btnTestSetup.setText(LanguageResolver.getString("TEST_SETUP"));
+            recorder = null;
+        }
+    }
 }

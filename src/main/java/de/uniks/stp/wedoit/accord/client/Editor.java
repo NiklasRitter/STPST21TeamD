@@ -165,10 +165,14 @@ public class Editor {
         return server;
     }
 
+    public User haveUserWithServer(String name, String id, boolean online, Server server) {
+        return haveUserWithServer(name, id, online, server, "");
+    }
+
     /**
      * @return a user with given id, onlineStatus and name who is member of the given server
      */
-    public User haveUserWithServer(String name, String id, boolean online, Server server) {
+    public User haveUserWithServer(String name, String id, boolean online, Server server, String description) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(id);
         Objects.requireNonNull(server);
@@ -177,7 +181,11 @@ public class Editor {
                 return user;
             }
         }
-        return haveUser(id, name).setOnlineStatus(online).withServers(server);
+        return haveUser(id, name, description).setOnlineStatus(online).withServers(server);
+    }
+
+    public User haveUser(String id, String name) {
+        return haveUser(id, name, "");
     }
 
     /**
@@ -187,7 +195,7 @@ public class Editor {
      * @param name name of the user
      * @return localUser
      */
-    public User haveUser(String id, String name) {
+    public User haveUser(String id, String name, String description) {
         LocalUser localUser = accordClient.getLocalUser();
         Objects.requireNonNull(localUser);
         Objects.requireNonNull(id);
@@ -199,6 +207,7 @@ public class Editor {
                 user = new User().setName(name);
             }
             user.setId(id);
+            user.setDescription(description);
             return user;
         }
 
@@ -214,6 +223,7 @@ public class Editor {
 
         User user = new User().setId(id).setName(name).setOnlineStatus(true).setChatRead(true);
         localUser.withUsers(user);
+        user.setDescription(description);
         return user;
     }
 
@@ -359,6 +369,29 @@ public class Editor {
         }
     }
 
+    public double calculateRMS(byte[] buf, int bytes){
+        float[] samples = new float[1024];
+
+        // convert bytes to samples here
+        for(int i = 0, s = 0; i < bytes;) {
+            int sample = 0;
+
+            sample |= buf[i++] & 0xFF; // (reverse these two lines
+            sample |= buf[i++] << 8;   //  if the format is big endian)
+
+            // normalize to range of +/-1.0f
+            samples[s++] = sample / 32768f;
+        }
+        float rms = 0f;
+        for(float sample : samples) {
+            rms += sample * sample;
+        }
+
+        return (float)Math.sqrt(rms / samples.length);
+
+    }
+
+
     /**
      * creates a instance of the sqlite databank and loads the font size
      * right after log in since the username is needed
@@ -374,6 +407,15 @@ public class Editor {
     public void savePrivateMessage(PrivateMessage message) {
         db.save(message);
     }
+
+    public double getAudioRMS(){
+        return db.getAudioRMS();
+    }
+
+    public void saveSensitivity(double rms){
+        db.updateAudioRMS(rms);
+    }
+
 
     /**
      * loads old offline chats that the local users has a history with
@@ -492,7 +534,7 @@ public class Editor {
                 stageManager.getStage(StageEnum.STAGE).setMaximized(true);
             });
         } else {
-            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null)));
+            Platform.runLater(() -> Platform.runLater(() -> stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null)));
         }
     }
 
@@ -504,7 +546,7 @@ public class Editor {
      */
     public void serverWithMembers(List<User> members, Server server) {
         for (User member : members) {
-            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server);
+            haveUserWithServer(member.getName(), member.getId(), member.isOnlineStatus(), server, member.getDescription());
         }
     }
 
@@ -625,5 +667,29 @@ public class Editor {
 
     public MessageManager getMessageManager() {
         return messageManager;
+    }
+
+    public void changeUserDescription(String userId, String newDescription) {
+
+        if (this.getLocalUser().getId().equals(userId)) {
+            this.getLocalUser().setDescription(newDescription);
+
+        }
+        for (User user : getLocalUser().getUsers()) {
+
+            if (user.getId().equals(userId)) {
+                user.setDescription(newDescription);
+                break;
+            }
+        }
+        for (Server server : getLocalUser().getServers()) {
+            for (User user : server.getMembers()) {
+                if (user.getId().equals(userId)) {
+                    user.setDescription(newDescription);
+                    break;
+                }
+            }
+        }
+
     }
 }

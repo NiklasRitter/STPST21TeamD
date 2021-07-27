@@ -233,7 +233,8 @@ public class JsonUtil {
         return new User()
                 .setId(jsonUser.getString(ID))
                 .setName(jsonUser.getString(NAME))
-                .setOnlineStatus(jsonUser.getBoolean(ONLINE));
+                .setOnlineStatus(jsonUser.getBoolean(ONLINE))
+                .setDescription(jsonUser.getString(DESCRIPTION));
     }
 
     public static List<User> parseUserArray(JsonArray jsonUsers) {
