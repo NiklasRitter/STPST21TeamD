@@ -256,7 +256,6 @@ public class GameScreenTest extends ApplicationTest {
         this.localUser = this.stageManager.getEditor().getLocalUser();
 
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnPrivateChats");
     }
 
 

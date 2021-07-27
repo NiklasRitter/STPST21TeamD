@@ -140,8 +140,6 @@ public class PrivateChatsScreenController implements Controller {
         this.audioChannelChange = null;
         this.languageRefreshed = null;
 
-        this.btnHome.setOnAction(null);
-
         this.btnPlay.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
 
