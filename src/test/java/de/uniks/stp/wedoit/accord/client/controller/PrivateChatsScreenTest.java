@@ -793,18 +793,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         this.localUser = stageManager.getEditor().getLocalUser();
 
-        /*json = buildGetServersSuccessWithTwoServers();
-
-        mockRestClient(json);
-
-        ListView<Server> listView = lookup("#lwServerList").queryListView();
-
-        Assert.assertEquals(2, listView.getItems().toArray().length);
-        for (Object server : listView.getItems()) {
-            Assert.assertTrue(server instanceof Server);
-        }
-        Assert.assertEquals("AMainTestServerTwo", (listView.getItems().get(0)).getName());
-        Assert.assertEquals("BMainTestServerOne", (listView.getItems().get(1)).getName());*/
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     public JsonObject buildGetServersSuccessWithTwoServers() {
@@ -884,7 +873,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn("#btnHome");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
     }
 
     @Test
