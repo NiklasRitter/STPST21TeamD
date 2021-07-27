@@ -6,7 +6,6 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -14,56 +13,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <children>
-                <VBox alignment="CENTER" maxWidth="75.0" minWidth="75.0" spacing="20.0" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="12.0" prefWidth="19.0" style="-fx-background-color: transparent;" styleClass="sidebar-Button">
-                            <textFill>
-                                <LinearGradient>
-                                    <stops>
-                                        <Stop offset="1.0">
-                                            <color>
-                                                <Color blue="1.0" green="1.0" red="1.0" />
-                                            </color>
-                                        </Stop>
-                                    </stops>
-                                </LinearGradient>
-                            </textFill>
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/options.png" />
-                                </ImageView>
-                            </graphic>
-                     <tooltip>
-                        <Tooltip text="%OPTIONS" />
-                     </tooltip>
-                        </Button>
-                        <Button id="btnHome" mnemonicParsing="false" styleClass="sidebar-Button" VBox.vgrow="ALWAYS">
-                            <graphic>
-                                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@images/home.png" />
-                                </ImageView>
-                            </graphic>
-                     <tooltip>
-                        <Tooltip text="%HOME" />
-                     </tooltip>
-                        </Button>
-                        <Region VBox.vgrow="ALWAYS" />
-                    </children>
-                    <padding>
-                        <Insets top="5.0" />
-                    </padding>
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
-                    <styleClass>
-                        <String fx:value="styleBorder" />
-                        <String fx:value="styleBackgroundHighlight" />
-                    </styleClass>
-                </VBox>
+            <fx:include source="listViewServerList.fxml" />
                 <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="150.0" prefHeight="41.0" prefWidth="150.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
                   <HBox id="hBoxName">
