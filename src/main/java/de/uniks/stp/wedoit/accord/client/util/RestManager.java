@@ -2,12 +2,11 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
+
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
@@ -23,11 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_AS_OWNER_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class RestManager {
 
@@ -195,7 +190,9 @@ public class RestManager {
             for (int index = 0; index < getServersResponse.toArray().length; index++) {
                 String name = getServersResponse.getJsonObject(index).getString(NAME);
                 String id = getServersResponse.getJsonObject(index).getString(ID);
-                editor.haveUser(id, name);
+                String description = getServersResponse.getJsonObject(index).getString(DESCRIPTION);
+
+                editor.haveUser(id, name, description);
             }
             controller.handleGetOnlineUsers();
         });
@@ -216,7 +213,8 @@ public class RestManager {
             for (int index = 0; index < getServersResponse.toArray().length; index++) {
                 String name = getServersResponse.getJsonObject(index).getString(NAME);
                 String id = getServersResponse.getJsonObject(index).getString(ID);
-                User user = editor.haveUser(id, name);
+                String description = getServersResponse.getJsonObject(index).getString(DESCRIPTION);
+                User user = editor.haveUser(id, name, description);
                 if (user.getName().equals(localUser.getName())) {
                     localUser.setId(id);
                 }
@@ -277,11 +275,11 @@ public class RestManager {
 
                 List<Channel> channelList = category.getChannels().stream().sorted(Comparator.comparing(Channel::getName))
                         .collect(Collectors.toList());
-                if(controller != null){
+                if (controller != null) {
                     controller.handleGetChannels(channelList);
                 }
             } else {
-                if(controller != null){
+                if (controller != null) {
                     controller.handleGetChannels(null);
                 }
             }
@@ -712,11 +710,11 @@ public class RestManager {
         restClient.leaveAudioChannel(userKey, server.getId(), category.getId(), channel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 getChannels(editor.getLocalUser(), server, category, null);
-                if(controller != null){
+                if (controller != null) {
                     controller.handleLeaveAudioChannel(channel.getCategory());
                 }
             } else {
-                if(controller != null){
+                if (controller != null) {
                     controller.handleLeaveAudioChannel(null);
                 }
             }

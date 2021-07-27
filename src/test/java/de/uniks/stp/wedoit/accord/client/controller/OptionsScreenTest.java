@@ -7,8 +7,6 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
-import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -31,15 +29,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
-
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.Locale;
 import java.util.Objects;
-
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -66,8 +60,6 @@ public class OptionsScreenTest extends ApplicationTest {
     private Stage popupStage;
     private StageManager stageManager;
     private Options oldOptions;
-    private PreferenceManager preferenceManager;
-    private ResourceManager resourceManager;
 
     @Override
     public void start(Stage stage) {
@@ -89,7 +81,7 @@ public class OptionsScreenTest extends ApplicationTest {
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
 
-        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
+        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
 
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -104,8 +96,6 @@ public class OptionsScreenTest extends ApplicationTest {
         popupStage = null;
         stageManager.stop();
         stageManager = null;
-        resourceManager = null;
-        preferenceManager = null;
         oldOptions = null;
         rule = null;
         restMock = null;
@@ -169,7 +159,7 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertTrue(stageManager.getScene(StageEnum.STAGE).getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
-        Assert.assertEquals(stageManager.getPrefManager().loadDarkMode(), true);
+        Assert.assertTrue(stageManager.getPrefManager().loadDarkMode());
     }
 
     @Test
@@ -187,7 +177,7 @@ public class OptionsScreenTest extends ApplicationTest {
         Label lblLanguage = lookup("#lblLanguage").query();
         Assert.assertEquals(lblLanguage.getText(), "Language");
 
-        ChoiceBox choiceBoxLanguage = lookup("#choiceBoxLanguage").query();
+        ChoiceBox<String> choiceBoxLanguage = lookup("#choiceBoxLanguage").query();
 
         clickOn(choiceBoxLanguage);
 
@@ -198,12 +188,10 @@ public class OptionsScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
-
+        lblLanguage = lookup("#lblLanguage").query();
         Assert.assertEquals(lblLanguage.getText(), "Sprache");
 
-        Platform.runLater(() -> {
-            popupStage.hide();
-        });
+        Platform.runLater(() -> popupStage.hide());
 
         directToMainScreen();
 
@@ -214,18 +202,17 @@ public class OptionsScreenTest extends ApplicationTest {
 
         // open options screen
         directToOptionsScreen();
-
+        ChoiceBox<String> choiceBoxLanguage2 = lookup("#choiceBoxLanguage").query();
         Platform.runLater(() -> {
             //choose english as language
-            choiceBoxLanguage.getSelectionModel().select(0);
+            choiceBoxLanguage2.getSelectionModel().select(0);
         });
 
         WaitForAsyncUtils.waitForFxEvents();
+        lblLanguage = lookup("#lblLanguage").query();
         Assert.assertEquals(lblLanguage.getText(), "Language");
 
-        Platform.runLater(() -> {
-            popupStage.hide();
-        });
+        Platform.runLater(() -> popupStage.hide());
 
         Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
     }
@@ -233,9 +220,9 @@ public class OptionsScreenTest extends ApplicationTest {
     @Test
     public void testLogoutButtonOnLoginScreenNotVisible() {
         directToOptionsScreen();
-        VBox mainVBox = (VBox) lookup("#mainVBox").query();
+        VBox mainVBox = lookup("#mainVBox").query();
 
-        Assert.assertEquals(mainVBox.getChildren().size(), 4);
+        Assert.assertEquals(mainVBox.getChildren().size(), 3);
     }
 
     @Test
@@ -247,10 +234,10 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertEquals("Main", stage.getTitle());
         directToOptionsScreen();
 
-        VBox mainVBox = (VBox) lookup("#mainVBox").query();
-        Button btnLogout = (Button) lookup("#btnLogout").query();
+        VBox mainVBox = lookup("#mainVBox").query();
+        Button btnLogout = lookup("#btnLogout").query();
 
-        Assert.assertEquals(mainVBox.getChildren().size(), 4);
+        Assert.assertEquals(mainVBox.getChildren().size(), 3);
         Assert.assertTrue(btnLogout.isVisible());
     }
 

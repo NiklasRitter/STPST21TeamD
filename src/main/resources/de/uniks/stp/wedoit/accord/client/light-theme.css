@@ -313,3 +313,21 @@
 .serverCircleTextSelected {
     -fx-text-fill: #ffffff;
 }
+
+.pbRed {
+    -fx-accent: rgba(255, 0, 0, 0.5);
+}
+
+.pbGreen{
+    -fx-accent: rgba(98, 255, 0, 0.5);
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-text-box-border: transparent;
+}
+
+.styleTopMenu {
+    -fx-font-size:8;
+    -fx-background-color: #d9d9d9;
+    -fx-border-color: #d9d9d9;
+    -fx-padding :0 0 0 10;
+}

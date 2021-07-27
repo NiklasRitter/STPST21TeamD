@@ -56,7 +56,6 @@ public class GameResultScreenController implements Controller {
         btnPlayAgain = (Button) view.lookup("#btnPlayAgain");
         btnQuit = (Button) view.lookup("#btnQuit");
 
-        this.setComponentsText();
         if (isWinner == null) {
             lbOutcome.setText(LanguageResolver.getString("OPPONENT_LEFT"));
         } else if (isWinner) {
@@ -68,12 +67,6 @@ public class GameResultScreenController implements Controller {
         btnQuit.setOnAction(this::redirectToPrivateChats);
         btnPlayAgain.setOnAction(this::playAgainOnClick);
     }
-
-    private void setComponentsText() {
-        this.btnPlayAgain.setText(LanguageResolver.getString("PLAY_AGAIN"));
-        this.btnQuit.setText(LanguageResolver.getString("QUIT"));
-    }
-
 
     /**
      * sends either a game game request or accepts a request if the opponent already requested a game

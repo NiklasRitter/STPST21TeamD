@@ -220,7 +220,7 @@ public class AudioManagerTest extends ApplicationTest {
         joinAudioServerTest();
         AudioManager audioManager = stageManager.getEditor().getAudioManager();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
-        AudioConnection tempAudioCon = new AudioConnection(localUser, channel) {
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
             @Override
             protected DatagramSocket createSocket() {
                 DatagramSocket datagramSocket = null;
@@ -248,7 +248,7 @@ public class AudioManagerTest extends ApplicationTest {
     public void muteAndUnmuteAllTest() {
         joinAudioServerTest();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
-        AudioConnection tempAudioCon = new AudioConnection(localUser, channel) {
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
             @Override
             protected DatagramSocket createSocket() {
                 DatagramSocket datagramSocket = null;
@@ -282,7 +282,7 @@ public class AudioManagerTest extends ApplicationTest {
     public void muteAndUnmuteYourselfTest() {
         joinAudioServerTest();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
-        AudioConnection tempAudioCon = new AudioConnection(localUser, channel) {
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
             @Override
             protected DatagramSocket createSocket() {
                 DatagramSocket datagramSocket = null;
@@ -315,6 +315,7 @@ public class AudioManagerTest extends ApplicationTest {
     private void initAudioChannelListView(JsonArray audioMembers) {
         JsonObject categoriesRestJson = getServerCategories();
         mockGetCategoryRest(categoriesRestJson);
+        WaitForAsyncUtils.waitForFxEvents();
         JsonObject channelRestJson = getCategoryAudioChannels(audioMembers);
         mockChannelRest(channelRestJson);
         WaitForAsyncUtils.waitForFxEvents();
@@ -363,13 +364,13 @@ public class AudioManagerTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder().add("id", server.getId())
                         .add("name", server.getName()).add("owner", "ow12ner").add("categories",
                                 Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2").add("description", "")
                                         .add("online", false))
-                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil")
+                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")
                                         .add("online", false))
                         )).build();
     }
@@ -379,6 +380,6 @@ public class AudioManagerTest extends ApplicationTest {
      */
     public JsonObject webSocketCallbackUserJoined() {
         return Json.createObjectBuilder().add("action", "userJoined").add("data",
-                Json.createObjectBuilder().add("id", "123456").add("name", "Phil")).build();
+                Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")).build();
     }
 }

@@ -87,7 +87,7 @@ public class GameScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, null, null);
+        this.stageManager.initView(ControllerEnum.LOGIN_SCREEN, true, null);
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }
@@ -267,13 +267,16 @@ public class GameScreenTest extends ApplicationTest {
                 .add("data", Json.createArrayBuilder()
                         .add(Json.createObjectBuilder()
                                 .add("id", "12345")
-                                .add("name", "Albert"))
+                                .add("name", "Albert")
+                                .add("description", ""))
                         .add(Json.createObjectBuilder()
                                 .add("id", "5678")
-                                .add("name", "Clemens"))
+                                .add("name", "Clemens")
+                                .add("description", ""))
                         .add(Json.createObjectBuilder()
                                 .add("id", "203040")
-                                .add("name", "Dieter")))
+                                .add("name", "Dieter")
+                                .add("description", "")))
                 .build();
     }
 

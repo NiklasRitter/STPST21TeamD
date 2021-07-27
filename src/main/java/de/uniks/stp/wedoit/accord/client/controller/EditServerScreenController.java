@@ -37,11 +37,11 @@ public class EditServerScreenController implements Controller {
 
     private Button btnCreateInvitation, btnDelete, btnSave, btnDeleteInvitation;
 
-    private RadioButton radioBtnTemporal,radioBtnMaxCount;
+    private RadioButton radioBtnTemporal, radioBtnMaxCount;
 
     private TextField tfNewServernameInput, tfMaxCountAmountInput, tfInvitationLink;
 
-    private Label labelCopy, lblChangeName, lblInvite, lblOldInvite, lblInvitationStatus, lblInvitationStatusText, lblCountWarning, lblError;
+    private Label labelCopy, lblInvitationStatus, lblInvitationStatusText, lblCountWarning, lblError;
 
     private ListView<Invitation> lvInvitation;
     private ObservableList<Invitation> invitationsObservableList;
@@ -89,15 +89,13 @@ public class EditServerScreenController implements Controller {
         this.lblError = (Label) view.lookup("#lblError");
         this.lblInvitationStatus = (Label) view.lookup("#lblInvitationStatus");
         this.lblInvitationStatusText = (Label) view.lookup("#lblInvitationStatusText");
-        this.lblChangeName = (Label) view.lookup("#lblChangeName");
-        this.lblInvite = (Label) view.lookup("#lblInvite");
-        this.lblOldInvite = (Label) view.lookup("#lblOldInvit");
         this.lblCountWarning = (Label) view.lookup("#lblCountWarning");
 
         this.lvInvitation = (ListView<Invitation>) view.lookup("#lvInvitation");
 
         this.view.requestFocus();
-        this.setComponentsText();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
         // Depending on if localUser is admin or not display the correct editMenu
         loadDefaultSettings();
 
@@ -108,23 +106,6 @@ public class EditServerScreenController implements Controller {
         this.lvInvitation.setTooltip(privateChatsButton);
 
         addActionListener();
-    }
-
-    private void setComponentsText() {
-        this.lblError.setText(LanguageResolver.getString(LanguageResolver.getString("SOMETHING_WENT_WRONG")));
-        this.lblChangeName.setText(LanguageResolver.getString("CHANGE_NAME"));
-        this.lblInvite.setText(LanguageResolver.getString("INVITE"));
-        this.lblOldInvite.setText(LanguageResolver.getString("OLD_INVITATIONS"));
-        this.btnDeleteInvitation.setText(LanguageResolver.getString("DELETE_INVITATION"));
-        this.btnDelete.setText(LanguageResolver.getString("DELETE_SERVER"));
-        this.btnSave.setText(LanguageResolver.getString("SAVE"));
-        this.btnCreateInvitation.setText(LanguageResolver.getString("CREATE_INVITATION"));
-        this.tfMaxCountAmountInput.setPromptText(LanguageResolver.getString("AMOUNT"));
-        this.tfNewServernameInput.setPromptText(LanguageResolver.getString("NEW_SERVERNAME"));
-        this.radioBtnTemporal.setText(LanguageResolver.getString("TEMPORAL"));
-        this.radioBtnMaxCount.setText(LanguageResolver.getString("MAX_COUNT"));
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
-        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).centerOnScreen();
     }
 
     /**

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -38,15 +39,26 @@
                     <children>
                         <HBox alignment="TOP_CENTER" prefWidth="200.0" styleClass="styleTop">
                             <children>
-                                <Label id="lblSelectedUser" minHeight="25.0" styleClass="styleBorder">
+                                <Label id="lblSelectedUser" minHeight="25.0" styleClass="styleBorder" text="%NO_USER_SELECTED">
                                     <font>
                                         <Font name="System Bold Italic" size="13.0" />
                                     </font>
                                 </Label>
-                                <Button id="btnPlay" mnemonicParsing="false" styleClass="playButton">
+                        <Label id="lblDescription" minHeight="25.0" style="-fx-font-size: 10;" styleClass="styleBorder">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                        </Label>
+                                <Button id="btnPlay" mnemonicParsing="false" styleClass="playButton" text="%PLAY">
                                     <HBox.margin>
                                         <Insets left="70.0" />
                                     </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="%ROCK_PAPER_SCISSORS" />
+                           </tooltip>
                                 </Button>
                             </children>
                         </HBox>
@@ -70,7 +82,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                             <children>
-                                <TextArea id="tfEnterPrivateChat" prefHeight="10.0" styleClass="textAreaInput" wrapText="true" HBox.hgrow="ALWAYS" />
+                                <TextArea id="tfEnterPrivateChat" prefHeight="10.0" promptText="%SELECT_A_USER" styleClass="textAreaInput" wrapText="true" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />

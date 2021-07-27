@@ -2,13 +2,12 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
+import de.uniks.stp.wedoit.accord.client.constants.JSON;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Platform;
 
-import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import java.io.UnsupportedEncodingException;
@@ -19,11 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 
 public class WebSocketManager {
 
@@ -130,6 +126,8 @@ public class WebSocketManager {
 
         } else if (jsonObject.getString(ACTION).equals(USER_LEFT)) {
             editor.userLeft(data.getString(ID));
+        } else if (jsonObject.getString(ACTION).equals(USER_DESCRIPTION_CHANGED)) {
+            editor.changeUserDescription(data.getString(ID), data.getString(JSON.DESCRIPTION));
         }
     }
 
@@ -153,7 +151,6 @@ public class WebSocketManager {
 
         JsonObject data = ((JsonObject) msg).getJsonObject(DATA);
         String action = ((JsonObject) msg).getString(ACTION);
-
         // change members
         if (action.equals(USER_JOINED) || action.equals(USER_LEFT) || action.equals(USER_ARRIVED) || action.equals(USER_EXITED)) {
             String id = data.getString(ID);
@@ -198,7 +195,7 @@ public class WebSocketManager {
                 break;
             case CATEGORY_DELETED:
                 Category categoryToDelete = editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
-                if(editor.getLocalUser().getAudioChannel() != null && categoryToDelete.getChannels().contains(editor.getLocalUser().getAudioChannel())){
+                if (editor.getLocalUser().getAudioChannel() != null && categoryToDelete.getChannels().contains(editor.getLocalUser().getAudioChannel())) {
                     editor.getAudioManager().closeAudioConnection();
                 }
                 categoryToDelete.removeYou();
@@ -216,7 +213,7 @@ public class WebSocketManager {
             case CHANNEL_DELETED:
                 Category categoryDeleted = editor.getCategoryManager().haveCategory(data.getString(CATEGORY), null, server);
                 Channel channelDeleted = editor.getChannelManager().getChannel(data.getString(ID), categoryDeleted);
-                if(editor.getLocalUser().getAudioChannel() != null && editor.getLocalUser().getAudioChannel().getId().equals(channelDeleted.getId())){
+                if (editor.getLocalUser().getAudioChannel() != null && editor.getLocalUser().getAudioChannel().getId().equals(channelDeleted.getId())) {
                     editor.getAudioManager().closeAudioConnection();
                 }
                 channelDeleted.removeYou();

@@ -83,7 +83,6 @@ public class EditChannelScreenController implements Controller {
         this.lblPrivileged = (Label) view.lookup("#lblPrivileged");
 
         this.view.requestFocus();
-        this.setComponentsText();
 
         if (channel.isPrivileged()) {
             this.checkBoxPrivileged.setSelected(true);
@@ -102,14 +101,6 @@ public class EditChannelScreenController implements Controller {
         this.btnSave.setOnAction(this::btnSaveOnClick);
         this.btnDeleteChannel.setOnAction(this::deleteChannelButtonOnClick);
         this.checkBoxPrivileged.setOnAction(this::checkBoxPrivilegedOnClick);
-    }
-
-    private void setComponentsText() {
-        this.lblChannelName.setText(LanguageResolver.getString("CHANNEL_NAME"));
-        this.lblPrivileged.setText(LanguageResolver.getString("PRIVILEGED"));
-        this.lblMembers.setText(LanguageResolver.getString("MEMBERS"));
-        this.btnSave.setText(LanguageResolver.getString("SAVE"));
-        this.btnDeleteChannel.setText(LanguageResolver.getString("DELETE"));
     }
 
     /**

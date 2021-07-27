@@ -717,11 +717,11 @@ public class ServerContextMenuTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder().add("id", server.getId())
                         .add("name", server.getName()).add("owner", "ow12ner").add("categories",
                                 Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1")
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1").add("description", "")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2")
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2").add("description", "")
                                         .add("online", false))
-                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3")
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "")
                                         .add("online", true)))).build();
     }
 
