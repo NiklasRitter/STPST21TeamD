@@ -54,7 +54,7 @@
                 </ImageView>
             </graphic>
          <tooltip>
-            <Tooltip text="\%JOIN_SERVER" />
+            <Tooltip text="%JOIN_SERVER" />
          </tooltip>
         </Button>
         <Button id="btnAddServer" mnemonicParsing="false" styleClass="sidebar-Button">
@@ -66,7 +66,7 @@
                 </ImageView>
             </graphic>
          <tooltip>
-            <Tooltip text="\%CREATE_INVITATION" />
+            <Tooltip text="%CREATE_INVITATION" />
          </tooltip>
         </Button>
     </children>
