@@ -6,11 +6,14 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -33,11 +36,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_ID_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_URL;
+
 public class PrivateChatsScreenController implements Controller {
 
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
+    private ServerListController serverListController;
     private Button btnOptions, btnPlay;
     private Button btnHome;
     private TextArea taPrivateChat;
@@ -69,6 +76,7 @@ public class PrivateChatsScreenController implements Controller {
         this.localUser = model;
         this.editor = editor;
         this.privateChatController = new PrivateChatController(view, model, editor);
+        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor);
     }
 
 
@@ -80,9 +88,7 @@ public class PrivateChatsScreenController implements Controller {
      * Add action listeners
      */
     public void init() {
-        this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnPlay = (Button) view.lookup("#btnPlay");
-        this.btnHome = (Button) view.lookup("#btnHome");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
@@ -94,11 +100,9 @@ public class PrivateChatsScreenController implements Controller {
 
         this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
 
-        privateChatController.init();
+        this.privateChatController.init();
+        this.serverListController.init();
 
-        this.btnHome.setOnAction(this::btnHomeOnClicked);
-
-        this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
         this.initOnlineUsersList();
@@ -136,32 +140,13 @@ public class PrivateChatsScreenController implements Controller {
         this.audioChannelChange = null;
         this.languageRefreshed = null;
 
-        this.btnHome.setOnAction(null);
         this.btnPlay.setOnAction(null);
-        this.btnOptions.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
 
         privateChatController.stop();
         privateChatController = null;
-    }
-
-    /**
-     * redirect to Main Screen
-     *
-     * @param actionEvent occurs when Home Button is clicked
-     */
-    private void btnHomeOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
-    }
-
-
-    /**
-     * redirect to Options Menu
-     *
-     * @param actionEvent occurs when Options Button is clicked
-     */
-    private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
+        this.serverListController.stop();
+        this.serverListController = null;
     }
 
     /**

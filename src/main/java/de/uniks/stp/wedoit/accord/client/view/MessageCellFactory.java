@@ -491,7 +491,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
         } else {
             if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null));
+                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
             }
         }
     }

@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
@@ -33,11 +34,11 @@ public class ServerScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
+    private ServerListController serverListController;
 
     // View Elements
-    private Button btnOptions;
-    private Button btnHome;
-    private Label lbServerName, lbChannelName;
+    private Label lbServerName, lblServerUsers, lbChannelName;
+
     private ListView<User> lvServerUsers;
     private MenuItem menuItemLeaveServer;
 
@@ -61,8 +62,7 @@ public class ServerScreenController implements Controller {
 
     /**
      * Create a new Controller
-     *
-     * @param view   The view this Controller belongs to
+     *  @param view   The view this Controller belongs to
      * @param model  The model this Controller belongs to
      * @param editor The editor of the Application
      * @param server The Server this Screen belongs to
@@ -76,6 +76,7 @@ public class ServerScreenController implements Controller {
         serverChatController = new ServerChatController(view, model, editor, server, this);
         this.serverWSCallback = (msg) -> editor.getWebSocketManager().handleServerMessage(msg, server);
         this.chatWSCallback = serverChatController::handleChatMessage;
+        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor);
     }
 
     /**
@@ -89,9 +90,8 @@ public class ServerScreenController implements Controller {
     public void init() {
         // Load all view references
         this.editor.setCurrentServer(server);
+
         TextArea tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
-        this.btnOptions = (Button) view.lookup("#btnOptions");
-        this.btnHome = (Button) view.lookup("#btnHome");
         this.lbServerName = (Label) view.lookup("#lbServerName");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
@@ -100,8 +100,10 @@ public class ServerScreenController implements Controller {
         this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
         this.audioChannelSubViewContainer.getChildren().clear();
 
-        categoryTreeViewController.init();
-        serverChatController.init();
+        this.categoryTreeViewController.init();
+        this.serverChatController.init();
+        this.serverListController.init();
+
 
         //this.setComponentsText();
 
@@ -121,9 +123,6 @@ public class ServerScreenController implements Controller {
         // get members of this server
         editor.getRestManager().getExplicitServerInformation(localUser, server, this);
 
-        // add OnActionListeners
-        addActionListener();
-
         if (localUser.getAudioChannel() != null) {
             initAudioChannelSubView(localUser.getAudioChannel());
         }
@@ -140,14 +139,6 @@ public class ServerScreenController implements Controller {
         lvServerUsers.refresh();
     }
 
-    /**
-     * adds action listener
-     */
-    public void addActionListener() {
-        // Add action listeners
-        this.btnOptions.setOnAction(this::optionsButtonOnClick);
-        this.btnHome.setOnAction(this::homeButtonOnClick);
-    }
 
     /**
      * If audio channel is clicked, then the audioChannelSubView is dynamically added to ServerScreen.
@@ -183,9 +174,6 @@ public class ServerScreenController implements Controller {
         for (User user : server.getMembers()) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
         }
-
-        this.btnOptions.setOnAction(null);
-        this.btnHome.setOnAction(null);
         for (MenuItem i: serverMenuButton.getItems()) {
             i.setOnAction(null);
         }
@@ -209,8 +197,10 @@ public class ServerScreenController implements Controller {
 
         this.categoryTreeViewController.stop();
         this.serverChatController.stop();
+        this.serverListController.stop();
         this.categoryTreeViewController = null;
         this.serverChatController = null;
+        this.serverListController = null;
         this.editor.setCurrentServer(null);
 
         if (audioChannelSubViewController != null) {
@@ -228,23 +218,7 @@ public class ServerScreenController implements Controller {
         this.editor.getStageManager().initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, server, null);
     }
 
-    /**
-     * The localUser will be redirect to the HomeScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void homeButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
-    }
-
-    /**
-     * The localUser will be redirect to the OptionsScreen
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void optionsButtonOnClick(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
-    }
+    // PropertyChangeEvent Methods
 
     /**
      * The localUser will be redirected to the EditServerScreen
@@ -254,8 +228,6 @@ public class ServerScreenController implements Controller {
     private void editButtonOnClick(ActionEvent actionEvent) {
         this.editor.getStageManager().initView(ControllerEnum.EDIT_SERVER_SCREEN, server, null);
     }
-
-    // PropertyChangeEvent Methods
 
     /**
      * rebuilds the user list
@@ -330,7 +302,6 @@ public class ServerScreenController implements Controller {
     private void createUserListView(JsonArray jsonMembers) {
         List<User> members = JsonUtil.parseUserArray(jsonMembers);
         editor.serverWithMembers(members, server);
-
         // load categories
         categoryTreeViewController.initCategoryChannelList();
 
