@@ -44,7 +44,7 @@ public class PrivateChatsScreenController implements Controller {
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
-    private final ServerListController serverListController;
+    private ServerListController serverListController;
     private Button btnOptions, btnPlay;
     private Button btnHome;
     private TextArea taPrivateChat;
@@ -145,6 +145,8 @@ public class PrivateChatsScreenController implements Controller {
 
         privateChatController.stop();
         privateChatController = null;
+        this.serverListController.stop();
+        this.serverListController = null;
     }
 
     /**

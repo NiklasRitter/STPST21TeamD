@@ -703,10 +703,8 @@ public class ServerScreenTest extends ApplicationTest {
         //init channel list and select first channel
         initUserListView();
         initChannelListViewCategoryFailure();
-        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
         WaitForAsyncUtils.waitForFxEvents();
-        TreeItem<Object> root = tvServerChannels.getRoot();
-        Assert.assertEquals(0, root.getChildren().size());
+        Assert.assertEquals("Login", stage.getTitle());
     }
 
     @Test

@@ -34,7 +34,7 @@ public class ServerScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
-    private final ServerListController serverListController;
+    private ServerListController serverListController;
 
     // View Elements
     private Label lbServerName, lblServerUsers, lbChannelName;
@@ -170,7 +170,6 @@ public class ServerScreenController implements Controller {
      * Remove action listeners
      */
     public void stop() {
-
         this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         for (User user : server.getMembers()) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
@@ -198,8 +197,10 @@ public class ServerScreenController implements Controller {
 
         this.categoryTreeViewController.stop();
         this.serverChatController.stop();
+        this.serverListController.stop();
         this.categoryTreeViewController = null;
         this.serverChatController = null;
+        this.serverListController = null;
         this.editor.setCurrentServer(null);
 
         if (audioChannelSubViewController != null) {

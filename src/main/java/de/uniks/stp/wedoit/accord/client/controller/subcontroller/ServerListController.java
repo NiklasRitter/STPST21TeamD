@@ -89,6 +89,13 @@ public class ServerListController implements Controller {
         this.btnHome.setOnAction(null);
         this.addServerButton.setOnAction(null);
         this.enterInvitationButton.setOnAction(null);
+        this.lvServerList.setOnMouseReleased(null);
+
+        this.btnOptions = null;
+        this.btnHome = null;
+        this.addServerButton = null;
+        this.enterInvitationButton = null;
+        this.lvServerList = null;
     }
 
     /**
