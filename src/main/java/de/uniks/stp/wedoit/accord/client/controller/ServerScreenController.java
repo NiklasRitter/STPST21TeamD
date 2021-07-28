@@ -268,9 +268,13 @@ public class ServerScreenController implements Controller {
 
     private void handleAudioChannelChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() == null) {
+            Platform.runLater(() -> {
+                if(this.audioChannelSubViewContainer != null){
+                    this.audioChannelSubViewContainer.getChildren().clear();
+                }
+            });
             this.audioChannelSubViewController.stop();
             this.audioChannelSubViewController = null;
-            Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().clear());
         } else {
             this.initAudioChannelSubView((Channel) propertyChangeEvent.getNewValue());
         }

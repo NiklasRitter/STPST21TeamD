@@ -488,7 +488,6 @@ public class LocalUser
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
-      result.append(' ').append(this.getDescription());
       result.append(' ').append(this.getPassword());
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());

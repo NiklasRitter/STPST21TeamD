@@ -144,8 +144,6 @@ public class AudioReceive extends Thread {
 
     public void updateVolume() {
         float systemVolume = localUser.getAccordClient().getOptions().getSystemVolume();
-        System.out.println("System Volume Change: " + systemVolume);
-
         for (String name : sourceDataLineMap.keySet()) {
             SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
             if (audioMemberLine.isOpen() && audioMemberLine.isControlSupported(FloatControl.Type.VOLUME)) {

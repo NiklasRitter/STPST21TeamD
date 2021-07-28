@@ -66,7 +66,7 @@ public class AudioSend extends Thread {
                 line = (TargetDataLine) AudioSystem.getMixer(inputDevice).getLine(info);
             }
             else{
-                line = AudioSystem.getTargetDataLine(audioFormat);
+                line = (TargetDataLine) AudioSystem.getLine(info);
             }
             line.open(audioFormat);
             byte[] readData = new byte[1279];

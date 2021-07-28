@@ -396,7 +396,6 @@ public class User
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
-      result.append(' ').append(this.getDescription());
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getGameMove());
       result.append(' ').append(this.getId());
