@@ -94,9 +94,6 @@ public class StageManager extends Application {
                 editor.haveLocalUser();
                 controller = new LoginScreenController(root, model, editor, (boolean) parameter);
                 break;
-            case MAIN_SCREEN_CONTROLLER:
-                controller = new MainScreenController(root, model.getLocalUser(), editor);
-                break;
             case CREATE_SERVER_SCREEN_CONTROLLER:
                 controller = new CreateServerScreenController(root, editor);
                 break;
