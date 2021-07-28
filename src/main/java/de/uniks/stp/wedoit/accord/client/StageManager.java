@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
@@ -36,6 +37,7 @@ public class StageManager extends Application {
     private PreferenceManager prefManager = new PreferenceManager();
     private SystemTrayController systemTrayController;
     private AccordClient model;
+
 
     {
         resourceManager.setPreferenceManager(prefManager);
@@ -91,9 +93,6 @@ public class StageManager extends Application {
             case LOGIN_SCREEN_CONTROLLER:
                 editor.haveLocalUser();
                 controller = new LoginScreenController(root, model, editor, (boolean) parameter);
-                break;
-            case MAIN_SCREEN_CONTROLLER:
-                controller = new MainScreenController(root, model.getLocalUser(), editor);
                 break;
             case CREATE_SERVER_SCREEN_CONTROLLER:
                 controller = new CreateServerScreenController(root, editor);
