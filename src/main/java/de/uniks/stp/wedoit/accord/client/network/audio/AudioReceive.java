@@ -1,9 +1,11 @@
 package de.uniks.stp.wedoit.accord.client.network.audio;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import org.json.JSONObject;
 
 import javax.sound.sampled.*;
+import java.beans.PropertyChangeListener;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ public class AudioReceive extends Thread {
     private final LocalUser localUser;
     private final Map<String, SourceDataLine> sourceDataLineMap;
     private final ArrayList<String> connectedUser;
+    public PropertyChangeListener systemVolumeListener = this::onSystemVolumeChange;
 
     AtomicBoolean shouldReceive;
 
@@ -31,6 +34,16 @@ public class AudioReceive extends Thread {
         this.shouldReceive.set(true);
 
         this.sourceDataLineMap = new HashMap<>();
+    }
+
+    public void init() {
+        localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
+                systemVolumeListener);
+        updateVolume();
+    }
+
+    public void terminate() {
+        localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME, systemVolumeListener);
     }
 
     @Override
@@ -122,6 +135,25 @@ public class AudioReceive extends Thread {
     public void unmuteUser(String username) {
         if (sourceDataLineMap.containsKey(username)) {
             sourceDataLineMap.get(username).start();
+        }
+    }
+
+    public void onSystemVolumeChange(Object object) {
+        updateVolume();
+    }
+
+    public void updateVolume() {
+        float systemVolume = localUser.getAccordClient().getOptions().getSystemVolume();
+        System.out.println("System Volume Change: " + systemVolume);
+
+        for (String name : sourceDataLineMap.keySet()) {
+            SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
+            if (audioMemberLine.isOpen() && audioMemberLine.isControlSupported(FloatControl.Type.VOLUME)) {
+                //TODO: add userVolume to user
+                float userVolume = 100;
+                FloatControl volumeControl = (FloatControl) audioMemberLine.getControl(FloatControl.Type.VOLUME);
+                volumeControl.setValue((systemVolume * userVolume) / 100);
+            }
         }
     }
 }

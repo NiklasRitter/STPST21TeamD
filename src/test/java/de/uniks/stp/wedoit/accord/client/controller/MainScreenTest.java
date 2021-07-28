@@ -526,12 +526,14 @@ public class MainScreenTest extends ApplicationTest {
 
     public JsonObject webSocketCallbackServerUpdated() {
         return Json.createObjectBuilder().add("action", "serverUpdated").add("data",
-                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")).build();
+                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")
+                        .add("description", "")).build();
     }
 
     public JsonObject webSocketCallbackServerDeleted() {
         return Json.createObjectBuilder().add("action", "serverDeleted").add("data",
-                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")).build();
+                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")
+                        .add("description", "")).build();
     }
 
     /**

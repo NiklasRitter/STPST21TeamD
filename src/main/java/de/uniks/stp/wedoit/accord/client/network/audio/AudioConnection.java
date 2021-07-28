@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.network.audio;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
@@ -17,15 +18,17 @@ public class AudioConnection {
     private final Channel channel;
     private AudioSend sendingThread;
     private AudioReceive receivingThread;
+    private final Editor editor;
     private DatagramSocket audioSocket;
     private String url;
     private int port;
     private PropertyChangeListener outputDeviceListener = this::handleOutputDeviceChange;
     private PropertyChangeListener inputDeviceListener = this::handleInputDeviceChange;
 
-    public AudioConnection(LocalUser localUser, Channel channel) {
+    public AudioConnection(LocalUser localUser, Channel channel, Editor editor) {
         this.localUser = localUser;
         this.channel = channel;
+        this.editor = editor;
     }
 
     public void startConnection(String url, int port) {
@@ -43,7 +46,7 @@ public class AudioConnection {
     }
 
     public void startSendingAudio(String url, int port) {
-        this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port);
+        this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port, editor);
         this.sendingThread.start();
     }
 
@@ -54,6 +57,7 @@ public class AudioConnection {
             connectedUser.add(member.getName());
         }
         this.receivingThread = new AudioReceive(localUser, audioSocket, connectedUser);
+        this.receivingThread.init();
         this.receivingThread.start();
     }
 
@@ -83,6 +87,7 @@ public class AudioConnection {
             if (this.receivingThread.isAlive()) {
                 try {
                     receivingThread.setShouldReceive(false);
+                    receivingThread.terminate();
                     receivingThread.join();
                 } catch (InterruptedException e) {
                     System.err.println("Error on closing receivingConnection");
