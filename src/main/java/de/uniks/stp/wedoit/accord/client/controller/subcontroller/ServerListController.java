@@ -67,10 +67,10 @@ public class ServerListController implements Controller {
         this.lvServerList = (ListView<Server>) view.lookup("#lwServerList");
 
         // load servers of the localUser
-        //editor.getRestManager().getServers(editor.getLocalUser(), this);
+        editor.getRestManager().getServers(editor.getLocalUser(), this);
 
         // load localUserId in order to later be able to edit server
-        //editor.getRestManager().getLocalUserId(editor.getLocalUser());
+        editor.getRestManager().getLocalUserId(editor.getLocalUser());
 
 
         this.btnOptions.setOnAction(this::optionsButtonOnClick);
