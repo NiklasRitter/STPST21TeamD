@@ -168,7 +168,7 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", this.stageManager.getEditor().getLocalUser().getUserKey());
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
 
         // Assert that the password is saved encrypted
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
@@ -363,7 +363,7 @@ public class LoginScreenTest extends ApplicationTest {
         Assert.assertEquals("c653b568-d987-4331-8d62-26ae617847bf", this.stageManager.getEditor().getLocalUser().getUserKey());
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
     }
 
     @Test

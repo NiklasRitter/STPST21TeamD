@@ -197,8 +197,8 @@ public class OptionsScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
-        Label lblYourServers = lookup("#lblYourServers").query();
-        Assert.assertEquals(lblYourServers.getText(), "Ihre Server");
+
+        Assert.assertEquals("Private Chats", stage.getTitle());
 
         // open options screen
         directToOptionsScreen();
@@ -231,7 +231,7 @@ public class OptionsScreenTest extends ApplicationTest {
 
         // got to main screen
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
         directToOptionsScreen();
 
         VBox mainVBox = lookup("#mainVBox").query();

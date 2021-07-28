@@ -5,6 +5,8 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
+
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
@@ -111,7 +113,7 @@ public class RestManager {
      * @param localUser  logged in local user
      * @param controller controller in which the response need handled
      */
-    public void getServers(LocalUser localUser, MainScreenController controller) {
+    public void getServers(LocalUser localUser, ServerListController controller) {
         restClient.getServers(localUser.getUserKey(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 JsonArray getServersResponse = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
@@ -663,7 +665,7 @@ public class RestManager {
                 System.err.println("Error while leaving server");
                 Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LEAVE_SERVER_AS_OWNER_SCREEN, null, null));
             } else {
-                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
+                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
             }
         });
     }
