@@ -129,7 +129,7 @@ public class OptionsScreenController implements Controller {
         this.choiceBoxInputDevice.setOnAction(this::choiceBoxOutputInputSelected);
     }
 
-    private void choiceBoxOutputInputSelected(ActionEvent actionEvent) {
+    private void choiceBoxOutputInputSelected(Event actionEvent) {
         String description = "Direct Audio Device: DirectSound Playback";
         String info = this.choiceBoxOutputDevice.getSelectionModel().getSelectedItem();
         if(actionEvent.getSource() == this.choiceBoxInputDevice) {
