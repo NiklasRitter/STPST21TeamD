@@ -60,8 +60,8 @@ public class UpdateMessageScreenController implements Controller {
         btnUpdateMessage.setOnAction(this::updateMessage);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
 
-        this.markingController = new MarkingController(tfUpdateMessage, message.getChannel(), vboxMarkingSelection);
-        this.markingController.init();
+        //this.markingController = new MarkingController(tfUpdateMessage, message.getChannel(), vboxMarkingSelection);
+        //this.markingController.init();
     }
 
     private void updateMessage(ActionEvent actionEvent) {

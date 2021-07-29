@@ -116,7 +116,6 @@ public class ReferenceController implements Controller {
 
     private void isMarking(KeyEvent keyEvent) {
         caret = textArea.getCaretPosition();
-
         if (!textArea.getText().contains("#")) {
             removeSelectionMenu();
             referencePositions = new ArrayList<>();
@@ -142,7 +141,7 @@ public class ReferenceController implements Controller {
             //character added
 
             atHit = checkAtHit(true);
-
+            System.out.println(keyEvent.getCharacter());
             if (atHit != null) {
                 if (keyEvent.getCharacter().equals("#") && currentChannel != null) {
                     atHit = new ReferencePositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1);
