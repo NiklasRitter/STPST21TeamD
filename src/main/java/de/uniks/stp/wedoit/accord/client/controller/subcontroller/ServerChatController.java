@@ -69,6 +69,7 @@ public class ServerChatController implements Controller {
     private PropertyChangeListener newMessagesListener = this::newMessage;
     private PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
     private PropertyChangeListener darkModeListener = this::onDarkmodeChanged;
+    private ReferenceController referenceController;
 
     /**
      * Create a new Controller
@@ -112,6 +113,9 @@ public class ServerChatController implements Controller {
         this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
         this.markingController.init();
 
+        this.referenceController = new ReferenceController(tfInputMessage, currentChannel, vBoxTextField);
+        this.referenceController.init();
+
         quoteVisible.getChildren().clear();
 
         addUserMessageContextMenu();
@@ -144,6 +148,7 @@ public class ServerChatController implements Controller {
         this.lvTextChat.setOnMousePressed(null);
         this.btnCancelQuote.setOnAction(null);
         this.markingController.stop();
+        this.referenceController.stop();
         this.controller = null;
 
 
@@ -168,6 +173,8 @@ public class ServerChatController implements Controller {
         this.messageTextChangedListener = null;
         this.newMessagesListener = null;
         this.darkModeListener = null;
+        this.markingController = null;
+        this.referenceController = null;
     }
 
     /**
