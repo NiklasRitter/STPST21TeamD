@@ -237,6 +237,11 @@ public class StageManager extends Application {
         changeLanguage(model.getOptions().getLanguage());
     }
 
+    private void updateOutputInputDevices() {
+        this.model.getOptions().setOutputDevice(prefManager.loadOutputDevice());
+        this.model.getOptions().setInputDevice(prefManager.loadInputDevice());
+    }
+
     public void changeLanguage(String language) {
         Locale.setDefault(new Locale(Objects.requireNonNullElse(language, "en_GB")));
     }
@@ -310,6 +315,7 @@ public class StageManager extends Application {
         model.setOptions(new Options());
         editor.haveLocalUser();
         resourceManager.start(model);
+        updateOutputInputDevices();
         updateLanguage();
         if (!SystemTray.isSupported()) System.err.println("SystemTray not supported on the platform.");
         else {

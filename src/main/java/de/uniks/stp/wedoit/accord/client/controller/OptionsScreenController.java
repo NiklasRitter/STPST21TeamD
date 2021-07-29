@@ -17,6 +17,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import java.beans.PropertyChangeEvent;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import java.util.Locale;
 
 public class OptionsScreenController implements Controller {
@@ -26,7 +28,7 @@ public class OptionsScreenController implements Controller {
     private Parent view;
     private CheckBox btnDarkMode;
     private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
-    private ChoiceBox choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
+    private ChoiceBox<String> choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
     private Slider sliderTextSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
     private ProgressBar progressBarTest, progressBarTestBot;
     private VBox vBoxSoundSettings, vBoxExtraSettings;
@@ -74,6 +76,7 @@ public class OptionsScreenController implements Controller {
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(LanguageResolver.getString("OPTIONS"));
 
         createChoiceBoxItems();
+        createOutputInputChoiceBox();
 
         this.btnDarkMode.setSelected(options.isDarkmode());
 
@@ -100,16 +103,67 @@ public class OptionsScreenController implements Controller {
         editor.getAccordClient().getOptions().setSystemVolume((float) sliderOutputVolume.getValue());
     }
 
+    private void createOutputInputChoiceBox() {
+        for(Mixer.Info m : AudioSystem.getMixerInfo()) {
+            if(m.getDescription().equals("Direct Audio Device: DirectSound Playback")) {
+                this.choiceBoxOutputDevice.getItems().add(m.getName());
+            }
+            else if(m.getDescription().equals("Direct Audio Device: DirectSound Capture")) {
+                this.choiceBoxInputDevice.getItems().add(m.getName());
+            }
+        }
+        if(this.options.getOutputDevice() != null) {
+            this.choiceBoxOutputDevice.getSelectionModel().select(this.options.getOutputDevice().getName());
+        }
+        else {
+            this.choiceBoxOutputDevice.getSelectionModel().select(0);
+        }
+        if(this.options.getInputDevice() != null) {
+            this.choiceBoxInputDevice.getSelectionModel().select(this.options.getInputDevice().getName());
+        }
+        else {
+            this.choiceBoxInputDevice.getSelectionModel().select(0);
+        }
+
+        this.choiceBoxOutputDevice.setOnAction(this::choiceBoxOutputInputSelected);
+        this.choiceBoxInputDevice.setOnAction(this::choiceBoxOutputInputSelected);
+    }
+
+    private void choiceBoxOutputInputSelected(Event actionEvent) {
+        String description = "Direct Audio Device: DirectSound Playback";
+        String info = this.choiceBoxOutputDevice.getSelectionModel().getSelectedItem();
+        if(actionEvent.getSource() == this.choiceBoxInputDevice) {
+            description = "Direct Audio Device: DirectSound Capture";
+            info = this.choiceBoxInputDevice.getSelectionModel().getSelectedItem();
+        }
+        for(Mixer.Info m : AudioSystem.getMixerInfo()) {
+            if(m.getName().equals(info) && m.getDescription().equals(description)) {
+                if(actionEvent.getSource() == choiceBoxOutputDevice) {
+                    this.options.setOutputDevice(m);
+                    this.editor.getStageManager().getPrefManager().saveOutputDevice(m.getName());
+                }
+                else {
+                    this.options.setInputDevice(m);
+                    this.editor.getStageManager().getPrefManager().saveInputDevice(m.getName());
+                }
+                break;
+            }
+        }
+    }
 
     private void createChoiceBoxItems() {
         this.choiceBoxLanguage.getItems().addAll("English", "Deutsch", "فارسی");
 
-        if (Locale.getDefault().getLanguage().equals("fa_ir")) {
-            this.choiceBoxLanguage.getSelectionModel().select(2);
-        } else if (Locale.getDefault().getLanguage().equals("de_de")) {
-            this.choiceBoxLanguage.getSelectionModel().select(1);
-        } else if (Locale.getDefault().getLanguage().equals("en_gb")) {
-            this.choiceBoxLanguage.getSelectionModel().select(0);
+        switch (Locale.getDefault().getLanguage()) {
+            case "fa_ir":
+                this.choiceBoxLanguage.getSelectionModel().select(2);
+                break;
+            case "de_de":
+                this.choiceBoxLanguage.getSelectionModel().select(1);
+                break;
+            case "en_gb":
+                this.choiceBoxLanguage.getSelectionModel().select(0);
+                break;
         }
         this.choiceBoxLanguage.setOnAction(this::choiceBoxLanguageOnClick);
     }

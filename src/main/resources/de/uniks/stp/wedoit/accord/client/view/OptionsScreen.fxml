@@ -121,15 +121,15 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
-                  <Label text="%OUTPUT_DEVICE">
+                  <Label minWidth="120.0" text="%OUTPUT_DEVICE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ChoiceBox id="choiceBoxOutputDevice" />
+                  <ChoiceBox id="choiceBoxOutputDevice" minWidth="200.0" />
                </children>
             </HBox>
-            <HBox alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT">
                <children>
                    <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
                        <Image url="@images/speaker-with-no-sound.png" />
@@ -139,18 +139,21 @@
                        <Image url="@images/speaker-with-sound.png" />
                    </ImageView>
                </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="42.0">
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
-                  <Label text="%INPUT_DEVICE">
+                  <Label minWidth="120.0" text="%INPUT_DEVICE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ChoiceBox id="choiceBoxInputDevice" />
+                  <ChoiceBox id="choiceBoxInputDevice" minWidth="200.0" />
                </children>
             </HBox>
-            <HBox alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT">
                <children>
                    <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
                        <Image url="@images/speaker-with-no-sound.png" />
@@ -160,6 +163,9 @@
                        <Image url="@images/speaker-with-sound.png" />
                    </ImageView>
                </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>

@@ -63,9 +63,16 @@ public class AudioReceive extends Thread {
 
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
 
+            Mixer.Info outputDevice = this.localUser.getAccordClient().getOptions().getOutputDevice();
             for (String memberName : connectedUser) {
                 if (!memberName.equals(localUser.getName())) {
-                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                    SourceDataLine membersSourceDataLine;
+                    if(outputDevice != null) {
+                        membersSourceDataLine = (SourceDataLine) AudioSystem.getMixer(outputDevice).getLine(dataLineInfo);
+                    }
+                    else {
+                        membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                    }
                     membersSourceDataLine.open(audioFormat);
                     membersSourceDataLine.start();
 
@@ -137,8 +144,6 @@ public class AudioReceive extends Thread {
 
     public void updateVolume() {
         float systemVolume = localUser.getAccordClient().getOptions().getSystemVolume();
-        System.out.println("System Volume Change: " + systemVolume);
-
         for (String name : sourceDataLineMap.keySet()) {
             SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
             if (audioMemberLine.isOpen() && audioMemberLine.isControlSupported(FloatControl.Type.VOLUME)) {
