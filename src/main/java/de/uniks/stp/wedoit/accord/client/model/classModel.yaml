@@ -58,7 +58,7 @@
   roles: 	server_categories 	server_invitations 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
-  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_muted 	user_gameMove 	user_id
+  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_muted 	user_gameMove 	user_audioVolume 	user_id
   model: 	c
   modified: 	false
   name: 	User
@@ -483,6 +483,15 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- user_audioVolume: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_audioVolume
+  modified: 	false
+  name: 	audioVolume
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
 
 - user_id: 	org.fulib.classmodel.Attribute
   clazz: 	user
