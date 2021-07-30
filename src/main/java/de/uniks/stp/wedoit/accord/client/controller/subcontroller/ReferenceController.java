@@ -38,7 +38,7 @@ public class ReferenceController implements Controller {
 
     @Override
     public void init() {
-        this.textArea.setOnKeyTyped(this::isMarking);
+        this.textArea.setOnKeyReleased(this::isMarking);
         lvSelectChannel = new ListView<>();
         lvSelectChannel.setVisible(false);
         lvSelectChannel.setId("lvSelectChannel");
@@ -46,7 +46,7 @@ public class ReferenceController implements Controller {
 
     @Override
     public void stop() {
-        this.textArea.setOnKeyTyped(null);
+        this.textArea.setOnKeyReleased(null);
         selectChannelObservableList = null;
         lvSelectChannel = null;
         vBoxTextField = null;
