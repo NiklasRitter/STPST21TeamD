@@ -168,11 +168,13 @@ public class MarkingController implements Controller {
 
                 AtPositions newAt = null;
                 if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
+                    removeSelectionMenu();
                     newAt = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1, "@");
                     atPositions.add(newAt);
 
                     initLwSelectUser(lvSelectUser);
                 } else if (keyEvent.getCharacter().equals("#") && !lvSelectChannel.isVisible() && currentChannel != null) {
+                    removeSelectionMenu();
                     newAt = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1, "#");
                     atPositions.add(newAt);
 
@@ -284,8 +286,6 @@ public class MarkingController implements Controller {
 
         vBoxTextField.getChildren().add(lvSelectUser);
 
-        lvSelectUser.setMinHeight(45);
-        lvSelectUser.setPrefHeight(45);
         lvSelectUser.setVisible(true);
 
         // init list view
@@ -300,24 +300,25 @@ public class MarkingController implements Controller {
 
         this.selectUserObservableList = FXCollections.observableList(availableUsers);
 
+        lvSelectUser.setMinHeight(selectUserObservableList.size() * 26);
+        lvSelectUser.setPrefHeight(selectUserObservableList.size() * 26);
+
         this.selectUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
                 .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
 
         this.lvSelectUser.setItems(selectUserObservableList);
     }
 
-    private void initLwSelectChannel(ListView<Channel> lvSelectUser) {
+    private void initLwSelectChannel(ListView<Channel> lvSelectChannel) {
 
         this.lvSelectChannel.setOnMousePressed(this::lvSelectChannelOnClick);
 
-        vBoxTextField.getChildren().add(lvSelectUser);
+        vBoxTextField.getChildren().add(lvSelectChannel);
 
-        lvSelectUser.setMinHeight(45);
-        lvSelectUser.setPrefHeight(45);
-        lvSelectUser.setVisible(true);
+        lvSelectChannel.setVisible(true);
 
         // init list view
-        lvSelectUser.setCellFactory(new SelectChannelCellFactory());
+        lvSelectChannel.setCellFactory(new SelectChannelCellFactory());
 
         ArrayList<Channel> possibleChannels = new ArrayList<>();
 
@@ -326,6 +327,9 @@ public class MarkingController implements Controller {
         }
 
         this.selectChannelObservableList = FXCollections.observableList(possibleChannels);
+
+        lvSelectChannel.setMinHeight(selectChannelObservableList.size() * 26);
+        lvSelectChannel.setPrefHeight(selectChannelObservableList.size() * 26);
 
         this.selectChannelObservableList.sort(Comparator.comparing(Channel::getName, String::compareToIgnoreCase).reversed());
 
@@ -438,58 +442,64 @@ public class MarkingController implements Controller {
 
     private void checkMarkingPossible(String text, AtPositions at) {
 
-        ArrayList<User> possibleUsers;
+        if (at.getContent().charAt(0) == '@') {
+            ArrayList<User> possibleUsers;
 
-        if (currentChannel != null && currentChannel.isPrivileged()) {
-            possibleUsers = new ArrayList<>(currentChannel.getMembers());
+            if (currentChannel != null && currentChannel.isPrivileged()) {
+                possibleUsers = new ArrayList<>(currentChannel.getMembers());
+            } else {
+                possibleUsers = new ArrayList<>(currentChannel.getCategory().getServer().getMembers());
+            }
+
+            for (User user : possibleUsers) {
+                if (!user.getName().contains(text)) {
+                    selectUserObservableList.remove(user);
+                } else if (user.getName().equals(text)) {
+                    at.setComplete(true);
+                    break;
+                } else if (!selectUserObservableList.contains(user)) {
+                    selectUserObservableList.add(user);
+                }
+            }
+
+            lvSelectUser.setMinHeight(selectUserObservableList.size() * 26);
+            lvSelectUser.setPrefHeight(selectUserObservableList.size() * 26);
+
+            if (!lvSelectUser.isVisible() && !at.isComplete() && !selectUserObservableList.isEmpty()) {
+                showUserSelectionMenu();
+            }
+
+            if (selectUserObservableList.isEmpty() || at.isComplete()) {
+                removeSelectionMenu();
+            }
         } else {
-            possibleUsers = new ArrayList<>(currentChannel.getCategory().getServer().getMembers());
-        }
+            ArrayList<Channel> possibleChannels = new ArrayList<>();
 
-        for (User user : possibleUsers) {
-            if (!user.getName().contains(text)) {
-                selectUserObservableList.remove(user);
-            } else if (user.getName().equals(text)) {
-                at.setComplete(true);
-                break;
-            } else if (!selectUserObservableList.contains(user)) {
-                selectUserObservableList.add(user);
+            for (Category category: currentChannel.getCategory().getServer().getCategories()) {
+                possibleChannels.addAll(category.getChannels());
             }
-        }
 
-        if (!lvSelectUser.isVisible() && !at.isComplete() && !selectUserObservableList.isEmpty()) {
-            showUserSelectionMenu();
-        }
-
-        if (selectUserObservableList.isEmpty() || at.isComplete()) {
-            removeSelectionMenu();
-        }
-    }
-
-    private void checkMarkingChannelPossible(String text, ReferenceController.ReferencePositions at) {
-        ArrayList<Channel> possibleChannels = new ArrayList<>();
-
-        for (Category category: currentChannel.getCategory().getServer().getCategories()) {
-            possibleChannels.addAll(category.getChannels());
-        }
-
-        for (Channel channel : possibleChannels) {
-            if (!channel.getName().contains(text)) {
-                selectChannelObservableList.remove(channel);
-            } else if (channel.getName().equals(text)) {
-                at.setComplete(true);
-                break;
-            } else if (!selectChannelObservableList.contains(channel)) {
-                selectChannelObservableList.add(channel);
+            for (Channel channel : possibleChannels) {
+                if (!channel.getName().contains(text)) {
+                    selectChannelObservableList.remove(channel);
+                } else if (channel.getName().equals(text)) {
+                    at.setComplete(true);
+                    break;
+                } else if (!selectChannelObservableList.contains(channel)) {
+                    selectChannelObservableList.add(channel);
+                }
             }
-        }
 
-        if (!lvSelectChannel.isVisible() && !at.isComplete() && !selectChannelObservableList.isEmpty()) {
-            showChannelSelectionMenu();
-        }
+            lvSelectChannel.setMinHeight(selectChannelObservableList.size() * 26);
+            lvSelectChannel.setPrefHeight(selectChannelObservableList.size() * 26);
 
-        if (selectChannelObservableList.isEmpty() || at.isComplete()) {
-            removeSelectionMenu();
+            if (!lvSelectChannel.isVisible() && !at.isComplete() && !selectChannelObservableList.isEmpty()) {
+                showChannelSelectionMenu();
+            }
+
+            if (selectChannelObservableList.isEmpty() || at.isComplete()) {
+                removeSelectionMenu();
+            }
         }
     }
 
