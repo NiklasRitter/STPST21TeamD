@@ -128,6 +128,10 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         return buf.toString();
     }
 
+    public void setText(String newText) {
+        this.replaceText(newText);
+    }
+
     private Emoji getEmojiFromPath(String imagePath) {
         String[] split = imagePath.split("/");
         String temp = split[split.length - 1];
