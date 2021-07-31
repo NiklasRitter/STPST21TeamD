@@ -234,11 +234,10 @@
 }
 
 .textAreaInput {
-    -fx-text-fill: #ffffff ;
+    -rtfx-text-fill: #ffffff;
+    -fx-fill: #ffffff ;
     -fx-background-color: #40444b;
-    -fx-prompt-text-fill: #cccccc;
 }
-
 
 .scroll-bar:horizontal .track,
 .scroll-bar:vertical .track{
