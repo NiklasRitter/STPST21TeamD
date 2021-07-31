@@ -157,9 +157,9 @@ public class PrivateMessageServerScreenController implements Controller {
         this.taMessage.setEditable(onlineStatus);
         if (!onlineStatus) {
             this.taMessage.clear();
-            this.taMessage.setPromptText(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+            this.taMessage.setPlaceholder(new Text(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE")));
         } else {
-            this.taMessage.setPromptText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
+            this.taMessage.setPlaceholder(new Text(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName()));
         }
     }
 

@@ -60,7 +60,7 @@ public class UpdateMessageScreenController implements Controller {
         } else {
             messageText = message.getText();
         }
-        tfUpdateMessage.setText(messageText);
+        tfUpdateMessage.replaceText(messageText);
 
         btnDiscard.setOnAction(this::discardChanges);
         btnUpdateMessage.setOnAction(this::updateMessage);

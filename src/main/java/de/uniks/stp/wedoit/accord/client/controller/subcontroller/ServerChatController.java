@@ -395,7 +395,7 @@ public class ServerChatController implements Controller {
         channel.setRead(true);
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
-        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+        this.tfInputMessage.setPlaceholder(new Text(LanguageResolver.getString("YOUR_MESSAGE")));
         this.tfInputMessage.setEditable(this.currentChannel != null);
 
         // init list view

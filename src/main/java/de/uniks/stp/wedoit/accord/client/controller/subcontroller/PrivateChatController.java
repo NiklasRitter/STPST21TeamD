@@ -95,7 +95,7 @@ public class PrivateChatController implements Controller {
 
         addMessageContextMenu();
 
-        this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
+        this.tfPrivateChat.setPlaceholder(new Text(LanguageResolver.getString("SELECT_A_USER")));
         this.tfPrivateChat.setEditable(false);
 
         this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
@@ -183,10 +183,10 @@ public class PrivateChatController implements Controller {
         selectedUser.setChatRead(true);
         editor.updateUserChatRead(selectedUser);
         if (selectedUser.isOnlineStatus()) {
-            this.tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+            this.tfPrivateChat.setPlaceholder(new Text(LanguageResolver.getString("YOUR_MESSAGE")));
             this.tfPrivateChat.setEditable(true);
         } else {
-            this.tfPrivateChat.setPromptText(selectedUser.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+            this.tfPrivateChat.setPlaceholder(new Text(selectedUser.getName() + " " + LanguageResolver.getString("IS_OFFLINE")));
             this.tfPrivateChat.setEditable(false);
         }
 
