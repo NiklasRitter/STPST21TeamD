@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.fxmisc.richtext.GenericStyledArea;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,9 +27,9 @@ public class MarkingController implements Controller {
     private int caret = 0;
     private int textLength = 0;
     private ArrayList<AtPositions> atPositions = new ArrayList<>();
-    private TextArea textArea;
+    private RichTextArea textArea;
 
-    public MarkingController(TextArea textArea, Channel channel, VBox vBoxTextField) {
+    public MarkingController(RichTextArea textArea, Channel channel, VBox vBoxTextField) {
         this.textArea = textArea;
         this.currentChannel = channel;
         this.vBoxTextField = vBoxTextField;
@@ -215,8 +217,8 @@ public class MarkingController implements Controller {
                 end = currentText.substring(at.getEnd());
             }
 
-            textArea.setText(start + end);
-            textArea.positionCaret(start.length());
+            textArea.replaceText(start + end);
+            textArea.displaceCaret(start.length());
 
             for (AtPositions atToShift : atPositions) {
                 if (atToShift != at && atToShift.getStart() > at.getEnd()) {
@@ -317,7 +319,7 @@ public class MarkingController implements Controller {
                     String firstPart = currentText.substring(0, correspondingAtPosition);
                     String secondPart = currentText.substring(caret);
 
-                    textArea.setText(firstPart + "@" + selectedUser.getName() + secondPart);
+                    textArea.replaceText(firstPart + "@" + selectedUser.getName() + secondPart);
                     correspondingAt.setEnd(correspondingAt.getStart() + selectedUser.getName().length());
                     correspondingAt.setContent("@" + selectedUser.getName());
 
@@ -332,7 +334,7 @@ public class MarkingController implements Controller {
                         }
                     }
 
-                    textArea.positionCaret(correspondingAt.getEnd() + 1);
+                    textArea.displaceCaret(correspondingAt.getEnd() + 1);
                 }
             }
         }
