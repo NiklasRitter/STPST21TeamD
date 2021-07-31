@@ -6,13 +6,14 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MarkingController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -24,7 +25,7 @@ public class UpdateMessageScreenController implements Controller {
     private final Editor editor;
     private final Message message;
     private final Object stage;
-    private TextArea tfUpdateMessage;
+    private RichTextArea tfUpdateMessage;
     private Button btnDiscard;
     private Button btnUpdateMessage;
     private Label lblError;
@@ -41,7 +42,12 @@ public class UpdateMessageScreenController implements Controller {
 
     @Override
     public void init() {
-        tfUpdateMessage = (TextArea) view.lookup("#tfUpdateMessage");
+        //tfUpdateMessage = (TextArea) view.lookup("#tfUpdateMessage");
+        tfUpdateMessage = new RichTextArea();
+        tfUpdateMessage.setId("tfUpdateMessage");
+        tfUpdateMessage.getStyleClass().add("textAreaInput");
+        HBox hBoxText = (HBox) view.lookup("#hBoxText");
+        hBoxText.getChildren().add(0, tfUpdateMessage);
         btnEmoji = (Button) view.lookup("#btnEmoji");
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");

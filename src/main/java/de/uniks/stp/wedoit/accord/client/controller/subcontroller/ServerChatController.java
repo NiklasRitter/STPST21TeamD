@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
@@ -26,6 +27,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import org.fxmisc.richtext.GenericStyledArea;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -52,7 +55,7 @@ public class ServerChatController implements Controller {
 
     private HBox quoteVisible;
     private Label lbChannelName;
-    private TextArea tfInputMessage;
+    private RichTextArea tfInputMessage;
     private Button btnCancelQuote;
     private Button btnEmoji;
     private ContextMenu contextMenuLocalUserMessage;
@@ -96,8 +99,8 @@ public class ServerChatController implements Controller {
      */
     public void init() {
         this.vBoxTextField = (VBox) view.lookup("#boxTextfield");
-        this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
-
+        this.tfInputMessage = (RichTextArea) view.lookup("#tfInputMessage");
+        System.out.println(tfInputMessage);
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
@@ -351,7 +354,7 @@ public class ServerChatController implements Controller {
             if (keyEvent.isShiftDown()) {
                 tfInputMessage.appendText(System.getProperty("line.separator"));
             } else {
-                sendMessage(this.tfInputMessage.getText());
+                sendMessage(tfInputMessage.getConvertedText());
             }
         }
 

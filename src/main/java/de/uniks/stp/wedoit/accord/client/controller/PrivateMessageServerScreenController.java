@@ -6,6 +6,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
@@ -15,6 +16,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -30,7 +33,7 @@ public class PrivateMessageServerScreenController implements Controller {
     private final Server server;
     private final User memberToWrite;
 
-    private TextArea taMessage;
+    private RichTextArea taMessage;
     private Button btnShowChat;
     private Button btnEmoji;
 
@@ -46,7 +49,11 @@ public class PrivateMessageServerScreenController implements Controller {
     @Override
     public void init() {
         Label lblTitle = (Label) view.lookup("#lblTitle");
-        this.taMessage = (TextArea) view.lookup("#tfMessage");
+        HBox hBoxTextField = (HBox) view.lookup("#hBoxTextField");
+        this.taMessage = new RichTextArea();
+        taMessage.setId("tfMessage");
+        taMessage.getStyleClass().add("textAreaInput");
+        hBoxTextField.getChildren().add(0, taMessage);
         this.btnShowChat = (Button) view.lookup("#btnShowChat");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
