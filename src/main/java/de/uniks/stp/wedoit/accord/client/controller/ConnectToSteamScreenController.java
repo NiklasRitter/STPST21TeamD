@@ -41,17 +41,18 @@ public class ConnectToSteamScreenController implements Controller {
      * Add action listeners
      */
     public void init() {
-        this.btnCancel = (Button) view.lookup("#btnCancel");
-        this.btnSave = (Button) view.lookup("#btnSave");
-        this.tfSteam64ID = (TextField) view.lookup("#tfSteam64ID");
-        this.hlSteamIDLookup = (Hyperlink) view.lookup("#hlSteamIDLookup");
+        btnCancel = (Button) view.lookup("#btnCancel");
+        btnSave = (Button) view.lookup("#btnSave");
+        tfSteam64ID = (TextField) view.lookup("#tfSteam64ID");
+        hlSteamIDLookup = (Hyperlink) view.lookup("#hlSteamIDLookup");
 
-        this.editor.getStageManager().getStage(POPUP_STAGE).setTitle(LanguageResolver.getString("CONNECT_TO_STEAM"));
+        editor.getStageManager().getStage(POPUP_STAGE).setTitle(LanguageResolver.getString("CONNECT_TO_STEAM"));
 
+        tfSteam64ID.setText(editor.getLocalUser().getSteam64ID());
 
-        this.btnCancel.setOnAction(this::btnCancelOnClick);
-        this.btnSave.setOnAction(this::btnSaveOnClick);
-        this.hlSteamIDLookup.setOnMouseClicked(this::hlSteamIDLookupOnClick);
+        btnCancel.setOnAction(this::btnCancelOnClick);
+        btnSave.setOnAction(this::btnSaveOnClick);
+        hlSteamIDLookup.setOnMouseClicked(this::hlSteamIDLookupOnClick);
     }
 
     /**
@@ -68,14 +69,17 @@ public class ConnectToSteamScreenController implements Controller {
 
     private void btnCancelOnClick(Object object) {
 //        Platform.runLater(() -> localUser.setSteam64ID(tfSteam64ID.getText()));
-        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
+        editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
     }
 
 
     private void btnSaveOnClick(Object object) {
-        localUser.setSteam64ID(tfSteam64ID.getText());
-        editor.getRestManager().getLocalUserSteamGameExtraInfo();
-        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
+        if (!tfSteam64ID.getText().isEmpty()) {
+            localUser.setSteam64ID(tfSteam64ID.getText());
+            editor.saveSteam64ID(tfSteam64ID.getText());
+            editor.getRestManager().getLocalUserSteamGameExtraInfo();
+            editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
+        }
     }
 
     private void hlSteamIDLookupOnClick(Object object) {
