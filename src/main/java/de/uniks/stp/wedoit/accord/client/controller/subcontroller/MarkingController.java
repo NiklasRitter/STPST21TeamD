@@ -134,7 +134,6 @@ public class MarkingController implements Controller {
 
         if (textArea.getText().length() < textLength) {
             //character deleted
-
             atHit = checkAtHit(false);
 
             if (atHit != null) {
@@ -146,20 +145,32 @@ public class MarkingController implements Controller {
 
         } else if (textArea.getText().length() > textLength) {
             //character added
-
             atHit = checkAtHit(true);
 
+            //TODO check if list is showing
             if (atHit != null) {
                 if (keyEvent.getCharacter().equals("@") && currentChannel != null) {
-                    atHit = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1, "@");
-                    atPositions.add(atHit);
+                    atHit = newReference("@");
+
+                    if (lvSelectChannel.isVisible()) {
+                        removeSelectionMenu();
+                        initLwSelectUser();
+                    }
+
                     checkMarkingPossible(atHit.getContent().substring(1), atHit);
                     shiftAtsRight(atHit);
+
                 } else if (keyEvent.getCharacter().equals("#") && currentChannel != null) {
-                    atHit = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1, "#");
-                    atPositions.add(atHit);
+                    atHit = newReference("#");
+
+                    if (lvSelectUser.isVisible()) {
+                        removeSelectionMenu();
+                        initLwSelectChannel();
+                    }
+
                     checkMarkingPossible(atHit.getContent().substring(1), atHit);
                     shiftAtsRight(atHit);
+
                 } else {
                     deleteOrActivateAt(atHit, true);
                 }
@@ -169,22 +180,26 @@ public class MarkingController implements Controller {
                 AtPositions newAt = null;
                 if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
                     removeSelectionMenu();
-                    newAt = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1, "@");
-                    atPositions.add(newAt);
+                    newAt = newReference("@");
+                    initLwSelectUser();
 
-                    initLwSelectUser(lvSelectUser);
                 } else if (keyEvent.getCharacter().equals("#") && !lvSelectChannel.isVisible() && currentChannel != null) {
                     removeSelectionMenu();
-                    newAt = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1, "#");
-                    atPositions.add(newAt);
+                    newAt = newReference("#");
+                    initLwSelectChannel();
 
-                    initLwSelectChannel(lvSelectChannel);
                 }
 
                 shiftAtsRight(newAt);
             }
         }
         textLength = textArea.getLength();
+    }
+
+    private AtPositions newReference(String type) {
+        AtPositions atHit = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1, type);
+        atPositions.add(atHit);
+        return atHit;
     }
 
     private void shiftAtsRight(AtPositions currentAt) {
@@ -280,16 +295,16 @@ public class MarkingController implements Controller {
         return null;
     }
 
-    private void initLwSelectUser(ListView<User> lvSelectUser) {
+    private void initLwSelectUser() {
 
         this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
 
-        vBoxTextField.getChildren().add(lvSelectUser);
+        this.vBoxTextField.getChildren().add(this.lvSelectUser);
 
-        lvSelectUser.setVisible(true);
+        this.lvSelectUser.setVisible(true);
 
         // init list view
-        lvSelectUser.setCellFactory(new SelectUserCellFactory());
+        this.lvSelectUser.setCellFactory(new SelectUserCellFactory());
 
         ArrayList<User> availableUsers;
         if (currentChannel != null && currentChannel.isPrivileged()) {
@@ -300,8 +315,8 @@ public class MarkingController implements Controller {
 
         this.selectUserObservableList = FXCollections.observableList(availableUsers);
 
-        lvSelectUser.setMinHeight(selectUserObservableList.size() * 26);
-        lvSelectUser.setPrefHeight(selectUserObservableList.size() * 26);
+        this.lvSelectUser.setMinHeight(selectUserObservableList.size() * 26);
+        this.lvSelectUser.setPrefHeight(selectUserObservableList.size() * 26);
 
         this.selectUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
                 .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
@@ -309,27 +324,28 @@ public class MarkingController implements Controller {
         this.lvSelectUser.setItems(selectUserObservableList);
     }
 
-    private void initLwSelectChannel(ListView<Channel> lvSelectChannel) {
+    private void initLwSelectChannel() {
 
         this.lvSelectChannel.setOnMousePressed(this::lvSelectChannelOnClick);
 
-        vBoxTextField.getChildren().add(lvSelectChannel);
+        this.vBoxTextField.getChildren().add(this.lvSelectChannel);
 
-        lvSelectChannel.setVisible(true);
+        this.lvSelectChannel.setVisible(true);
 
         // init list view
-        lvSelectChannel.setCellFactory(new SelectChannelCellFactory());
+        this.lvSelectChannel.setCellFactory(new SelectChannelCellFactory());
 
         ArrayList<Channel> possibleChannels = new ArrayList<>();
 
-        for (Category category: currentChannel.getCategory().getServer().getCategories()) {
+        //TODO filter voiceChannel ?
+        for (Category category : currentChannel.getCategory().getServer().getCategories()) {
             possibleChannels.addAll(category.getChannels());
         }
 
         this.selectChannelObservableList = FXCollections.observableList(possibleChannels);
 
-        lvSelectChannel.setMinHeight(selectChannelObservableList.size() * 26);
-        lvSelectChannel.setPrefHeight(selectChannelObservableList.size() * 26);
+        this.lvSelectChannel.setMinHeight(selectChannelObservableList.size() * 26);
+        this.lvSelectChannel.setPrefHeight(selectChannelObservableList.size() * 26);
 
         this.selectChannelObservableList.sort(Comparator.comparing(Channel::getName, String::compareToIgnoreCase).reversed());
 
@@ -443,6 +459,7 @@ public class MarkingController implements Controller {
     private void checkMarkingPossible(String text, AtPositions at) {
 
         if (at.getContent().charAt(0) == '@') {
+
             ArrayList<User> possibleUsers;
 
             if (currentChannel != null && currentChannel.isPrivileged()) {
@@ -475,7 +492,7 @@ public class MarkingController implements Controller {
         } else {
             ArrayList<Channel> possibleChannels = new ArrayList<>();
 
-            for (Category category: currentChannel.getCategory().getServer().getCategories()) {
+            for (Category category : currentChannel.getCategory().getServer().getCategories()) {
                 possibleChannels.addAll(category.getChannels());
             }
 
