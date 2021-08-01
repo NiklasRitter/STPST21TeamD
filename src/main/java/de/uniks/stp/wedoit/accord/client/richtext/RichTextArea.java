@@ -27,6 +27,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+/**
+ * RichTextArea is text area in which images and text can be inserted.
+ */
 public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, LinkedImage>, TextStyle> {
 
     HashMap<String, Emoji> typedEmojis = new HashMap<>();
@@ -53,6 +56,11 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         this.setWrapText(true);
     }
 
+    /**
+     * updates the text color of the text of a area and the text color of a prompt text of this area
+     * True -> color white, false -> color black
+     * @param isDarkMode boolean which shows whether the dark mode is switched on
+     */
     public void updateTextColor(boolean isDarkMode) {
         TextStyle mixin;
         this.isDarkmode = isDarkMode;
@@ -107,6 +115,10 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
                 Codec.styledSegmentCodec(Codec.eitherCodec(Codec.STRING_CODEC, LinkedImage.codec()), TextStyle.CODEC));
     }
 
+    /**
+     * inserts a emoji at the caret position
+     * @param emoji
+     */
     public void insertEmoji(Emoji emoji) {
         String hex = emoji.getHex();
         String imagePath = Objects.requireNonNull(StageManager.class.getResource("emoji_images/" + hex + ".png")).toString();
@@ -118,11 +130,20 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         updateTextColor(isDarkmode);
     }
 
+    /**
+     *
+     * @return the converted text
+     */
     @Override
     public String getText() {
         return this.getConvertedText();
     }
 
+    /**
+     * converts the text in a text area.
+     * included emojis will be transformed to their shortnames
+     * @return converted text
+     */
     public String getConvertedText() {
         StringBuilder buf = new StringBuilder();
         boolean lastSegmentLeft = false;
@@ -159,6 +180,12 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         return typedEmojis.get(emojiHex);
     }
 
+    /**
+     * similar to setPlaceholder. The given text is set as javafx Label as placeholder. The text color depends on the isDarkMode parameter.
+     * true -> white, false -> black
+     * @param promptText text which should set as prompt text
+     * @param isDarkMode boolean which shows whether the dark mode is switched on
+     */
     public void setPromptText(String promptText, boolean isDarkMode) {
         Label text = new Label(promptText);
         if (isDarkMode) {
@@ -171,6 +198,11 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         this.setPlaceholder(text);
     }
 
+
+    /**
+     * returns a prompt text, set with setPromptText
+     * @return text of the prompt text
+     */
     public String getPromptText() {
         Node placeholder = this.getPlaceholder();
         if (placeholder instanceof Label) {
