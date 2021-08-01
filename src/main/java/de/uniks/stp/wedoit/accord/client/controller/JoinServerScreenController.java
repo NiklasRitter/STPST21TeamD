@@ -98,7 +98,7 @@ public class JoinServerScreenController implements Controller {
             });
         } else {
             if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
+                Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
             }
 
             Platform.runLater(() -> lblError.setText(responseMessage));

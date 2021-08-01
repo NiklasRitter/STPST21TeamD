@@ -5,8 +5,9 @@ import java.util.Objects;
 import java.util.Collections;
 import java.util.Collection;
 import java.beans.PropertyChangeSupport;
+import java.util.Timer;
 
-public class LocalUser
+public class LocalUser
 {
    public static final String PROPERTY_PASSWORD = "password";
    public static final String PROPERTY_NAME = "name";
@@ -21,6 +22,9 @@ public class LocalUser
    public static final String PROPERTY_MUTED = "muted";
    public static final String PROPERTY_ALL_MUTED = "allMuted";
    public static final String PROPERTY_DESCRIPTION = "description";
+   public static final String PROPERTY_STEAM64_ID = "steam64ID";
+   public static final String PROPERTY_STEAM_GAME_EXTRA_INFO = "steamGameExtraInfo";
+   public static final String PROPERTY_STEAM_GAME_EXTRA_INFO_TIMER = "steamGameExtraInfoTimer";
    private String password;
    private String name;
    private String userKey;
@@ -35,6 +39,9 @@ public class LocalUser
    private boolean muted;
    private boolean allMuted;
    private String description;
+   private String steam64ID;
+   private String steamGameExtraInfo;
+   private Timer steamGameExtraInfoTimer;
 
    public String getPassword()
    {
@@ -465,6 +472,60 @@ public class LocalUser
       return this;
    }
 
+   public String getSteam64ID()
+   {
+      return this.steam64ID;
+   }
+
+   public LocalUser setSteam64ID(String value)
+   {
+      if (Objects.equals(value, this.steam64ID))
+      {
+         return this;
+      }
+
+      final String oldValue = this.steam64ID;
+      this.steam64ID = value;
+      this.firePropertyChange(PROPERTY_STEAM64_ID, oldValue, value);
+      return this;
+   }
+
+   public String getSteamGameExtraInfo()
+   {
+      return this.steamGameExtraInfo;
+   }
+
+   public LocalUser setSteamGameExtraInfo(String value)
+   {
+      if (Objects.equals(value, this.steamGameExtraInfo))
+      {
+         return this;
+      }
+
+      final String oldValue = this.steamGameExtraInfo;
+      this.steamGameExtraInfo = value;
+      this.firePropertyChange(PROPERTY_STEAM_GAME_EXTRA_INFO, oldValue, value);
+      return this;
+   }
+
+   public Timer getSteamGameExtraInfoTimer()
+   {
+      return this.steamGameExtraInfoTimer;
+   }
+
+   public LocalUser setSteamGameExtraInfoTimer(Timer value)
+   {
+      if (Objects.equals(value, this.steamGameExtraInfoTimer))
+      {
+         return this;
+      }
+
+      final Timer oldValue = this.steamGameExtraInfoTimer;
+      this.steamGameExtraInfoTimer = value;
+      this.firePropertyChange(PROPERTY_STEAM_GAME_EXTRA_INFO_TIMER, oldValue, value);
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -492,6 +553,8 @@ public class LocalUser
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());
       result.append(' ').append(this.getId());
+      result.append(' ').append(this.getSteam64ID());
+      result.append(' ').append(this.getSteamGameExtraInfo());
       return result.substring(1);
    }
 

@@ -3,15 +3,14 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
-import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -25,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
+import static de.uniks.stp.wedoit.accord.client.constants.StageEnum.POPUP_STAGE;
 
 public class StageManager extends Application {
 
@@ -63,6 +63,7 @@ public class StageManager extends Application {
 
             if (currentScene != null) currentScene.setRoot(root);
             else sceneMap.put(controller.stage, new Scene(root));
+            if (controller.stage.equals(POPUP_STAGE)) currentStage.sizeToScene();
 
             controller.setUpStage(currentStage);
 
@@ -115,6 +116,9 @@ public class StageManager extends Application {
             case OPTIONS_SCREEN_CONTROLLER:
                 controller = new OptionsScreenController(root, model.getOptions(), editor);
                 break;
+            case CONNECT_TO_STEAM_SCREEN_CONTROLLER:
+                controller = new ConnectToSteamScreenController(root, model.getLocalUser(), editor);
+                break;
             case CREATE_CATEGORY_SCREEN_CONTROLLER:
                 controller = new CreateCategoryScreenController(root, editor);
                 break;
@@ -128,7 +132,7 @@ public class StageManager extends Application {
                 controller = new EditChannelScreenController(root, model.getLocalUser(), editor, (Channel) parameter);
                 break;
             case EMOJI_SCREEN_CONTROLLER:
-                controller = new EmojiScreenController(root, (TextArea) parameter, (Bounds) parameterTwo);
+                controller = new EmojiScreenController(root, (RichTextArea) parameter, (Bounds) parameterTwo);
                 break;
             case ATTENTION_SCREEN_CONTROLLER:
                 controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter);
@@ -186,12 +190,12 @@ public class StageManager extends Application {
      * @param darkmode boolean weather darkmode is enabled or not
      */
     public void changeDarkmode(boolean darkmode) {
-        Scene s = sceneMap.get(StageEnum.STAGE), popup = sceneMap.get(StageEnum.POPUP_STAGE), game = sceneMap.get(StageEnum.POPUP_STAGE);
+        Scene scene = sceneMap.get(StageEnum.STAGE), popup = sceneMap.get(StageEnum.POPUP_STAGE), game = sceneMap.get(StageEnum.POPUP_STAGE);
         if (darkmode) {
-            if (s != null) {
-                s.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (scene != null) {
+                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
-                s.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
             if (popup != null) {
@@ -207,10 +211,10 @@ public class StageManager extends Application {
                         "dark-theme.css")).toExternalForm());
             }
         } else {
-            if (s != null) {
-                s.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+            if (scene != null) {
+                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
-                s.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
             if (popup != null) {
@@ -336,6 +340,7 @@ public class StageManager extends Application {
             super.stop();
             stageMap.forEach((k, v) -> v.getIcons().remove(logoImage));
             this.editor.getAudioManager().closeAudioConnection();
+            this.editor.getSteamManager().terminateSteamTimer();
             if (systemTrayController != null) systemTrayController.stop();
             editor.getWebSocketManager().stop();
             if (this.model != null) {

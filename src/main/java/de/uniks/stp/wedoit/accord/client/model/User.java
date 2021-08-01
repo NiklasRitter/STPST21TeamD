@@ -20,6 +20,7 @@ public class User
    public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
    public static final String PROPERTY_MUTED = "muted";
    public static final String PROPERTY_DESCRIPTION = "description";
+   public static final String PROPERTY_AUDIO_VOLUME = "audioVolume";
    private String name;
    private boolean onlineStatus;
    private boolean chatRead;
@@ -33,6 +34,7 @@ public class User
    private Channel audioChannel;
    private boolean muted;
    private String description;
+   private int audioVolume;
 
    public String getName()
    {
@@ -370,6 +372,24 @@ public class User
       final String oldValue = this.description;
       this.description = value;
       this.firePropertyChange(PROPERTY_DESCRIPTION, oldValue, value);
+      return this;
+   }
+
+   public int getAudioVolume()
+   {
+      return this.audioVolume;
+   }
+
+   public User setAudioVolume(int value)
+   {
+      if (value == this.audioVolume)
+      {
+         return this;
+      }
+
+      final int oldValue = this.audioVolume;
+      this.audioVolume = value;
+      this.firePropertyChange(PROPERTY_AUDIO_VOLUME, oldValue, value);
       return this;
    }
 
