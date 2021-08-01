@@ -5,9 +5,7 @@ import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.Message;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import javafx.application.Platform;
 import javafx.css.Style;
@@ -43,6 +41,8 @@ import java.util.Objects;
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
@@ -196,8 +196,28 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     if (containsMarking(item.getText())) {
                         this.getStyleClass().add("marked_message");
                     }
+
+                    ArrayList<Channel> referencedChannels = getReferences(item);
+
+                    if (!referencedChannels.isEmpty()) {
+                        setUpReferenceInMessage(item, referencedChannels);
+                    }
                 }
             }
+        }
+
+        private ArrayList<Channel> getReferences(Message item) {
+            ArrayList<Channel> channels = new ArrayList<>();
+            Server server = item.getChannel().getCategory().getServer();
+
+            for (Category category: server.getCategories()) {
+                for (Channel channel: category.getChannels()) {
+                    if (item.getText().contains("#"+ channel.getName())) {
+                        channels.add(channel);
+                    }
+                }
+            }
+            return channels;
         }
 
         private Label timeLabel() {
@@ -443,6 +463,28 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             setGraphic(this.vBox);
         }
 
+        private void setUpReferenceInMessage(Message item, ArrayList<Channel> referencedChannels) {
+            HBox message = new HBox();
+            String current = item.getText();
+
+            for (Channel channel: referencedChannels) {
+                int start = current.indexOf("#" + channel.getName());
+
+                message.getChildren().add(new Label(current.substring(0, start)));
+
+                Button reference = new Button();
+                reference.setText("#" + channel.getName());
+                reference.getStyleClass().add("sidebar-Button");
+                reference.setOnAction(event -> referenceButtonOnClick(channel));
+                message.getChildren().add(reference);
+
+                current = current.substring(start + channel.getName().length() + 1);
+            }
+
+            this.vBox.getChildren().add(message);
+            setGraphic(this.vBox);
+        }
+
         private void displayTextWithEmoji(Message item) {
             this.emojiTextFlow.parseAndAppend(item.getText());
             this.vBox.getChildren().add(emojiTextFlow);
@@ -482,8 +524,17 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             setGraphic(vBox);
         }
     }
+
     private void joinButtonOnClick(String inviteLink) {
         stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
+    }
+
+    private void referenceButtonOnClick(Channel channel) {
+        if (channel.getType().equals(TEXT)) {
+            System.out.println(TEXT);
+        } else {
+            System.out.println(AUDIO);
+        }
     }
 
     public void handleInvitation(Server server, String responseMessage) {
