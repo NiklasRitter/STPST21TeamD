@@ -20,12 +20,6 @@ public class RichTextTest {
     public void TextStyleTest() {
         TextStyle textStyle = new TextStyle();
         Assert.assertEquals(textStyle.getCodec().getName(), "text-style");
-        Assert.assertEquals((TextStyle.bold(true)).getClass(), TextStyle.class);
-        Assert.assertEquals((TextStyle.fontFamily("true")).getClass(), TextStyle.class);
-        Assert.assertEquals((TextStyle.fontSize(1)).getClass(), TextStyle.class);
-        Assert.assertEquals((TextStyle.italic(true)).getClass(), TextStyle.class);
-        Assert.assertEquals((TextStyle.strikethrough(true)).getClass(), TextStyle.class);
-        Assert.assertEquals((TextStyle.underline(true)).getClass(), TextStyle.class);
     }
 
     @Test
@@ -34,8 +28,7 @@ public class RichTextTest {
 
         Assert.assertEquals(parStyle.toCss(), "");
         Assert.assertEquals(parStyle.toString(), "");
-        Assert.assertEquals(parStyle.equals(ParStyle.EMPTY), true);
-        Assert.assertEquals(parStyle.equals(ParStyle.EMPTY), true);
+        Assert.assertEquals(parStyle.equals(ParStyle.EMPTY), false);
 
     }
 
