@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -647,6 +647,24 @@
   type: 	String
   typeSignature: 	String
 
+- localUser_steam64ID: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_steam64ID
+  modified: 	false
+  name: 	steam64ID
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- localUser_steamGameExtraInfo: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_steamGameExtraInfo
+  modified: 	false
+  name: 	steamGameExtraInfo
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
 - localUser_gameInvites: 	org.fulib.classmodel.Attribute
   clazz: 	localUser
   collectionType: 	c1
@@ -693,6 +711,15 @@
   propertyStyle: 	Bean
   type: 	boolean
   typeSignature: 	boolean
+
+- localUser_steamGameExtraInfoTimer: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_steamGameExtraInfoTimer
+  modified: 	false
+  name: 	steamGameExtraInfoTimer
+  propertyStyle: 	Bean
+  type: 	"import(java.util.Timer)"
+  typeSignature: 	Timer
 
 - localUser_servers: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
