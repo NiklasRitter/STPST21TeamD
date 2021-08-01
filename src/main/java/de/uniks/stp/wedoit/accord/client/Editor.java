@@ -22,13 +22,17 @@ import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class Editor {
 
     private final RestManager restManager = new RestManager(this);
+    private final SteamManager steamManager = new SteamManager(this);
     private final WebSocketManager webSocketManager = new WebSocketManager(this);
     private final ChannelManager channelManager = new ChannelManager(this);
     private final CategoryManager categoryManager = new CategoryManager();
@@ -55,6 +59,13 @@ public class Editor {
      */
     public RestManager getRestManager() {
         return restManager;
+    }
+
+    /**
+     * @return private final SteamManager steamManager
+     */
+    public SteamManager getSteamManager() {
+        return steamManager;
     }
 
     public AccordClient getAccordClient() {
@@ -89,9 +100,10 @@ public class Editor {
      * @return localUser
      */
     public LocalUser haveLocalUser() {
+        System.out.println("New LocalUser!");
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
-        createSteamTimer();
+        steamManager.setupSteamTimer();
         return localUser;
     }
 
@@ -282,18 +294,6 @@ public class Editor {
         }
     }
 
-    public void createSteamTimer() {
-        if (getLocalUser() != null) {
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    restManager.getLocalUserSteamGameExtraInfo();
-                }
-            }, 0, /*1000 **/ 60);
-            getLocalUser().setSteamGameExtraInfoTimer(timer);
-        }
-    }
 
     /**
      * add message to channel chat
@@ -380,11 +380,11 @@ public class Editor {
         }
     }
 
-    public double calculateRMS(byte[] buf, int bytes){
+    public double calculateRMS(byte[] buf, int bytes) {
         float[] samples = new float[1024];
 
         // convert bytes to samples here
-        for(int i = 0, s = 0; i < bytes;) {
+        for (int i = 0, s = 0; i < bytes; ) {
             int sample = 0;
 
             sample |= buf[i++] & 0xFF; // (reverse these two lines
@@ -394,11 +394,11 @@ public class Editor {
             samples[s++] = sample / 32768f;
         }
         float rms = 0f;
-        for(float sample : samples) {
+        for (float sample : samples) {
             rms += sample * sample;
         }
 
-        return (float)Math.sqrt(rms / samples.length);
+        return (float) Math.sqrt(rms / samples.length);
 
     }
 
@@ -419,11 +419,11 @@ public class Editor {
         db.save(message);
     }
 
-    public double getAudioRMS(){
+    public double getAudioRMS() {
         return db.getAudioRMS();
     }
 
-    public void saveSensitivity(double rms){
+    public void saveSensitivity(double rms) {
         db.updateAudioRMS(rms);
     }
 

@@ -336,13 +336,13 @@ public class StageManager extends Application {
             super.stop();
             stageMap.forEach((k, v) -> v.getIcons().remove(logoImage));
             this.editor.getAudioManager().closeAudioConnection();
+            this.editor.getSteamManager().terminateSteamTimer();
             if (systemTrayController != null) systemTrayController.stop();
             editor.getWebSocketManager().stop();
             if (this.model != null) {
                 LocalUser localUser = model.getLocalUser();
                 resourceManager.stop(model);
                 if (localUser != null) {
-                    localUser.getSteamGameExtraInfoTimer().cancel();
                     String userKey = localUser.getUserKey();
                     if (userKey != null && !userKey.isEmpty()) {
                         editor.getRestManager().getRestClient().logout(userKey, response -> {
