@@ -12,6 +12,7 @@ public class Options
    public static final String PROPERTY_OUTPUT_DEVICE = "outputDevice";
    public static final String PROPERTY_INPUT_DEVICE = "inputDevice";
    public static final String PROPERTY_SYSTEM_VOLUME = "systemVolume";
+   public static final String PROPERTY_INPUT_VOLUME = "inputVolume";
    private boolean darkmode;
    private AccordClient accordClient;
    protected PropertyChangeSupport listeners;
@@ -20,6 +21,7 @@ public class Options
    private float systemVolume;
    private Info outputDevice;
    private Info inputDevice;
+   private float inputVolume;
 
    public boolean isDarkmode()
    {
@@ -153,6 +155,24 @@ public class Options
       final Info oldValue = this.inputDevice;
       this.inputDevice = value;
       this.firePropertyChange(PROPERTY_INPUT_DEVICE, oldValue, value);
+      return this;
+   }
+
+   public float getInputVolume()
+   {
+      return this.inputVolume;
+   }
+
+   public Options setInputVolume(float value)
+   {
+      if (value == this.inputVolume)
+      {
+         return this;
+      }
+
+      final float oldValue = this.inputVolume;
+      this.inputVolume = value;
+      this.firePropertyChange(PROPERTY_INPUT_VOLUME, oldValue, value);
       return this;
    }
 
