@@ -426,6 +426,7 @@ public class Editor {
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
         chatFontSize.setValue(db.getFontSize());
+        getLocalUser().setSteam64ID(getSteam64ID());
     }
 
     /**
@@ -441,6 +442,14 @@ public class Editor {
 
     public void saveSensitivity(double rms) {
         db.updateAudioRMS(rms);
+    }
+
+    public String getSteam64ID() {
+        return db.getSteam64ID();
+    }
+
+    public void saveSteam64ID(String steam64ID) {
+        db.updateSteam64ID(steam64ID);
     }
 
     /**

@@ -46,7 +46,8 @@ public class SqliteDB {
             stmt.execute("CREATE TABLE IF NOT EXISTS settings (\n"
                     + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
                     + "	fontSize integer DEFAULT 12,\n"
-                    + " audioRMS double DEFAULT 0"
+                    + " audioRMS double DEFAULT 0,\n"
+                    + " steam64ID varchar(255)"
                     + ");"
             );
 
@@ -137,6 +138,35 @@ public class SqliteDB {
              PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,audioRMS) VALUES(1,?)")) {
 
             prep.setDouble(1, rms);
+
+            prep.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getSteam64ID() {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
+
+            ResultSet rs = prep.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("steam64ID");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateSteam64ID(String steam64ID) {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,steam64ID) VALUES(1,?)")) {
+
+            prep.setString(1, steam64ID);
 
             prep.execute();
 
