@@ -18,7 +18,6 @@ import javafx.scene.layout.VBox;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
-import java.beans.PropertyChangeEvent;
 import java.util.Locale;
 
 public class OptionsScreenController implements Controller {
@@ -29,7 +28,7 @@ public class OptionsScreenController implements Controller {
     private CheckBox btnDarkMode;
     private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
     private ChoiceBox<String> choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
-    private Slider sliderTextSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
+    private Slider sliderFontSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
     private ProgressBar progressBarTest, progressBarTestBot;
     private VBox vBoxSoundSettings, vBoxExtraSettings;
     private Recorder recorder;
@@ -60,7 +59,7 @@ public class OptionsScreenController implements Controller {
         this.btnSpotify = (Button) view.lookup("#btnSpotify");
         this.btnSteam = (Button) view.lookup("#btnSteam");
         this.btnTestSetup = (Button) view.lookup("#btnTestSetup");
-        this.sliderTextSize = (Slider) view.lookup("#sliderTextSize");
+        this.sliderFontSize = (Slider) view.lookup("#sliderFontSize");
         this.sliderOutputVolume = (Slider) view.lookup("#sliderOutputVolume");
         this.sliderInputVolume = (Slider) view.lookup("#sliderInputVolume");
         this.sliderInputSensitivity = (Slider) view.lookup("#sliderInputSensitivity");
@@ -84,16 +83,16 @@ public class OptionsScreenController implements Controller {
 
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.sliderTextSize.setOnMouseReleased(this::fontSizeSliderOnChange);
+        this.sliderFontSize.setOnMouseReleased(this::fontSizeSliderOnChange);
         this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
         this.btnTestSetup.setOnAction(this::btnAudioTest);
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
-        sliderInputSensitivity.valueProperty().addListener((e, old, n) -> editor.saveSensitivity(n.doubleValue()));
+        sliderInputSensitivity.valueProperty().addListener((e, old, n) -> editor.getAccordClient().getOptions().setAudioRootMeanSquare(n.doubleValue()));
         this.btnSteam.setOnAction(this::btnSteamOnClick);
     }
 
     private void fontSizeSliderOnChange(MouseEvent e) {
-        editor.saveFontSize((int) sliderTextSize.getValue());
+        options.setChatFontSize((int) sliderFontSize.getValue());
     }
 
     private void outputVolumeSliderOnChange(MouseEvent e) {
@@ -198,8 +197,8 @@ public class OptionsScreenController implements Controller {
             this.view.autosize();
             this.view.getScene().getWindow().sizeToScene();
         } else {
-            sliderInputSensitivity.setValue(editor.getAudioRMS());
-            sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
+            sliderInputSensitivity.setValue(editor.getAccordClient().getOptions().getAudioRootMeanSquare());
+            sliderFontSize.setValue(options.getChatFontSize());
             sliderOutputVolume.setValue(editor.getAccordClient().getOptions().getSystemVolume());
         }
     }
@@ -213,7 +212,7 @@ public class OptionsScreenController implements Controller {
         btnDarkMode.setOnAction(null);
         btnLogout.setOnAction(null);
         btnTestSetup.setOnAction(null);
-        sliderTextSize.setOnMouseReleased(null);
+        sliderFontSize.setOnMouseReleased(null);
         sliderOutputVolume.setOnMouseReleased(null);
         btnTestSetup.setOnAction(null);
         progressBarTest.progressProperty().unbind();

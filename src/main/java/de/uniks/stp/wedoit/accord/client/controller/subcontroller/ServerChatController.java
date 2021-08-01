@@ -66,9 +66,8 @@ public class ServerChatController implements Controller {
     private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
     private EmojiTextFlowParameters quoteParameter;
     private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
-
-    private PropertyChangeListener newMessagesListener = this::newMessage;
     private PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
+    private PropertyChangeListener newMessagesListener = this::newMessage;
     private PropertyChangeListener darkModeListener = this::onDarkmodeChanged;
 
     /**
@@ -117,7 +116,7 @@ public class ServerChatController implements Controller {
         addUserMessageContextMenu();
         addLocalUserMessageContextMenu();
 
-        this.lvTextChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
+        this.lvTextChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getAccordClient().getOptions().getChatFontSize(), ";"));
 
         setQuoteParameter();
         this.quoteTextFlow = new EmojiTextFlow(quoteParameter);
@@ -163,7 +162,7 @@ public class ServerChatController implements Controller {
         if (this.localUser.getAccordClient() != null) {
             this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         }
-        this.editor.getChatFontSizeProperty().removeListener(this::onDarkmodeChanged);
+        this.editor.getAccordClient().getOptions().listeners().removePropertyChangeListener(this::onDarkmodeChanged);
 
         this.messageTextChangedListener = null;
         this.newMessagesListener = null;
@@ -410,7 +409,7 @@ public class ServerChatController implements Controller {
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
-        this.editor.getChatFontSizeProperty().addListener(this::onDarkmodeChanged);
+        this.editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_CHAT_FONT_SIZE, this::onDarkmodeChanged);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
 
         this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);

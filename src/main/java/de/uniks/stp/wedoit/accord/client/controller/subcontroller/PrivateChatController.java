@@ -92,7 +92,7 @@ public class PrivateChatController implements Controller {
         this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"), editor.getAccordClient().getOptions().isDarkmode());
         this.tfPrivateChat.setEditable(false);
 
-        this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
+        this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getAccordClient().getOptions().getChatFontSize(), ";"));
 
         initToolTip();
         this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
@@ -120,7 +120,7 @@ public class PrivateChatController implements Controller {
         if (localUser.getAccordClient() != null) {
             this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         }
-        this.editor.getChatFontSizeProperty().removeListener(this::onDarkmodeChanged);
+        this.editor.getAccordClient().getOptions().listeners().removePropertyChangeListener(this::onDarkmodeChanged);
         this.currentChat = null;
         messageContextMenu = null;
         btnCancelQuote.setOnAction(null);
@@ -201,7 +201,7 @@ public class PrivateChatController implements Controller {
         // Add listener for the loaded listView
         this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
 
-        this.editor.getChatFontSizeProperty().addListener(this::onDarkmodeChanged);
+        this.editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_CHAT_FONT_SIZE, this::onDarkmodeChanged);
         Platform.runLater(() -> this.lwPrivateChat.scrollTo(this.privateMessageObservableList.size()));
     }
 
