@@ -1,8 +1,5 @@
 package de.uniks.stp.wedoit.accord.client.richtext;
 
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import org.fxmisc.richtext.model.Codec;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +38,6 @@ public class RichTextTest {
         Assert.assertEquals(parStyle.equals(ParStyle.EMPTY), true);
 
     }
-
 
 
 }
