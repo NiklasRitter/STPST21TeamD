@@ -159,8 +159,8 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
                 } else if (segment.isRight()) {
                     String imagePath = segment.getRight().getImagePath();
                     Emoji emoji = getEmojiFromPath(imagePath);
-                    if (emoji.getShortname() != null) {
-                        buf.append(emoji.getShortname());
+                    if (emoji.getUnicode() != null) {
+                        buf.append(emoji.getUnicode());
                     }
                     lastSegmentLeft = false;
                 }
