@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
@@ -36,6 +37,7 @@ public class PrivateMessageServerScreenController implements Controller {
     private Button btnEmoji;
 
     private final PropertyChangeListener onlineListener = this::onOnlineChanged;
+    private PropertyChangeListener darkmodeChanged = this::darkModeChanged;
 
     public PrivateMessageServerScreenController(Parent root, Editor editor, Server server, User memberToWrite) {
         this.view = root;
@@ -65,15 +67,23 @@ public class PrivateMessageServerScreenController implements Controller {
 
         this.memberToWrite.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(memberToWrite.getName());
+        editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this.darkmodeChanged);
+
     }
 
     @Override
     public void stop() {
+        editor.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this.darkmodeChanged);
+        this.darkmodeChanged = null;
         this.taMessage.setOnKeyPressed(null);
         this.btnShowChat.setOnAction(null);
         this.btnEmoji.setOnAction(null);
         this.memberToWrite.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
+    }
+
+    private void darkModeChanged(PropertyChangeEvent propertyChangeEvent) {
+        taMessage.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
     }
 
     /**
