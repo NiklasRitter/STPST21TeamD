@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0">
           <children>
@@ -134,7 +125,7 @@
                    <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
                        <Image url="@images/speaker-with-no-sound.png" />
                    </ImageView>
-                  <Slider id="sliderOutputVolume" blockIncrement="5.0" value="50.0" />
+                  <Slider id="sliderOutputVolume" blockIncrement="5.0" min="-100.0" />
                    <ImageView fitHeight="20.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                        <Image url="@images/speaker-with-sound.png" />
                    </ImageView>
@@ -187,7 +178,7 @@
                   <StackPane>
                      <children>
                          <ProgressBar id="prgBarSetupTest" prefWidth="200.0" progress="0.2" styleClass="pbRed" />
-                         <ProgressBar id="progressBarTestBot" prefWidth="200.0" progress="0.0" styleClass="pbGreen"/>
+                         <ProgressBar id="progressBarTestBot" prefWidth="200.0" progress="0.0" styleClass="pbGreen" />
                      </children>
                   </StackPane>
                </children>

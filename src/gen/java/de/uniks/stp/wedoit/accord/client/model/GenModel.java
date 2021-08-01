@@ -64,7 +64,7 @@ public class GenModel implements ClassModelDecorator {
         boolean chatRead;
         boolean muted;
         String gameMove;
-
+        int audioVolume;
         String id;
 
         @Link("users")
