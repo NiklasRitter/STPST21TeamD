@@ -29,6 +29,8 @@ public class GenModel implements ClassModelDecorator {
         Mixer.Info outputDevice;
         Mixer.Info inputDevice;
         float systemVolume;
+        double audioRootMeanSquare;
+        int chatFontSize;
 
         @Link("options")
         AccordClient accordClient;
