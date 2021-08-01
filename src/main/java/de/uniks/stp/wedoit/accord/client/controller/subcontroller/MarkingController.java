@@ -8,11 +8,9 @@ import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import org.fxmisc.richtext.GenericStyledArea;
 
 import java.util.ArrayList;
 import java.util.Comparator;

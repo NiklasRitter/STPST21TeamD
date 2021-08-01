@@ -13,11 +13,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -132,6 +130,7 @@ public class PrivateMessageServerScreenController implements Controller {
 
     /**
      * gets the position of Emoji Button and pass it to showEmojiScreen
+     *
      * @param actionEvent is triggered when emoji button is clicked
      */
     private void btnEmojiOnClicked(ActionEvent actionEvent) {

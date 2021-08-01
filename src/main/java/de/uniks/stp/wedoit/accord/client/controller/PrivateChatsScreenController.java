@@ -10,26 +10,21 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListCont
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
-import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -38,9 +33,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_ID_URL;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_URL;
 
 public class PrivateChatsScreenController implements Controller {
 
@@ -96,7 +88,6 @@ public class PrivateChatsScreenController implements Controller {
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
         this.lblDescription = (Label) view.lookup("#lblDescription");
-        //this.taPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
         HBox hBoxText = (HBox) view.lookup("#hBoxText");
         this.taPrivateChat = new RichTextArea();
         taPrivateChat.setId("tfEnterPrivateChat");

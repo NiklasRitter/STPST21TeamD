@@ -42,7 +42,6 @@ public class UpdateMessageScreenController implements Controller {
 
     @Override
     public void init() {
-        //tfUpdateMessage = (TextArea) view.lookup("#tfUpdateMessage");
         tfUpdateMessage = new RichTextArea();
         tfUpdateMessage.setId("tfUpdateMessage");
         tfUpdateMessage.getStyleClass().add("textAreaInput");

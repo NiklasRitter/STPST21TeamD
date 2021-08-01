@@ -27,8 +27,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import org.fxmisc.richtext.GenericStyledArea;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -296,7 +294,7 @@ public class ServerChatController implements Controller {
         quoteVisible.getChildren().clear();
     }
 
-    private void setQuoteParameter(){
+    private void setQuoteParameter() {
         quoteParameter = new EmojiTextFlowParameterHelper(10).createParameters();
         if (editor.getStageManager().getPrefManager().loadDarkMode()) {
             quoteParameter.setTextColor(Color.valueOf("#ADD8e6"));
@@ -431,7 +429,7 @@ public class ServerChatController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
         }
     }
 
@@ -471,10 +469,8 @@ public class ServerChatController implements Controller {
     }
 
 
-
     /**
      * Refreshes chat list in order to update the font and color
-     *
      */
     private void onDarkmodeChanged(Object object) {
         this.lvTextChat.refresh();

@@ -62,9 +62,9 @@ public class TextStyle {
 
         private int encodeBoldItalicUnderlineStrikethrough(TextStyle s) {
             return encodeOptionalBoolean(s.bold) << 6 |
-                   encodeOptionalBoolean(s.italic) << 4 |
-                   encodeOptionalBoolean(s.underline) << 2 |
-                   encodeOptionalBoolean(s.strikethrough);
+                    encodeOptionalBoolean(s.italic) << 4 |
+                    encodeOptionalBoolean(s.underline) << 2 |
+                    encodeOptionalBoolean(s.strikethrough);
         }
 
         private Optional<Boolean> bold(byte bius) throws IOException {
@@ -88,10 +88,13 @@ public class TextStyle {
         }
 
         private Optional<Boolean> decodeOptionalBoolean(int i) throws IOException {
-            switch(i) {
-                case 0: return Optional.empty();
-                case 2: return Optional.of(false);
-                case 3: return Optional.of(true);
+            switch (i) {
+                case 0:
+                    return Optional.empty();
+                case 2:
+                    return Optional.of(false);
+                case 3:
+                    return Optional.of(true);
             }
             throw new MalformedInputException(0);
         }
@@ -105,14 +108,37 @@ public class TextStyle {
         }
     };
 
-    public static TextStyle bold(boolean bold) { return EMPTY.updateBold(bold); }
-    public static TextStyle italic(boolean italic) { return EMPTY.updateItalic(italic); }
-    public static TextStyle underline(boolean underline) { return EMPTY.updateUnderline(underline); }
-    public static TextStyle strikethrough(boolean strikethrough) { return EMPTY.updateStrikethrough(strikethrough); }
-    public static TextStyle fontSize(int fontSize) { return EMPTY.updateFontSize(fontSize); }
-    public static TextStyle fontFamily(String family) { return EMPTY.updateFontFamily(family); }
-    public static TextStyle textColor(Color color) { return EMPTY.updateTextColor(color); }
-    public static TextStyle backgroundColor(Color color) { return EMPTY.updateBackgroundColor(color); }
+    public static TextStyle bold(boolean bold) {
+        return EMPTY.updateBold(bold);
+    }
+
+    public static TextStyle italic(boolean italic) {
+        return EMPTY.updateItalic(italic);
+    }
+
+    public static TextStyle underline(boolean underline) {
+        return EMPTY.updateUnderline(underline);
+    }
+
+    public static TextStyle strikethrough(boolean strikethrough) {
+        return EMPTY.updateStrikethrough(strikethrough);
+    }
+
+    public static TextStyle fontSize(int fontSize) {
+        return EMPTY.updateFontSize(fontSize);
+    }
+
+    public static TextStyle fontFamily(String family) {
+        return EMPTY.updateFontFamily(family);
+    }
+
+    public static TextStyle textColor(Color color) {
+        return EMPTY.updateTextColor(color);
+    }
+
+    public static TextStyle backgroundColor(Color color) {
+        return EMPTY.updateBackgroundColor(color);
+    }
 
     static String cssColor(Color color) {
         int red = (int) (color.getRed() * 255);
@@ -132,14 +158,14 @@ public class TextStyle {
 
     public TextStyle() {
         this(
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty()
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()
         );
     }
 
@@ -182,16 +208,16 @@ public class TextStyle {
 
     @Override
     public boolean equals(Object other) {
-        if(other instanceof TextStyle) {
+        if (other instanceof TextStyle) {
             TextStyle that = (TextStyle) other;
-            return Objects.equals(this.bold,            that.bold) &&
-                   Objects.equals(this.italic,          that.italic) &&
-                   Objects.equals(this.underline,       that.underline) &&
-                   Objects.equals(this.strikethrough,   that.strikethrough) &&
-                   Objects.equals(this.fontSize,        that.fontSize) &&
-                   Objects.equals(this.fontFamily,      that.fontFamily) &&
-                   Objects.equals(this.textColor,       that.textColor) &&
-                   Objects.equals(this.backgroundColor, that.backgroundColor);
+            return Objects.equals(this.bold, that.bold) &&
+                    Objects.equals(this.italic, that.italic) &&
+                    Objects.equals(this.underline, that.underline) &&
+                    Objects.equals(this.strikethrough, that.strikethrough) &&
+                    Objects.equals(this.fontSize, that.fontSize) &&
+                    Objects.equals(this.fontFamily, that.fontFamily) &&
+                    Objects.equals(this.textColor, that.textColor) &&
+                    Objects.equals(this.backgroundColor, that.backgroundColor);
         } else {
             return false;
         }
@@ -201,13 +227,13 @@ public class TextStyle {
     public String toString() {
         List<String> styles = new ArrayList<>();
 
-        bold           .ifPresent(b -> styles.add(b.toString()));
-        italic         .ifPresent(i -> styles.add(i.toString()));
-        underline      .ifPresent(u -> styles.add(u.toString()));
-        strikethrough  .ifPresent(s -> styles.add(s.toString()));
-        fontSize       .ifPresent(s -> styles.add(s.toString()));
-        fontFamily     .ifPresent(f -> styles.add(f.toString()));
-        textColor      .ifPresent(c -> styles.add(c.toString()));
+        bold.ifPresent(b -> styles.add(b.toString()));
+        italic.ifPresent(i -> styles.add(i.toString()));
+        underline.ifPresent(u -> styles.add(u.toString()));
+        strikethrough.ifPresent(s -> styles.add(s.toString()));
+        fontSize.ifPresent(s -> styles.add(s.toString()));
+        fontFamily.ifPresent(f -> styles.add(f.toString()));
+        textColor.ifPresent(c -> styles.add(c.toString()));
         backgroundColor.ifPresent(b -> styles.add(b.toString()));
 
         return String.join(",", styles);
@@ -216,52 +242,52 @@ public class TextStyle {
     public String toCss() {
         StringBuilder sb = new StringBuilder();
 
-        if(bold.isPresent()) {
-            if(bold.get()) {
+        if (bold.isPresent()) {
+            if (bold.get()) {
                 sb.append("-fx-font-weight: bold;");
             } else {
                 sb.append("-fx-font-weight: normal;");
             }
         }
 
-        if(italic.isPresent()) {
-            if(italic.get()) {
+        if (italic.isPresent()) {
+            if (italic.get()) {
                 sb.append("-fx-font-style: italic;");
             } else {
                 sb.append("-fx-font-style: normal;");
             }
         }
 
-        if(underline.isPresent()) {
-            if(underline.get()) {
+        if (underline.isPresent()) {
+            if (underline.get()) {
                 sb.append("-fx-underline: true;");
             } else {
                 sb.append("-fx-underline: false;");
             }
         }
 
-        if(strikethrough.isPresent()) {
-            if(strikethrough.get()) {
+        if (strikethrough.isPresent()) {
+            if (strikethrough.get()) {
                 sb.append("-fx-strikethrough: true;");
             } else {
                 sb.append("-fx-strikethrough: false;");
             }
         }
 
-        if(fontSize.isPresent()) {
+        if (fontSize.isPresent()) {
             sb.append("-fx-font-size: " + fontSize.get() + "pt;");
         }
 
-        if(fontFamily.isPresent()) {
+        if (fontFamily.isPresent()) {
             sb.append("-fx-font-family: " + fontFamily.get() + ";");
         }
 
-        if(textColor.isPresent()) {
+        if (textColor.isPresent()) {
             Color color = textColor.get();
             sb.append("-fx-fill: " + cssColor(color) + ";");
         }
 
-        if(backgroundColor.isPresent()) {
+        if (backgroundColor.isPresent()) {
             Color color = backgroundColor.get();
             sb.append("-rtfx-background-color: " + cssColor(color) + ";");
         }

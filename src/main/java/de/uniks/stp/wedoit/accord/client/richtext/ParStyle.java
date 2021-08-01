@@ -1,4 +1,3 @@
-
 /**
  * This code is from the following GitHub repository.
  * https://github.com/FXMisc/RichTextFX
@@ -72,10 +71,10 @@ public class ParStyle {
 
     @Override
     public boolean equals(Object other) {
-        if(other instanceof ParStyle) {
+        if (other instanceof ParStyle) {
             ParStyle that = (ParStyle) other;
             return Objects.equals(this.alignment, that.alignment) &&
-                   Objects.equals(this.backgroundColor, that.backgroundColor);
+                    Objects.equals(this.backgroundColor, that.backgroundColor);
         } else {
             return false;
         }
@@ -91,12 +90,21 @@ public class ParStyle {
 
         alignment.ifPresent(al -> {
             String cssAlignment;
-            switch(al) {
-                case LEFT:    cssAlignment = "left";    break;
-                case CENTER:  cssAlignment = "center";  break;
-                case RIGHT:   cssAlignment = "right";   break;
-                case JUSTIFY: cssAlignment = "justify"; break;
-                default: throw new AssertionError("unreachable code");
+            switch (al) {
+                case LEFT:
+                    cssAlignment = "left";
+                    break;
+                case CENTER:
+                    cssAlignment = "center";
+                    break;
+                case RIGHT:
+                    cssAlignment = "right";
+                    break;
+                case JUSTIFY:
+                    cssAlignment = "justify";
+                    break;
+                default:
+                    throw new AssertionError("unreachable code");
             }
             sb.append("-fx-text-alignment: " + cssAlignment + ";");
         });

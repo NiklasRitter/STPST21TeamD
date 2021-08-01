@@ -1,9 +1,11 @@
 /*
- * Created 2014 by Tomas Mikula.
- *
+ * This code relates to the following GitHub repository.
+ * https://github.com/FXMisc/RichTextFX
+ * https://github.com/FXMisc/RichTextFX/tree/master/richtextfx-demos
+ * The code is part from the demo for the RichTextFx library.
+ * Some source code are created 2014 by Tomas Mikula.
  * The author dedicates this file to the public domain.
  */
-
 package de.uniks.stp.wedoit.accord.client.richtext;
 
 import com.pavlobu.emojitextflow.Emoji;
@@ -12,9 +14,7 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import org.fxmisc.richtext.GenericStyledArea;
 import org.fxmisc.richtext.StyledTextArea;
 import org.fxmisc.richtext.TextExt;
@@ -37,13 +37,10 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
 
     public RichTextArea() {
         super(
-                ParStyle.EMPTY,                                                 // default paragraph style
-                (paragraph, style) -> {
-                    paragraph.setStyle(style.toCss());
-                },        // paragraph style setter
-
-                TextStyle.EMPTY.updateFontSize(12).updateFontFamily("Serif").updateTextColor(Color.BLACK),  // default segment style
-                styledTextOps._or(linkedImageOps, (s1, s2) -> Optional.empty()),                            // segment operations
+                ParStyle.EMPTY,
+                (paragraph, style) -> paragraph.setStyle(style.toCss()),
+                TextStyle.EMPTY.updateFontSize(12).updateFontFamily("Serif").updateTextColor(Color.BLACK),
+                styledTextOps._or(linkedImageOps, (s1, s2) -> Optional.empty()),
                 seg -> createNode(seg, (text, style) -> text.setStyle(style.toCss())));
 
         this.setStyleCodecs();
@@ -55,8 +52,11 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
     public void updateTextColor(boolean isDarkMode) {
         TextStyle mixin;
         this.isDarkmode = isDarkMode;
-        if (isDarkMode) {mixin = TextStyle.textColor(Color.WHITE);}
-        else {mixin = TextStyle.textColor(Color.BLACK);}
+        if (isDarkMode) {
+            mixin = TextStyle.textColor(Color.WHITE);
+        } else {
+            mixin = TextStyle.textColor(Color.BLACK);
+        }
         boolean init = false;
         if (this.getConvertedText() == null || this.getConvertedText().equals("")) {
             this.replaceText("init");
@@ -70,16 +70,24 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
             StyleSpans<TextStyle> newStyles = styles.mapStyles(style -> style.updateWith(mixin));
             this.setStyleSpans(selection.getStart(), newStyles);
         }
-        if (init) {this.replaceText("");}
+        if (init) {
+            this.replaceText("");
+        }
         this.deselect();
 
-        if (this.getPlaceholder() != null) {
-            if (isDarkMode) {
-                this.getPlaceholder().setStyle("-fx-text-fill: WHITE");
-            } else {
-                this.getPlaceholder().setStyle("-fx-text-fill: BLACK");
+        if (this.getPlaceholder() instanceof Label) {
+            Label placeholder = (Label) this.getPlaceholder();
+            if (placeholder != null) {
+                if (isDarkMode) {
+                    placeholder.setStyle("-fx-text-fill: WHITE");
+                    System.out.println("sosss");
+                } else {
+                    placeholder.setStyle("-fx-text-fill: BLACK");
+                }
             }
+            this.setPlaceholder(placeholder);
         }
+
     }
 
     private static Node createNode(StyledSegment<Either<String, LinkedImage>, TextStyle> seg,
@@ -114,23 +122,23 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
 
     public String getConvertedText() {
         StringBuilder buf = new StringBuilder();
-        Boolean lastSegmentleft = false;
+        boolean lastSegmentLeft = false;
         LiveList<Paragraph<ParStyle, Either<String, LinkedImage>, TextStyle>> paragraphs = this.getParagraphs();
         for (Paragraph<ParStyle, Either<String, LinkedImage>, TextStyle> paragraph : paragraphs) {
             for (Either<String, LinkedImage> segment : paragraph.getSegments()) {
-                if (segment.isLeft() && lastSegmentleft) {
+                if (segment.isLeft() && lastSegmentLeft) {
                     buf.append(System.getProperty("line.separator"));
                     buf.append(segment.getLeft());
-                } else if (segment.isLeft() && !lastSegmentleft) {
+                } else if (segment.isLeft() && !lastSegmentLeft) {
                     buf.append(segment.getLeft());
-                    lastSegmentleft = true;
+                    lastSegmentLeft = true;
                 } else if (segment.isRight()) {
                     String imagePath = segment.getRight().getImagePath();
                     Emoji emoji = getEmojiFromPath(imagePath);
-                    if (emoji.getShortname() != null){
+                    if (emoji.getShortname() != null) {
                         buf.append(emoji.getShortname());
                     }
-                    lastSegmentleft = false;
+                    lastSegmentLeft = false;
                 }
             }
         }
@@ -145,16 +153,14 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         String[] split = imagePath.split("/");
         String temp = split[split.length - 1];
         String emojiHex = temp.substring(0, temp.length() - 4);
-        Emoji emoji = typedEmojis.get(emojiHex);
-        return emoji;
+        return typedEmojis.get(emojiHex);
     }
 
-    public void setPromptText(String promptText ,boolean isDarkMode) {
+    public void setPromptText(String promptText, boolean isDarkMode) {
         Label text = new Label(promptText);
         if (isDarkMode) {
             text.setStyle("-fx-text-fill: WHITE");
 
-            System.out.println("white");
         } else {
             text.setStyle("-fx-text-fill: BLACK");
 

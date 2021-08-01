@@ -22,7 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 
 public class CreateChannelScreenController implements Controller {
 

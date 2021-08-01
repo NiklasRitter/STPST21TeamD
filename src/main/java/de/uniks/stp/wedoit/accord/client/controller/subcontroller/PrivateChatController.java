@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import com.pavlobu.emojitextflow.EmojiTextFlow;
-import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
@@ -13,7 +12,6 @@ import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,8 +25,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -37,10 +33,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJI_PICKER_STAGE;
 
 public class PrivateChatController implements Controller {
 
@@ -101,6 +95,7 @@ public class PrivateChatController implements Controller {
         this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
 
         initToolTip();
+        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
     }
 
     public void initToolTip() {
@@ -205,7 +200,7 @@ public class PrivateChatController implements Controller {
 
         // Add listener for the loaded listView
         this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
-        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+
         this.editor.getChatFontSizeProperty().addListener(this::onDarkmodeChanged);
         Platform.runLater(() -> this.lwPrivateChat.scrollTo(this.privateMessageObservableList.size()));
     }
@@ -406,7 +401,6 @@ public class PrivateChatController implements Controller {
 
     /**
      * Refreshes chat list in order to update the font and color
-     *
      */
     private void onDarkmodeChanged(Object object) {
 
