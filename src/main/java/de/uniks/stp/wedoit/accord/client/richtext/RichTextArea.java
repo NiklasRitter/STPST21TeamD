@@ -35,6 +35,10 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
     private final static LinkedImageOps<TextStyle> linkedImageOps = new LinkedImageOps<>();
     private boolean isDarkmode = false;
 
+    public boolean isDarkmode() {
+        return isDarkmode;
+    }
+
     public RichTextArea() {
         super(
                 ParStyle.EMPTY,
@@ -80,7 +84,6 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
             if (placeholder != null) {
                 if (isDarkMode) {
                     placeholder.setStyle("-fx-text-fill: WHITE");
-                    System.out.println("sosss");
                 } else {
                     placeholder.setStyle("-fx-text-fill: BLACK");
                 }

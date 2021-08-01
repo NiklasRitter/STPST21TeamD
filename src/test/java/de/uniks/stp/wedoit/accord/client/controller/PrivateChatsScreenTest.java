@@ -17,6 +17,7 @@ import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -607,6 +608,24 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WSCallback wsSystemCallback = callbackArgumentSystemCaptorWebSocket.getValue();
 
         wsSystemCallback.handleMessage(webSocketJson);
+    }
+
+    @Test
+    public void RichTextAreaTest() {
+        RichTextArea richTextArea = new RichTextArea();
+
+        richTextArea.setPromptText("Test", true);
+        Assert.assertEquals(richTextArea.getPromptText(), "Test");
+
+        richTextArea.updateTextColor(true);
+        Assert.assertEquals(true, richTextArea.isDarkmode());
+
+        richTextArea.updateTextColor(false);
+        Assert.assertEquals(false, richTextArea.isDarkmode());
+
+        richTextArea.setPlaceholder(new Text("123"));
+        Assert.assertEquals(richTextArea.getPromptText(), "");
+
     }
 
     @Test

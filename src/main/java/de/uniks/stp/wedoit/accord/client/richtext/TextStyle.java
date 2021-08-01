@@ -26,6 +26,10 @@ public class TextStyle {
 
     public static final TextStyle EMPTY = new TextStyle();
 
+    public Codec<TextStyle> getCodec(){
+        return CODEC;
+    }
+
     public static final Codec<TextStyle> CODEC = new Codec<TextStyle>() {
 
         private final Codec<Optional<String>> OPT_STRING_CODEC =
@@ -167,17 +171,6 @@ public class TextStyle {
                 Optional.empty(),
                 Optional.empty()
         );
-    }
-
-    public TextStyle(Optional<Color> textColor) {
-        this.bold = Optional.empty();
-        this.italic = Optional.empty();
-        this.underline = Optional.empty();
-        this.strikethrough = Optional.empty();
-        this.fontSize = Optional.empty();
-        this.fontFamily = Optional.empty();
-        this.textColor = textColor;
-        this.backgroundColor = Optional.empty();
     }
 
     public TextStyle(
