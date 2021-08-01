@@ -231,7 +231,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         slider.setOnMouseReleased((event) -> {
             int audioVolume = (int) slider.getValue();
             user.setAudioVolume(audioVolume);
-            System.out.println(audioVolume);
+            stageManager.getEditor().getAudioManager().getAudioConnection().getAudioReceive().updateVolume();
         });
         return slider;
     }
