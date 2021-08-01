@@ -8,9 +8,13 @@ package de.uniks.stp.wedoit.accord.client.richtext;
 
 import com.pavlobu.emojitextflow.Emoji;
 import de.uniks.stp.wedoit.accord.client.StageManager;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.IndexRange;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import org.fxmisc.richtext.GenericStyledArea;
 import org.fxmisc.richtext.StyledTextArea;
 import org.fxmisc.richtext.TextExt;
@@ -29,7 +33,7 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
 
     private final static TextOps<String, TextStyle> styledTextOps = SegmentOps.styledTextOps();
     private final static LinkedImageOps<TextStyle> linkedImageOps = new LinkedImageOps<>();
-    private static boolean isDarkmode = false;
+    private boolean isDarkmode = false;
 
     public RichTextArea() {
         super(
@@ -61,7 +65,6 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
 
         this.selectAll();
         IndexRange selection = this.getSelection();
-        System.out.println("sel" + selection.getLength());
         if (selection.getLength() != 0) {
             StyleSpans<TextStyle> styles = this.getStyleSpans(selection);
             StyleSpans<TextStyle> newStyles = styles.mapStyles(style -> style.updateWith(mixin));
@@ -69,6 +72,14 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         }
         if (init) {this.replaceText("");}
         this.deselect();
+
+        if (this.getPlaceholder() != null) {
+            if (isDarkMode) {
+                this.getPlaceholder().setStyle("-fx-text-fill: WHITE");
+            } else {
+                this.getPlaceholder().setStyle("-fx-text-fill: BLACK");
+            }
+        }
     }
 
     private static Node createNode(StyledSegment<Either<String, LinkedImage>, TextStyle> seg,
@@ -92,7 +103,6 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
                 ReadOnlyStyledDocument.fromSegment(Either.right(new RealLinkedImage(imagePath)),
                         ParStyle.EMPTY, TextStyle.EMPTY, this.getSegOps());
         this.insert(this.getCaretPosition(), ros);
-        System.out.println(this.getContent().getText());
         typedEmojis.put(hex, emoji);
         updateTextColor(isDarkmode);
     }
@@ -103,7 +113,6 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
     }
 
     public String getConvertedText() {
-        System.out.println(this.getParagraphs());
         StringBuilder buf = new StringBuilder();
         Boolean lastSegmentleft = false;
         LiveList<Paragraph<ParStyle, Either<String, LinkedImage>, TextStyle>> paragraphs = this.getParagraphs();
@@ -129,7 +138,7 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
     }
 
     public void setText(String newText) {
-        this.replaceText(newText);
+        Platform.runLater(() -> this.replaceText(newText));
     }
 
     private Emoji getEmojiFromPath(String imagePath) {
@@ -138,6 +147,27 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         String emojiHex = temp.substring(0, temp.length() - 4);
         Emoji emoji = typedEmojis.get(emojiHex);
         return emoji;
+    }
+
+    public void setPromptText(String promptText ,boolean isDarkMode) {
+        Label text = new Label(promptText);
+        if (isDarkMode) {
+            text.setStyle("-fx-text-fill: WHITE");
+
+            System.out.println("white");
+        } else {
+            text.setStyle("-fx-text-fill: BLACK");
+
+        }
+        this.setPlaceholder(text);
+    }
+
+    public String getPromptText() {
+        Node placeholder = this.getPlaceholder();
+        if (placeholder instanceof Label) {
+            return ((Label) placeholder).getText();
+        }
+        return "";
     }
 
 }
