@@ -86,10 +86,6 @@ public class OptionsScreenController implements Controller {
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.sliderTextSize.setOnMouseReleased(this::fontSizeSliderOnChange);
         this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
-        editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
-                (PropertyChangeEvent propertyChangeEvent) -> {
-                    System.out.println(propertyChangeEvent.getNewValue());
-                });
         this.btnTestSetup.setOnAction(this::btnAudioTest);
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
         sliderInputSensitivity.valueProperty().addListener((e, old, n) -> editor.saveSensitivity(n.doubleValue()));

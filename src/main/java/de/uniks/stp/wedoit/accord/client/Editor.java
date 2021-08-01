@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class Editor {
 
@@ -52,6 +54,23 @@ public class Editor {
      */
     private static byte[] base64Decode(String property) {
         return Base64.getDecoder().decode(property);
+    }
+
+    public static String parseUserDescription(String rawDescription) {
+        switch (String.valueOf(rawDescription.charAt(0))) {
+            case SPOTIFY_KEY:
+                return rawDescription.replace(SPOTIFY_KEY, LanguageResolver.getString(SPOTIFY));
+            case GITHUB_KEY:
+                return rawDescription.replace(GITHUB_KEY, LanguageResolver.getString(GITHUB));
+            case STEAM_KEY:
+                return rawDescription.replace(STEAM_KEY, LanguageResolver.getString(STEAM));
+            case CUSTOM_KEY:
+                return rawDescription.replace(CUSTOM_KEY, LanguageResolver.getString(CUSTOM));
+            case CLUB_PENGUIN:
+                return rawDescription.replace(CLUB_PENGUIN_KEY, LanguageResolver.getString(CLUB_PENGUIN));
+            default:
+                return rawDescription;
+        }
     }
 
     /**
@@ -100,7 +119,6 @@ public class Editor {
      * @return localUser
      */
     public LocalUser haveLocalUser() {
-        System.out.println("New LocalUser!");
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
         steamManager.setupSteamTimer();
@@ -294,7 +312,6 @@ public class Editor {
         }
     }
 
-
     /**
      * add message to channel chat
      *
@@ -402,7 +419,6 @@ public class Editor {
 
     }
 
-
     /**
      * creates a instance of the sqlite databank and loads the font size
      * right after log in since the username is needed
@@ -426,7 +442,6 @@ public class Editor {
     public void saveSensitivity(double rms) {
         db.updateAudioRMS(rms);
     }
-
 
     /**
      * loads old offline chats that the local users has a history with
@@ -540,7 +555,7 @@ public class Editor {
     public void handleAutomaticLogin(boolean success) {
         if (success) {
             Platform.runLater(() -> {
-                stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null);
+                stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
                 stageManager.getStage(StageEnum.STAGE).setResizable(true);
                 stageManager.getStage(StageEnum.STAGE).setMaximized(true);
             });
