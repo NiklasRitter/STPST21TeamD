@@ -372,7 +372,6 @@ public class Editor {
     public double calculateRMS(byte[] buf, int bytes){
         float[] samples = new float[1024];
 
-        // convert bytes to samples here
         for(int i = 0, s = 0; i < bytes;) {
             int sample = 0;
 
@@ -387,7 +386,7 @@ public class Editor {
             rms += sample * sample;
         }
 
-        return (float)Math.sqrt(rms / samples.length);
+        return (float) Math.sqrt(rms / samples.length);
 
     }
 
