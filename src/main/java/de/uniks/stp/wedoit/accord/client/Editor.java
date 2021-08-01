@@ -40,7 +40,6 @@ public class Editor {
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
-    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
@@ -426,7 +425,6 @@ public class Editor {
      */
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
-        chatFontSize.setValue(db.getFontSize());
         getLocalUser().setSteam64ID(getSteam64ID());
     }
 
@@ -435,14 +433,6 @@ public class Editor {
      */
     public void savePrivateMessage(PrivateMessage message) {
         db.save(message);
-    }
-
-    public double getAudioRMS() {
-        return db.getAudioRMS();
-    }
-
-    public void saveSensitivity(double rms) {
-        db.updateAudioRMS(rms);
     }
 
     public String getSteam64ID() {
@@ -493,24 +483,6 @@ public class Editor {
 
     public void getUserChatRead(User user) {
         db.getChatReadForUser(user);
-    }
-
-    /**
-     * Updates fontsize in settings databank and updates the property
-     *
-     * @param size to be set
-     */
-    public void saveFontSize(int size) {
-        db.updateFontSize(size);
-        chatFontSize.setValue(size);
-    }
-
-    public int getFontSize() {
-        return db.getFontSize();
-    }
-
-    public IntegerProperty getChatFontSizeProperty() {
-        return chatFontSize;
     }
 
     /**

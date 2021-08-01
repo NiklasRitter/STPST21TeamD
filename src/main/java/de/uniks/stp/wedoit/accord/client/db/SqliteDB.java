@@ -16,7 +16,7 @@ public class SqliteDB {
 
     /**
      * When creating a SqliteDB object </p>
-     * creates three tables: messages, privateChats, settings
+     * creates three tables: messages, privateChats, options
      *
      * @param username for creating the DB
      */
@@ -43,11 +43,10 @@ public class SqliteDB {
                     + ");"
             );
 
-            stmt.execute("CREATE TABLE IF NOT EXISTS settings (\n"
+            stmt.execute("CREATE TABLE IF NOT EXISTS options (\n"
                     + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
-                    + "	fontSize integer DEFAULT 12,\n"
-                    + " audioRMS double DEFAULT 0,\n"
-                    + " steam64ID varchar(255)"
+                    + " key varchar(255) NOT NULL,\n"
+                    + " value varchar(255)\n"
                     + ");"
             );
 
@@ -82,78 +81,14 @@ public class SqliteDB {
         updateOrInsertUserChatRead(message.getChat().getUser());
     }
 
-    /**
-     * @param size to be updated in the databank
-     */
-    public void updateFontSize(int size) {
-        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,fontSize) VALUES(1,?)")) {
-
-            prep.setInt(1, size);
-
-            prep.execute();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @return current fontsize according to fontsize slider
-     */
-    public int getFontSize() {
-        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
-
-            ResultSet rs = prep.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("fontSize");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 12;
-    }
-
-    public double getAudioRMS() {
-        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
-
-            ResultSet rs = prep.executeQuery();
-
-            if (rs.next()) {
-                return rs.getDouble("audioRMS");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public void updateAudioRMS(double rms) {
-        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,audioRMS) VALUES(1,?)")) {
-
-            prep.setDouble(1, rms);
-
-            prep.execute();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public String getSteam64ID() {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
+             PreparedStatement prep = conn.prepareStatement("SELECT * FROM options WHERE key = 'steam64ID' LIMIT 1;")) {
 
             ResultSet rs = prep.executeQuery();
 
             if (rs.next()) {
-                return rs.getString("steam64ID");
+                return rs.getString("value");
             }
 
         } catch (Exception e) {
@@ -164,9 +99,10 @@ public class SqliteDB {
 
     public void updateSteam64ID(String steam64ID) {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,steam64ID) VALUES(1,?)")) {
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO options(id,key,value) VALUES(1,?,?)")) {
 
-            prep.setString(1, steam64ID);
+            prep.setString(1, "steam64ID");
+            prep.setString(2, steam64ID);
 
             prep.execute();
 
