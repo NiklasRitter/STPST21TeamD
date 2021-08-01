@@ -172,10 +172,12 @@ public class AudioReceive extends Thread {
     private float calculateVolume(float optionsVolume, FloatControl volumeControl, String userName){
         float finalVolume;
         float userVolume = 0;
+        // get the user and his audio volume setting
         User user = getUser(userName);
         if(user != null) {
             userVolume = user.getAudioVolume();
         }
+        // check the volume setting from the OptionsScreen and the user volume setting and set the overall volume accordingly
         if (optionsVolume > 0) {
             float volumeSettingOptions = volumeControl.getMaximum() * optionsVolume / 100;
             if (userVolume >= 0) {
@@ -204,6 +206,7 @@ public class AudioReceive extends Thread {
                 }
             }
         }
+        // when the overall volume is not set only the user volume setting is part of the overall volume
         else {
             if (userVolume > 0) {
                 finalVolume = (volumeControl.getMaximum() / 100) * userVolume;
