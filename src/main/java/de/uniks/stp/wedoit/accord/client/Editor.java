@@ -540,7 +540,7 @@ public class Editor {
     public void handleAutomaticLogin(boolean success) {
         if (success) {
             Platform.runLater(() -> {
-                stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
+                stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null);
                 stageManager.getStage(StageEnum.STAGE).setResizable(true);
                 stageManager.getStage(StageEnum.STAGE).setMaximized(true);
             });

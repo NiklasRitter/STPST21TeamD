@@ -58,7 +58,7 @@
   roles: 	server_categories 	server_invitations 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
-  attributes: 	user_description 	user_name 	user_onlineStatus 	user_chatRead 	user_muted 	user_gameMove 	user_id
+  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_muted 	user_gameMove 	user_id
   model: 	c
   modified: 	false
   name: 	User
@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_description 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -89,7 +89,7 @@
   roles: 	accordClient_localUser 	accordClient_options
 
 - options: 	org.fulib.classmodel.Clazz
-  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_systemVolume
+  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_outputDevice 	options_inputDevice 	options_systemVolume
   model: 	c
   modified: 	false
   name: 	Options
@@ -439,15 +439,6 @@
   other: 	localUser_servers
   propertyStyle: 	Bean
 
-- user_description: 	org.fulib.classmodel.Attribute
-  clazz: 	user
-  id: 	User_description
-  modified: 	false
-  name: 	description
-  propertyStyle: 	Bean
-  type: 	String
-  typeSignature: 	String
-
 - user_name: 	org.fulib.classmodel.Attribute
   clazz: 	user
   id: 	User_name
@@ -610,15 +601,6 @@
   name: 	server
   other: 	server_invitations
   propertyStyle: 	Bean
-
-- localUser_description: 	org.fulib.classmodel.Attribute
-  clazz: 	localUser
-  id: 	LocalUser_description
-  modified: 	false
-  name: 	description
-  propertyStyle: 	Bean
-  type: 	String
-  typeSignature: 	String
 
 - localUser_password: 	org.fulib.classmodel.Attribute
   clazz: 	localUser
@@ -810,6 +792,24 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- options_outputDevice: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_outputDevice
+  modified: 	false
+  name: 	outputDevice
+  propertyStyle: 	Bean
+  type: 	"import(javax.sound.sampled.Mixer.Info)"
+  typeSignature: 	Info
+
+- options_inputDevice: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_inputDevice
+  modified: 	false
+  name: 	inputDevice
+  propertyStyle: 	Bean
+  type: 	"import(javax.sound.sampled.Mixer.Info)"
+  typeSignature: 	Info
 
 - options_systemVolume: 	org.fulib.classmodel.Attribute
   clazz: 	options

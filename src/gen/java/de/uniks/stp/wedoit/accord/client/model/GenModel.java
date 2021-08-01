@@ -4,6 +4,7 @@ import org.fulib.builder.ClassModelDecorator;
 import org.fulib.builder.ClassModelManager;
 import org.fulib.builder.reflect.Link;
 
+import javax.sound.sampled.Mixer;
 import java.util.List;
 import java.util.Timer;
 
@@ -25,6 +26,8 @@ public class GenModel implements ClassModelDecorator {
         boolean darkmode;
         boolean rememberMe;
         String language;
+        Mixer.Info outputDevice;
+        Mixer.Info inputDevice;
         float systemVolume;
 
         @Link("options")
@@ -32,7 +35,6 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class LocalUser {
-        String description;
         String password;
         String name;
         String userKey;
@@ -57,7 +59,6 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class User {
-        String description;
         String name;
         boolean onlineStatus;
         boolean chatRead;

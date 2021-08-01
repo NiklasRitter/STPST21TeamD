@@ -96,7 +96,7 @@ public class AutomatedLoginTest extends ApplicationTest {
 
     @Test
     public void startWithRememberMeOption() {
-        Assert.assertEquals(stage.getTitle(), "Main");
+        Assert.assertEquals(stage.getTitle(), "Private Chats");
         Assert.assertEquals(stageManager.getEditor().getLocalUser().getName(), "username");
     }
 

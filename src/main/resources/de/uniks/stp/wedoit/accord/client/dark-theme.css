@@ -147,6 +147,16 @@
     -fx-border-color: transparent;
 }
 
+.listViewServer > .virtual-flow> .clipped-container > .sheet > .list-cell{
+    -fx-background-color: #212121;
+    -fx-border-color: transparent;
+}
+
+.listViewServer {
+    -fx-background-color: #212121;
+    -fx-border-color: transparent;
+}
+
 .list-cell {
     -fx-text-fill: #dcddde ;
     -fx-background-color: #2f3136;
@@ -279,6 +289,27 @@
     -fx-background-color :derive(#4D4C4F,10.0%);
     -fx-background-insets : 2.0, 0.0, 0.0;
     -fx-background-radius : 2.0em;
+}
+
+.serverCircle {
+    -fx-fill: #ffffff;
+}
+
+.serverCircleText{
+    -fx-text-fill: #000000;
+}
+
+
+.serverCircleText:cell-selection {
+    -fx-text-fill: #ffffff;
+}
+
+.serverCircleSelected {
+    -fx-fill: #9e9e9e;
+}
+
+.serverCircleTextSelected {
+    -fx-text-fill: #ffffff;
 }
 
 .styleTopMenu {
