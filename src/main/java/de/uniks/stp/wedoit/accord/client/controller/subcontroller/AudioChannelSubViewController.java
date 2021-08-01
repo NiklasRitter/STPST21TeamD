@@ -1,9 +1,7 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.application.Platform;
@@ -11,7 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -87,7 +84,7 @@ public class AudioChannelSubViewController implements Controller {
 
     private void btnMuteYouOnClick(ActionEvent actionEvent) {
         if (localUser.isMuted()) {
-            if(localUser.isAllMuted()){
+            if (localUser.isAllMuted()) {
                 editor.getAudioManager().unMuteAllUsers(channel.getAudioMembers());
             }
             this.editor.getAudioManager().unmuteYourself(localUser);
@@ -105,7 +102,7 @@ public class AudioChannelSubViewController implements Controller {
             editor.getAudioManager().unMuteAllUsers(channel.getAudioMembers());
             this.editor.getAudioManager().unmuteYourself(localUser);
         }
-        if (controller != null){
+        if (controller != null) {
             controller.getTvServerChannels().refresh();
         }
     }
@@ -131,10 +128,9 @@ public class AudioChannelSubViewController implements Controller {
     }
 
     public void closeAudioChannel() {
-        if(channel.getCategory() != null){
+        if (channel.getCategory() != null) {
             this.editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, controller);
-        }
-        else{
+        } else {
             this.editor.getAudioManager().closeAudioConnection();
         }
     }

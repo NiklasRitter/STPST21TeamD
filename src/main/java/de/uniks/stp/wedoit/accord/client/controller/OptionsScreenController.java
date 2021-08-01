@@ -16,9 +16,9 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
-import java.beans.PropertyChangeEvent;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
+import java.beans.PropertyChangeEvent;
 import java.util.Locale;
 
 public class OptionsScreenController implements Controller {
@@ -92,7 +92,7 @@ public class OptionsScreenController implements Controller {
                 });
         this.btnTestSetup.setOnAction(this::btnAudioTest);
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
-        sliderInputSensitivity.valueProperty().addListener((e,old,n)->editor.saveSensitivity(n.doubleValue()));
+        sliderInputSensitivity.valueProperty().addListener((e, old, n) -> editor.saveSensitivity(n.doubleValue()));
     }
 
     private void fontSizeSliderOnChange(MouseEvent e) {
@@ -104,24 +104,21 @@ public class OptionsScreenController implements Controller {
     }
 
     private void createOutputInputChoiceBox() {
-        for(Mixer.Info m : AudioSystem.getMixerInfo()) {
-            if(m.getDescription().equals("Direct Audio Device: DirectSound Playback")) {
+        for (Mixer.Info m : AudioSystem.getMixerInfo()) {
+            if (m.getDescription().equals("Direct Audio Device: DirectSound Playback")) {
                 this.choiceBoxOutputDevice.getItems().add(m.getName());
-            }
-            else if(m.getDescription().equals("Direct Audio Device: DirectSound Capture")) {
+            } else if (m.getDescription().equals("Direct Audio Device: DirectSound Capture")) {
                 this.choiceBoxInputDevice.getItems().add(m.getName());
             }
         }
-        if(this.options.getOutputDevice() != null) {
+        if (this.options.getOutputDevice() != null) {
             this.choiceBoxOutputDevice.getSelectionModel().select(this.options.getOutputDevice().getName());
-        }
-        else {
+        } else {
             this.choiceBoxOutputDevice.getSelectionModel().select(0);
         }
-        if(this.options.getInputDevice() != null) {
+        if (this.options.getInputDevice() != null) {
             this.choiceBoxInputDevice.getSelectionModel().select(this.options.getInputDevice().getName());
-        }
-        else {
+        } else {
             this.choiceBoxInputDevice.getSelectionModel().select(0);
         }
 
@@ -132,17 +129,16 @@ public class OptionsScreenController implements Controller {
     private void choiceBoxOutputInputSelected(Event actionEvent) {
         String description = "Direct Audio Device: DirectSound Playback";
         String info = this.choiceBoxOutputDevice.getSelectionModel().getSelectedItem();
-        if(actionEvent.getSource() == this.choiceBoxInputDevice) {
+        if (actionEvent.getSource() == this.choiceBoxInputDevice) {
             description = "Direct Audio Device: DirectSound Capture";
             info = this.choiceBoxInputDevice.getSelectionModel().getSelectedItem();
         }
-        for(Mixer.Info m : AudioSystem.getMixerInfo()) {
-            if(m.getName().equals(info) && m.getDescription().equals(description)) {
-                if(actionEvent.getSource() == choiceBoxOutputDevice) {
+        for (Mixer.Info m : AudioSystem.getMixerInfo()) {
+            if (m.getName().equals(info) && m.getDescription().equals(description)) {
+                if (actionEvent.getSource() == choiceBoxOutputDevice) {
                     this.options.setOutputDevice(m);
                     this.editor.getStageManager().getPrefManager().saveOutputDevice(m.getName());
-                }
-                else {
+                } else {
                     this.options.setInputDevice(m);
                     this.editor.getStageManager().getPrefManager().saveInputDevice(m.getName());
                 }
@@ -224,7 +220,7 @@ public class OptionsScreenController implements Controller {
         sliderOutputVolume.setOnMouseReleased(null);
         btnTestSetup.setOnAction(null);
         progressBarTest.progressProperty().unbind();
-        if(recorder != null){
+        if (recorder != null) {
             recorder.stop();
             recorder = null;
         }
@@ -250,13 +246,13 @@ public class OptionsScreenController implements Controller {
 
 
     private void btnAudioTest(ActionEvent actionEvent) {
-        if(recorder == null){
-             recorder = new Recorder(progressBarTestBot, editor);
+        if (recorder == null) {
+            recorder = new Recorder(progressBarTestBot, editor);
         }
-        if(btnTestSetup.getText().equals(LanguageResolver.getString("TEST_SETUP"))) {
+        if (btnTestSetup.getText().equals(LanguageResolver.getString("TEST_SETUP"))) {
             btnTestSetup.setText("STOP");
             recorder.start();
-        }else{
+        } else {
             recorder.stop();
             btnTestSetup.setText(LanguageResolver.getString("TEST_SETUP"));
             recorder = null;
