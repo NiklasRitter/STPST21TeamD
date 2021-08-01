@@ -6,6 +6,7 @@ import org.fulib.builder.reflect.Link;
 
 import javax.sound.sampled.Mixer;
 import java.util.List;
+import java.util.Timer;
 
 public class GenModel implements ClassModelDecorator {
     @Override
@@ -38,11 +39,14 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String userKey;
         String id;
+        String steam64ID;
+        String steamGameExtraInfo;
         List<User> gameInvites;
         List<User> gameRequests;
         Channel audioChannel;
         boolean muted;
         boolean allMuted;
+        Timer steamGameExtraInfoTimer;
 
         @Link("localUser")
         List<User> users;

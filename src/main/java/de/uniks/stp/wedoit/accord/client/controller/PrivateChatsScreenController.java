@@ -322,7 +322,7 @@ public class PrivateChatsScreenController implements Controller {
             privateChatController.initPrivateChat(selectedUser);
             this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
             if (selectedUser.getDescription() != null && !selectedUser.getDescription().equals("") && selectedUser.isOnlineStatus()) {
-                lblDescription.setText("- " + selectedUser.getDescription());
+                lblDescription.setText("- " + Editor.parseUserDescription(selectedUser.getDescription()));
             }
             this.btnPlay.setVisible(true);
             this.editor.getStageManager().updateDarkmode();
@@ -332,7 +332,7 @@ public class PrivateChatsScreenController implements Controller {
     private void userDescriptionChanged(PropertyChangeEvent propertyChangeEvent) {
         if (!lblDescription.getText().equals(selectedUser.getDescription())) {
             if (!selectedUser.getDescription().equals("") && selectedUser.getDescription() != null && selectedUser.isOnlineStatus())
-                Platform.runLater(() -> lblDescription.setText("- " + selectedUser.getDescription()));
+                Platform.runLater(() -> lblDescription.setText("- " + Editor.parseUserDescription(selectedUser.getDescription())));
         }
     }
 
