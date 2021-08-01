@@ -214,4 +214,8 @@ public class AudioReceive extends Thread {
         }
         return finalVolume;
     }
+
+    public Map<String, SourceDataLine> getSourceDataLineMap(){
+        return sourceDataLineMap;
+    }
 }

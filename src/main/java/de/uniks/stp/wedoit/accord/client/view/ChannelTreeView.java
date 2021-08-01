@@ -225,6 +225,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
 
     public Slider createSlider(User user){
         Slider slider = new Slider();
+        slider.setId("sliderVolumeUser");
         slider.setMax(100);
         slider.setMin(-100);
         slider.setValue(user.getAudioVolume());
