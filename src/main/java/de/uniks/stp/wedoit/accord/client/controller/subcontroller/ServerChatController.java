@@ -100,7 +100,6 @@ public class ServerChatController implements Controller {
     public void init() {
         this.vBoxTextField = (VBox) view.lookup("#boxTextfield");
         this.tfInputMessage = (RichTextArea) view.lookup("#tfInputMessage");
-        System.out.println(tfInputMessage);
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
@@ -395,7 +394,7 @@ public class ServerChatController implements Controller {
         channel.setRead(true);
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
-        this.tfInputMessage.setPlaceholder(new Text(LanguageResolver.getString("YOUR_MESSAGE")));
+        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"), editor.getAccordClient().getOptions().isDarkmode());
         this.tfInputMessage.setEditable(this.currentChannel != null);
 
         // init list view

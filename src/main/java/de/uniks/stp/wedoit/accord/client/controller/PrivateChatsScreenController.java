@@ -217,7 +217,7 @@ public class PrivateChatsScreenController implements Controller {
                     lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    tfPrivateChat.setPlaceholder(new Text(user.getName() + " " + LanguageResolver.getString("IS_OFFLINE")));
+                    tfPrivateChat.setPromptText(user.getName() + " " + LanguageResolver.getString("IS_OFFLINE"), editor.getAccordClient().getOptions().isDarkmode());
                     tfPrivateChat.setEditable(false);
                 }
             });
@@ -231,7 +231,7 @@ public class PrivateChatsScreenController implements Controller {
                     lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    tfPrivateChat.setPlaceholder(new Text(LanguageResolver.getString("YOUR_MESSAGE")));
+                    tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"), editor.getAccordClient().getOptions().isDarkmode());
                     tfPrivateChat.setEditable(true);
                 }
             });

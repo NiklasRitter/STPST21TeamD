@@ -95,7 +95,7 @@ public class PrivateChatController implements Controller {
 
         addMessageContextMenu();
 
-        this.tfPrivateChat.setPlaceholder(new Text(LanguageResolver.getString("SELECT_A_USER")));
+        this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"), editor.getAccordClient().getOptions().isDarkmode());
         this.tfPrivateChat.setEditable(false);
 
         this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
@@ -183,10 +183,10 @@ public class PrivateChatController implements Controller {
         selectedUser.setChatRead(true);
         editor.updateUserChatRead(selectedUser);
         if (selectedUser.isOnlineStatus()) {
-            this.tfPrivateChat.setPlaceholder(new Text(LanguageResolver.getString("YOUR_MESSAGE")));
+            this.tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"), editor.getAccordClient().getOptions().isDarkmode());
             this.tfPrivateChat.setEditable(true);
         } else {
-            this.tfPrivateChat.setPlaceholder(new Text(selectedUser.getName() + " " + LanguageResolver.getString("IS_OFFLINE")));
+            this.tfPrivateChat.setPromptText(selectedUser.getName() + " " + LanguageResolver.getString("IS_OFFLINE"), editor.getAccordClient().getOptions().isDarkmode());
             this.tfPrivateChat.setEditable(false);
         }
 
@@ -412,7 +412,7 @@ public class PrivateChatController implements Controller {
 
         this.lwPrivateChat.refresh();
         this.tfPrivateChat.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
-       
+
     }
 
     public Chat getCurrentChat() {
