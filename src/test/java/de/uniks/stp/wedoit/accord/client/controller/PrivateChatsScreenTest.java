@@ -11,6 +11,7 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.scene.control.*;
@@ -328,7 +329,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfEnterPrivateChat");
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -389,7 +390,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn("#tfEnterPrivateChat");
 
         String message = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Eopsaltria_australis_-_Mogo_Campground.jpg/1200px-Eopsaltria_australis_-_Mogo_Campground.jpg";
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
         press(KeyCode.ENTER);
 
 
@@ -423,7 +424,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn("#tfEnterPrivateChat");
 
         String message = "https://media.giphy.com/media/AibXOtCbZgwChaOWcz/source.gif";
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
         press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -456,7 +457,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn("#tfEnterPrivateChat");
 
         String message = "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4";
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
         press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -487,7 +488,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         clickOn("#tfEnterPrivateChat");
 
         String message = "https://youtu.be/NxvQPzrg2Wg";
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText(message);
         press(KeyCode.ENTER);
 
 
@@ -546,7 +547,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
 
         //send message
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message\n");
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message\n");
 
         Assert.assertEquals(0, lwPrivateChat.getItems().size());
     }
@@ -569,7 +570,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfEnterPrivateChat");
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
 
         JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message");
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
@@ -627,7 +628,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
 
         //send message
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
         press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -671,7 +672,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         formatted = stageManager.getEditor().getMessageManager().getMessageFormatted(selectedItem);
         Assert.assertEquals(privateChatController.getQuotedText(), formatted);
 
-        ((TextArea) lookup("#tfEnterPrivateChat").query()).setText("quote");
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("quote");
         clickOn("#tfEnterPrivateChat");
         press(KeyCode.ENTER);
 
