@@ -6,11 +6,14 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.AudioChannelSubViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -18,7 +21,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -30,11 +36,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_ID_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_URL;
+
 public class PrivateChatsScreenController implements Controller {
 
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
+    private ServerListController serverListController;
     private Button btnOptions, btnPlay;
     private Button btnHome;
     private TextArea taPrivateChat;
@@ -51,7 +61,8 @@ public class PrivateChatsScreenController implements Controller {
     private PropertyChangeListener newUsersListener = this::newUser;
     private PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
     private PropertyChangeListener languageRefreshed = this::refreshStage;
-
+    private Label lblDescription;
+    private PropertyChangeListener usersDescriptionListener = this::userDescriptionChanged;
 
     /**
      * Create a new Controller
@@ -65,6 +76,7 @@ public class PrivateChatsScreenController implements Controller {
         this.localUser = model;
         this.editor = editor;
         this.privateChatController = new PrivateChatController(view, model, editor);
+        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor);
     }
 
 
@@ -76,12 +88,11 @@ public class PrivateChatsScreenController implements Controller {
      * Add action listeners
      */
     public void init() {
-        this.btnOptions = (Button) view.lookup("#btnOptions");
         this.btnPlay = (Button) view.lookup("#btnPlay");
-        this.btnHome = (Button) view.lookup("#btnHome");
         this.lwOnlineUsers = (ListView<User>) view.lookup("#lwOnlineUsers");
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
+        this.lblDescription = (Label) view.lookup("#lblDescription");
         this.taPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
 
         this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
@@ -89,11 +100,9 @@ public class PrivateChatsScreenController implements Controller {
 
         this.editor.getStageManager().getStage(StageEnum.STAGE).setTitle(LanguageResolver.getString("PRIVATE_CHATS"));
 
-        privateChatController.init();
+        this.privateChatController.init();
+        this.serverListController.init();
 
-        this.btnHome.setOnAction(this::btnHomeOnClicked);
-
-        this.btnOptions.setOnAction(this::btnOptionsOnClicked);
         this.lwOnlineUsers.setOnMouseReleased(this::onOnlineUserListViewClicked);
 
         this.initOnlineUsersList();
@@ -123,6 +132,7 @@ public class PrivateChatsScreenController implements Controller {
         for (User user : availableUsers) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
             user.listeners().removePropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
+            user.listeners().removePropertyChangeListener(User.PROPERTY_DESCRIPTION, this.usersDescriptionListener);
         }
         this.usersMessageListListener = null;
         this.usersOnlineListListener = null;
@@ -130,32 +140,13 @@ public class PrivateChatsScreenController implements Controller {
         this.audioChannelChange = null;
         this.languageRefreshed = null;
 
-        this.btnHome.setOnAction(null);
         this.btnPlay.setOnAction(null);
-        this.btnOptions.setOnAction(null);
         this.lwOnlineUsers.setOnMouseReleased(null);
 
         privateChatController.stop();
         privateChatController = null;
-    }
-
-    /**
-     * redirect to Main Screen
-     *
-     * @param actionEvent occurs when Home Button is clicked
-     */
-    private void btnHomeOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
-    }
-
-
-    /**
-     * redirect to Options Menu
-     *
-     * @param actionEvent occurs when Options Button is clicked
-     */
-    private void btnOptionsOnClicked(ActionEvent actionEvent) {
-        this.editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
+        this.serverListController.stop();
+        this.serverListController = null;
     }
 
     /**
@@ -192,6 +183,7 @@ public class PrivateChatsScreenController implements Controller {
             editor.getUserChatRead(user);
             user.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.usersOnlineListListener);
             user.listeners().addPropertyChangeListener(User.PROPERTY_CHAT_READ, this.usersMessageListListener);
+            user.listeners().addPropertyChangeListener(User.PROPERTY_DESCRIPTION, this.usersDescriptionListener);
         }
     }
 
@@ -328,8 +320,18 @@ public class PrivateChatsScreenController implements Controller {
                     LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));
             privateChatController.initPrivateChat(selectedUser);
             this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
+            if (selectedUser.getDescription() != null && !selectedUser.getDescription().equals("") && selectedUser.isOnlineStatus()) {
+                lblDescription.setText("- " + selectedUser.getDescription());
+            }
             this.btnPlay.setVisible(true);
             this.editor.getStageManager().updateDarkmode();
+        }
+    }
+
+    private void userDescriptionChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (!lblDescription.getText().equals(selectedUser.getDescription())) {
+            if (!selectedUser.getDescription().equals("") && selectedUser.getDescription() != null && selectedUser.isOnlineStatus())
+                Platform.runLater(() -> lblDescription.setText("- " + selectedUser.getDescription()));
         }
     }
 

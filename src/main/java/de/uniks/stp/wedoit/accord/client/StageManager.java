@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
@@ -18,22 +19,24 @@ import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 
 public class StageManager extends Application {
 
     private final Map<String, Controller> controllerMap = new HashMap<>();
-    private ResourceManager resourceManager = new ResourceManager();
     private final Editor editor = new Editor();
+    private final Image logoImage = new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png")));
+    private final Map<StageEnum, Scene> sceneMap = new HashMap<>();
+    private final Map<StageEnum, Stage> stageMap = new HashMap<>();
+    private ResourceManager resourceManager = new ResourceManager();
     private PreferenceManager prefManager = new PreferenceManager();
     private SystemTrayController systemTrayController;
     private AccordClient model;
-    private final Image logoImage = new Image(Objects.requireNonNull(StageManager.class.getResourceAsStream("view/images/LogoAccord.png")));
-
-    private final Map<StageEnum, Scene> sceneMap = new HashMap<>();
-    private final Map<StageEnum, Stage> stageMap = new HashMap<>();
 
 
     {
@@ -44,8 +47,8 @@ public class StageManager extends Application {
      * inits the view using the ControllerEnum
      * set up in a strategy design Pattern
      *
-     * @param controller Enum with information which stage should be loaded
-     * @param parameter for controller
+     * @param controller   Enum with information which stage should be loaded
+     * @param parameter    for controller
      * @param parameterTwo for controller
      */
     public void initView(ControllerEnum controller, Object parameter, Object parameterTwo) {
@@ -79,10 +82,10 @@ public class StageManager extends Application {
     /**
      * loads the right controller when changing the scene
      *
-     * @param root fxml root object
+     * @param root           fxml root object
      * @param controllerName for switch case to load right controller
-     * @param parameter for controller
-     * @param parameterTwo for controller
+     * @param parameter      for controller
+     * @param parameterTwo   for controller
      */
     private void openController(Parent root, String controllerName, Object parameter, Object parameterTwo) {
         Controller controller = null;
@@ -90,9 +93,6 @@ public class StageManager extends Application {
             case LOGIN_SCREEN_CONTROLLER:
                 editor.haveLocalUser();
                 controller = new LoginScreenController(root, model, editor, (boolean) parameter);
-                break;
-            case MAIN_SCREEN_CONTROLLER:
-                controller = new MainScreenController(root, model.getLocalUser(), editor);
                 break;
             case CREATE_SERVER_SCREEN_CONTROLLER:
                 controller = new CreateServerScreenController(root, editor);
@@ -157,6 +157,7 @@ public class StageManager extends Application {
 
     /**
      * clean up a specific controller
+     *
      * @param c the controller to be cleaned up
      */
     private void cleanup(ControllerEnum c) {
@@ -236,6 +237,11 @@ public class StageManager extends Application {
         changeLanguage(model.getOptions().getLanguage());
     }
 
+    private void updateOutputInputDevices() {
+        this.model.getOptions().setOutputDevice(prefManager.loadOutputDevice());
+        this.model.getOptions().setInputDevice(prefManager.loadInputDevice());
+    }
+
     public void changeLanguage(String language) {
         Locale.setDefault(new Locale(Objects.requireNonNullElse(language, "en_GB")));
     }
@@ -276,6 +282,7 @@ public class StageManager extends Application {
      * start message for the initial screen,
      * overrides the start method from javafx.application </p>
      * sets up the stageMap with all needed stages
+     *
      * @param primaryStage from javafx
      */
     @Override
@@ -308,6 +315,7 @@ public class StageManager extends Application {
         model.setOptions(new Options());
         editor.haveLocalUser();
         resourceManager.start(model);
+        updateOutputInputDevices();
         updateLanguage();
         if (!SystemTray.isSupported()) System.err.println("SystemTray not supported on the platform.");
         else {

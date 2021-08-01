@@ -34,17 +34,13 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.ATTENTION_LEAVE_SERVER_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.MAIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MainScreenTest extends ApplicationTest {
+public class ServerListTest extends ApplicationTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -92,7 +88,7 @@ public class MainScreenTest extends ApplicationTest {
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + "username", chatWebSocketClient);
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
-        this.stageManager.initView(ControllerEnum.MAIN_SCREEN, null, null);
+        this.stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
         ;
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
@@ -130,51 +126,6 @@ public class MainScreenTest extends ApplicationTest {
 
         Callback<JsonNode> callback = callbackArgumentCaptor.getValue();
         callback.completed(res);
-    }
-
-    @Test
-    public void testBtnLogout() {
-        JsonObject json = Json.createObjectBuilder()
-                .add("status", "success")
-                .add("message", "Logged out")
-                .add("data", "{}")
-                .build();
-        when(res.getBody()).thenReturn(new JsonNode(json.toString()));
-
-        Assert.assertEquals("Main", stage.getTitle());
-
-        // testing logout button
-        // first have to open optionScreen
-        clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
-
-        clickOn("#btnLogout");
-
-        verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
-
-        Callback<JsonNode> callbackLogout = callbackArgumentCaptor.getValue();
-        callbackLogout.completed(res);
-
-        Assert.assertEquals("success", res.getBody().getObject().getString("status"));
-
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Login", stage.getTitle());
-    }
-
-
-    @Test
-    public void privateChatsButtonTest() {
-        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
-        this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX + this.localUser.getName(), chatWebSocketClient);
-
-        clickOn("#btnPrivateChats");
-        Assert.assertEquals("Private Chats", stage.getTitle());
-    }
-
-    @Test
-    public void optionsButtonTest() {
-        clickOn("#btnOptions");
-        Assert.assertEquals("Options", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
     }
 
     // Test: list View load servers correct in the list view and sorted alphabetical
@@ -454,7 +405,7 @@ public class MainScreenTest extends ApplicationTest {
         callbackLeaveServer.completed(res);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Private Chats");
     }
 
     @Test
@@ -490,9 +441,8 @@ public class MainScreenTest extends ApplicationTest {
         clickOn(btnCancel);
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Main");
+        Assert.assertEquals(this.stageManager.getStage(StageEnum.STAGE).getTitle(), "Private Chats");
     }
-
 
     public void openAttentionLeaverServerScreen() {
         JsonObject json = buildGetServersSuccessWithTwoServers();
@@ -526,12 +476,14 @@ public class MainScreenTest extends ApplicationTest {
 
     public JsonObject webSocketCallbackServerUpdated() {
         return Json.createObjectBuilder().add("action", "serverUpdated").add("data",
-                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")).build();
+                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")
+                        .add("description", "")).build();
     }
 
     public JsonObject webSocketCallbackServerDeleted() {
         return Json.createObjectBuilder().add("action", "serverDeleted").add("data",
-                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")).build();
+                Json.createObjectBuilder().add("id", "5e2ffbd8770dd077d03df505").add("name", "serverUpdated")
+                        .add("description", "")).build();
     }
 
     /**

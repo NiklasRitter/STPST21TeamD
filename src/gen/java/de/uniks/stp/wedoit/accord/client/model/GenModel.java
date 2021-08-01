@@ -4,6 +4,7 @@ import org.fulib.builder.ClassModelDecorator;
 import org.fulib.builder.ClassModelManager;
 import org.fulib.builder.reflect.Link;
 
+import javax.sound.sampled.Mixer;
 import java.util.List;
 
 public class GenModel implements ClassModelDecorator {
@@ -24,6 +25,9 @@ public class GenModel implements ClassModelDecorator {
         boolean darkmode;
         boolean rememberMe;
         String language;
+        Mixer.Info outputDevice;
+        Mixer.Info inputDevice;
+        float systemVolume;
 
         @Link("options")
         AccordClient accordClient;

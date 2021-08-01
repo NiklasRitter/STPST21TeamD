@@ -89,7 +89,7 @@
   roles: 	accordClient_localUser 	accordClient_options
 
 - options: 	org.fulib.classmodel.Clazz
-  attributes: 	options_darkmode 	options_rememberMe 	options_language
+  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_outputDevice 	options_inputDevice 	options_systemVolume
   model: 	c
   modified: 	false
   name: 	Options
@@ -765,6 +765,33 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- options_outputDevice: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_outputDevice
+  modified: 	false
+  name: 	outputDevice
+  propertyStyle: 	Bean
+  type: 	"import(javax.sound.sampled.Mixer.Info)"
+  typeSignature: 	Info
+
+- options_inputDevice: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_inputDevice
+  modified: 	false
+  name: 	inputDevice
+  propertyStyle: 	Bean
+  type: 	"import(javax.sound.sampled.Mixer.Info)"
+  typeSignature: 	Info
+
+- options_systemVolume: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_systemVolume
+  modified: 	false
+  name: 	systemVolume
+  propertyStyle: 	Bean
+  type: 	float
+  typeSignature: 	float
 
 - options_accordClient: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

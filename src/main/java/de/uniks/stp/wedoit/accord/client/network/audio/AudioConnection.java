@@ -1,9 +1,13 @@
 package de.uniks.stp.wedoit.accord.client.network.audio;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,26 +18,35 @@ public class AudioConnection {
     private final Channel channel;
     private AudioSend sendingThread;
     private AudioReceive receivingThread;
-
+    private final Editor editor;
     private DatagramSocket audioSocket;
+    private String url;
+    private int port;
+    private PropertyChangeListener outputDeviceListener = this::handleOutputDeviceChange;
+    private PropertyChangeListener inputDeviceListener = this::handleInputDeviceChange;
 
-    public AudioConnection(LocalUser localUser, Channel channel) {
+    public AudioConnection(LocalUser localUser, Channel channel, Editor editor) {
         this.localUser = localUser;
         this.channel = channel;
+        this.editor = editor;
     }
 
     public void startConnection(String url, int port) {
         try {
+            this.url = url;
+            this.port = port;
             this.audioSocket = createSocket();
             startSendingAudio(url, port);
             startReceivingAudio();
+            this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
+            this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_INPUT_DEVICE, inputDeviceListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void startSendingAudio(String url, int port) {
-        this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port);
+        this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port, editor);
         this.sendingThread.start();
     }
 
@@ -44,6 +57,7 @@ public class AudioConnection {
             connectedUser.add(member.getName());
         }
         this.receivingThread = new AudioReceive(localUser, audioSocket, connectedUser);
+        this.receivingThread.init();
         this.receivingThread.start();
     }
 
@@ -51,6 +65,7 @@ public class AudioConnection {
         stopReceivingAudio();
         stopSendingAudio();
         audioSocket.close();
+        stop();
     }
 
     private void stopSendingAudio() {
@@ -72,6 +87,7 @@ public class AudioConnection {
             if (this.receivingThread.isAlive()) {
                 try {
                     receivingThread.setShouldReceive(false);
+                    receivingThread.terminate();
                     receivingThread.join();
                 } catch (InterruptedException e) {
                     System.err.println("Error on closing receivingConnection");
@@ -79,6 +95,16 @@ public class AudioConnection {
                 }
             }
         }
+    }
+
+    private void handleOutputDeviceChange(PropertyChangeEvent propertyChangeEvent) {
+        stopReceivingAudio();
+        startReceivingAudio();
+    }
+
+    private void handleInputDeviceChange(PropertyChangeEvent propertyChangeEvent) {
+        stopSendingAudio();
+        startSendingAudio(url, port);
     }
 
     protected DatagramSocket createSocket() {
@@ -89,6 +115,13 @@ public class AudioConnection {
             e.printStackTrace();
         }
         return datagramSocket;
+    }
+
+    private void stop() {
+        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
+        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, inputDeviceListener);
+        this.outputDeviceListener = null;
+        this.inputDeviceListener = null;
     }
 
     public AudioReceive getAudioReceive() {

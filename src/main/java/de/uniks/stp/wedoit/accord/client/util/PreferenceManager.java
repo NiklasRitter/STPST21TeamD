@@ -1,8 +1,9 @@
 package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import javafx.application.Platform;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.prefs.Preferences;
@@ -11,13 +12,13 @@ import static de.uniks.stp.wedoit.accord.client.constants.Preferences.*;
 
 public class PreferenceManager {
 
-    private StageManager stageManager;
-    public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
-    public PropertyChangeListener languageListener = this::onLanguageChanged;
-
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
-    public PropertyChangeListener passwordListener = this::onPasswordChanged;
     public PropertyChangeListener usernameListener = this::onUsernameChanged;
+    private StageManager stageManager;
+    public PropertyChangeListener systemVolumeListener = this::onSystemVolumeChanged;
+    public PropertyChangeListener languageListener = this::onLanguageChanged;
+    public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
+    public PropertyChangeListener passwordListener = this::onPasswordChanged;
 
     /**
      * Loads the dark mode preference from the Registry.
@@ -57,6 +58,26 @@ public class PreferenceManager {
     public boolean loadRememberMe() {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
         return preferences.getBoolean(REMEMBER_ME, false);
+    }
+
+    /**
+     * Saves the SystemVolume preference to the Registry.
+     *
+     * @param systemVolume The value of the SystemVolume preference.
+     */
+    public void saveSystemVolume(float systemVolume) {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        preferences.putFloat(SYSTEM_VOLUME, systemVolume);
+    }
+
+    /**
+     * Loads the SystemVolume preference from the Registry.
+     *
+     * @return The value of the SystemVolume preference.
+     */
+    public float loadSystemVolume() {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        return preferences.getFloat(SYSTEM_VOLUME, 100f);
     }
 
     /**
@@ -187,6 +208,16 @@ public class PreferenceManager {
         }
     }
 
+    private void onSystemVolumeChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Float) {
+            float systemVolume = (float) propertyChangeEvent.getNewValue();
+
+            this.stageManager.getEditor().getAccordClient().getOptions().setSystemVolume(systemVolume);
+
+            saveSystemVolume(systemVolume);
+        }
+    }
+
     public void saveLanguage(String language) {
         if (language != null) {
             try {
@@ -259,6 +290,62 @@ public class PreferenceManager {
             System.err.println("Error while loading language!");
             e.printStackTrace();
             return "";
+        }
+    }
+
+    public Mixer.Info loadOutputDevice() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            String device = preferences.get(OUTPUT_DEVICE, "");
+            for(Mixer.Info m : AudioSystem.getMixerInfo()){
+                if(m.getName().equals(device) && m.getDescription().equals("Direct Audio Device: DirectSound Playback")){
+                    return m;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error while loading output device!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveOutputDevice(String outputDevice) {
+        if (outputDevice != null) {
+            try {
+                Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+                preferences.put(OUTPUT_DEVICE, outputDevice);
+            } catch (Exception e) {
+                System.err.println("Error while saving outputDevice!");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Mixer.Info loadInputDevice() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            String device = preferences.get(INPUT_DEVICE, "");
+            for(Mixer.Info m : AudioSystem.getMixerInfo()){
+                if(m.getName().equals(device) && m.getDescription().equals("Direct Audio Device: DirectSound Capture")){
+                    return m;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error while loading input device!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveInputDevice(String inputDevice) {
+        if (inputDevice != null) {
+            try {
+                Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+                preferences.put(INPUT_DEVICE, inputDevice);
+            } catch (Exception e) {
+                System.err.println("Error while saving inputDevice!");
+                e.printStackTrace();
+            }
         }
     }
 }

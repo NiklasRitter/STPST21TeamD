@@ -12,10 +12,11 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
    <children>
       <VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0">
           <children>
@@ -65,20 +66,16 @@
                      <children>
                         <Button id="btnSpotify" mnemonicParsing="false">
                            <graphic>
-                              <ImageView fitHeight="50.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@images/spotify.png" />
-                                 </image>
-                              </ImageView>
+                               <ImageView fitHeight="50.0" pickOnBounds="true" preserveRatio="true">
+                                   <Image url="@images/spotify.png" />
+                               </ImageView>
                            </graphic>
                         </Button>
                         <Button id="btnSteam" mnemonicParsing="false">
                            <graphic>
-                              <ImageView fitHeight="50.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@images/steam.png" />
-                                 </image>
-                              </ImageView>
+                               <ImageView fitHeight="50.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                   <Image url="@images/steam.png" />
+                               </ImageView>
                            </graphic>
                         </Button>
                      </children>
@@ -124,53 +121,51 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
-                  <Label text="%OUTPUT_DEVICE">
+                  <Label minWidth="120.0" text="%OUTPUT_DEVICE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ChoiceBox id="choiceBoxOutputDevice" />
+                  <ChoiceBox id="choiceBoxOutputDevice" minWidth="200.0" />
                </children>
             </HBox>
-            <HBox alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT">
                <children>
-                  <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/speaker-with-no-sound.png" />
-                     </image>
-                  </ImageView>
+                   <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
+                       <Image url="@images/speaker-with-no-sound.png" />
+                   </ImageView>
                   <Slider id="sliderOutputVolume" blockIncrement="5.0" value="50.0" />
-                  <ImageView fitHeight="20.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/speaker-with-sound.png" />
-                     </image>
-                  </ImageView>
+                   <ImageView fitHeight="20.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                       <Image url="@images/speaker-with-sound.png" />
+                   </ImageView>
                </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="42.0">
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
-                  <Label text="%INPUT_DEVICE">
+                  <Label minWidth="120.0" text="%INPUT_DEVICE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ChoiceBox id="choiceBoxInputDevice" />
+                  <ChoiceBox id="choiceBoxInputDevice" minWidth="200.0" />
                </children>
             </HBox>
-            <HBox alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT">
                <children>
-                  <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/speaker-with-no-sound.png" />
-                     </image>
-                  </ImageView>
+                   <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
+                       <Image url="@images/speaker-with-no-sound.png" />
+                   </ImageView>
                   <Slider id="sliderInputVolume" blockIncrement="5.0" value="50.0" />
-                  <ImageView fitHeight="20.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/speaker-with-sound.png" />
-                     </image>
-                  </ImageView>
+                   <ImageView fitHeight="20.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                       <Image url="@images/speaker-with-sound.png" />
+                   </ImageView>
                </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
@@ -183,13 +178,18 @@
             </HBox>
             <HBox alignment="CENTER">
                <children>
-                  <Slider id="sliderInputSensitivity" blockIncrement="5.0" value="50.0" />
+                  <Slider id="sliderInputSensitivity" max="1" />
                </children>
             </HBox>
             <VBox alignment="CENTER" spacing="10.0">
                <children>
                   <Button id="btnTestSetup" alignment="CENTER" mnemonicParsing="false" text="%TEST_SETUP" />
-                  <ProgressBar id="prgBarSetupTest" prefWidth="200.0" progress="0.0" />
+                  <StackPane>
+                     <children>
+                         <ProgressBar id="prgBarSetupTest" prefWidth="200.0" progress="0.2" styleClass="pbRed" />
+                         <ProgressBar id="progressBarTestBot" prefWidth="200.0" progress="0.0" styleClass="pbGreen"/>
+                     </children>
+                  </StackPane>
                </children>
             </VBox>
          </children>

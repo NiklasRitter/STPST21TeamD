@@ -11,6 +11,8 @@ import kong.unirest.Unirest;
 import javax.json.Json;
 import javax.json.JsonArray;
 
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.DESCRIPTION;
+
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
@@ -447,6 +449,22 @@ public class RestClient {
     public void guestLogin(Callback<JsonNode> callback) {
         // Use UniRest to make guest login request
         HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + TEMP);
+
+        sendRequest(req, callback);
+    }
+
+    /**
+     * posts a description for the local user
+     *
+     * @param callback The Callback to be called after the Request.
+     */
+    public void postDescription(Callback<JsonNode> callback, String userId, String userKey, String description) {
+        // Use UniRest to make guest login request
+        String body = Json.createObjectBuilder().add(TEXT, description).build().toString();
+
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + SLASH + userId + DESCRIPTION)
+                .header(USER_KEY, userKey).body(body);
+
 
         sendRequest(req, callback);
     }

@@ -19,6 +19,7 @@ public class User
    public static final String PROPERTY_GAME_MOVE = "gameMove";
    public static final String PROPERTY_AUDIO_CHANNEL = "audioChannel";
    public static final String PROPERTY_MUTED = "muted";
+   public static final String PROPERTY_DESCRIPTION = "description";
    private String name;
    private boolean onlineStatus;
    private boolean chatRead;
@@ -31,6 +32,7 @@ public class User
    private String gameMove;
    private Channel audioChannel;
    private boolean muted;
+   private String description;
 
    public String getName()
    {
@@ -350,6 +352,24 @@ public class User
       final boolean oldValue = this.muted;
       this.muted = value;
       this.firePropertyChange(PROPERTY_MUTED, oldValue, value);
+      return this;
+   }
+
+   public String getDescription()
+   {
+      return this.description;
+   }
+
+   public User setDescription(String value)
+   {
+      if (Objects.equals(value, this.description))
+      {
+         return this;
+      }
+
+      final String oldValue = this.description;
+      this.description = value;
+      this.firePropertyChange(PROPERTY_DESCRIPTION, oldValue, value);
       return this;
    }
 
