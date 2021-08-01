@@ -6,15 +6,20 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.MarkingController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
+import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
@@ -24,13 +29,14 @@ public class UpdateMessageScreenController implements Controller {
     private final Editor editor;
     private final Message message;
     private final Object stage;
-    private TextArea tfUpdateMessage;
+    private RichTextArea tfUpdateMessage;
     private Button btnDiscard;
     private Button btnUpdateMessage;
     private Label lblError;
     private Button btnEmoji;
     private MarkingController markingController;
     private VBox vboxMarkingSelection;
+    private PropertyChangeListener darkmodeChanged = this::darkModeChanged;
 
     public UpdateMessageScreenController(Parent view, Editor editor, Message message, Stage stage) {
         this.view = view;
@@ -41,7 +47,12 @@ public class UpdateMessageScreenController implements Controller {
 
     @Override
     public void init() {
-        tfUpdateMessage = (TextArea) view.lookup("#tfUpdateMessage");
+        tfUpdateMessage = new RichTextArea();
+        tfUpdateMessage.setId("tfUpdateMessage");
+        tfUpdateMessage.getStyleClass().add("textAreaInput");
+        tfUpdateMessage.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
+        HBox hBoxText = (HBox) view.lookup("#hBoxText");
+        hBoxText.getChildren().add(0, tfUpdateMessage);
         btnEmoji = (Button) view.lookup("#btnEmoji");
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
@@ -54,7 +65,7 @@ public class UpdateMessageScreenController implements Controller {
         } else {
             messageText = message.getText();
         }
-        tfUpdateMessage.setText(messageText);
+        tfUpdateMessage.replaceText(messageText);
 
         btnDiscard.setOnAction(this::discardChanges);
         btnUpdateMessage.setOnAction(this::updateMessage);
@@ -62,6 +73,11 @@ public class UpdateMessageScreenController implements Controller {
 
         this.markingController = new MarkingController(tfUpdateMessage, message.getChannel(), vboxMarkingSelection);
         this.markingController.init();
+        editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this.darkmodeChanged);
+    }
+
+    private void darkModeChanged(PropertyChangeEvent propertyChangeEvent) {
+        tfUpdateMessage.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
     }
 
     private void updateMessage(ActionEvent actionEvent) {
@@ -102,6 +118,8 @@ public class UpdateMessageScreenController implements Controller {
 
     @Override
     public void stop() {
+        editor.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this.darkmodeChanged);
+        this.darkmodeChanged = null;
         btnDiscard.setOnAction(null);
         btnUpdateMessage.setOnAction(null);
         btnEmoji.setOnAction(null);

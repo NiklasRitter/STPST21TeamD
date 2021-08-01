@@ -3,15 +3,14 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
-import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -128,7 +127,7 @@ public class StageManager extends Application {
                 controller = new EditChannelScreenController(root, model.getLocalUser(), editor, (Channel) parameter);
                 break;
             case EMOJI_SCREEN_CONTROLLER:
-                controller = new EmojiScreenController(root, (TextArea) parameter, (Bounds) parameterTwo);
+                controller = new EmojiScreenController(root, (RichTextArea) parameter, (Bounds) parameterTwo);
                 break;
             case ATTENTION_SCREEN_CONTROLLER:
                 controller = new AttentionScreenController(root, model.getLocalUser(), editor, parameter);
