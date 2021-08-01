@@ -3,10 +3,13 @@ package de.uniks.stp.wedoit.accord.client.network.audio;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.sound.sampled.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -26,6 +29,8 @@ public class AudioSend extends Thread {
     private final Editor editor;
     AtomicBoolean shouldSend;
     private TargetDataLine line;
+    private PropertyChangeListener inputVolumeListener = this::onInputVolumeChange;
+
 
 
 
@@ -94,6 +99,20 @@ public class AudioSend extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void init() {
+        localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
+                inputVolumeListener);
+        updateVolume();
+    }
+
+    private void onInputVolumeChange(PropertyChangeEvent propertyChangeEvent) {
+        updateVolume();
+    }
+
+    private void updateVolume() {
+
     }
 
     private byte[] createMetaData(LocalUser localUser, Channel channel) {

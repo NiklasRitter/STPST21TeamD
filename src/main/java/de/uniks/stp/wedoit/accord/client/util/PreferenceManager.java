@@ -14,6 +14,7 @@ public class PreferenceManager {
 
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
     public PropertyChangeListener usernameListener = this::onUsernameChanged;
+    public PropertyChangeListener inputVolumeListener = this::onInputVolumeChanged;
     private StageManager stageManager;
     public PropertyChangeListener systemVolumeListener = this::onSystemVolumeChanged;
     public PropertyChangeListener languageListener = this::onLanguageChanged;
@@ -78,6 +79,26 @@ public class PreferenceManager {
     public float loadSystemVolume() {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
         return preferences.getFloat(SYSTEM_VOLUME, 100f);
+    }
+
+    /**
+     * Saves the input volume preference to the Registry.
+     *
+     * @param inputVolume The value of the inputVolume preference.
+     */
+    public void saveInputVolume(float inputVolume) {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        preferences.putFloat(INPUT_VOLUME, inputVolume);
+    }
+
+    /**
+     * Loads the input volume preference from the Registry.
+     *
+     * @return The value of the inputVolume preference.
+     */
+    public float loadInputVolume() {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        return preferences.getFloat(INPUT_VOLUME, 100f);
     }
 
     /**
@@ -205,6 +226,17 @@ public class PreferenceManager {
             this.stageManager.changeLanguage(language);
 
             saveLanguage(language);
+        }
+    }
+
+    private void onInputVolumeChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Float) {
+            float inputVolume = (float) propertyChangeEvent.getNewValue();
+            System.out.println(propertyChangeEvent.getOldValue());
+            System.out.println(inputVolume);
+            this.stageManager.getEditor().getAccordClient().getOptions().setInputVolume(inputVolume);
+
+            saveInputVolume(inputVolume);
         }
     }
 

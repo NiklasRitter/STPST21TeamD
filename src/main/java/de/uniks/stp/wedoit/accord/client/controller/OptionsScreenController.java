@@ -86,6 +86,7 @@ public class OptionsScreenController implements Controller {
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.sliderTextSize.setOnMouseReleased(this::fontSizeSliderOnChange);
         this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
+        this.sliderInputVolume.setOnMouseReleased(this::inputVolumeSliderOnChange);
         editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
                 (PropertyChangeEvent propertyChangeEvent) -> {
                     System.out.println(propertyChangeEvent.getNewValue());
@@ -97,6 +98,10 @@ public class OptionsScreenController implements Controller {
 
     private void fontSizeSliderOnChange(MouseEvent e) {
         editor.saveFontSize((int) sliderTextSize.getValue());
+    }
+
+    private void inputVolumeSliderOnChange(MouseEvent e) {
+        editor.getAccordClient().getOptions().setInputVolume((float) sliderInputVolume.getValue());
     }
 
     private void outputVolumeSliderOnChange(MouseEvent e) {
@@ -208,6 +213,8 @@ public class OptionsScreenController implements Controller {
             sliderInputSensitivity.setValue(editor.getAudioRMS());
             sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
             sliderOutputVolume.setValue(editor.getAccordClient().getOptions().getSystemVolume());
+            sliderInputVolume.setValue(editor.getAccordClient().getOptions().getInputVolume());
+
         }
     }
 
@@ -222,6 +229,7 @@ public class OptionsScreenController implements Controller {
         btnTestSetup.setOnAction(null);
         sliderTextSize.setOnMouseReleased(null);
         sliderOutputVolume.setOnMouseReleased(null);
+        sliderInputVolume.setOnMouseReleased(null);
         btnTestSetup.setOnAction(null);
         progressBarTest.progressProperty().unbind();
         if(recorder != null){
