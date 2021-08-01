@@ -5,7 +5,6 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
-
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -665,7 +664,7 @@ public class RestManager {
                 System.err.println("Error while leaving server");
                 Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LEAVE_SERVER_AS_OWNER_SCREEN, null, null));
             } else {
-                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
+                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
             }
         });
     }
@@ -773,8 +772,12 @@ public class RestManager {
                 String steamGameExtraInfo =
                         JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(RESPONSE).getJsonArray(PLAYERS).getJsonObject(0).getString(GAME_EXTRA_INfO);
                 editor.getLocalUser().setSteamGameExtraInfo(steamGameExtraInfo);
-                System.out.println(steamGameExtraInfo);
             });
         }
+    }
+
+    public void updateDescription(String userDescription) {
+        restClient.postDescription(null, editor.getLocalUser().getId(), editor.getLocalUser().getUserKey(),
+                userDescription);
     }
 }
