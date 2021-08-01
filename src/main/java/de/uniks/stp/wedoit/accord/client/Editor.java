@@ -57,20 +57,21 @@ public class Editor {
     }
 
     public static String parseUserDescription(String rawDescription) {
-        switch (String.valueOf(rawDescription.charAt(0))) {
-            case SPOTIFY_KEY:
-                return rawDescription.replace(SPOTIFY_KEY, LanguageResolver.getString(SPOTIFY));
-            case GITHUB_KEY:
-                return rawDescription.replace(GITHUB_KEY, LanguageResolver.getString(GITHUB));
-            case STEAM_KEY:
-                return rawDescription.replace(STEAM_KEY, LanguageResolver.getString(STEAM));
-            case CUSTOM_KEY:
-                return rawDescription.replace(CUSTOM_KEY, LanguageResolver.getString(CUSTOM));
-            case CLUB_PENGUIN:
-                return rawDescription.replace(CLUB_PENGUIN_KEY, LanguageResolver.getString(CLUB_PENGUIN));
-            default:
-                return rawDescription;
+        if (rawDescription != null && !rawDescription.isEmpty()) {
+            switch (String.valueOf(rawDescription.charAt(0))) {
+                case SPOTIFY_KEY:
+                    return rawDescription.replace(SPOTIFY_KEY, LanguageResolver.getString(SPOTIFY));
+                case GITHUB_KEY:
+                    return rawDescription.replace(GITHUB_KEY, LanguageResolver.getString(GITHUB));
+                case STEAM_KEY:
+                    return rawDescription.replace(STEAM_KEY, LanguageResolver.getString(STEAM));
+                case CUSTOM_KEY:
+                    return rawDescription.replace(CUSTOM_KEY, LanguageResolver.getString(CUSTOM));
+                case CLUB_PENGUIN:
+                    return rawDescription.replace(CLUB_PENGUIN_KEY, LanguageResolver.getString(CLUB_PENGUIN));
+            }
         }
+        return rawDescription;
     }
 
     /**

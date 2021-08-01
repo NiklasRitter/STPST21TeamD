@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.application.Platform;
@@ -165,8 +164,8 @@ public class GameScreenController implements Controller {
      * checks weather one of the player has won,
      * in that case they get redirected to the result screen
      */
-    private void handleGameDone(){
-        if(oppScore.get() == 3 || ownScore.get() == 3){
+    private void handleGameDone() {
+        if (oppScore.get() == 3 || ownScore.get() == 3) {
             this.editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, opponent, ownScore.get() == 3);
             stop();
         }

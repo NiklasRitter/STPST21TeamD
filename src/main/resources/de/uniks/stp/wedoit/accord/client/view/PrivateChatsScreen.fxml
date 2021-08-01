@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -80,9 +79,8 @@
                                 </Button>
                             </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                        <HBox id="hBoxText" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                             <children>
-                                <TextArea id="tfEnterPrivateChat" prefHeight="10.0" promptText="%SELECT_A_USER" styleClass="textAreaInput" wrapText="true" HBox.hgrow="ALWAYS" />
                                 <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />

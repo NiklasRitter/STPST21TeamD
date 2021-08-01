@@ -1,18 +1,17 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import com.pavlobu.emojitextflow.EmojiTextFlow;
-import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,10 +33,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EMOJI_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.EMOJI_PICKER_STAGE;
 
 public class PrivateChatController implements Controller {
 
@@ -48,7 +45,7 @@ public class PrivateChatController implements Controller {
     private ContextMenu messageContextMenu;
     private HBox hBoxQuoteVisible;
     private Button btnCancelQuote, btnPlay;
-    private TextArea tfPrivateChat;
+    private RichTextArea tfPrivateChat;
     private ObservableList<PrivateMessage> privateMessageObservableList;
     private ListView<PrivateMessage> lwPrivateChat;
     private Button btnEmoji;
@@ -79,7 +76,7 @@ public class PrivateChatController implements Controller {
         this.lwPrivateChat = (ListView<PrivateMessage>) view.lookup("#lwPrivateChat");
         this.hBoxQuoteVisible = (HBox) view.lookup("#quoteVisible");
         this.btnCancelQuote = (Button) view.lookup("#btnCancelQuote");
-        this.tfPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
+        this.tfPrivateChat = (RichTextArea) view.lookup("#tfEnterPrivateChat");
         this.btnPlay = (Button) view.lookup("#btnPlay");
         this.quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(10).createParameters());
 
@@ -92,12 +89,13 @@ public class PrivateChatController implements Controller {
 
         addMessageContextMenu();
 
-        this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"));
+        this.tfPrivateChat.setPromptText(LanguageResolver.getString("SELECT_A_USER"), editor.getAccordClient().getOptions().isDarkmode());
         this.tfPrivateChat.setEditable(false);
 
         this.lwPrivateChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
 
         initToolTip();
+        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
     }
 
     public void initToolTip() {
@@ -180,10 +178,10 @@ public class PrivateChatController implements Controller {
         selectedUser.setChatRead(true);
         editor.updateUserChatRead(selectedUser);
         if (selectedUser.isOnlineStatus()) {
-            this.tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+            this.tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"), editor.getAccordClient().getOptions().isDarkmode());
             this.tfPrivateChat.setEditable(true);
         } else {
-            this.tfPrivateChat.setPromptText(selectedUser.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+            this.tfPrivateChat.setPromptText(selectedUser.getName() + " " + LanguageResolver.getString("IS_OFFLINE"), editor.getAccordClient().getOptions().isDarkmode());
             this.tfPrivateChat.setEditable(false);
         }
 
@@ -202,7 +200,7 @@ public class PrivateChatController implements Controller {
 
         // Add listener for the loaded listView
         this.currentChat.listeners().addPropertyChangeListener(Chat.PROPERTY_MESSAGES, this.chatListener);
-        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+
         this.editor.getChatFontSizeProperty().addListener(this::onDarkmodeChanged);
         Platform.runLater(() -> this.lwPrivateChat.scrollTo(this.privateMessageObservableList.size()));
     }
@@ -403,17 +401,19 @@ public class PrivateChatController implements Controller {
 
     /**
      * Refreshes chat list in order to update the font and color
-     *
      */
     private void onDarkmodeChanged(Object object) {
+
         this.lwPrivateChat.refresh();
+        this.tfPrivateChat.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
+
     }
 
     public Chat getCurrentChat() {
         return currentChat;
     }
 
-    public TextArea getTfPrivateChat() {
+    public RichTextArea getTfPrivateChat() {
         return tfPrivateChat;
     }
 
