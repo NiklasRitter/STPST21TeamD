@@ -9,7 +9,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.STEAM;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.STEAM_KEY;
 
 public class SteamManager {
     private final Editor editor;
@@ -44,20 +44,26 @@ public class SteamManager {
             editor.getLocalUser().listeners().removePropertyChangeListener(localUserGameExtraInfoListener);
             editor.getAccordClient().listeners().removePropertyChangeListener(localUserListener);
         }
-        gameExtraInfoTimer.cancel();
-        gameExtraInfoTimer = null;
+        if (gameExtraInfoTimer != null) {
+            gameExtraInfoTimer.cancel();
+            gameExtraInfoTimer = null;
+        }
     }
 
     public void localUserGameExtraInfoOnChange(PropertyChangeEvent propertyChangeEvent) {
-        if (editor.getLocalUser() != null) {
-            if (editor.getLocalUser().getDescription().startsWith(STEAM)) {
+        if (editor.getLocalUser() != null && propertyChangeEvent.getNewValue() instanceof String) {
+            String oldValue = (String) propertyChangeEvent.getOldValue();
+            String newValue = (String) propertyChangeEvent.getNewValue();
+            String currentDescription = editor.getLocalUser().getDescription();
+            if (currentDescription == null) currentDescription = "";
+            if (currentDescription.contains(STEAM_KEY)) {
                 if (propertyChangeEvent.getNewValue() == null || ((String) propertyChangeEvent.getNewValue()).isEmpty())
-                    editor.getLocalUser().setDescription(editor.getLocalUser().getDescription().substring(editor.getLocalUser().getDescription().indexOf(STEAM), editor.getLocalUser().getDescription().indexOf(STEAM) + ((String) propertyChangeEvent.getOldValue()).length() + 1));
+                    editor.getRestManager().updateDescription(currentDescription.substring(currentDescription.indexOf(STEAM_KEY), currentDescription.indexOf(STEAM_KEY) + ((String) propertyChangeEvent.getOldValue()).length() + 1));
                 else
-                    editor.getLocalUser().setDescription(editor.getLocalUser().getDescription().replace((String) propertyChangeEvent.getOldValue(),
-                            (String) propertyChangeEvent.getNewValue()));
-            } else
-                editor.getLocalUser().setDescription(STEAM + propertyChangeEvent.getNewValue() + editor.getLocalUser().getDescription());
+                    editor.getRestManager().updateDescription(currentDescription.replace(oldValue, newValue));
+            } else {
+                editor.getRestManager().updateDescription(STEAM_KEY + newValue + currentDescription);
+            }
         }
     }
 
