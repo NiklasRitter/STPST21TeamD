@@ -12,7 +12,7 @@ public class Recorder implements Runnable{
     private Thread worker;
     final ProgressBar bar;
     TargetDataLine line;
-    private Editor editor;
+    private final Editor editor;
 
     AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
@@ -65,7 +65,7 @@ public class Recorder implements Runnable{
         for(int b; (b = line.read(buf, 0, buf.length)) > -1;) {
 
             double rms = editor.calculateRMS(buf,b);
-            bar.setProgress(rms*1.5);
+            bar.setProgress(rms);
 
         }
     }

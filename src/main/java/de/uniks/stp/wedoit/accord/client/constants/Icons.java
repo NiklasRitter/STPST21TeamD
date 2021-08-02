@@ -45,7 +45,8 @@ public enum Icons {
     WEARY_FACE("\uD83D\uDE29"),
     FEARFUL_FACE("\uD83D\uDE28"),
     COLD_SWEAT("\uD83D\uDE13"),
-    RECREATIONAL_VEHICLE("\uD83D\uDE99");
+    RECREATIONAL_VEHICLE("\uD83D\uDE99"),
+    HANDSHAKE("\uD83E\uDD1D");
 
     private final String iconName;
 

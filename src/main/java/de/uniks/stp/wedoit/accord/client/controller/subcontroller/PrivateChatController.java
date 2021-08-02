@@ -335,19 +335,16 @@ public class PrivateChatController implements Controller {
         if (message != null && !message.isEmpty() && currentChat != null) {
             this.tfPrivateChat.clear();
             message = message.trim();
-            JsonObject jsonMsg;
 
             if (!quotedText.isEmpty()) {
                 JsonObject quoteMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), QUOTE_PREFIX + quotedText + QUOTE_MESSAGE + message + QUOTE_SUFFIX);
-                //JsonObject jsonMessage = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 removeQuote();
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(quoteMsg));
-                //editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMessage));
 
             } else {
                 if (message.equals(GAME_INVITE) || message.equals(GAME_ACCEPTS) || message.equals(GAME_CLOSE) || message.equals(GAME_START) || message.equals(GAME_INGAME))
                     message = message.substring(GAME_PREFIX.length());
-                jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
+                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             }
         }
@@ -394,7 +391,7 @@ public class PrivateChatController implements Controller {
             JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPTS);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         } else if (currentChat != null && currentChat.getUser() != null && editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())) {
-            privateMessageObservableList.add(new PrivateMessage().setText("###game### System: Cant play two games at once."));
+            privateMessageObservableList.add(new PrivateMessage().setText(GAME_SYSTEM));
         }
 
     }

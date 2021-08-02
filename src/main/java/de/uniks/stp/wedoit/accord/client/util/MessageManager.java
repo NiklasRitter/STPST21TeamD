@@ -58,9 +58,16 @@ public class MessageManager {
         editor.savePrivateMessage(message);
     }
 
+    /**
+     * @param message private message expected to have GAME_PREFIX as prefix
+     * @return true if message should not be displayed in chat else false to display message
+     */
     private boolean handleGameMessages(PrivateMessage message) {
+
+        if(GAME_NOT_SUPPORTED.stream().anyMatch((e) -> message.getText().startsWith(e))) return true;
+
         //game messages
-        if (message.getText().equals(GAME_INVITE)) {
+        if (message.getText().equals(GAME_INVITE) || message.getText().equals(GAME_REVENGE)) {
             if (message.getTo().equals(editor.getLocalUser().getName()))
                 editor.getLocalUser().withGameInvites(editor.getUser(message.getFrom()));
             else
@@ -93,7 +100,6 @@ public class MessageManager {
 
         } else if (message.getText().equals(GAME_CLOSE) && editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing()) {
             Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, editor.getUser(message.getFrom()), null));
-
         }
 
         if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {
