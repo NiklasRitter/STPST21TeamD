@@ -400,8 +400,7 @@ public class Editor {
     public double calculateRMS(byte[] buf, int bytes) {
         float[] samples = new float[1024];
 
-        // convert bytes to samples here
-        for (int i = 0, s = 0; i < bytes; ) {
+        for(int i = 0, s = 0; i < bytes;) {
             int sample = 0;
 
             sample |= buf[i++] & 0xFF; // (reverse these two lines

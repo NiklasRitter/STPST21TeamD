@@ -98,11 +98,11 @@ public class GameScreenController implements Controller {
     private void gameActionOnClick(ActionEvent actionEvent) {
 
         if (actionEvent.getSource() == btnRock) {
-            gameAction = "Rock";
+            gameAction = GAME_ROCK;
         } else if (actionEvent.getSource() == btnPaper) {
-            gameAction = "Paper";
+            gameAction = GAME_PAPER;
         } else if (actionEvent.getSource() == btnScissors) {
-            gameAction = "Scissors";
+            gameAction = GAME_SCISSORS;
         }
 
         JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_PREFIX + gameAction);
