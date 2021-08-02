@@ -102,7 +102,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             super.updateItem(item, empty);
             setItem(item);
             this.setText(null);
-            this.getStyleClass().removeAll("font_size", "marked_message");
+            this.getStyleClass().removeAll("font_size", "marked_message", "sidebar-Button");
             this.setGraphic(null);
             this.vBox.getChildren().clear();
             webView.getEngine().load(null);

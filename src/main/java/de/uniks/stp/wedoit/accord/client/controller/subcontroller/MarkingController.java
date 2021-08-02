@@ -147,7 +147,7 @@ public class MarkingController implements Controller {
             //character added
             atHit = checkAtHit(true);
 
-            //TODO check if list is showing
+
             if (atHit != null) {
                 if (keyEvent.getCharacter().equals("@") && currentChannel != null) {
                     atHit = newReference("@");
@@ -337,7 +337,6 @@ public class MarkingController implements Controller {
 
         ArrayList<Channel> possibleChannels = new ArrayList<>();
 
-        //TODO filter voiceChannel ?
         for (Category category : currentChannel.getCategory().getServer().getCategories()) {
             possibleChannels.addAll(category.getChannels());
         }
