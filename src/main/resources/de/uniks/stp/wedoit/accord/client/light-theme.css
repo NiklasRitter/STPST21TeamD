@@ -169,8 +169,7 @@
 
 .textAreaInput {
     -fx-text-fill: #000000 ;
-    -fx-background-color: #ebebeb;
-    -fx-prompt-text-fill: #808080;
+    -fx-background-color: rgba(255, 255, 255, 0.32);
 
 }
 

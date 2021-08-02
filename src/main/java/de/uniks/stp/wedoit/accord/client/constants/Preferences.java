@@ -13,4 +13,6 @@ public class Preferences {
     public static final String OUTPUT_DEVICE = "output_device";
     public static final String INPUT_DEVICE = "input_device";
     public static final String INITIALIZATION_VECTOR = "initialization_vector";
+    public static final String AUDIO_ROOT_MEAN_SQUARE = "audio_root_mean_square";
+    public static final String CHAT_FONT_SIZE = "chat_font_size";
 }
