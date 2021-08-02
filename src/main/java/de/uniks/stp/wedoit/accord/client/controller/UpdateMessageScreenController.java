@@ -30,7 +30,6 @@ public class UpdateMessageScreenController implements Controller {
     private Label lblError;
     private Button btnEmoji;
     private MarkingController markingController;
-    private VBox vboxMarkingSelection;
 
     public UpdateMessageScreenController(Parent view, Editor editor, Message message, Stage stage) {
         this.view = view;
@@ -46,7 +45,7 @@ public class UpdateMessageScreenController implements Controller {
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
         lblError = (Label) view.lookup("#lblError");
-        vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
+        VBox vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
 
         String messageText;
         if (editor.getMessageManager().isQuote(message)) {
@@ -60,8 +59,8 @@ public class UpdateMessageScreenController implements Controller {
         btnUpdateMessage.setOnAction(this::updateMessage);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
 
-        //this.markingController = new MarkingController(tfUpdateMessage, message.getChannel(), vboxMarkingSelection);
-        //this.markingController.init();
+        this.markingController = new MarkingController(tfUpdateMessage, message.getChannel(), vboxMarkingSelection);
+        this.markingController.init();
     }
 
     private void updateMessage(ActionEvent actionEvent) {
