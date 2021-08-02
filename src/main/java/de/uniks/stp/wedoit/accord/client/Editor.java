@@ -3,6 +3,7 @@ package de.uniks.stp.wedoit.accord.client;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
+import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
@@ -28,16 +29,17 @@ import java.util.List;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class Editor {
 
     private final RestManager restManager = new RestManager(this);
+    private final SteamManager steamManager = new SteamManager(this);
     private final WebSocketManager webSocketManager = new WebSocketManager(this);
     private final ChannelManager channelManager = new ChannelManager(this);
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
-    private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
@@ -53,11 +55,36 @@ public class Editor {
         return Base64.getDecoder().decode(property);
     }
 
+    public static String parseUserDescription(String rawDescription) {
+        if (rawDescription != null && !rawDescription.isEmpty()) {
+            switch (String.valueOf(rawDescription.charAt(0))) {
+                case SPOTIFY_KEY:
+                    return rawDescription.replace(SPOTIFY_KEY, LanguageResolver.getString(SPOTIFY));
+                case GITHUB_KEY:
+                    return rawDescription.replace(GITHUB_KEY, LanguageResolver.getString(GITHUB));
+                case STEAM_KEY:
+                    return rawDescription.replace(STEAM_KEY, LanguageResolver.getString(STEAM));
+                case CUSTOM_KEY:
+                    return rawDescription.replace(CUSTOM_KEY, LanguageResolver.getString(CUSTOM));
+                case CLUB_PENGUIN:
+                    return rawDescription.replace(CLUB_PENGUIN_KEY, LanguageResolver.getString(CLUB_PENGUIN));
+            }
+        }
+        return rawDescription;
+    }
+
     /**
      * @return private final RestManager restManager
      */
     public RestManager getRestManager() {
         return restManager;
+    }
+
+    /**
+     * @return private final SteamManager steamManager
+     */
+    public SteamManager getSteamManager() {
+        return steamManager;
     }
 
     public AccordClient getAccordClient() {
@@ -94,6 +121,7 @@ public class Editor {
     public LocalUser haveLocalUser() {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
+        steamManager.setupSteamTimer();
         return localUser;
     }
 
@@ -119,7 +147,7 @@ public class Editor {
     public LocalUser haveLocalUser(String username, String userKey) {
         LocalUser localUser = accordClient.getLocalUser();
         if (localUser == null) {
-            localUser = new LocalUser();
+            haveLocalUser();
         }
         localUser.setName(username);
         localUser.setUserKey(userKey);
@@ -369,10 +397,9 @@ public class Editor {
         }
     }
 
-    public double calculateRMS(byte[] buf, int bytes){
+    public double calculateRMS(byte[] buf, int bytes) {
         float[] samples = new float[1024];
 
-        // convert bytes to samples here
         for(int i = 0, s = 0; i < bytes;) {
             int sample = 0;
 
@@ -383,14 +410,13 @@ public class Editor {
             samples[s++] = sample / 32768f;
         }
         float rms = 0f;
-        for(float sample : samples) {
+        for (float sample : samples) {
             rms += sample * sample;
         }
 
-        return (float)Math.sqrt(rms / samples.length);
+        return (float) Math.sqrt(rms / samples.length);
 
     }
-
 
     /**
      * creates a instance of the sqlite databank and loads the font size
@@ -398,7 +424,7 @@ public class Editor {
      */
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
-        chatFontSize.setValue(db.getFontSize());
+        getLocalUser().setSteam64ID(getSteam64ID());
     }
 
     /**
@@ -408,14 +434,13 @@ public class Editor {
         db.save(message);
     }
 
-    public double getAudioRMS(){
-        return db.getAudioRMS();
+    public String getSteam64ID() {
+        return db.getSteam64ID();
     }
 
-    public void saveSensitivity(double rms){
-        db.updateAudioRMS(rms);
+    public void saveSteam64ID(String steam64ID) {
+        db.updateSteam64ID(steam64ID);
     }
-
 
     /**
      * loads old offline chats that the local users has a history with
@@ -457,24 +482,6 @@ public class Editor {
 
     public void getUserChatRead(User user) {
         db.getChatReadForUser(user);
-    }
-
-    /**
-     * Updates fontsize in settings databank and updates the property
-     *
-     * @param size to be set
-     */
-    public void saveFontSize(int size) {
-        db.updateFontSize(size);
-        chatFontSize.setValue(size);
-    }
-
-    public int getFontSize() {
-        return db.getFontSize();
-    }
-
-    public IntegerProperty getChatFontSizeProperty() {
-        return chatFontSize;
     }
 
     /**
@@ -529,7 +536,7 @@ public class Editor {
     public void handleAutomaticLogin(boolean success) {
         if (success) {
             Platform.runLater(() -> {
-                stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null);
+                stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
                 stageManager.getStage(StageEnum.STAGE).setResizable(true);
                 stageManager.getStage(StageEnum.STAGE).setMaximized(true);
             });

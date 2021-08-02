@@ -10,6 +10,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListCont
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
@@ -18,12 +19,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import javax.json.JsonArray;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -58,11 +63,14 @@ public class ServerScreenController implements Controller {
     private AudioChannelSubViewController audioChannelSubViewController;
     private PropertyChangeListener userDescriptionListener = this::userDescriptionChanged;
     private MenuButton serverMenuButton;
+    private HBox hBoxText;
+    private RichTextArea richTextArea;
 
 
     /**
      * Create a new Controller
-     *  @param view   The view this Controller belongs to
+     *
+     * @param view   The view this Controller belongs to
      * @param model  The model this Controller belongs to
      * @param editor The editor of the Application
      * @param server The Server this Screen belongs to
@@ -91,7 +99,14 @@ public class ServerScreenController implements Controller {
         // Load all view references
         this.editor.setCurrentServer(server);
 
-        TextArea tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
+        richTextArea = new RichTextArea();
+        hBoxText = (HBox) view.lookup("#hBoxText");
+        hBoxText.getChildren().add(0, richTextArea);
+        richTextArea.setId("tfInputMessage");
+        richTextArea.setEditable(false);
+        richTextArea.getStyleClass().add("textAreaInput");
+        richTextArea.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
+
         this.lbServerName = (Label) view.lookup("#lbServerName");
         this.lvServerUsers = (ListView<User>) view.lookup("#lvServerUsers");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
@@ -110,7 +125,6 @@ public class ServerScreenController implements Controller {
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }
-        tfInputMessage.setEditable(false);
 
         // Add server websocket
         editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
@@ -136,7 +150,9 @@ public class ServerScreenController implements Controller {
     }
 
     private void onDarkmodeChanged(PropertyChangeEvent propertyChangeEvent) {
+
         lvServerUsers.refresh();
+        this.richTextArea.updateTextColor(this.editor.getAccordClient().getOptions().isDarkmode());
     }
 
 
@@ -174,7 +190,7 @@ public class ServerScreenController implements Controller {
         for (User user : server.getMembers()) {
             user.listeners().removePropertyChangeListener(User.PROPERTY_DESCRIPTION, this.userDescriptionListener);
         }
-        for (MenuItem i: serverMenuButton.getItems()) {
+        for (MenuItem i : serverMenuButton.getItems()) {
             i.setOnAction(null);
         }
         this.serverMenuButton = null;
@@ -240,9 +256,13 @@ public class ServerScreenController implements Controller {
 
     private void handleAudioChannelChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() == null) {
+            Platform.runLater(() -> {
+                if (this.audioChannelSubViewContainer != null) {
+                    this.audioChannelSubViewContainer.getChildren().clear();
+                }
+            });
             this.audioChannelSubViewController.stop();
             this.audioChannelSubViewController = null;
-            Platform.runLater(() -> this.audioChannelSubViewContainer.getChildren().clear());
         } else {
             this.initAudioChannelSubView((Channel) propertyChangeEvent.getNewValue());
         }

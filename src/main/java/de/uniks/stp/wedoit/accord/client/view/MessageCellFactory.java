@@ -13,7 +13,6 @@ import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import javafx.application.Platform;
-import javafx.css.Style;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -66,6 +65,20 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         return new MessageCell<>(param);
     }
 
+    private void joinButtonOnClick(String inviteLink) {
+        stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
+    }
+
+    public void handleInvitation(Server server, String responseMessage) {
+        if (server != null) {
+            Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
+        } else {
+            if (responseMessage.equals("MainScreen")) {
+                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
+            }
+        }
+    }
+
     private class MessageCell<S extends Message> extends ListCell<S> {
 
         private final ListView<S> param;
@@ -76,12 +89,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Button btnHandleMedia = new Button();
         private final Label lblDate = new Label();
         private final MediaView mediaView = new MediaView();
-        private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
         private final Label label = new Label();
         private final Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
+        private MediaPlayer mediaPlayer;
         private String time;
         private EmojiTextFlowParameters parameters;
         private EmojiTextFlowParameters parametersQuote;
@@ -94,7 +107,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         /**
          * determinants how Message cell is constructed
-         * @param item of PrivateMessage or Message
+         *
+         * @param item  of PrivateMessage or Message
          * @param empty if cell is empty
          */
         @Override
@@ -111,8 +125,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             hyperlink.getStyleClass().removeAll("link", "descBox");
 
             // parameters for emoji
-            this.parametersQuote = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize() -3).createParameters();
-            this.parameters = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize()).createParameters();
+            this.parametersQuote =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize() - 3).createParameters();
+            this.parameters =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize()).createParameters();
             if (stageManager.getPrefManager().loadDarkMode()) {
                 this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
                 this.parametersQuote.setTextColor(Color.valueOf("#ADD8e6"));
@@ -138,7 +154,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 // allow wrapping
                 setWrapText(true);
 
-                if(item.getText().startsWith(GAME_PREFIX)) item.setText(item.getText().substring(GAME_PREFIX.length()));
+                if (item.getText().startsWith(GAME_PREFIX))
+                    item.setText(item.getText().substring(GAME_PREFIX.length()));
 
                 time = checkTime(item);
 
@@ -244,6 +261,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         /**
          * checks time and determines if time was today, yesterday
+         *
          * @param item message item
          * @return String with correct description of time
          */
@@ -290,6 +308,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         /**
          * check for a valid url in general
+         *
          * @param url string to be checked
          * @return true if is valid else false
          */
@@ -315,7 +334,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         /**
-         *
          * @param url a string that might be a url
          * @return true image could be set
          */
@@ -422,6 +440,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         /**
          * opens standard browser
+         *
          * @param url that the browser opens
          */
         private void openBrowser(String url) {
@@ -503,7 +522,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             setGraphic(vBox);
         }
 
-        private void displayNameAndDate(Message item){
+        private void displayNameAndDate(Message item) {
             HBox nameAndDateHBox = new HBox();
             nameAndDateHBox.setAlignment(Pos.CENTER_LEFT);
             Label name = new Label(item.getFrom() + " ");
@@ -537,9 +556,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
     }
 
-    private void joinButtonOnClick(String inviteLink) {
-        stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
-    }
 
     private void referenceButtonOnClick(Channel channel) {
         LocalUser localUser = channel.getCategory().getServer().getLocalUser();
@@ -562,17 +578,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(),
                         channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(),
                         channel.getCategory(), localUser.getAudioChannel(), channel, categoryTreeViewController);
-            }
-        }
-    }
-
-
-    public void handleInvitation(Server server, String responseMessage) {
-        if (server != null) {
-            Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
-        } else {
-            if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
             }
         }
     }

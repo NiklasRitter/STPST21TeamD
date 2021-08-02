@@ -2,6 +2,8 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.prefs.Preferences;
@@ -17,6 +19,8 @@ public class PreferenceManager {
     public PropertyChangeListener languageListener = this::onLanguageChanged;
     public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
     public PropertyChangeListener passwordListener = this::onPasswordChanged;
+    public PropertyChangeListener chatFontSizeListener = this::onChatFontSizeChanged;
+    public PropertyChangeListener audioRootMeanSquareListener = this::onAudioRootMeanSquareChanged;
 
     /**
      * Loads the dark mode preference from the Registry.
@@ -148,6 +152,68 @@ public class PreferenceManager {
     }
 
     /**
+     * Loads the chatFontSize preference from the Registry.
+     *
+     * @return The value of the chatFontSize preference.
+     */
+    public int loadChatFontSize() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            return preferences.getInt(CHAT_FONT_SIZE, 12);
+        } catch (Exception e) {
+            System.err.println("Error while loading chat font size:");
+            e.printStackTrace();
+            return 12;
+        }
+    }
+
+    /**
+     * Saves the chatFontSize preference to the Registry.
+     *
+     * @param chatFontSize The value of the chatFontSize preference.
+     */
+    public void saveChatFontSize(int chatFontSize) {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            preferences.putInt(CHAT_FONT_SIZE, chatFontSize);
+        } catch (Exception e) {
+            System.err.println("Error while saving chat font size:");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads the audioRootMeanSquare preference from the Registry.
+     *
+     * @return The value of the audioRootMeanSquare preference.
+     */
+    public double loadAudioRootMeanSquare() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            return preferences.getDouble(AUDIO_ROOT_MEAN_SQUARE, 0);
+        } catch (Exception e) {
+            System.err.println("Error while loading audio root mean square:");
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * Saves the audioRootMeanSquare preference to the Registry.
+     *
+     * @param audioRootMeanSquare The value of the audioRootMeanSquare preference.
+     */
+    public void saveAudioRootMeanSquare(double audioRootMeanSquare) {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            preferences.putDouble(AUDIO_ROOT_MEAN_SQUARE, audioRootMeanSquare);
+        } catch (Exception e) {
+            System.err.println("Error while saving password:");
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Saves the login preference to the Registry.
      *
      * @param encrypted The value of the encrypted password.
@@ -213,6 +279,26 @@ public class PreferenceManager {
             this.stageManager.getEditor().getAccordClient().getOptions().setSystemVolume(systemVolume);
 
             saveSystemVolume(systemVolume);
+        }
+    }
+
+    private void onChatFontSizeChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Integer) {
+            int chatFontSize = (int) propertyChangeEvent.getNewValue();
+
+            this.stageManager.getEditor().getAccordClient().getOptions().setChatFontSize(chatFontSize);
+
+            saveChatFontSize(chatFontSize);
+        }
+    }
+
+    private void onAudioRootMeanSquareChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Double) {
+            double audioRootMeanSquare = (double) propertyChangeEvent.getNewValue();
+
+            this.stageManager.getEditor().getAccordClient().getOptions().setAudioRootMeanSquare(audioRootMeanSquare);
+
+            saveAudioRootMeanSquare(audioRootMeanSquare);
         }
     }
 
@@ -288,6 +374,62 @@ public class PreferenceManager {
             System.err.println("Error while loading language!");
             e.printStackTrace();
             return "";
+        }
+    }
+
+    public Mixer.Info loadOutputDevice() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            String device = preferences.get(OUTPUT_DEVICE, "");
+            for (Mixer.Info m : AudioSystem.getMixerInfo()) {
+                if (m.getName().equals(device) && m.getDescription().equals("Direct Audio Device: DirectSound Playback")) {
+                    return m;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error while loading output device!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveOutputDevice(String outputDevice) {
+        if (outputDevice != null) {
+            try {
+                Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+                preferences.put(OUTPUT_DEVICE, outputDevice);
+            } catch (Exception e) {
+                System.err.println("Error while saving outputDevice!");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Mixer.Info loadInputDevice() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            String device = preferences.get(INPUT_DEVICE, "");
+            for (Mixer.Info m : AudioSystem.getMixerInfo()) {
+                if (m.getName().equals(device) && m.getDescription().equals("Direct Audio Device: DirectSound Capture")) {
+                    return m;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error while loading input device!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveInputDevice(String inputDevice) {
+        if (inputDevice != null) {
+            try {
+                Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+                preferences.put(INPUT_DEVICE, inputDevice);
+            } catch (Exception e) {
+                System.err.println("Error while saving inputDevice!");
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -3,8 +3,11 @@ package de.uniks.stp.wedoit.accord.client.network.audio;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +19,11 @@ public class AudioConnection {
     private AudioSend sendingThread;
     private AudioReceive receivingThread;
     private final Editor editor;
-
     private DatagramSocket audioSocket;
+    private String url;
+    private int port;
+    private PropertyChangeListener outputDeviceListener = this::handleOutputDeviceChange;
+    private PropertyChangeListener inputDeviceListener = this::handleInputDeviceChange;
 
     public AudioConnection(LocalUser localUser, Channel channel, Editor editor) {
         this.localUser = localUser;
@@ -27,9 +33,13 @@ public class AudioConnection {
 
     public void startConnection(String url, int port) {
         try {
+            this.url = url;
+            this.port = port;
             this.audioSocket = createSocket();
             startSendingAudio(url, port);
             startReceivingAudio();
+            this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
+            this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_INPUT_DEVICE, inputDeviceListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,6 +65,7 @@ public class AudioConnection {
         stopReceivingAudio();
         stopSendingAudio();
         audioSocket.close();
+        stop();
     }
 
     private void stopSendingAudio() {
@@ -86,6 +97,16 @@ public class AudioConnection {
         }
     }
 
+    private void handleOutputDeviceChange(PropertyChangeEvent propertyChangeEvent) {
+        stopReceivingAudio();
+        startReceivingAudio();
+    }
+
+    private void handleInputDeviceChange(PropertyChangeEvent propertyChangeEvent) {
+        stopSendingAudio();
+        startSendingAudio(url, port);
+    }
+
     protected DatagramSocket createSocket() {
         DatagramSocket datagramSocket = null;
         try {
@@ -94,6 +115,13 @@ public class AudioConnection {
             e.printStackTrace();
         }
         return datagramSocket;
+    }
+
+    private void stop() {
+        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
+        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, inputDeviceListener);
+        this.outputDeviceListener = null;
+        this.inputDeviceListener = null;
     }
 
     public AudioReceive getAudioReceive() {

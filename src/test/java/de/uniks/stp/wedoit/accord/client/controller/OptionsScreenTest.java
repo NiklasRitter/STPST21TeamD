@@ -31,6 +31,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.sound.sampled.Mixer;
 import java.util.Locale;
 import java.util.Objects;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -69,7 +70,7 @@ public class OptionsScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
-        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB").setOutputDevice(null).setInputDevice(null));
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getStage(StageEnum.POPUP_STAGE);
 
@@ -96,7 +97,6 @@ public class OptionsScreenTest extends ApplicationTest {
         popupStage = null;
         stageManager.stop();
         stageManager = null;
-        oldOptions = null;
         rule = null;
         restMock = null;
         res = null;
@@ -239,6 +239,33 @@ public class OptionsScreenTest extends ApplicationTest {
 
         Assert.assertEquals(mainVBox.getChildren().size(), 3);
         Assert.assertTrue(btnLogout.isVisible());
+    }
+
+    @Test
+    public void inputOutputDeviceSelect(){
+        Options options = this.stageManager.getEditor().getAccordClient().getOptions();
+        options.setInputDevice(null);
+        options.setOutputDevice(null);
+        directToMainScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+        directToOptionsScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertNull(stageManager.getEditor().getAccordClient().getOptions().getOutputDevice());
+        Assert.assertNull(stageManager.getEditor().getAccordClient().getOptions().getInputDevice());
+        ChoiceBox<String> outputDeviceChoiceBox = lookup("#choiceBoxOutputDevice").query();
+        outputDeviceChoiceBox.getItems().add("test");
+        Platform.runLater(() -> outputDeviceChoiceBox.getSelectionModel().select("test"));
+        clickOn(outputDeviceChoiceBox);
+        Platform.runLater(() -> outputDeviceChoiceBox.getSelectionModel().select(1));
+        ChoiceBox<String> inputDeviceChoiceBox = lookup("#choiceBoxInputDevice").query();
+        inputDeviceChoiceBox.getItems().add("test");
+        Platform.runLater(() -> inputDeviceChoiceBox.getSelectionModel().select("test"));
+        clickOn(inputDeviceChoiceBox);
+        Platform.runLater(() -> inputDeviceChoiceBox.getSelectionModel().select(1));
+        Platform.runLater(() -> this.stageManager.getStage(StageEnum.POPUP_STAGE).close());
+        directToOptionsScreen();
+        Assert.assertNotNull(stageManager.getEditor().getAccordClient().getOptions().getOutputDevice());
+        Assert.assertNotNull(stageManager.getEditor().getAccordClient().getOptions().getInputDevice());
     }
 
 

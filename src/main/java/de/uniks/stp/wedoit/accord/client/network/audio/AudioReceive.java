@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.network.audio;
 
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import org.json.JSONObject;
 
 import javax.sound.sampled.*;
@@ -37,9 +38,7 @@ public class AudioReceive extends Thread {
     }
 
     public void init() {
-        localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
-                systemVolumeListener);
-        updateVolume();
+        localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME, systemVolumeListener);
     }
 
     public void terminate() {
@@ -63,16 +62,23 @@ public class AudioReceive extends Thread {
 
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
 
+            Mixer.Info outputDevice = this.localUser.getAccordClient().getOptions().getOutputDevice();
             for (String memberName : connectedUser) {
                 if (!memberName.equals(localUser.getName())) {
-                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                    SourceDataLine membersSourceDataLine;
+                    if(outputDevice != null) {
+                        membersSourceDataLine = (SourceDataLine) AudioSystem.getMixer(outputDevice).getLine(dataLineInfo);
+                    }
+                    else {
+                        membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                    }
                     membersSourceDataLine.open(audioFormat);
                     membersSourceDataLine.start();
 
                     sourceDataLineMap.put(memberName, membersSourceDataLine);
                 }
             }
-
+            updateVolume();
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             while (shouldReceive.get()) {
                 this.receiveSocket.receive(receivePacket);
@@ -84,11 +90,18 @@ public class AudioReceive extends Thread {
                 String audioSender = getAudioSenderName(metaDataByte);
 
                 if (!sourceDataLineMap.containsKey(audioSender) && !audioSender.equals(localUser.getName())) {
-                    SourceDataLine membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                    SourceDataLine membersSourceDataLine;
+                    if(outputDevice != null) {
+                        membersSourceDataLine = (SourceDataLine) AudioSystem.getMixer(outputDevice).getLine(dataLineInfo);
+                    }
+                    else {
+                        membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
+                    }
                     membersSourceDataLine.open(audioFormat);
                     membersSourceDataLine.start();
 
                     sourceDataLineMap.put(audioSender, membersSourceDataLine);
+                    updateVolume();
                 }
                 if (!audioSender.equals(localUser.getName())) {
                     this.sourceDataLineMap.get(audioSender).write(receivedAudio, 0, receivedAudio.length);
@@ -137,16 +150,75 @@ public class AudioReceive extends Thread {
 
     public void updateVolume() {
         float systemVolume = localUser.getAccordClient().getOptions().getSystemVolume();
-        System.out.println("System Volume Change: " + systemVolume);
-
         for (String name : sourceDataLineMap.keySet()) {
             SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
-            if (audioMemberLine.isOpen() && audioMemberLine.isControlSupported(FloatControl.Type.VOLUME)) {
-                //TODO: add userVolume to user
-                float userVolume = 100;
-                FloatControl volumeControl = (FloatControl) audioMemberLine.getControl(FloatControl.Type.VOLUME);
-                volumeControl.setValue((systemVolume * userVolume) / 100);
+            if (audioMemberLine.isOpen() && audioMemberLine.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl volumeControl = (FloatControl) audioMemberLine.getControl(FloatControl.Type.MASTER_GAIN);
+                float volumeSetting = calculateVolume(systemVolume, volumeControl, name);
+                volumeControl.setValue(volumeSetting);
             }
         }
+    }
+
+    private User getUser(String userName){
+        for(User user : localUser.getUsers()){
+            if(user.getName().equals(userName)){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    private float calculateVolume(float optionsVolume, FloatControl volumeControl, String userName){
+        float finalVolume;
+        float userVolume = 0;
+        // get the user and his audio volume setting
+        User user = getUser(userName);
+        if(user != null) {
+            userVolume = user.getAudioVolume();
+        }
+        // check the volume setting from the OptionsScreen and the user volume setting and set the overall volume accordingly
+        if (optionsVolume > 0) {
+            float volumeSettingOptions = volumeControl.getMaximum() * optionsVolume / 100;
+            if (userVolume >= 0) {
+                float right = volumeControl.getMaximum() - volumeSettingOptions;
+                finalVolume = volumeSettingOptions + right * userVolume / 100;
+            }
+            else {
+                float left = volumeSettingOptions - volumeControl.getMinimum();
+                finalVolume = left * userVolume / -100;
+                if (finalVolume > volumeSettingOptions){
+                    finalVolume = (finalVolume - volumeSettingOptions) * -1;
+                }
+            }
+        }
+        else if(optionsVolume < 0) {
+            float volumeSettingOptions = volumeControl.getMinimum() * optionsVolume / -100;
+            if (userVolume <= 0) {
+                float left = volumeControl.getMinimum() - volumeSettingOptions;
+                finalVolume = volumeSettingOptions - left * userVolume / 100;
+            }
+            else {
+                float right = (volumeSettingOptions * -1) + volumeControl.getMaximum();
+                finalVolume = volumeSettingOptions + right * userVolume / 100;
+                if (finalVolume > volumeControl.getMaximum()) {
+                    finalVolume = volumeControl.getMaximum();
+                }
+            }
+        }
+        // when the overall volume is not set only the user volume setting is part of the overall volume
+        else {
+            if (userVolume > 0) {
+                finalVolume = (volumeControl.getMaximum() / 100) * userVolume;
+            }
+            else {
+                finalVolume = (volumeControl.getMinimum() / -100) * userVolume;
+            }
+        }
+        return finalVolume;
+    }
+
+    public Map<String, SourceDataLine> getSourceDataLineMap(){
+        return sourceDataLineMap;
     }
 }

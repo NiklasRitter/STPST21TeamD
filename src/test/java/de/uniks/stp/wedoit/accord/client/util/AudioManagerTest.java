@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
@@ -30,6 +31,8 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.sound.sampled.Control;
+import javax.sound.sampled.FloatControl;
 import java.net.DatagramSocket;
 import java.util.concurrent.TimeUnit;
 
@@ -302,6 +305,35 @@ public class AudioManagerTest extends ApplicationTest {
         stageManager.getEditor().getAudioManager().unmuteYourself(localUser);
         Assert.assertFalse(localUser.isMuted());
         tempAudioCon.close();
+    }
+
+    @Test
+    public void changeUserVolume(){
+        joinAudioServerTest();
+        Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
+            @Override
+            protected DatagramSocket createSocket() {
+                DatagramSocket datagramSocket = null;
+                try {
+                    datagramSocket = new DatagramSocket(33100);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return datagramSocket;
+            }
+        };
+        stageManager.getEditor().getAudioManager().setAudioConnection(tempAudioCon);
+        tempAudioCon.startConnection("localhost", 33100);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        User user = stageManager.getEditor().getUser("N2");
+        user.setAudioVolume(100);
+        tempAudioCon.getAudioReceive().updateVolume();
+        FloatControl control = (FloatControl) tempAudioCon.getAudioReceive().getSourceDataLineMap().get("N2").getControl(FloatControl.Type.MASTER_GAIN);
+        Assert.assertEquals(control.getValue(), control.getMaximum(), 0.0000);
+        user.setAudioVolume(-100);
+        tempAudioCon.getAudioReceive().updateVolume();
+        Assert.assertEquals(control.getValue(), control.getMinimum(), 0.0000);
     }
 
     public void initUserListView() {

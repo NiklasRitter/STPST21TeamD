@@ -16,7 +16,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
-import java.beans.PropertyChangeEvent;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import java.util.Locale;
 
 public class OptionsScreenController implements Controller {
@@ -26,8 +27,8 @@ public class OptionsScreenController implements Controller {
     private Parent view;
     private CheckBox btnDarkMode;
     private Button btnLogout, btnTestSetup, btnSpotify, btnSteam;
-    private ChoiceBox choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
-    private Slider sliderTextSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
+    private ChoiceBox<String> choiceBoxLanguage, choiceBoxOutputDevice, choiceBoxInputDevice;
+    private Slider sliderFontSize, sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
     private ProgressBar progressBarTest, progressBarTestBot;
     private VBox vBoxSoundSettings, vBoxExtraSettings;
     private Recorder recorder;
@@ -58,7 +59,7 @@ public class OptionsScreenController implements Controller {
         this.btnSpotify = (Button) view.lookup("#btnSpotify");
         this.btnSteam = (Button) view.lookup("#btnSteam");
         this.btnTestSetup = (Button) view.lookup("#btnTestSetup");
-        this.sliderTextSize = (Slider) view.lookup("#sliderTextSize");
+        this.sliderFontSize = (Slider) view.lookup("#sliderFontSize");
         this.sliderOutputVolume = (Slider) view.lookup("#sliderOutputVolume");
         this.sliderInputVolume = (Slider) view.lookup("#sliderInputVolume");
         this.sliderInputSensitivity = (Slider) view.lookup("#sliderInputSensitivity");
@@ -74,6 +75,7 @@ public class OptionsScreenController implements Controller {
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(LanguageResolver.getString("OPTIONS"));
 
         createChoiceBoxItems();
+        createOutputInputChoiceBox();
 
         this.btnDarkMode.setSelected(options.isDarkmode());
 
@@ -81,35 +83,79 @@ public class OptionsScreenController implements Controller {
 
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.sliderTextSize.setOnMouseReleased(this::fontSizeSliderOnChange);
+        this.sliderFontSize.setOnMouseReleased(this::fontSizeSliderOnChange);
         this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
-        editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME,
-                (PropertyChangeEvent propertyChangeEvent) -> {
-                    System.out.println(propertyChangeEvent.getNewValue());
-                });
         this.btnTestSetup.setOnAction(this::btnAudioTest);
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
-        sliderInputSensitivity.valueProperty().addListener((e,old,n)->editor.saveSensitivity(n.doubleValue()));
+        sliderInputSensitivity.valueProperty().addListener((e, old, n) -> editor.getAccordClient().getOptions().setAudioRootMeanSquare(n.doubleValue()));
+        this.btnSteam.setOnAction(this::btnSteamOnClick);
     }
 
     private void fontSizeSliderOnChange(MouseEvent e) {
-        editor.saveFontSize((int) sliderTextSize.getValue());
+        options.setChatFontSize((int) sliderFontSize.getValue());
     }
 
     private void outputVolumeSliderOnChange(MouseEvent e) {
         editor.getAccordClient().getOptions().setSystemVolume((float) sliderOutputVolume.getValue());
     }
 
+    private void createOutputInputChoiceBox() {
+        for (Mixer.Info m : AudioSystem.getMixerInfo()) {
+            if (m.getDescription().equals("Direct Audio Device: DirectSound Playback")) {
+                this.choiceBoxOutputDevice.getItems().add(m.getName());
+            } else if (m.getDescription().equals("Direct Audio Device: DirectSound Capture")) {
+                this.choiceBoxInputDevice.getItems().add(m.getName());
+            }
+        }
+        if (this.options.getOutputDevice() != null) {
+            this.choiceBoxOutputDevice.getSelectionModel().select(this.options.getOutputDevice().getName());
+        } else {
+            this.choiceBoxOutputDevice.getSelectionModel().select(0);
+        }
+        if (this.options.getInputDevice() != null) {
+            this.choiceBoxInputDevice.getSelectionModel().select(this.options.getInputDevice().getName());
+        } else {
+            this.choiceBoxInputDevice.getSelectionModel().select(0);
+        }
+
+        this.choiceBoxOutputDevice.setOnAction(this::choiceBoxOutputInputSelected);
+        this.choiceBoxInputDevice.setOnAction(this::choiceBoxOutputInputSelected);
+    }
+
+    private void choiceBoxOutputInputSelected(Event actionEvent) {
+        String description = "Direct Audio Device: DirectSound Playback";
+        String info = this.choiceBoxOutputDevice.getSelectionModel().getSelectedItem();
+        if (actionEvent.getSource() == this.choiceBoxInputDevice) {
+            description = "Direct Audio Device: DirectSound Capture";
+            info = this.choiceBoxInputDevice.getSelectionModel().getSelectedItem();
+        }
+        for (Mixer.Info m : AudioSystem.getMixerInfo()) {
+            if (m.getName().equals(info) && m.getDescription().equals(description)) {
+                if (actionEvent.getSource() == choiceBoxOutputDevice) {
+                    this.options.setOutputDevice(m);
+                    this.editor.getStageManager().getPrefManager().saveOutputDevice(m.getName());
+                } else {
+                    this.options.setInputDevice(m);
+                    this.editor.getStageManager().getPrefManager().saveInputDevice(m.getName());
+                }
+                break;
+            }
+        }
+    }
 
     private void createChoiceBoxItems() {
         this.choiceBoxLanguage.getItems().addAll("English", "Deutsch", "فارسی");
 
-        if (Locale.getDefault().getLanguage().equals("fa_ir")) {
-            this.choiceBoxLanguage.getSelectionModel().select(2);
-        } else if (Locale.getDefault().getLanguage().equals("de_de")) {
-            this.choiceBoxLanguage.getSelectionModel().select(1);
-        } else if (Locale.getDefault().getLanguage().equals("en_gb")) {
-            this.choiceBoxLanguage.getSelectionModel().select(0);
+        switch (Locale.getDefault().getLanguage()) {
+            case "fa_ir":
+                this.choiceBoxLanguage.getSelectionModel().select(2);
+                break;
+            case "de_de":
+                this.choiceBoxLanguage.getSelectionModel().select(1);
+                break;
+            case "en_gb":
+                this.choiceBoxLanguage.getSelectionModel().select(0);
+                break;
         }
         this.choiceBoxLanguage.setOnAction(this::choiceBoxLanguageOnClick);
     }
@@ -151,8 +197,8 @@ public class OptionsScreenController implements Controller {
             this.view.autosize();
             this.view.getScene().getWindow().sizeToScene();
         } else {
-            sliderInputSensitivity.setValue(editor.getAudioRMS());
-            sliderTextSize.setValue(editor.getChatFontSizeProperty().getValue());
+            sliderInputSensitivity.setValue(editor.getAccordClient().getOptions().getAudioRootMeanSquare());
+            sliderFontSize.setValue(options.getChatFontSize());
             sliderOutputVolume.setValue(editor.getAccordClient().getOptions().getSystemVolume());
         }
     }
@@ -166,14 +212,15 @@ public class OptionsScreenController implements Controller {
         btnDarkMode.setOnAction(null);
         btnLogout.setOnAction(null);
         btnTestSetup.setOnAction(null);
-        sliderTextSize.setOnMouseReleased(null);
+        sliderFontSize.setOnMouseReleased(null);
         sliderOutputVolume.setOnMouseReleased(null);
         btnTestSetup.setOnAction(null);
         progressBarTest.progressProperty().unbind();
-        if(recorder != null){
+        if (recorder != null) {
             recorder.stop();
             recorder = null;
         }
+        btnSteam.setOnAction(null);
     }
 
     /**
@@ -196,16 +243,21 @@ public class OptionsScreenController implements Controller {
 
 
     private void btnAudioTest(ActionEvent actionEvent) {
-        if(recorder == null){
-             recorder = new Recorder(progressBarTestBot, editor);
+        if (recorder == null) {
+            recorder = new Recorder(progressBarTestBot, editor);
         }
-        if(btnTestSetup.getText().equals(LanguageResolver.getString("TEST_SETUP"))) {
+        if (btnTestSetup.getText().equals(LanguageResolver.getString("TEST_SETUP"))) {
             btnTestSetup.setText("STOP");
             recorder.start();
-        }else{
+        } else {
             recorder.stop();
             btnTestSetup.setText(LanguageResolver.getString("TEST_SETUP"));
             recorder = null;
         }
     }
+
+    private void btnSteamOnClick(ActionEvent actionEvent) {
+        this.editor.getStageManager().initView(ControllerEnum.CONNECT_TO_STEAM_SCREEN, null, null);
+    }
+
 }

@@ -10,22 +10,20 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListCont
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.beans.PropertyChangeEvent;
@@ -36,9 +34,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_ID_URL;
-import static de.uniks.stp.wedoit.accord.client.constants.Network.WS_SERVER_URL;
-
 public class PrivateChatsScreenController implements Controller {
 
     private final Parent view;
@@ -47,7 +42,7 @@ public class PrivateChatsScreenController implements Controller {
     private ServerListController serverListController;
     private Button btnOptions, btnPlay;
     private Button btnHome;
-    private TextArea taPrivateChat;
+    private RichTextArea taPrivateChat;
     private ListView<User> lwOnlineUsers;
     private ObservableList<User> onlineUserObservableList;
     private List<User> availableUsers = new ArrayList<>();
@@ -93,7 +88,13 @@ public class PrivateChatsScreenController implements Controller {
         this.lblSelectedUser = (Label) view.lookup("#lblSelectedUser");
         this.lblOnlineUser = (Label) view.lookup("#lblOnlineUser");
         this.lblDescription = (Label) view.lookup("#lblDescription");
-        this.taPrivateChat = (TextArea) view.lookup("#tfEnterPrivateChat");
+        HBox hBoxText = (HBox) view.lookup("#hBoxText");
+        this.taPrivateChat = new RichTextArea();
+        taPrivateChat.setId("tfEnterPrivateChat");
+        taPrivateChat.getStyleClass().add("textAreaInput");
+        taPrivateChat.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
+        hBoxText.getChildren().add(0, taPrivateChat);
+
 
         this.audioChannelSubViewContainer = (VBox) view.lookup("#audioChannelSubViewContainer");
         this.audioChannelSubViewContainer.getChildren().clear();
@@ -193,7 +194,7 @@ public class PrivateChatsScreenController implements Controller {
      * @param propertyChangeEvent event occurs when a users online status changes
      */
     private void usersOnlineListViewChanged(PropertyChangeEvent propertyChangeEvent) {
-        TextArea tfPrivateChat = privateChatController.getTfPrivateChat();
+        RichTextArea tfPrivateChat = privateChatController.getTfPrivateChat();
         User user = (User) propertyChangeEvent.getSource();
         editor.getUserChatRead(user);
         if (!user.isOnlineStatus()) {
@@ -207,7 +208,7 @@ public class PrivateChatsScreenController implements Controller {
                     lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    tfPrivateChat.setPromptText(user.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+                    tfPrivateChat.setPromptText(user.getName() + " " + LanguageResolver.getString("IS_OFFLINE"), editor.getAccordClient().getOptions().isDarkmode());
                     tfPrivateChat.setEditable(false);
                 }
             });
@@ -221,7 +222,7 @@ public class PrivateChatsScreenController implements Controller {
                     lwOnlineUsers.getSelectionModel().select(privateChatController.getCurrentChat().getUser());
                 lwOnlineUsers.refresh();
                 if (user.getName().equals(this.lblSelectedUser.getText())) {
-                    tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+                    tfPrivateChat.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"), editor.getAccordClient().getOptions().isDarkmode());
                     tfPrivateChat.setEditable(true);
                 }
             });
@@ -321,7 +322,7 @@ public class PrivateChatsScreenController implements Controller {
             privateChatController.initPrivateChat(selectedUser);
             this.lblSelectedUser.setText(privateChatController.getCurrentChat().getUser().getName());
             if (selectedUser.getDescription() != null && !selectedUser.getDescription().equals("") && selectedUser.isOnlineStatus()) {
-                lblDescription.setText("- " + selectedUser.getDescription());
+                lblDescription.setText("- " + Editor.parseUserDescription(selectedUser.getDescription()));
             }
             this.btnPlay.setVisible(true);
             this.editor.getStageManager().updateDarkmode();
@@ -331,7 +332,7 @@ public class PrivateChatsScreenController implements Controller {
     private void userDescriptionChanged(PropertyChangeEvent propertyChangeEvent) {
         if (!lblDescription.getText().equals(selectedUser.getDescription())) {
             if (!selectedUser.getDescription().equals("") && selectedUser.getDescription() != null && selectedUser.isOnlineStatus())
-                Platform.runLater(() -> lblDescription.setText("- " + selectedUser.getDescription()));
+                Platform.runLater(() -> lblDescription.setText("- " + Editor.parseUserDescription(selectedUser.getDescription())));
         }
     }
 
@@ -348,7 +349,7 @@ public class PrivateChatsScreenController implements Controller {
     }
 
     public void setTfPrivateChatText(String text) {
-        this.taPrivateChat.setText(text);
+        this.taPrivateChat.replaceText(text);
     }
 
     public PrivateChatController getPrivateChatController() {

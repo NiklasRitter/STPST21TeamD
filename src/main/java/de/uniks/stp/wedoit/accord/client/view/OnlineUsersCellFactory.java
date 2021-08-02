@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.view;
 
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -15,9 +16,9 @@ import javafx.scene.text.Font;
 import javafx.util.Callback;
 
 public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell<User>> {
-    private boolean isPrivate;
     private final StageManager stageManager;
     private final Server server;
+    private boolean isPrivate;
 
     public OnlineUsersCellFactory(StageManager stageManager, Server server) {
         this.stageManager = stageManager;
@@ -28,6 +29,31 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
     public ListCell<User> call(ListView<User> param) {
         isPrivate = param.getId().equals("lwOnlineUsers");
         return new OnlineUserListCell();
+    }
+
+    private void setLabelStyle(Label name, Label description) {
+        description.setFont(new Font(9));
+
+        if (stageManager.getPrefManager().loadDarkMode()) {
+            name.setStyle("-fx-text-fill: #ADD8e6");
+            description.setStyle("-fx-text-fill: #ADD8e6");
+        } else {
+            name.setStyle("-fx-text-fill: #000000");
+            description.setStyle("-fx-text-fill: #000000");
+        }
+    }
+
+    /**
+     * creates a context menu to write a private Message to a member
+     *
+     * @return the created context menu
+     */
+    private ContextMenu createContextMenuWriteMembers(User user) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemWriteMembers = new MenuItem("Private Message");
+        contextMenu.getItems().add(menuItemWriteMembers);
+        menuItemWriteMembers.setOnAction((event) -> stageManager.initView(ControllerEnum.PRIVATE_MESSAGE_SERVER_SCREEN, server, user));
+        return contextMenu;
     }
 
     private class OnlineUserListCell extends ListCell<User> {
@@ -49,8 +75,8 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
                     VBox vBox = new VBox();
                     Label name = new Label(item.getName());
                     name.setPadding(new Insets(0, 0, 0, 3));
-                    Label description = new Label(item.getDescription());
-                    description.setTooltip(new Tooltip(item.getDescription()));
+                    Label description = new Label(Editor.parseUserDescription(item.getDescription()));
+                    description.setTooltip(new Tooltip(Editor.parseUserDescription(item.getDescription())));
                     setLabelStyle(name, description);
 
                     hBox.setAlignment(Pos.CENTER_LEFT);
@@ -80,30 +106,5 @@ public class OnlineUsersCellFactory implements Callback<ListView<User>, ListCell
                 this.setContextMenu(null);
             }
         }
-    }
-
-    private void setLabelStyle(Label name, Label description) {
-        description.setFont(new Font(9));
-
-        if (stageManager.getPrefManager().loadDarkMode()) {
-            name.setStyle("-fx-text-fill: #ADD8e6");
-            description.setStyle("-fx-text-fill: #ADD8e6");
-        } else {
-            name.setStyle("-fx-text-fill: #000000");
-            description.setStyle("-fx-text-fill: #000000");
-        }
-    }
-
-    /**
-     * creates a context menu to write a private Message to a member
-     *
-     * @return the created context menu
-     */
-    private ContextMenu createContextMenuWriteMembers(User user) {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItemWriteMembers = new MenuItem("Private Message");
-        contextMenu.getItems().add(menuItemWriteMembers);
-        menuItemWriteMembers.setOnAction((event) -> stageManager.initView(ControllerEnum.PRIVATE_MESSAGE_SERVER_SCREEN, server, user));
-        return contextMenu;
     }
 }
