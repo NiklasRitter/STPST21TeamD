@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -29,12 +30,8 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.EDIT_SERVER_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.POPUP_STAGE;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -63,8 +60,7 @@ public class AttentionScreenControllerTest extends ApplicationTest {
         this.stageManager = new StageManager();
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
-        stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
-        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB").setRememberMe(false));
 
         this.stageManager.start(stage);
 

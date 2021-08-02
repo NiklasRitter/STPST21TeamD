@@ -23,7 +23,7 @@ public class ConstantsClassesTest {
     @Test
     public void testGame() {
         Game game = new Game();
-        Assert.assertEquals(game.GAME_INVITE, game.GAME_PREFIX + "Invites you to Rock - Paper - Scissors!");
+        Assert.assertEquals(game.GAME_INVITE, game.GAME_PREFIX + "play " + Icons.HANDSHAKE);
     }
 
     @Test
