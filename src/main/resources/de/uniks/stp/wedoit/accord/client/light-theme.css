@@ -330,3 +330,7 @@
     -fx-border-color: #d9d9d9;
     -fx-padding :0 0 0 10;
 }
+
+.text-on-top{
+    -fx-content-display: TOP;
+}

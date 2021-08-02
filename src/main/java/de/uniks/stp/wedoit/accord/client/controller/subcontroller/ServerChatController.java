@@ -109,9 +109,6 @@ public class ServerChatController implements Controller {
         this.btnCancelQuote.setOnAction(this::cancelQuote);
         this.btnEmoji.setOnAction(this::btnEmojiOnClick);
 
-        this.referenceController = new ReferenceController(tfInputMessage, currentChannel, vBoxTextField);
-        this.referenceController.init();
-
         this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
         this.markingController.init();
 
@@ -147,7 +144,6 @@ public class ServerChatController implements Controller {
         this.lvTextChat.setOnMousePressed(null);
         this.btnCancelQuote.setOnAction(null);
         this.markingController.stop();
-        this.referenceController.stop();
         this.controller = null;
 
 
@@ -418,10 +414,6 @@ public class ServerChatController implements Controller {
         this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         this.editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_CHAT_FONT_SIZE, this::onDarkmodeChanged);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
-
-
-        this.referenceController = new ReferenceController(tfInputMessage, currentChannel, vBoxTextField);
-        this.referenceController.init();
 
         this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
         this.markingController.init();

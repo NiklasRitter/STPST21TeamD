@@ -329,3 +329,7 @@
     -fx-control-inner-background: transparent;
     -fx-text-box-border: transparent;
 }
+
+.text-on-top{
+    -fx-text-alignment: top;
+}
