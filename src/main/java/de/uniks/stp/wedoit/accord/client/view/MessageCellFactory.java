@@ -489,6 +489,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 current = current.substring(start + channel.getName().length() + 1);
             }
 
+            if (!current.isEmpty()) {
+                message.getChildren().add(new Label(current));
+            }
+
             this.vBox.getChildren().add(message);
             setGraphic(this.vBox);
         }
