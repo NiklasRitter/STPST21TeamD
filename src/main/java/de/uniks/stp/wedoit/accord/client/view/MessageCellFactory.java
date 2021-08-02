@@ -2,8 +2,13 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
+import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.controller.Controller;
+import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
@@ -29,6 +34,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
@@ -47,10 +53,12 @@ import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
 
+    private final Controller controller;
     StageManager stageManager;
 
-    public MessageCellFactory(StageManager stageManager) {
+    public MessageCellFactory(StageManager stageManager, Controller controller) {
         this.stageManager = stageManager;
+        this.controller = controller;
     }
 
     @Override
@@ -530,12 +538,30 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
     }
 
     private void referenceButtonOnClick(Channel channel) {
+        LocalUser localUser = channel.getCategory().getServer().getLocalUser();
+        Editor editor = stageManager.getEditor();
+        ServerScreenController serverScreenController = (ServerScreenController) controller;
+        CategoryTreeViewController categoryTreeViewController = serverScreenController.getCategoryTreeViewController();
+
         if (channel.getType().equals(TEXT)) {
-            System.out.println(TEXT);
-        } else {
-            System.out.println(AUDIO);
+            serverScreenController.getServerChatController().initChannelChat(channel);
+            serverScreenController.refreshLvUsers(channel);
+
+        } else if (channel.getType().equals(AUDIO)) {
+            if (localUser.getAudioChannel() == null) {
+                editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(),
+                        channel.getCategory(), channel, categoryTreeViewController);
+            } else if (localUser.getAudioChannel().getId().equals(channel.getId())) {
+                editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(),
+                        channel.getCategory(), channel, categoryTreeViewController);
+            } else {
+                editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(),
+                        channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(),
+                        channel.getCategory(), localUser.getAudioChannel(), channel, categoryTreeViewController);
+            }
         }
     }
+
 
     public void handleInvitation(Server server, String responseMessage) {
         if (server != null) {
