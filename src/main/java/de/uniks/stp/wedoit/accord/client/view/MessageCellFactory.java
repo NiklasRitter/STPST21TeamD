@@ -8,10 +8,8 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
-import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
-import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -34,7 +32,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
@@ -50,7 +47,6 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static javafx.scene.text.TextAlignment.CENTER;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
 
@@ -211,10 +207,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayTextWithEmoji(item);
                     }
                 } else if (!(item instanceof PrivateMessage)) {
-                    ArrayList<Channel> referencedChannels = getReferences(item);
+                    ArrayList<Channel> referencedChannels = getReferences(item, item.getText());
 
                     if (!referencedChannels.isEmpty()) {
-                        setUpReferenceInMessage(item, referencedChannels);
+                        HBox hBox = new HBox();
+                        displayNameAndDate(item);
+                        setUpReferenceInMessage(item, referencedChannels, hBox, item.getText());
+
+                        this.vBox.getChildren().add(hBox);
+                        setGraphic(this.vBox);
+
                     } else {
                         displayNameAndDate(item);
                         displayTextWithEmoji(item);
@@ -240,13 +242,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             }
         }
 
-        private ArrayList<Channel> getReferences(Message item) {
+        private ArrayList<Channel> getReferences(Message item, String text) {
             ArrayList<Channel> channels = new ArrayList<>();
             Server server = item.getChannel().getCategory().getServer();
 
-            for (Category category: server.getCategories()) {
-                for (Channel channel: category.getChannels()) {
-                    if (item.getText().contains("#"+ channel.getName())) {
+            for (Category category : server.getCategories()) {
+                for (Channel channel : category.getChannels()) {
+                    if (text.contains("#" + channel.getName())) {
                         channels.add(channel);
                     }
                 }
@@ -499,17 +501,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             setGraphic(this.vBox);
         }
 
-        private void setUpReferenceInMessage(Message item, ArrayList<Channel> referencedChannels) {
-            HBox message = new HBox();
-            String current = item.getText();
+        private void setUpReferenceInMessage(Message item, ArrayList<Channel> referencedChannels, HBox message, String currentText) {
+            String current = currentText;
+            boolean duplications = false;
 
-            displayNameAndDate(item);
-
-            for (Channel channel: referencedChannels) {
+            for (Channel channel : referencedChannels) {
                 int start = current.indexOf("#" + channel.getName());
                 if (start == -1) {
                     continue;
                 }
+
                 EmojiTextFlow emojiTextFlow = new EmojiTextFlow(this.parameters);
                 emojiTextFlow.parseAndAppend(current.substring(0, start));
                 message.getChildren().add(emojiTextFlow);
@@ -521,16 +522,21 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 message.getChildren().add(emojiTextFlowClickable);
 
                 current = current.substring(start + channel.getName().length() + 1);
+
+                if (current.contains("#" + channel.getName())) {
+                    duplications = true;
+                    break;
+                }
             }
 
-            if (!current.isEmpty()) {
+            if (duplications) {
+                ArrayList<Channel> references = getReferences(item, current);
+                setUpReferenceInMessage(item, references, message, current);
+            } else if (!current.isEmpty()) {
                 EmojiTextFlow emojiTextFlow = new EmojiTextFlow(this.parameters);
                 emojiTextFlow.parseAndAppend(current);
                 message.getChildren().add(emojiTextFlow);
             }
-
-            this.vBox.getChildren().add(message);
-            setGraphic(this.vBox);
         }
 
         private void displayTextWithEmoji(Message item) {
