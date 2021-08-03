@@ -586,9 +586,19 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         ServerScreenController serverScreenController = (ServerScreenController) controller;
         CategoryTreeViewController categoryTreeViewController = serverScreenController.getCategoryTreeViewController();
 
+        TreeView<Object> tvServerChannels = categoryTreeViewController.getTvServerChannels();
+        TreeItem<Object> treeItem = tvServerChannels.getRoot();
+
+
         if (channel.getType().equals(TEXT)) {
             serverScreenController.getServerChatController().initChannelChat(channel);
             serverScreenController.refreshLvUsers(channel);
+
+            treeItem = getItem(treeItem, channel.getName());
+
+            if (treeItem != null) {
+                tvServerChannels.getSelectionModel().select(treeItem);
+            }
 
         } else if (channel.getType().equals(AUDIO)) {
             if (localUser.getAudioChannel() == null) {
@@ -603,6 +613,19 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         channel.getCategory(), localUser.getAudioChannel(), channel, categoryTreeViewController);
             }
         }
+    }
+
+    private TreeItem<Object> getItem(TreeItem<Object> item, String name) {
+
+        if (item != null && (item.getValue() instanceof Channel) && ((Channel) item.getValue()).getName().equals(name))
+            return item;
+
+        for (TreeItem<Object> child : item.getChildren()) {
+            TreeItem<Object> treeItem = getItem(child, name);
+            if (treeItem != null)
+                return treeItem;
+        }
+        return null;
     }
 
 }
