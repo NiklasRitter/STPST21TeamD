@@ -119,9 +119,6 @@ public class ServerScreenController implements Controller {
         this.serverChatController.init();
         this.serverListController.init();
 
-
-        //this.setComponentsText();
-
         if (server.getName() != null && !server.getName().equals("")) {
             this.lbServerName.setText(server.getName());
         }

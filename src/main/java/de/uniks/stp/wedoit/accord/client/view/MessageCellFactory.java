@@ -507,7 +507,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             for (Channel channel: referencedChannels) {
                 int start = current.indexOf("#" + channel.getName());
-
+                if (start == -1) {
+                    continue;
+                }
                 EmojiTextFlow emojiTextFlow = new EmojiTextFlow(this.parameters);
                 emojiTextFlow.parseAndAppend(current.substring(0, start));
                 message.getChildren().add(emojiTextFlow);
