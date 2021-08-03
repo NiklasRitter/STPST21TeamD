@@ -331,6 +331,10 @@
     -fx-padding :0 0 0 10;
 }
 
-.text-on-top{
-    -fx-content-display: TOP;
+.reference{
+    -fx-background-color: #aab0f0;
+}
+
+.reference:hover{
+    -fx-background-color: #cacded;
 }

@@ -50,6 +50,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static javafx.scene.text.TextAlignment.CENTER;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
 
@@ -99,6 +100,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private String time;
         private EmojiTextFlowParameters parameters;
         private EmojiTextFlowParameters parametersQuote;
+        private EmojiTextFlowParameters referenceParameters;
         private EmojiTextFlow emojiTextFlow;
         private EmojiTextFlow quoteTextFlow;
 
@@ -117,7 +119,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             super.updateItem(item, empty);
             setItem(item);
             this.setText(null);
-            this.getStyleClass().removeAll("font_size", "marked_message", "sidebar-Button");
+            this.getStyleClass().removeAll("font_size", "marked_message", "reference");
             this.setGraphic(null);
             this.vBox.getChildren().clear();
             webView.getEngine().load(null);
@@ -130,9 +132,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize() - 3).createParameters();
             this.parameters =
                     new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize()).createParameters();
+            this.referenceParameters =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize()).createParameters();
             if (stageManager.getPrefManager().loadDarkMode()) {
                 this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
                 this.parametersQuote.setTextColor(Color.valueOf("#ADD8e6"));
+                this.referenceParameters.setTextColor(Color.valueOf("#ffffff"));
                 this.hyperlink.setStyle("-fx-text-fill: #ADD8e6");
                 this.label.setStyle("-fx-text-fill: #ADD8e6");
             } else {
@@ -503,17 +508,15 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             for (Channel channel: referencedChannels) {
                 int start = current.indexOf("#" + channel.getName());
 
-
                 EmojiTextFlow emojiTextFlow = new EmojiTextFlow(this.parameters);
                 emojiTextFlow.parseAndAppend(current.substring(0, start));
                 message.getChildren().add(emojiTextFlow);
 
-                Button reference = new Button();
-                reference.setText("#" + channel.getName());
-                reference.setAlignment(Pos.TOP_CENTER);
-                reference.getStyleClass().add("sidebar-Button");
-                reference.setOnAction(event -> referenceButtonOnClick(channel));
-                message.getChildren().add(reference);
+                EmojiTextFlow emojiTextFlowClickable = new EmojiTextFlow(this.referenceParameters);
+                emojiTextFlowClickable.parseAndAppend("#" + channel.getName());
+                emojiTextFlowClickable.setOnMousePressed(event -> referenceButtonOnClick(channel));
+                emojiTextFlowClickable.getStyleClass().add("reference");
+                message.getChildren().add(emojiTextFlowClickable);
 
                 current = current.substring(start + channel.getName().length() + 1);
             }

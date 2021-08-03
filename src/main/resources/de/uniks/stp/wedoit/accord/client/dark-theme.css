@@ -330,6 +330,10 @@
     -fx-text-box-border: transparent;
 }
 
-.text-on-top{
-    -fx-text-alignment: top;
+.reference{
+    -fx-background-color: #414675;
+}
+
+.reference:hover{
+    -fx-background-color: #5865f2;
 }
