@@ -407,7 +407,7 @@ public class MarkingController implements Controller {
 
         if (mouseEvent.getClickCount() == 1) {
 
-            Channel selectedUser = lvSelectChannel.getSelectionModel().getSelectedItem();
+            Channel selectedChannel = lvSelectChannel.getSelectionModel().getSelectedItem();
             String currentText = textArea.getText();
 
             int correspondingAtPosition = -1;
@@ -433,9 +433,9 @@ public class MarkingController implements Controller {
                     String firstPart = currentText.substring(0, correspondingAtPosition);
                     String secondPart = currentText.substring(caret);
 
-                    textArea.setText(firstPart + "#" + selectedUser.getName() + secondPart);
-                    correspondingAt.setEnd(correspondingAt.getStart() + selectedUser.getName().length());
-                    correspondingAt.setContent("#" + selectedUser.getName());
+                    textArea.replaceText(firstPart + "#" + selectedChannel.getName() + secondPart);
+                    correspondingAt.setEnd(correspondingAt.getStart() + selectedChannel.getName().length());
+                    correspondingAt.setContent("#" + selectedChannel.getName());
 
                     correspondingAt.setComplete(true);
                     removeSelectionMenu();
