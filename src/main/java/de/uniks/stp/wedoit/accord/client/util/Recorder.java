@@ -23,7 +23,7 @@ public class Recorder implements Runnable{
     AudioFormat audioFormat = new AudioFormat(encoding, bitRate, sampleSize, channels,
             (sampleSize / 8) * channels, bitRate, bigEndian);
 
-    public Recorder(final ProgressBar bar, Editor editor) {
+    public Recorder(ProgressBar bar, Editor editor) {
         this.bar = bar;
         this.editor = editor;
     }
@@ -39,12 +39,14 @@ public class Recorder implements Runnable{
     }
 
     private void cleanup(){
-        if (line.isRunning()) {
-            line.stop();
-            line.flush();
-        }
-        if (line.isOpen()) {
-            line.close();
+        if(line != null) {
+            if (line.isRunning()) {
+                line.stop();
+                line.flush();
+            }
+            if (line.isOpen()) {
+                line.close();
+            }
         }
 
     }
@@ -65,7 +67,7 @@ public class Recorder implements Runnable{
         for(int b; (b = line.read(buf, 0, buf.length)) > -1;) {
 
             double rms = editor.calculateRMS(buf,b);
-            bar.setProgress(rms);
+            if(bar != null) bar.setProgress(rms);
 
         }
     }
