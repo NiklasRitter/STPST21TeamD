@@ -145,9 +145,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 // allow wrapping
                 setWrapText(true);
 
+                //remove game prefix
                 if (item.getText().startsWith(GAME_PREFIX))
                     item.setText(item.getText().substring(GAME_PREFIX.length()));
 
+                //eval correct time format
                 time = checkTime(item);
 
                 if (item instanceof PrivateMessage) {
@@ -161,16 +163,18 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
 
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
+                    //media view
                     setUpMedia(item);
 
                 } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                    //load more option if more than 50 messages in chat
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
                 } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_MESSAGE)
                         && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
-
+                    //handle quote formatting
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
                     String[] messages = quoteMessage.split(QUOTE_MESSAGE);
@@ -187,6 +191,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
 
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
+                    //invitation links for other server
                     String url = containsInviteUrl(item.getText());
                     if (url != null) {
                         setUpJoinServerView(item, url);
@@ -196,6 +201,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayTextWithEmoji(item);
                     }
                 } else {
+                    //normal message possibly with emoji
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);
                 }
