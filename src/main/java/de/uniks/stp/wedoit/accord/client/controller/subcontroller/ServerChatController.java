@@ -70,7 +70,6 @@ public class ServerChatController implements Controller {
     private PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
     private PropertyChangeListener newMessagesListener = this::newMessage;
     private PropertyChangeListener darkModeListener = this::onDarkmodeChanged;
-    private ReferenceController referenceController;
 
     /**
      * Create a new Controller
@@ -170,7 +169,6 @@ public class ServerChatController implements Controller {
         this.newMessagesListener = null;
         this.darkModeListener = null;
         this.markingController = null;
-        this.referenceController = null;
     }
 
     /**

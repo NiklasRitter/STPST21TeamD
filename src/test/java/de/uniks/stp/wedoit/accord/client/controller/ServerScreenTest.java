@@ -676,13 +676,17 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         clickOn("#tfInputMessage");
-        write("1@@");
-        tfInputMessage.moveTo(1);
+        write("@");
         WaitForAsyncUtils.waitForFxEvents();
-        write("1");
-        press(KeyCode.BACK_SPACE);
-        write('\b');
+        Assert.assertTrue(selectUser.isVisible());
+        write("3");
         WaitForAsyncUtils.waitForFxEvents();
+        push(KeyCode.BACK_SPACE);
+        push(KeyCode.BACK_SPACE);
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertTrue(selectUser.isVisible());
     }
 
     @Test
@@ -715,6 +719,54 @@ public class ServerScreenTest extends ApplicationTest {
 
         selectChannel.getSelectionModel().select(0);
         clickOn("#lvSelectChannel");
+
+        Assert.assertEquals("#channelName2", tfInputMessage.getText());
+
+        clickOn("#tfInputMessage");
+        write("#channelName2");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertFalse(selectChannel.isVisible());
+
+        Assert.assertEquals(tfInputMessage.getText(), "#channelName2#channelName2");
+        TextArea s = new TextArea();
+        s.positionCaret(2);
+        tfInputMessage.moveTo(2);
+
+        write("1");
+        Assert.assertEquals(tfInputMessage.getText(), "#channelName2");
+        tfInputMessage.moveTo(3);
+
+        press(KeyCode.BACK_SPACE);
+        write('\b');
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertTrue(tfInputMessage.getText().isEmpty());
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "@JohnDoe");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#tfInputMessage");
+        write("#");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(selectChannel.isVisible());
+        write("3");
+        WaitForAsyncUtils.waitForFxEvents();
+        push(KeyCode.BACK_SPACE);
+
+        JsonObject webSocketJson = getChannelMessageReference(channel);
+        mockChatWebSocket(webSocketJson);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ObservableList<Message> items = lvTextChat.getItems();
+        Assert.assertEquals(items.size(), 2);
+
+        Assert.assertEquals("#channelName2 1#channelName2 1", items.get(0).getText());
+
+        clickOn("channelName2");
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("channelName2", lblChannelName.getText());
+
     }
 
     @Test
@@ -1757,6 +1809,16 @@ public class ServerScreenTest extends ApplicationTest {
                                 .add(TIMESTAMP, 1616935884)
                                 .add(FROM, "Bob")
                                 .add(TEXT, "I am Bob")))
+                .build();
+    }
+
+    public JsonObject getChannelMessageReference(Channel channel) {
+        return Json.createObjectBuilder()
+                                .add(ID, "message_id_1")
+                                .add(CHANNEL, channel.getId())
+                                .add(TIMESTAMP, 1616935874)
+                                .add(FROM, "Bob")
+                                .add(TEXT, "#channelName2 1#channelName2 1")
                 .build();
     }
 
