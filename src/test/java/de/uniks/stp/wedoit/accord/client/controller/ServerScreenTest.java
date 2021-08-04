@@ -649,14 +649,14 @@ public class ServerScreenTest extends ApplicationTest {
         selectUser.getSelectionModel().select(0);
         clickOn("#lvSelectUser");
 
-        Assert.assertEquals(tfInputMessage.getText(), "@N1");
+        Assert.assertEquals("@N2", tfInputMessage.getText());
 
         clickOn("#tfInputMessage");
         write("@N1");
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertFalse(selectUser.isVisible());
 
-        Assert.assertEquals(tfInputMessage.getText(), "@N1@N1");
+        Assert.assertEquals(tfInputMessage.getText(), "@N2@N1");
         TextArea s = new TextArea();
         s.positionCaret(2);
         tfInputMessage.moveTo(2);
@@ -683,6 +683,38 @@ public class ServerScreenTest extends ApplicationTest {
         press(KeyCode.BACK_SPACE);
         write('\b');
         WaitForAsyncUtils.waitForFxEvents();
+    }
+
+    @Test
+    public void referenceTest() {
+        initUserListView();
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+        RichTextArea tfInputMessage = lookup("#tfInputMessage").query();
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        tfInputMessage.setText("");
+        clickOn("#tfInputMessage");
+
+        write("#channel");
+        WaitForAsyncUtils.waitForFxEvents();
+        ListView<Channel> selectChannel = lookup("#lvSelectChannel").queryListView();
+
+        Assert.assertEquals(selectChannel.getItems().size(), 2);
+
+        selectChannel.getSelectionModel().select(0);
+        clickOn("#lvSelectChannel");
     }
 
     @Test
