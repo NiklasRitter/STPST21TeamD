@@ -79,6 +79,10 @@ public class ServerListController implements Controller {
 
         if (!editor.getStageManager().getStage(StageEnum.STAGE).getTitle().equals("Private Chats")) {
             lvServerList.getSelectionModel().select(editor.getCurrentServer());
+            btnHome.getStyleClass().remove("button-selected");
+        }
+        else {
+            btnHome.getStyleClass().add("button-selected");
         }
     }
 
