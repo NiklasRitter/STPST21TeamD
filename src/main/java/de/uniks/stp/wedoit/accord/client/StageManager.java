@@ -37,6 +37,7 @@ public class StageManager extends Application {
     private PreferenceManager prefManager = new PreferenceManager();
     private SystemTrayController systemTrayController;
     private AccordClient model;
+    private ControllerEnum currentController;
 
 
     {
@@ -55,7 +56,8 @@ public class StageManager extends Application {
         try {
 
             Parent root = controller.loadScreen();
-            cleanup(controller);
+            if(currentController != null) cleanup(controller);
+            currentController = controller;
 
             Scene currentScene = sceneMap.get(controller.stage);
 
@@ -63,6 +65,7 @@ public class StageManager extends Application {
 
             if (currentScene != null) currentScene.setRoot(root);
             else sceneMap.put(controller.stage, new Scene(root));
+
             if (controller.stage.equals(POPUP_STAGE)) currentStage.sizeToScene();
 
             controller.setUpStage(currentStage);
@@ -160,16 +163,11 @@ public class StageManager extends Application {
     }
 
     /**
-     * clean up a specific controller
-     *
-     * @param c the controller to be cleaned up
+     * clean up the last opened controller
      */
-    private void cleanup(ControllerEnum c) {
+    private void cleanup(ControllerEnum e) {
 
-        if (controllerMap.get(c.controllerName) != null) {
-            controllerMap.get(c.controllerName).stop();
-            controllerMap.remove(c.controllerName);
-        }
+        if(currentController.stage == e.stage) controllerMap.get(currentController.controllerName).stop();
 
         if (stageMap.get(StageEnum.EMOJI_PICKER_STAGE) != null) {
             stageMap.get(StageEnum.EMOJI_PICKER_STAGE).hide();
@@ -181,7 +179,7 @@ public class StageManager extends Application {
      */
     private void cleanup() {
         stageMap.forEach((k, v) -> v.hide());
-        controllerMap.forEach((k, v) -> v.stop());
+        controllerMap.get(currentController.controllerName).stop();
     }
 
     /**
