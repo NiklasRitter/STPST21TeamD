@@ -35,7 +35,6 @@ public class UpdateMessageScreenController implements Controller {
     private Label lblError;
     private Button btnEmoji;
     private MarkingController markingController;
-    private VBox vboxMarkingSelection;
     private PropertyChangeListener darkmodeChanged = this::darkModeChanged;
 
     public UpdateMessageScreenController(Parent view, Editor editor, Message message, Stage stage) {
@@ -57,7 +56,7 @@ public class UpdateMessageScreenController implements Controller {
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
         lblError = (Label) view.lookup("#lblError");
-        vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
+        VBox vboxMarkingSelection = (VBox) view.lookup("#vboxMarkingSelection");
 
         String messageText;
         if (editor.getMessageManager().isQuote(message)) {

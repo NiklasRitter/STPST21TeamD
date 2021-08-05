@@ -17,7 +17,7 @@ public class Game {
     public static final String GAME_INGAME = GAME_PREFIX + "Already in game, try again later!";
     public static final String GAME_START = GAME_PREFIX + "Lets start the Game!";
     public static final String GAME_SYSTEM = GAME_PREFIX + "System: Only one game at a time.";
-    public static final String GAME_REVENGE = GAME_PREFIX + "!revanche";
+    public static final String GAME_REVENGE = GAME_PREFIX + "revanche";
 
     //game actions
     public static final String GAME_IMGURL = "/de/uniks/stp/wedoit/accord/client/view/images/game/";

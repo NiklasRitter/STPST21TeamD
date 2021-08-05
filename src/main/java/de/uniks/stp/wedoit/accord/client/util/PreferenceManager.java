@@ -159,7 +159,9 @@ public class PreferenceManager {
     public int loadChatFontSize() {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
-            return preferences.getInt(CHAT_FONT_SIZE, 12);
+            int size = preferences.getInt(CHAT_FONT_SIZE, 12);
+            if(size == 0) size = 12;
+            return size;
         } catch (Exception e) {
             System.err.println("Error while loading chat font size:");
             e.printStackTrace();
