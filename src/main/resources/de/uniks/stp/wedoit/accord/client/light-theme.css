@@ -330,3 +330,11 @@
     -fx-border-color: #d9d9d9;
     -fx-padding :0 0 0 10;
 }
+
+.reference{
+    -fx-background-color: #aab0f0;
+}
+
+.reference:hover{
+    -fx-background-color: #cacded;
+}
