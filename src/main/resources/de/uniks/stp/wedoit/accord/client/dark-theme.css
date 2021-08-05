@@ -329,3 +329,11 @@
     -fx-control-inner-background: transparent;
     -fx-text-box-border: transparent;
 }
+
+.reference{
+    -fx-background-color: #414675;
+}
+
+.reference:hover{
+    -fx-background-color: #5865f2;
+}

@@ -4,6 +4,7 @@ import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
@@ -167,6 +168,7 @@ public class ServerChatController implements Controller {
         this.messageTextChangedListener = null;
         this.newMessagesListener = null;
         this.darkModeListener = null;
+        this.markingController = null;
     }
 
     /**
@@ -395,7 +397,7 @@ public class ServerChatController implements Controller {
         this.tfInputMessage.setEditable(this.currentChannel != null);
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory<>(this.editor.getStageManager()));
+        lvTextChat.setCellFactory(new MessageCellFactory<>(this.editor.getStageManager(), controller));
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 

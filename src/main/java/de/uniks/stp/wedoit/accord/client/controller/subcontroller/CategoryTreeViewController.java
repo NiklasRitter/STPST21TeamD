@@ -173,16 +173,25 @@ public class CategoryTreeViewController implements Controller {
                     controller.refreshLvUsers(channel);
                 } else if (mouseEvent.getClickCount() == 2) {
                     if (channel.getType().equals(AUDIO)) {
-                        if (localUser.getAudioChannel() == null) {
-                            editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                        } else if (localUser.getAudioChannel().getId().equals(channel.getId())) {
-                            editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                        } else {
-                            editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
-                        }
+                        handleAudioDoubleClicked(channel);
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * initAudioConnection when audio channel is clicked twice
+     *
+     * @param channel selected channel
+     */
+    public void handleAudioDoubleClicked(Channel channel) {
+        if (localUser.getAudioChannel() == null) {
+            editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+        } else if (localUser.getAudioChannel().getId().equals(channel.getId())) {
+            editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+        } else {
+            editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
         }
     }
 

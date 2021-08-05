@@ -169,8 +169,9 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         return buf.toString();
     }
 
-    public void setText(String newText) {
+    public RichTextArea setText(String newText) {
         Platform.runLater(() -> this.replaceText(newText));
+        return this;
     }
 
     private Emoji getEmojiFromPath(String imagePath) {
