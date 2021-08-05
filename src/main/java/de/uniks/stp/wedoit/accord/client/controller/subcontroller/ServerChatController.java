@@ -42,6 +42,8 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.COPY_MESSAGE_LINK;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 
 public class ServerChatController implements Controller {
 
@@ -216,16 +218,19 @@ public class ServerChatController implements Controller {
         MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
         MenuItem updateMessage = new MenuItem("- " + LanguageResolver.getString("UPDATE_MESSAGE_CONTEXT"));
         MenuItem deleteMessage = new MenuItem("- " + LanguageResolver.getString("DELETE_MESSAGE"));
+        MenuItem copyMessageLink = new MenuItem("- " + LanguageResolver.getString("COPY_MESSAGE_LINK"));
         contextMenuLocalUserMessage = new ContextMenu();
         contextMenuLocalUserMessage.setId("localUserMessageContextMenu");
         contextMenuLocalUserMessage.getItems().add(copy);
         contextMenuLocalUserMessage.getItems().add(quote);
         contextMenuLocalUserMessage.getItems().add(updateMessage);
         contextMenuLocalUserMessage.getItems().add(deleteMessage);
+        contextMenuLocalUserMessage.getItems().add(copyMessageLink);
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         updateMessage.setOnAction((event) -> handleContextMenuClicked(UPDATE, lvTextChat.getSelectionModel().getSelectedItem()));
         deleteMessage.setOnAction((event) -> handleContextMenuClicked(DELETE, lvTextChat.getSelectionModel().getSelectedItem()));
+        copyMessageLink.setOnAction((event) -> handleContextMenuClicked(COPY_MESSAGE_LINK, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -234,12 +239,13 @@ public class ServerChatController implements Controller {
     public void addUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
         MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
+        MenuItem copyMessageLink = new MenuItem("- " + LanguageResolver.getString("COPY_MESSAGE_LINK"));
         contextMenuUserMessage = new ContextMenu();
         contextMenuUserMessage.setId("userMessageContextMenu");
-        contextMenuUserMessage.getItems().add(copy);
-        contextMenuUserMessage.getItems().add(quote);
+        contextMenuUserMessage.getItems().addAll(copy, quote, copyMessageLink);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
+        copyMessageLink.setOnAction((event) -> handleContextMenuClicked(COPY_MESSAGE_LINK, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -272,6 +278,11 @@ public class ServerChatController implements Controller {
             }
             if (menu.equals(COPY)) {
                 editor.copyToSystemClipBoard(message.getText());
+            }
+            if (menu.equals(COPY_MESSAGE_LINK)) {
+                editor.copyToSystemClipBoard(MESSAGE_LINK + SLASH + server.getId() + SLASH +
+                        currentChannel.getCategory().getId() + SLASH + currentChannel.getId() +
+                        SLASH + message.getId() + SLASH + message.getTimestamp());
             }
         }
     }
