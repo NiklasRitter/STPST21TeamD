@@ -35,10 +35,7 @@ import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
@@ -46,6 +43,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
 
@@ -239,11 +237,36 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayNameAndDate(item);
                         displayTextWithEmoji(item);
                     }
+
+                    if (item.getText().startsWith(MESSAGE_LINK + SLASH)) {
+                        Hyperlink hyperlink = new Hyperlink(item.getText());
+                        this.setText(null);
+                        this.setGraphic(hyperlink);
+                        hyperlink.getStyleClass().add("link");
+                        hyperlink.setOnAction(event -> openMessage(item));
+                    }
+
                 } else {
                     //normal message possibly with emoji
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);
                 }
+            }
+        }
+
+        private void openMessage(Message message) {
+            String[] parsedReferenceMessage = stageManager.getEditor().parseReferenceMessage(message.getText());
+            Server server = null;
+            for (Server serverIndex: stageManager.getModel().getLocalUser().getServers()) {
+                if (serverIndex.getId().equals(parsedReferenceMessage[1])){
+                    server = serverIndex;
+                }
+            }
+            if (server != null) {
+                server.setReferenceMessage(message.getText());
+                Server finalServer = server;
+                Platform.runLater(() -> stageManager.initView(ControllerEnum.SERVER_SCREEN, finalServer, null));
+
             }
         }
 
