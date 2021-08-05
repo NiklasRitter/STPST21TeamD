@@ -401,6 +401,7 @@ public class MarkingController implements Controller {
             }
         }
         textLength = textArea.getLength();
+        textArea.requestFocus();
     }
 
     private void lvSelectChannelOnClick(MouseEvent mouseEvent) {
@@ -453,6 +454,7 @@ public class MarkingController implements Controller {
             }
         }
         textLength = textArea.getLength();
+        textArea.requestFocus();
     }
 
     private void checkMarkingPossible(String text, AtPositions at) {
