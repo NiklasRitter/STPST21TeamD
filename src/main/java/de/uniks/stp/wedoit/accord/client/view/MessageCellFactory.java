@@ -153,12 +153,18 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 time = checkTime(item);
 
                 if (item instanceof PrivateMessage) {
+                    //private message handling
                     if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
                         return;
                     } else if (item.getText().startsWith(GAME_PREFIX)) {
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                         return;
+                    }
+                } else {
+                    //marking in server chats
+                    if (containsMarking(item.getText())) {
+                        this.getStyleClass().add("marked_message");
                     }
                 }
 
@@ -205,27 +211,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);
                 }
-
-                if (item instanceof PrivateMessage) {
-
-                    if (item.getText().startsWith(GAME_SYSTEM)) {
-                        this.setText(item.getText().substring(GAME_PREFIX.length()));
-                    } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setStyle("-fx-font-size: 12");
-                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
-                    }
-                } else {
-                    if (containsMarking(item.getText())) {
-                        this.getStyleClass().add("marked_message");
-                    }
-                }
             }
-        }
-
-        private Label timeLabel() {
-            lblTime.setText(time + ": ");
-            lblTime.setStyle("-fx-font-size: 12");
-            return lblTime;
         }
 
         public void initToolTip(S item) {

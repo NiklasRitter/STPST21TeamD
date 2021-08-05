@@ -3,9 +3,7 @@ package de.uniks.stp.wedoit.accord.client.util;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import javafx.scene.control.ProgressBar;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.*;
 
 public class Recorder implements Runnable{
 
@@ -54,7 +52,14 @@ public class Recorder implements Runnable{
     @Override
     public void run() {
         try {
-            line = AudioSystem.getTargetDataLine(audioFormat);
+            DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
+            Mixer.Info inputDevice = editor.getStageManager().getPrefManager().loadInputDevice();
+            if(inputDevice != null){
+                line = (TargetDataLine) AudioSystem.getMixer(inputDevice).getLine(info);
+            }else{
+                line = (TargetDataLine) AudioSystem.getLine(info);
+            }
+
             line.open(audioFormat);
         } catch(Exception e) {
             e.printStackTrace();
