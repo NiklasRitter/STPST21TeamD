@@ -125,6 +125,26 @@ public class ServerChatController implements Controller {
         this.quoteTextFlow = new EmojiTextFlow(quoteParameter);
 
         initToolTip();
+
+        if (server.getReferenceMessage() != null && !server.getReferenceMessage().equals("")) {
+            loadMessage();
+        }
+
+    }
+
+    private void loadMessage() {
+        String[] parseReferenceMessage = editor.parseReferenceMessage(server.getReferenceMessage());
+        String categoryId = parseReferenceMessage[2];
+        String channelId = parseReferenceMessage[3];
+        Channel channel = editor.getChannelById(server, categoryId, channelId);
+        if (channel != null) {
+            initChannelChat(channel);
+        }
+        if (currentChannel != null) {
+            Message message = lvTextChat.getItems().get(0);
+            System.out.println(message.getId());
+        }
+
     }
 
 

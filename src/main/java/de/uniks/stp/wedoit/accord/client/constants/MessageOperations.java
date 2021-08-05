@@ -13,4 +13,6 @@ public class MessageOperations {
     public static final String UPDATE = "update";
     public static final String DELETE = "delete";
     public static final String COPY = "copy";
+    public static final String COPY_MESSAGE_LINK = "copy_message_link";
+    public static final String MESSAGE_LINK = "messageLink";
 }
