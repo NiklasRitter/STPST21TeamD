@@ -103,6 +103,14 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private MessageCell(ListView<S> param) {
             this.param = param;
+            // set the width (-20 to eliminate overhang in ListView)
+            prefWidthProperty().bind(param.widthProperty().subtract(20));
+            setMinWidth(param.getWidth() - 20);
+            setMaxWidth(param.getWidth() - 20);
+            setAlignment(Pos.CENTER_LEFT);
+
+            // allow wrapping
+            setWrapText(true);
         }
 
         /**
@@ -149,15 +157,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             if (!empty) {
 
-                // set the width (-20 to eliminate overhang in ListView)
-                prefWidthProperty().bind(param.widthProperty().subtract(20));
-                setMinWidth(param.getWidth() - 20);
-                setMaxWidth(param.getWidth() - 20);
-                setAlignment(Pos.CENTER_LEFT);
-
-                // allow wrapping
-                setWrapText(true);
-
                 //remove game prefix
                 if (item.getText().startsWith(GAME_PREFIX))
                     item.setText(item.getText().substring(GAME_PREFIX.length()));
@@ -182,9 +181,21 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
 
                 if (item.getText().startsWith("%") && item.getText().endsWith("%")) {
-                    //spoiler function
-                    displayNameAndDate(item);
-                    displaySpoilerButton(item);
+                    if (item.getText().charAt(item.getText().length()-2) != 92) {
+                        //spoiler function
+                        displayNameAndDate(item);
+                        displaySpoilerButton(item);
+                    }
+                    else {
+                        Message newMessage = new Message();
+                        newMessage.setId(item.getId());
+                        newMessage.setFrom(item.getFrom());
+                        newMessage.setChannel(item.getChannel());
+                        newMessage.setTimestamp(item.getTimestamp());
+                        newMessage.setText(item.getText().substring(0, item.getText().length()-2) + item.getText().substring(item.getText().length()-1));
+                        displayNameAndDate(newMessage);
+                        displayTextWithEmoji(newMessage);
+                    }
 
                 } else if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     //media view
