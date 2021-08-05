@@ -721,6 +721,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(channel.getName(), lblChannelName.getText());
+        Assert.assertEquals(channel.getName(), "channelName1");
 
         tfInputMessage.setText("");
         clickOn("#tfInputMessage");
@@ -777,9 +778,13 @@ public class ServerScreenTest extends ApplicationTest {
 
         Assert.assertEquals("#channelName2 1#channelName2 1", items.get(0).getText());
 
-        clickOn("channelName2");
+        clickOn("#reference");
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("channelName2", lblChannelName.getText());
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertTrue(tvServerChannels.getSelectionModel().getSelectedItem().getValue() instanceof Channel);
+        Assert.assertEquals("channelName2", ((Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue()).getName());
 
     }
 

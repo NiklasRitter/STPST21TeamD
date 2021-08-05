@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
-import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
@@ -182,7 +181,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
                 }
 
-                if(item.getText().startsWith("%") && item.getText().endsWith("%")){
+                if (item.getText().startsWith("%") && item.getText().endsWith("%")) {
                     //spoiler function
                     displayNameAndDate(item);
                     displaySpoilerButton(item);
@@ -260,12 +259,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
             }
             return channels;
-        }
-
-        private Label timeLabel() {
-            lblTime.setText(time + ": ");
-            lblTime.setStyle("-fx-font-size: 12");
-            return lblTime;
         }
 
         public void initToolTip(S item) {
@@ -525,6 +518,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 emojiTextFlowClickable.parseAndAppend("#" + channel.getName());
                 emojiTextFlowClickable.setOnMousePressed(event -> referenceButtonOnClick(channel));
                 emojiTextFlowClickable.getStyleClass().add("reference");
+                emojiTextFlowClickable.setId("reference");
                 message.getChildren().add(emojiTextFlowClickable);
 
                 current = current.substring(start + channel.getName().length() + 1);
@@ -553,14 +547,15 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         /**
          * content of message will be loaded into the list when the button is pressed
+         *
          * @param item to be loaded
          */
-        private void displaySpoilerButton(S item){
+        private void displaySpoilerButton(S item) {
             spoilerButton.getStyleClass().add("styleButton");
             vBox.getChildren().add(spoilerButton);
             spoilerButton.setOnAction((e) -> {
                 vBox.getChildren().remove(spoilerButton);
-                item.setText(item.getText().substring(1, item.getText().length()-1));
+                item.setText(item.getText().substring(1, item.getText().length() - 1));
                 displayTextWithEmoji(item);
                 spoilerButton.setOnAction(null);
             });
@@ -590,16 +585,15 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
 
     private void referenceButtonOnClick(Channel channel) {
-        LocalUser localUser = channel.getCategory().getServer().getLocalUser();
-        Editor editor = stageManager.getEditor();
         ServerScreenController serverScreenController = (ServerScreenController) controller;
         CategoryTreeViewController categoryTreeViewController = serverScreenController.getCategoryTreeViewController();
 
         TreeView<Object> tvServerChannels = categoryTreeViewController.getTvServerChannels();
         TreeItem<Object> treeItem = tvServerChannels.getRoot();
 
-
-        if (channel.getType().equals(TEXT)) {
+        if (channel.getType().equals(AUDIO)) {
+            categoryTreeViewController.handleAudioDoubleClicked(channel);
+        } else if (channel.getType().equals(TEXT)) {
             serverScreenController.getServerChatController().initChannelChat(channel);
             serverScreenController.refreshLvUsers(channel);
 
@@ -607,19 +601,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             if (treeItem != null) {
                 tvServerChannels.getSelectionModel().select(treeItem);
-            }
-
-        } else if (channel.getType().equals(AUDIO)) {
-            if (localUser.getAudioChannel() == null) {
-                editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(),
-                        channel.getCategory(), channel, categoryTreeViewController);
-            } else if (localUser.getAudioChannel().getId().equals(channel.getId())) {
-                editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(),
-                        channel.getCategory(), channel, categoryTreeViewController);
-            } else {
-                editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(),
-                        channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(),
-                        channel.getCategory(), localUser.getAudioChannel(), channel, categoryTreeViewController);
             }
         }
     }
