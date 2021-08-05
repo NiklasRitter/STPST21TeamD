@@ -608,6 +608,20 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
         Assert.assertEquals("Test Message" + emoji.getText(), lvTextChat.getItems().get(0).getText());
 
+        ((RichTextArea) lookup("#tfInputMessage").query()).setText("%Spoiler Message%");
+        clickOn("#tfInputMessage");
+        press(KeyCode.ENTER);
+
+        JsonObject testSpoilerMessage = JsonUtil.buildServerChatMessage(channel.getId(), "%Spoiler Message%");
+        mockChatWebSocket(getTestMessageServerAnswer(testSpoilerMessage));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("Spoiler");
+        Assert.assertEquals(channel.getMessages().size(), lvTextChat.getItems().size());
+        Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(1));
+        Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(1).getText());
+        Assert.assertEquals("Spoiler Message", lvTextChat.getItems().get(0).getText());
+
     }
 
     @Test

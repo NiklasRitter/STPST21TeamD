@@ -91,6 +91,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private EmojiTextFlowParameters parametersQuote;
         private EmojiTextFlow emojiTextFlow;
         private EmojiTextFlow quoteTextFlow;
+        private final Button spoilerButton = new Button("Spoiler");
+
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -106,6 +108,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         protected void updateItem(S item, boolean empty) {
             super.updateItem(item, empty);
             setItem(item);
+            spoilerButton.setOnAction(null);
             this.setText(null);
             this.getStyleClass().removeAll("font_size", "marked_message");
             this.setGraphic(null);
@@ -145,12 +148,15 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 // allow wrapping
                 setWrapText(true);
 
+                //remove game prefix
                 if (item.getText().startsWith(GAME_PREFIX))
                     item.setText(item.getText().substring(GAME_PREFIX.length()));
 
+                //eval correct time format
                 time = checkTime(item);
 
                 if (item instanceof PrivateMessage) {
+                    //private message handling
                     if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
                         return;
@@ -158,19 +164,31 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                         return;
                     }
+                } else {
+                    //marking in server chats
+                    if (containsMarking(item.getText())) {
+                        this.getStyleClass().add("marked_message");
+                    }
                 }
 
-                if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
+                if(item.getText().startsWith("%") && item.getText().endsWith("%")){
+                    //spoiler function
+                    displayNameAndDate(item);
+                    displaySpoilerButton(item);
+
+                } else if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
+                    //media view
                     setUpMedia(item);
 
                 } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                    //load more option if more than 50 messages in chat
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
                 } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_MESSAGE)
                         && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
-
+                    //handle quote formatting
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
                     String[] messages = quoteMessage.split(QUOTE_MESSAGE);
@@ -187,6 +205,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
 
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
+                    //invitation links for other server
                     String url = containsInviteUrl(item.getText());
                     if (url != null) {
                         setUpJoinServerView(item, url);
@@ -196,30 +215,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayTextWithEmoji(item);
                     }
                 } else {
+                    //normal message possibly with emoji
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);
                 }
-
-                if (item instanceof PrivateMessage) {
-
-                    if (item.getText().startsWith(GAME_SYSTEM)) {
-                        this.setText(item.getText().substring(GAME_PREFIX.length()));
-                    } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setStyle("-fx-font-size: 12");
-                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
-                    }
-                } else {
-                    if (containsMarking(item.getText())) {
-                        this.getStyleClass().add("marked_message");
-                    }
-                }
             }
-        }
-
-        private Label timeLabel() {
-            lblTime.setText(time + ": ");
-            lblTime.setStyle("-fx-font-size: 12");
-            return lblTime;
         }
 
         public void initToolTip(S item) {
@@ -467,6 +467,23 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             setGraphic(vBox);
         }
 
+        /**
+         * content of message will be loaded into the list when the button is pressed
+         * @param item to be loaded
+         */
+        private void displaySpoilerButton(S item){
+            spoilerButton.getStyleClass().add("styleButton");
+            vBox.getChildren().add(spoilerButton);
+            spoilerButton.setOnAction((e) -> {
+                vBox.getChildren().remove(spoilerButton);
+                item.setText(item.getText().substring(1, item.getText().length()-1));
+                displayTextWithEmoji(item);
+                spoilerButton.setOnAction(null);
+            });
+            setGraphic(vBox);
+
+        }
+
         private void displayNameAndDate(Message item) {
             HBox nameAndDateHBox = new HBox();
             nameAndDateHBox.setAlignment(Pos.CENTER_LEFT);
@@ -474,23 +491,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             int nameLength = item.getFrom().length();
 
-            switch (nameLength % 5) {
-                case 0:
-                    name.getStyleClass().add("color0");
-                    break;
-                case 1:
-                    name.getStyleClass().add("color1");
-                    break;
-                case 2:
-                    name.getStyleClass().add("color2");
-                    break;
-                case 3:
-                    name.getStyleClass().add("color3");
-                    break;
-                case 4:
-                    name.getStyleClass().add("color4");
-                    break;
-            }
+            //selects css class called "color0" to "color5"
+            name.getStyleClass().add("color" + nameLength % 5);
+
             lblDate.setText(time);
             lblDate.getStyleClass().add("date");
             initToolTip((S) item);
