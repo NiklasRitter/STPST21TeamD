@@ -195,10 +195,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayTextWithEmoji(newMessage);
                     }
 
-                } else if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
-                    //media view
-                    setUpMedia(item);
-
                 } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     //load more option if more than 50 messages in chat
                     setAlignment(Pos.CENTER);
@@ -233,6 +229,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayNameAndDate(item);
                         displayTextWithEmoji(item);
                     }
+
+                } else if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
+                    //media view
+                    setUpMedia(item);
+
                 } else if (!(item instanceof PrivateMessage)) {
                     ArrayList<Channel> referencedChannels = getReferences(item, item.getText());
                     if (!referencedChannels.isEmpty()) {
