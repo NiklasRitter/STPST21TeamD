@@ -179,7 +179,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         this.getStyleClass().add("marked_message");
                     }
                 }
-
                 if (item.getText().startsWith("%") && item.getText().endsWith("%")) {
                     if (item.getText().charAt(item.getText().length()-2) != 92) {
                         //spoiler function
@@ -190,7 +189,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         Message newMessage = new Message();
                         newMessage.setId(item.getId());
                         newMessage.setFrom(item.getFrom());
-                        newMessage.setChannel(item.getChannel());
                         newMessage.setTimestamp(item.getTimestamp());
                         newMessage.setText(item.getText().substring(0, item.getText().length()-2) + item.getText().substring(item.getText().length()-1));
                         displayNameAndDate(newMessage);
@@ -237,12 +235,10 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
                 } else if (!(item instanceof PrivateMessage)) {
                     ArrayList<Channel> referencedChannels = getReferences(item, item.getText());
-
                     if (!referencedChannels.isEmpty()) {
                         HBox hBox = new HBox();
                         displayNameAndDate(item);
                         setUpReferenceInMessage(item, referencedChannels, hBox, item.getText());
-
                         this.vBox.getChildren().add(hBox);
                         setGraphic(this.vBox);
 
@@ -337,15 +333,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             try {
                 URL Url = new URL(url);
                 Url.toURI();
-
                 if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
                 if (url.contains(MP4)) return true;
                 if (url.contains(MP3)) return true;
                 if (url.contains(GIF)) return true;
-                Document doc = Jsoup.connect(url).get();
-                if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
-                    descBox.setText(doc.title());
-                    descBox.getStyleClass().add("descBox");
+                if (Url.getHost().equals(SUPPORTED_CLOUD)) {
+                    Document doc = Jsoup.connect(url).get();
+                    if (doc.title() != null){
+                        descBox.setText(doc.title());
+                        descBox.getStyleClass().add("descBox");
+                    }
                 }
 
                 return true;
