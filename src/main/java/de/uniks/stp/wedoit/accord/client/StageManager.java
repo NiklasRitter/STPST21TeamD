@@ -64,7 +64,7 @@ public class StageManager extends Application {
             Stage currentStage = stageMap.get(controller.stage);
 
             if (currentScene != null) currentScene.setRoot(root);
-            else sceneMap.put(controller.stage, new Scene(root));
+            else sceneMap.put(controller.stage, new Scene(Objects.requireNonNull(root)));
 
             if (controller.stage.equals(POPUP_STAGE)) currentStage.sizeToScene();
 

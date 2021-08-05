@@ -91,6 +91,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private EmojiTextFlowParameters parametersQuote;
         private EmojiTextFlow emojiTextFlow;
         private EmojiTextFlow quoteTextFlow;
+        private final Button spoilerButton = new Button("Spoiler");
+
 
         private MessageCell(ListView<S> param) {
             this.param = param;
@@ -106,6 +108,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         protected void updateItem(S item, boolean empty) {
             super.updateItem(item, empty);
             setItem(item);
+            spoilerButton.setOnAction(null);
             this.setText(null);
             this.getStyleClass().removeAll("font_size", "marked_message");
             this.setGraphic(null);
@@ -168,7 +171,12 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
                 }
 
-                if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
+                if(item.getText().startsWith("%") && item.getText().endsWith("%")){
+                    //spoiler function
+                    displayNameAndDate(item);
+                    displaySpoilerButton(item);
+
+                } else if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
                     //media view
                     setUpMedia(item);
 
@@ -457,6 +465,23 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.emojiTextFlow.parseAndAppend(item.getText());
             this.vBox.getChildren().add(emojiTextFlow);
             setGraphic(vBox);
+        }
+
+        /**
+         * content of message will be loaded into the list when the button is pressed
+         * @param item to be loaded
+         */
+        private void displaySpoilerButton(S item){
+            spoilerButton.getStyleClass().add("styleButton");
+            vBox.getChildren().add(spoilerButton);
+            spoilerButton.setOnAction((e) -> {
+                vBox.getChildren().remove(spoilerButton);
+                item.setText(item.getText().substring(1, item.getText().length()-1));
+                displayTextWithEmoji(item);
+                spoilerButton.setOnAction(null);
+            });
+            setGraphic(vBox);
+
         }
 
         private void displayNameAndDate(Message item) {
