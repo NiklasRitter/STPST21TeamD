@@ -786,6 +786,8 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertTrue(tvServerChannels.getSelectionModel().getSelectedItem().getValue() instanceof Channel);
         Assert.assertEquals("channelName2", ((Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue()).getName());
 
+        clickOn("#tfInputMessage");
+        write("@#@");
     }
 
     @Test
