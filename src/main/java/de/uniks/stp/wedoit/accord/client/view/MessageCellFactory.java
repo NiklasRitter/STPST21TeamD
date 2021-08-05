@@ -491,23 +491,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             int nameLength = item.getFrom().length();
 
-            switch (nameLength % 5) {
-                case 0:
-                    name.getStyleClass().add("color0");
-                    break;
-                case 1:
-                    name.getStyleClass().add("color1");
-                    break;
-                case 2:
-                    name.getStyleClass().add("color2");
-                    break;
-                case 3:
-                    name.getStyleClass().add("color3");
-                    break;
-                case 4:
-                    name.getStyleClass().add("color4");
-                    break;
-            }
+            //selects css class called "color0" to "color5"
+            name.getStyleClass().add("color" + nameLength % 5);
+
             lblDate.setText(time);
             lblDate.getStyleClass().add("date");
             initToolTip((S) item);
