@@ -116,7 +116,7 @@ public class ServerChatController implements Controller {
 
         addUserMessageContextMenu();
         addLocalUserMessageContextMenu();
-
+        lvTextChat.setCellFactory(new MessageCellFactory<>(this.editor.getStageManager(), controller));
         this.lvTextChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getAccordClient().getOptions().getChatFontSize(), ";"));
 
         setQuoteParameter();
@@ -397,7 +397,6 @@ public class ServerChatController implements Controller {
         this.tfInputMessage.setEditable(this.currentChannel != null);
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory<>(this.editor.getStageManager(), controller));
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
