@@ -603,19 +603,12 @@ public class RestManager {
                 JsonArray data = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
                 List<Message> messages = JsonUtil.parseMessageArray(data, channel);
                 messages.stream().sorted(Comparator.comparing(Message::getTimestamp));
-                System.out.println("messages" + messages.get(0).getTimestamp());
-                System.out.println("messages" + messages.get(messages.size()-1).getTimestamp());
-                System.out.println(messages.size());
-                System.out.println("x" + timestamp);
-                System.out.println("to" +toTimestamp);
-                System.out.println((toTimestamp.matches("[0-9][0-9]*")));
                 if (toTimestamp.matches("[0-9][0-9]*")) {
-                    if(messages.get(messages.size()-1).getTimestamp() > Long.parseLong(toTimestamp) && messages.size() >= 50){
+                    if(messages.size() >= 50 && messages.get(messages.size()-1).getTimestamp() > Long.parseLong(toTimestamp)){
                         getChannelMessagesToTimeStamp(localUser, server, category, channel, messages.get(0).getTimestamp() +"", toTimestamp, messageId, controller);
                     } else {
                     Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));}
                 } else {
-                    System.out.println("iniiit");
                     Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));
 
                 }

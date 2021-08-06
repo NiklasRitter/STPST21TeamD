@@ -132,7 +132,9 @@ public class ServerChatController implements Controller {
 
     public void loadMessage() {
         String[] parseReferenceMessage = editor.parseReferenceMessage(server.getReferenceMessage());
-        if (parseReferenceMessage == null) {return;}
+        if (parseReferenceMessage == null) {
+            return;
+        }
         String categoryId = parseReferenceMessage[2];
         String channelId = parseReferenceMessage[3];
         String messageTimeStamp = parseReferenceMessage[5];
@@ -151,11 +153,10 @@ public class ServerChatController implements Controller {
         if (channel != null) {
             initChannelChat(channel);
 
-            for (Message selectMessage: lvTextChat.getItems()
+            for (Message selectMessage : lvTextChat.getItems()
             ) {
                 if (selectMessage.getId().equals(messageId)) {
-                    System.out.println("gefunden");
-                    Platform.runLater(() ->{
+                    Platform.runLater(() -> {
                         lvTextChat.scrollTo(selectMessage);
                         lvTextChat.getSelectionModel().select(selectMessage);
                     });
