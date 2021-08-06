@@ -14,8 +14,7 @@ import javafx.scene.control.Label;
 
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_ACCEPTS;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_INVITE;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 
 public class GameResultScreenController implements Controller {
 
@@ -66,6 +65,8 @@ public class GameResultScreenController implements Controller {
 
         btnQuit.setOnAction(this::redirectToPrivateChats);
         btnPlayAgain.setOnAction(this::playAgainOnClick);
+
+        localUser.setInGame(true);
     }
 
     /**
@@ -75,11 +76,11 @@ public class GameResultScreenController implements Controller {
      */
     private void playAgainOnClick(ActionEvent actionEvent) {
         if (this.localUser.getGameInvites().contains(opponent)) {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_ACCEPTS);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_REVENGE);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
-            stop();
+            //stop();
         } else {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_INVITE);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_REVENGE);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         }
     }
@@ -90,6 +91,8 @@ public class GameResultScreenController implements Controller {
      * @param actionEvent occurs when the Quit button ist pressed
      */
     private void redirectToPrivateChats(ActionEvent actionEvent) {
+        JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_CLOSE);
+        editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
         this.editor.getStageManager().getStage(StageEnum.GAME_STAGE).hide();
     }
@@ -103,6 +106,7 @@ public class GameResultScreenController implements Controller {
     public void stop() {
         btnPlayAgain.setOnAction(null);
         btnQuit.setOnAction(null);
+        localUser.setInGame(false);
     }
 
 }

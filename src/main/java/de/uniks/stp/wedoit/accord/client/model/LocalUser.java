@@ -25,6 +25,7 @@ public class LocalUser
    public static final String PROPERTY_STEAM64_ID = "steam64ID";
    public static final String PROPERTY_STEAM_GAME_EXTRA_INFO = "steamGameExtraInfo";
    public static final String PROPERTY_STEAM_GAME_EXTRA_INFO_TIMER = "steamGameExtraInfoTimer";
+   public static final String PROPERTY_IN_GAME = "inGame";
    private String password;
    private String name;
    private String userKey;
@@ -42,6 +43,7 @@ public class LocalUser
    private String steam64ID;
    private String steamGameExtraInfo;
    private Timer steamGameExtraInfoTimer;
+   private boolean inGame;
 
    public String getPassword()
    {
@@ -523,6 +525,24 @@ public class LocalUser
       final Timer oldValue = this.steamGameExtraInfoTimer;
       this.steamGameExtraInfoTimer = value;
       this.firePropertyChange(PROPERTY_STEAM_GAME_EXTRA_INFO_TIMER, oldValue, value);
+      return this;
+   }
+
+   public boolean isInGame()
+   {
+      return this.inGame;
+   }
+
+   public LocalUser setInGame(boolean value)
+   {
+      if (value == this.inGame)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.inGame;
+      this.inGame = value;
+      this.firePropertyChange(PROPERTY_IN_GAME, oldValue, value);
       return this;
    }
 

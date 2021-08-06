@@ -43,6 +43,7 @@ public class GenModel implements ClassModelDecorator {
         String id;
         String steam64ID;
         String steamGameExtraInfo;
+        boolean inGame;
         List<User> gameInvites;
         List<User> gameRequests;
         Channel audioChannel;

@@ -4,6 +4,7 @@ import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Message;
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
@@ -39,8 +40,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
@@ -145,19 +145,38 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 // allow wrapping
                 setWrapText(true);
 
-                if (item.getText().startsWith(GAME_PREFIX))
-                    item.setText(item.getText().substring(GAME_PREFIX.length()));
-
                 time = checkTime(item);
 
                 if (item instanceof PrivateMessage) {
-                    if (item.getText().startsWith(GAME_SYSTEM)) {
+                    String textToDisplay;
+                    if (item.getText().equals(GAME_INVITE) || item.getText().equals(GAME_REVENGE)) {
+                        if (item.getFrom().equals(stageManager.getEditor().getLocalUser().getName())) {
+                            textToDisplay = LanguageResolver.getString("SEND_GAME_INVITE");
+                        } else {
+                            textToDisplay = item.getFrom() + " " +LanguageResolver.getString("RECEIVE_GAME_INVITE");
+                        }
+                        item.setText(textToDisplay);
+                        displayNameAndDate(item);
+                        displayTextWithEmoji(item);
+                        return;
+                    } else if (item.getText().equals(GAME_CLOSE)) {
+                        if (item.getFrom().equals(stageManager.getEditor().getLocalUser().getName())) {
+                            textToDisplay = LanguageResolver.getString("YOU_LEFT_GAME");
+                        } else {
+                            textToDisplay = item.getFrom() + " " + LanguageResolver.getString("OPP_LEFT_GAME");
+                        }
+                        item.setText(textToDisplay);
+                        displayNameAndDate(item);
+                        displayTextWithEmoji(item);
+                        return;
+                    }
+                    /*if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
                         return;
                     } else if (item.getText().startsWith(GAME_PREFIX)) {
                         this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                         return;
-                    }
+                    }*/
                 }
 
                 if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
@@ -199,8 +218,11 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);
                 }
+                if (containsMarking(item.getText())) {
+                    this.getStyleClass().add("marked_message");
+                }
 
-                if (item instanceof PrivateMessage) {
+                /*if (item instanceof PrivateMessage) {
 
                     if (item.getText().startsWith(GAME_SYSTEM)) {
                         this.setText(item.getText().substring(GAME_PREFIX.length()));
@@ -209,10 +231,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
                     }
                 } else {
-                    if (containsMarking(item.getText())) {
-                        this.getStyleClass().add("marked_message");
-                    }
-                }
+
+                }*/
             }
         }
 

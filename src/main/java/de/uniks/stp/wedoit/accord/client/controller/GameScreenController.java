@@ -105,14 +105,15 @@ public class GameScreenController implements Controller {
             gameAction = GAME_SCISSORS;
         }
 
-        JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_PREFIX + gameAction);
+        JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(opponent.getName(), GAME_PREFIX + GAME_CHOOSE_MOVE + gameAction);
         editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
 
         StringBuilder buf = new StringBuilder().append(GAME_IMGURL).append(gameAction).append(".png");
         imgYouPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
 
         if (opponent.getGameMove() != null) {
-            buf = new StringBuilder().append(GAME_IMGURL).append(opponent.getGameMove()).append(".png");
+            buf = new StringBuilder().append(GAME_IMGURL).append(opponent.getGameMove().replace("choose ", "")).append(".png");
+            System.out.println(buf);
             imgOppPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
 
             resolveGameOutcome();
@@ -151,9 +152,11 @@ public class GameScreenController implements Controller {
     private void resolveGameOutcome() {
         Boolean outCome = editor.resultOfGame(gameAction, opponent.getGameMove());
         Platform.runLater(() -> {
-
-            if (outCome != null && outCome) ownScore.set(ownScore.get() + 1);
-            else if (outCome != null) oppScore.set(oppScore.get() + 1);
+            if (outCome != null && outCome) {
+                ownScore.set(ownScore.get() + 1);
+            } else if (outCome != null) {
+                oppScore.set(oppScore.get() + 1);
+            }
             handleGameDone();
         });
     }
@@ -166,8 +169,8 @@ public class GameScreenController implements Controller {
      */
     private void handleGameDone() {
         if (oppScore.get() == 3 || ownScore.get() == 3) {
-            this.editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, opponent, ownScore.get() == 3);
             stop();
+            this.editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, opponent, ownScore.get() == 3);
         }
     }
 
@@ -183,6 +186,10 @@ public class GameScreenController implements Controller {
         this.btnPaper.setOnAction(null);
         this.opponent.listeners().removePropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
         this.lbScore.textProperty().unbind();
+        this.editor.getLocalUser().setInGame(false);
+    }
 
+    public User getOpponent() {
+        return opponent;
     }
 }
