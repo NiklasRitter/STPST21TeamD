@@ -339,6 +339,10 @@
     -fx-background-color: #cacded;
 }
 
+.button-selected {
+    -fx-background-color: #2f3136;
+}
+
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
     -fx-background-color: rgba(173, 216, 230, 0.57);
 }
