@@ -238,17 +238,19 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayTextWithEmoji(item);
                     }
 
-                    if (item.getText().startsWith(MESSAGE_LINK + SLASH)) {
-                        Hyperlink hyperlink = new Hyperlink(item.getText());
-                        hyperlink.setId("messageLink");
-                        vBox.getChildren().clear();
-                        displayNameAndDate(item);
-                        vBox.getChildren().add(hyperlink);
-                        hyperlink.getStyleClass().add("link");
-                        hyperlink.setOnAction(event -> openMessage(item));
-                    }
 
-                } else {
+
+                } else if(item.getText().startsWith(MESSAGE_LINK + SLASH)) {
+                    Hyperlink hyperlink = new Hyperlink(item.getText());
+                    hyperlink.setId("messageLink");
+                    vBox.getChildren().clear();
+                    displayNameAndDate(item);
+                    vBox.getChildren().add(hyperlink);
+                    hyperlink.getStyleClass().add("link");
+                    hyperlink.setOnAction(event -> openMessage(item));
+
+                }
+                else {
                     //normal message possibly with emoji
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);
