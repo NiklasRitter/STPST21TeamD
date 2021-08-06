@@ -130,42 +130,42 @@ public class ServerChatController implements Controller {
 
     }
 
-    private void loadMessage() {
+    public void loadMessage() {
         String[] parseReferenceMessage = editor.parseReferenceMessage(server.getReferenceMessage());
+        if (parseReferenceMessage == null) {return;}
         String categoryId = parseReferenceMessage[2];
         String channelId = parseReferenceMessage[3];
         String messageTimeStamp = parseReferenceMessage[5];
+        String messageId = parseReferenceMessage[4];
         Channel channel = editor.getChannelById(server, categoryId, channelId);
 
 
         if (channel != null && channel.getCategory() != null && messageTimeStamp.matches("[0-9][0-9]*")) {
+            server.setReferenceMessage(null);
             String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
-            this.editor.getRestManager().getChannelMessagesToTimeStamp(this.localUser, this.server, channel.getCategory(), channel, timestamp, messageTimeStamp, this);
+            this.editor.getRestManager().getChannelMessagesToTimeStamp(this.localUser, this.server, channel.getCategory(), channel, timestamp, messageTimeStamp, messageId, this);
         }
-
-
-
     }
 
-    public void handleGetChannelMessagesToTimeStamp(Channel channel) {
-        String[] parseReferenceMessage = editor.parseReferenceMessage(server.getReferenceMessage());
-        String messageId = parseReferenceMessage[4];
-        server.setReferenceMessage(null);
+    public void handleGetChannelMessagesToTimeStamp(Channel channel, String messageId) {
         if (channel != null) {
             initChannelChat(channel);
-        }
 
-        for (Message selectMessage: lvTextChat.getItems()
-        ) {
-            if (selectMessage.getId().equals(messageId)) {
-                System.out.println("gefunden");
-                Platform.runLater(() ->{
+            for (Message selectMessage: lvTextChat.getItems()
+            ) {
+                if (selectMessage.getId().equals(messageId)) {
+                    System.out.println("gefunden");
+                    Platform.runLater(() ->{
                         lvTextChat.scrollTo(selectMessage);
                         lvTextChat.getSelectionModel().select(selectMessage);
-                });
+                    });
 
+                }
             }
+
         }
+
+
     }
 
 
