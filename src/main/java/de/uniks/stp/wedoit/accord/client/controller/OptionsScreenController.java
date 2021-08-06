@@ -14,9 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.util.Locale;
 
@@ -179,6 +177,6 @@ public class OptionsScreenController implements Controller {
      */
     private void authorizeSpotify(ActionEvent actionEvent) {
         Authorization authorizationSpotify = new Authorization();
-        authorizationSpotify.authorizationCodeUri_Sync();
+        authorizationSpotify.authorizationCodeUri();
     }
 }
