@@ -32,6 +32,7 @@ public class OptionsScreenController implements Controller {
     private ProgressBar progressBarTest, progressBarTestBot;
     private VBox vBoxSoundSettings, vBoxExtraSettings;
     private Recorder recorder;
+    private Slider sliderZoomLevel;
 
     /**
      * Create a new Controller
@@ -60,6 +61,7 @@ public class OptionsScreenController implements Controller {
         this.btnSteam = (Button) view.lookup("#btnSteam");
         this.btnTestSetup = (Button) view.lookup("#btnTestSetup");
         this.sliderFontSize = (Slider) view.lookup("#sliderFontSize");
+        this.sliderZoomLevel = (Slider) view.lookup("#sliderZoomLevel");
         this.sliderOutputVolume = (Slider) view.lookup("#sliderOutputVolume");
         this.sliderInputVolume = (Slider) view.lookup("#sliderInputVolume");
         this.sliderInputSensitivity = (Slider) view.lookup("#sliderInputSensitivity");
@@ -84,6 +86,7 @@ public class OptionsScreenController implements Controller {
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
         this.sliderFontSize.setOnMouseReleased(this::fontSizeSliderOnChange);
+        this.sliderZoomLevel.setOnMouseReleased(this::zoomLevelSliderOnChange);
         this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
         this.btnTestSetup.setOnAction(this::btnAudioTest);
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
@@ -93,6 +96,10 @@ public class OptionsScreenController implements Controller {
 
     private void fontSizeSliderOnChange(MouseEvent e) {
         options.setChatFontSize((int) sliderFontSize.getValue());
+    }
+
+    private void zoomLevelSliderOnChange(MouseEvent e) {
+        options.setZoomLevel((int) sliderFontSize.getValue());
     }
 
     private void outputVolumeSliderOnChange(MouseEvent e) {
@@ -213,6 +220,7 @@ public class OptionsScreenController implements Controller {
         btnLogout.setOnAction(null);
         btnTestSetup.setOnAction(null);
         sliderFontSize.setOnMouseReleased(null);
+        sliderZoomLevel.setOnMouseReleased(null);
         sliderOutputVolume.setOnMouseReleased(null);
         btnTestSetup.setOnAction(null);
         progressBarTest.progressProperty().unbind();

@@ -31,6 +31,7 @@ public class GenModel implements ClassModelDecorator {
         float systemVolume;
         double audioRootMeanSquare;
         int chatFontSize;
+        int zoomLevel;
 
         @Link("options")
         AccordClient accordClient;
