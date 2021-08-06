@@ -154,7 +154,11 @@ public class CategoryTreeViewController implements Controller {
             System.err.println("Error while loading channels from server");
             Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
-        Platform.runLater(() -> controller.getServerChatController().loadMessage());
+        Platform.runLater(() -> {
+            if (server.getReferenceMessage() != null && !server.getReferenceMessage().equals("")) {
+                controller.getServerChatController().loadMessage();
+            }
+        });
 
     }
 

@@ -240,6 +240,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                     if (item.getText().startsWith(MESSAGE_LINK + SLASH)) {
                         Hyperlink hyperlink = new Hyperlink(item.getText());
+                        hyperlink.setId("messageLink");
                         vBox.getChildren().clear();
                         displayNameAndDate(item);
                         vBox.getChildren().add(hyperlink);

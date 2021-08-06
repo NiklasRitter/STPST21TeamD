@@ -35,6 +35,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.*;
+import javax.websocket.DeploymentException;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
@@ -1202,6 +1203,62 @@ public class ServerScreenTest extends ApplicationTest {
             }
         }
         Assert.assertEquals("newTest", n1.getDescription());
+
+    }
+
+    @Test
+    public void testReferencedMessage() {
+        //init channel list and select first channel
+        initUserListView();
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //send message
+        ((RichTextArea) lookup("#tfInputMessage").query()).setText(((RichTextArea) lookup("#tfInputMessage").query()).getText() + "Test Message");
+        clickOn("#tfInputMessage");
+
+        press(KeyCode.ENTER);
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(1, lvTextChat.getItems().size());
+        Assert.assertEquals(channel.getMessages().size(), lvTextChat.getItems().size());
+        Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
+        Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn("- copy message link");
+        test_message = JsonUtil.buildServerChatMessage(channel.getId(), "messageLink/testId/idTest/idTest1/5e2ffbd8770dd077d03dr458/1616935874");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        server.setReferenceMessage("messageLink/testId/idTest/idTest1/5e2ffbd8770dd077d03dr458/1616935874");
+
+
+        Platform.runLater(() -> stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
+
+
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
