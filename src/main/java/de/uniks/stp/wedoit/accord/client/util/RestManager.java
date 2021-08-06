@@ -596,7 +596,7 @@ public class RestManager {
     }
 
 
-    public void getChannelMessagesToTimeStamp(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, String toTimestamp, ServerChatController controller) {
+    public void getChannelMessagesToTimeStamp(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, String toTimestamp, String messageId, ServerChatController controller) {
         restClient.getChannelMessages(localUser.getUserKey(), server.getId(), category.getId(), channel.getId(), timestamp, (response) -> {
 
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
@@ -611,12 +611,12 @@ public class RestManager {
                 System.out.println((toTimestamp.matches("[0-9][0-9]*")));
                 if (toTimestamp.matches("[0-9][0-9]*")) {
                     if(messages.get(messages.size()-1).getTimestamp() > Long.parseLong(toTimestamp) && messages.size() >= 50){
-                        getChannelMessagesToTimeStamp(localUser, server, category, channel, messages.get(0).getTimestamp() +"", toTimestamp, controller);
+                        getChannelMessagesToTimeStamp(localUser, server, category, channel, messages.get(0).getTimestamp() +"", toTimestamp, messageId, controller);
                     } else {
-                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel));}
+                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));}
                 } else {
                     System.out.println("iniiit");
-                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel));
+                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));
 
                 }
 
