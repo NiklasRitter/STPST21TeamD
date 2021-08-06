@@ -4,7 +4,6 @@ import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
@@ -42,7 +41,6 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.COPY_MESSAGE_LINK;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 
 public class ServerChatController implements Controller {
@@ -136,15 +134,38 @@ public class ServerChatController implements Controller {
         String[] parseReferenceMessage = editor.parseReferenceMessage(server.getReferenceMessage());
         String categoryId = parseReferenceMessage[2];
         String channelId = parseReferenceMessage[3];
+        String messageTimeStamp = parseReferenceMessage[5];
         Channel channel = editor.getChannelById(server, categoryId, channelId);
+
+
+        if (channel != null && channel.getCategory() != null && messageTimeStamp.matches("[0-9][0-9]*")) {
+            String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
+            this.editor.getRestManager().getChannelMessagesToTimeStamp(this.localUser, this.server, channel.getCategory(), channel, timestamp, messageTimeStamp, this);
+        }
+
+
+
+    }
+
+    public void handleGetChannelMessagesToTimeStamp(Channel channel) {
+        String[] parseReferenceMessage = editor.parseReferenceMessage(server.getReferenceMessage());
+        String messageId = parseReferenceMessage[4];
+        server.setReferenceMessage(null);
         if (channel != null) {
             initChannelChat(channel);
         }
-        if (currentChannel != null) {
-            Message message = lvTextChat.getItems().get(0);
-            System.out.println(message.getId());
-        }
 
+        for (Message selectMessage: lvTextChat.getItems()
+        ) {
+            if (selectMessage.getId().equals(messageId)) {
+                System.out.println("gefunden");
+                Platform.runLater(() ->{
+                        lvTextChat.scrollTo(selectMessage);
+                        lvTextChat.getSelectionModel().select(selectMessage);
+                });
+
+            }
+        }
     }
 
 
@@ -511,5 +532,6 @@ public class ServerChatController implements Controller {
     public String getQuotedText() {
         return quotedText;
     }
+
 
 }
