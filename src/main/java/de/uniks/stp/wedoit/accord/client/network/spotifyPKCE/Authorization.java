@@ -9,9 +9,6 @@ import java.net.URI;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 public class Authorization {
     private final String clientId = "14d2a17f341444c189820d1f5d704839";
@@ -25,7 +22,7 @@ public class Authorization {
     private final AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodePKCEUri(codeChallenge)
             .build();
 
-    public void authorizationCodeUri_Sync() {
+    public void authorizationCodeUri() {
         final URI uri = authorizationCodeUriRequest.execute();
 
         Desktop desktop = java.awt.Desktop.getDesktop();
@@ -36,29 +33,12 @@ public class Authorization {
         }
     }
 
-    public void authorizationCodeUri_Async() {
-        try {
-            final CompletableFuture<URI> uriFuture = authorizationCodeUriRequest.executeAsync();
-
-            // Thread free to do other tasks...
-
-            // Example Only. Never block in production code.
-            final URI uri = uriFuture.join();
-
-            System.out.println("URI: " + uri.toString());
-        } catch (CompletionException e) {
-            System.out.println("Error: " + e.getCause().getMessage());
-        } catch (CancellationException e) {
-            System.out.println("Async operation cancelled.");
-        }
-    }
-
     //------------------------------------------------------------------------------------------------------------------
     // PKCE Methods
     //------------------------------------------------------------------------------------------------------------------
 
     public String getPkce() {
-        return generateCodeChallange(generateCodeVerifier());
+        return generateCodeChallenge(generateCodeVerifier());
     }
 
     private String generateCodeVerifier() {
@@ -68,7 +48,7 @@ public class Authorization {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(codeVerifier);
     }
 
-    private String generateCodeChallange(String codeVerifier) {
+    private String generateCodeChallenge(String codeVerifier) {
         byte[] digest = null;
         try {
             byte[] bytes = codeVerifier.getBytes("US-ASCII");
