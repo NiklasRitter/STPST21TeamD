@@ -240,8 +240,9 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
                     if (item.getText().startsWith(MESSAGE_LINK + SLASH)) {
                         Hyperlink hyperlink = new Hyperlink(item.getText());
-                        this.setText(null);
-                        this.setGraphic(hyperlink);
+                        vBox.getChildren().clear();
+                        displayNameAndDate(item);
+                        vBox.getChildren().add(hyperlink);
                         hyperlink.getStyleClass().add("link");
                         hyperlink.setOnAction(event -> openMessage(item));
                     }
