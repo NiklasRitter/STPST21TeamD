@@ -383,7 +383,8 @@ public class ServerScreenController implements Controller {
 
         SpotifyIntegration spotifyIntegration = this.editor.getSpotifyIntegration();
         if (spotifyIntegration != null) {
-            this.editor.changeUserDescription(this.localUser.getId(), spotifyIntegration.getUsersCurrentlyPlayingTrack());
+            // this.editor.changeUserDescription(this.localUser.getId(), spotifyIntegration.getUsersCurrentlyPlayingTrack());
+            spotifyIntegration.test1();
         }
     }
 

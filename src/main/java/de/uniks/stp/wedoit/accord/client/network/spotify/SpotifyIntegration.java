@@ -148,7 +148,6 @@ public class SpotifyIntegration implements HttpHandler {
 
     public void checkAuthorizationCodeExpired() {
         try {
-            if (this.authorizationCodeCredentials.getExpiresIn() <= 0) {
                 AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
                 authorizationCodePKCERefreshRequest.execute();
 
@@ -157,7 +156,6 @@ public class SpotifyIntegration implements HttpHandler {
                 spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
                 System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -166,6 +164,58 @@ public class SpotifyIntegration implements HttpHandler {
     //------------------------------------------------------------------------------------------------------------------
     // Get Users currently playing track
     //------------------------------------------------------------------------------------------------------------------
+
+    public void test1() {
+        GetUsersCurrentlyPlayingTrackRequest getUsersCurrentlyPlayingTrackRequest = this.spotifyApi
+                .getUsersCurrentlyPlayingTrack()
+                .build();
+        CurrentlyPlaying currentlyPlaying = null;
+        try {
+            currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
+            test2(currentlyPlaying);
+        } catch (Exception e) {
+            test3();
+        }
+    }
+
+    public void test2(CurrentlyPlaying currentlyPlaying) {
+        String response;
+        if (currentlyPlaying != null) {
+            Track track = (Track) currentlyPlaying.getItem();
+            StringBuilder artistNames = new StringBuilder();
+            boolean multipleArtists = false;
+            for (ArtistSimplified artist : track.getArtists()) {
+                if (!multipleArtists) {
+                    artistNames.append(artist.getName());
+                    multipleArtists = true;
+                } else {
+                    artistNames.append(" , ").append(artist.getName());
+                }
+            }
+            response = "listens to " + track.getName() + " from " + artistNames;
+        } else {
+            response = "no currently playing song";
+        }
+        System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
+        System.out.println(response);
+    }
+
+    public void test3() {
+        try {
+            AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
+            authorizationCodePKCERefreshRequest.execute();
+
+            authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
+            spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
+            spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
+
+            System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
+            test1();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public String getUsersCurrentlyPlayingTrack() {
         checkAuthorizationCodeExpired();
@@ -177,7 +227,7 @@ public class SpotifyIntegration implements HttpHandler {
         try {
             currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
         } catch (Exception e) {
-            e.printStackTrace();
+            checkAuthorizationCodeExpired();
         }
         String response;
         if (currentlyPlaying != null) {
