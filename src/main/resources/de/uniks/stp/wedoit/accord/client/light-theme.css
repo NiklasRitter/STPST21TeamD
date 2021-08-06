@@ -338,3 +338,7 @@
 .reference:hover{
     -fx-background-color: #cacded;
 }
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: rgba(173, 216, 230, 0.57);
+}
