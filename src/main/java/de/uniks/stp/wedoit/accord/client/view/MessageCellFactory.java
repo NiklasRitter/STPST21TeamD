@@ -81,6 +81,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Label lblDate = new Label();
         private final MediaView mediaView = new MediaView();
         private final VBox vBox = new VBox();
+        private final HBox styleHBox = new HBox();
         private final Label label = new Label();
         private final Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
@@ -88,6 +89,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private MediaPlayer mediaPlayer;
         private String time;
         private EmojiTextFlowParameters parameters;
+        private EmojiTextFlowParameters parametersBold;
         private EmojiTextFlowParameters parametersQuote;
         private EmojiTextFlow emojiTextFlow;
         private EmojiTextFlow quoteTextFlow;
@@ -110,6 +112,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.getStyleClass().removeAll("font_size", "marked_message");
             this.setGraphic(null);
             this.vBox.getChildren().clear();
+            this.styleHBox.getChildren().clear();
             webView.getEngine().load(null);
             descBox.setText(null);
             hyperlink.setOnAction(null);
@@ -120,13 +123,17 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize() - 3).createParameters();
             this.parameters =
                     new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize()).createParameters();
+            this.parametersBold =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize(), true).createParameters();
             if (stageManager.getPrefManager().loadDarkMode()) {
                 this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
+                this.parametersBold.setTextColor(Color.valueOf("#ADD8e6"));
                 this.parametersQuote.setTextColor(Color.valueOf("#ADD8e6"));
                 this.hyperlink.setStyle("-fx-text-fill: #ADD8e6");
                 this.label.setStyle("-fx-text-fill: #ADD8e6");
             } else {
                 this.parameters.setTextColor(Color.valueOf("#000000"));
+                this.parametersBold.setTextColor(Color.valueOf("#000000"));
                 this.parametersQuote.setTextColor(Color.valueOf("#000000"));
                 this.hyperlink.setStyle("-fx-text-fill: #000000");
                 this.label.setStyle("-fx-text-fill: #000000");
@@ -462,8 +469,32 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private void displayTextWithEmoji(Message item) {
-            this.emojiTextFlow.parseAndAppend(item.getText());
-            this.vBox.getChildren().add(emojiTextFlow);
+            if (item.getText().contains(BOLD_STYLING_KEY)) {
+                String[] messageTextBlocks = item.getText().split(BOLD_STYLING_KEY_SPLITTER);
+                boolean lastBoldKey = false;
+                for (String messageTextBlock : messageTextBlocks) {
+                    if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
+                        lastBoldKey = false;
+                        messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parametersBold);
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    } else {
+                        if (messageTextBlock.endsWith(BOLD_STYLING_KEY)) {
+                            lastBoldKey = true;
+                            messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
+                        }
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parameters);
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    }
+                }
+                setGraphic(styleHBox);
+                this.vBox.getChildren().add(this.styleHBox);
+            } else {
+                this.emojiTextFlow.parseAndAppend(item.getText());
+                this.vBox.getChildren().add(emojiTextFlow);
+            }
             setGraphic(vBox);
         }
 
