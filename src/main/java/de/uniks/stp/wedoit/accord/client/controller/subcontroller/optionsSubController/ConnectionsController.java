@@ -29,15 +29,21 @@ public class ConnectionsController implements Controller {
         this.btnSteam = (Button) view.lookup("#btnSteam");
 
         this.btnSteam.setOnAction(this::btnSteamOnClick);
+        this.btnSpotify.setOnAction(this::btnSpotifyClick);
 
     }
 
     @Override
     public void stop() {
         btnSteam.setOnAction(null);
+        btnSpotify.setOnAction(null);
     }
 
     private void btnSteamOnClick(ActionEvent actionEvent) {
         this.editor.getStageManager().initView(ControllerEnum.CONNECT_TO_STEAM_SCREEN, null, null);
+    }
+
+    private void btnSpotifyClick(ActionEvent actionEvent) {
+
     }
 }

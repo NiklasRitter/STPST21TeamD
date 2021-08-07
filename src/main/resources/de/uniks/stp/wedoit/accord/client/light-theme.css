@@ -187,6 +187,7 @@
 
 .sidebar-Button {
     -fx-background-color: transparent;
+    -fx-text-fill: white;
 }
 
 .sidebar-Button:hover {

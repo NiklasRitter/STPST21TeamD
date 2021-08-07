@@ -63,8 +63,23 @@ public class OptionsScreenController implements Controller {
         this.btnConnections.setOnAction(this::btnConnectionsOptions);
         this.btnVoice.setOnAction(this::btnVoiceOptions);
         this.btnDescription.setOnAction(this::btnDescriptionOptions);
-
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
+
+    }
+
+    /**
+     * Called to stop this controller
+     * <p>
+     * Remove action listeners
+     */
+    public void stop(){
+        btnBack.setOnAction(null);
+        btnLogout.setOnAction(null);
+        btnAppearance.setOnAction(null);
+        btnConnections.setOnAction(null);
+        btnDescription.setOnAction(null);
+        btnLanguage.setOnAction(null);
+        btnVoice.setOnAction(null);
 
     }
 
@@ -132,29 +147,8 @@ public class OptionsScreenController implements Controller {
 
     }
 
-
-
     private void changeIfLoginScreen() {
     }
-
-    /**
-     * Called to stop this controller
-     * <p>
-     * Remove action listeners
-     */
-    public void stop(){
-        btnBack.setOnAction(null);
-        btnLogout.setOnAction(null);
-        btnAppearance.setOnAction(null);
-        btnConnections.setOnAction(null);
-        btnDescription.setOnAction(null);
-        btnLanguage.setOnAction(null);
-        btnVoice.setOnAction(null);
-
-    }
-
-
-
 
     /**
      * The localUser will be logged out and redirect to the LoginScreen

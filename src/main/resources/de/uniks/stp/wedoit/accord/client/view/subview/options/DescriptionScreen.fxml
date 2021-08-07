@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="vBoxDescription" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox id="hBoxLanguage" alignment="CENTER_LEFT" spacing="91.0">
+      <HBox alignment="CENTER_LEFT" spacing="91.0">
          <children>
-            <Label id="lblLanguage" text="Desciption">
+            <Label text="Desciption">
                <font>
                   <Font size="14.0" />
                </font>

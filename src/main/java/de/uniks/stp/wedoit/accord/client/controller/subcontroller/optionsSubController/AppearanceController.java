@@ -3,7 +3,6 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller.optionsSubCon
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.model.Options;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
@@ -41,9 +40,8 @@ public class AppearanceController implements Controller {
     @Override
     public void stop() {
         btnDarkMode.setOnAction(null);
-
+        sliderFontSize.setOnMouseReleased(null);
     }
-
 
     /**
      * Change the dark mode to the value of the CheckBox
@@ -51,11 +49,10 @@ public class AppearanceController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void btnDarkModeOnClick(ActionEvent actionEvent) {
-        Platform.runLater(() -> options.setDarkmode(btnDarkMode.isSelected()));
+        options.setDarkmode(btnDarkMode.isSelected());
     }
 
     private void fontSizeSliderOnChange(MouseEvent e) {
         options.setChatFontSize((int) sliderFontSize.getValue());
-        editor.getStageManager().getPrefManager().saveChatFontSize((int) sliderFontSize.getValue());
     }
 }
