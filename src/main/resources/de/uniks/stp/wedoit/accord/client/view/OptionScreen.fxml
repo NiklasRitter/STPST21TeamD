@@ -11,16 +11,16 @@
    <children>
       <VBox id="vBoxButtons" alignment="TOP_CENTER" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" spacing="20.0" styleClass="styleBackgroundHighlight">
          <children>
-            <Button id="btnBack" mnemonicParsing="false" styleClass="sidebar-Button" text="BACK">
+            <Button id="btnBack" mnemonicParsing="false" styleClass="sidebar-Button" text="%BACK">
                <tooltip>
                   <Tooltip text="BACK" />
                </tooltip>
             </Button>
-            <Button id="btnAppearance" mnemonicParsing="false" styleClass="sidebar-Button" text="Appearance" />
-            <Button id="btnLanguage" mnemonicParsing="false" styleClass="sidebar-Button" text="Language" />
-            <Button id="btnConnections" mnemonicParsing="false" styleClass="sidebar-Button" text="Connections" />
-            <Button id="btnVoice" mnemonicParsing="false" styleClass="sidebar-Button" text="Voice" />
-            <Button id="btnDescription" mnemonicParsing="false" styleClass="sidebar-Button" text="Description" />
+            <Button id="btnAppearance" mnemonicParsing="false" styleClass="sidebar-Button" text="%APPEARANCE" />
+            <Button id="btnLanguage" mnemonicParsing="false" styleClass="sidebar-Button" text="%LANGUAGE" />
+            <Button id="btnConnections" mnemonicParsing="false" styleClass="sidebar-Button" text="%CONNECTIONS" />
+            <Button id="btnVoice" mnemonicParsing="false" styleClass="sidebar-Button" text="%SOUND" />
+            <Button id="btnDescription" mnemonicParsing="false" styleClass="sidebar-Button" text="%DESCRIPTION" />
             <Region VBox.vgrow="ALWAYS" />
             <Button id="btnLogout" mnemonicParsing="false" styleClass="sidebar-Button" text="%LOGOUT">
                <tooltip>
@@ -29,8 +29,11 @@
             </Button>
          </children>
          <padding>
-            <Insets bottom="5.0" top="5.0" />
+            <Insets bottom="10.0" top="10.0" />
          </padding>
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
       </VBox>
    </children>
 </HBox>

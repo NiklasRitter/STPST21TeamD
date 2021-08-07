@@ -10,7 +10,7 @@
    <children>
       <HBox alignment="CENTER_LEFT" spacing="91.0">
          <children>
-            <Label text="Desciption">
+            <Label text="%DESCRIPTION">
                <font>
                   <Font size="14.0" />
                </font>

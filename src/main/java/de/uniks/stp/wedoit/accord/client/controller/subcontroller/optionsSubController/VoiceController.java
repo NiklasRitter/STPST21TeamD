@@ -55,6 +55,7 @@ public class VoiceController implements Controller {
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
         sliderInputSensitivity.valueProperty().addListener((e, old, n) -> editor.getAccordClient().getOptions().setAudioRootMeanSquare(n.doubleValue()));
         sliderInputSensitivity.setValue(editor.getAccordClient().getOptions().getAudioRootMeanSquare());
+        sliderOutputVolume.setValue(editor.getStageManager().getPrefManager().loadSystemVolume());
     }
 
     @Override

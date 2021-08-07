@@ -116,23 +116,30 @@ public class OptionsScreenController implements Controller {
             switch (e){
                 case APPEARANCE_OPTIONS_SCREEN:
                     currentController = new AppearanceController(loadedOptions, options, editor);
-                    stageTitle += " - Appearance";
+                    stageTitle += " - " + LanguageResolver.getString("APPEARANCE");
                     break;
                 case LANGUAGE_OPTIONS_SCREEN:
                     currentController = new LanguageController(loadedOptions, options, editor, this);
                     stageTitle += " - " + LanguageResolver.getString("LANGUAGE");
+                    btnBack.setText(LanguageResolver.getString("BACK"));
+                    btnAppearance.setText(LanguageResolver.getString("APPEARANCE"));
+                    btnLanguage.setText(LanguageResolver.getString("LANGUAGE"));
+                    btnConnections.setText(LanguageResolver.getString("CONNECTIONS"));
+                    btnVoice.setText(LanguageResolver.getString("SOUND"));
+                    btnDescription.setText(LanguageResolver.getString("DESCRIPTION"));
+                    btnLogout.setText(LanguageResolver.getString("LOGOUT"));
                     break;
                 case CONNECTIONS_OPTIONS_SCREEN:
                     currentController = new ConnectionsController(loadedOptions, options, editor);
-                    stageTitle += " - Connections";
+                    stageTitle += " - " + LanguageResolver.getString("CONNECTIONS");
                     break;
                 case VOICE_OPTIONS_SCREEN:
                     currentController = new VoiceController(loadedOptions, options, editor);
-                    stageTitle += " - Voice";
+                    stageTitle += " - " + LanguageResolver.getString("SOUND");
                     break;
                 case DESCRIPTION_OPTION_SCREEN:
                     currentController = new DescriptionController(loadedOptions, options, editor);
-                    stageTitle += " - Description";
+                    stageTitle += " - " + LanguageResolver.getString("DESCRIPTION");
                     break;
             }
             editor.getStageManager().getStage(StageEnum.STAGE).setTitle(stageTitle);

@@ -32,7 +32,7 @@
       </HBox>
       <HBox id="hBoxZoomLevel" alignment="CENTER_LEFT" spacing="25.0">
          <children>
-            <Label id="lbZoomLevel" text="ZOOM LEVEL">
+            <Label id="lbZoomLevel" text="%ZOOM_LEVEL">
                <font>
                   <Font size="14.0" />
                </font>
