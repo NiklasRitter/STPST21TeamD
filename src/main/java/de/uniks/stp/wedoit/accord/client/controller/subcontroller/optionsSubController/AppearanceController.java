@@ -8,6 +8,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 
 public class AppearanceController implements Controller {
@@ -30,6 +32,9 @@ public class AppearanceController implements Controller {
         this.btnDarkMode = (CheckBox) view.lookup("#btnDarkMode");
         this.sliderFontSize = (Slider) view.lookup("#sliderFontSize");
 
+        changeIfLoginScreen();
+
+
         this.btnDarkMode.setSelected(options.isDarkmode());
         this.sliderFontSize.setValue(editor.getStageManager().getPrefManager().loadChatFontSize());
 
@@ -42,6 +47,16 @@ public class AppearanceController implements Controller {
         btnDarkMode.setOnAction(null);
         sliderFontSize.setOnMouseReleased(null);
     }
+
+    private void changeIfLoginScreen(){
+        if (editor.getLocalUser().getUserKey() == null) {
+            VBox vBoxAppearance = (VBox) view.lookup("#vBoxAppearance");
+            HBox hBoxTextSize = (HBox) view.lookup("#hBoxTextSize");
+            HBox hBoxZoomLevel = (HBox) view.lookup("#hBoxZoomLevel");
+            vBoxAppearance.getChildren().removeAll(hBoxTextSize, hBoxZoomLevel);
+        }
+    }
+
 
     /**
      * Change the dark mode to the value of the CheckBox

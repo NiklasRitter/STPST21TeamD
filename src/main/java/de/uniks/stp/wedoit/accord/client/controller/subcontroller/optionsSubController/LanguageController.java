@@ -3,29 +3,34 @@ package de.uniks.stp.wedoit.accord.client.controller.subcontroller.optionsSubCon
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
+import de.uniks.stp.wedoit.accord.client.controller.OptionsScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import javafx.event.Event;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.util.Locale;
 
 public class LanguageController implements Controller {
 
-    private Parent view;
+    private final Parent view;
     private final Options options;
     private final Editor editor;
+    private final OptionsScreenController controller;
 
     private ChoiceBox<String> choiceBoxLanguage;
 
-    public LanguageController(Parent view, Options model, Editor editor){
+    public LanguageController(Parent view, Options model, Editor editor, OptionsScreenController controller){
         this.view = view;
         this.options = model;
         this.editor = editor;
+        this.controller = controller;
     }
 
     @Override
@@ -75,13 +80,7 @@ public class LanguageController implements Controller {
                 options.setLanguage("fa_IR");
                 break;
         }
-
-        Scene scene = this.view.getScene();
-        this.view = ControllerEnum.OPTION_SCREEN.loadScreen();
-        ((HBox) view.lookup("#hBoxOuter")).getChildren().add( ControllerEnum.LANGUAGE_OPTIONS_SCREEN.loadSubOptionScreen());
-        scene.setRoot(this.view);
-        this.init();
-
+        controller.selectSubController(ControllerEnum.LANGUAGE_OPTIONS_SCREEN);
     }
 
     private void setLanguage(String languageURL) {

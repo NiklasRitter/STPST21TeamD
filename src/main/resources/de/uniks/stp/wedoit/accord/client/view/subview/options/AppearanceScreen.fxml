@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="vBoxAppearance" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="50.0">
          <children>
@@ -20,7 +20,7 @@
             <CheckBox id="btnDarkMode" mnemonicParsing="false" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="25.0">
+      <HBox id="hBoxTextSize" alignment="CENTER_LEFT" spacing="25.0">
          <children>
             <Label id="lbFontSize" text="%CHAT_TEXT_SIZE">
                <font>
@@ -30,7 +30,7 @@
             <Slider id="sliderFontSize" blockIncrement="0.0" majorTickUnit="2.0" max="20.0" min="12.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="12.0" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="25.0">
+      <HBox id="hBoxZoomLevel" alignment="CENTER_LEFT" spacing="25.0">
          <children>
             <Label id="lbZoomLevel" text="ZOOM LEVEL">
                <font>

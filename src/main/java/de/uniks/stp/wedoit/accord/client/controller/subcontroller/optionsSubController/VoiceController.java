@@ -54,7 +54,7 @@ public class VoiceController implements Controller {
 
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
         sliderInputSensitivity.valueProperty().addListener((e, old, n) -> editor.getAccordClient().getOptions().setAudioRootMeanSquare(n.doubleValue()));
-
+        sliderInputSensitivity.setValue(editor.getAccordClient().getOptions().getAudioRootMeanSquare());
     }
 
     @Override
@@ -63,6 +63,7 @@ public class VoiceController implements Controller {
         choiceBoxInputDevice.setOnAction(null);
         sliderOutputVolume.setOnMouseReleased(null);
         btnTestSetup.setOnAction(null);
+        progressBarTest.progressProperty().unbind();
 
         if (recorder != null) {
             recorder.stop();

@@ -16,7 +16,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.*;
 public enum ControllerEnum {
     LOGIN_SCREEN(StageEnum.STAGE, LanguageResolver.getString("LOGIN"), "LoginRegisterScreen", LOGIN_SCREEN_CONTROLLER, true),
     PRIVATE_CHAT_SCREEN(StageEnum.STAGE, LanguageResolver.getString("PRIVATE_CHATS"), "PrivateChatsScreen", PRIVATE_CHATS_SCREEN_CONTROLLER, true),
-    OPTION_SCREEN(StageEnum.STAGE, LanguageResolver.getString("OPTIONS"), "OptionScreen", OPTIONS_SCREEN_CONTROLLER, false),
+    OPTION_SCREEN(StageEnum.STAGE, LanguageResolver.getString("OPTIONS"), "OptionScreen", OPTIONS_SCREEN_CONTROLLER, true),
     CONNECT_TO_STEAM_SCREEN(StageEnum.POPUP_STAGE, LanguageResolver.getString("CONNECT_TO_STEAM"), "SteamConnectionScreen", CONNECT_TO_STEAM_SCREEN_CONTROLLER, false),
     GAME_SCREEN_INGAME(StageEnum.GAME_STAGE, LanguageResolver.getString("ROCK_PAPER_SCISSORS"), "GameScreen", GAME_SCREEN_CONTROLLER, true),
     GAME_SCREEN_RESULT(StageEnum.GAME_STAGE, LanguageResolver.getString("RESULT"), "GameResultScreen", GAME_RESULT_SCREEN_CONTROLLER, false),

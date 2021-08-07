@@ -10,12 +10,13 @@ import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class OptionsScreenController implements Controller {
 
     private final Options options;
     private final Editor editor;
-    private Parent view;
+    private final Parent view;
 
     private HBox hBoxOuter;
     private Controller currentController;
@@ -53,9 +54,10 @@ public class OptionsScreenController implements Controller {
         this.btnVoice = (Button) view.lookup("#btnVoice");
         this.btnDescription = (Button) view.lookup("#btnDescription");
 
+        changeIfLoginScreen();
+
         selectSubController(ControllerEnum.APPEARANCE_OPTIONS_SCREEN);
 
-        changeIfLoginScreen();
 
         this.btnBack.setOnAction(this::btnBackToChats);
         this.btnAppearance.setOnAction(this::btnAppearanceOptions);
@@ -83,14 +85,6 @@ public class OptionsScreenController implements Controller {
 
     }
 
-    /**
-     * sends user form options screen back to the private chats
-     * @param actionEvent occurs when Back button is pressed
-     */
-    private void btnBackToChats(ActionEvent actionEvent) {
-        editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null);
-    }
-
     private void btnAppearanceOptions(ActionEvent actionEvent) {
         selectSubController(ControllerEnum.APPEARANCE_OPTIONS_SCREEN);
     }
@@ -111,8 +105,8 @@ public class OptionsScreenController implements Controller {
         selectSubController(ControllerEnum.DESCRIPTION_OPTION_SCREEN);
     }
 
-    private void selectSubController(ControllerEnum e){
-        if(e != currentControllerEnum){
+    public void selectSubController(ControllerEnum e){
+        if(e != currentControllerEnum || e == ControllerEnum.LANGUAGE_OPTIONS_SCREEN){
             currentControllerEnum = e;
             if(currentController != null) currentController.stop();
             hBoxOuter.getChildren().remove(loadedOptions);
@@ -125,8 +119,8 @@ public class OptionsScreenController implements Controller {
                     stageTitle += " - Appearance";
                     break;
                 case LANGUAGE_OPTIONS_SCREEN:
-                    currentController = new LanguageController(loadedOptions, options, editor);
-                    stageTitle += " - Language";
+                    currentController = new LanguageController(loadedOptions, options, editor, this);
+                    stageTitle += " - " + LanguageResolver.getString("LANGUAGE");
                     break;
                 case CONNECTIONS_OPTIONS_SCREEN:
                     currentController = new ConnectionsController(loadedOptions, options, editor);
@@ -147,9 +141,21 @@ public class OptionsScreenController implements Controller {
 
     }
 
-    private void changeIfLoginScreen() {
+    /**
+     * sends user form options screen back to the private chats
+     * @param actionEvent occurs when Back button is pressed
+     */
+    private void btnBackToChats(ActionEvent actionEvent) {
+        if(editor.getLocalUser().getUserKey() != null) editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null);
+        else editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN,true, null);
     }
 
+    private void changeIfLoginScreen() {
+        if (editor.getLocalUser().getUserKey() == null) {
+            VBox vBoxButtons = (VBox) view.lookup("#vBoxButtons");
+            vBoxButtons.getChildren().removeAll(btnConnections, btnVoice, btnLogout, btnDescription);
+        }
+    }
     /**
      * The localUser will be logged out and redirect to the LoginScreen
      *
