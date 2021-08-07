@@ -337,3 +337,7 @@
 .reference:hover{
     -fx-background-color: #5865f2;
 }
+
+.button-selected {
+    -fx-background-color: #2f3136;
+}
