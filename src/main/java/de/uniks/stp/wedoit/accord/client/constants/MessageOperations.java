@@ -13,4 +13,7 @@ public class MessageOperations {
     public static final String UPDATE = "update";
     public static final String DELETE = "delete";
     public static final String COPY = "copy";
+
+    public static final String BOLD_STYLING_KEY = "*";
+    public static final String BOLD_STYLING_KEY_SPLITTER = "(?<=\\" + BOLD_STYLING_KEY + ")";
 }
