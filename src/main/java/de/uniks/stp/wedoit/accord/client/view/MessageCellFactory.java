@@ -240,7 +240,14 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
 
 
-                } else if(item.getText().startsWith(MESSAGE_LINK + SLASH)) {
+                }
+                else {
+                    //normal message possibly with emoji
+                    displayNameAndDate(item);
+                    displayTextWithEmoji(item);
+                }
+
+                if(item.getText().startsWith(MESSAGE_LINK + SLASH) && item.getText().split("/").length == 6) {
                     Hyperlink hyperlink = new Hyperlink(item.getText());
                     hyperlink.setId("messageLink");
                     vBox.getChildren().clear();
@@ -249,11 +256,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     hyperlink.getStyleClass().add("link");
                     hyperlink.setOnAction(event -> openMessage(item));
 
-                }
-                else {
-                    //normal message possibly with emoji
-                    displayNameAndDate(item);
-                    displayTextWithEmoji(item);
                 }
             }
         }
