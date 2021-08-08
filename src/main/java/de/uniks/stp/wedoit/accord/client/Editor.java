@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class Editor {
@@ -698,5 +699,18 @@ public class Editor {
             }
         }
 
+    }
+
+    public void removeUserFromAudioChannelOfServer(Server server) {
+        for (Category category: server.getCategories()) {
+            for (Channel channel: category.getChannels()) {
+                if (channel.getType().equals(AUDIO) && channel != getLocalUser().getAudioChannel()){
+                    for (User user: channel.getAudioMembers()) {
+                        channel.withoutAudioMembers(user);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

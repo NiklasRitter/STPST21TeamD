@@ -722,9 +722,10 @@ public class RestManager {
 
     public void leaveAndJoinNewAudioChannel(String userKey, Server server, Category oldCategory, Category newCategory, Channel oldChannel, Channel newChannel, CategoryTreeViewController controller) {
         this.editor.getAudioManager().closeAudioConnection();
-        restClient.leaveAudioChannel(userKey, server.getId(), oldCategory.getId(), oldChannel.getId(), response -> {
+        restClient.leaveAudioChannel(userKey, oldCategory.getServer().getId(), oldCategory.getId(), oldChannel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 joinAudioChannel(userKey, server, newCategory, newChannel, controller);
+
             } else {
                 controller.handleLeaveAudioChannel(null);
             }
