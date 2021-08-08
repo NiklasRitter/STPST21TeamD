@@ -40,6 +40,7 @@ public class CategoryTreeViewController implements Controller {
     private PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
     private PropertyChangeListener userListViewListener = this::changeUserList;
     private MenuButton serverMenuButton;
+    private PropertyChangeListener localUserAudioChannel = this::localUserAudioChannelChanged;
 
     public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
@@ -59,6 +60,7 @@ public class CategoryTreeViewController implements Controller {
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
         initTvServerChannels();
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.localUserAudioChannel);
     }
 
     /**
@@ -91,6 +93,8 @@ public class CategoryTreeViewController implements Controller {
     }
 
     public void stop() {
+        this.localUserAudioChannel = null;
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.localUserAudioChannel);
         this.tvServerChannels.setOnMouseReleased(null);
         this.tvServerChannels = null;
         this.tvServerChannelsRoot = null;
@@ -116,6 +120,10 @@ public class CategoryTreeViewController implements Controller {
     }
 
     // Channel and Category init
+
+    private void localUserAudioChannelChanged(PropertyChangeEvent propertyChangeEvent) {
+        this.tvServerChannels.refresh();
+    }
 
     /**
      * initialize channel List view
