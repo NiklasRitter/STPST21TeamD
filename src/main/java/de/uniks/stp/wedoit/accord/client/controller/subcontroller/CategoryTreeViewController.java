@@ -93,8 +93,8 @@ public class CategoryTreeViewController implements Controller {
     }
 
     public void stop() {
-        this.localUserAudioChannel = null;
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.localUserAudioChannel);
+        this.localUserAudioChannel = null;
         this.tvServerChannels.setOnMouseReleased(null);
         this.tvServerChannels = null;
         this.tvServerChannelsRoot = null;
