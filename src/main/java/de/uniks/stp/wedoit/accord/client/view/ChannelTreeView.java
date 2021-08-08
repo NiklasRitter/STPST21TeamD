@@ -2,16 +2,21 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.controller.Controller;
+import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
@@ -127,6 +132,20 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         menuItem1.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CATEGORY_SCREEN, null, null));
         menuItem2.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CHANNEL_SCREEN, item.getCategory(), null));
         menuItem3.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CHANNEL_SCREEN, item, null));
+
+        if (item.getType().equals(AUDIO)) {
+            MenuItem menuItem4;
+            if (stageManager.getEditor().getAccordClient().getLocalUser().getAudioChannel() == item) {
+                menuItem4= new MenuItem("- " + LanguageResolver.getString("LEAVE_AUDIO_CHANNEL") +" "+ item.getName());
+            } else {
+                menuItem4 = new MenuItem("- " + LanguageResolver.getString("JOIN_AUDIO_CHANNEL") +" "+ item.getName());
+            }
+            contextMenu.getItems().add(menuItem4);
+            ServerScreenController controller = (ServerScreenController) this.stageManager.getControllerMap().get(SERVER_SCREEN_CONTROLLER);
+            if (controller != null) {
+                menuItem4.setOnAction((event) -> controller.getCategoryTreeViewController().handleAudioDoubleClicked(item));
+            }
+        }
 
         return contextMenu;
     }

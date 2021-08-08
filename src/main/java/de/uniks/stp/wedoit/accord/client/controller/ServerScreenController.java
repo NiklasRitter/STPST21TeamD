@@ -201,6 +201,7 @@ public class ServerScreenController implements Controller {
         this.server.listeners().removePropertyChangeListener(Server.PROPERTY_MEMBERS, this.userListViewListener);
         this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
         this.editor.getStageManager().getModel().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
+
         this.serverNameListener = null;
         this.userListViewListener = null;
         this.languageRefreshed = null;
@@ -220,6 +221,8 @@ public class ServerScreenController implements Controller {
             this.audioChannelSubViewController.stop();
         }
         this.audioChannelSubViewContainer = null;
+        editor.removeUserFromAudioChannelOfServer(server);
+
     }
 
     // ActionEvent Methods

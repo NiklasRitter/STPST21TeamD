@@ -28,6 +28,7 @@ import java.util.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.MESSAGE_LINK;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class Editor {
@@ -699,12 +700,34 @@ public class Editor {
         }
 
     }
-    //"messageLink/ServerId/CategoryId/ChannelId/MessageId/Timestamp"
+
+
+    /**
+     * converts a message link, given in the format: messageLink/ServerId/CategoryId/ChannelId/MessageId/Timestamp,
+     * to array of the strings which contains messageLink, ServerId, CategoryId, ChannelId, MessageId and Timestamp.
+     */
     public String[] parseReferenceMessage(String message) {
         if (message.startsWith(MESSAGE_LINK + SLASH) && message.split("/").length == 6) {
             String[] split = message.split("/");
             return split;
         }
         return null;
+    }
+
+
+    /**
+     * removes the audiomembers of a channel of a given server
+     */
+    public void removeUserFromAudioChannelOfServer(Server server) {
+        for (Category category: server.getCategories()) {
+            for (Channel channel: category.getChannels()) {
+                if (channel.getType().equals(AUDIO) && channel != getLocalUser().getAudioChannel()){
+                    for (User user: channel.getAudioMembers()) {
+                        channel.withoutAudioMembers(user);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
