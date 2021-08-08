@@ -16,6 +16,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
@@ -96,6 +97,16 @@ public class PrivateChatController implements Controller {
 
         initToolTip();
         this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
+
+        this.tfPrivateChat.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
+                    event.consume();
+                    sendMessage(tfPrivateChat.getConvertedText());
+                }
+            }
+        });
     }
 
     public void initToolTip() {
