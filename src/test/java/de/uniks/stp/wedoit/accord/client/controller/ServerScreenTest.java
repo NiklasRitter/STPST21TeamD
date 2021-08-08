@@ -15,6 +15,7 @@ import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -35,6 +36,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.*;
+import javax.websocket.DeploymentException;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
@@ -1205,6 +1207,78 @@ public class ServerScreenTest extends ApplicationTest {
 
     }
 
+    @Test
+    public void testReferencedMessage() {
+        //init channel list and select first channel
+        initUserListView();
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+        Label lblChannelName = lookup("#lbChannelName").query();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        TreeView<Object> tvServerChannels = lookup("#tvServerChannels").query();
+
+
+        WaitForAsyncUtils.waitForFxEvents();
+        tvServerChannels.getSelectionModel().select(1);
+        Channel channel = (Channel) tvServerChannels.getSelectionModel().getSelectedItem().getValue();
+
+        clickOn("#tvServerChannels");
+
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals(channel.getName(), lblChannelName.getText());
+
+        //send message
+        ((RichTextArea) lookup("#tfInputMessage").query()).setText(((RichTextArea) lookup("#tfInputMessage").query()).getText() + "Test Message");
+        clickOn("#tfInputMessage");
+
+        press(KeyCode.ENTER);
+
+        JsonObject test_message = JsonUtil.buildServerChatMessage(channel.getId(), "Test Message");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(1, lvTextChat.getItems().size());
+        Assert.assertEquals(channel.getMessages().size(), lvTextChat.getItems().size());
+        Assert.assertEquals(lvTextChat.getItems().get(0), channel.getMessages().get(0));
+        Assert.assertEquals(lvTextChat.getItems().get(0).getText(), channel.getMessages().get(0).getText());
+
+        lvTextChat.getSelectionModel().select(0);
+        rightClickOn(lvTextChat);
+
+        clickOn("- copy message link");
+        test_message = JsonUtil.buildServerChatMessage(channel.getId(), "messageLink/testId/idTest/idTest1/5e2ffbd8770dd077d03dr458/1616935874");
+        mockChatWebSocket(getTestMessageServerAnswer(test_message));
+
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        Platform.runLater(() -> {
+
+            Assert.assertEquals(clipboard.getString(),"messageLink/testId/idTest/idTest1/5e2ffbd8770dd077d03dr458/1616935874");
+        });
+        WaitForAsyncUtils.waitForFxEvents();
+    }
+
+    @Test
+    public void testReferencedMessageOpen() {
+        //init channel list and select first channel
+        Message message = new Message().setText("Test").setTimestamp(1616935874).setId("5e2ffbd8770dd077d03dr458").setFrom("Tom");
+        server.withCategories(new Category().setId("idTest").withChannels(new Channel().setId("idTest1")
+                .withMessages(message)));
+        server.setReferenceMessage("messageLink/testId/idTest/idTest1/5e2ffbd8770dd077d03dr458/1616935874");
+        initUserListView();
+        initChannelListView();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        when(res.getBody()).thenReturn(new JsonNode(Json.createObjectBuilder().add("status", "success")
+                .add("data", Json.createArrayBuilder()).build().toString()));
+
+        verify(restMock).getChannelMessages(anyString(), anyString(), anyString(), anyString(), anyString(), categoriesCallbackArgumentCaptor.capture());
+
+        Callback<JsonNode> callback = categoriesCallbackArgumentCaptor.getValue();
+        callback.completed(res);
+        WaitForAsyncUtils.waitForFxEvents();
+        ListView<Message> lvTextChat = lookup("#lvTextChat").queryListView();
+        Assert.assertEquals(lvTextChat.getSelectionModel().getSelectedItem(), message);
+    }
 
     @Test
     public void testUpdateMessage() {

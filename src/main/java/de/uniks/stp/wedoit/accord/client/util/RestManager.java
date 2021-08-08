@@ -27,6 +27,7 @@ public class RestManager {
 
     private final Editor editor;
     private RestClient restClient = new RestClient();
+    private int count = 0;
 
     /**
      * Create a RestManager.
@@ -593,6 +594,30 @@ public class RestManager {
             }
         });
     }
+
+
+    public void getChannelMessagesToTimeStamp(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, String toTimestamp, String messageId, ServerChatController controller) {
+        restClient.getChannelMessages(localUser.getUserKey(), server.getId(), category.getId(), channel.getId(), timestamp, (response) -> {
+
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JsonArray data = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
+                List<Message> messages = JsonUtil.parseMessageArray(data, channel);
+                messages.stream().sorted(Comparator.comparing(Message::getTimestamp));
+                if (toTimestamp.matches("[0-9][0-9]*")) {
+                    if(messages.size() >= 50 && messages.get(messages.size()-1).getTimestamp() > Long.parseLong(toTimestamp)){
+                        getChannelMessagesToTimeStamp(localUser, server, category, channel, messages.get(0).getTimestamp() +"", toTimestamp, messageId, controller);
+                    } else {
+                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));}
+                } else {
+                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));
+
+                }
+
+
+            }
+        });
+    }
+
 
     /**
      * Try to delete a category with the Restclient::deleteCategory method

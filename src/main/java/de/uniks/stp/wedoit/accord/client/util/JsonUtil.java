@@ -169,6 +169,31 @@ public class JsonUtil {
         return messages;
     }
 
+    public static List<Message> parseMessageArray(JsonArray jsonMessages, Channel channel) {
+        ArrayList<Message> messages = new ArrayList<>();
+        for (JsonValue jsonMessage : jsonMessages) {
+
+            String id = (jsonMessage.asJsonObject().getString(ID));
+            Message message = haveMessage(channel, id);
+            message.setText(jsonMessage.asJsonObject().getString(TEXT));
+            message.setFrom(jsonMessage.asJsonObject().getString(FROM));
+            String timestamp = jsonMessage.asJsonObject().get(TIMESTAMP).toString();
+            message.setTimestamp(Long.parseLong(timestamp));
+
+            messages.add(message);
+        }
+        return messages;
+    }
+
+    private static Message haveMessage(Channel channel, String id) {
+        for (Message message: channel.getMessages()) {
+            if (message.getId().equals(id)) {
+                return message;
+            }
+        }
+        return new Message().setId(id).setChannel(channel);
+    }
+
     /**
      * Parse a given JsonObject to a invitation.
      * <p>

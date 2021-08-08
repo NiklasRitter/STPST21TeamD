@@ -23,12 +23,11 @@ import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.MESSAGE_LINK;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
@@ -568,6 +567,7 @@ public class Editor {
      */
     public Channel getChannelById(Server server, String categoryId, String channelId) {
         Category category = getCategoryById(server, categoryId);
+        if (category == null) {return null;}
         for (Channel channel : category.getChannels()) {
             if (channel.getId().equals(channelId)) {
                 return channel;
@@ -701,6 +701,23 @@ public class Editor {
 
     }
 
+
+    /**
+     * converts a message link, given in the format: messageLink/ServerId/CategoryId/ChannelId/MessageId/Timestamp,
+     * to array of the strings which contains messageLink, ServerId, CategoryId, ChannelId, MessageId and Timestamp.
+     */
+    public String[] parseReferenceMessage(String message) {
+        if (message.startsWith(MESSAGE_LINK + SLASH) && message.split("/").length == 6) {
+            String[] split = message.split("/");
+            return split;
+        }
+        return null;
+    }
+
+
+    /**
+     * removes the audiomembers of a channel of a given server
+     */
     public void removeUserFromAudioChannelOfServer(Server server) {
         for (Category category: server.getCategories()) {
             for (Channel channel: category.getChannels()) {
