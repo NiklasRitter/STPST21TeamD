@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.db;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -46,7 +47,8 @@ public class SqliteDB {
             stmt.execute("CREATE TABLE settings (\n"
                     + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
                     + "	fontSize integer DEFAULT 12,\n"
-                    + " audioRMS double DEFAULT 0"
+                    + " audioRMS double DEFAULT 0,\n"
+                    + " refreshToken string DEFAULT null"
                     + ");"
             );
 
@@ -321,4 +323,32 @@ public class SqliteDB {
         return new ArrayList<>(users);
     }
 
+    public void updateRefreshToken(String refreshToken) {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,refreshToken) VALUES(1,?)")) {
+
+            prep.setString(1, refreshToken);
+
+            prep.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getRefreshToken() {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
+
+            ResultSet rs = prep.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("refreshToken");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

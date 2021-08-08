@@ -217,7 +217,7 @@ public class OptionsScreenController implements Controller {
      * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
      */
     private void authorizeSpotify(ActionEvent actionEvent) {
-        this.editor.setSpotifyIntegration(new SpotifyIntegration());
+        this.editor.setSpotifyIntegration(new SpotifyIntegration(editor));
         this.editor.getSpotifyIntegration().authorize();
     }
 }

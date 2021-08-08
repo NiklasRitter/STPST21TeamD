@@ -695,11 +695,20 @@ public class Editor {
 
     }
 
-    public void setSpotifyIntegration(SpotifyIntegration spotifyIntegration) {
+    public SpotifyIntegration setSpotifyIntegration(SpotifyIntegration spotifyIntegration) {
         this.spotifyIntegration = spotifyIntegration;
+        return spotifyIntegration;
     }
 
     public SpotifyIntegration getSpotifyIntegration() {
         return this.spotifyIntegration;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.db.updateRefreshToken(refreshToken);
+    }
+
+    public String getRefreshToken() {
+        return this.db.getRefreshToken();
     }
 }

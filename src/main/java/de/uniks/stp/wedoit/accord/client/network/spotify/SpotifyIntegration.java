@@ -16,6 +16,7 @@ import com.wrapper.spotify.requests.authorization.authorization_code.Authorizati
 import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERefreshRequest;
 import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERequest;
 import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackRequest;
+import de.uniks.stp.wedoit.accord.client.Editor;
 import org.apache.hc.core5.http.ParseException;
 
 import java.awt.*;
@@ -36,6 +37,7 @@ import java.util.concurrent.Executors;
 
 public class SpotifyIntegration implements HttpHandler {
 
+    private final Editor editor;
     private SpotifyApi spotifyApi;
     private final String clientId = "14d2a17f341444c189820d1f5d704839";
     private final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8000/spotify");
@@ -46,7 +48,8 @@ public class SpotifyIntegration implements HttpHandler {
     private AuthorizationCodeCredentials authorizationCodeCredentials;
     private AuthorizationCodePKCERequest authorizationCodePKCERequest;
 
-    public SpotifyIntegration() {
+    public SpotifyIntegration(Editor editor) {
+        this.editor = editor;
         this.executorService = Executors.newCachedThreadPool();
     }
 
@@ -79,6 +82,24 @@ public class SpotifyIntegration implements HttpHandler {
         Desktop desktop = java.awt.Desktop.getDesktop();
         try {
             desktop.browse(uri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void reauthorize() {
+        this.spotifyApi = new SpotifyApi.Builder()
+                .setClientId(clientId)
+                .setRefreshToken(this.editor.getRefreshToken())
+                .build();
+
+        try {
+            AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
+            authorizationCodePKCERefreshRequest.execute();
+
+            authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
+            spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
+            spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,6 +147,8 @@ public class SpotifyIntegration implements HttpHandler {
 
             this.spotifyApi.setAccessToken(this.authorizationCodeCredentials.getAccessToken());
             this.spotifyApi.setRefreshToken(this.authorizationCodeCredentials.getRefreshToken());
+
+            this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -148,14 +171,14 @@ public class SpotifyIntegration implements HttpHandler {
 
     public void checkAuthorizationCodeExpired() {
         try {
-                AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
-                authorizationCodePKCERefreshRequest.execute();
+            AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
+            authorizationCodePKCERefreshRequest.execute();
 
-                authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
-                spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
-                spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
+            authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
+            spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
+            spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
-                System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
+            System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
         } catch (Exception e) {
             e.printStackTrace();
         }

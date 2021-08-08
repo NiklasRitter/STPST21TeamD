@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeVi
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import kong.unirest.JsonNode;
@@ -87,6 +88,11 @@ public class RestManager {
                 LocalUser localUser = editor.haveLocalUser(username, userKey);
                 localUser.setPassword(password);
                 editor.getWebSocketManager().start();
+                //TODO
+                if (this.editor.getRefreshToken() != null) {
+                    SpotifyIntegration spotifyIntegration = this.editor.setSpotifyIntegration(new SpotifyIntegration(editor));
+                    spotifyIntegration.reauthorize();
+                }
                 controller.handleLogin(true);
             }
         });
