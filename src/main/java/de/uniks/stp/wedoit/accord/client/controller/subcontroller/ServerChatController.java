@@ -17,6 +17,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -127,6 +128,15 @@ public class ServerChatController implements Controller {
         if (server.getReferenceMessage() != null && !server.getReferenceMessage().equals("")) {
             loadMessage();
         }
+        this.tfInputMessage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
+                    event.consume();
+                    sendMessage(tfInputMessage.getConvertedText());
+                }
+            }
+        });
 
     }
 

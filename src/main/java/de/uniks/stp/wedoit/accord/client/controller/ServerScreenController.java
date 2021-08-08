@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 
 public class ServerScreenController implements Controller {
