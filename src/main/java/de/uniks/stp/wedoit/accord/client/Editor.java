@@ -23,12 +23,11 @@ import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.MESSAGE_LINK;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class Editor {
@@ -567,6 +566,7 @@ public class Editor {
      */
     public Channel getChannelById(Server server, String categoryId, String channelId) {
         Category category = getCategoryById(server, categoryId);
+        if (category == null) {return null;}
         for (Channel channel : category.getChannels()) {
             if (channel.getId().equals(channelId)) {
                 return channel;
@@ -698,5 +698,13 @@ public class Editor {
             }
         }
 
+    }
+    //"messageLink/ServerId/CategoryId/ChannelId/MessageId/Timestamp"
+    public String[] parseReferenceMessage(String message) {
+        if (message.startsWith(MESSAGE_LINK + SLASH) && message.split("/").length == 6) {
+            String[] split = message.split("/");
+            return split;
+        }
+        return null;
     }
 }

@@ -99,6 +99,7 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String id;
         String owner;
+        String referenceMessage;
 
         @Link("servers")
         List<User> members;
