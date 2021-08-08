@@ -5,6 +5,7 @@ import org.fulib.builder.ClassModelManager;
 import org.fulib.builder.reflect.Link;
 
 import java.util.List;
+import java.util.Timer;
 
 public class GenModel implements ClassModelDecorator {
     @Override
@@ -36,11 +37,14 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String userKey;
         String id;
+        String spotifyCurrentlyPlaying;
         List<User> gameInvites;
         List<User> gameRequests;
         Channel audioChannel;
         boolean muted;
         boolean allMuted;
+        Timer trackTimer;
+        Timer refreshSpotifyAuthTimer;
 
         @Link("localUser")
         List<User> users;

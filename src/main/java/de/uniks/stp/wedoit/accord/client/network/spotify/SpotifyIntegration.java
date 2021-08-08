@@ -85,6 +85,8 @@ public class SpotifyIntegration implements HttpHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        this.editor.getSpotifyManager().setupRefreshAuthTimer();
     }
 
     public void reauthorize() {
@@ -169,40 +171,23 @@ public class SpotifyIntegration implements HttpHandler {
         executorService.shutdown();
     }
 
-    public void checkAuthorizationCodeExpired() {
-        try {
-            AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
-            authorizationCodePKCERefreshRequest.execute();
-
-            authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
-            spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
-            spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
-
-            System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     //------------------------------------------------------------------------------------------------------------------
     // Get Users currently playing track
     //------------------------------------------------------------------------------------------------------------------
 
-    public String getSpotifyDescription() {
-        return createDescription(getCurrentlyPlayingTrack());
-    }
-
-    public CurrentlyPlaying getCurrentlyPlayingTrack() {
+    public String getUsersCurrentlyPlayingTrack() {
         GetUsersCurrentlyPlayingTrackRequest getUsersCurrentlyPlayingTrackRequest = this.spotifyApi
                 .getUsersCurrentlyPlayingTrack()
                 .build();
         CurrentlyPlaying currentlyPlaying = null;
         try {
             currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
-        } catch (IOException | ParseException | SpotifyWebApiException e) {
-            refreshAccessToken();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return currentlyPlaying;
+        String description = createDescription(currentlyPlaying);
+        this.editor.getLocalUser().setSpotifyCurrentlyPlaying(description);
+        return description;
     }
 
     public String createDescription(CurrentlyPlaying currentlyPlaying) {
@@ -226,6 +211,26 @@ public class SpotifyIntegration implements HttpHandler {
         return response;
     }
 
+    /*
+    //-----------------OLD-----------------
+
+    public String getSpotifyDescriptionOld() {
+        return createDescription(getCurrentlyPlayingTrackOld());
+    }
+
+    public CurrentlyPlaying getCurrentlyPlayingTrackOld() {
+        GetUsersCurrentlyPlayingTrackRequest getUsersCurrentlyPlayingTrackRequest = this.spotifyApi
+                .getUsersCurrentlyPlayingTrack()
+                .build();
+        CurrentlyPlaying currentlyPlaying = null;
+        try {
+            currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
+        } catch (IOException | ParseException | SpotifyWebApiException e) {
+            refreshAccessToken();
+        }
+        return currentlyPlaying;
+    }
+
     public CurrentlyPlaying refreshAccessToken() {
         CurrentlyPlaying currentlyPlaying = null;
         try {
@@ -236,14 +241,14 @@ public class SpotifyIntegration implements HttpHandler {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
-            getCurrentlyPlayingTrack();
+            getCurrentlyPlayingTrackOld();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return currentlyPlaying;
     }
 
-    public String getUsersCurrentlyPlayingTrack() {
+    public String getUsersCurrentlyPlayingTrackOld() {
         checkAuthorizationCodeExpired();
 
         GetUsersCurrentlyPlayingTrackRequest getUsersCurrentlyPlayingTrackRequest = this.spotifyApi
@@ -275,6 +280,8 @@ public class SpotifyIntegration implements HttpHandler {
         System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
         return response;
     }
+
+     */
 
     //------------------------------------------------------------------------------------------------------------------
     // PKCE Methods

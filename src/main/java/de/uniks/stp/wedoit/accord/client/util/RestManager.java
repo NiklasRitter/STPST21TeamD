@@ -88,11 +88,6 @@ public class RestManager {
                 LocalUser localUser = editor.haveLocalUser(username, userKey);
                 localUser.setPassword(password);
                 editor.getWebSocketManager().start();
-                //TODO
-                if (this.editor.getRefreshToken() != null) {
-                    SpotifyIntegration spotifyIntegration = this.editor.setSpotifyIntegration(new SpotifyIntegration(editor));
-                    spotifyIntegration.reauthorize();
-                }
                 controller.handleLogin(true);
             }
         });
@@ -769,5 +764,10 @@ public class RestManager {
                 loginScreenController.handleGuestLogin(userName, password, true);
             }
         });
+    }
+
+    public void updateDescription(String userDescription) {
+        restClient.postDescription(null, editor.getLocalUser().getId(), editor.getLocalUser().getUserKey(),
+                userDescription);
     }
 }

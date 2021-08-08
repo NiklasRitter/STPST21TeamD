@@ -38,6 +38,7 @@ public class Editor {
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
+    private final SpotifyManager spotifyManager = new SpotifyManager(this);
     private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private AccordClient accordClient;
     private Server currentServer;
@@ -96,7 +97,17 @@ public class Editor {
     public LocalUser haveLocalUser() {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
+        // authorizeSpotify();
         return localUser;
+    }
+
+    public void authorizeSpotify() {
+        if (getRefreshToken() != null) {
+            SpotifyIntegration spotifyIntegration = setSpotifyIntegration(new SpotifyIntegration(this));
+            spotifyIntegration.reauthorize();
+        }
+        String x = getLocalUser().getSpotifyCurrentlyPlaying();
+        x = "";
     }
 
     /**
@@ -127,6 +138,8 @@ public class Editor {
         localUser.setUserKey(userKey);
         webSocketManager.setClearUsername();
         setUpDB();
+        spotifyManager.setupTrackTimer();
+        authorizeSpotify();
         return localUser;
     }
 
@@ -710,5 +723,9 @@ public class Editor {
 
     public String getRefreshToken() {
         return this.db.getRefreshToken();
+    }
+
+    public SpotifyManager getSpotifyManager() {
+        return spotifyManager;
     }
 }

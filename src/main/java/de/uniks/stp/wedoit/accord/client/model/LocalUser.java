@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Collections;
 import java.util.Collection;
 import java.beans.PropertyChangeSupport;
+import java.util.Timer;
 
 public class LocalUser
 {
@@ -21,6 +22,9 @@ public class LocalUser
    public static final String PROPERTY_MUTED = "muted";
    public static final String PROPERTY_ALL_MUTED = "allMuted";
    public static final String PROPERTY_DESCRIPTION = "description";
+   public static final String PROPERTY_SPOTIFY_CURRENTLY_PLAYING = "spotifyCurrentlyPlaying";
+   public static final String PROPERTY_TRACK_TIMER = "trackTimer";
+   public static final String PROPERTY_REFRESH_SPOTIFY_AUTH_TIMER = "refreshSpotifyAuthTimer";
    private String password;
    private String name;
    private String userKey;
@@ -35,6 +39,9 @@ public class LocalUser
    private boolean muted;
    private boolean allMuted;
    private String description;
+   private String spotifyCurrentlyPlaying;
+   private Timer trackTimer;
+   private Timer refreshSpotifyAuthTimer;
 
    public String getPassword()
    {
@@ -465,6 +472,60 @@ public class LocalUser
       return this;
    }
 
+   public String getSpotifyCurrentlyPlaying()
+   {
+      return this.spotifyCurrentlyPlaying;
+   }
+
+   public LocalUser setSpotifyCurrentlyPlaying(String value)
+   {
+      if (Objects.equals(value, this.spotifyCurrentlyPlaying))
+      {
+         return this;
+      }
+
+      final String oldValue = this.spotifyCurrentlyPlaying;
+      this.spotifyCurrentlyPlaying = value;
+      this.firePropertyChange(PROPERTY_SPOTIFY_CURRENTLY_PLAYING, oldValue, value);
+      return this;
+   }
+
+   public Timer getTrackTimer()
+   {
+      return this.trackTimer;
+   }
+
+   public LocalUser setTrackTimer(Timer value)
+   {
+      if (Objects.equals(value, this.trackTimer))
+      {
+         return this;
+      }
+
+      final Timer oldValue = this.trackTimer;
+      this.trackTimer = value;
+      this.firePropertyChange(PROPERTY_TRACK_TIMER, oldValue, value);
+      return this;
+   }
+
+   public Timer getRefreshSpotifyAuthTimer()
+   {
+      return this.refreshSpotifyAuthTimer;
+   }
+
+   public LocalUser setRefreshSpotifyAuthTimer(Timer value)
+   {
+      if (Objects.equals(value, this.refreshSpotifyAuthTimer))
+      {
+         return this;
+      }
+
+      final Timer oldValue = this.refreshSpotifyAuthTimer;
+      this.refreshSpotifyAuthTimer = value;
+      this.firePropertyChange(PROPERTY_REFRESH_SPOTIFY_AUTH_TIMER, oldValue, value);
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -493,6 +554,7 @@ public class LocalUser
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());
       result.append(' ').append(this.getId());
+      result.append(' ').append(this.getSpotifyCurrentlyPlaying());
       return result.substring(1);
    }
 

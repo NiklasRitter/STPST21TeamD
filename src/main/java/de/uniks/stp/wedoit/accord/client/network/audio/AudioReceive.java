@@ -142,7 +142,6 @@ public class AudioReceive extends Thread {
         for (String name : sourceDataLineMap.keySet()) {
             SourceDataLine audioMemberLine = this.sourceDataLineMap.get(name);
             if (audioMemberLine.isOpen() && audioMemberLine.isControlSupported(FloatControl.Type.VOLUME)) {
-                //TODO: add userVolume to user
                 float userVolume = 100;
                 FloatControl volumeControl = (FloatControl) audioMemberLine.getControl(FloatControl.Type.VOLUME);
                 volumeControl.setValue((systemVolume * userVolume) / 100);
