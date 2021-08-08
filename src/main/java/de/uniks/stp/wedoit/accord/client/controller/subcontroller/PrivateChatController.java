@@ -218,10 +218,11 @@ public class PrivateChatController implements Controller {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
             Platform.runLater(() -> this.privateMessageObservableList.add(message));
 
-            if (message.getText().equals(GAME_INVITE.substring(GAME_PREFIX.length())) && !message.getFrom().equals(localUser.getName())) {
+            System.out.println("game button soll sich ändern zu: " + message.getText());
+            if (message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName())) {
                 Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("ACCEPT")));
             }
-            if (message.getText().equals(GAME_START) && currentChat != null) {
+            if (message.getText().equals(GAME_INVITE) && message.getFrom().equals(localUser.getName())) {
                 Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("PLAY")));
             }
         }
