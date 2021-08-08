@@ -330,50 +330,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfEnterPrivateChat");
-        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
-        press(KeyCode.ENTER);
-
-        WaitForAsyncUtils.waitForFxEvents();
-        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message" + emoji.getText());
-        mockChatWebSocket(getTestMessageServerAnswer(test_message));
-
-        WaitForAsyncUtils.waitForFxEvents();
-        int lwNewestItem = lwPrivateChat.getItems().size() - 1;
-
-        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
-        Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals("Test Message" + emoji.getText(), lwPrivateChat.getItems().get(lwNewestItem).getText());
-    }
-
-    @Test
-    public void testChatSendBoldMessage() {
-        //init user list and select first user
-        initUserListView();
-        Label lblSelectedUser = lookup("#lblSelectedUser").query();
-        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
-        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
-
-        lwOnlineUsers.getSelectionModel().select(0);
-        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
-
-        clickOn("#lwOnlineUsers");
-
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals(user.getName(), lblSelectedUser.getText());
-
-        WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnEmoji");
-
-        WaitForAsyncUtils.waitForFxEvents();
-        //Assert.assertTrue(emojiPickerStage.isShowing());
-        Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
-
-        GridPane panelForEmojis = (GridPane) emojiPickerStage.getScene().getRoot().lookup("#panelForEmojis");
-        EmojiButton emoji = (EmojiButton) panelForEmojis.getChildren().get(0);
-        clickOn(emoji);
-
-        //send message
-        clickOn("#tfEnterPrivateChat");
         ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("*Test* Message");
         press(KeyCode.ENTER);
 
