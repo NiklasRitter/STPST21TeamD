@@ -15,4 +15,7 @@ public class MessageOperations {
     public static final String COPY = "copy";
     public static final String COPY_MESSAGE_LINK = "copy_message_link";
     public static final String MESSAGE_LINK = "messageLink";
+
+    public static final String BOLD_STYLING_KEY = "*";
+    public static final String BOLD_STYLING_KEY_SPLITTER = "(?<=\\" + BOLD_STYLING_KEY + ")";
 }

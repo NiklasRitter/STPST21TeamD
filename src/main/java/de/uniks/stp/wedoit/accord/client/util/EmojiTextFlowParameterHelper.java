@@ -24,6 +24,15 @@ public class EmojiTextFlowParameterHelper {
         this.color = Color.BLACK;
     }
 
+    public EmojiTextFlowParameterHelper(int fontSize, boolean bold) {
+        this.fontSize = fontSize;
+        this.scaleFactor = 1D;
+        this.textAlignment = TextAlignment.LEFT;
+        this.fontFamily = "System";
+        this.fontWeight = bold ? FontWeight.BOLD : FontWeight.NORMAL;
+        this.color = Color.BLACK;
+    }
+
     public EmojiTextFlowParameters createParameters() {
         EmojiTextFlowParameters parameters = new EmojiTextFlowParameters();
         parameters.setEmojiScaleFactor(scaleFactor);
