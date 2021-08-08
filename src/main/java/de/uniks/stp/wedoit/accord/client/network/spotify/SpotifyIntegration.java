@@ -17,6 +17,7 @@ import com.wrapper.spotify.requests.authorization.authorization_code.pkce.Author
 import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERequest;
 import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackRequest;
 import de.uniks.stp.wedoit.accord.client.Editor;
+import javafx.application.Platform;
 import org.apache.hc.core5.http.ParseException;
 
 import java.awt.*;
@@ -85,8 +86,6 @@ public class SpotifyIntegration implements HttpHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        this.editor.getSpotifyManager().setupRefreshAuthTimer();
     }
 
     public void reauthorize() {
@@ -119,7 +118,9 @@ public class SpotifyIntegration implements HttpHandler {
             authorizationCodePKCERequest = spotifyApi.authorizationCodePKCE(queryMap.get("code"), codeVerifier)
                     .build();
 
-            executorService.execute(() -> getAuthCodeCredentials(authorizationCodePKCERequest));
+            getAuthCodeCredentials(authorizationCodePKCERequest);
+            this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
+            // executorService.execute(() -> );
             try {
                 exchange.sendResponseHeaders(200, response.length());
             } catch (Exception e) {
@@ -140,7 +141,10 @@ public class SpotifyIntegration implements HttpHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        this.editor.getSpotifyManager().setupRefreshAuthTimer();
         stopServer();
+        this.editor.getSpotifyManager().setupTrackTimer();
     }
 
     private void getAuthCodeCredentials(AuthorizationCodePKCERequest authorizationCodePKCERequest) {
@@ -149,8 +153,6 @@ public class SpotifyIntegration implements HttpHandler {
 
             this.spotifyApi.setAccessToken(this.authorizationCodeCredentials.getAccessToken());
             this.spotifyApi.setRefreshToken(this.authorizationCodeCredentials.getRefreshToken());
-
-            this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
         } catch (Exception e) {
             e.printStackTrace();
         }

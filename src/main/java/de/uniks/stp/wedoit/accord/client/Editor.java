@@ -102,12 +102,11 @@ public class Editor {
     }
 
     public void authorizeSpotify() {
-        if (getRefreshToken() != null) {
+        String refreshToken = getRefreshToken();
+        if (refreshToken != null) {
             SpotifyIntegration spotifyIntegration = setSpotifyIntegration(new SpotifyIntegration(this));
             spotifyIntegration.reauthorize();
         }
-        String x = getLocalUser().getSpotifyCurrentlyPlaying();
-        x = "";
     }
 
     /**
@@ -722,6 +721,7 @@ public class Editor {
     }
 
     public String getRefreshToken() {
+        SqliteDB db1 = this.db;
         return this.db.getRefreshToken();
     }
 
