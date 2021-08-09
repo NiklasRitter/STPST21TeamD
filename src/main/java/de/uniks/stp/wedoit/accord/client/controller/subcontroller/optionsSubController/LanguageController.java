@@ -1,21 +1,34 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller.optionsSubController;
 
+import com.pavlobu.emojitextflow.EmojiTextFlow;
 import de.uniks.stp.wedoit.accord.client.Editor;
+import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.OptionsScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguagePreferences;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
+import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
+import javafx.beans.Observable;
 import javafx.event.Event;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.apache.commons.codec.language.bm.Lang;
 
+import javax.swing.text.DefaultEditorKit;
+import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class LanguageController implements Controller {
 
@@ -24,7 +37,9 @@ public class LanguageController implements Controller {
     private final Editor editor;
     private final OptionsScreenController controller;
 
-    private ChoiceBox<String> choiceBoxLanguage;
+    private VBox vBoxLanguage;
+    private final ToggleGroup toggleGroup = new ToggleGroup();
+
 
     public LanguageController(Parent view, Options model, Editor editor, OptionsScreenController controller){
         this.view = view;
@@ -35,38 +50,65 @@ public class LanguageController implements Controller {
 
     @Override
     public void init() {
-        this.choiceBoxLanguage = (ChoiceBox<String>) view.lookup("#choiceBoxLanguage");
+        String currentLanguage = editor.getStageManager().getPrefManager().loadLanguage();
+        this.vBoxLanguage = (VBox) view.lookup("#vBoxLanguage");
 
-        createChoiceBoxItems();
+        //createChoiceBoxItems();
+        toggleGroup.selectedToggleProperty().addListener(this::radioButtonOnClick);
+
+        for(String lang: List.of("English", "Deutsch","فارسی")){
+
+            HBox hBoxLanguageItem = new HBox();
+            hBoxLanguageItem.getStyleClass().add("LanguageBox");
+
+            RadioButton radioButton = new RadioButton(lang);
+            radioButton.setPadding(new Insets(5,0,0,0));
+            radioButton.setAlignment(Pos.CENTER);
+            radioButton.setToggleGroup(toggleGroup);
+
+            EmojiTextFlow etf = new EmojiTextFlow();
+            switch (lang){
+                case "Deutsch":
+                    etf.parseAndAppend(Icons.GERMANY_FLAG.toString());
+                    if(currentLanguage.equals("de_DE")){
+                        radioButton.setSelected(true);
+                    }
+                    break;
+                case "English":
+                    etf.parseAndAppend(Icons.ENGLISH_FLAG.toString());
+                    if(currentLanguage.equals("en_GB")){
+                        radioButton.setSelected(true);
+                    }
+                    break;
+                case "فارسی":
+                    etf.parseAndAppend(Icons.PERSIAN_FLAG.toString());
+                    if(currentLanguage.equals("fa_IR")){
+                        radioButton.setSelected(true);
+                    }
+                    break;
+            }
+
+            hBoxLanguageItem.getChildren().addAll(radioButton,etf);
+
+            vBoxLanguage.getChildren().add(hBoxLanguageItem);
+        }
     }
 
     @Override
     public void stop() {
-        this.choiceBoxLanguage.setOnAction(null);
-
+        toggleGroup.selectedToggleProperty().removeListener(this::radioButtonOnClick);
     }
 
-    private void createChoiceBoxItems() {
-        this.choiceBoxLanguage.getItems().addAll("English", "Deutsch", "فارسی");
+    private void radioButtonOnClick(Observable event, Toggle oldToggle, Toggle newToggle) {
 
-        switch (Locale.getDefault().getLanguage()) {
-            case "fa_ir":
-                this.choiceBoxLanguage.getSelectionModel().select(2);
-                break;
-            case "de_de":
-                this.choiceBoxLanguage.getSelectionModel().select(1);
-                break;
-            case "en_gb":
-                this.choiceBoxLanguage.getSelectionModel().select(0);
-                break;
-        }
-        this.choiceBoxLanguage.setOnAction(this::choiceBoxLanguageOnClick);
-    }
+        RadioButton selectedItem = (RadioButton) newToggle;
+        RadioButton oldItem = (RadioButton) oldToggle;
+        if(oldItem != null) oldItem.setSelected(false);
 
-    private void choiceBoxLanguageOnClick(Event event) {
-        Object selectedItem = this.choiceBoxLanguage.getSelectionModel().getSelectedItem();
+        selectedItem.setSelected(true);
 
-        switch (selectedItem.toString()) {
+
+        switch (selectedItem.getText()) {
             case "English":
                 setLanguage("language/Language");
                 options.setLanguage("en_GB");
@@ -80,7 +122,7 @@ public class LanguageController implements Controller {
                 options.setLanguage("fa_IR");
                 break;
         }
-        controller.selectSubController(ControllerEnum.LANGUAGE_OPTIONS_SCREEN);
+        if(oldItem != null) controller.selectSubController(ControllerEnum.LANGUAGE_OPTIONS_SCREEN);
     }
 
     private void setLanguage(String languageURL) {

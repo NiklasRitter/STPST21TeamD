@@ -347,3 +347,11 @@
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
     -fx-background-color: rgba(173, 216, 230, 0.57);
 }
+
+.LanguageBox{
+    -fx-border-color: darkgrey;
+    -fx-border-radius: 3;
+    -fx-border-width: 2;
+    -fx-padding: 3,3,3,3;
+    -fx-spacing: 200;
+}
