@@ -370,7 +370,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         // first have to open optionScreen
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
 
         clickOn("#btnLogout");
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
@@ -392,7 +392,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         // first have to open optionScreen
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
 
         clickOn("#btnLogout");
         verify(restMock).logout(anyString(), callbackArgumentCaptor.capture());
@@ -410,11 +410,6 @@ public class ServerScreenTest extends ApplicationTest {
         Assert.assertEquals("Private Chats", stage.getTitle());
     }
 
-    @Test
-    public void optionsButtonTest() {
-        clickOn("#btnOptions");
-        Assert.assertEquals("Options", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
-    }
 
     @Test
     public void initChannelsTest() {
