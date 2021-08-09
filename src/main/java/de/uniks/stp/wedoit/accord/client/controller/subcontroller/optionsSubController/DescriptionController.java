@@ -24,6 +24,7 @@ public class DescriptionController implements Controller {
     @Override
     public void init() {
         this.vBoxDescription = (VBox) view.lookup("#vBoxDescription");
+        vBoxDescription.setMaxWidth(500);
 
         vBoxDescription.getChildren().add(richTextArea);
 
