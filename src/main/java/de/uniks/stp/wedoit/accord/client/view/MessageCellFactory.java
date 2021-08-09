@@ -35,10 +35,7 @@ import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
@@ -46,6 +43,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
 
@@ -87,6 +85,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Label lblDate = new Label();
         private final MediaView mediaView = new MediaView();
         private final VBox vBox = new VBox();
+        private final HBox styleHBox = new HBox();
         private final Label label = new Label();
         private final Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
@@ -94,6 +93,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private MediaPlayer mediaPlayer;
         private String time;
         private EmojiTextFlowParameters parameters;
+        private EmojiTextFlowParameters parametersBold;
         private EmojiTextFlowParameters parametersQuote;
         private EmojiTextFlowParameters referenceParameters;
         private EmojiTextFlow emojiTextFlow;
@@ -120,6 +120,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.getStyleClass().removeAll("font_size", "marked_message", "reference");
             this.setGraphic(null);
             this.vBox.getChildren().clear();
+            this.styleHBox.getChildren().clear();
             webView.getEngine().load(null);
             descBox.setText(null);
             hyperlink.setOnAction(null);
@@ -132,14 +133,18 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize()).createParameters();
             this.referenceParameters =
                     new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize()).createParameters();
+            this.parametersBold =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize(), true).createParameters();
             if (stageManager.getPrefManager().loadDarkMode()) {
                 this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
+                this.parametersBold.setTextColor(Color.valueOf("#ADD8e6"));
                 this.parametersQuote.setTextColor(Color.valueOf("#ADD8e6"));
                 this.referenceParameters.setTextColor(Color.valueOf("#ffffff"));
                 this.hyperlink.setStyle("-fx-text-fill: #ADD8e6");
                 this.label.setStyle("-fx-text-fill: #ADD8e6");
             } else {
                 this.parameters.setTextColor(Color.valueOf("#000000"));
+                this.parametersBold.setTextColor(Color.valueOf("#000000"));
                 this.parametersQuote.setTextColor(Color.valueOf("#000000"));
                 this.hyperlink.setStyle("-fx-text-fill: #000000");
                 this.label.setStyle("-fx-text-fill: #000000");
@@ -239,11 +244,42 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayNameAndDate(item);
                         displayTextWithEmoji(item);
                     }
-                } else {
+
+
+
+                }
+                else {
                     //normal message possibly with emoji
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);
                 }
+
+                if(item.getText().startsWith(MESSAGE_LINK + SLASH) && item.getText().split("/").length == 6) {
+                    Hyperlink hyperlink = new Hyperlink(item.getText());
+                    hyperlink.setId("messageLink");
+                    vBox.getChildren().clear();
+                    displayNameAndDate(item);
+                    vBox.getChildren().add(hyperlink);
+                    hyperlink.getStyleClass().add("link");
+                    hyperlink.setOnAction(event -> openMessage(item));
+
+                }
+            }
+        }
+
+        private void openMessage(Message message) {
+            String[] parsedReferenceMessage = stageManager.getEditor().parseReferenceMessage(message.getText());
+            Server server = null;
+            for (Server serverIndex: stageManager.getModel().getLocalUser().getServers()) {
+                if (serverIndex.getId().equals(parsedReferenceMessage[1])){
+                    server = serverIndex;
+                }
+            }
+            if (server != null) {
+                server.setReferenceMessage(message.getText());
+                Server finalServer = server;
+                Platform.runLater(() -> stageManager.initView(ControllerEnum.SERVER_SCREEN, finalServer, null));
+
             }
         }
 
@@ -540,8 +576,32 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         private void displayTextWithEmoji(Message item) {
-            this.emojiTextFlow.parseAndAppend(item.getText());
-            this.vBox.getChildren().add(emojiTextFlow);
+            if (item.getText().contains(BOLD_STYLING_KEY)) {
+                String[] messageTextBlocks = item.getText().split(BOLD_STYLING_KEY_SPLITTER);
+                boolean lastBoldKey = false;
+                for (String messageTextBlock : messageTextBlocks) {
+                    if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
+                        lastBoldKey = false;
+                        messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parametersBold);
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    } else {
+                        if (messageTextBlock.endsWith(BOLD_STYLING_KEY)) {
+                            lastBoldKey = true;
+                            messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
+                        }
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parameters);
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    }
+                }
+                setGraphic(styleHBox);
+                this.vBox.getChildren().add(this.styleHBox);
+            } else {
+                this.emojiTextFlow.parseAndAppend(item.getText());
+                this.vBox.getChildren().add(emojiTextFlow);
+            }
             setGraphic(vBox);
         }
 

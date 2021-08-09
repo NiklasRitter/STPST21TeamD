@@ -330,11 +330,11 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         //send message
         clickOn("#tfEnterPrivateChat");
-        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("Test Message");
+        ((RichTextArea) lookup("#tfEnterPrivateChat").query()).setText("*Test* Message");
         press(KeyCode.ENTER);
 
         WaitForAsyncUtils.waitForFxEvents();
-        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "Test Message" + emoji.getText());
+        JsonObject test_message = JsonUtil.buildPrivateChatMessage(user.getName(), "*Test* Message" + emoji.getText());
         mockChatWebSocket(getTestMessageServerAnswer(test_message));
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -342,7 +342,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem), user.getPrivateChat().getMessages().get(0));
         Assert.assertEquals(lwPrivateChat.getItems().get(lwNewestItem).getText(), user.getPrivateChat().getMessages().get(0).getText());
-        Assert.assertEquals("Test Message" + emoji.getText(), lwPrivateChat.getItems().get(lwNewestItem).getText());
+        Assert.assertEquals("*Test* Message" + emoji.getText(), lwPrivateChat.getItems().get(lwNewestItem).getText());
     }
 
     @Test

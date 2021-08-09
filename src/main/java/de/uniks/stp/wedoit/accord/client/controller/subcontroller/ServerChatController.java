@@ -4,7 +4,6 @@ import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
@@ -18,6 +17,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 
 public class ServerChatController implements Controller {
 
@@ -123,6 +124,59 @@ public class ServerChatController implements Controller {
         this.quoteTextFlow = new EmojiTextFlow(quoteParameter);
 
         initToolTip();
+
+        if (server.getReferenceMessage() != null && !server.getReferenceMessage().equals("")) {
+            loadMessage();
+        }
+        this.tfInputMessage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
+                    event.consume();
+                    sendMessage(tfInputMessage.getConvertedText());
+                }
+            }
+        });
+
+    }
+
+    public void loadMessage() {
+        String[] parseReferenceMessage = editor.parseReferenceMessage(server.getReferenceMessage());
+        if (parseReferenceMessage == null) {
+            return;
+        }
+        String categoryId = parseReferenceMessage[2];
+        String channelId = parseReferenceMessage[3];
+        String messageTimeStamp = parseReferenceMessage[5];
+        String messageId = parseReferenceMessage[4];
+        Channel channel = editor.getChannelById(server, categoryId, channelId);
+
+
+        if (channel != null && channel.getCategory() != null && messageTimeStamp.matches("[0-9][0-9]*")) {
+            server.setReferenceMessage(null);
+            String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
+            this.editor.getRestManager().getChannelMessagesToTimeStamp(this.localUser, this.server, channel.getCategory(), channel, timestamp, messageTimeStamp, messageId, this);
+        }
+    }
+
+    public void handleGetChannelMessagesToTimeStamp(Channel channel, String messageId) {
+        if (channel != null) {
+            initChannelChat(channel);
+
+            for (Message selectMessage : lvTextChat.getItems()
+            ) {
+                if (selectMessage.getId().equals(messageId)) {
+                    Platform.runLater(() -> {
+                        lvTextChat.scrollTo(selectMessage);
+                        lvTextChat.getSelectionModel().select(selectMessage);
+                    });
+
+                }
+            }
+
+        }
+
+
     }
 
 
@@ -216,16 +270,19 @@ public class ServerChatController implements Controller {
         MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
         MenuItem updateMessage = new MenuItem("- " + LanguageResolver.getString("UPDATE_MESSAGE_CONTEXT"));
         MenuItem deleteMessage = new MenuItem("- " + LanguageResolver.getString("DELETE_MESSAGE"));
+        MenuItem copyMessageLink = new MenuItem("- " + LanguageResolver.getString("COPY_MESSAGE_LINK"));
         contextMenuLocalUserMessage = new ContextMenu();
         contextMenuLocalUserMessage.setId("localUserMessageContextMenu");
         contextMenuLocalUserMessage.getItems().add(copy);
         contextMenuLocalUserMessage.getItems().add(quote);
         contextMenuLocalUserMessage.getItems().add(updateMessage);
         contextMenuLocalUserMessage.getItems().add(deleteMessage);
+        contextMenuLocalUserMessage.getItems().add(copyMessageLink);
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         updateMessage.setOnAction((event) -> handleContextMenuClicked(UPDATE, lvTextChat.getSelectionModel().getSelectedItem()));
         deleteMessage.setOnAction((event) -> handleContextMenuClicked(DELETE, lvTextChat.getSelectionModel().getSelectedItem()));
+        copyMessageLink.setOnAction((event) -> handleContextMenuClicked(COPY_MESSAGE_LINK, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -234,12 +291,13 @@ public class ServerChatController implements Controller {
     public void addUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
         MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
+        MenuItem copyMessageLink = new MenuItem("- " + LanguageResolver.getString("COPY_MESSAGE_LINK"));
         contextMenuUserMessage = new ContextMenu();
         contextMenuUserMessage.setId("userMessageContextMenu");
-        contextMenuUserMessage.getItems().add(copy);
-        contextMenuUserMessage.getItems().add(quote);
+        contextMenuUserMessage.getItems().addAll(copy, quote, copyMessageLink);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
+        copyMessageLink.setOnAction((event) -> handleContextMenuClicked(COPY_MESSAGE_LINK, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -272,6 +330,11 @@ public class ServerChatController implements Controller {
             }
             if (menu.equals(COPY)) {
                 editor.copyToSystemClipBoard(message.getText());
+            }
+            if (menu.equals(COPY_MESSAGE_LINK)) {
+                editor.copyToSystemClipBoard(MESSAGE_LINK + SLASH + server.getId() + SLASH +
+                        currentChannel.getCategory().getId() + SLASH + currentChannel.getId() +
+                        SLASH + message.getId() + SLASH + message.getTimestamp());
             }
         }
     }
@@ -480,5 +543,6 @@ public class ServerChatController implements Controller {
     public String getQuotedText() {
         return quotedText;
     }
+
 
 }
