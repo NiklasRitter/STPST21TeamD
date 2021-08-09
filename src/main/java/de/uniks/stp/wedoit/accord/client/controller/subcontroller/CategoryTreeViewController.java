@@ -10,6 +10,7 @@ import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -179,13 +180,13 @@ public class CategoryTreeViewController implements Controller {
         if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
             if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
                 Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
-                if (mouseEvent.getClickCount() == 1) {
+                if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.PRIMARY) {
                     if (channel.getType().equals(TEXT)) {
                         channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
                         controller.getServerChatController().initChannelChat(channel);
                     }
                     controller.refreshLvUsers(channel);
-                } else if (mouseEvent.getClickCount() == 2) {
+                } else if (mouseEvent.getClickCount() == 2 && mouseEvent.getButton() == MouseButton.PRIMARY) {
                     if (channel.getType().equals(AUDIO)) {
                         handleAudioDoubleClicked(channel);
                     }
