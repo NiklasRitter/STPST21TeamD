@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.scene.Parent;
@@ -69,7 +70,7 @@ public class ConnectToSteamScreenController implements Controller {
 
     private void btnCancelOnClick(Object object) {
 //        Platform.runLater(() -> localUser.setSteam64ID(tfSteam64ID.getText()));
-        editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
+        editor.getStageManager().getStage(POPUP_STAGE).close();
     }
 
 
@@ -78,7 +79,7 @@ public class ConnectToSteamScreenController implements Controller {
             localUser.setSteam64ID(tfSteam64ID.getText());
             editor.saveSteam64ID(tfSteam64ID.getText());
             editor.getRestManager().getLocalUserSteamGameExtraInfo();
-            editor.getStageManager().initView(ControllerEnum.OPTION_SCREEN, null, null);
+            editor.getStageManager().getStage(POPUP_STAGE).close();
         }
     }
 

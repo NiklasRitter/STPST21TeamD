@@ -46,7 +46,10 @@ public enum Icons {
     FEARFUL_FACE("\uD83D\uDE28"),
     COLD_SWEAT("\uD83D\uDE13"),
     RECREATIONAL_VEHICLE("\uD83D\uDE99"),
-    HANDSHAKE("\uD83E\uDD1D");
+    HANDSHAKE("\uD83E\uDD1D"),
+    GERMANY_FLAG("\uD83C\uDDE9\uD83C\uDDEA"),
+    ENGLISH_FLAG("\uD83C\uDDEC\uD83C\uDDE7"),
+    PERSIAN_FLAG(	"\uD83C\uDDEE\uD83C\uDDF7");
 
     private final String iconName;
 
@@ -58,5 +61,6 @@ public enum Icons {
     public String toString() {
         return iconName;
     }
+
 
 }

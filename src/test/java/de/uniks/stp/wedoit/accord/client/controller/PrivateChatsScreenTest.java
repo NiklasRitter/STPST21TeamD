@@ -864,7 +864,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         // testing logout button
         // first have to open optionScreen
         clickOn("#btnOptions");
-        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
 
         clickOn("#btnLogout");
 
@@ -879,21 +879,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals("Login", stage.getTitle());
     }
 
-    @Test
-    public void testBtnOptions() {
-
-        directToPrivateChatsScreen();
-
-        // got to privateChats screen
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Private Chats", stage.getTitle());
-
-        // testing options button
-        clickOn("#btnOptions");
-
-        WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
-    }
 
     @Test
     public void testBtnHome() {
