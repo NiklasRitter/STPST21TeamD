@@ -589,7 +589,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 String[] messageTextBlocks = item.getText().split(BOLD_STYLING_KEY_SPLITTER);
                 boolean lastBoldKey = false;
                 for (String messageTextBlock : messageTextBlocks) {
-                    if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
+                    if (messageTextBlock.length() >= 2 && messageTextBlock.charAt(messageTextBlock.length()-2) == 92) {
+                        messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - 2) + BOLD_STYLING_KEY;
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parameters);
+                        if (lastBoldKey) {
+                            messageBlock = new EmojiTextFlow(this.parametersBold);
+                        }
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    }
+                    else if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
                         lastBoldKey = false;
                         messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
                         EmojiTextFlow messageBlock = new EmojiTextFlow(this.parametersBold);
