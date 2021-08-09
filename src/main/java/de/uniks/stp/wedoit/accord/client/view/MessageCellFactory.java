@@ -103,6 +103,14 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         private MessageCell(ListView<S> param) {
             this.param = param;
+            // set the width (-20 to eliminate overhang in ListView)
+            prefWidthProperty().bind(param.widthProperty().subtract(20));
+            setMinWidth(param.getWidth() - 20);
+            setMaxWidth(param.getWidth() - 20);
+            setAlignment(Pos.CENTER_LEFT);
+
+            // allow wrapping
+            setWrapText(true);
         }
 
         /**
@@ -154,15 +162,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             if (!empty) {
 
-                // set the width (-20 to eliminate overhang in ListView)
-                prefWidthProperty().bind(param.widthProperty().subtract(20));
-                setMinWidth(param.getWidth() - 20);
-                setMaxWidth(param.getWidth() - 20);
-                setAlignment(Pos.CENTER_LEFT);
-
-                // allow wrapping
-                setWrapText(true);
-
                 //remove game prefix
                 if (item.getText().startsWith(GAME_PREFIX))
                     item.setText(item.getText().substring(GAME_PREFIX.length()));
@@ -185,15 +184,21 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         this.getStyleClass().add("marked_message");
                     }
                 }
-
                 if (item.getText().startsWith("%") && item.getText().endsWith("%")) {
-                    //spoiler function
-                    displayNameAndDate(item);
-                    displaySpoilerButton(item);
-
-                } else if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
-                    //media view
-                    setUpMedia(item);
+                    if (item.getText().charAt(item.getText().length()-2) != 92) {
+                        //spoiler function
+                        displayNameAndDate(item);
+                        displaySpoilerButton(item);
+                    }
+                    else {
+                        Message newMessage = new Message();
+                        newMessage.setId(item.getId());
+                        newMessage.setFrom(item.getFrom());
+                        newMessage.setTimestamp(item.getTimestamp());
+                        newMessage.setText(item.getText().substring(0, item.getText().length()-2) + item.getText().substring(item.getText().length()-1));
+                        displayNameAndDate(newMessage);
+                        displayTextWithEmoji(newMessage);
+                    }
 
                 } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
                     //load more option if more than 50 messages in chat
@@ -229,14 +234,17 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayNameAndDate(item);
                         displayTextWithEmoji(item);
                     }
+
+                } else if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
+                    //media view
+                    setUpMedia(item);
+
                 } else if (!(item instanceof PrivateMessage)) {
                     ArrayList<Channel> referencedChannels = getReferences(item, item.getText());
-
                     if (!referencedChannels.isEmpty()) {
                         HBox hBox = new HBox();
                         displayNameAndDate(item);
                         setUpReferenceInMessage(item, referencedChannels, hBox, item.getText());
-
                         this.vBox.getChildren().add(hBox);
                         setGraphic(this.vBox);
 
@@ -362,15 +370,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             try {
                 URL Url = new URL(url);
                 Url.toURI();
-
                 if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
                 if (url.contains(MP4)) return true;
                 if (url.contains(MP3)) return true;
                 if (url.contains(GIF)) return true;
-                Document doc = Jsoup.connect(url).get();
-                if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
-                    descBox.setText(doc.title());
-                    descBox.getStyleClass().add("descBox");
+                if (Url.getHost().equals(SUPPORTED_CLOUD)) {
+                    Document doc = Jsoup.connect(url).get();
+                    if (doc.title() != null){
+                        descBox.setText(doc.title());
+                        descBox.getStyleClass().add("descBox");
+                    }
                 }
 
                 return true;
@@ -580,7 +589,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 String[] messageTextBlocks = item.getText().split(BOLD_STYLING_KEY_SPLITTER);
                 boolean lastBoldKey = false;
                 for (String messageTextBlock : messageTextBlocks) {
-                    if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
+                    if (messageTextBlock.length() >= 2 && messageTextBlock.charAt(messageTextBlock.length()-2) == 92) {
+                        messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - 2) + BOLD_STYLING_KEY;
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parameters);
+                        if (lastBoldKey) {
+                            messageBlock = new EmojiTextFlow(this.parametersBold);
+                        }
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    }
+                    else if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
                         lastBoldKey = false;
                         messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
                         EmojiTextFlow messageBlock = new EmojiTextFlow(this.parametersBold);
