@@ -20,6 +20,7 @@ public class PreferenceManager {
     public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
     public PropertyChangeListener passwordListener = this::onPasswordChanged;
     public PropertyChangeListener chatFontSizeListener = this::onChatFontSizeChanged;
+    public PropertyChangeListener zoomLevelListener = this::onZoomLevelChanged;
     public PropertyChangeListener audioRootMeanSquareListener = this::onAudioRootMeanSquareChanged;
 
     /**
@@ -170,6 +171,26 @@ public class PreferenceManager {
     }
 
     /**
+     * Loads the zoomLevel preference from the Registry.
+     *
+     * @return The value of the zoomLevel preference.
+     */
+    public int loadZoomLevel() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            int zoom = preferences.getInt(ZOOM_LEVEL, 100);
+            if(zoom == 0) {
+                zoom = 100;
+            }
+            return zoom;
+        } catch (Exception e) {
+            System.err.println("Error while loading chat font size:");
+            e.printStackTrace();
+            return 100;
+        }
+    }
+
+    /**
      * Saves the chatFontSize preference to the Registry.
      *
      * @param chatFontSize The value of the chatFontSize preference.
@@ -178,6 +199,21 @@ public class PreferenceManager {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
             preferences.putInt(CHAT_FONT_SIZE, chatFontSize);
+        } catch (Exception e) {
+            System.err.println("Error while saving chat font size:");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Saves the zoomLevel preference to the Registry.
+     *
+     * @param zoomLevel The value of the zoomLevel preference.
+     */
+    public void saveZoomLevel(int zoomLevel) {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            preferences.putInt(ZOOM_LEVEL, zoomLevel);
         } catch (Exception e) {
             System.err.println("Error while saving chat font size:");
             e.printStackTrace();
@@ -291,6 +327,16 @@ public class PreferenceManager {
             this.stageManager.getEditor().getAccordClient().getOptions().setChatFontSize(chatFontSize);
 
             saveChatFontSize(chatFontSize);
+        }
+    }
+
+    private void onZoomLevelChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Integer) {
+            int zoomLevel = (int) propertyChangeEvent.getNewValue();
+
+            this.stageManager.getEditor().getAccordClient().getOptions().setZoomLevel(zoomLevel);
+
+            saveZoomLevel(zoomLevel);
         }
     }
 

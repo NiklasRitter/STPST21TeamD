@@ -99,7 +99,7 @@ public class OptionsScreenController implements Controller {
     }
 
     private void zoomLevelSliderOnChange(MouseEvent e) {
-        options.setZoomLevel((int) sliderFontSize.getValue());
+        options.setZoomLevel((int) sliderZoomLevel.getValue());
     }
 
     private void outputVolumeSliderOnChange(MouseEvent e) {
