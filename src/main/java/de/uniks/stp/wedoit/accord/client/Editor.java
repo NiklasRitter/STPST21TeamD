@@ -97,7 +97,6 @@ public class Editor {
     public LocalUser haveLocalUser() {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
-        // authorizeSpotify();
         return localUser;
     }
 
@@ -139,6 +138,7 @@ public class Editor {
         setUpDB();
         spotifyManager.setupTrackTimer();
         authorizeSpotify();
+        // TODO spotifyManager.setupRefreshAuthTimer();
         return localUser;
     }
 
@@ -721,7 +721,6 @@ public class Editor {
     }
 
     public String getRefreshToken() {
-        SqliteDB db1 = this.db;
         return this.db.getRefreshToken();
     }
 

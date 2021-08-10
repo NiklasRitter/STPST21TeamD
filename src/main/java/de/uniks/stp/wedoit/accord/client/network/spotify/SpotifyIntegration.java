@@ -96,7 +96,6 @@ public class SpotifyIntegration implements HttpHandler {
 
         try {
             AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
-            authorizationCodePKCERefreshRequest.execute();
 
             authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
@@ -118,9 +117,9 @@ public class SpotifyIntegration implements HttpHandler {
             authorizationCodePKCERequest = spotifyApi.authorizationCodePKCE(queryMap.get("code"), codeVerifier)
                     .build();
 
+            // executorService.execute(() -> );
             getAuthCodeCredentials(authorizationCodePKCERequest);
             this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
-            // executorService.execute(() -> );
             try {
                 exchange.sendResponseHeaders(200, response.length());
             } catch (Exception e) {
@@ -142,9 +141,9 @@ public class SpotifyIntegration implements HttpHandler {
             e.printStackTrace();
         }
 
-        this.editor.getSpotifyManager().setupRefreshAuthTimer();
-        stopServer();
+        // TODO this.editor.getSpotifyManager().setupRefreshAuthTimer();
         this.editor.getSpotifyManager().setupTrackTimer();
+        stopServer();
     }
 
     private void getAuthCodeCredentials(AuthorizationCodePKCERequest authorizationCodePKCERequest) {
@@ -206,7 +205,7 @@ public class SpotifyIntegration implements HttpHandler {
                     artistNames.append(" , ").append(artist.getName());
                 }
             }
-            response = "listens to " + track.getName() + " from " + artistNames;
+            response = "listens to " + track.getName() + " - " + artistNames;
         } else {
             response = "no currently playing song";
         }

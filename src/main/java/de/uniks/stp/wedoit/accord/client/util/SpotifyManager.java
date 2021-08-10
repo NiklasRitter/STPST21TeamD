@@ -86,6 +86,7 @@ public class SpotifyManager {
     public void localUserCurrentlyPlayingTrackOnChange(PropertyChangeEvent propertyChangeEvent) {
         if (editor.getLocalUser() != null && propertyChangeEvent.getNewValue() instanceof String) {
             editor.getRestManager().updateDescription(this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
+            //TODO are both needed?
             this.editor.changeUserDescription(this.editor.getLocalUser().getId(), this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
             /*
             String oldValue = (String) propertyChangeEvent.getOldValue();
