@@ -290,9 +290,10 @@ public class SqliteDB {
 
     public void updateRefreshToken(String refreshToken) {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO settings(id,refreshToken) VALUES(1,?)")) {
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO options(id,key,value) VALUES(1,?,?)")) {
 
-            prep.setString(1, refreshToken);
+            prep.setString(1, "refreshToken");
+            prep.setString(2, refreshToken);
 
             prep.execute();
 
@@ -303,12 +304,12 @@ public class SqliteDB {
 
     public String getRefreshToken() {
         try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("SELECT * FROM settings")) {
+             PreparedStatement prep = conn.prepareStatement("SELECT * FROM options WHERE key = 'refreshToken' LIMIT 1;")) {
 
             ResultSet rs = prep.executeQuery();
 
             if (rs.next()) {
-                return rs.getString("refreshToken");
+                return rs.getString("value");
             }
 
         } catch (Exception e) {
