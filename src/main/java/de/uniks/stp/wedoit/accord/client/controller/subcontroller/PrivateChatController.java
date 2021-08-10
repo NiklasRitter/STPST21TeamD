@@ -411,10 +411,8 @@ public class PrivateChatController implements Controller {
      * Refreshes chat list in order to update the font and color
      */
     private void onDarkmodeChanged(Object object) {
-
         this.lwPrivateChat.refresh();
         this.tfPrivateChat.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
-
     }
 
     public Chat getCurrentChat() {
@@ -427,10 +425,6 @@ public class PrivateChatController implements Controller {
 
     public String getQuotedText() {
         return quotedText;
-    }
-
-    public ListView<PrivateMessage> getLwPrivateChat() {
-        return lwPrivateChat;
     }
 
 }
