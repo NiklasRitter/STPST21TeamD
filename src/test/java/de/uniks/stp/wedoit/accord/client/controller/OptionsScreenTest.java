@@ -31,6 +31,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.sound.sampled.Mixer;
 import java.util.Locale;
 import java.util.Objects;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
@@ -69,7 +70,7 @@ public class OptionsScreenTest extends ApplicationTest {
         this.oldOptions = new Options();
         stageManager.getResourceManager().loadOptions(oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setDarkmode(false).setRememberMe(false));
-        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
+        stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB").setOutputDevice(null).setInputDevice(null));
         this.stageManager.start(stage);
         this.popupStage = this.stageManager.getStage(StageEnum.POPUP_STAGE);
 
@@ -96,7 +97,6 @@ public class OptionsScreenTest extends ApplicationTest {
         popupStage = null;
         stageManager.stop();
         stageManager = null;
-        oldOptions = null;
         rule = null;
         restMock = null;
         res = null;
@@ -146,8 +146,8 @@ public class OptionsScreenTest extends ApplicationTest {
 
         // check if stylesheets contain light theme
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(popupStage.isShowing());
-        Assert.assertEquals("Options", popupStage.getTitle());
+        Assert.assertTrue(stage.isShowing());
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
         Assert.assertTrue(stageManager.getScene(StageEnum.STAGE).getStylesheets()
                 .contains(Objects.requireNonNull(StageManager.class.getResource("light-theme.css")).toExternalForm()));
 
@@ -168,61 +168,58 @@ public class OptionsScreenTest extends ApplicationTest {
         // open options screen
         directToOptionsScreen();
 
+        Assert.assertTrue(stage.isShowing());
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
+        clickOn("Language");
+
         // check if stylesheets contain light theme
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(popupStage.isShowing());
-        Assert.assertEquals("Options", popupStage.getTitle());
+        Assert.assertTrue(stage.isShowing());
+        Assert.assertEquals("Options - Language", stage.getTitle());
         Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
 
-        Label lblLanguage = lookup("#lblLanguage").query();
-        Assert.assertEquals(lblLanguage.getText(), "Language");
+        //Label lblLanguage = lookup("#lblLanguage").query();
+        //Assert.assertEquals(lblLanguage.getText(), "Language");
 
-        ChoiceBox<String> choiceBoxLanguage = lookup("#choiceBoxLanguage").query();
+        //ChoiceBox<String> choiceBoxLanguage = lookup("#choiceBoxLanguage").query();
 
-        clickOn(choiceBoxLanguage);
-
-        Platform.runLater(() -> {
-            //choose german as language
-            choiceBoxLanguage.getSelectionModel().select(1);
-        });
+        clickOn("Deutsch");
 
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
-        lblLanguage = lookup("#lblLanguage").query();
-        Assert.assertEquals(lblLanguage.getText(), "Sprache");
+        Assert.assertEquals("Einstellungen - Sprache", stage.getTitle());
 
-        Platform.runLater(() -> popupStage.hide());
+        clickOn("Zurück");
 
         directToMainScreen();
-
         WaitForAsyncUtils.waitForFxEvents();
+
         Assert.assertEquals(Locale.getDefault().getLanguage(), "de_de");
-        Label lblYourServers = lookup("#lblYourServers").query();
-        Assert.assertEquals(lblYourServers.getText(), "Ihre Server");
+
+        Assert.assertEquals("Private Chats", stage.getTitle());
 
         // open options screen
         directToOptionsScreen();
-        ChoiceBox<String> choiceBoxLanguage2 = lookup("#choiceBoxLanguage").query();
-        Platform.runLater(() -> {
-            //choose english as language
-            choiceBoxLanguage2.getSelectionModel().select(0);
-        });
+        clickOn("Sprache");
+        WaitForAsyncUtils.waitForFxEvents();
+        //ChoiceBox<String> choiceBoxLanguage2 = lookup("#choiceBoxLanguage").query();
+        clickOn("English");
 
         WaitForAsyncUtils.waitForFxEvents();
-        lblLanguage = lookup("#lblLanguage").query();
-        Assert.assertEquals(lblLanguage.getText(), "Language");
-
-        Platform.runLater(() -> popupStage.hide());
-
+        Assert.assertEquals("Options - Language", stage.getTitle());
         Assert.assertEquals(Locale.getDefault().getLanguage(), "en_gb");
+
     }
 
     @Test
     public void testLogoutButtonOnLoginScreenNotVisible() {
         directToOptionsScreen();
-        VBox mainVBox = lookup("#mainVBox").query();
-
-        Assert.assertEquals(mainVBox.getChildren().size(), 3);
+        try {
+            lookup("#btnLogout").query();
+            Assert.fail();
+        }catch (Exception e){
+            Assert.assertEquals("Options - Appearance", stage.getTitle());
+        }
     }
 
     @Test
@@ -231,14 +228,51 @@ public class OptionsScreenTest extends ApplicationTest {
 
         // got to main screen
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Main", stage.getTitle());
+        Assert.assertEquals("Private Chats", stage.getTitle());
         directToOptionsScreen();
 
-        VBox mainVBox = lookup("#mainVBox").query();
-        Button btnLogout = lookup("#btnLogout").query();
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
 
-        Assert.assertEquals(mainVBox.getChildren().size(), 3);
-        Assert.assertTrue(btnLogout.isVisible());
+        Assert.assertNotNull(lookup("#btnAppearance").query());
+        Assert.assertNotNull(lookup("#btnLanguage").query());
+        Assert.assertNotNull(lookup("#btnConnections").query());
+        Assert.assertNotNull(lookup("#btnVoice").query());
+        Assert.assertNotNull(lookup("#btnDescription").query());
+        Assert.assertNotNull(lookup("#btnLogout").query());
+    }
+
+    @Test
+    public void inputOutputDeviceSelect(){
+        Options options = this.stageManager.getEditor().getAccordClient().getOptions();
+        options.setInputDevice(null);
+        options.setOutputDevice(null);
+        directToMainScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        directToOptionsScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("Sound");
+
+        Assert.assertNull(stageManager.getEditor().getAccordClient().getOptions().getOutputDevice());
+        Assert.assertNull(stageManager.getEditor().getAccordClient().getOptions().getInputDevice());
+        ChoiceBox<String> outputDeviceChoiceBox = lookup("#choiceBoxOutputDevice").query();
+        outputDeviceChoiceBox.getItems().add("test");
+        Platform.runLater(() -> outputDeviceChoiceBox.getSelectionModel().select("test"));
+        clickOn(outputDeviceChoiceBox);
+        Platform.runLater(() -> outputDeviceChoiceBox.getSelectionModel().select(1));
+        ChoiceBox<String> inputDeviceChoiceBox = lookup("#choiceBoxInputDevice").query();
+        inputDeviceChoiceBox.getItems().add("test");
+        Platform.runLater(() -> inputDeviceChoiceBox.getSelectionModel().select("test"));
+        clickOn(inputDeviceChoiceBox);
+        Platform.runLater(() -> inputDeviceChoiceBox.getSelectionModel().select(1));
+
+        clickOn("Back");
+        directToOptionsScreen();
+        clickOn("Sound");
+
+        Assert.assertNotNull(stageManager.getEditor().getAccordClient().getOptions().getOutputDevice());
+        Assert.assertNotNull(stageManager.getEditor().getAccordClient().getOptions().getInputDevice());
     }
 
 

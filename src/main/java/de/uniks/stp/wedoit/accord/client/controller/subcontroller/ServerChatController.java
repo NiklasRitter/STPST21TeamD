@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
@@ -16,6 +17,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.CHANNEL;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 
 public class ServerChatController implements Controller {
 
@@ -52,7 +55,7 @@ public class ServerChatController implements Controller {
 
     private HBox quoteVisible;
     private Label lbChannelName;
-    private TextArea tfInputMessage;
+    private RichTextArea tfInputMessage;
     private Button btnCancelQuote;
     private Button btnEmoji;
     private ContextMenu contextMenuLocalUserMessage;
@@ -65,9 +68,8 @@ public class ServerChatController implements Controller {
     private EmojiTextFlow quoteTextFlow; // this replaces the quoteLabel
     private EmojiTextFlowParameters quoteParameter;
     private String quotedText = ""; // this is needed so that we can access the text inside the quoteTextFlow, since the EmojiTextFlow does not have a getText() method
-
-    private PropertyChangeListener newMessagesListener = this::newMessage;
     private PropertyChangeListener messageTextChangedListener = this::onMessageTextChanged;
+    private PropertyChangeListener newMessagesListener = this::newMessage;
     private PropertyChangeListener darkModeListener = this::onDarkmodeChanged;
 
     /**
@@ -96,8 +98,7 @@ public class ServerChatController implements Controller {
      */
     public void init() {
         this.vBoxTextField = (VBox) view.lookup("#boxTextfield");
-        this.tfInputMessage = (TextArea) view.lookup("#tfInputMessage");
-
+        this.tfInputMessage = (RichTextArea) view.lookup("#tfInputMessage");
         this.lvTextChat = (ListView<Message>) view.lookup("#lvTextChat");
         this.lbChannelName = (Label) view.lookup("#lbChannelName");
         this.quoteVisible = (HBox) view.lookup("#quoteVisible");
@@ -116,13 +117,66 @@ public class ServerChatController implements Controller {
 
         addUserMessageContextMenu();
         addLocalUserMessageContextMenu();
-
-        this.lvTextChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getChatFontSizeProperty().asString(), ";"));
+        lvTextChat.setCellFactory(new MessageCellFactory<>(this.editor.getStageManager(), controller));
+        this.lvTextChat.styleProperty().bind(Bindings.concat("-fx-font-size: ", editor.getAccordClient().getOptions().getChatFontSize(), ";"));
 
         setQuoteParameter();
         this.quoteTextFlow = new EmojiTextFlow(quoteParameter);
 
         initToolTip();
+
+        if (server.getReferenceMessage() != null && !server.getReferenceMessage().equals("")) {
+            loadMessage();
+        }
+        this.tfInputMessage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
+                    event.consume();
+                    sendMessage(tfInputMessage.getConvertedText());
+                }
+            }
+        });
+
+    }
+
+    public void loadMessage() {
+        String[] parseReferenceMessage = editor.parseReferenceMessage(server.getReferenceMessage());
+        if (parseReferenceMessage == null) {
+            return;
+        }
+        String categoryId = parseReferenceMessage[2];
+        String channelId = parseReferenceMessage[3];
+        String messageTimeStamp = parseReferenceMessage[5];
+        String messageId = parseReferenceMessage[4];
+        Channel channel = editor.getChannelById(server, categoryId, channelId);
+
+
+        if (channel != null && channel.getCategory() != null && messageTimeStamp.matches("[0-9][0-9]*")) {
+            server.setReferenceMessage(null);
+            String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
+            this.editor.getRestManager().getChannelMessagesToTimeStamp(this.localUser, this.server, channel.getCategory(), channel, timestamp, messageTimeStamp, messageId, this);
+        }
+    }
+
+    public void handleGetChannelMessagesToTimeStamp(Channel channel, String messageId) {
+        if (channel != null) {
+            initChannelChat(channel);
+
+            for (Message selectMessage : lvTextChat.getItems()
+            ) {
+                if (selectMessage.getId().equals(messageId)) {
+                    Platform.runLater(() -> {
+                        lvTextChat.scrollTo(selectMessage);
+                        lvTextChat.getSelectionModel().select(selectMessage);
+                    });
+
+                }
+            }
+
+        }
+
+
     }
 
 
@@ -163,11 +217,12 @@ public class ServerChatController implements Controller {
         if (this.localUser.getAccordClient() != null) {
             this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
         }
-        this.editor.getChatFontSizeProperty().removeListener(this::onDarkmodeChanged);
+        this.editor.getAccordClient().getOptions().listeners().removePropertyChangeListener(this::onDarkmodeChanged);
 
         this.messageTextChangedListener = null;
         this.newMessagesListener = null;
         this.darkModeListener = null;
+        this.markingController = null;
     }
 
     /**
@@ -215,16 +270,19 @@ public class ServerChatController implements Controller {
         MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
         MenuItem updateMessage = new MenuItem("- " + LanguageResolver.getString("UPDATE_MESSAGE_CONTEXT"));
         MenuItem deleteMessage = new MenuItem("- " + LanguageResolver.getString("DELETE_MESSAGE"));
+        MenuItem copyMessageLink = new MenuItem("- " + LanguageResolver.getString("COPY_MESSAGE_LINK"));
         contextMenuLocalUserMessage = new ContextMenu();
         contextMenuLocalUserMessage.setId("localUserMessageContextMenu");
         contextMenuLocalUserMessage.getItems().add(copy);
         contextMenuLocalUserMessage.getItems().add(quote);
         contextMenuLocalUserMessage.getItems().add(updateMessage);
         contextMenuLocalUserMessage.getItems().add(deleteMessage);
+        contextMenuLocalUserMessage.getItems().add(copyMessageLink);
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         updateMessage.setOnAction((event) -> handleContextMenuClicked(UPDATE, lvTextChat.getSelectionModel().getSelectedItem()));
         deleteMessage.setOnAction((event) -> handleContextMenuClicked(DELETE, lvTextChat.getSelectionModel().getSelectedItem()));
+        copyMessageLink.setOnAction((event) -> handleContextMenuClicked(COPY_MESSAGE_LINK, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -233,12 +291,13 @@ public class ServerChatController implements Controller {
     public void addUserMessageContextMenu() {
         MenuItem quote = new MenuItem("- " + LanguageResolver.getString("QUOTE"));
         MenuItem copy = new MenuItem("- " + LanguageResolver.getString("COPY"));
+        MenuItem copyMessageLink = new MenuItem("- " + LanguageResolver.getString("COPY_MESSAGE_LINK"));
         contextMenuUserMessage = new ContextMenu();
         contextMenuUserMessage.setId("userMessageContextMenu");
-        contextMenuUserMessage.getItems().add(copy);
-        contextMenuUserMessage.getItems().add(quote);
+        contextMenuUserMessage.getItems().addAll(copy, quote, copyMessageLink);
         quote.setOnAction((event) -> handleContextMenuClicked(QUOTE, lvTextChat.getSelectionModel().getSelectedItem()));
         copy.setOnAction((event) -> handleContextMenuClicked(COPY, lvTextChat.getSelectionModel().getSelectedItem()));
+        copyMessageLink.setOnAction((event) -> handleContextMenuClicked(COPY_MESSAGE_LINK, lvTextChat.getSelectionModel().getSelectedItem()));
     }
 
     /**
@@ -272,6 +331,11 @@ public class ServerChatController implements Controller {
             if (menu.equals(COPY)) {
                 editor.copyToSystemClipBoard(message.getText());
             }
+            if (menu.equals(COPY_MESSAGE_LINK)) {
+                editor.copyToSystemClipBoard(MESSAGE_LINK + SLASH + server.getId() + SLASH +
+                        currentChannel.getCategory().getId() + SLASH + currentChannel.getId() +
+                        SLASH + message.getId() + SLASH + message.getTimestamp());
+            }
         }
     }
 
@@ -294,7 +358,7 @@ public class ServerChatController implements Controller {
         quoteVisible.getChildren().clear();
     }
 
-    private void setQuoteParameter(){
+    private void setQuoteParameter() {
         quoteParameter = new EmojiTextFlowParameterHelper(10).createParameters();
         if (editor.getStageManager().getPrefManager().loadDarkMode()) {
             quoteParameter.setTextColor(Color.valueOf("#ADD8e6"));
@@ -351,7 +415,7 @@ public class ServerChatController implements Controller {
             if (keyEvent.isShiftDown()) {
                 tfInputMessage.appendText(System.getProperty("line.separator"));
             } else {
-                sendMessage(this.tfInputMessage.getText());
+                sendMessage(tfInputMessage.getConvertedText());
             }
         }
 
@@ -392,11 +456,10 @@ public class ServerChatController implements Controller {
         channel.setRead(true);
         this.currentChannel = channel;
         this.lbChannelName.setText(this.currentChannel.getName());
-        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"));
+        this.tfInputMessage.setPromptText(LanguageResolver.getString("YOUR_MESSAGE"), editor.getAccordClient().getOptions().isDarkmode());
         this.tfInputMessage.setEditable(this.currentChannel != null);
 
         // init list view
-        lvTextChat.setCellFactory(new MessageCellFactory<>(this.editor.getStageManager()));
         this.observableMessageList = FXCollections.observableList(currentChannel.getMessages().stream().sorted(Comparator.comparing(Message::getTimestamp))
                 .collect(Collectors.toList()));
 
@@ -410,7 +473,7 @@ public class ServerChatController implements Controller {
         // Add listener for the loaded listView
         this.currentChannel.listeners().addPropertyChangeListener(Channel.PROPERTY_MESSAGES, this.newMessagesListener);
         this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this::onDarkmodeChanged);
-        this.editor.getChatFontSizeProperty().addListener(this::onDarkmodeChanged);
+        this.editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_CHAT_FONT_SIZE, this::onDarkmodeChanged);
         Platform.runLater(() -> this.lvTextChat.scrollTo(this.observableMessageList.size()));
 
         this.markingController = new MarkingController(tfInputMessage, currentChannel, vBoxTextField);
@@ -429,7 +492,7 @@ public class ServerChatController implements Controller {
                 Platform.runLater(this::displayLoadMore);
             }
         } else {
-            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null));
+            Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
         }
     }
 
@@ -469,10 +532,8 @@ public class ServerChatController implements Controller {
     }
 
 
-
     /**
      * Refreshes chat list in order to update the font and color
-     *
      */
     private void onDarkmodeChanged(Object object) {
         this.lvTextChat.refresh();
@@ -481,5 +542,6 @@ public class ServerChatController implements Controller {
     public String getQuotedText() {
         return quotedText;
     }
+
 
 }

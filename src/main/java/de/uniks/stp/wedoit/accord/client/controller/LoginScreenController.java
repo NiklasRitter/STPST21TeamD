@@ -92,10 +92,9 @@ public class LoginScreenController implements Controller {
 
         this.tfUserName.requestFocus();
 
-       if(this.isLogin){
+        if (this.isLogin) {
             this.setComponentsTextSignIn();
-        }
-        else{
+        } else {
             this.setComponentsTextSignUp();
         }
 
@@ -297,7 +296,7 @@ public class LoginScreenController implements Controller {
             });
         } else {
             Platform.runLater(() -> {
-                this.editor.getStageManager().initView(ControllerEnum.MAIN_SCREEN, null, null);
+                this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
                 this.editor.getStageManager().getStage(StageEnum.STAGE).setResizable(true);
                 this.editor.getStageManager().getStage(StageEnum.STAGE).setMaximized(true);
             });
@@ -335,14 +334,14 @@ public class LoginScreenController implements Controller {
             String password = this.pwUserPw.getText();
             String confirmedPassword = this.pwConfirmPW.getText();
 
-            if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty() || pwConfirmPW == null ||confirmedPassword.isEmpty()) {
+            if (tfUserName == null || name.isEmpty() || pwUserPw == null || password.isEmpty() || pwConfirmPW == null || confirmedPassword.isEmpty()) {
                 //reset name and password fields
                 Objects.requireNonNull(tfUserName).getStyleClass().add("error");
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
                 Objects.requireNonNull(pwConfirmPW).getStyleClass().add("error");
                 errorLabelText = "PLEASE_TYPE_USERNAME_PASSWORD";
                 refreshErrLabelText(errorLabelText);
-            } else if (!password.equals(confirmedPassword)){
+            } else if (!password.equals(confirmedPassword)) {
                 Objects.requireNonNull(tfUserName).getStyleClass().add("error");
                 Objects.requireNonNull(pwUserPw).getStyleClass().add("error");
                 Objects.requireNonNull(pwConfirmPW).getStyleClass().add("error");

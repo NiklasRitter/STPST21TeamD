@@ -58,8 +58,16 @@ public class AudioSend extends Thread {
         AudioFormat audioFormat = new AudioFormat(encoding, bitRate, sampleSize, channels,
                 (sampleSize / 8) * channels, bitRate, bigEndian);
 
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
+
         try {
-            line = AudioSystem.getTargetDataLine(audioFormat);
+            Mixer.Info inputDevice = this.localUser.getAccordClient().getOptions().getInputDevice();
+            if(inputDevice != null){
+                line = (TargetDataLine) AudioSystem.getMixer(inputDevice).getLine(info);
+            }
+            else{
+                line = (TargetDataLine) AudioSystem.getLine(info);
+            }
             line.open(audioFormat);
             byte[] readData = new byte[1279];
             System.arraycopy(metaData, 0, readData, 0, 255);
@@ -72,8 +80,7 @@ public class AudioSend extends Thread {
 
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
 
-
-                if (line.isRunning() && editor.calculateRMS(readData,b) > editor.getAudioRMS()) {
+                if (line.isRunning() && editor.calculateRMS(readData,b) > editor.getAccordClient().getOptions().getAudioRootMeanSquare()) {
                     this.sendSocket.send(datagramPacket);
                 }
             }

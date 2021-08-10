@@ -147,6 +147,16 @@
     -fx-border-color: transparent;
 }
 
+.listViewServer > .virtual-flow> .clipped-container > .sheet > .list-cell{
+    -fx-background-color: #212121;
+    -fx-border-color: transparent;
+}
+
+.listViewServer {
+    -fx-background-color: #212121;
+    -fx-border-color: transparent;
+}
+
 .list-cell {
     -fx-text-fill: #dcddde ;
     -fx-background-color: #2f3136;
@@ -224,11 +234,10 @@
 }
 
 .textAreaInput {
-    -fx-text-fill: #ffffff ;
+    -rtfx-text-fill: #ffffff;
+    -fx-fill: #ffffff ;
     -fx-background-color: #40444b;
-    -fx-prompt-text-fill: #cccccc;
 }
-
 
 .scroll-bar:horizontal .track,
 .scroll-bar:vertical .track{
@@ -281,6 +290,27 @@
     -fx-background-radius : 2.0em;
 }
 
+.serverCircle {
+    -fx-fill: #ffffff;
+}
+
+.serverCircleText{
+    -fx-text-fill: #000000;
+}
+
+
+.serverCircleText:cell-selection {
+    -fx-text-fill: #ffffff;
+}
+
+.serverCircleSelected {
+    -fx-fill: #9e9e9e;
+}
+
+.serverCircleTextSelected {
+    -fx-text-fill: #ffffff;
+}
+
 .styleTopMenu {
     -fx-font-size:8;
     -fx-border-color: #4a4a4a;
@@ -298,4 +328,28 @@
     -fx-background-color: transparent;
     -fx-control-inner-background: transparent;
     -fx-text-box-border: transparent;
+}
+
+.reference{
+    -fx-background-color: #414675;
+}
+
+.reference:hover{
+    -fx-background-color: #5865f2;
+}
+
+.button-selected {
+    -fx-background-color: #2f3136;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: rgba(0, 14, 44, 0.75);
+}
+
+.LanguageBox{
+    -fx-border-color: black;
+    -fx-border-radius: 3;
+    -fx-border-width: 2;
+    -fx-padding: 3,3,3,3;
+    -fx-spacing: 200;
 }

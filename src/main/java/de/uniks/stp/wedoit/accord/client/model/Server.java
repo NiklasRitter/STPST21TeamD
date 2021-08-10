@@ -15,6 +15,7 @@ public class Server
    public static final String PROPERTY_MEMBERS = "members";
    public static final String PROPERTY_LOCAL_USER = "localUser";
    public static final String PROPERTY_INVITATIONS = "invitations";
+   public static final String PROPERTY_REFERENCE_MESSAGE = "referenceMessage";
    private String name;
    private String id;
    private String owner;
@@ -23,6 +24,7 @@ public class Server
    private LocalUser localUser;
    protected PropertyChangeSupport listeners;
    private List<Invitation> invitations;
+   private String referenceMessage;
 
    public String getName()
    {
@@ -303,6 +305,24 @@ public class Server
       return this;
    }
 
+   public String getReferenceMessage()
+   {
+      return this.referenceMessage;
+   }
+
+   public Server setReferenceMessage(String value)
+   {
+      if (Objects.equals(value, this.referenceMessage))
+      {
+         return this;
+      }
+
+      final String oldValue = this.referenceMessage;
+      this.referenceMessage = value;
+      this.firePropertyChange(PROPERTY_REFERENCE_MESSAGE, oldValue, value);
+      return this;
+   }
+
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
    {
       if (this.listeners != null)
@@ -329,6 +349,7 @@ public class Server
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getId());
       result.append(' ').append(this.getOwner());
+      result.append(' ').append(this.getReferenceMessage());
       return result.substring(1);
    }
 

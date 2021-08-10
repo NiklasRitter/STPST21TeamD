@@ -3,16 +3,14 @@ package de.uniks.stp.wedoit.accord.client.util;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import javafx.scene.control.ProgressBar;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.*;
 
 public class Recorder implements Runnable{
 
     private Thread worker;
     final ProgressBar bar;
     TargetDataLine line;
-    private Editor editor;
+    private final Editor editor;
 
     AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
@@ -23,7 +21,7 @@ public class Recorder implements Runnable{
     AudioFormat audioFormat = new AudioFormat(encoding, bitRate, sampleSize, channels,
             (sampleSize / 8) * channels, bitRate, bigEndian);
 
-    public Recorder(final ProgressBar bar, Editor editor) {
+    public Recorder(ProgressBar bar, Editor editor) {
         this.bar = bar;
         this.editor = editor;
     }
@@ -39,12 +37,14 @@ public class Recorder implements Runnable{
     }
 
     private void cleanup(){
-        if (line.isRunning()) {
-            line.stop();
-            line.flush();
-        }
-        if (line.isOpen()) {
-            line.close();
+        if(line != null) {
+            if (line.isRunning()) {
+                line.stop();
+                line.flush();
+            }
+            if (line.isOpen()) {
+                line.close();
+            }
         }
 
     }
@@ -52,7 +52,14 @@ public class Recorder implements Runnable{
     @Override
     public void run() {
         try {
-            line = AudioSystem.getTargetDataLine(audioFormat);
+            DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
+            Mixer.Info inputDevice = editor.getStageManager().getPrefManager().loadInputDevice();
+            if(inputDevice != null){
+                line = (TargetDataLine) AudioSystem.getMixer(inputDevice).getLine(info);
+            }else{
+                line = (TargetDataLine) AudioSystem.getLine(info);
+            }
+
             line.open(audioFormat);
         } catch(Exception e) {
             e.printStackTrace();
@@ -65,7 +72,7 @@ public class Recorder implements Runnable{
         for(int b; (b = line.read(buf, 0, buf.length)) > -1;) {
 
             double rms = editor.calculateRMS(buf,b);
-            bar.setProgress(rms*1.5);
+            if(bar != null) bar.setProgress(rms);
 
         }
     }

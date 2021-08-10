@@ -31,4 +31,13 @@ public class Network {
     public static final String JOIN = "/join";
     public static final String DESCRIPTION = "/description";
     public static final String PRIVATE_USER_CHAT_PREFIX = WS_SERVER_URL + CHAT_PATH + "?user=";
+
+    public static final String STEAM_SERVER_URL = "https://api.steampowered.com";
+    public static final String STEAM_USER_SUMMERY_PATH = "/ISteamUser/GetPlayerSummaries/v0002";
+    public static final String STEAM_KEY_PATH = "/?key=";
+    public static final String STEAM_IDS_PATH = "&steamids=";
+    public static final String STEAM_KEY = "F0C6B74791CF78014325DAEC03FB89C9";
+    public static final String STEAM_USER_SUMMERY_URL =
+            STEAM_SERVER_URL + STEAM_USER_SUMMERY_PATH + STEAM_KEY_PATH + STEAM_KEY + STEAM_IDS_PATH;
+    public static final String STEAM_APP_LIST_URL = STEAM_SERVER_URL + "/ISteamApps/GetAppList/v0002/";
 }

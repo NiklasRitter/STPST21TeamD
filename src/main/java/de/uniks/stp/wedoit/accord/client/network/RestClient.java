@@ -418,10 +418,10 @@ public class RestClient {
         String body = Json.createObjectBuilder().add(TEXT, newMessage).build().toString();
 
         HttpRequest<?> req = Unirest.put(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH +
-                oldMessage.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
-                oldMessage.getChannel().getCategory().getId() + CHANNELS + SLASH +
-                oldMessage.getChannel().getId() + MESSAGES +
-                SLASH + oldMessage.getId())
+                        oldMessage.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
+                        oldMessage.getChannel().getCategory().getId() + CHANNELS + SLASH +
+                        oldMessage.getChannel().getId() + MESSAGES +
+                        SLASH + oldMessage.getId())
                 .header(USER_KEY, userKey)
                 .body(body);
 
@@ -431,10 +431,10 @@ public class RestClient {
     public void deleteMessage(String userKey, Message message, Callback<JsonNode> callback) {
 
         HttpRequest<?> req = Unirest.delete(REST_SERVER_URL + API_PREFIX + SERVER_PATH + SLASH +
-                message.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
-                message.getChannel().getCategory().getId() + CHANNELS + SLASH +
-                message.getChannel().getId() + MESSAGES +
-                SLASH + message.getId())
+                        message.getChannel().getCategory().getServer().getId() + CATEGORIES + SLASH +
+                        message.getChannel().getCategory().getId() + CHANNELS + SLASH +
+                        message.getChannel().getId() + MESSAGES +
+                        SLASH + message.getId())
                 .header(USER_KEY, userKey);
 
         sendRequest(req, callback);
@@ -461,9 +461,20 @@ public class RestClient {
         // Use UniRest to make guest login request
         String body = Json.createObjectBuilder().add(TEXT, description).build().toString();
 
-        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + SLASH + userId + DESCRIPTION)
+        HttpRequest<?> req = Unirest.post(REST_SERVER_URL + API_PREFIX + USERS_PATH + SLASH + userId + SLASH + DESCRIPTION)
                 .header(USER_KEY, userKey).body(body);
 
+        sendRequest(req, callback);
+    }
+
+    public void getCurrentGameForSteamUser(String UserSteamID, Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(STEAM_USER_SUMMERY_URL + UserSteamID);
+
+        sendRequest(req, callback);
+    }
+
+    public void getSteamAppList(Callback<JsonNode> callback) {
+        HttpRequest<?> req = Unirest.get(STEAM_APP_LIST_URL);
 
         sendRequest(req, callback);
     }

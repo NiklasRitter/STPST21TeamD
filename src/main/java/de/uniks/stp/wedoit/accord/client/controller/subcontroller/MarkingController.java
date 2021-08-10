@@ -1,13 +1,15 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
+import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.view.SelectChannelCellFactory;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -20,14 +22,16 @@ public class MarkingController implements Controller {
 
     private final Channel currentChannel;
     private ObservableList<User> selectUserObservableList;
+    private ObservableList<Channel> selectChannelObservableList;
     private ListView<User> lvSelectUser;
+    private ListView<Channel> lvSelectChannel;
     private VBox vBoxTextField;
     private int caret = 0;
     private int textLength = 0;
     private ArrayList<AtPositions> atPositions = new ArrayList<>();
-    private TextArea textArea;
+    private RichTextArea textArea;
 
-    public MarkingController(TextArea textArea, Channel channel, VBox vBoxTextField) {
+    public MarkingController(RichTextArea textArea, Channel channel, VBox vBoxTextField) {
         this.textArea = textArea;
         this.currentChannel = channel;
         this.vBoxTextField = vBoxTextField;
@@ -39,6 +43,10 @@ public class MarkingController implements Controller {
         lvSelectUser = new ListView<>();
         lvSelectUser.setVisible(false);
         lvSelectUser.setId("lvSelectUser");
+
+        lvSelectChannel = new ListView<>();
+        lvSelectChannel.setVisible(false);
+        lvSelectChannel.setId("lvSelectChannel");
     }
 
     @Override
@@ -46,6 +54,7 @@ public class MarkingController implements Controller {
         this.textArea.setOnKeyTyped(null);
         selectUserObservableList = null;
         lvSelectUser = null;
+        lvSelectChannel = null;
         vBoxTextField = null;
         atPositions = null;
         textArea = null;
@@ -57,11 +66,11 @@ public class MarkingController implements Controller {
         boolean complete;
         String content;
 
-        public AtPositions(int start, int end) {
+        public AtPositions(int start, int end, String content) {
             this.start = start;
             this.end = end;
             this.complete = false;
-            this.content = "@";
+            this.content = content;
         }
 
         public void shiftLeft() {
@@ -114,7 +123,7 @@ public class MarkingController implements Controller {
     private void isMarking(KeyEvent keyEvent) {
         caret = textArea.getCaretPosition();
 
-        if (!textArea.getText().contains("@")) {
+        if (!textArea.getText().contains("@") && !textArea.getText().contains("#")) {
             removeSelectionMenu();
             atPositions = new ArrayList<>();
             textLength = textArea.getLength();
@@ -125,7 +134,6 @@ public class MarkingController implements Controller {
 
         if (textArea.getText().length() < textLength) {
             //character deleted
-
             atHit = checkAtHit(false);
 
             if (atHit != null) {
@@ -137,15 +145,32 @@ public class MarkingController implements Controller {
 
         } else if (textArea.getText().length() > textLength) {
             //character added
-
             atHit = checkAtHit(true);
+
 
             if (atHit != null) {
                 if (keyEvent.getCharacter().equals("@") && currentChannel != null) {
-                    atHit = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1);
-                    atPositions.add(atHit);
+                    atHit = newReference("@");
+
+                    if (lvSelectChannel.isVisible()) {
+                        removeSelectionMenu();
+                        initLwSelectUser();
+                    }
+
                     checkMarkingPossible(atHit.getContent().substring(1), atHit);
                     shiftAtsRight(atHit);
+
+                } else if (keyEvent.getCharacter().equals("#") && currentChannel != null) {
+                    atHit = newReference("#");
+
+                    if (lvSelectUser.isVisible()) {
+                        removeSelectionMenu();
+                        initLwSelectChannel();
+                    }
+
+                    checkMarkingPossible(atHit.getContent().substring(1), atHit);
+                    shiftAtsRight(atHit);
+
                 } else {
                     deleteOrActivateAt(atHit, true);
                 }
@@ -154,16 +179,27 @@ public class MarkingController implements Controller {
 
                 AtPositions newAt = null;
                 if (keyEvent.getCharacter().equals("@") && !lvSelectUser.isVisible() && currentChannel != null) {
-                    newAt = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1);
-                    atPositions.add(newAt);
+                    removeSelectionMenu();
+                    newAt = newReference("@");
+                    initLwSelectUser();
 
-                    initLwSelectUser(lvSelectUser);
+                } else if (keyEvent.getCharacter().equals("#") && !lvSelectChannel.isVisible() && currentChannel != null) {
+                    removeSelectionMenu();
+                    newAt = newReference("#");
+                    initLwSelectChannel();
+
                 }
 
                 shiftAtsRight(newAt);
             }
         }
         textLength = textArea.getLength();
+    }
+
+    private AtPositions newReference(String type) {
+        AtPositions atHit = new AtPositions(textArea.getCaretPosition() - 1, textArea.getCaretPosition() - 1, type);
+        atPositions.add(atHit);
+        return atHit;
     }
 
     private void shiftAtsRight(AtPositions currentAt) {
@@ -215,8 +251,8 @@ public class MarkingController implements Controller {
                 end = currentText.substring(at.getEnd());
             }
 
-            textArea.setText(start + end);
-            textArea.positionCaret(start.length());
+            textArea.replaceText(start + end);
+            textArea.displaceCaret(start.length());
 
             for (AtPositions atToShift : atPositions) {
                 if (atToShift != at && atToShift.getStart() > at.getEnd()) {
@@ -259,18 +295,16 @@ public class MarkingController implements Controller {
         return null;
     }
 
-    private void initLwSelectUser(ListView<User> lvSelectUser) {
+    private void initLwSelectUser() {
 
         this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
 
-        vBoxTextField.getChildren().add(lvSelectUser);
+        this.vBoxTextField.getChildren().add(this.lvSelectUser);
 
-        lvSelectUser.setMinHeight(45);
-        lvSelectUser.setPrefHeight(45);
-        lvSelectUser.setVisible(true);
+        this.lvSelectUser.setVisible(true);
 
         // init list view
-        lvSelectUser.setCellFactory(new SelectUserCellFactory());
+        this.lvSelectUser.setCellFactory(new SelectUserCellFactory());
 
         ArrayList<User> availableUsers;
         if (currentChannel != null && currentChannel.isPrivileged()) {
@@ -281,10 +315,40 @@ public class MarkingController implements Controller {
 
         this.selectUserObservableList = FXCollections.observableList(availableUsers);
 
+        this.lvSelectUser.setMinHeight(selectUserObservableList.size() * 26);
+        this.lvSelectUser.setPrefHeight(selectUserObservableList.size() * 26);
+
         this.selectUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
                 .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
 
         this.lvSelectUser.setItems(selectUserObservableList);
+    }
+
+    private void initLwSelectChannel() {
+
+        this.lvSelectChannel.setOnMousePressed(this::lvSelectChannelOnClick);
+
+        this.vBoxTextField.getChildren().add(this.lvSelectChannel);
+
+        this.lvSelectChannel.setVisible(true);
+
+        // init list view
+        this.lvSelectChannel.setCellFactory(new SelectChannelCellFactory());
+
+        ArrayList<Channel> possibleChannels = new ArrayList<>();
+
+        for (Category category : currentChannel.getCategory().getServer().getCategories()) {
+            possibleChannels.addAll(category.getChannels());
+        }
+
+        this.selectChannelObservableList = FXCollections.observableList(possibleChannels);
+
+        this.lvSelectChannel.setMinHeight(selectChannelObservableList.size() * 26);
+        this.lvSelectChannel.setPrefHeight(selectChannelObservableList.size() * 26);
+
+        this.selectChannelObservableList.sort(Comparator.comparing(Channel::getName, String::compareToIgnoreCase).reversed());
+
+        this.lvSelectChannel.setItems(selectChannelObservableList);
     }
 
     private void lvSelectUserOnClick(MouseEvent mouseEvent) {
@@ -317,7 +381,7 @@ public class MarkingController implements Controller {
                     String firstPart = currentText.substring(0, correspondingAtPosition);
                     String secondPart = currentText.substring(caret);
 
-                    textArea.setText(firstPart + "@" + selectedUser.getName() + secondPart);
+                    textArea.replaceText(firstPart + "@" + selectedUser.getName() + secondPart);
                     correspondingAt.setEnd(correspondingAt.getStart() + selectedUser.getName().length());
                     correspondingAt.setContent("@" + selectedUser.getName());
 
@@ -332,40 +396,128 @@ public class MarkingController implements Controller {
                         }
                     }
 
-                    textArea.positionCaret(correspondingAt.getEnd() + 1);
+                    textArea.displaceCaret(correspondingAt.getEnd() + 1);
                 }
             }
         }
         textLength = textArea.getLength();
+        textArea.requestFocus();
+    }
+
+    private void lvSelectChannelOnClick(MouseEvent mouseEvent) {
+
+        if (mouseEvent.getClickCount() == 1) {
+
+            Channel selectedChannel = lvSelectChannel.getSelectionModel().getSelectedItem();
+            String currentText = textArea.getText();
+
+            int correspondingAtPosition = -1;
+
+            for (int i = caret - 1; i >= 0; i--) {
+                if (currentText.charAt(i) == '#') {
+                    correspondingAtPosition = i;
+                    break;
+                }
+            }
+
+            if (correspondingAtPosition != -1) {
+
+                AtPositions correspondingAt = null;
+                for (AtPositions at : atPositions) {
+                    if (at.getStart() == correspondingAtPosition) {
+                        correspondingAt = at;
+                    }
+                }
+
+                if (correspondingAt != null) {
+
+                    String firstPart = currentText.substring(0, correspondingAtPosition);
+                    String secondPart = currentText.substring(caret);
+
+                    textArea.replaceText(firstPart + "#" + selectedChannel.getName() + secondPart);
+                    correspondingAt.setEnd(correspondingAt.getStart() + selectedChannel.getName().length());
+                    correspondingAt.setContent("#" + selectedChannel.getName());
+
+                    correspondingAt.setComplete(true);
+                    removeSelectionMenu();
+
+                    for (AtPositions atToShift : atPositions) {
+                        if (atToShift.getStart() > correspondingAt.getStart()) {
+                            for (int i = 0; i < textArea.getText().length() - currentText.length(); i++) {
+                                atToShift.shiftRight();
+                            }
+                        }
+                    }
+
+                    textArea.displaceCaret(correspondingAt.getEnd() + 1);
+                }
+            }
+        }
+        textLength = textArea.getLength();
+        textArea.requestFocus();
     }
 
     private void checkMarkingPossible(String text, AtPositions at) {
 
-        ArrayList<User> possibleUsers;
+        if (at.getContent().charAt(0) == '@') {
 
-        if (currentChannel != null && currentChannel.isPrivileged()) {
-            possibleUsers = new ArrayList<>(currentChannel.getMembers());
-        } else {
-            possibleUsers = new ArrayList<>(currentChannel.getCategory().getServer().getMembers());
-        }
+            ArrayList<User> possibleUsers;
 
-        for (User user : possibleUsers) {
-            if (!user.getName().contains(text)) {
-                selectUserObservableList.remove(user);
-            } else if (user.getName().equals(text)) {
-                at.setComplete(true);
-                break;
-            } else if (!selectUserObservableList.contains(user)) {
-                selectUserObservableList.add(user);
+            if (currentChannel != null && currentChannel.isPrivileged()) {
+                possibleUsers = new ArrayList<>(currentChannel.getMembers());
+            } else {
+                possibleUsers = new ArrayList<>(currentChannel.getCategory().getServer().getMembers());
             }
-        }
 
-        if (!lvSelectUser.isVisible() && !at.isComplete() && !selectUserObservableList.isEmpty()) {
-            showSelectionMenu();
-        }
+            for (User user : possibleUsers) {
+                if (!user.getName().contains(text)) {
+                    selectUserObservableList.remove(user);
+                } else if (user.getName().equals(text)) {
+                    at.setComplete(true);
+                    break;
+                } else if (!selectUserObservableList.contains(user)) {
+                    selectUserObservableList.add(user);
+                }
+            }
 
-        if (selectUserObservableList.isEmpty() || at.isComplete()) {
-            removeSelectionMenu();
+            lvSelectUser.setMinHeight(selectUserObservableList.size() * 26);
+            lvSelectUser.setPrefHeight(selectUserObservableList.size() * 26);
+
+            if (!lvSelectUser.isVisible() && !at.isComplete() && !selectUserObservableList.isEmpty()) {
+                showUserSelectionMenu();
+            }
+
+            if (selectUserObservableList.isEmpty() || at.isComplete()) {
+                removeSelectionMenu();
+            }
+        } else {
+            ArrayList<Channel> possibleChannels = new ArrayList<>();
+
+            for (Category category : currentChannel.getCategory().getServer().getCategories()) {
+                possibleChannels.addAll(category.getChannels());
+            }
+
+            for (Channel channel : possibleChannels) {
+                if (!channel.getName().contains(text)) {
+                    selectChannelObservableList.remove(channel);
+                } else if (channel.getName().equals(text)) {
+                    at.setComplete(true);
+                    break;
+                } else if (!selectChannelObservableList.contains(channel)) {
+                    selectChannelObservableList.add(channel);
+                }
+            }
+
+            lvSelectChannel.setMinHeight(selectChannelObservableList.size() * 26);
+            lvSelectChannel.setPrefHeight(selectChannelObservableList.size() * 26);
+
+            if (!lvSelectChannel.isVisible() && !at.isComplete() && !selectChannelObservableList.isEmpty()) {
+                showChannelSelectionMenu();
+            }
+
+            if (selectChannelObservableList.isEmpty() || at.isComplete()) {
+                removeSelectionMenu();
+            }
         }
     }
 
@@ -373,11 +525,21 @@ public class MarkingController implements Controller {
         vBoxTextField.getChildren().remove(lvSelectUser);
         lvSelectUser.setVisible(false);
         this.lvSelectUser.setOnMousePressed(null);
+
+        vBoxTextField.getChildren().remove(lvSelectChannel);
+        lvSelectChannel.setVisible(false);
+        this.lvSelectChannel.setOnMousePressed(null);
     }
 
-    private void showSelectionMenu() {
+    private void showUserSelectionMenu() {
         vBoxTextField.getChildren().add(lvSelectUser);
         lvSelectUser.setVisible(true);
         this.lvSelectUser.setOnMousePressed(this::lvSelectUserOnClick);
+    }
+
+    private void showChannelSelectionMenu() {
+        vBoxTextField.getChildren().add(lvSelectChannel);
+        lvSelectChannel.setVisible(true);
+        this.lvSelectChannel.setOnMousePressed(this::lvSelectChannelOnClick);
     }
 }
