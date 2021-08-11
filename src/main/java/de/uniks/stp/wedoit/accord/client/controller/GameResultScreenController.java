@@ -62,6 +62,7 @@ public class GameResultScreenController implements Controller {
         } else {
             lbOutcome.setText(LanguageResolver.getString("SECOND_PLACE"));
         }
+        this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).sizeToScene();
 
         btnQuit.setOnAction(this::redirectToPrivateChats);
         btnPlayAgain.setOnAction(this::playAgainOnClick);
