@@ -90,8 +90,9 @@ public class MessageManager {
         }
 
         if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {
-            if (!message.getFrom().equals(editor.getLocalUser().getName()))
+            if (!message.getFrom().equals(editor.getLocalUser().getName())){
                 editor.getUser(message.getFrom()).setGameMove(message.getText().substring(GAME_PREFIX.length() + GAME_CHOOSE_MOVE.length()));
+            }
             return true;
         }
         return false;

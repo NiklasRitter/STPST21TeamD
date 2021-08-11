@@ -153,7 +153,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         if (item.getFrom().equals(stageManager.getEditor().getLocalUser().getName())) {
                             textToDisplay = LanguageResolver.getString("SEND_GAME_INVITE");
                         } else {
-                            textToDisplay = item.getFrom() + " " +LanguageResolver.getString("RECEIVE_GAME_INVITE");
+                            textToDisplay = item.getFrom() + LanguageResolver.getString("RECEIVE_GAME_INVITE");
                         }
                         item.setText(textToDisplay);
                         displayNameAndDate(item);
