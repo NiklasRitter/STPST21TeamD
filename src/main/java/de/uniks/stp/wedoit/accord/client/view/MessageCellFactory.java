@@ -162,10 +162,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             if (!empty) {
 
-                //remove game prefix
-                if (item.getText().startsWith(GAME_PREFIX))
-                    item.setText(item.getText().substring(GAME_PREFIX.length()));
-
                 //eval correct time format
                 time = checkTime(item);
 
