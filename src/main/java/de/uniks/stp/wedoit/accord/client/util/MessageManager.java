@@ -77,7 +77,6 @@ public class MessageManager {
                 handleOutGoingGameInvite(message.getTo());
             }
         }
-        System.out.println(editor.getLocalUser().isInGame());
         if (message.getText().equals(GAME_REVENGE) && editor.getLocalUser().isInGame()) {
             if (message.getTo().equals(editor.getLocalUser().getName())) { //incoming !revenge
                 handleIncomingGameInvite(message.getFrom());
@@ -96,48 +95,12 @@ public class MessageManager {
             return true;
         }
         return false;
-
-        /*if (message.getText().equals(GAME_INVITE) || message.getText().equals(GAME_REVENGE)) {
-            if (message.getTo().equals(editor.getLocalUser().getName()))
-                editor.getLocalUser().withGameInvites(editor.getUser(message.getFrom()));
-            else
-                editor.getLocalUser().withGameRequests(editor.getUser(message.getTo()));
-        }
-
-        if (message.getText().equals(GAME_ACCEPTS)) {
-            if (!editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() || editor.getStageManager().getStage(StageEnum.GAME_STAGE).getTitle().equals("Result")) {
-                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getTo().equals(editor.getLocalUser().getName()) ? message.getFrom() : message.getTo(), GAME_START);
-                editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
-                return true;
-
-            } else {
-                JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(message.getFrom().equals(editor.getLocalUser().getName()) ? message.getTo() : message.getFrom(), GAME_INGAME);
-                editor.getWebSocketManager().sendPrivateChatMessage(jsonMsg.toString());
-                return true;
-
-            }
-        } else if (message.getText().equals(GAME_START) && (editor.getLocalUser().getGameInvites().contains(editor.getUser(message.getTo())) || editor.getLocalUser().getGameRequests().contains(editor.getUser(message.getFrom())))) {
-            //Start game
-            editor.getLocalUser().withoutGameInvites(editor.getUser(message.getTo()));
-            editor.getLocalUser().withoutGameRequests(editor.getUser(message.getFrom()));
-
-            Platform.runLater(() -> {
-                if (message.getFrom().equals(editor.getLocalUser().getName()))
-                    editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_INGAME, editor.getUser(message.getTo()), null);
-                else
-                    editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_INGAME, editor.getUser(message.getFrom()), null);
-            });
-
-        } else if (message.getText().equals(GAME_CLOSE) && editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing()) {
-            Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.GAME_SCREEN_RESULT, editor.getUser(message.getFrom()), null));
-        }
-*/
     }
 
     private void handleQuitGame(PrivateMessage message) {
         LocalUser localUser = editor.getLocalUser();
-
         User opponent;
+
         if (localUser.getName().equals(message.getFrom())) { // outgoing quit from user --> delete game request for this opponent
             opponent = editor.getUser(message.getTo());
             localUser.withoutGameRequests(opponent);

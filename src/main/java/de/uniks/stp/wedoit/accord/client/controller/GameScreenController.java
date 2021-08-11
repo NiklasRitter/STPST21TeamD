@@ -113,7 +113,6 @@ public class GameScreenController implements Controller {
 
         if (opponent.getGameMove() != null) {
             buf = new StringBuilder().append(GAME_IMGURL).append(opponent.getGameMove().replace("choose ", "")).append(".png");
-            System.out.println(buf);
             imgOppPlayed.setImage(new Image(String.valueOf(getClass().getResource(buf.toString()))));
 
             resolveGameOutcome();
