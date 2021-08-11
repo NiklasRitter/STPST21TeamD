@@ -50,7 +50,7 @@
   roles: 	category_channels 	category_server
 
 - server: 	org.fulib.classmodel.Clazz
-  attributes: 	server_name 	server_id 	server_owner
+  attributes: 	server_name 	server_id 	server_owner 	server_referenceMessage
   model: 	c
   modified: 	false
   name: 	Server
@@ -389,6 +389,15 @@
   id: 	Server_owner
   modified: 	false
   name: 	owner
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- server_referenceMessage: 	org.fulib.classmodel.Attribute
+  clazz: 	server
+  id: 	Server_referenceMessage
+  modified: 	false
+  name: 	referenceMessage
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String

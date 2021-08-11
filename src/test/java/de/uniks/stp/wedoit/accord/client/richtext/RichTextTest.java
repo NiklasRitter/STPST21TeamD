@@ -28,7 +28,7 @@ public class RichTextTest {
 
         Assert.assertEquals(parStyle.toCss(), "");
         Assert.assertEquals(parStyle.toString(), "");
-        Assert.assertEquals(parStyle.equals(ParStyle.EMPTY), false);
+        Assert.assertFalse(parStyle.equals(ParStyle.EMPTY));
 
     }
 

@@ -10,6 +10,7 @@ import de.uniks.stp.wedoit.accord.client.view.ChannelTreeView;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import java.beans.PropertyChangeEvent;
@@ -40,6 +41,7 @@ public class CategoryTreeViewController implements Controller {
     private PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
     private PropertyChangeListener userListViewListener = this::changeUserList;
     private MenuButton serverMenuButton;
+    private PropertyChangeListener localUserAudioChannel = this::localUserAudioChannelChanged;
 
     public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
@@ -59,6 +61,7 @@ public class CategoryTreeViewController implements Controller {
         this.tvServerChannels.setOnMouseReleased(this::tvServerChannelsOnDoubleClicked);
         initTvServerChannels();
         this.server.listeners().addPropertyChangeListener(Server.PROPERTY_CATEGORIES, this.categoriesListener);
+        this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.localUserAudioChannel);
     }
 
     /**
@@ -91,6 +94,8 @@ public class CategoryTreeViewController implements Controller {
     }
 
     public void stop() {
+        this.localUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.localUserAudioChannel);
+        this.localUserAudioChannel = null;
         this.tvServerChannels.setOnMouseReleased(null);
         this.tvServerChannels = null;
         this.tvServerChannelsRoot = null;
@@ -116,6 +121,10 @@ public class CategoryTreeViewController implements Controller {
     }
 
     // Channel and Category init
+
+    private void localUserAudioChannelChanged(PropertyChangeEvent propertyChangeEvent) {
+        this.tvServerChannels.refresh();
+    }
 
     /**
      * initialize channel List view
@@ -154,6 +163,12 @@ public class CategoryTreeViewController implements Controller {
             System.err.println("Error while loading channels from server");
             Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
+        Platform.runLater(() -> {
+            if (server.getReferenceMessage() != null && !server.getReferenceMessage().equals("")) {
+                controller.getServerChatController().loadMessage();
+            }
+        });
+
     }
 
     /**
@@ -165,24 +180,33 @@ public class CategoryTreeViewController implements Controller {
         if (tvServerChannels.getSelectionModel().getSelectedItem() != null) {
             if (((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue() instanceof Channel) {
                 Channel channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
-                if (mouseEvent.getClickCount() == 1) {
+                if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.PRIMARY) {
                     if (channel.getType().equals(TEXT)) {
                         channel = (Channel) ((TreeItem<?>) tvServerChannels.getSelectionModel().getSelectedItem()).getValue();
                         controller.getServerChatController().initChannelChat(channel);
                     }
                     controller.refreshLvUsers(channel);
-                } else if (mouseEvent.getClickCount() == 2) {
+                } else if (mouseEvent.getClickCount() == 2 && mouseEvent.getButton() == MouseButton.PRIMARY) {
                     if (channel.getType().equals(AUDIO)) {
-                        if (localUser.getAudioChannel() == null) {
-                            editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                        } else if (localUser.getAudioChannel().getId().equals(channel.getId())) {
-                            editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
-                        } else {
-                            editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
-                        }
+                        handleAudioDoubleClicked(channel);
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * initAudioConnection when audio channel is clicked twice
+     *
+     * @param channel selected channel
+     */
+    public void handleAudioDoubleClicked(Channel channel) {
+        if (localUser.getAudioChannel() == null) {
+            editor.getRestManager().joinAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+        } else if (localUser.getAudioChannel().getId().equals(channel.getId())) {
+            editor.getRestManager().leaveAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), channel.getCategory(), channel, this);
+        } else {
+            editor.getRestManager().leaveAndJoinNewAudioChannel(localUser.getUserKey(), channel.getCategory().getServer(), localUser.getAudioChannel().getCategory(), channel.getCategory(), localUser.getAudioChannel(), channel, this);
         }
     }
 
