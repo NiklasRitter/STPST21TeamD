@@ -61,7 +61,6 @@ public class OptionsScreenController implements Controller {
 
         selectSubController(ControllerEnum.APPEARANCE_OPTIONS_SCREEN);
 
-
         this.btnBack.setOnAction(this::btnBackToChats);
         this.btnAppearance.setOnAction(this::btnAppearanceOptions);
         this.btnLanguage.setOnAction(this::btnLanguageOptions);
@@ -69,7 +68,6 @@ public class OptionsScreenController implements Controller {
         this.btnVoice.setOnAction(this::btnVoiceOptions);
         this.btnDescription.setOnAction(this::btnDescriptionOptions);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-        this.btnSpotify.setOnAction(this::authorizeSpotify);
     }
 
     /**
@@ -85,7 +83,6 @@ public class OptionsScreenController implements Controller {
         btnDescription.setOnAction(null);
         btnLanguage.setOnAction(null);
         btnVoice.setOnAction(null);
-        btnSpotify.setOnAction(null);
     }
 
     private void btnAppearanceOptions(ActionEvent actionEvent) {
@@ -173,15 +170,5 @@ public class OptionsScreenController implements Controller {
      */
     private void logoutButtonOnClick(ActionEvent actionEvent) {
         editor.logoutUser(editor.getLocalUser().getUserKey());
-    }
-
-    /**
-     * Authorize Spotify Account of localUser
-     *
-     * @param actionEvent Expects an action event, such as when a javafx.scene.control.Button has been fired
-     */
-    private void authorizeSpotify(ActionEvent actionEvent) {
-        this.editor.setSpotifyIntegration(new SpotifyIntegration(editor));
-        this.editor.getSpotifyIntegration().authorize();
     }
 }

@@ -614,9 +614,9 @@ public class LocalUser
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());
       result.append(' ').append(this.getId());
+      result.append(' ').append(this.getSpotifyCurrentlyPlaying());
       result.append(' ').append(this.getSteam64ID());
       result.append(' ').append(this.getSteamGameExtraInfo());
-      result.append(' ').append(this.getSpotifyCurrentlyPlaying());
       return result.substring(1);
    }
 

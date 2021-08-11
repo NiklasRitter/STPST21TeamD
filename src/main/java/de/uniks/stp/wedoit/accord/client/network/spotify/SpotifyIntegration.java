@@ -100,6 +100,7 @@ public class SpotifyIntegration implements HttpHandler {
             authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
+            this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -141,7 +142,7 @@ public class SpotifyIntegration implements HttpHandler {
             e.printStackTrace();
         }
 
-        // TODO this.editor.getSpotifyManager().setupRefreshAuthTimer();
+        this.editor.getSpotifyManager().setupRefreshAuthTimer();
         this.editor.getSpotifyManager().setupTrackTimer();
         stopServer();
     }

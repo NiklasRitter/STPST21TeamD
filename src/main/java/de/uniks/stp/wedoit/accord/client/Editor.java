@@ -126,15 +126,9 @@ public class Editor {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
         steamManager.setupSteamTimer();
+        spotifyManager.setupTrackTimer();
+        spotifyManager.setupRefreshAuthTimer();
         return localUser;
-    }
-
-    public void authorizeSpotify() {
-        String refreshToken = getRefreshToken();
-        if (refreshToken != null) {
-            SpotifyIntegration spotifyIntegration = setSpotifyIntegration(new SpotifyIntegration(this));
-            spotifyIntegration.reauthorize();
-        }
     }
 
     /**
@@ -165,9 +159,6 @@ public class Editor {
         localUser.setUserKey(userKey);
         webSocketManager.setClearUsername();
         setUpDB();
-        spotifyManager.setupTrackTimer();
-        authorizeSpotify();
-        // TODO spotifyManager.setupRefreshAuthTimer();
         return localUser;
     }
 
@@ -433,6 +424,14 @@ public class Editor {
 
     }
 
+    public void authorizeSpotify() {
+        String refreshToken = getRefreshToken();
+        if (refreshToken != null) {
+            SpotifyIntegration spotifyIntegration = setSpotifyIntegration(new SpotifyIntegration(this));
+            spotifyIntegration.reauthorize();
+        }
+    }
+
     /**
      * creates a instance of the sqlite databank and loads the font size
      * right after log in since the username is needed
@@ -440,6 +439,7 @@ public class Editor {
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
         getLocalUser().setSteam64ID(getSteam64ID());
+        authorizeSpotify();
     }
 
     /**

@@ -17,7 +17,7 @@ public class SpotifyManager {
     private Timer trackTimer;
     private Timer refreshTimer;
     private SpotifyIntegration spotifyIntegration;
-    private int TRACK_TIMER = 10000;
+    private int TRACK_TIMER = 1000;
     private int REFRESH_TIMER = 3540000;
 
     public SpotifyManager(Editor editor) {
@@ -87,8 +87,9 @@ public class SpotifyManager {
         if (editor.getLocalUser() != null && propertyChangeEvent.getNewValue() instanceof String) {
             editor.getRestManager().updateDescription(this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
             //TODO are both needed?
-            this.editor.changeUserDescription(this.editor.getLocalUser().getId(), this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
             /*
+            // this.editor.changeUserDescription(this.editor.getLocalUser().getId(), this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
+
             String oldValue = (String) propertyChangeEvent.getOldValue();
             String newValue = (String) propertyChangeEvent.getNewValue();
             String currentDescription = editor.getLocalUser().getDescription();
