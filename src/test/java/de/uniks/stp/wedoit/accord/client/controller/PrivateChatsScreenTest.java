@@ -15,6 +15,7 @@ import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
@@ -280,6 +281,87 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertTrue(this.stageManager.getStage(StageEnum.GAME_STAGE).isShowing());
         Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
+    }
+
+    @Test
+    public void testQuitGame() {
+        initUserListView();
+
+        Label lblSelectedUser = lookup("#lblSelectedUser").query();
+        ListView<PrivateMessage> lwPrivateChat = lookup("#lwPrivateChat").queryListView();
+        ListView<User> lwOnlineUsers = lookup("#lwOnlineUsers").queryListView();
+        Button btnPlay = lookup("#btnPlay").queryButton();
+
+        Assert.assertEquals(LanguageResolver.getString("PLAY"), btnPlay.getText());
+
+        lwOnlineUsers.getSelectionModel().select(0);
+        User user = lwOnlineUsers.getSelectionModel().getSelectedItem();
+
+        clickOn("#lwOnlineUsers");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(user.getName(), lblSelectedUser.getText());
+
+        clickOn(btnPlay);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        //send invite
+        JsonObject gameInvite = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_INVITE);
+        mockChatWebSocket(getTestMessageServerAnswer(gameInvite));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(localUser.getGameRequests().size(), 1);
+
+        //send quit
+        JsonObject gameQuit = JsonUtil.buildPrivateChatMessage(user.getName(), GAME_CLOSE);
+        mockChatWebSocket(getTestMessageServerAnswer(gameQuit));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(localUser.getGameRequests().size(), 0);
+
+        //receive game invite message
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(localUser.getGameInvites().size(), 1);
+
+        //receive quit
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_CLOSE));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertEquals(localUser.getGameInvites().size(), 0);
+
+        // go inGame now
+        clickOn(btnPlay);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        //send message
+        mockChatWebSocket(getTestMessageServerAnswer(gameInvite));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        //add more gameInvites and Request to localUser so that the test covers all scenarios
+        lwOnlineUsers.getSelectionModel().select(1);
+        User user2 = lwOnlineUsers.getSelectionModel().getSelectedItem();
+        lwOnlineUsers.getSelectionModel().select(2);
+        User user3 = lwOnlineUsers.getSelectionModel().getSelectedItem();
+        localUser.withGameRequests(user2);
+        localUser.withGameInvites(user3);
+
+        //receive game accepted message
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_INVITE));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertTrue(this.stageManager.getStage(StageEnum.GAME_STAGE).isShowing());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
+
+        // opponent sends quit message --> go to result screen
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_CLOSE));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Assert.assertTrue(this.stageManager.getStage(StageEnum.GAME_STAGE).isShowing());
+        Assert.assertEquals("Result",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
+        Label lbOutcome = lookup("#lbOutcome").query();
+        Assert.assertEquals(lbOutcome.getText(), LanguageResolver.getString("OPPONENT_LEFT"));
     }
 
     @Test

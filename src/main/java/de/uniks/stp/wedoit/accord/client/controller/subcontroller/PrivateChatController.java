@@ -355,8 +355,6 @@ public class PrivateChatController implements Controller {
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(quoteMsg));
 
             } else {
-                //if (message.equals(GAME_INVITE) || message.equals(GAME_ACCEPTS) || message.equals(GAME_CLOSE) || message.equals(GAME_START) || message.equals(GAME_INGAME))
-                    //message = message.substring(GAME_PREFIX.length());
                 JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             }
