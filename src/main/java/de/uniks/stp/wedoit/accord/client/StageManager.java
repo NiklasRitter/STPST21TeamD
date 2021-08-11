@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,7 +18,10 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
+import javax.swing.text.html.StyleSheet;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +42,8 @@ public class StageManager extends Application {
     private SystemTrayController systemTrayController;
     private AccordClient model;
     private ControllerEnum currentController;
+
+    private PropertyChangeListener zoomLevelChanged = this::handleZoomLevelChanged;
 
 
     {
@@ -280,6 +286,40 @@ public class StageManager extends Application {
         return prefManager;
     }
 
+    private void handleZoomLevelChanged(PropertyChangeEvent propertyChangeEvent) {
+        for (Scene scene: this.sceneMap.values()) {
+                if (scene != null) {
+                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/25.css")).toExternalForm());
+
+                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/50.css")).toExternalForm());
+
+                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/75.css")).toExternalForm());
+
+                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/100.css")).toExternalForm());
+
+                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/125.css")).toExternalForm());
+
+                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/150.css")).toExternalForm());
+
+                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/175.css")).toExternalForm());
+
+                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/200.css")).toExternalForm());
+
+                    scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                            "zoomLevels/"+ model.getOptions().getZoomLevel() + ".css")).toExternalForm());
+                }
+        }
+        System.out.println("Hallo");
+    }
+
     /**
      * start message for the initial screen,
      * overrides the start method from javafx.application </p>
@@ -315,6 +355,7 @@ public class StageManager extends Application {
         prefManager.setStageManager(this);
         model = editor.haveAccordClient();
         model.setOptions(new Options());
+        this.model.getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_ZOOM_LEVEL, this.zoomLevelChanged);
         editor.haveLocalUser();
         resourceManager.start(model);
         updateOutputInputDevices();
@@ -336,6 +377,7 @@ public class StageManager extends Application {
     public void stop() {
         try {
             super.stop();
+            this.model.getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_ZOOM_LEVEL, this.zoomLevelChanged);
             stageMap.forEach((k, v) -> v.getIcons().remove(logoImage));
             this.editor.getAudioManager().closeAudioConnection();
             this.editor.getSteamManager().terminateSteamTimer();
