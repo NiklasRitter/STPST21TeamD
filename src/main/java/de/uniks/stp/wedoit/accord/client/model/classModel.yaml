@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_inGame 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -673,6 +673,15 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- localUser_inGame: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_inGame
+  modified: 	false
+  name: 	inGame
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
 
 - localUser_gameInvites: 	org.fulib.classmodel.Attribute
   clazz: 	localUser
