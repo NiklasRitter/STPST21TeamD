@@ -327,13 +327,14 @@ public class AudioManagerTest extends ApplicationTest {
         tempAudioCon.startConnection("localhost", 33100);
         WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
         User user = stageManager.getEditor().getUser("N2");
+        int audioVolume = user.getAudioVolume();
         user.setAudioVolume(100);
         tempAudioCon.getAudioReceive().updateVolume();
-        FloatControl control = (FloatControl) tempAudioCon.getAudioReceive().getSourceDataLineMap().get("N2").getControl(FloatControl.Type.MASTER_GAIN);
-        Assert.assertEquals(control.getValue(), control.getMaximum(), 0.0000);
+        Assert.assertNotEquals(audioVolume, user.getAudioVolume(), 0.0000);
+        audioVolume = user.getAudioVolume();
         user.setAudioVolume(-100);
         tempAudioCon.getAudioReceive().updateVolume();
-        Assert.assertEquals(control.getValue(), control.getMinimum(), 0.0000);
+        Assert.assertNotEquals(audioVolume, user.getAudioVolume(), 0.0000);
     }
 
     @Test

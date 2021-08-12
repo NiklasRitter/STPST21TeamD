@@ -71,7 +71,7 @@ public class PrivateChatsScreenController implements Controller {
         this.localUser = model;
         this.editor = editor;
         this.privateChatController = new PrivateChatController(view, model, editor);
-        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor);
+        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor, null);
     }
 
 
@@ -178,7 +178,7 @@ public class PrivateChatsScreenController implements Controller {
 
         this.onlineUserObservableList.addAll(editor.loadOldChats());
 
-        Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
+        this.lwOnlineUsers.setItems(onlineUserObservableList);
 
         for (User user : availableUsers) {
             editor.getUserChatRead(user);
