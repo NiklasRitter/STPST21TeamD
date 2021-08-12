@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
@@ -29,12 +28,10 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.prefs.Preferences;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.LOGIN_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
 import static de.uniks.stp.wedoit.accord.client.constants.Preferences.PASSWORD;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -116,16 +113,16 @@ public class LoginScreenTest extends ApplicationTest {
     public void testSetRememberMe() {
         Options options = new Options();
         stageManager.getResourceManager().loadOptions(options);
-        Assert.assertEquals(options.isRememberMe(), false);
-        Assert.assertEquals(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe(), false);
+        Assert.assertFalse(options.isRememberMe());
+        Assert.assertFalse(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe());
         clickOn("#btnRememberMe");
         stageManager.getResourceManager().loadOptions(options);
-        Assert.assertEquals(options.isRememberMe(), true);
-        Assert.assertEquals(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe(), true);
+        Assert.assertTrue(options.isRememberMe());
+        Assert.assertTrue(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe());
         clickOn("#btnRememberMe");
         stageManager.getResourceManager().loadOptions(options);
-        Assert.assertEquals(options.isRememberMe(), false);
-        Assert.assertEquals(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe(), false);
+        Assert.assertFalse(options.isRememberMe());
+        Assert.assertFalse(stageManager.getEditor().getLocalUser().getAccordClient().getOptions().isRememberMe());
     }
 
     @Test
@@ -134,7 +131,8 @@ public class LoginScreenTest extends ApplicationTest {
         clickOn("#btnOptions");
 
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Options", this.stageManager.getStage(StageEnum.POPUP_STAGE).getTitle());
+
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
     }
 
     @Test

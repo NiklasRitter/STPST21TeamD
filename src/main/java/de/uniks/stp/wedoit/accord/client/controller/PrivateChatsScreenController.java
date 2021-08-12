@@ -316,6 +316,7 @@ public class PrivateChatsScreenController implements Controller {
     }
 
     public void initPrivateChatView(User selectedUser) {
+        lblDescription.setText("");
         if (selectedUser != null) {
             btnPlay.setText(localUser.getGameInvites().contains(selectedUser) ?
                     LanguageResolver.getString("ACCEPT") : LanguageResolver.getString("PLAY"));

@@ -341,3 +341,15 @@
 .button-selected {
     -fx-background-color: #2f3136;
 }
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: rgba(0, 14, 44, 0.75);
+}
+
+.LanguageBox{
+    -fx-border-color: black;
+    -fx-border-radius: 3;
+    -fx-border-width: 2;
+    -fx-padding: 3,3,3,3;
+    -fx-spacing: 200;
+}

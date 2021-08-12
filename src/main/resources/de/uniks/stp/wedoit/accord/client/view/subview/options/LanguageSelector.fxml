@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+
+
+<HBox id="hBoxLanguageItem" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="200.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+
+</HBox>

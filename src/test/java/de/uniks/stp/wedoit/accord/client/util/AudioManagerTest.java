@@ -336,6 +336,18 @@ public class AudioManagerTest extends ApplicationTest {
         Assert.assertEquals(control.getValue(), control.getMinimum(), 0.0000);
     }
 
+    @Test
+    public void removeUserFromAudioChannelOfServerTest() {
+        initUserListView();
+        JsonArray audioMembers = Json.createArrayBuilder().add("I1").build();
+        initAudioChannelListView(audioMembers);
+        Server testServer = new Server().withCategories(new Category().withChannels(new Channel().setType("audio").withAudioMembers(new User())));
+        Assert.assertEquals(testServer.getCategories().get(0).getChannels().get(0).getAudioMembers().size(), 1);
+        stageManager.getEditor().removeUserFromAudioChannelOfServer(testServer);
+        Assert.assertEquals(testServer.getCategories().get(0).getChannels().get(0).getAudioMembers().size(), 0);
+    }
+
+
     public void initUserListView() {
         JsonObject restJson = getServerIdSuccessful();
         JsonObject webSocketJson = webSocketCallbackUserJoined();
