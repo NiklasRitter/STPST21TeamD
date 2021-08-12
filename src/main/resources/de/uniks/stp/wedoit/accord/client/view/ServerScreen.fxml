@@ -12,16 +12,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" styleClass="styleBorder" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <children>
             <fx:include source="listViewServerList.fxml" />
-                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="150.0" prefHeight="41.0" prefWidth="150.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+                <VBox alignment="TOP_CENTER" minWidth="150.0" prefHeight="41.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
                   <HBox id="hBoxName">
                      <children>
-                              <Label id="lbServerName" prefWidth="300.0" styleClass="styleTop" text="%SERVER">
+                              <Label id="lbServerName" styleClass="styleTop" text="%SERVER">
                                   <padding>
                                       <Insets left="2.0" />
                                   </padding>
@@ -32,7 +32,7 @@
                         <MenuButton id="serverMenuButton" mnemonicParsing="false" prefWidth="32.0" styleClass="styleTopMenu" />
                      </children>
                   </HBox>
-                        <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="192.0" prefWidth="150.0" VBox.vgrow="ALWAYS" />
+                        <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="192.0" VBox.vgrow="ALWAYS" />
                         <VBox id="audioChannelSubViewContainer" alignment="CENTER" spacing="10.0">
                             <children>
                                 <fx:include source="subview/AudioChannelSubView.fxml" />
@@ -85,7 +85,7 @@
                         </HBox>
                     </children>
                 </VBox>
-                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+                <VBox alignment="TOP_CENTER" maxWidth="250.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
                         <Label id="lblServerUsers" prefWidth="200.0" styleClass="styleTop" text="%SERVER_USERS" VBox.vgrow="ALWAYS">
                             <padding>

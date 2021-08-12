@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox id="hBoxOuter" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<HBox id="hBoxOuter" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox id="vBoxButtons" alignment="TOP_CENTER" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" spacing="20.0" styleClass="styleBackgroundHighlight">
+      <VBox id="vBoxButtons" alignment="TOP_CENTER" minWidth="90.0" spacing="20.0" styleClass="styleBackgroundHighlight">
          <children>
             <Button id="btnBack" mnemonicParsing="false" styleClass="sidebar-Button" text="%BACK">
                <tooltip>

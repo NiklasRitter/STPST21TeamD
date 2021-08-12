@@ -287,37 +287,37 @@ public class StageManager extends Application {
     }
 
     private void handleZoomLevelChanged(PropertyChangeEvent propertyChangeEvent) {
-        for (Scene scene: this.sceneMap.values()) {
-                if (scene != null) {
-                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+        for (Scene sc: this.sceneMap.values()) {
+                if (sc != null) {
+                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/25.css")).toExternalForm());
 
-                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/50.css")).toExternalForm());
 
-                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/75.css")).toExternalForm());
 
-                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/100.css")).toExternalForm());
 
-                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/125.css")).toExternalForm());
 
-                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/150.css")).toExternalForm());
 
-                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/175.css")).toExternalForm());
 
-                    scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/200.css")).toExternalForm());
 
-                    scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                    sc.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                             "zoomLevels/"+ model.getOptions().getZoomLevel() + ".css")).toExternalForm());
                 }
+
         }
-        System.out.println("Hallo");
     }
 
     /**

@@ -9,3 +9,11 @@
 .tooltip {
     -fx-font-size: 12;
 }
+
+.listView2  > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-font-size: 12;
+}
+
+.tree-cell {
+    -fx-font-size: 12;
+}
