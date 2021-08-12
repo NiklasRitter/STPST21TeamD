@@ -124,7 +124,7 @@ public class ServerScreenController implements Controller {
         }
 
         // Add server websocket
-        //editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+        editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
         // Add chat server web socket
         editor.getWebSocketManager().haveWebSocket(CHAT_USER_URL + this.editor.getWebSocketManager().getCleanLocalUserName()
                 + AND_SERVER_ID_URL + this.server.getId(), chatWSCallback);

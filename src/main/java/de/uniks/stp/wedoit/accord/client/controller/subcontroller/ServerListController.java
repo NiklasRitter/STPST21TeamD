@@ -94,9 +94,6 @@ public class ServerListController implements Controller {
     }
 
     public void stop() {
-        for (String url : webSocketServerUrls) {
-            editor.getWebSocketManager().withOutWebSocket(url);
-        }
         this.btnOptions.setOnAction(null);
         this.btnHome.setOnAction(null);
         this.addServerButton.setOnAction(null);

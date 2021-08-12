@@ -381,10 +381,11 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         Assert.assertEquals(user.getName(), lblSelectedUser.getText());
 
         WaitForAsyncUtils.waitForFxEvents();
-        clickOn("#btnEmoji");
+        Button btnEmoji = lookup("#btnEmoji").queryButton();
+        clickOn(btnEmoji);
 
         WaitForAsyncUtils.waitForFxEvents();
-        //Assert.assertTrue(emojiPickerStage.isShowing());
+        Assert.assertTrue(emojiPickerStage.isShowing());
         Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
 
         GridPane panelForEmojis = (GridPane) emojiPickerStage.getScene().getRoot().lookup("#panelForEmojis");

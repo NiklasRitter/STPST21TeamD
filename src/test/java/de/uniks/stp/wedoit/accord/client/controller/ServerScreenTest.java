@@ -579,7 +579,8 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(channel.getName(), lblChannelName.getText());
 
-        clickOn("#btnEmoji");
+        Button emojiButton = lookup("#btnEmoji").queryButton();
+        clickOn(emojiButton);
 
         WaitForAsyncUtils.waitForFxEvents();
         //Assert.assertTrue(emojiPickerStage.isShowing());
@@ -660,7 +661,8 @@ public class ServerScreenTest extends ApplicationTest {
         selectUser.getSelectionModel().select(0);
         clickOn("#lvSelectUser");
 
-        Assert.assertEquals("@N2", tfInputMessage.getText());
+        String text = tfInputMessage.getText();
+        Assert.assertEquals("@N2", text);
 
         clickOn("#tfInputMessage");
         write("@N1");
@@ -1312,10 +1314,10 @@ public class ServerScreenTest extends ApplicationTest {
 
         RichTextArea tArea = lookup("#tfUpdateMessage").query();
         tArea.setText("update");
-        Button btn = (Button) tArea.getParent().lookup("#btnEmoji");
+        Button btn = lookup("#btnEmojiUpdateMessage").queryButton();
         clickOn(btn);
         WaitForAsyncUtils.waitForFxEvents();
-        //Assert.assertTrue(emojiPickerStage.isShowing());
+        Assert.assertTrue(emojiPickerStage.isShowing());
         Assert.assertEquals("Emoji Picker", emojiPickerStage.getTitle());
 
 
