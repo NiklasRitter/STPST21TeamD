@@ -6,6 +6,7 @@ import org.fulib.builder.reflect.Link;
 
 import javax.sound.sampled.Mixer;
 import java.util.List;
+import java.util.Timer;
 
 public class GenModel implements ClassModelDecorator {
     @Override
@@ -29,6 +30,8 @@ public class GenModel implements ClassModelDecorator {
         Mixer.Info inputDevice;
         float systemVolume;
         float inputVolume;
+        double audioRootMeanSquare;
+        int chatFontSize;
 
         @Link("options")
         AccordClient accordClient;
@@ -39,11 +42,15 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String userKey;
         String id;
+        String steam64ID;
+        String steamGameExtraInfo;
+        boolean inGame;
         List<User> gameInvites;
         List<User> gameRequests;
         Channel audioChannel;
         boolean muted;
         boolean allMuted;
+        Timer steamGameExtraInfoTimer;
 
         @Link("localUser")
         List<User> users;
@@ -61,7 +68,7 @@ public class GenModel implements ClassModelDecorator {
         boolean chatRead;
         boolean muted;
         String gameMove;
-
+        int audioVolume;
         String id;
 
         @Link("users")
@@ -94,6 +101,7 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String id;
         String owner;
+        String referenceMessage;
 
         @Link("servers")
         List<User> members;

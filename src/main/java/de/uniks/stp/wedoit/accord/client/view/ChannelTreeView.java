@@ -2,19 +2,21 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.controller.Controller;
+import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeView;
+import javafx.application.Platform;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.util.Objects;
 
+import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 
 public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, TreeCell<Object>> {
@@ -131,6 +133,20 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         menuItem2.setOnAction((event) -> this.stageManager.initView(ControllerEnum.CREATE_CHANNEL_SCREEN, item.getCategory(), null));
         menuItem3.setOnAction((event) -> this.stageManager.initView(ControllerEnum.EDIT_CHANNEL_SCREEN, item, null));
 
+        if (item.getType().equals(AUDIO)) {
+            MenuItem menuItem4;
+            if (stageManager.getEditor().getAccordClient().getLocalUser().getAudioChannel() == item) {
+                menuItem4= new MenuItem("- " + LanguageResolver.getString("LEAVE_AUDIO_CHANNEL") +" "+ item.getName());
+            } else {
+                menuItem4 = new MenuItem("- " + LanguageResolver.getString("JOIN_AUDIO_CHANNEL") +" "+ item.getName());
+            }
+            contextMenu.getItems().add(menuItem4);
+            ServerScreenController controller = (ServerScreenController) this.stageManager.getControllerMap().get(SERVER_SCREEN_CONTROLLER);
+            if (controller != null) {
+                menuItem4.setOnAction((event) -> controller.getCategoryTreeViewController().handleAudioDoubleClicked(item));
+            }
+        }
+
         return contextMenu;
     }
 
@@ -153,12 +169,14 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
     public ContextMenu addContextMenuMute(User user, TreeCell<Object> cell) {
         if (!user.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
             ContextMenu contextMenu = new ContextMenu();
-            MenuItem menuItem = new MenuItem("- " + LanguageResolver.getString("MUTE"));
+            MenuItem menuItem = new MenuItem("", new Label("    - " + LanguageResolver.getString("MUTE")));
+            MenuItem menuItem2 = new MenuItem("", createSlider(user));
             menuItem.setOnAction((event) -> {
                 this.stageManager.getEditor().getAudioManager().muteUser(user);
                 cell.getTreeView().refresh();
             });
             contextMenu.getItems().add(menuItem);
+            contextMenu.getItems().add(menuItem2);
             return contextMenu;
         }
         return null;
@@ -168,11 +186,13 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         if (!user.getName().equals(stageManager.getEditor().getLocalUser().getName())) {
             ContextMenu contextMenu = new ContextMenu();
             MenuItem menuItem = new MenuItem("- " + LanguageResolver.getString("UNMUTE"));
+            MenuItem menuItem2 = new MenuItem("", createSlider(user));
             menuItem.setOnAction((event) -> {
                 this.stageManager.getEditor().getAudioManager().unmuteUser(user);
                 cell.getTreeView().refresh();
             });
             contextMenu.getItems().add(menuItem);
+            contextMenu.getItems().add(menuItem2);
             return contextMenu;
         }
         return null;
@@ -220,6 +240,20 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         contextMenu.getItems().add(menuItem2);
         contextMenu.getItems().add(menuItem3);
         return contextMenu;
+    }
+
+    public Slider createSlider(User user){
+        Slider slider = new Slider();
+        slider.setId("sliderVolumeUser");
+        slider.setMax(100);
+        slider.setMin(-100);
+        slider.setValue(user.getAudioVolume());
+        slider.setOnMouseReleased((event) -> {
+            int audioVolume = (int) slider.getValue();
+            user.setAudioVolume(audioVolume);
+            stageManager.getEditor().getAudioManager().getAudioConnection().getAudioReceive().updateVolume();
+        });
+        return slider;
     }
 
 }

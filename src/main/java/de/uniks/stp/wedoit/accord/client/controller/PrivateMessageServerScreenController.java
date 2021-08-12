@@ -4,17 +4,20 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
+import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 
 import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
@@ -30,11 +33,12 @@ public class PrivateMessageServerScreenController implements Controller {
     private final Server server;
     private final User memberToWrite;
 
-    private TextArea taMessage;
+    private RichTextArea taMessage;
     private Button btnShowChat;
     private Button btnEmoji;
 
     private final PropertyChangeListener onlineListener = this::onOnlineChanged;
+    private PropertyChangeListener darkmodeChanged = this::darkModeChanged;
 
     public PrivateMessageServerScreenController(Parent root, Editor editor, Server server, User memberToWrite) {
         this.view = root;
@@ -46,7 +50,11 @@ public class PrivateMessageServerScreenController implements Controller {
     @Override
     public void init() {
         Label lblTitle = (Label) view.lookup("#lblTitle");
-        this.taMessage = (TextArea) view.lookup("#tfMessage");
+        HBox hBoxTextField = (HBox) view.lookup("#hBoxTextField");
+        this.taMessage = new RichTextArea();
+        taMessage.setId("tfMessage");
+        taMessage.getStyleClass().add("textAreaInput");
+        hBoxTextField.getChildren().add(0, taMessage);
         this.btnShowChat = (Button) view.lookup("#btnShowChat");
         this.btnEmoji = (Button) view.lookup("#btnEmoji");
 
@@ -60,15 +68,33 @@ public class PrivateMessageServerScreenController implements Controller {
 
         this.memberToWrite.listeners().addPropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).setTitle(memberToWrite.getName());
+        editor.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_DARKMODE, this.darkmodeChanged);
+
+        this.taMessage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
+                    event.consume();
+                    sendMessage(taMessage.getConvertedText());
+                }
+            }
+        });
+
     }
 
     @Override
     public void stop() {
+        editor.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_DARKMODE, this.darkmodeChanged);
+        this.darkmodeChanged = null;
         this.taMessage.setOnKeyPressed(null);
         this.btnShowChat.setOnAction(null);
         this.btnEmoji.setOnAction(null);
         this.memberToWrite.listeners().removePropertyChangeListener(User.PROPERTY_ONLINE_STATUS, this.onlineListener);
         this.editor.getStageManager().getStage(StageEnum.POPUP_STAGE).close();
+    }
+
+    private void darkModeChanged(PropertyChangeEvent propertyChangeEvent) {
+        taMessage.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
     }
 
     /**
@@ -125,6 +151,7 @@ public class PrivateMessageServerScreenController implements Controller {
 
     /**
      * gets the position of Emoji Button and pass it to showEmojiScreen
+     *
      * @param actionEvent is triggered when emoji button is clicked
      */
     private void btnEmojiOnClicked(ActionEvent actionEvent) {
@@ -150,9 +177,9 @@ public class PrivateMessageServerScreenController implements Controller {
         this.taMessage.setEditable(onlineStatus);
         if (!onlineStatus) {
             this.taMessage.clear();
-            this.taMessage.setPromptText(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE"));
+            this.taMessage.setPromptText(memberToWrite.getName() + " " + LanguageResolver.getString("IS_OFFLINE"), editor.getAccordClient().getOptions().isDarkmode());
         } else {
-            this.taMessage.setPromptText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName());
+            this.taMessage.setPromptText(LanguageResolver.getString("SEND_MESSAGE_TO") + " " + memberToWrite.getName(), editor.getAccordClient().getOptions().isDarkmode());
         }
     }
 

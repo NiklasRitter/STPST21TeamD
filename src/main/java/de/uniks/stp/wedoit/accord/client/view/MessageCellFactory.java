@@ -4,13 +4,14 @@ import com.pavlobu.emojitextflow.EmojiTextFlow;
 import com.pavlobu.emojitextflow.EmojiTextFlowParameters;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.controller.Controller;
+import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
+import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.Message;
-import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
 import javafx.application.Platform;
-import javafx.css.Style;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -35,27 +36,42 @@ import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
 
 public class MessageCellFactory<T extends Message> implements Callback<ListView<T>, ListCell<T>> {
 
+    private final Controller controller;
     StageManager stageManager;
 
-    public MessageCellFactory(StageManager stageManager) {
+    public MessageCellFactory(StageManager stageManager, Controller controller) {
         this.stageManager = stageManager;
+        this.controller = controller;
     }
 
     @Override
     public ListCell<T> call(ListView<T> param) {
         return new MessageCell<>(param);
+    }
+
+    private void joinButtonOnClick(String inviteLink) {
+        stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
+    }
+
+    public void handleInvitation(Server server, String responseMessage) {
+        if (server != null) {
+            Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
+        } else {
+            if (responseMessage.equals("MainScreen")) {
+                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
+            }
+        }
     }
 
     private class MessageCell<S extends Message> extends ListCell<S> {
@@ -68,50 +84,75 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Button btnHandleMedia = new Button();
         private final Label lblDate = new Label();
         private final MediaView mediaView = new MediaView();
-        private MediaPlayer mediaPlayer;
         private final VBox vBox = new VBox();
+        private final HBox styleHBox = new HBox();
         private final Label label = new Label();
         private final Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
+        private MediaPlayer mediaPlayer;
         private String time;
         private EmojiTextFlowParameters parameters;
+        private EmojiTextFlowParameters parametersBold;
         private EmojiTextFlowParameters parametersQuote;
+        private EmojiTextFlowParameters referenceParameters;
         private EmojiTextFlow emojiTextFlow;
         private EmojiTextFlow quoteTextFlow;
+        private final Button spoilerButton = new Button("Spoiler");
+
 
         private MessageCell(ListView<S> param) {
             this.param = param;
+            // set the width (-20 to eliminate overhang in ListView)
+            prefWidthProperty().bind(param.widthProperty().subtract(20));
+            setMinWidth(param.getWidth() - 20);
+            setMaxWidth(param.getWidth() - 20);
+            setAlignment(Pos.CENTER_LEFT);
+
+            // allow wrapping
+            setWrapText(true);
         }
 
         /**
          * determinants how Message cell is constructed
-         * @param item of PrivateMessage or Message
+         *
+         * @param item  of PrivateMessage or Message
          * @param empty if cell is empty
          */
         @Override
         protected void updateItem(S item, boolean empty) {
             super.updateItem(item, empty);
             setItem(item);
+            spoilerButton.setOnAction(null);
             this.setText(null);
-            this.getStyleClass().removeAll("font_size", "marked_message");
+            this.getStyleClass().removeAll("font_size", "marked_message", "reference");
             this.setGraphic(null);
             this.vBox.getChildren().clear();
+            this.styleHBox.getChildren().clear();
             webView.getEngine().load(null);
             descBox.setText(null);
             hyperlink.setOnAction(null);
             hyperlink.getStyleClass().removeAll("link", "descBox");
 
             // parameters for emoji
-            this.parametersQuote = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize() -3).createParameters();
-            this.parameters = new EmojiTextFlowParameterHelper(stageManager.getEditor().getFontSize()).createParameters();
+            this.parametersQuote =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize() - 3).createParameters();
+            this.parameters =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize()).createParameters();
+            this.referenceParameters =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize()).createParameters();
+            this.parametersBold =
+                    new EmojiTextFlowParameterHelper(stageManager.getEditor().getAccordClient().getOptions().getChatFontSize(), true).createParameters();
             if (stageManager.getPrefManager().loadDarkMode()) {
                 this.parameters.setTextColor(Color.valueOf("#ADD8e6"));
+                this.parametersBold.setTextColor(Color.valueOf("#ADD8e6"));
                 this.parametersQuote.setTextColor(Color.valueOf("#ADD8e6"));
+                this.referenceParameters.setTextColor(Color.valueOf("#ffffff"));
                 this.hyperlink.setStyle("-fx-text-fill: #ADD8e6");
                 this.label.setStyle("-fx-text-fill: #ADD8e6");
             } else {
                 this.parameters.setTextColor(Color.valueOf("#000000"));
+                this.parametersBold.setTextColor(Color.valueOf("#000000"));
                 this.parametersQuote.setTextColor(Color.valueOf("#000000"));
                 this.hyperlink.setStyle("-fx-text-fill: #000000");
                 this.label.setStyle("-fx-text-fill: #000000");
@@ -121,40 +162,63 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             if (!empty) {
 
-                // set the width (-20 to eliminate overhang in ListView)
-                prefWidthProperty().bind(param.widthProperty().subtract(20));
-                setMinWidth(param.getWidth() - 20);
-                setMaxWidth(param.getWidth() - 20);
-                setAlignment(Pos.CENTER_LEFT);
-
-                // allow wrapping
-                setWrapText(true);
-
-                if(item.getText().startsWith(GAME_PREFIX)) item.setText(item.getText().substring(GAME_PREFIX.length()));
-
+                //eval correct time format
                 time = checkTime(item);
 
                 if (item instanceof PrivateMessage) {
-                    if (item.getText().startsWith(GAME_SYSTEM)) {
-                        this.setText(item.getText().substring(GAME_PREFIX.length()));
+                    String textToDisplay;
+                    if (item.getText().equals(GAME_INVITE) || item.getText().equals(GAME_REVENGE)) {
+                        if (item.getFrom().equals(stageManager.getEditor().getLocalUser().getName())) {
+                            textToDisplay = LanguageResolver.getString("SEND_GAME_INVITE");
+                        } else {
+                            textToDisplay = item.getFrom() + LanguageResolver.getString("RECEIVE_GAME_INVITE");
+                        }
+                        item.setText(textToDisplay);
+                        displayNameAndDate(item);
+                        displayTextWithEmoji(item);
                         return;
-                    } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                    } else if (item.getText().equals(GAME_CLOSE)) {
+                        if (item.getFrom().equals(stageManager.getEditor().getLocalUser().getName())) {
+                            textToDisplay = LanguageResolver.getString("YOU_LEFT_GAME");
+                        } else {
+                            textToDisplay = item.getFrom() + " " + LanguageResolver.getString("OPP_LEFT_GAME");
+                        }
+                        item.setText(textToDisplay);
+                        displayNameAndDate(item);
+                        displayTextWithEmoji(item);
                         return;
+                    } else {
+                        //marking in server chats
+                        if (containsMarking(item.getText())) {
+                            this.getStyleClass().add("marked_message");
+                        }
                     }
                 }
-
-                if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
-                    setUpMedia(item);
+                if (item.getText().startsWith("%") && item.getText().endsWith("%")) {
+                    if (item.getText().charAt(item.getText().length()-2) != 92) {
+                        //spoiler function
+                        displayNameAndDate(item);
+                        displaySpoilerButton(item);
+                    }
+                    else {
+                        Message newMessage = new Message();
+                        newMessage.setId(item.getId());
+                        newMessage.setFrom(item.getFrom());
+                        newMessage.setTimestamp(item.getTimestamp());
+                        newMessage.setText(item.getText().substring(0, item.getText().length()-2) + item.getText().substring(item.getText().length()-1));
+                        displayNameAndDate(newMessage);
+                        displayTextWithEmoji(newMessage);
+                    }
 
                 } else if (item.getId() != null && item.getId().equals("idLoadMore")) {
+                    //load more option if more than 50 messages in chat
                     setAlignment(Pos.CENTER);
                     this.setText(item.getText());
 
                 } else if (item.getText().contains(QUOTE_PREFIX) && item.getText().contains(QUOTE_SUFFIX) && item.getText().contains(QUOTE_MESSAGE)
                         && item.getText().length() >= (QUOTE_PREFIX.length() + QUOTE_SUFFIX.length() + QUOTE_MESSAGE.length())
                         && (item.getText()).startsWith(QUOTE_PREFIX)) {
-
+                    //handle quote formatting
                     String quoteMessage = item.getText().substring(QUOTE_PREFIX.length(), item.getText().length() - QUOTE_SUFFIX.length());
 
                     String[] messages = quoteMessage.split(QUOTE_MESSAGE);
@@ -171,6 +235,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
 
                 } else if (item.getText().contains("https://ac.uniks.de/api/servers/") && item.getText().contains("/invites/")) {
+                    //invitation links for other server
                     String url = containsInviteUrl(item.getText());
                     if (url != null) {
                         setUpJoinServerView(item, url);
@@ -179,31 +244,72 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayNameAndDate(item);
                         displayTextWithEmoji(item);
                     }
+
+                } else if (setImgGraphic(item.getText()) && !item.getText().contains(QUOTE_PREFIX)) {
+                    //media view
+                    setUpMedia(item);
+
+                } else if (!(item instanceof PrivateMessage)) {
+                    ArrayList<Channel> referencedChannels = getReferences(item, item.getText());
+                    if (!referencedChannels.isEmpty()) {
+                        HBox hBox = new HBox();
+                        displayNameAndDate(item);
+                        setUpReferenceInMessage(item, referencedChannels, hBox, item.getText());
+                        this.vBox.getChildren().add(hBox);
+                        setGraphic(this.vBox);
+
+                    } else {
+                        displayNameAndDate(item);
+                        displayTextWithEmoji(item);
+                    }
+
                 } else {
+                    //normal message possibly with emoji
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);
                 }
 
-                if (item instanceof PrivateMessage) {
+                if(item.getText().startsWith(MESSAGE_LINK + SLASH) && item.getText().split("/").length == 6) {
+                    Hyperlink hyperlink = new Hyperlink(item.getText());
+                    hyperlink.setId("messageLink");
+                    vBox.getChildren().clear();
+                    displayNameAndDate(item);
+                    vBox.getChildren().add(hyperlink);
+                    hyperlink.getStyleClass().add("link");
+                    hyperlink.setOnAction(event -> openMessage(item));
 
-                    if (item.getText().startsWith(GAME_SYSTEM)) {
-                        this.setText(item.getText().substring(GAME_PREFIX.length()));
-                    } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setStyle("-fx-font-size: 12");
-                        this.setText(timeLabel().getText() + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
-                    }
-                } else {
-                    if (containsMarking(item.getText())) {
-                        this.getStyleClass().add("marked_message");
-                    }
                 }
             }
         }
 
-        private Label timeLabel() {
-            lblTime.setText(time + ": ");
-            lblTime.setStyle("-fx-font-size: 12");
-            return lblTime;
+        private void openMessage(Message message) {
+            String[] parsedReferenceMessage = stageManager.getEditor().parseReferenceMessage(message.getText());
+            Server server = null;
+            for (Server serverIndex: stageManager.getModel().getLocalUser().getServers()) {
+                if (serverIndex.getId().equals(parsedReferenceMessage[1])){
+                    server = serverIndex;
+                }
+            }
+            if (server != null) {
+                server.setReferenceMessage(message.getText());
+                Server finalServer = server;
+                Platform.runLater(() -> stageManager.initView(ControllerEnum.SERVER_SCREEN, finalServer, null));
+
+            }
+        }
+
+        private ArrayList<Channel> getReferences(Message item, String text) {
+            ArrayList<Channel> channels = new ArrayList<>();
+            Server server = item.getChannel().getCategory().getServer();
+
+            for (Category category : server.getCategories()) {
+                for (Channel channel : category.getChannels()) {
+                    if (text.contains("#" + channel.getName())) {
+                        channels.add(channel);
+                    }
+                }
+            }
+            return channels;
         }
 
         public void initToolTip(S item) {
@@ -216,6 +322,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         /**
          * checks time and determines if time was today, yesterday
+         *
          * @param item message item
          * @return String with correct description of time
          */
@@ -262,6 +369,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         /**
          * check for a valid url in general
+         *
          * @param url string to be checked
          * @return true if is valid else false
          */
@@ -269,15 +377,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             try {
                 URL Url = new URL(url);
                 Url.toURI();
-
                 if (SUPPORTED_IMG.contains(url.substring(url.length() - 4))) return true;
                 if (url.contains(MP4)) return true;
                 if (url.contains(MP3)) return true;
                 if (url.contains(GIF)) return true;
-                Document doc = Jsoup.connect(url).get();
-                if (Url.getHost().equals(SUPPORTED_CLOUD) && doc.title() != null) {
-                    descBox.setText(doc.title());
-                    descBox.getStyleClass().add("descBox");
+                if (Url.getHost().equals(SUPPORTED_CLOUD)) {
+                    Document doc = Jsoup.connect(url).get();
+                    if (doc.title() != null){
+                        descBox.setText(doc.title());
+                        descBox.getStyleClass().add("descBox");
+                    }
                 }
 
                 return true;
@@ -287,7 +396,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
 
         /**
-         *
          * @param url a string that might be a url
          * @return true image could be set
          */
@@ -394,6 +502,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
         /**
          * opens standard browser
+         *
          * @param url that the browser opens
          */
         private void openBrowser(String url) {
@@ -443,36 +552,112 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             setGraphic(this.vBox);
         }
 
+        private void setUpReferenceInMessage(Message item, ArrayList<Channel> referencedChannels, HBox message, String currentText) {
+            String current = currentText;
+            boolean duplications = false;
+
+            for (Channel channel : referencedChannels) {
+                int start = current.indexOf("#" + channel.getName());
+                if (start == -1) {
+                    continue;
+                }
+
+                EmojiTextFlow emojiTextFlow = new EmojiTextFlow(this.parameters);
+                emojiTextFlow.parseAndAppend(current.substring(0, start));
+                message.getChildren().add(emojiTextFlow);
+
+                EmojiTextFlow emojiTextFlowClickable = new EmojiTextFlow(this.referenceParameters);
+                emojiTextFlowClickable.parseAndAppend("#" + channel.getName());
+                emojiTextFlowClickable.setOnMousePressed(event -> referenceButtonOnClick(channel));
+                emojiTextFlowClickable.getStyleClass().add("reference");
+                emojiTextFlowClickable.setId("reference");
+                message.getChildren().add(emojiTextFlowClickable);
+
+                current = current.substring(start + channel.getName().length() + 1);
+
+                if (current.contains("#" + channel.getName())) {
+                    duplications = true;
+                    break;
+                }
+            }
+
+            if (duplications) {
+                ArrayList<Channel> references = getReferences(item, current);
+                setUpReferenceInMessage(item, references, message, current);
+            } else if (!current.isEmpty()) {
+                EmojiTextFlow emojiTextFlow = new EmojiTextFlow(this.parameters);
+                emojiTextFlow.parseAndAppend(current);
+                message.getChildren().add(emojiTextFlow);
+            }
+        }
+
         private void displayTextWithEmoji(Message item) {
-            this.emojiTextFlow.parseAndAppend(item.getText());
-            this.vBox.getChildren().add(emojiTextFlow);
+            if (item.getText().contains(BOLD_STYLING_KEY)) {
+                String[] messageTextBlocks = item.getText().split(BOLD_STYLING_KEY_SPLITTER);
+                boolean lastBoldKey = false;
+                for (String messageTextBlock : messageTextBlocks) {
+                    if (messageTextBlock.length() >= 2 && messageTextBlock.charAt(messageTextBlock.length()-2) == 92) {
+                        messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - 2) + BOLD_STYLING_KEY;
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parameters);
+                        if (lastBoldKey) {
+                            messageBlock = new EmojiTextFlow(this.parametersBold);
+                        }
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    }
+                    else if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
+                        lastBoldKey = false;
+                        messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parametersBold);
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    } else {
+                        if (messageTextBlock.endsWith(BOLD_STYLING_KEY)) {
+                            lastBoldKey = true;
+                            messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
+                        }
+                        EmojiTextFlow messageBlock = new EmojiTextFlow(this.parameters);
+                        messageBlock.parseAndAppend(messageTextBlock);
+                        this.styleHBox.getChildren().add(messageBlock);
+                    }
+                }
+                setGraphic(styleHBox);
+                this.vBox.getChildren().add(this.styleHBox);
+            } else {
+                this.emojiTextFlow.parseAndAppend(item.getText());
+                this.vBox.getChildren().add(emojiTextFlow);
+            }
             setGraphic(vBox);
         }
 
-        private void displayNameAndDate(Message item){
+        /**
+         * content of message will be loaded into the list when the button is pressed
+         *
+         * @param item to be loaded
+         */
+        private void displaySpoilerButton(S item) {
+            spoilerButton.getStyleClass().add("styleButton");
+            vBox.getChildren().add(spoilerButton);
+            spoilerButton.setOnAction((e) -> {
+                vBox.getChildren().remove(spoilerButton);
+                item.setText(item.getText().substring(1, item.getText().length() - 1));
+                displayTextWithEmoji(item);
+                spoilerButton.setOnAction(null);
+            });
+            setGraphic(vBox);
+
+        }
+
+        private void displayNameAndDate(Message item) {
             HBox nameAndDateHBox = new HBox();
             nameAndDateHBox.setAlignment(Pos.CENTER_LEFT);
             Label name = new Label(item.getFrom() + " ");
 
             int nameLength = item.getFrom().length();
 
-            switch (nameLength % 5) {
-                case 0:
-                    name.getStyleClass().add("color0");
-                    break;
-                case 1:
-                    name.getStyleClass().add("color1");
-                    break;
-                case 2:
-                    name.getStyleClass().add("color2");
-                    break;
-                case 3:
-                    name.getStyleClass().add("color3");
-                    break;
-                case 4:
-                    name.getStyleClass().add("color4");
-                    break;
-            }
+            //selects css class called "color0" to "color5"
+            name.getStyleClass().add("color" + nameLength % 5);
+
             lblDate.setText(time);
             lblDate.getStyleClass().add("date");
             initToolTip((S) item);
@@ -482,18 +667,40 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             setGraphic(vBox);
         }
     }
-    private void joinButtonOnClick(String inviteLink) {
-        stageManager.getEditor().getRestManager().joinServer(stageManager.getEditor().getLocalUser(), inviteLink, this);
-    }
 
-    public void handleInvitation(Server server, String responseMessage) {
-        if (server != null) {
-            Platform.runLater(() -> this.stageManager.initView(ControllerEnum.SERVER_SCREEN, server, null));
-        } else {
-            if (responseMessage.equals("MainScreen")) {
-                Platform.runLater(() -> this.stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
+
+    private void referenceButtonOnClick(Channel channel) {
+        ServerScreenController serverScreenController = (ServerScreenController) controller;
+        CategoryTreeViewController categoryTreeViewController = serverScreenController.getCategoryTreeViewController();
+
+        TreeView<Object> tvServerChannels = categoryTreeViewController.getTvServerChannels();
+        TreeItem<Object> treeItem = tvServerChannels.getRoot();
+
+        if (channel.getType().equals(AUDIO)) {
+            categoryTreeViewController.handleAudioDoubleClicked(channel);
+        } else if (channel.getType().equals(TEXT)) {
+            serverScreenController.getServerChatController().initChannelChat(channel);
+            serverScreenController.refreshLvUsers(channel);
+
+            treeItem = getItem(treeItem, channel.getName());
+
+            if (treeItem != null) {
+                tvServerChannels.getSelectionModel().select(treeItem);
             }
         }
+    }
+
+    private TreeItem<Object> getItem(TreeItem<Object> item, String name) {
+
+        if (item != null && (item.getValue() instanceof Channel) && ((Channel) item.getValue()).getName().equals(name))
+            return item;
+
+        for (TreeItem<Object> child : item.getChildren()) {
+            TreeItem<Object> treeItem = getItem(child, name);
+            if (treeItem != null)
+                return treeItem;
+        }
+        return null;
     }
 
 }

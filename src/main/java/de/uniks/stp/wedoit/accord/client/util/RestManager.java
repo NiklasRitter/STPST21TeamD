@@ -5,7 +5,6 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.*;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatController;
-
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
@@ -28,6 +27,7 @@ public class RestManager {
 
     private final Editor editor;
     private RestClient restClient = new RestClient();
+    private int count = 0;
 
     /**
      * Create a RestManager.
@@ -595,6 +595,30 @@ public class RestManager {
         });
     }
 
+
+    public void getChannelMessagesToTimeStamp(LocalUser localUser, Server server, Category category, Channel channel, String timestamp, String toTimestamp, String messageId, ServerChatController controller) {
+        restClient.getChannelMessages(localUser.getUserKey(), server.getId(), category.getId(), channel.getId(), timestamp, (response) -> {
+
+            if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
+                JsonArray data = JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonArray(DATA);
+                List<Message> messages = JsonUtil.parseMessageArray(data, channel);
+                messages.stream().sorted(Comparator.comparing(Message::getTimestamp));
+                if (toTimestamp.matches("[0-9][0-9]*")) {
+                    if(messages.size() >= 50 && messages.get(messages.size()-1).getTimestamp() > Long.parseLong(toTimestamp)){
+                        getChannelMessagesToTimeStamp(localUser, server, category, channel, messages.get(0).getTimestamp() +"", toTimestamp, messageId, controller);
+                    } else {
+                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));}
+                } else {
+                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));
+
+                }
+
+
+            }
+        });
+    }
+
+
     /**
      * Try to delete a category with the Restclient::deleteCategory method
      *
@@ -665,7 +689,7 @@ public class RestManager {
                 System.err.println("Error while leaving server");
                 Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LEAVE_SERVER_AS_OWNER_SCREEN, null, null));
             } else {
-                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
+                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
             }
         });
     }
@@ -723,9 +747,10 @@ public class RestManager {
 
     public void leaveAndJoinNewAudioChannel(String userKey, Server server, Category oldCategory, Category newCategory, Channel oldChannel, Channel newChannel, CategoryTreeViewController controller) {
         this.editor.getAudioManager().closeAudioConnection();
-        restClient.leaveAudioChannel(userKey, server.getId(), oldCategory.getId(), oldChannel.getId(), response -> {
+        restClient.leaveAudioChannel(userKey, oldCategory.getServer().getId(), oldCategory.getId(), oldChannel.getId(), response -> {
             if (response.getBody().getObject().getString(STATUS).equals(SUCCESS)) {
                 joinAudioChannel(userKey, server, newCategory, newChannel, controller);
+
             } else {
                 controller.handleLeaveAudioChannel(null);
             }
@@ -765,5 +790,20 @@ public class RestManager {
                 loginScreenController.handleGuestLogin(userName, password, true);
             }
         });
+    }
+
+    public void getLocalUserSteamGameExtraInfo() {
+        if (editor.getLocalUser().getSteam64ID() != null) {
+            restClient.getCurrentGameForSteamUser(editor.getLocalUser().getSteam64ID(), (response) -> {
+                String steamGameExtraInfo =
+                        JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(RESPONSE).getJsonArray(PLAYERS).getJsonObject(0).getString(GAME_EXTRA_INfO);
+                editor.getLocalUser().setSteamGameExtraInfo(steamGameExtraInfo);
+            });
+        }
+    }
+
+    public void updateDescription(String userDescription) {
+        restClient.postDescription(null, editor.getLocalUser().getId(), editor.getLocalUser().getUserKey(),
+                userDescription);
     }
 }

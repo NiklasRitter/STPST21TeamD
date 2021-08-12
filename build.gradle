@@ -81,7 +81,6 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 
     compile 'com.vdurmont:emoji-java:5.1.1'
-
 }
 
 generateScenarioSource {
@@ -110,7 +109,7 @@ test {
     systemProperty 'prism.text', 't2k'
     systemProperty 'java.awt.headless', 'true'
     minHeapSize = "128m"
-    maxHeapSize = "2560m"
+    maxHeapSize = "3000m"
 }
 
 /* DO NOT CHANGE THIS PART */

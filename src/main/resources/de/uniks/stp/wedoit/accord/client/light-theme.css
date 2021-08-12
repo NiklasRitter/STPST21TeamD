@@ -169,8 +169,7 @@
 
 .textAreaInput {
     -fx-text-fill: #000000 ;
-    -fx-background-color: #ebebeb;
-    -fx-prompt-text-fill: #808080;
+    -fx-background-color: rgba(255, 255, 255, 0.32);
 
 }
 
@@ -188,6 +187,7 @@
 
 .sidebar-Button {
     -fx-background-color: transparent;
+    -fx-text-fill: white;
 }
 
 .sidebar-Button:hover {
@@ -330,4 +330,28 @@
     -fx-background-color: #d9d9d9;
     -fx-border-color: #d9d9d9;
     -fx-padding :0 0 0 10;
+}
+
+.reference{
+    -fx-background-color: #aab0f0;
+}
+
+.reference:hover{
+    -fx-background-color: #cacded;
+}
+
+.button-selected {
+    -fx-background-color: #2f3136;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: rgba(173, 216, 230, 0.57);
+}
+
+.LanguageBox{
+    -fx-border-color: darkgrey;
+    -fx-border-radius: 3;
+    -fx-border-width: 2;
+    -fx-padding: 3,3,3,3;
+    -fx-spacing: 200;
 }

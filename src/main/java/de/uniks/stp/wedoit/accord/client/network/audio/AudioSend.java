@@ -85,7 +85,7 @@ public class AudioSend extends Thread {
 
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
 
-                if (line.isRunning() && editor.calculateRMS(readData,b) > editor.getAudioRMS()) {
+                if (line.isRunning() && editor.calculateRMS(readData,b) > editor.getAccordClient().getOptions().getAudioRootMeanSquare()) {
                     this.sendSocket.send(datagramPacket);
                 }
             }

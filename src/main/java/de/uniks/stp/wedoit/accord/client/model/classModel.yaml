@@ -50,7 +50,7 @@
   roles: 	category_channels 	category_server
 
 - server: 	org.fulib.classmodel.Clazz
-  attributes: 	server_name 	server_id 	server_owner
+  attributes: 	server_name 	server_id 	server_owner 	server_referenceMessage
   model: 	c
   modified: 	false
   name: 	Server
@@ -58,7 +58,7 @@
   roles: 	server_categories 	server_invitations 	server_members 	server_localUser
 
 - user: 	org.fulib.classmodel.Clazz
-  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_muted 	user_gameMove 	user_id
+  attributes: 	user_name 	user_onlineStatus 	user_chatRead 	user_muted 	user_gameMove 	user_audioVolume 	user_id
   model: 	c
   modified: 	false
   name: 	User
@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_inGame 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -89,7 +89,7 @@
   roles: 	accordClient_localUser 	accordClient_options
 
 - options: 	org.fulib.classmodel.Clazz
-  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_outputDevice 	options_inputDevice 	options_systemVolume 	options_inputVolume
+  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_outputDevice 	options_inputDevice 	options_systemVolume 	options_inputVolume 	options_audioRootMeanSquare 	options_chatFontSize
   model: 	c
   modified: 	false
   name: 	Options
@@ -393,6 +393,15 @@
   type: 	String
   typeSignature: 	String
 
+- server_referenceMessage: 	org.fulib.classmodel.Attribute
+  clazz: 	server
+  id: 	Server_referenceMessage
+  modified: 	false
+  name: 	referenceMessage
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
 - server_categories: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	42
@@ -483,6 +492,15 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- user_audioVolume: 	org.fulib.classmodel.Attribute
+  clazz: 	user
+  id: 	User_audioVolume
+  modified: 	false
+  name: 	audioVolume
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
 
 - user_id: 	org.fulib.classmodel.Attribute
   clazz: 	user
@@ -638,6 +656,33 @@
   type: 	String
   typeSignature: 	String
 
+- localUser_steam64ID: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_steam64ID
+  modified: 	false
+  name: 	steam64ID
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- localUser_steamGameExtraInfo: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_steamGameExtraInfo
+  modified: 	false
+  name: 	steamGameExtraInfo
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- localUser_inGame: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_inGame
+  modified: 	false
+  name: 	inGame
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
+
 - localUser_gameInvites: 	org.fulib.classmodel.Attribute
   clazz: 	localUser
   collectionType: 	c1
@@ -684,6 +729,15 @@
   propertyStyle: 	Bean
   type: 	boolean
   typeSignature: 	boolean
+
+- localUser_steamGameExtraInfoTimer: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_steamGameExtraInfoTimer
+  modified: 	false
+  name: 	steamGameExtraInfoTimer
+  propertyStyle: 	Bean
+  type: 	"import(java.util.Timer)"
+  typeSignature: 	Timer
 
 - localUser_servers: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
@@ -801,6 +855,24 @@
   propertyStyle: 	Bean
   type: 	float
   typeSignature: 	float
+
+- options_audioRootMeanSquare: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_audioRootMeanSquare
+  modified: 	false
+  name: 	audioRootMeanSquare
+  propertyStyle: 	Bean
+  type: 	double
+  typeSignature: 	double
+
+- options_chatFontSize: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_chatFontSize
+  modified: 	false
+  name: 	chatFontSize
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
 
 - options_accordClient: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
