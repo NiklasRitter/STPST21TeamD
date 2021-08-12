@@ -159,6 +159,8 @@ public class Editor {
         localUser.setUserKey(userKey);
         webSocketManager.setClearUsername();
         setUpDB();
+        //TODO
+        System.out.println(getRefreshToken());
         return localUser;
     }
 

@@ -301,6 +301,8 @@ public class LoginScreenController implements Controller {
                 this.editor.getStageManager().getStage(StageEnum.STAGE).setMaximized(true);
             });
         }
+        //TODO
+        System.out.println(this.editor.getRefreshToken());
     }
 
     /**

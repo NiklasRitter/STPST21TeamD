@@ -356,6 +356,8 @@ public class StageManager extends Application {
                     }
                 }
             }
+            //TODO
+            System.out.println(this.editor.getRefreshToken());
             Unirest.shutDown();
             cleanup();
         } catch (Exception e) {
