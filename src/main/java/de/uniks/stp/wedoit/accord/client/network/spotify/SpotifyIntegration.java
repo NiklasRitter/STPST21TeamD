@@ -163,7 +163,8 @@ public class SpotifyIntegration implements HttpHandler {
         String[] parts = queryString.split("&");
         for (String part: parts) {
             int index = part.indexOf("=");
-            queryParts.put(URLDecoder.decode(part.substring(0, index), StandardCharsets.UTF_8), URLDecoder.decode(part.substring(index + 1), StandardCharsets.UTF_8));
+            queryParts.put(URLDecoder.decode(part.substring(0, index), StandardCharsets.UTF_8),
+                    URLDecoder.decode(part.substring(index + 1), StandardCharsets.UTF_8));
         }
         return queryParts;
     }
@@ -206,84 +207,12 @@ public class SpotifyIntegration implements HttpHandler {
                     artistNames.append(" , ").append(artist.getName());
                 }
             }
-            response = "listens to " + track.getName() + " - " + artistNames;
+            response = track.getName() + " - " + artistNames;
         } else {
-            response = "no currently playing song";
+            response = null;
         }
         return response;
     }
-
-    /*
-    //-----------------OLD-----------------
-
-    public String getSpotifyDescriptionOld() {
-        return createDescription(getCurrentlyPlayingTrackOld());
-    }
-
-    public CurrentlyPlaying getCurrentlyPlayingTrackOld() {
-        GetUsersCurrentlyPlayingTrackRequest getUsersCurrentlyPlayingTrackRequest = this.spotifyApi
-                .getUsersCurrentlyPlayingTrack()
-                .build();
-        CurrentlyPlaying currentlyPlaying = null;
-        try {
-            currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
-        } catch (IOException | ParseException | SpotifyWebApiException e) {
-            refreshAccessToken();
-        }
-        return currentlyPlaying;
-    }
-
-    public CurrentlyPlaying refreshAccessToken() {
-        CurrentlyPlaying currentlyPlaying = null;
-        try {
-            AuthorizationCodePKCERefreshRequest authorizationCodePKCERefreshRequest = spotifyApi.authorizationCodePKCERefresh().build();
-            authorizationCodePKCERefreshRequest.execute();
-
-            authorizationCodeCredentials = authorizationCodePKCERefreshRequest.execute();
-            spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
-            spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
-
-            getCurrentlyPlayingTrackOld();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return currentlyPlaying;
-    }
-
-    public String getUsersCurrentlyPlayingTrackOld() {
-        checkAuthorizationCodeExpired();
-
-        GetUsersCurrentlyPlayingTrackRequest getUsersCurrentlyPlayingTrackRequest = this.spotifyApi
-                .getUsersCurrentlyPlayingTrack()
-                .build();
-        CurrentlyPlaying currentlyPlaying = null;
-        try {
-            currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
-        } catch (Exception e) {
-            checkAuthorizationCodeExpired();
-        }
-        String response;
-        if (currentlyPlaying != null) {
-            Track track = (Track) currentlyPlaying.getItem();
-            StringBuilder artistNames = new StringBuilder();
-            boolean multipleArtists = false;
-            for (ArtistSimplified artist : track.getArtists()) {
-                if (!multipleArtists) {
-                    artistNames.append(artist.getName());
-                    multipleArtists = true;
-                } else {
-                    artistNames.append(" , ").append(artist.getName());
-                }
-            }
-            response = "listens to " + track.getName() + " from " + artistNames;
-        } else {
-            response = "no currently playing song";
-        }
-        System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
-        return response;
-    }
-
-     */
 
     //------------------------------------------------------------------------------------------------------------------
     // PKCE Methods

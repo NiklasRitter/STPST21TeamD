@@ -88,23 +88,6 @@ public class SpotifyManager {
     public void localUserCurrentlyPlayingTrackOnChange(PropertyChangeEvent propertyChangeEvent) {
         if (editor.getLocalUser() != null && propertyChangeEvent.getNewValue() instanceof String) {
             editor.getRestManager().updateDescription(this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
-            //TODO are both needed?
-            /*
-            // this.editor.changeUserDescription(this.editor.getLocalUser().getId(), this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
-
-            String oldValue = (String) propertyChangeEvent.getOldValue();
-            String newValue = (String) propertyChangeEvent.getNewValue();
-            String currentDescription = editor.getLocalUser().getDescription();
-            if (currentDescription == null) currentDescription = "";
-            if (currentDescription.contains(STEAM_KEY)) {
-                if (propertyChangeEvent.getNewValue() == null || ((String) propertyChangeEvent.getNewValue()).isEmpty())
-                    editor.getRestManager().updateDescription(currentDescription.substring(currentDescription.indexOf(STEAM_KEY), currentDescription.indexOf(STEAM_KEY) + ((String) propertyChangeEvent.getOldValue()).length() + 1));
-                else
-                    editor.getRestManager().updateDescription(currentDescription.replace(oldValue, newValue));
-            } else {
-                editor.getRestManager().updateDescription(STEAM_KEY + newValue + currentDescription);
-            }
-             */
         }
     }
 
