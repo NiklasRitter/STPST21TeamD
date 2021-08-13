@@ -8,10 +8,13 @@ import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -56,7 +59,8 @@ public class StageManager extends Application {
         try {
 
             Parent root = controller.loadScreen();
-            if(currentController != null) cleanup(controller);
+            root.setOnKeyPressed(this::addHotKeys);
+            if (currentController != null) cleanup(controller);
             currentController = controller;
 
             Scene currentScene = sceneMap.get(controller.stage);
@@ -80,6 +84,30 @@ public class StageManager extends Application {
         } catch (Exception e) {
             System.err.println("Error on showing " + controller.controllerName);
             e.printStackTrace();
+        }
+    }
+
+    private void addHotKeys(KeyEvent keyEvent) {
+        if (currentController.controllerName.equals("optionsScreenController") && keyEvent.getCode() == KeyCode.ESCAPE) {
+            if (editor.getLocalUser().getUserKey() != null && !editor.getLocalUser().getUserKey().equals("")) {
+                editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
+            } else editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null);
+        }
+        if (keyEvent.isControlDown()) {
+            switch (keyEvent.getText()) {
+                case "o":
+                    Platform.runLater(() -> initView(ControllerEnum.OPTION_SCREEN, null, null));
+                    break;
+                case "p":
+                    if (editor.getLocalUser().getUserKey() != null && !editor.getLocalUser().getUserKey().equals("")) {
+                        Platform.runLater(() -> initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
+                    }
+                    break;
+                case "d":
+                    boolean isDarkMode = editor.getLocalUser().getAccordClient().getOptions().isDarkmode();
+                    editor.getLocalUser().getAccordClient().getOptions().setDarkmode(!isDarkMode);
+                    break;
+            }
         }
     }
 
@@ -167,7 +195,7 @@ public class StageManager extends Application {
      */
     private void cleanup(ControllerEnum e) {
 
-        if(currentController.stage == e.stage) controllerMap.get(currentController.controllerName).stop();
+        if (currentController.stage == e.stage) controllerMap.get(currentController.controllerName).stop();
 
         if (stageMap.get(StageEnum.EMOJI_PICKER_STAGE) != null) {
             stageMap.get(StageEnum.EMOJI_PICKER_STAGE).hide();
