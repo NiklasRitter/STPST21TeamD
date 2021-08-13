@@ -107,9 +107,18 @@ public class StageManager extends Application {
                     boolean isDarkMode = editor.getLocalUser().getAccordClient().getOptions().isDarkmode();
                     editor.getLocalUser().getAccordClient().getOptions().setDarkmode(!isDarkMode);
                     break;
+                case "m":
+                    if (editor.getLocalUser().isMuted()) {
+                        this.editor.getAudioManager().unmuteYourself(editor.getLocalUser());
+                    } else {
+                        this.editor.getAudioManager().muteYourself(editor.getLocalUser());
+                    }
+                    break;
             }
         }
     }
+
+
 
     /**
      * loads the right controller when changing the scene
