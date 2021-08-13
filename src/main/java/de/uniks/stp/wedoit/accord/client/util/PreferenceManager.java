@@ -12,9 +12,9 @@ import static de.uniks.stp.wedoit.accord.client.constants.Preferences.*;
 
 public class PreferenceManager {
 
-    private StageManager stageManager;
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
     public PropertyChangeListener usernameListener = this::onUsernameChanged;
+    private StageManager stageManager;
     public PropertyChangeListener inputVolumeListener = this::onInputVolumeChanged;
     public PropertyChangeListener systemVolumeListener = this::onSystemVolumeChanged;
     public PropertyChangeListener languageListener = this::onLanguageChanged;
@@ -181,7 +181,7 @@ public class PreferenceManager {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
             int size = preferences.getInt(CHAT_FONT_SIZE, 12);
-            if(size == 0) size = 12;
+            if (size == 0) size = 12;
             return size;
         } catch (Exception e) {
             System.err.println("Error while loading chat font size:");
@@ -298,8 +298,7 @@ public class PreferenceManager {
     private void onInputVolumeChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() instanceof Float) {
             float inputVolume = (float) propertyChangeEvent.getNewValue();
-            System.out.println(propertyChangeEvent.getOldValue());
-            System.out.println(inputVolume);
+            System.out.println("Go commit die! " + inputVolume);
             this.stageManager.getEditor().getAccordClient().getOptions().setInputVolume(inputVolume);
 
             saveInputVolume(inputVolume);

@@ -24,12 +24,12 @@ public class VoiceController implements Controller {
     private final Editor editor;
 
     private Button btnTestSetup;
-    private Slider sliderOutputVolume,sliderInputVolume, sliderInputSensitivity;
+    private Slider sliderOutputVolume, sliderInputVolume, sliderInputSensitivity;
     private ChoiceBox<String> choiceBoxInputDevice, choiceBoxOutputDevice;
     private ProgressBar progressBarTest, progressBarTestBot;
     private Recorder recorder;
 
-    public VoiceController(Parent view, Options model, Editor editor){
+    public VoiceController(Parent view, Options model, Editor editor) {
         this.view = view;
         this.options = model;
         this.editor = editor;
@@ -49,13 +49,15 @@ public class VoiceController implements Controller {
         createOutputInputChoiceBox();
 
         this.sliderOutputVolume.setOnMouseReleased(this::outputVolumeSliderOnChange);
+        this.sliderInputVolume.setOnMouseReleased(this::inputVolumeSliderOnChange);
 
         this.btnTestSetup.setOnAction(this::btnAudioTest);
 
         progressBarTest.progressProperty().bind(sliderInputSensitivity.valueProperty());
         sliderInputSensitivity.valueProperty().addListener((e, old, n) -> editor.getAccordClient().getOptions().setAudioRootMeanSquare(n.doubleValue()));
         sliderInputSensitivity.setValue(editor.getAccordClient().getOptions().getAudioRootMeanSquare());
-        sliderOutputVolume.setValue(editor.getStageManager().getPrefManager().loadSystemVolume());
+        sliderOutputVolume.setValue(editor.getAccordClient().getOptions().getSystemVolume());
+        sliderInputVolume.setValue(editor.getAccordClient().getOptions().getInputVolume() * 100f);
     }
 
     @Override
@@ -63,6 +65,7 @@ public class VoiceController implements Controller {
         choiceBoxOutputDevice.setOnAction(null);
         choiceBoxInputDevice.setOnAction(null);
         sliderOutputVolume.setOnMouseReleased(null);
+        sliderInputVolume.setOnMouseReleased(null);
         btnTestSetup.setOnAction(null);
         progressBarTest.progressProperty().unbind();
 
@@ -118,6 +121,10 @@ public class VoiceController implements Controller {
 
     private void outputVolumeSliderOnChange(MouseEvent e) {
         editor.getAccordClient().getOptions().setSystemVolume((float) sliderOutputVolume.getValue());
+    }
+
+    private void inputVolumeSliderOnChange(MouseEvent e) {
+        editor.getAccordClient().getOptions().setInputVolume((float) (sliderInputVolume.getValue() / 100f));
     }
 
     private void btnAudioTest(ActionEvent actionEvent) {
