@@ -660,6 +660,7 @@ public class ServerScreenTest extends ApplicationTest {
 
         selectUser.getSelectionModel().select(0);
         clickOn("#lvSelectUser");
+        WaitForAsyncUtils.waitForFxEvents();
 
         String text = tfInputMessage.getText();
         Assert.assertEquals("@N2", text);

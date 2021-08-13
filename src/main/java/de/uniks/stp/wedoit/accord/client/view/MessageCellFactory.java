@@ -187,13 +187,13 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayNameAndDate(item);
                         displayTextWithEmoji(item);
                         return;
-                    } else {
-                        //marking in server chats
-                        if (containsMarking(item.getText())) {
-                            this.getStyleClass().add("marked_message");
-                        }
+                    }
+                } else {
+                    if (containsMarking(item.getText())) {
+                        this.getStyleClass().add("marked_message");
                     }
                 }
+
                 if (item.getText().startsWith("%") && item.getText().endsWith("%")) {
                     if (item.getText().charAt(item.getText().length()-2) != 92) {
                         //spoiler function

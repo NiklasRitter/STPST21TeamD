@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -17,22 +18,25 @@
         <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
             <children>
             <fx:include source="listViewServerList.fxml" />
-                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="150.0" prefHeight="41.0" prefWidth="150.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+                <VBox alignment="TOP_CENTER" minWidth="150.0" prefHeight="41.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
-                  <HBox id="hBoxName">
+                  <HBox id="hBoxName" alignment="TOP_CENTER" maxHeight="25.0" prefHeight="25.0" VBox.vgrow="NEVER">
                      <children>
-                              <Label id="lbServerName" prefWidth="300.0" styleClass="styleTop" text="%SERVER">
+                              <Label id="lbServerName" minHeight="25.0" styleClass="styleTop" text="%SERVER" HBox.hgrow="ALWAYS">
                                   <padding>
                                       <Insets left="2.0" />
                                   </padding>
                                   <font>
                                       <Font name="System Bold Italic" size="13.0" />
                                   </font>
+                           <tooltip>
+                              <Tooltip text="\%SERVER" />
+                           </tooltip>
                               </Label>
-                        <MenuButton id="serverMenuButton" mnemonicParsing="false" prefWidth="32.0" styleClass="styleTopMenu" />
+                        <MenuButton id="serverMenuButton" alignment="TOP_RIGHT" maxHeight="25.0" maxWidth="32.0" minHeight="25.0" minWidth="32.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="32.0" styleClass="styleTopMenu" HBox.hgrow="NEVER" />
                      </children>
                   </HBox>
-                        <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="192.0" prefWidth="150.0" VBox.vgrow="ALWAYS" />
+                        <TreeView id="tvServerChannels" minWidth="150.0" prefHeight="192.0" VBox.vgrow="ALWAYS" />
                         <VBox id="audioChannelSubViewContainer" alignment="CENTER" spacing="10.0">
                             <children>
                                 <fx:include source="subview/AudioChannelSubView.fxml" />
@@ -71,7 +75,7 @@
                         </VBox>
                         <HBox id="hBoxText" alignment="CENTER_LEFT">
                             <children>
-                                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" HBox.hgrow="ALWAYS">
+                                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" styleClass="emoji-Button" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />
                                     </font>
@@ -85,7 +89,7 @@
                         </HBox>
                     </children>
                 </VBox>
-                <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
+                <VBox alignment="TOP_CENTER" maxWidth="250.0" minWidth="100.0" styleClass="styleBorder" HBox.hgrow="ALWAYS">
                     <children>
                         <Label id="lblServerUsers" prefWidth="200.0" styleClass="styleTop" text="%SERVER_USERS" VBox.vgrow="ALWAYS">
                             <padding>
