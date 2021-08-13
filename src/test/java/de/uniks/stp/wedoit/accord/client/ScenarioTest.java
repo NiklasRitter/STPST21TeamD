@@ -50,6 +50,7 @@ public class ScenarioTest {
         localUser.withoutUsers(users);
 
         localUser.setDescription("description");
+        localUser.setDescription("description");
         String description = localUser.getDescription();
         Assert.assertEquals(description, "description");
 

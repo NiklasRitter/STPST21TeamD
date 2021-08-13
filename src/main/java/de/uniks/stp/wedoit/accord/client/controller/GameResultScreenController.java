@@ -68,6 +68,8 @@ public class GameResultScreenController implements Controller {
         btnPlayAgain.setOnAction(this::playAgainOnClick);
 
         localUser.setInGame(true);
+
+        this.editor.getStageManager().correctZoom();
     }
 
     /**
