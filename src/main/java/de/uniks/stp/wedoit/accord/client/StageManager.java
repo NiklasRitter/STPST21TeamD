@@ -111,10 +111,13 @@ public class StageManager extends Application {
                     editor.getLocalUser().getAccordClient().getOptions().setDarkmode(!isDarkMode);
                     break;
                 case "m":
-                    if (editor.getLocalUser().isMuted()) {
-                        this.editor.getAudioManager().unmuteYourself(editor.getLocalUser());
-                    } else {
-                        this.editor.getAudioManager().muteYourself(editor.getLocalUser());
+                    //System.out.println(editor.getLocalUser());
+                    if (editor.getLocalUser().getAudioChannel() != null){
+                        if (editor.getLocalUser().isMuted()) {
+                            this.editor.getAudioManager().unmuteYourself(editor.getLocalUser());
+                        } else {
+                            this.editor.getAudioManager().muteYourself(editor.getLocalUser());
+                        }
                     }
                     break;
             }
