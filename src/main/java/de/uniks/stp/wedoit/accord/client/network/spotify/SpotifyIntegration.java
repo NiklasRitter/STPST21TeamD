@@ -118,7 +118,6 @@ public class SpotifyIntegration implements HttpHandler {
             authorizationCodePKCERequest = spotifyApi.authorizationCodePKCE(queryMap.get("code"), codeVerifier)
                     .build();
 
-            // executorService.execute(() -> );
             getAuthCodeCredentials(authorizationCodePKCERequest);
             this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
             try {
@@ -207,7 +206,7 @@ public class SpotifyIntegration implements HttpHandler {
                     artistNames.append(" , ").append(artist.getName());
                 }
             }
-            response = track.getName() + "-" + artistNames;
+            response = track.getName() + " - " + artistNames;
         } else {
             response = null;
         }

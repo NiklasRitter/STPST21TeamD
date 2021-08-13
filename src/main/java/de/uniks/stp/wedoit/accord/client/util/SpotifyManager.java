@@ -68,8 +68,6 @@ public class SpotifyManager {
             trackTimer.cancel();
             trackTimer = null;
         }
-        //TODO
-        System.out.println(this.editor.getRefreshToken());
     }
 
     public void terminateRefreshTimer() {

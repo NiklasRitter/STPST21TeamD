@@ -91,8 +91,6 @@ public class RestManager {
                 localUser.setPassword(password);
                 editor.getWebSocketManager().start();
                 controller.handleLogin(true);
-                //TODO
-                System.out.println(this.editor.getRefreshToken());
             }
         });
     }

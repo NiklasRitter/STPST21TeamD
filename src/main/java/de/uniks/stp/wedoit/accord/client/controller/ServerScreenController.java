@@ -371,15 +371,6 @@ public class ServerScreenController implements Controller {
         this.lvServerUsers.getItems().removeAll();
         this.lvServerUsers.setItems(FXCollections.observableList(users));
         this.lvServerUsers.refresh();
-
-        //TODO
-        /*
-        SpotifyIntegration spotifyIntegration = this.editor.getSpotifyIntegration();
-        if (spotifyIntegration != null) {
-            // this.editor.changeUserDescription(this.localUser.getId(), spotifyIntegration.getUsersCurrentlyPlayingTrack());
-            this.editor.changeUserDescription(this.localUser.getId(), spotifyIntegration.getSpotifyDescriptionOld());
-        }
-         */
     }
 
     /**
