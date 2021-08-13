@@ -199,6 +199,10 @@
     -fx-background-color: transparent;
 }
 
+.emoji-Button{
+    -fx-background-color: transparent;
+}
+
 .sidebar-Button:hover {
     -fx-background-color: #2f3136;
 }
@@ -315,7 +319,7 @@
     -fx-font-size:8;
     -fx-border-color: #4a4a4a;
     -fx-background-color: #4a4a4a;
-    -fx-padding :0 0 0 10;
+    -fx-padding :0 0 0 0;
 }
 
 
@@ -352,4 +356,8 @@
     -fx-border-width: 2;
     -fx-padding: 3,3,3,3;
     -fx-spacing: 200;
+}
+
+.logout-button-color {
+    -fx-text-fill: RED;
 }

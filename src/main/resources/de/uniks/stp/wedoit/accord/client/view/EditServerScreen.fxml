@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -81,6 +82,9 @@
                                             <font>
                                                 <Font name="System Bold" size="14.0" />
                                             </font>
+                                 <tooltip>
+                                    <Tooltip text="\%CREATE_INVITATION" />
+                                 </tooltip>
                                         </Button>
                                         <Region prefHeight="20.0" />
                                         <TextField id="tfInvitationLink" editable="false" prefHeight="25.0" prefWidth="290.0" styleClass="createTextField">
@@ -112,12 +116,18 @@
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
+                     <tooltip>
+                        <Tooltip text="\%SAVE" />
+                     </tooltip>
                         </Button>
                         <Region prefWidth="65.0" />
                         <Button id="btnDelete" mnemonicParsing="false" styleClass="styleButton" text="%DELETE_SERVER">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
+                     <tooltip>
+                        <Tooltip text="\%DELETE_SERVER" />
+                     </tooltip>
                         </Button>
                     </children>
                 </HBox>
@@ -143,6 +153,9 @@
                                     <HBox.margin>
                                         <Insets right="10.0" />
                                     </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="\%DELETE_INVITATION" />
+                           </tooltip>
                                 </Button>
                                 <VBox>
                                     <children>

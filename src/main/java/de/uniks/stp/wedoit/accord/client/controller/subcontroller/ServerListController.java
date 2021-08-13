@@ -4,13 +4,14 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.model.AccordClient;
-import de.uniks.stp.wedoit.accord.client.model.LocalUser;
-import de.uniks.stp.wedoit.accord.client.model.Server;
+import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
+import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
+import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -35,6 +36,7 @@ public class ServerListController implements Controller {
     private final Parent view;
     private final AccordClient model;
     private final Editor editor;
+    private final Server server;
     private Button btnOptions;
     private Button btnHome;
     private Button addServerButton;
@@ -43,11 +45,13 @@ public class ServerListController implements Controller {
     private PropertyChangeListener serverListListener = this::serverListViewChanged;
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
+    private ObservableList<Server> observableServerList;
 
-    public ServerListController(Parent view, AccordClient model, Editor editor) {
+    public ServerListController(Parent view, AccordClient model, Editor editor, Server server) {
         this.view = view;
         this.model = model;
         this.editor = editor;
+        this.server = server;
     }
 
     /**
@@ -115,14 +119,22 @@ public class ServerListController implements Controller {
             MainScreenServerListView mainScreenServerListView = new MainScreenServerListView(this.editor);
             lvServerList.setCellFactory(mainScreenServerListView);
             List<Server> localUserServers = editor.getLocalUser().getServers().stream().sorted(Comparator.comparing(Server::getName)).collect(Collectors.toList());
-            this.lvServerList.setItems(FXCollections.observableList(localUserServers));
+
+            this.observableServerList = FXCollections.observableList(localUserServers);
+            this.lvServerList.setItems(this.observableServerList);
 
             // Add listener for the loaded listView
             this.editor.getLocalUser().listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
             // Add server websockets
             for (Server server : editor.getLocalUser().getServers()) {
                 webSocketServerUrls.add(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-                editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+                if (this.server != null && server.getId().equals(this.server.getId())) {
+                    WSCallback callback = (msg) -> editor.getWebSocketManager().handleServerMessage(msg, server);
+                    editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), callback);
+                }
+                else {
+                    editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+                }
             }
         } else {
             Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
@@ -136,11 +148,16 @@ public class ServerListController implements Controller {
      */
     private void serverListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
-            lvServerList.getItems().removeAll();
-            List<Server> localUserServers = editor.getLocalUser().getServers().stream().sorted(Comparator.comparing(Server::getName))
-                    .collect(Collectors.toList());
-            Platform.runLater(() -> this.lvServerList.setItems(FXCollections.observableList(localUserServers)));
-            lvServerList.refresh();
+            Server server = (Server) propertyChangeEvent.getNewValue();
+            Platform.runLater(() -> {
+                this.observableServerList.add(server);
+                this.observableServerList.sort(Comparator.comparing(Server::getName));
+            });
+        } else if (propertyChangeEvent.getOldValue() != null) {
+            Server server = (Server) propertyChangeEvent.getOldValue();
+            Platform.runLater(() -> {
+                this.observableServerList.remove(server);
+            });
         }
     }
 

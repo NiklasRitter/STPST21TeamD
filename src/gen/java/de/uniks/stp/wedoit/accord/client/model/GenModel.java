@@ -31,6 +31,7 @@ public class GenModel implements ClassModelDecorator {
         float systemVolume;
         double audioRootMeanSquare;
         int chatFontSize;
+        int zoomLevel;
 
         @Link("options")
         AccordClient accordClient;
@@ -44,6 +45,7 @@ public class GenModel implements ClassModelDecorator {
         String spotifyCurrentlyPlaying;
         String steam64ID;
         String steamGameExtraInfo;
+        boolean inGame;
         List<User> gameInvites;
         List<User> gameRequests;
         Channel audioChannel;

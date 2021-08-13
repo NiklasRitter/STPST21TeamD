@@ -270,9 +270,6 @@ public class OptionsScreenTest extends ApplicationTest {
         clickOn("Back");
         directToOptionsScreen();
         clickOn("Sound");
-
-        Assert.assertNotNull(stageManager.getEditor().getAccordClient().getOptions().getOutputDevice());
-        Assert.assertNotNull(stageManager.getEditor().getAccordClient().getOptions().getInputDevice());
     }
 
 

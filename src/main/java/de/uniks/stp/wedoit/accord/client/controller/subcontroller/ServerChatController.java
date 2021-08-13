@@ -170,13 +170,9 @@ public class ServerChatController implements Controller {
                         lvTextChat.scrollTo(selectMessage);
                         lvTextChat.getSelectionModel().select(selectMessage);
                     });
-
                 }
             }
-
         }
-
-
     }
 
 
@@ -418,8 +414,6 @@ public class ServerChatController implements Controller {
                 sendMessage(tfInputMessage.getConvertedText());
             }
         }
-
-
     }
 
     private void sendMessage(String message) {

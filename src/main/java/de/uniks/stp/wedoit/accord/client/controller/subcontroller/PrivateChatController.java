@@ -1,8 +1,10 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
+import com.pavlobu.emojitextflow.EmojiParser;
 import com.pavlobu.emojitextflow.EmojiTextFlow;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
+import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
@@ -225,14 +227,16 @@ public class PrivateChatController implements Controller {
     private void newMessage(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             PrivateMessage message = (PrivateMessage) propertyChangeEvent.getNewValue();
-            Platform.runLater(() -> this.privateMessageObservableList.add(message));
+            Platform.runLater(() -> {
+                this.privateMessageObservableList.add(message);
 
-            if (message.getText().equals(GAME_INVITE.substring(GAME_PREFIX.length())) && !message.getFrom().equals(localUser.getName())) {
-                Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("ACCEPT")));
-            }
-            if (message.getText().equals(GAME_START) && currentChat != null) {
-                Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("PLAY")));
-            }
+                if (message.getText().equals(GAME_INVITE) && !message.getFrom().equals(localUser.getName()) && !localUser.isInGame()) {
+                    Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("ACCEPT")));
+                }
+                if (message.getText().equals(GAME_INVITE) && message.getFrom().equals(localUser.getName())) {
+                    Platform.runLater(() -> btnPlay.setText(LanguageResolver.getString("PLAY")));
+                }
+            });
         }
     }
 
@@ -353,8 +357,6 @@ public class PrivateChatController implements Controller {
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(quoteMsg));
 
             } else {
-                if (message.equals(GAME_INVITE) || message.equals(GAME_ACCEPTS) || message.equals(GAME_CLOSE) || message.equals(GAME_START) || message.equals(GAME_INGAME))
-                    message = message.substring(GAME_PREFIX.length());
                 JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), message);
                 editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
             }
@@ -399,7 +401,7 @@ public class PrivateChatController implements Controller {
         } else if ((currentChat != null && currentChat.getUser() != null && btnPlay.getText().equals(LanguageResolver.getString("ACCEPT")))
                 &&
                 (!editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() || editor.getStageManager().getStage(StageEnum.GAME_STAGE).getTitle().equals(LanguageResolver.getString("RESULT")))) {
-            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_ACCEPTS);
+            JsonObject jsonMsg = JsonUtil.buildPrivateChatMessage(currentChat.getUser().getName(), GAME_INVITE);
             editor.getWebSocketManager().sendPrivateChatMessage(JsonUtil.stringify(jsonMsg));
         } else if (currentChat != null && currentChat.getUser() != null && editor.getStageManager().getStage(StageEnum.GAME_STAGE).isShowing() && !localUser.getGameRequests().contains(currentChat.getUser())) {
             privateMessageObservableList.add(new PrivateMessage().setText(GAME_SYSTEM));
@@ -411,10 +413,8 @@ public class PrivateChatController implements Controller {
      * Refreshes chat list in order to update the font and color
      */
     private void onDarkmodeChanged(Object object) {
-
         this.lwPrivateChat.refresh();
         this.tfPrivateChat.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
-
     }
 
     public Chat getCurrentChat() {
@@ -427,10 +427,6 @@ public class PrivateChatController implements Controller {
 
     public String getQuotedText() {
         return quotedText;
-    }
-
-    public ListView<PrivateMessage> getLwPrivateChat() {
-        return lwPrivateChat;
     }
 
 }

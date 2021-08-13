@@ -1,5 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
+import com.pavlobu.emojitextflow.EmojiParser;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 
 import java.util.List;
@@ -12,8 +13,8 @@ public class Game {
     public static final String GAME_PREFIX = "!";
     public static final String GAME_INVITE = GAME_PREFIX + "play " + Icons.HANDSHAKE;
     public static final String GAME_ACCEPT = GAME_PREFIX + "Accepts!";
-    public static final String GAME_ACCEPTS = GAME_PREFIX + "Is game valid?";
-    public static final String GAME_CLOSE = GAME_PREFIX + "quit";
+    public static final String GAME_ACCEPTS = GAME_ACCEPT; //GAME_PREFIX + "Is game valid?";
+    public static final String GAME_CLOSE = GAME_PREFIX + "play quit";
     public static final String GAME_INGAME = GAME_PREFIX + "Already in game, try again later!";
     public static final String GAME_START = GAME_PREFIX + "Lets start the Game!";
     public static final String GAME_SYSTEM = GAME_PREFIX + "System: Only one game at a time.";
@@ -22,6 +23,7 @@ public class Game {
     //game actions
     public static final String GAME_IMGURL = "/de/uniks/stp/wedoit/accord/client/view/images/game/";
     public static final String GAME_CHOOSINGIMG = GAME_IMGURL + "choosing.png";
+    public static final String GAME_CHOOSE_MOVE = "choose ";
     public static final String GAME_ROCK = "rock";
     public static final String GAME_PAPER = "paper";
     public static final String GAME_SCISSORS = "scissors";
