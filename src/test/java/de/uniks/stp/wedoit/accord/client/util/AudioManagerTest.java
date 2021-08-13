@@ -192,7 +192,7 @@ public class AudioManagerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         ObservableList<TreeItem<Object>> treeItems = treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren();
         User user = (User) treeItems.get(0).getValue();
-        if(user.getId().equals("I1")) {
+        if (user.getId().equals("I1")) {
             user = (User) treeItems.get(1).getValue();
         }
         Assert.assertEquals("I2", user.getId());
@@ -305,38 +305,16 @@ public class AudioManagerTest extends ApplicationTest {
         Assert.assertTrue(localUser.isMuted());
         stageManager.getEditor().getAudioManager().unmuteYourself(localUser);
         Assert.assertFalse(localUser.isMuted());
-        press(KeyCode.CONTROL, KeyCode.M);
+        press(KeyCode.CONTROL, KeyCode.M).release(KeyCode.CONTROL, KeyCode.M);
+        ;
         Assert.assertTrue(localUser.isMuted());
-        tempAudioCon.close();
-    }
-
-    @Test
-    public void muteAndUnmuteYourselfWithHotkeysTest() {
-        joinAudioServerTest();
-        Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
-        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
-            @Override
-            protected DatagramSocket createSocket() {
-                DatagramSocket datagramSocket = null;
-                try {
-                    datagramSocket = new DatagramSocket(33100);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return datagramSocket;
-            }
-        };
-        stageManager.getEditor().getAudioManager().setAudioConnection(tempAudioCon);
-        tempAudioCon.startConnection("localhost", 33100);
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
-        stageManager.getEditor().getAudioManager().muteYourself(localUser);
         press(KeyCode.CONTROL, KeyCode.M).release(KeyCode.CONTROL, KeyCode.M);
         Assert.assertFalse(localUser.isMuted());
         tempAudioCon.close();
     }
 
     @Test
-    public void changeUserVolume(){
+    public void changeUserVolume() {
         joinAudioServerTest();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
         AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {

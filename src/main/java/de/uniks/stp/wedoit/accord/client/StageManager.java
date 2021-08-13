@@ -87,6 +87,9 @@ public class StageManager extends Application {
         }
     }
 
+    /**
+     * adds hot keys for the application
+     */
     private void addHotKeys(KeyEvent keyEvent) {
         if (currentController.controllerName.equals("optionsScreenController") && keyEvent.getCode() == KeyCode.ESCAPE) {
             if (editor.getLocalUser().getUserKey() != null && !editor.getLocalUser().getUserKey().equals("")) {
@@ -117,7 +120,6 @@ public class StageManager extends Application {
             }
         }
     }
-
 
 
     /**
