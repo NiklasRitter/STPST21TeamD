@@ -158,40 +158,6 @@ public class SqliteDB {
     /**
      * Query for messages between username (set in constructor) and user, ordered by timestamp
      *
-     * @param user username to find chats with
-     * @return list of PrivateMessage that the localUser had with user
-     */
-    public List<PrivateMessage> getAllMessagesBetweenUsers(String user) {
-        List<PrivateMessage> messages = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY times")) {
-
-            prep.setString(1, user);
-            prep.setString(2, username);
-            prep.setString(3, username);
-            prep.setString(4, user);
-
-            ResultSet rs = prep.executeQuery();
-
-            while (rs.next()) {
-                PrivateMessage msg = new PrivateMessage();
-                msg.setText(rs.getString("text"));
-                msg.setTimestamp(rs.getLong("times"));
-                msg.setTo(rs.getString("receiver"));
-                msg.setFrom(rs.getString("sender"));
-
-                messages.add(msg);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return messages;
-    }
-
-    /**
-     * Query for messages between username (set in constructor) and user, ordered by timestamp
-     *
      * @param user   username to find chats with
      * @param offset The offset from the start
      * @return list of PrivateMessage that the localUser had with user
