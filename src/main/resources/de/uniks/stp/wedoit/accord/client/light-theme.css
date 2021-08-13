@@ -359,3 +359,7 @@
 .emoji-Button{
     -fx-background-color: transparent;
 }
+
+.logout-button-color {
+    -fx-text-fill: RED;
+}

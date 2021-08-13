@@ -190,7 +190,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     }
                 } else {
                     if (containsMarking(item.getText())) {
-                        System.out.println("SCheiße");
                         this.getStyleClass().add("marked_message");
                     }
                 }
