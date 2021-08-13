@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="mainVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Region prefHeight="25.0" prefWidth="300.0" />
         <Label id="lblTitle">
@@ -23,7 +23,7 @@
             <children>
                 <Region prefHeight="32.0" prefWidth="15.0" />
                 <Region prefHeight="32.0" prefWidth="5.0" />
-                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" style="-fx-background-radius: 100;">
+                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" style="-fx-background-radius: 100;" styleClass="sidebar-Button">
                     <font>
                         <Font size="4.0" />
                     </font>

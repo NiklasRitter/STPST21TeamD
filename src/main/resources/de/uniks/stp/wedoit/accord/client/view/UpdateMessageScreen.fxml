@@ -10,14 +10,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="360.0" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label id="lblError" textFill="RED" />
         <VBox id="vboxMarkingSelection" prefHeight="200.0" prefWidth="100.0">
             <children>
                 <HBox id="hBoxText" prefHeight="100.0" prefWidth="200.0">
                     <children>
-                        <Button id="btnEmojiUpdateMessage" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;">
+                        <Button id="btnEmojiUpdateMessage" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" styleClass="sidebar-Button">
                             <font>
                                 <Font size="4.0" />
                             </font>
