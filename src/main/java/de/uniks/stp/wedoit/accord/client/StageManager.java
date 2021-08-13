@@ -347,6 +347,7 @@ public class StageManager extends Application {
         stageMap.put(StageEnum.GAME_STAGE, new Stage());
         stageMap.get(StageEnum.GAME_STAGE).getIcons().add(logoImage);
         stageMap.get(StageEnum.GAME_STAGE).initOwner(stageMap.get(StageEnum.STAGE));
+        stageMap.get(StageEnum.GAME_STAGE).initModality(Modality.APPLICATION_MODAL);
 
         stageMap.put(StageEnum.EMOJI_PICKER_STAGE, new Stage());
         stageMap.get(StageEnum.EMOJI_PICKER_STAGE).initOwner(stageMap.get(StageEnum.STAGE));

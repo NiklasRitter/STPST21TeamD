@@ -143,6 +143,11 @@ public class CategoryTreeViewController implements Controller {
             System.err.println("Error while loading categories from server");
             Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
         }
+        else if (!tvServerChannels.getRoot().getChildren().isEmpty()){
+            for (Category category : categoryList) {
+                loadCategoryChannels(category);
+            }
+        }
     }
 
     /**

@@ -17,7 +17,7 @@
             <children>
                 <HBox id="hBoxText" prefHeight="100.0" prefWidth="200.0">
                     <children>
-                        <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;">
+                        <Button id="btnEmojiUpdateMessage" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;">
                             <font>
                                 <Font size="4.0" />
                             </font>
