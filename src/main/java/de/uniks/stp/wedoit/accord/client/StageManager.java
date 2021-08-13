@@ -293,7 +293,7 @@ public class StageManager extends Application {
         correctZoom();
     }
 
-    private void correctZoom() {
+    public void correctZoom() {
         for (Scene sc: this.sceneMap.values()) {
             if (sc != null) {
                 sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(

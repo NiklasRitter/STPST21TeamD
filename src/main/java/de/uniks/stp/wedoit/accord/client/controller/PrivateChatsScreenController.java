@@ -116,6 +116,8 @@ public class PrivateChatsScreenController implements Controller {
 
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
         this.editor.getStageManager().getModel().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
+
+        this.editor.getStageManager().correctZoom();
     }
 
 
