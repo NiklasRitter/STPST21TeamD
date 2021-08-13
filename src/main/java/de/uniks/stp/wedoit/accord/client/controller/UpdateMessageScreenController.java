@@ -52,7 +52,7 @@ public class UpdateMessageScreenController implements Controller {
         tfUpdateMessage.updateTextColor(editor.getAccordClient().getOptions().isDarkmode());
         HBox hBoxText = (HBox) view.lookup("#hBoxText");
         hBoxText.getChildren().add(0, tfUpdateMessage);
-        btnEmoji = (Button) view.lookup("#btnEmoji");
+        btnEmoji = (Button) view.lookup("#btnEmojiUpdateMessage");
         btnDiscard = (Button) view.lookup("#btnDiscard");
         btnUpdateMessage = (Button) view.lookup("#btnUpdateMessage");
         lblError = (Label) view.lookup("#lblError");

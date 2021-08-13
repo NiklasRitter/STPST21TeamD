@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
+import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Server;
@@ -35,6 +36,7 @@ public class ServerListController implements Controller {
     private final Parent view;
     private final AccordClient model;
     private final Editor editor;
+    private final Server server;
     private Button btnOptions;
     private Button btnHome;
     private Button addServerButton;
@@ -44,10 +46,11 @@ public class ServerListController implements Controller {
     private WSCallback serverWSCallback = this::handleServersMessage;
     private final List<String> webSocketServerUrls = new ArrayList<>();
 
-    public ServerListController(Parent view, AccordClient model, Editor editor) {
+    public ServerListController(Parent view, AccordClient model, Editor editor, Server server) {
         this.view = view;
         this.model = model;
         this.editor = editor;
+        this.server = server;
     }
 
     /**
@@ -122,7 +125,13 @@ public class ServerListController implements Controller {
             // Add server websockets
             for (Server server : editor.getLocalUser().getServers()) {
                 webSocketServerUrls.add(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-                editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+                if (this.server != null && server.getId().equals(this.server.getId())) {
+                    WSCallback callback = (msg) -> editor.getWebSocketManager().handleServerMessage(msg, server);
+                    editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), callback);
+                }
+                else {
+                    editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+                }
             }
         } else {
             Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
