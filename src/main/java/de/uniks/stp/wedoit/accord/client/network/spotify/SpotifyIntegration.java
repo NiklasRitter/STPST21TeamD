@@ -207,7 +207,7 @@ public class SpotifyIntegration implements HttpHandler {
                     artistNames.append(" , ").append(artist.getName());
                 }
             }
-            response = track.getName() + " - " + artistNames;
+            response = track.getName() + "-" + artistNames;
         } else {
             response = null;
         }
