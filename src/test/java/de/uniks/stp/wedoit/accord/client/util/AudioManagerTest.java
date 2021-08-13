@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -303,6 +304,33 @@ public class AudioManagerTest extends ApplicationTest {
         stageManager.getEditor().getAudioManager().muteYourself(localUser);
         Assert.assertTrue(localUser.isMuted());
         stageManager.getEditor().getAudioManager().unmuteYourself(localUser);
+        Assert.assertFalse(localUser.isMuted());
+        press(KeyCode.CONTROL, KeyCode.M);
+        Assert.assertTrue(localUser.isMuted());
+        tempAudioCon.close();
+    }
+
+    @Test
+    public void muteAndUnmuteYourselfWithHotkeysTest() {
+        joinAudioServerTest();
+        Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
+        AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {
+            @Override
+            protected DatagramSocket createSocket() {
+                DatagramSocket datagramSocket = null;
+                try {
+                    datagramSocket = new DatagramSocket(33100);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return datagramSocket;
+            }
+        };
+        stageManager.getEditor().getAudioManager().setAudioConnection(tempAudioCon);
+        tempAudioCon.startConnection("localhost", 33100);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        stageManager.getEditor().getAudioManager().muteYourself(localUser);
+        press(KeyCode.CONTROL, KeyCode.M).release(KeyCode.CONTROL, KeyCode.M);
         Assert.assertFalse(localUser.isMuted());
         tempAudioCon.close();
     }

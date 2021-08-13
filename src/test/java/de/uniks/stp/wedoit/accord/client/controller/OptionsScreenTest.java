@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
@@ -142,8 +143,13 @@ public class OptionsScreenTest extends ApplicationTest {
     @Test
     public void testBtnDarkmode() {
         // open options screen
+        press(KeyCode.CONTROL, KeyCode.O);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
+        press(KeyCode.ESCAPE);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertFalse("Options - Appearance".equals(stage.getTitle()));
         directToOptionsScreen();
-
         // check if stylesheets contain light theme
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(stage.isShowing());
@@ -160,6 +166,14 @@ public class OptionsScreenTest extends ApplicationTest {
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
         Assert.assertTrue(stageManager.getPrefManager().loadDarkMode());
+
+        press(KeyCode.CONTROL, KeyCode.D);
+
+        // check if stylesheets contain dark theme
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertFalse(stageManager.getScene(StageEnum.STAGE).getStylesheets()
+                .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
+
     }
 
     @Test
