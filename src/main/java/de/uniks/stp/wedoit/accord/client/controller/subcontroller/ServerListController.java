@@ -149,10 +149,15 @@ public class ServerListController implements Controller {
     private void serverListViewChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null) {
             Server server = (Server) propertyChangeEvent.getNewValue();
-            this.observableServerList.add(server);
+            Platform.runLater(() -> {
+                this.observableServerList.add(server);
+                this.observableServerList.sort(Comparator.comparing(Server::getName));
+            });
         } else if (propertyChangeEvent.getOldValue() != null) {
             Server server = (Server) propertyChangeEvent.getOldValue();
-            this.observableServerList.remove(server);
+            Platform.runLater(() -> {
+                this.observableServerList.remove(server);
+            });
         }
     }
 
