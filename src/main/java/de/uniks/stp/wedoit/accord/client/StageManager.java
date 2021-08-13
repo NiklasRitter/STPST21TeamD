@@ -72,7 +72,10 @@ public class StageManager extends Application {
             if (currentScene != null) currentScene.setRoot(root);
             else sceneMap.put(controller.stage, new Scene(Objects.requireNonNull(root)));
 
-            if (controller.stage.equals(POPUP_STAGE)) currentStage.sizeToScene();
+            if (controller.stage.equals(POPUP_STAGE)) {
+                currentStage.sizeToScene();
+                correctZoom();
+            }
 
             controller.setUpStage(currentStage);
 
@@ -287,36 +290,39 @@ public class StageManager extends Application {
     }
 
     private void handleZoomLevelChanged(PropertyChangeEvent propertyChangeEvent) {
+        correctZoom();
+    }
+
+    private void correctZoom() {
         for (Scene sc: this.sceneMap.values()) {
-                if (sc != null) {
-                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/25.css")).toExternalForm());
+            if (sc != null) {
+                sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/25.css")).toExternalForm());
 
-                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/50.css")).toExternalForm());
+                sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/50.css")).toExternalForm());
 
-                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/75.css")).toExternalForm());
+                sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/75.css")).toExternalForm());
 
-                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/100.css")).toExternalForm());
+                sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/100.css")).toExternalForm());
 
-                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/125.css")).toExternalForm());
+                sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/125.css")).toExternalForm());
 
-                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/150.css")).toExternalForm());
+                sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/150.css")).toExternalForm());
 
-                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/175.css")).toExternalForm());
+                sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/175.css")).toExternalForm());
 
-                    sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/200.css")).toExternalForm());
+                sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/200.css")).toExternalForm());
 
-                    sc.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
-                            "zoomLevels/"+ model.getOptions().getZoomLevel() + ".css")).toExternalForm());
-                }
-
+                sc.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
+                        "zoomLevels/"+ model.getOptions().getZoomLevel() + ".css")).toExternalForm());
+            }
         }
     }
 

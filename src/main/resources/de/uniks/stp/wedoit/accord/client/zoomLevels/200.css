@@ -17,3 +17,11 @@
 .tree-cell {
      -fx-font-size: 17;
 }
+
+.radio-button {
+    -fx-font-size: 17;
+}
+
+.menu-button {
+    -fx-max-height: 25;
+}
