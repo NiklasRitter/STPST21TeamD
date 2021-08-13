@@ -332,7 +332,6 @@ public class PreferenceManager {
     private void onInputVolumeChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() instanceof Float) {
             float inputVolume = (float) propertyChangeEvent.getNewValue();
-            System.out.println("Go commit die! " + inputVolume);
             this.stageManager.getEditor().getAccordClient().getOptions().setInputVolume(inputVolume);
 
             saveInputVolume(inputVolume);
