@@ -87,6 +87,8 @@ public class GameScreenController implements Controller {
         this.opponent.listeners().addPropertyChangeListener(User.PROPERTY_GAME_MOVE, this.opponentGameMove);
 
         this.lbScore.textProperty().bind(Bindings.createStringBinding(() -> (ownScore.get() + ":" + oppScore.get()), oppScore, ownScore));
+
+        this.editor.getStageManager().correctZoom();
     }
 
     /**

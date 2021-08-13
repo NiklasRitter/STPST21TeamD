@@ -20,6 +20,7 @@ public class AppearanceController implements Controller {
 
     private CheckBox btnDarkMode;
     private Slider sliderFontSize;
+    private Slider sliderZoomLevel;
 
     public AppearanceController(Parent view, Options model, Editor editor) {
         this.view = view;
@@ -31,14 +32,16 @@ public class AppearanceController implements Controller {
     public void init() {
         this.btnDarkMode = (CheckBox) view.lookup("#btnDarkMode");
         this.sliderFontSize = (Slider) view.lookup("#sliderFontSize");
+        this.sliderZoomLevel = (Slider) view.lookup("#sliderZoomLevel");
 
         changeIfLoginScreen();
 
-
         this.btnDarkMode.setSelected(options.isDarkmode());
         this.sliderFontSize.setValue(editor.getStageManager().getPrefManager().loadChatFontSize());
+        this.sliderZoomLevel.setValue(editor.getStageManager().getPrefManager().loadZoomLevel());
 
         this.sliderFontSize.setOnMouseReleased(this::fontSizeSliderOnChange);
+        this.sliderZoomLevel.setOnMouseReleased(this::zoomLevelSliderOnChange);
         this.btnDarkMode.setOnAction(this::btnDarkModeOnClick);
     }
 
@@ -46,6 +49,7 @@ public class AppearanceController implements Controller {
     public void stop() {
         btnDarkMode.setOnAction(null);
         sliderFontSize.setOnMouseReleased(null);
+        sliderZoomLevel.setOnMouseReleased(null);
     }
 
     private void changeIfLoginScreen(){
@@ -69,5 +73,9 @@ public class AppearanceController implements Controller {
 
     private void fontSizeSliderOnChange(MouseEvent e) {
         options.setChatFontSize((int) sliderFontSize.getValue());
+    }
+
+    private void zoomLevelSliderOnChange(MouseEvent e) {
+        options.setZoomLevel((int) sliderZoomLevel.getValue());
     }
 }

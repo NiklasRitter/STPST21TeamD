@@ -15,6 +15,7 @@ public class Options
    public static final String PROPERTY_INPUT_VOLUME = "inputVolume";
    public static final String PROPERTY_AUDIO_ROOT_MEAN_SQUARE = "audioRootMeanSquare";
    public static final String PROPERTY_CHAT_FONT_SIZE = "chatFontSize";
+   public static final String PROPERTY_ZOOM_LEVEL = "zoomLevel";
    private boolean darkmode;
    private AccordClient accordClient;
    protected PropertyChangeSupport listeners;
@@ -26,6 +27,7 @@ public class Options
    private float inputVolume;
    private double audioRootMeanSquare;
    private int chatFontSize;
+   private int zoomLevel;
 
    public boolean isDarkmode()
    {
@@ -213,6 +215,24 @@ public class Options
       final int oldValue = this.chatFontSize;
       this.chatFontSize = value;
       this.firePropertyChange(PROPERTY_CHAT_FONT_SIZE, oldValue, value);
+      return this;
+   }
+
+   public int getZoomLevel()
+   {
+      return this.zoomLevel;
+   }
+
+   public Options setZoomLevel(int value)
+   {
+      if (value == this.zoomLevel)
+      {
+         return this;
+      }
+
+      final int oldValue = this.zoomLevel;
+      this.zoomLevel = value;
+      this.firePropertyChange(PROPERTY_ZOOM_LEVEL, oldValue, value);
       return this;
    }
 
