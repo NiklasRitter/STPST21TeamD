@@ -29,6 +29,7 @@ public class GenModel implements ClassModelDecorator {
         Mixer.Info outputDevice;
         Mixer.Info inputDevice;
         float systemVolume;
+        float inputVolume;
         double audioRootMeanSquare;
         int chatFontSize;
         int zoomLevel;

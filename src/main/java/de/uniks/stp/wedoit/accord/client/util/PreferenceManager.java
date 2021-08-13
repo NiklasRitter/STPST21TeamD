@@ -12,9 +12,10 @@ import static de.uniks.stp.wedoit.accord.client.constants.Preferences.*;
 
 public class PreferenceManager {
 
-    private StageManager stageManager;
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
     public PropertyChangeListener usernameListener = this::onUsernameChanged;
+    private StageManager stageManager;
+    public PropertyChangeListener inputVolumeListener = this::onInputVolumeChanged;
     public PropertyChangeListener systemVolumeListener = this::onSystemVolumeChanged;
     public PropertyChangeListener languageListener = this::onLanguageChanged;
     public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
@@ -81,6 +82,26 @@ public class PreferenceManager {
     public float loadSystemVolume() {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
         return preferences.getFloat(SYSTEM_VOLUME, 100f);
+    }
+
+    /**
+     * Saves the input volume preference to the Registry.
+     *
+     * @param inputVolume The value of the inputVolume preference.
+     */
+    public void saveInputVolume(float inputVolume) {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        preferences.putFloat(INPUT_VOLUME, inputVolume);
+    }
+
+    /**
+     * Loads the input volume preference from the Registry.
+     *
+     * @return The value of the inputVolume preference.
+     */
+    public float loadInputVolume() {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        return preferences.getFloat(INPUT_VOLUME, 100f);
     }
 
     /**
@@ -161,7 +182,7 @@ public class PreferenceManager {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
             int size = preferences.getInt(CHAT_FONT_SIZE, 12);
-            if(size == 0) size = 12;
+            if (size == 0) size = 12;
             return size;
         } catch (Exception e) {
             System.err.println("Error while loading chat font size:");
@@ -305,6 +326,15 @@ public class PreferenceManager {
             this.stageManager.changeLanguage(language);
 
             saveLanguage(language);
+        }
+    }
+
+    private void onInputVolumeChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Float) {
+            float inputVolume = (float) propertyChangeEvent.getNewValue();
+            this.stageManager.getEditor().getAccordClient().getOptions().setInputVolume(inputVolume);
+
+            saveInputVolume(inputVolume);
         }
     }
 
