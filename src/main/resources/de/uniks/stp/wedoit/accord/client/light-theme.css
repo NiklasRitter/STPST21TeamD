@@ -355,3 +355,7 @@
     -fx-padding: 3,3,3,3;
     -fx-spacing: 200;
 }
+
+.emoji-Button{
+    -fx-background-color: transparent;
+}

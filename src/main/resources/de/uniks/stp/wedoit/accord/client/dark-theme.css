@@ -199,6 +199,10 @@
     -fx-background-color: transparent;
 }
 
+.emoji-Button{
+    -fx-background-color: transparent;
+}
+
 .sidebar-Button:hover {
     -fx-background-color: #2f3136;
 }

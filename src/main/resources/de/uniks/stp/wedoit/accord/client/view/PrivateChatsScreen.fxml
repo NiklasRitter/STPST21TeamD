@@ -81,7 +81,7 @@
                         </HBox>
                         <HBox id="hBoxText" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                             <children>
-                                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" styleClass="sidebar-Button" HBox.hgrow="ALWAYS">
+                                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" style="-fx-background-radius: 100;" styleClass="emoji-Button" HBox.hgrow="ALWAYS">
                                     <font>
                                         <Font size="4.0" />
                                     </font>
