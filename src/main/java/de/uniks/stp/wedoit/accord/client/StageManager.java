@@ -63,7 +63,7 @@ public class StageManager extends Application {
         try {
 
             Parent root = controller.loadScreen();
-            root.setOnKeyPressed(this::addHotKeys);
+            root.setOnKeyPressed((keyEvent) -> addHotKeys(keyEvent.getText(), keyEvent.isControlDown(), keyEvent.getCode()));
             if (currentController != null) cleanup(controller);
             currentController = controller;
 
@@ -97,15 +97,15 @@ public class StageManager extends Application {
     /**
      * adds hot keys for the application
      */
-    private void addHotKeys(KeyEvent keyEvent) {
-        if (currentController.controllerName.equals("optionsScreenController") && keyEvent.getCode() == KeyCode.ESCAPE) {
+    public void addHotKeys(String key, boolean isControlDown, KeyCode keyCode) {
+        if (currentController.controllerName.equals("optionsScreenController") && keyCode == KeyCode.ESCAPE) {
             if (editor.getLocalUser().getUserKey() != null && !editor.getLocalUser().getUserKey().equals("")) {
                 editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
             } else editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null);
         }
         int oldZoomLevel;
-        if (keyEvent.isControlDown()) {
-            switch (keyEvent.getText()) {
+        if (isControlDown) {
+            switch (key) {
                 case "o":
                     Platform.runLater(() -> initView(ControllerEnum.OPTION_SCREEN, null, null));
                     break;

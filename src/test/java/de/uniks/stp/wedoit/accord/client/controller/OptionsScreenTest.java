@@ -141,7 +141,7 @@ public class OptionsScreenTest extends ApplicationTest {
     @Test
     public void testBtnDarkmode() {
         // open options screen
-        press(KeyCode.CONTROL, KeyCode.O);
+        press(KeyCode.CONTROL, KeyCode.O).release(KeyCode.CONTROL, KeyCode.O);
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals("Options - Appearance", stage.getTitle());
         press(KeyCode.ESCAPE);
@@ -289,13 +289,19 @@ public class OptionsScreenTest extends ApplicationTest {
         Options options = this.stageManager.getEditor().getAccordClient().getOptions();
         directToMainScreen();
         WaitForAsyncUtils.waitForFxEvents();
+        directToOptionsScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+        int old = options.getZoomLevel();
         options.setZoomLevel(50);
         int zoomLevel = options.getZoomLevel();
-        press(KeyCode.CONTROL, KeyCode.PLUS).release(KeyCode.CONTROL, KeyCode.PLUS);
-        Assert.assertEquals(zoomLevel + 25, options.getZoomLevel());
-        press(KeyCode.CONTROL, KeyCode.MINUS).release(KeyCode.CONTROL, KeyCode.MINUS);
-        Assert.assertEquals(zoomLevel - 25, options.getZoomLevel());
+        stageManager.addHotKeys("+", true, KeyCode.PLUS);
 
+        Assert.assertEquals(zoomLevel + 25, options.getZoomLevel());
+        WaitForAsyncUtils.waitForFxEvents();
+        stageManager.addHotKeys("-", true, KeyCode.MINUS);
+        Assert.assertEquals(zoomLevel, options.getZoomLevel());
+
+        options.setZoomLevel(old);
     }
 
 
