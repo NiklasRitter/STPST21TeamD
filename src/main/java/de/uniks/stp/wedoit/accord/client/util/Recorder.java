@@ -34,7 +34,12 @@ public class Recorder implements Runnable{
 
     public void stop(){
         cleanup();
-        worker.stop();
+        try {
+            worker.join();
+        } catch (InterruptedException e) {
+            System.err.println("Error on closing recorder");
+            e.printStackTrace();
+        }
     }
 
     private void cleanup(){

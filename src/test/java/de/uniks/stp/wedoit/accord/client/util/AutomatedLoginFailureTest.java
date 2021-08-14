@@ -79,7 +79,8 @@ public class AutomatedLoginFailureTest extends ApplicationTest {
 
     @Override
     public void stop() {
-        stageManager.getResourceManager().saveOptions(this.oldOptions);
+        ResourceManager resourceManager = stageManager.getResourceManager();
+        resourceManager.saveOptions(this.oldOptions);
         stageManager.getResourceManager().saveLocalUser(this.oldLocalUser);
         oldLocalUser = null;
         rule = null;
