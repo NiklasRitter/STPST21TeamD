@@ -126,8 +126,6 @@ public class Editor {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
         steamManager.setupSteamTimer();
-        spotifyManager.setupTrackTimer();
-        //TODO spotifyManager.setupRefreshAuthTimer();
         return localUser;
     }
 

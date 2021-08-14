@@ -93,6 +93,8 @@ public class SpotifyIntegration implements HttpHandler {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
             this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
+
+            this.editor.getSpotifyManager().setupTrackTimer();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,7 +135,6 @@ public class SpotifyIntegration implements HttpHandler {
             e.printStackTrace();
         }
 
-        //TODO this.editor.getSpotifyManager().setupRefreshAuthTimer();
         this.editor.getSpotifyManager().setupTrackTimer();
         stopServer();
     }
@@ -178,6 +179,7 @@ public class SpotifyIntegration implements HttpHandler {
             currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
         } catch (Exception e) {
             reauthorize();
+            //TODO
             System.out.println("ES FOLGT DER ERROR");
             e.printStackTrace();
         }

@@ -25,7 +25,8 @@ public class SpotifyManager {
 
     public void setupTrackTimer() {
         this.spotifyIntegration = this.editor.getSpotifyIntegration();
-        if (editor.getLocalUser() != null && spotifyIntegration != null) {
+        Timer timer = editor.getLocalUser().getTrackTimer();
+        if (editor.getLocalUser() != null && spotifyIntegration != null && editor.getLocalUser().getTrackTimer() == null) {
             trackTimer = createTrackTimer();
             editor.getLocalUser().setTrackTimer(trackTimer);
             editor.getLocalUser().listeners().addPropertyChangeListener(LocalUser.PROPERTY_SPOTIFY_CURRENTLY_PLAYING, localUserCurrentlyPlayingTrackListener);
@@ -58,6 +59,7 @@ public class SpotifyManager {
             @Override
             public void run() {
                 spotifyIntegration.reauthorize();
+                System.out.println(1);
             }
         }, 3540000, 3540000);
         return refreshTimer;
