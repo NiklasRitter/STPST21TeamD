@@ -37,6 +37,7 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class LocalUser {
+        String customDescription;
         String password;
         String name;
         String userKey;
@@ -61,6 +62,7 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class User {
+        String description;
         String name;
         boolean onlineStatus;
         boolean chatRead;
