@@ -15,6 +15,7 @@ import javax.json.JsonObject;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JsonUtilTest {
@@ -215,4 +216,17 @@ public class JsonUtilTest {
         Assert.assertEquals("{\"from\":\"Alice\",\"to\":\"Bob\",\"timestamp\":343141232,\"message\":\"Hello Bob\"}", JsonUtil.stringify(jsonObj));
     }
 
+    @Test
+    public void parseDescriptionTest() {
+        Assert.assertEquals("",JsonUtil.parseDescription(Json.createObjectBuilder().add(DESC, "Test").build().toString()));
+        Assert.assertEquals("#Test",JsonUtil.parseDescription(SPOTIFY_KEY +Json.createObjectBuilder().add(DESC, "Test").build().toString()));
+        Assert.assertEquals("%Test",JsonUtil.parseDescription(GITHUB_KEY+Json.createObjectBuilder().add(DESC, "Test").build().toString()));
+        Assert.assertEquals("?Test",STEAM_KEY + "Test");
+        Assert.assertEquals("+Test",CUSTOM_KEY + "Test");
+        Assert.assertEquals("#Test",JsonUtil.parseDescription(JsonUtil.buildDescription(SPOTIFY_KEY, "Test")));
+        Assert.assertEquals("%Test",JsonUtil.parseDescription(JsonUtil.buildDescription(GITHUB_KEY, "Test")));
+        Assert.assertEquals("?Test",JsonUtil.parseDescription(JsonUtil.buildDescription(STEAM_KEY, "Test")));
+        Assert.assertEquals("+Test",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "Test")));
+
+    }
 }
