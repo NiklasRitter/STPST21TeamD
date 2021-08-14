@@ -259,7 +259,7 @@ public class JsonUtil {
                 .setId(jsonUser.getString(ID))
                 .setName(jsonUser.getString(NAME))
                 .setOnlineStatus(jsonUser.getBoolean(ONLINE))
-                .setDescription(jsonUser.getString(DESCRIPTION));
+                .setDescription(JsonUtil.parseDescription(jsonUser.getString(DESCRIPTION)));
     }
 
     public static List<User> parseUserArray(JsonArray jsonUsers) {
@@ -271,4 +271,20 @@ public class JsonUtil {
         return users;
     }
 
+    public static String parseDescription(String description) {
+        return description;
+        /*if (description == null || description.length() == 0) {return "";}
+        switch (description.substring(0,1)) {
+            case "#":
+            case "%":
+                JsonObject parse = parse(description.substring(1));
+                return parse.getString(DESC);
+            case "?":
+            case "+":
+                return description.substring(1);
+            default:
+                return "";
+        }*/
+
+    }
 }

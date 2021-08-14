@@ -191,7 +191,7 @@ public class RestManager {
                 String name = getServersResponse.getJsonObject(index).getString(NAME);
                 String id = getServersResponse.getJsonObject(index).getString(ID);
                 String description = getServersResponse.getJsonObject(index).getString(DESCRIPTION);
-
+                description = JsonUtil.parseDescription(description);
                 editor.haveUser(id, name, description);
             }
             controller.handleGetOnlineUsers();
@@ -214,6 +214,7 @@ public class RestManager {
                 String name = getServersResponse.getJsonObject(index).getString(NAME);
                 String id = getServersResponse.getJsonObject(index).getString(ID);
                 String description = getServersResponse.getJsonObject(index).getString(DESCRIPTION);
+                description = JsonUtil.parseDescription(description);
                 User user = editor.haveUser(id, name, description);
                 if (user.getName().equals(localUser.getName())) {
                     localUser.setId(id);
