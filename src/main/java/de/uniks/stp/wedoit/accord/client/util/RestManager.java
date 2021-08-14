@@ -799,6 +799,7 @@ public class RestManager {
             restClient.getCurrentGameForSteamUser(editor.getLocalUser().getSteam64ID(), (response) -> {
                 String steamGameExtraInfo =
                         JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(RESPONSE).getJsonArray(PLAYERS).getJsonObject(0).getString(GAME_EXTRA_INfO);
+                editor.getLocalUser().setSteamGameExtraInfo("");
                 editor.getLocalUser().setSteamGameExtraInfo(steamGameExtraInfo);
             });
         }

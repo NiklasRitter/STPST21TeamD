@@ -280,10 +280,10 @@ public class JsonUtil {
             } catch (Exception e) {
                 return "";
             }
-                return parse.getString(DESC);
+                return description.charAt(0) + parse.getString(DESC);
             case STEAM_KEY:
             case CUSTOM_KEY:
-                return description.substring(1);
+                return description;
             default:
                 return "";
         }
