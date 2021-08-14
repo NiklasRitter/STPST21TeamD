@@ -191,7 +191,7 @@ public class SpotifyIntegration implements HttpHandler {
             Track track = (Track) currentlyPlaying.getItem();
             StringBuilder artistNames = new StringBuilder();
             boolean multipleArtists = false;
-            if (track.getArtists() != null) {
+            if (track != null) {
                 for (ArtistSimplified artist : track.getArtists()) {
                     if (!multipleArtists) {
                         artistNames.append(artist.getName());
