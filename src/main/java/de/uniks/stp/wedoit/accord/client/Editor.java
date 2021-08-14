@@ -19,6 +19,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.nio.charset.StandardCharsets;
 import java.security.AlgorithmParameters;
 import java.security.Key;
@@ -48,6 +50,20 @@ public class Editor {
     private StageManager stageManager;
     private SqliteDB db;
     private SpotifyIntegration spotifyIntegration;
+    private PropertyChangeListener descriptionChanged = this::descriptionChanged;
+    private LocalUser lastLocalUser = new LocalUser();
+
+    private void descriptionChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String){
+            System.out.println("New: "+propertyChangeEvent.getNewValue());
+            System.out.println(getLocalUser().getDescription());
+            if(propertyChangeEvent.getNewValue().equals("?")) {
+                getLocalUser().setDescription("+");
+            } else {
+            restManager.updateDescription((String) propertyChangeEvent.getNewValue());
+            }
+        }
+    }
 
     /**
      * used to decode the given string
@@ -131,6 +147,14 @@ public class Editor {
         return localUser;
     }
 
+    private void setUpDescription(LocalUser localUser) {
+        lastLocalUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_DESCRIPTION, this.descriptionChanged);
+        lastLocalUser = localUser;
+        if (localUser.listeners().getPropertyChangeListeners(LocalUser.PROPERTY_DESCRIPTION).length == 0) {
+            localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_DESCRIPTION, this.descriptionChanged);
+        }
+    }
+
     /**
      * creates a new AccordClient
      *
@@ -159,6 +183,7 @@ public class Editor {
         localUser.setUserKey(userKey);
         webSocketManager.setClearUsername();
         setUpDB();
+        setUpDescription(localUser);
         return localUser;
     }
 
@@ -439,6 +464,7 @@ public class Editor {
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
         getLocalUser().setSteam64ID(getSteam64ID());
+        getLocalUser().setDescription(getDescription());
         authorizeSpotify();
     }
 
@@ -451,6 +477,10 @@ public class Editor {
 
     public String getSteam64ID() {
         return db.getSteam64ID();
+    }
+
+    public String getDescription() {
+        return "";
     }
 
     public void saveSteam64ID(String steam64ID) {
@@ -693,11 +723,6 @@ public class Editor {
     }
 
     public void changeUserDescription(String userId, String newDescription) {
-
-        if (this.getLocalUser().getId().equals(userId)) {
-            this.getLocalUser().setDescription(newDescription);
-
-        }
         for (User user : getLocalUser().getUsers()) {
 
             if (user.getId().equals(userId)) {
