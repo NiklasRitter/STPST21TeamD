@@ -24,8 +24,8 @@ import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 public class WebSocketManager {
 
     private final Editor editor;
-    private String cleanLocalUserName;
     private final Map<String, WebSocketClient> webSocketMap = new HashMap<>();
+    private String cleanLocalUserName;
 
     /**
      * Create a WebSocketManager.
@@ -92,7 +92,7 @@ public class WebSocketManager {
         if (webSocket != null) {
             webSocket.setCallback(callback);
         } else {
-            webSocket = new WebSocketClient(editor, URI.create(url), callback);
+            webSocket = new WebSocketClient(editor, URI.create(url), callback).connectToServer();
         }
         webSocketMap.put(url, webSocket);
         return webSocket;
@@ -185,7 +185,7 @@ public class WebSocketManager {
                 server.setName(data.getString(NAME));
                 break;
             case SERVER_DELETED:
-                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
+                Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
                 break;
             case CATEGORY_CREATED:
                 editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
@@ -225,7 +225,7 @@ public class WebSocketManager {
                 Message messageToUpdate = JsonUtil.parseMessageUpdated(data);
                 Channel channelUpdatedMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
                 if (channelUpdatedMessage == null) {
-                    Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
+                    Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
                     System.err.println("Error from message updated");
                     return;
                 }
@@ -234,7 +234,7 @@ public class WebSocketManager {
             case MESSAGE_DELETED:
                 Channel channelDeleteMessage = editor.getChannelById(server, data.getString(CATEGORY), data.getString(CHANNEL));
                 if (channelDeleteMessage == null) {
-                    Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
+                    Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
                     System.err.println("Error from message delete");
                     return;
                 }
