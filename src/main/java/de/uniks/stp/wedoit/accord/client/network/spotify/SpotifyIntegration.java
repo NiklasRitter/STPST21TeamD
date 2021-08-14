@@ -186,7 +186,7 @@ public class SpotifyIntegration implements HttpHandler {
     }
 
     public String createDescription(CurrentlyPlaying currentlyPlaying) {
-        String response;
+        String response = "";
         if (currentlyPlaying != null) {
             Track track = (Track) currentlyPlaying.getItem();
             StringBuilder artistNames = new StringBuilder();
@@ -200,8 +200,8 @@ public class SpotifyIntegration implements HttpHandler {
                         artistNames.append(" , ").append(artist.getName());
                     }
                 }
+                response = track.getName() + " - " + artistNames;
             }
-            response = track.getName() + " - " + artistNames;
         } else {
             response = null;
         }
