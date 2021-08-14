@@ -89,7 +89,7 @@
   roles: 	accordClient_localUser 	accordClient_options
 
 - options: 	org.fulib.classmodel.Clazz
-  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_outputDevice 	options_inputDevice 	options_systemVolume 	options_audioRootMeanSquare 	options_chatFontSize 	options_zoomLevel
+  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_outputDevice 	options_inputDevice 	options_systemVolume 	options_inputVolume 	options_audioRootMeanSquare 	options_chatFontSize 	options_zoomLevel
   model: 	c
   modified: 	false
   name: 	Options
@@ -870,6 +870,15 @@
   id: 	Options_systemVolume
   modified: 	false
   name: 	systemVolume
+  propertyStyle: 	Bean
+  type: 	float
+  typeSignature: 	float
+
+- options_inputVolume: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_inputVolume
+  modified: 	false
+  name: 	inputVolume
   propertyStyle: 	Bean
   type: 	float
   typeSignature: 	float

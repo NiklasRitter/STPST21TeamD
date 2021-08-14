@@ -9,7 +9,8 @@ public class Recorder implements Runnable{
 
     private Thread worker;
     final ProgressBar bar;
-    TargetDataLine line;
+    private TargetDataLine line;
+    private SourceDataLine sourceDataLine;
     private final Editor editor;
 
     AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
@@ -46,6 +47,15 @@ public class Recorder implements Runnable{
                 line.close();
             }
         }
+        if(sourceDataLine != null) {
+            if (sourceDataLine.isRunning()) {
+                sourceDataLine.stop();
+                sourceDataLine.flush();
+            }
+            if (sourceDataLine.isOpen()) {
+                sourceDataLine.close();
+            }
+        }
 
     }
 
@@ -53,13 +63,22 @@ public class Recorder implements Runnable{
     public void run() {
         try {
             DataLine.Info info = new DataLine.Info(TargetDataLine.class, audioFormat);
+            DataLine.Info sourceDataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
             Mixer.Info inputDevice = editor.getStageManager().getPrefManager().loadInputDevice();
+            Mixer.Info outputDevice = editor.getStageManager().getPrefManager().loadOutputDevice();
             if(inputDevice != null){
                 line = (TargetDataLine) AudioSystem.getMixer(inputDevice).getLine(info);
             }else{
                 line = (TargetDataLine) AudioSystem.getLine(info);
             }
 
+            if(outputDevice != null){
+                sourceDataLine = (SourceDataLine) AudioSystem.getMixer(outputDevice).getLine(sourceDataLineInfo);
+            }else{
+                sourceDataLine = (SourceDataLine) AudioSystem.getLine(sourceDataLineInfo);
+            }
+
+            sourceDataLine.open(audioFormat);
             line.open(audioFormat);
         } catch(Exception e) {
             e.printStackTrace();
@@ -69,9 +88,12 @@ public class Recorder implements Runnable{
         byte[] buf = new byte[2048];
 
         line.start();
+        sourceDataLine.start();
         for(int b; (b = line.read(buf, 0, buf.length)) > -1;) {
 
             double rms = editor.calculateRMS(buf,b);
+            if(rms > editor.getAccordClient().getOptions().getAudioRootMeanSquare())sourceDataLine.write(buf,0,buf.length);
+            else sourceDataLine.flush();
             if(bar != null) bar.setProgress(rms);
 
         }
