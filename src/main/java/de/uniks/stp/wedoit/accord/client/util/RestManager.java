@@ -195,7 +195,9 @@ public class RestManager {
                 description = JsonUtil.parseDescription(description);
                 editor.haveUser(id, name, description);
             }
-            controller.handleGetOnlineUsers();
+            if (controller != null) {
+                controller.handleGetOnlineUsers();
+            }
         });
     }
 

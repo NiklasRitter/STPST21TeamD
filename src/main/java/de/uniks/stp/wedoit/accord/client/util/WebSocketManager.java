@@ -123,6 +123,7 @@ public class WebSocketManager {
 
         if (jsonObject.getString(ACTION).equals(USER_JOINED)) {
             editor.haveUser(data.getString(ID), data.getString(NAME));
+            editor.getRestManager().getOnlineUsers(editor.getLocalUser(), null);
 
         } else if (jsonObject.getString(ACTION).equals(USER_LEFT)) {
             editor.userLeft(data.getString(ID));
