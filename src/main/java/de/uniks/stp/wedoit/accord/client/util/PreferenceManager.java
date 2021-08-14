@@ -12,14 +12,16 @@ import static de.uniks.stp.wedoit.accord.client.constants.Preferences.*;
 
 public class PreferenceManager {
 
-    private StageManager stageManager;
     public PropertyChangeListener rememberMeListener = this::onRememberMeChanged;
     public PropertyChangeListener usernameListener = this::onUsernameChanged;
+    private StageManager stageManager;
+    public PropertyChangeListener inputVolumeListener = this::onInputVolumeChanged;
     public PropertyChangeListener systemVolumeListener = this::onSystemVolumeChanged;
     public PropertyChangeListener languageListener = this::onLanguageChanged;
     public PropertyChangeListener darkModeListener = this::onDarkModeChanged;
     public PropertyChangeListener passwordListener = this::onPasswordChanged;
     public PropertyChangeListener chatFontSizeListener = this::onChatFontSizeChanged;
+    public PropertyChangeListener zoomLevelListener = this::onZoomLevelChanged;
     public PropertyChangeListener audioRootMeanSquareListener = this::onAudioRootMeanSquareChanged;
 
     /**
@@ -80,6 +82,26 @@ public class PreferenceManager {
     public float loadSystemVolume() {
         Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
         return preferences.getFloat(SYSTEM_VOLUME, 100f);
+    }
+
+    /**
+     * Saves the input volume preference to the Registry.
+     *
+     * @param inputVolume The value of the inputVolume preference.
+     */
+    public void saveInputVolume(float inputVolume) {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        preferences.putFloat(INPUT_VOLUME, inputVolume);
+    }
+
+    /**
+     * Loads the input volume preference from the Registry.
+     *
+     * @return The value of the inputVolume preference.
+     */
+    public float loadInputVolume() {
+        Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+        return preferences.getFloat(INPUT_VOLUME, 100f);
     }
 
     /**
@@ -160,12 +182,45 @@ public class PreferenceManager {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
             int size = preferences.getInt(CHAT_FONT_SIZE, 12);
-            if(size == 0) size = 12;
+            if (size == 0) size = 12;
             return size;
         } catch (Exception e) {
             System.err.println("Error while loading chat font size:");
             e.printStackTrace();
             return 12;
+        }
+    }
+
+    /**
+     * Loads the zoomLevel preference from the Registry.
+     *
+     * @return The value of the zoomLevel preference.
+     */
+    public int loadZoomLevel() {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            int size = preferences.getInt(ZOOM_LEVEL, 100);
+            if(size == 0) size = 100;
+            return size;
+        } catch (Exception e) {
+            System.err.println("Error while loading chat font size:");
+            e.printStackTrace();
+            return 100;
+        }
+    }
+
+    /**
+     * Saves the zoomLevel preference to the Registry.
+     *
+     * @param zoomLevel The value of the zoomLevel preference.
+     */
+    public void saveZoomLevel(int zoomLevel) {
+        try {
+            Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
+            preferences.putInt(ZOOM_LEVEL, zoomLevel);
+        } catch (Exception e) {
+            System.err.println("Error while saving chat font size:");
+            e.printStackTrace();
         }
     }
 
@@ -274,6 +329,15 @@ public class PreferenceManager {
         }
     }
 
+    private void onInputVolumeChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Float) {
+            float inputVolume = (float) propertyChangeEvent.getNewValue();
+            this.stageManager.getEditor().getAccordClient().getOptions().setInputVolume(inputVolume);
+
+            saveInputVolume(inputVolume);
+        }
+    }
+
     private void onSystemVolumeChanged(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() instanceof Float) {
             float systemVolume = (float) propertyChangeEvent.getNewValue();
@@ -291,6 +355,16 @@ public class PreferenceManager {
             this.stageManager.getEditor().getAccordClient().getOptions().setChatFontSize(chatFontSize);
 
             saveChatFontSize(chatFontSize);
+        }
+    }
+
+    private void onZoomLevelChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() instanceof Integer) {
+            int zoomLevel = (int) propertyChangeEvent.getNewValue();
+
+            this.stageManager.getEditor().getAccordClient().getOptions().setZoomLevel(zoomLevel);
+
+            saveZoomLevel(zoomLevel);
         }
     }
 

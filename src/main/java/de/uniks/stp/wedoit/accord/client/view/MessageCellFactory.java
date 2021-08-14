@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
+import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
@@ -38,8 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.TEXT;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
@@ -162,28 +162,38 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
 
             if (!empty) {
 
-                //remove game prefix
-                if (item.getText().startsWith(GAME_PREFIX))
-                    item.setText(item.getText().substring(GAME_PREFIX.length()));
-
                 //eval correct time format
                 time = checkTime(item);
 
                 if (item instanceof PrivateMessage) {
-                    //private message handling
-                    if (item.getText().startsWith(GAME_SYSTEM)) {
-                        this.setText(item.getText().substring(GAME_PREFIX.length()));
+                    String textToDisplay;
+                    if (item.getText().equals(GAME_INVITE) || item.getText().equals(GAME_REVENGE)) {
+                        if (item.getFrom().equals(stageManager.getEditor().getLocalUser().getName())) {
+                            textToDisplay = LanguageResolver.getString("SEND_GAME_INVITE");
+                        } else {
+                            textToDisplay = item.getFrom() + LanguageResolver.getString("RECEIVE_GAME_INVITE");
+                        }
+                        item.setText(textToDisplay);
+                        displayNameAndDate(item);
+                        displayTextWithEmoji(item);
                         return;
-                    } else if (item.getText().startsWith(GAME_PREFIX)) {
-                        this.setText("[" + time + "] " + item.getFrom() + ": " + item.getText().substring(GAME_PREFIX.length()));
+                    } else if (item.getText().equals(GAME_CLOSE)) {
+                        if (item.getFrom().equals(stageManager.getEditor().getLocalUser().getName())) {
+                            textToDisplay = LanguageResolver.getString("YOU_LEFT_GAME");
+                        } else {
+                            textToDisplay = item.getFrom() + " " + LanguageResolver.getString("OPP_LEFT_GAME");
+                        }
+                        item.setText(textToDisplay);
+                        displayNameAndDate(item);
+                        displayTextWithEmoji(item);
                         return;
                     }
                 } else {
-                    //marking in server chats
                     if (containsMarking(item.getText())) {
                         this.getStyleClass().add("marked_message");
                     }
                 }
+
                 if (item.getText().startsWith("%") && item.getText().endsWith("%")) {
                     if (item.getText().charAt(item.getText().length()-2) != 92) {
                         //spoiler function
@@ -253,10 +263,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         displayTextWithEmoji(item);
                     }
 
-
-
-                }
-                else {
+                } else {
                     //normal message possibly with emoji
                     displayNameAndDate(item);
                     displayTextWithEmoji(item);

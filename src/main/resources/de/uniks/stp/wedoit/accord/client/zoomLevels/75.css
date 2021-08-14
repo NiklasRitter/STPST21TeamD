@@ -1,0 +1,23 @@
+.button {
+    -fx-font-size: 12;
+}
+
+.label {
+    -fx-font-size: 12;
+}
+
+.tooltip {
+    -fx-font-size: 12;
+}
+
+.listView2  > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-font-size: 12;
+}
+
+.tree-cell {
+    -fx-font-size: 12;
+}
+
+.radio-button {
+    -fx-font-size: 12;
+}

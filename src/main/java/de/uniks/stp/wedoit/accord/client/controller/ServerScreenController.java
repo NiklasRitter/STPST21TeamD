@@ -84,7 +84,7 @@ public class ServerScreenController implements Controller {
         serverChatController = new ServerChatController(view, model, editor, server, this);
         this.serverWSCallback = (msg) -> editor.getWebSocketManager().handleServerMessage(msg, server);
         this.chatWSCallback = serverChatController::handleChatMessage;
-        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor);
+        this.serverListController = new ServerListController(view, this.editor.getStageManager().getModel(), this.editor, this.server);
     }
 
     /**

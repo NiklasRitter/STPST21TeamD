@@ -28,7 +28,6 @@ public class AudioSend extends Thread {
     private TargetDataLine line;
 
 
-
     public AudioSend(LocalUser localUser, Channel channel, DatagramSocket sendSocket, String address, int port, Editor editor) {
         this.localUser = localUser;
         this.channel = channel;
@@ -62,10 +61,9 @@ public class AudioSend extends Thread {
 
         try {
             Mixer.Info inputDevice = this.localUser.getAccordClient().getOptions().getInputDevice();
-            if(inputDevice != null){
+            if (inputDevice != null) {
                 line = (TargetDataLine) AudioSystem.getMixer(inputDevice).getLine(info);
-            }
-            else{
+            } else {
                 line = (TargetDataLine) AudioSystem.getLine(info);
             }
             line.open(audioFormat);
@@ -78,9 +76,13 @@ public class AudioSend extends Thread {
             while (shouldSend.get()) {
                 int b = line.read(readData, 255, 1024);
 
+                for (int i = 255; i < readData.length; i++) {
+                    readData[i] = (byte) (readData[i] * editor.getAccordClient().getOptions().getInputVolume());
+                }
+
                 datagramPacket = new DatagramPacket(readData, readData.length, inetAddress, port);
 
-                if (line.isRunning() && editor.calculateRMS(readData,b) > editor.getAccordClient().getOptions().getAudioRootMeanSquare()) {
+                if (line.isRunning() && editor.calculateRMS(readData, b) > editor.getAccordClient().getOptions().getAudioRootMeanSquare()) {
                     this.sendSocket.send(datagramPacket);
                 }
             }
