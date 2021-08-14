@@ -9,6 +9,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.CUSTOM_KEY;
 import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.STEAM_KEY;
 
 public class SteamManager {
@@ -51,19 +52,10 @@ public class SteamManager {
     }
 
     public void localUserGameExtraInfoOnChange(PropertyChangeEvent propertyChangeEvent) {
-        if (editor.getLocalUser() != null && propertyChangeEvent.getNewValue() instanceof String) {
-            String oldValue = (String) propertyChangeEvent.getOldValue();
-            String newValue = (String) propertyChangeEvent.getNewValue();
-            String currentDescription = editor.getLocalUser().getDescription();
-            if (currentDescription == null) currentDescription = "";
-            if (currentDescription.contains(STEAM_KEY)) {
-                if (propertyChangeEvent.getNewValue() == null || ((String) propertyChangeEvent.getNewValue()).isEmpty())
-                    editor.getRestManager().updateDescription(currentDescription.substring(currentDescription.indexOf(STEAM_KEY), currentDescription.indexOf(STEAM_KEY) + ((String) propertyChangeEvent.getOldValue()).length() + 1));
-                else
-                    editor.getRestManager().updateDescription(currentDescription.replace(oldValue, newValue));
-            } else {
-                editor.getRestManager().updateDescription(STEAM_KEY + newValue + currentDescription);
-            }
+        if (propertyChangeEvent.getNewValue() != null && !propertyChangeEvent.getNewValue().equals("") && propertyChangeEvent.getNewValue() instanceof String) {
+            String description = editor.getLocalUser().getDescription();
+            if (description != null && description.startsWith(CUSTOM_KEY)) return;
+            editor.getLocalUser().setDescription((String) propertyChangeEvent.getNewValue());
         }
     }
 
