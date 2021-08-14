@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.db;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -109,6 +110,36 @@ public class SqliteDB {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO options(id,key,value) VALUES(1,?,?)")) {
+
+            prep.setString(1, "refreshToken");
+            prep.setString(2, refreshToken);
+
+            prep.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getRefreshToken() {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("SELECT * FROM options WHERE key = 'refreshToken' LIMIT 1;")) {
+
+            ResultSet rs = prep.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("value");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -252,5 +283,4 @@ public class SqliteDB {
         }
         return new ArrayList<>(users);
     }
-
 }

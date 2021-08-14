@@ -8,11 +8,9 @@ import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import javafx.application.Platform;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -29,11 +27,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
+
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.sound.sampled.Mixer;
 import java.util.Locale;
 import java.util.Objects;
+
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -142,8 +141,13 @@ public class OptionsScreenTest extends ApplicationTest {
     @Test
     public void testBtnDarkmode() {
         // open options screen
+        press(KeyCode.CONTROL, KeyCode.O).release(KeyCode.CONTROL, KeyCode.O);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertEquals("Options - Appearance", stage.getTitle());
+        press(KeyCode.ESCAPE);
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertFalse("Options - Appearance".equals(stage.getTitle()));
         directToOptionsScreen();
-
         // check if stylesheets contain light theme
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(stage.isShowing());
@@ -160,6 +164,14 @@ public class OptionsScreenTest extends ApplicationTest {
                 .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
 
         Assert.assertTrue(stageManager.getPrefManager().loadDarkMode());
+
+        press(KeyCode.CONTROL, KeyCode.D);
+
+        // check if stylesheets contain dark theme
+        WaitForAsyncUtils.waitForFxEvents();
+        Assert.assertFalse(stageManager.getScene(StageEnum.STAGE).getStylesheets()
+                .contains(Objects.requireNonNull(StageManager.class.getResource("dark-theme.css")).toExternalForm()));
+
     }
 
     @Test
@@ -217,7 +229,7 @@ public class OptionsScreenTest extends ApplicationTest {
         try {
             lookup("#btnLogout").query();
             Assert.fail();
-        }catch (Exception e){
+        } catch (Exception e) {
             Assert.assertEquals("Options - Appearance", stage.getTitle());
         }
     }
@@ -242,7 +254,7 @@ public class OptionsScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void inputOutputDeviceSelect(){
+    public void inputOutputDeviceSelect() {
         Options options = this.stageManager.getEditor().getAccordClient().getOptions();
         options.setInputDevice(null);
         options.setOutputDevice(null);
@@ -270,6 +282,26 @@ public class OptionsScreenTest extends ApplicationTest {
         clickOn("Back");
         directToOptionsScreen();
         clickOn("Sound");
+    }
+
+    @Test
+    public void zoomLevelTest() {
+        Options options = this.stageManager.getEditor().getAccordClient().getOptions();
+        directToMainScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+        directToOptionsScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+        int old = options.getZoomLevel();
+        options.setZoomLevel(50);
+        int zoomLevel = options.getZoomLevel();
+        stageManager.addHotKeys("+", true, KeyCode.PLUS);
+
+        Assert.assertEquals(zoomLevel + 25, options.getZoomLevel());
+        WaitForAsyncUtils.waitForFxEvents();
+        stageManager.addHotKeys("-", true, KeyCode.MINUS);
+        Assert.assertEquals(zoomLevel, options.getZoomLevel());
+
+        options.setZoomLevel(old);
     }
 
 

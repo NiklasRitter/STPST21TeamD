@@ -6,6 +6,9 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.optionsSubController.*;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
+import de.uniks.stp.wedoit.accord.client.util.Recorder;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -58,7 +61,6 @@ public class OptionsScreenController implements Controller {
 
         selectSubController(ControllerEnum.APPEARANCE_OPTIONS_SCREEN);
 
-
         this.btnBack.setOnAction(this::btnBackToChats);
         this.btnAppearance.setOnAction(this::btnAppearanceOptions);
         this.btnLanguage.setOnAction(this::btnLanguageOptions);
@@ -66,7 +68,6 @@ public class OptionsScreenController implements Controller {
         this.btnVoice.setOnAction(this::btnVoiceOptions);
         this.btnDescription.setOnAction(this::btnDescriptionOptions);
         this.btnLogout.setOnAction(this::logoutButtonOnClick);
-
     }
 
     /**
@@ -82,7 +83,6 @@ public class OptionsScreenController implements Controller {
         btnDescription.setOnAction(null);
         btnLanguage.setOnAction(null);
         btnVoice.setOnAction(null);
-
     }
 
     private void btnAppearanceOptions(ActionEvent actionEvent) {
@@ -171,5 +171,4 @@ public class OptionsScreenController implements Controller {
     private void logoutButtonOnClick(ActionEvent actionEvent) {
         editor.logoutUser(editor.getLocalUser().getUserKey());
     }
-
 }

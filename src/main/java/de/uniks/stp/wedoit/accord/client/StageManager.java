@@ -8,17 +8,18 @@ import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
-import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -62,7 +63,8 @@ public class StageManager extends Application {
         try {
 
             Parent root = controller.loadScreen();
-            if(currentController != null) cleanup(controller);
+            root.setOnKeyPressed((keyEvent) -> addHotKeys(keyEvent.getText(), keyEvent.isControlDown(), keyEvent.getCode()));
+            if (currentController != null) cleanup(controller);
             currentController = controller;
 
             Scene currentScene = sceneMap.get(controller.stage);
@@ -91,6 +93,56 @@ public class StageManager extends Application {
             e.printStackTrace();
         }
     }
+
+    /**
+     * adds hot keys for the application
+     */
+    public void addHotKeys(String key, boolean isControlDown, KeyCode keyCode) {
+        if (currentController.controllerName.equals("optionsScreenController") && keyCode == KeyCode.ESCAPE) {
+            if (editor.getLocalUser().getUserKey() != null && !editor.getLocalUser().getUserKey().equals("")) {
+                editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
+            } else editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null);
+        }
+        int oldZoomLevel;
+        if (isControlDown) {
+            switch (key) {
+                case "o":
+                    Platform.runLater(() -> initView(ControllerEnum.OPTION_SCREEN, null, null));
+                    break;
+                case "p":
+                    if (editor.getLocalUser().getUserKey() != null && !editor.getLocalUser().getUserKey().equals("")) {
+                        Platform.runLater(() -> initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null));
+                    }
+                    break;
+                case "d":
+                    boolean isDarkMode = editor.getLocalUser().getAccordClient().getOptions().isDarkmode();
+                    editor.getLocalUser().getAccordClient().getOptions().setDarkmode(!isDarkMode);
+                    break;
+                case "m":
+                    if (editor.getLocalUser().getAudioChannel() != null) {
+                        if (editor.getLocalUser().isMuted()) {
+                            this.editor.getAudioManager().unmuteYourself(editor.getLocalUser());
+                        } else {
+                            this.editor.getAudioManager().muteYourself(editor.getLocalUser());
+                        }
+                    }
+                    break;
+                case "+":
+                    oldZoomLevel = editor.getLocalUser().getAccordClient().getOptions().getZoomLevel();
+                    if (oldZoomLevel + 25 >= 25 && oldZoomLevel + 25 <= 200 && (oldZoomLevel + 25) % 25 == 0 && editor.getLocalUser().getUserKey() != null) {
+                        editor.getLocalUser().getAccordClient().getOptions().setZoomLevel(oldZoomLevel + 25);
+                    }
+                    break;
+                case "-":
+                    oldZoomLevel = editor.getLocalUser().getAccordClient().getOptions().getZoomLevel();
+                    if (oldZoomLevel - 25 >= 25 && oldZoomLevel - 25 <= 200 && (oldZoomLevel + 25) % 25 == 0 && editor.getLocalUser().getUserKey() != null) {
+                        editor.getLocalUser().getAccordClient().getOptions().setZoomLevel(oldZoomLevel - 25);
+                    }
+                    break;
+            }
+        }
+    }
+
 
     /**
      * loads the right controller when changing the scene
@@ -176,7 +228,7 @@ public class StageManager extends Application {
      */
     private void cleanup(ControllerEnum e) {
 
-        if(currentController.stage == e.stage) controllerMap.get(currentController.controllerName).stop();
+        if (currentController.stage == e.stage) controllerMap.get(currentController.controllerName).stop();
 
         if (stageMap.get(StageEnum.EMOJI_PICKER_STAGE) != null) {
             stageMap.get(StageEnum.EMOJI_PICKER_STAGE).hide();
@@ -294,7 +346,7 @@ public class StageManager extends Application {
     }
 
     public void correctZoom() {
-        for (Scene sc: this.sceneMap.values()) {
+        for (Scene sc : this.sceneMap.values()) {
             if (sc != null) {
                 sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "zoomLevels/25.css")).toExternalForm());
@@ -321,7 +373,7 @@ public class StageManager extends Application {
                         "zoomLevels/200.css")).toExternalForm());
 
                 sc.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
-                        "zoomLevels/"+ model.getOptions().getZoomLevel() + ".css")).toExternalForm());
+                        "zoomLevels/" + model.getOptions().getZoomLevel() + ".css")).toExternalForm());
             }
         }
     }
@@ -388,6 +440,8 @@ public class StageManager extends Application {
             stageMap.forEach((k, v) -> v.getIcons().remove(logoImage));
             this.editor.getAudioManager().closeAudioConnection();
             this.editor.getSteamManager().terminateSteamTimer();
+            this.editor.getSpotifyManager().terminateRefreshTimer();
+            this.editor.getSpotifyManager().terminateTrackTimer();
             if (systemTrayController != null) systemTrayController.stop();
             editor.getWebSocketManager().stop();
             if (this.model != null) {

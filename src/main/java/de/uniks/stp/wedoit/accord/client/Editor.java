@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
@@ -40,10 +41,13 @@ public class Editor {
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
+    private final SpotifyManager spotifyManager = new SpotifyManager(this);
+    // private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
     private SqliteDB db;
+    private SpotifyIntegration spotifyIntegration;
 
     /**
      * used to decode the given string
@@ -122,6 +126,8 @@ public class Editor {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
         steamManager.setupSteamTimer();
+        spotifyManager.setupTrackTimer();
+        spotifyManager.setupRefreshAuthTimer();
         return localUser;
     }
 
@@ -418,6 +424,14 @@ public class Editor {
 
     }
 
+    public void authorizeSpotify() {
+        String refreshToken = getRefreshToken();
+        if (refreshToken != null) {
+            SpotifyIntegration spotifyIntegration = setSpotifyIntegration(new SpotifyIntegration(this));
+            spotifyIntegration.reauthorize();
+        }
+    }
+
     /**
      * creates a instance of the sqlite databank and loads the font size
      * right after log in since the username is needed
@@ -425,6 +439,7 @@ public class Editor {
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
         getLocalUser().setSteam64ID(getSteam64ID());
+        authorizeSpotify();
     }
 
     /**
@@ -699,6 +714,27 @@ public class Editor {
             }
         }
 
+    }
+
+    public SpotifyIntegration setSpotifyIntegration(SpotifyIntegration spotifyIntegration) {
+        this.spotifyIntegration = spotifyIntegration;
+        return spotifyIntegration;
+    }
+
+    public SpotifyIntegration getSpotifyIntegration() {
+        return this.spotifyIntegration;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.db.updateRefreshToken(refreshToken);
+    }
+
+    public String getRefreshToken() {
+        return this.db.getRefreshToken();
+    }
+
+    public SpotifyManager getSpotifyManager() {
+        return spotifyManager;
     }
 
 
