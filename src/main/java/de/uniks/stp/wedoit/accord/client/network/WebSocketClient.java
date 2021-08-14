@@ -81,7 +81,7 @@ public class WebSocketClient extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         this.session = session;
-        this.session.addMessageHandler(String.class, this::onMessage);
+        if (this.session != null) this.session.addMessageHandler(String.class, this::onMessage);
 
         this.noopTimer.schedule(new TimerTask() {
             @Override
@@ -125,7 +125,7 @@ public class WebSocketClient extends Endpoint {
      * @param message The Message to be sent.
      */
     public void sendMessage(String message) {
-        if (this.session.isOpen()) {
+        if (this.session != null && this.session.isOpen()) {
             this.session.getAsyncRemote().sendText(message);
         }
     }
