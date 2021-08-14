@@ -8,7 +8,6 @@ import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.PreferenceManager;
 import de.uniks.stp.wedoit.accord.client.util.ResourceManager;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
@@ -21,7 +20,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import kong.unirest.Unirest;
 
-import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -105,6 +103,7 @@ public class StageManager extends Application {
                 editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
             } else editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null);
         }
+        int oldZoomLevel;
         if (keyEvent.isControlDown()) {
             switch (keyEvent.getText()) {
                 case "o":
@@ -120,13 +119,24 @@ public class StageManager extends Application {
                     editor.getLocalUser().getAccordClient().getOptions().setDarkmode(!isDarkMode);
                     break;
                 case "m":
-                    //System.out.println(editor.getLocalUser());
-                    if (editor.getLocalUser().getAudioChannel() != null){
+                    if (editor.getLocalUser().getAudioChannel() != null) {
                         if (editor.getLocalUser().isMuted()) {
                             this.editor.getAudioManager().unmuteYourself(editor.getLocalUser());
                         } else {
                             this.editor.getAudioManager().muteYourself(editor.getLocalUser());
                         }
+                    }
+                    break;
+                case "+":
+                    oldZoomLevel = editor.getLocalUser().getAccordClient().getOptions().getZoomLevel();
+                    if (oldZoomLevel + 25 >= 25 && oldZoomLevel + 25 <= 200 && (oldZoomLevel + 25) % 25 == 0 && editor.getLocalUser().getUserKey() != null) {
+                        editor.getLocalUser().getAccordClient().getOptions().setZoomLevel(oldZoomLevel + 25);
+                    }
+                    break;
+                case "-":
+                    oldZoomLevel = editor.getLocalUser().getAccordClient().getOptions().getZoomLevel();
+                    if (oldZoomLevel - 25 >= 25 && oldZoomLevel - 25 <= 200 && (oldZoomLevel + 25) % 25 == 0 && editor.getLocalUser().getUserKey() != null) {
+                        editor.getLocalUser().getAccordClient().getOptions().setZoomLevel(oldZoomLevel - 25);
                     }
                     break;
             }
@@ -336,7 +346,7 @@ public class StageManager extends Application {
     }
 
     public void correctZoom() {
-        for (Scene sc: this.sceneMap.values()) {
+        for (Scene sc : this.sceneMap.values()) {
             if (sc != null) {
                 sc.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
                         "zoomLevels/25.css")).toExternalForm());
@@ -363,7 +373,7 @@ public class StageManager extends Application {
                         "zoomLevels/200.css")).toExternalForm());
 
                 sc.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
-                        "zoomLevels/"+ model.getOptions().getZoomLevel() + ".css")).toExternalForm());
+                        "zoomLevels/" + model.getOptions().getZoomLevel() + ".css")).toExternalForm());
             }
         }
     }
