@@ -656,10 +656,8 @@ public class ServerScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals(selectUser.getItems().size(), 4);
-        clickOn("#tfInputMessage");
 
-        selectUser.getSelectionModel().select(0);
-        clickOn("#lvSelectUser");
+        clickOn("#@N2");
         WaitForAsyncUtils.waitForFxEvents();
 
         String text = tfInputMessage.getText();

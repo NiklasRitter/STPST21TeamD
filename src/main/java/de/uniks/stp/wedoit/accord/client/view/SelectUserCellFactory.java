@@ -27,6 +27,7 @@ public class SelectUserCellFactory implements Callback<ListView<User>, ListCell<
             if (!empty && item != null) {
                 this.setGraphic(circle);
                 this.setText("@" + item.getName());
+                this.setId("@" + item.getName());
 
                 if (item.isOnlineStatus()) {
                     circle.setFill(Color.GREEN);
