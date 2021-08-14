@@ -29,8 +29,10 @@ public class GenModel implements ClassModelDecorator {
         Mixer.Info outputDevice;
         Mixer.Info inputDevice;
         float systemVolume;
+        float inputVolume;
         double audioRootMeanSquare;
         int chatFontSize;
+        int zoomLevel;
 
         @Link("options")
         AccordClient accordClient;
@@ -42,14 +44,18 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String userKey;
         String id;
+        String spotifyCurrentlyPlaying;
         String steam64ID;
         String steamGameExtraInfo;
+        boolean inGame;
         List<User> gameInvites;
         List<User> gameRequests;
         Channel audioChannel;
         boolean muted;
         boolean allMuted;
         Timer steamGameExtraInfoTimer;
+        Timer trackTimer;
+        Timer refreshSpotifyAuthTimer;
 
         @Link("localUser")
         List<User> users;

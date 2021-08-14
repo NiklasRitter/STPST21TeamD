@@ -26,7 +26,9 @@ public class ResourceManager {
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, preferenceManager.languageListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME, preferenceManager.systemVolumeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_INPUT_VOLUME, preferenceManager.inputVolumeListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_CHAT_FONT_SIZE, preferenceManager.chatFontSizeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_ZOOM_LEVEL, preferenceManager.zoomLevelListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().addPropertyChangeListener(Options.PROPERTY_AUDIO_ROOT_MEAN_SQUARE, preferenceManager.audioRootMeanSquareListener);
         }
         if (clientModel.getLocalUser() != null) {
@@ -48,7 +50,9 @@ public class ResourceManager {
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_LANGUAGE, preferenceManager.languageListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_REMEMBER_ME, preferenceManager.rememberMeListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_SYSTEM_VOLUME, preferenceManager.systemVolumeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_INPUT_VOLUME, preferenceManager.systemVolumeListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_CHAT_FONT_SIZE, preferenceManager.chatFontSizeListener);
+            Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_ZOOM_LEVEL, preferenceManager.zoomLevelListener);
             Objects.requireNonNull(clientModel.getOptions()).listeners().removePropertyChangeListener(Options.PROPERTY_AUDIO_ROOT_MEAN_SQUARE, preferenceManager.audioRootMeanSquareListener);
         }
         if (clientModel.getLocalUser() != null) {
@@ -94,8 +98,10 @@ public class ResourceManager {
         preferenceManager.saveRememberMe(options.isRememberMe());
         preferenceManager.saveLanguage(options.getLanguage());
         preferenceManager.saveSystemVolume(options.getSystemVolume());
+        preferenceManager.saveInputVolume(options.getInputVolume());
         preferenceManager.saveAudioRootMeanSquare(options.getAudioRootMeanSquare());
         preferenceManager.saveChatFontSize(options.getChatFontSize());
+        preferenceManager.saveZoomLevel(options.getZoomLevel());
     }
 
     public PreferenceManager getPreferenceManager() {
@@ -118,8 +124,10 @@ public class ResourceManager {
         Objects.requireNonNull(options).setLanguage(preferenceManager.loadLanguage());
         Objects.requireNonNull(options).setRememberMe(preferenceManager.loadRememberMe());
         Objects.requireNonNull(options).setSystemVolume(preferenceManager.loadSystemVolume());
+        Objects.requireNonNull(options).setInputVolume(preferenceManager.loadInputVolume());
         Objects.requireNonNull(options).setAudioRootMeanSquare(preferenceManager.loadAudioRootMeanSquare());
         Objects.requireNonNull(options).setChatFontSize(preferenceManager.loadChatFontSize());
+        Objects.requireNonNull(options).setZoomLevel(preferenceManager.loadZoomLevel());
     }
 
     /**

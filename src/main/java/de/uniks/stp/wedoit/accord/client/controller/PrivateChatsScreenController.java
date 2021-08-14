@@ -71,7 +71,7 @@ public class PrivateChatsScreenController implements Controller {
         this.localUser = model;
         this.editor = editor;
         this.privateChatController = new PrivateChatController(view, model, editor);
-        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor);
+        this.serverListController = new ServerListController(view, editor.getStageManager().getModel(), editor, null);
     }
 
 
@@ -116,6 +116,8 @@ public class PrivateChatsScreenController implements Controller {
 
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_AUDIO_CHANNEL, this.audioChannelChange);
         this.editor.getStageManager().getModel().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_LANGUAGE, this.languageRefreshed);
+
+        this.editor.getStageManager().correctZoom();
     }
 
 
@@ -178,7 +180,7 @@ public class PrivateChatsScreenController implements Controller {
 
         this.onlineUserObservableList.addAll(editor.loadOldChats());
 
-        Platform.runLater(() -> this.lwOnlineUsers.setItems(onlineUserObservableList));
+        this.lwOnlineUsers.setItems(onlineUserObservableList);
 
         for (User user : availableUsers) {
             editor.getUserChatRead(user);

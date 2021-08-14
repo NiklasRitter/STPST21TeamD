@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_customDescription 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_spotifyCurrentlyPlaying 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_inGame 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer 	localUser_trackTimer 	localUser_refreshSpotifyAuthTimer
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -89,7 +89,7 @@
   roles: 	accordClient_localUser 	accordClient_options
 
 - options: 	org.fulib.classmodel.Clazz
-  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_outputDevice 	options_inputDevice 	options_systemVolume 	options_audioRootMeanSquare 	options_chatFontSize
+  attributes: 	options_darkmode 	options_rememberMe 	options_language 	options_outputDevice 	options_inputDevice 	options_systemVolume 	options_inputVolume 	options_audioRootMeanSquare 	options_chatFontSize 	options_zoomLevel
   model: 	c
   modified: 	false
   name: 	Options
@@ -674,6 +674,15 @@
   type: 	String
   typeSignature: 	String
 
+- localUser_spotifyCurrentlyPlaying: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_spotifyCurrentlyPlaying
+  modified: 	false
+  name: 	spotifyCurrentlyPlaying
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
 - localUser_steam64ID: 	org.fulib.classmodel.Attribute
   clazz: 	localUser
   id: 	LocalUser_steam64ID
@@ -691,6 +700,15 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- localUser_inGame: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_inGame
+  modified: 	false
+  name: 	inGame
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
 
 - localUser_gameInvites: 	org.fulib.classmodel.Attribute
   clazz: 	localUser
@@ -744,6 +762,24 @@
   id: 	LocalUser_steamGameExtraInfoTimer
   modified: 	false
   name: 	steamGameExtraInfoTimer
+  propertyStyle: 	Bean
+  type: 	"import(java.util.Timer)"
+  typeSignature: 	Timer
+
+- localUser_trackTimer: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_trackTimer
+  modified: 	false
+  name: 	trackTimer
+  propertyStyle: 	Bean
+  type: 	"import(java.util.Timer)"
+  typeSignature: 	Timer
+
+- localUser_refreshSpotifyAuthTimer: 	org.fulib.classmodel.Attribute
+  clazz: 	localUser
+  id: 	LocalUser_refreshSpotifyAuthTimer
+  modified: 	false
+  name: 	refreshSpotifyAuthTimer
   propertyStyle: 	Bean
   type: 	"import(java.util.Timer)"
   typeSignature: 	Timer
@@ -856,6 +892,15 @@
   type: 	float
   typeSignature: 	float
 
+- options_inputVolume: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_inputVolume
+  modified: 	false
+  name: 	inputVolume
+  propertyStyle: 	Bean
+  type: 	float
+  typeSignature: 	float
+
 - options_audioRootMeanSquare: 	org.fulib.classmodel.Attribute
   clazz: 	options
   id: 	Options_audioRootMeanSquare
@@ -870,6 +915,15 @@
   id: 	Options_chatFontSize
   modified: 	false
   name: 	chatFontSize
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
+
+- options_zoomLevel: 	org.fulib.classmodel.Attribute
+  clazz: 	options
+  id: 	Options_zoomLevel
+  modified: 	false
+  name: 	zoomLevel
   propertyStyle: 	Bean
   type: 	int
   typeSignature: 	int

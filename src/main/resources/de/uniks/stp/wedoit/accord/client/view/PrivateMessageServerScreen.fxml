@@ -23,7 +23,7 @@
             <children>
                 <Region prefHeight="32.0" prefWidth="15.0" />
                 <Region prefHeight="32.0" prefWidth="5.0" />
-                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" style="-fx-background-radius: 100;">
+                <Button id="btnEmoji" alignment="CENTER" mnemonicParsing="false" prefHeight="27.0" style="-fx-background-radius: 100;" styleClass="emoji-Button">
                     <font>
                         <Font size="4.0" />
                     </font>

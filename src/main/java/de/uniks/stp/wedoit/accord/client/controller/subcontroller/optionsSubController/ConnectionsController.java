@@ -4,6 +4,7 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -30,7 +31,6 @@ public class ConnectionsController implements Controller {
 
         this.btnSteam.setOnAction(this::btnSteamOnClick);
         this.btnSpotify.setOnAction(this::btnSpotifyClick);
-
     }
 
     @Override
@@ -44,6 +44,7 @@ public class ConnectionsController implements Controller {
     }
 
     private void btnSpotifyClick(ActionEvent actionEvent) {
-
+        this.editor.setSpotifyIntegration(new SpotifyIntegration(editor));
+        this.editor.getSpotifyIntegration().authorize();
     }
 }

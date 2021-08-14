@@ -2,6 +2,7 @@ package de.uniks.stp.wedoit.accord.client.db;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -111,6 +112,36 @@ public class SqliteDB {
         }
     }
 
+    public void updateRefreshToken(String refreshToken) {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("INSERT OR REPLACE INTO options(id,key,value) VALUES(1,?,?)")) {
+
+            prep.setString(1, "refreshToken");
+            prep.setString(2, refreshToken);
+
+            prep.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getRefreshToken() {
+        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
+             PreparedStatement prep = conn.prepareStatement("SELECT * FROM options WHERE key = 'refreshToken' LIMIT 1;")) {
+
+            ResultSet rs = prep.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("value");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * Updates or inserts the read status in userChats
      *
@@ -153,40 +184,6 @@ public class SqliteDB {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Query for messages between username (set in constructor) and user, ordered by timestamp
-     *
-     * @param user username to find chats with
-     * @return list of PrivateMessage that the localUser had with user
-     */
-    public List<PrivateMessage> getAllMessagesBetweenUsers(String user) {
-        List<PrivateMessage> messages = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(url + username + ".sqlite");
-             PreparedStatement prep = conn.prepareStatement("SELECT * FROM messages WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY times")) {
-
-            prep.setString(1, user);
-            prep.setString(2, username);
-            prep.setString(3, username);
-            prep.setString(4, user);
-
-            ResultSet rs = prep.executeQuery();
-
-            while (rs.next()) {
-                PrivateMessage msg = new PrivateMessage();
-                msg.setText(rs.getString("text"));
-                msg.setTimestamp(rs.getLong("times"));
-                msg.setTo(rs.getString("receiver"));
-                msg.setFrom(rs.getString("sender"));
-
-                messages.add(msg);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return messages;
     }
 
     /**
@@ -286,5 +283,4 @@ public class SqliteDB {
         }
         return new ArrayList<>(users);
     }
-
 }

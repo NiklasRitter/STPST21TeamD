@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatCont
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import kong.unirest.JsonNode;
