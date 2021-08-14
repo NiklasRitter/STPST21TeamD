@@ -9,8 +9,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.CUSTOM_KEY;
-import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.STEAM_KEY;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class SteamManager {
     private final Editor editor;
@@ -52,10 +51,10 @@ public class SteamManager {
     }
 
     public void localUserGameExtraInfoOnChange(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != null && !propertyChangeEvent.getNewValue().equals("") && propertyChangeEvent.getNewValue() instanceof String) {
+        if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String) {
             String description = editor.getLocalUser().getDescription();
-            if (description != null && description.startsWith(CUSTOM_KEY)) return;
-            editor.getLocalUser().setDescription((String) propertyChangeEvent.getNewValue());
+            if (description != null && description.startsWith(CUSTOM_KEY) && description.length() > 1) return;
+            editor.getLocalUser().setDescription(JsonUtil.buildDescription(STEAM_KEY, (String) propertyChangeEvent.getNewValue()));
         }
     }
 
