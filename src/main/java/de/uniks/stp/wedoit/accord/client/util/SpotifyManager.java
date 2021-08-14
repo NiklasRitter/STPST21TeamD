@@ -15,7 +15,6 @@ public class SpotifyManager {
     private final PropertyChangeListener localUserCurrentlyPlayingTrackListener = this::localUserCurrentlyPlayingTrackOnChange;
     private final PropertyChangeListener localUserListener = this::localUserOnChange;
     private Timer trackTimer;
-    private Timer refreshTimer;
     private SpotifyIntegration spotifyIntegration;
 
     public SpotifyManager(Editor editor) {
@@ -33,14 +32,6 @@ public class SpotifyManager {
         }
     }
 
-    public void setupRefreshAuthTimer() {
-        this.spotifyIntegration = this.editor.getSpotifyIntegration();
-        if (editor.getLocalUser() != null && spotifyIntegration != null) {
-            refreshTimer = createRefreshTimer();
-            editor.getLocalUser().setRefreshSpotifyAuthTimer(refreshTimer);
-        }
-    }
-
     public Timer createTrackTimer() {
         Timer trackTimer = new Timer();
         trackTimer.schedule(new TimerTask() {
@@ -50,17 +41,6 @@ public class SpotifyManager {
             }
         }, 0, 1000);
         return trackTimer;
-    }
-
-    public Timer createRefreshTimer() {
-        Timer refreshTimer = new Timer();
-        refreshTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                spotifyIntegration.reauthorize();
-            }
-        }, 3540000, 3540000);
-        return refreshTimer;
     }
 
     public void terminateTrackTimer() {
@@ -78,19 +58,6 @@ public class SpotifyManager {
         }
     }
 
-    public void terminateRefreshTimer() {
-        if (editor.getLocalUser() != null) {
-            if (editor.getLocalUser().getRefreshSpotifyAuthTimer() != null) {
-                editor.getLocalUser().getRefreshSpotifyAuthTimer().cancel();
-                editor.getLocalUser().setRefreshSpotifyAuthTimer(null);
-            }
-        }
-        if (refreshTimer != null) {
-            refreshTimer.cancel();
-            refreshTimer = null;
-        }
-    }
-
     public void localUserCurrentlyPlayingTrackOnChange(PropertyChangeEvent propertyChangeEvent) {
         if (editor.getLocalUser() != null && propertyChangeEvent.getNewValue() instanceof String) {
             editor.getRestManager().updateDescription(this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
@@ -100,7 +67,6 @@ public class SpotifyManager {
     public void localUserOnChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != propertyChangeEvent.getOldValue())
             if (propertyChangeEvent.getNewValue() instanceof LocalUser && propertyChangeEvent.getOldValue() instanceof LocalUser) {
-                terminateRefreshTimer();
                 terminateTrackTimer();
             }
     }

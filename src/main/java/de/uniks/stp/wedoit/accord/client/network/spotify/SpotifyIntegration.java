@@ -5,6 +5,8 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
+import com.wrapper.spotify.exceptions.SpotifyWebApiException;
+import com.wrapper.spotify.exceptions.detailed.UnauthorizedException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlaying;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
@@ -14,8 +16,10 @@ import com.wrapper.spotify.requests.authorization.authorization_code.pkce.Author
 import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERequest;
 import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackRequest;
 import de.uniks.stp.wedoit.accord.client.Editor;
+import org.apache.hc.core5.http.ParseException;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -132,8 +136,6 @@ public class SpotifyIntegration implements HttpHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //TODO this.editor.getSpotifyManager().setupRefreshAuthTimer();
         this.editor.getSpotifyManager().setupTrackTimer();
         stopServer();
     }
@@ -176,9 +178,9 @@ public class SpotifyIntegration implements HttpHandler {
         CurrentlyPlaying currentlyPlaying = null;
         try {
             currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
-        } catch (Exception e) {
+        } catch (UnauthorizedException e) {
             reauthorize();
-            System.out.println("ES FOLGT DER ERROR");
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
             e.printStackTrace();
         }
         String description = createDescription(currentlyPlaying);

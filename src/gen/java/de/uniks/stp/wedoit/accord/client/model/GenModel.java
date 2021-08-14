@@ -54,7 +54,6 @@ public class GenModel implements ClassModelDecorator {
         boolean allMuted;
         Timer steamGameExtraInfoTimer;
         Timer trackTimer;
-        Timer refreshSpotifyAuthTimer;
 
         @Link("localUser")
         List<User> users;
