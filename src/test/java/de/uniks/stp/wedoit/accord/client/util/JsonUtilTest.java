@@ -218,6 +218,7 @@ public class JsonUtilTest {
 
     @Test
     public void parseDescriptionTest() {
+        Assert.assertEquals("",JsonUtil.parseDescription(GITHUB_KEY + "asdasd,ss{"));
         Assert.assertEquals("",JsonUtil.parseDescription(Json.createObjectBuilder().add(DESC, "Test").build().toString()));
         Assert.assertEquals("#Test",JsonUtil.parseDescription(SPOTIFY_KEY +Json.createObjectBuilder().add(DESC, "Test").build().toString()));
         Assert.assertEquals("%Test",JsonUtil.parseDescription(GITHUB_KEY+Json.createObjectBuilder().add(DESC, "Test").build().toString()));
@@ -227,6 +228,7 @@ public class JsonUtilTest {
         Assert.assertEquals("%Test",JsonUtil.parseDescription(JsonUtil.buildDescription(GITHUB_KEY, "Test")));
         Assert.assertEquals("?Test",JsonUtil.parseDescription(JsonUtil.buildDescription(STEAM_KEY, "Test")));
         Assert.assertEquals("+Test",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "Test")));
+        Assert.assertEquals("",JsonUtil.buildDescription("s","s"));
 
     }
 }

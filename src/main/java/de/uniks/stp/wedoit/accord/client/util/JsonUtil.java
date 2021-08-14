@@ -292,9 +292,9 @@ public class JsonUtil {
     public static String buildDescription(String type, String description) {
         switch (type) {
             case SPOTIFY_KEY:
-                return SPOTIFY_KEY + Json.createObjectBuilder().add(DESCRIPTION, description).build().toString();
+                return SPOTIFY_KEY + Json.createObjectBuilder().add(DESC, description).build().toString();
             case GITHUB_KEY:
-                return GITHUB_KEY + Json.createObjectBuilder().add(DESCRIPTION, description).build().toString();
+                return GITHUB_KEY + Json.createObjectBuilder().add(DESC, description).build().toString();
             case STEAM_KEY:
                 return STEAM_KEY + description;
             case CUSTOM_KEY:
