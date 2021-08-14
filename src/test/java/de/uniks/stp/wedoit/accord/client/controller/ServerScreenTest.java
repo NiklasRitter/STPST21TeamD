@@ -227,20 +227,6 @@ public class ServerScreenTest extends ApplicationTest {
         callback.completed(res);
     }
 
-    public void mockJoinAudio(JsonObject restClientJson) {
-        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
-        verify(restMock).joinAudioChannel(anyString(), anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
-        Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
-        callback.completed(res);
-    }
-
-    public void mockLeaveAudio(JsonObject restClientJson) {
-        when(res.getBody()).thenReturn(new JsonNode(restClientJson.toString()));
-        verify(restMock).leaveAudioChannel(anyString(), anyString(), anyString(), anyString(), channelCallbackArgumentCaptor.capture());
-        Callback<JsonNode> callback = channelCallbackArgumentCaptor.getValue();
-        callback.completed(res);
-    }
-
     public void mockChatWebSocket(JsonObject webSocketJson) {
         // mock websocket
         verify(chatWebSocketClient, atLeastOnce()).setCallback(chatCallbackArgumentCaptorWebSocket.capture());
@@ -281,9 +267,9 @@ public class ServerScreenTest extends ApplicationTest {
     private void initChannelListView() {
         JsonObject categoriesRestJson = getServerCategories();
         mockGetCategoryRest(categoriesRestJson);
+        WaitForAsyncUtils.waitForFxEvents();
         JsonObject channelRestJson = getCategoryChannels();
         mockChannelRest(channelRestJson);
-        WaitForAsyncUtils.waitForFxEvents();
     }
 
     public void initChannelListViewChannelFailure() {
