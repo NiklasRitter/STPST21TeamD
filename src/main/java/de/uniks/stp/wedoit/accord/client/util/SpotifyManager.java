@@ -17,8 +17,6 @@ public class SpotifyManager {
     private Timer trackTimer;
     private Timer refreshTimer;
     private SpotifyIntegration spotifyIntegration;
-    private int TRACK_TIMER = 1000;
-    private int REFRESH_TIMER = 3540000;
 
     public SpotifyManager(Editor editor) {
         this.editor = editor;
@@ -28,13 +26,7 @@ public class SpotifyManager {
     public void setupTrackTimer() {
         this.spotifyIntegration = this.editor.getSpotifyIntegration();
         if (editor.getLocalUser() != null && spotifyIntegration != null) {
-            trackTimer = new Timer();
-            trackTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    spotifyIntegration.getUsersCurrentlyPlayingTrack();
-                }
-            }, 0, TRACK_TIMER);
+            trackTimer = createTrackTimer();
             editor.getLocalUser().setTrackTimer(trackTimer);
             editor.getLocalUser().listeners().addPropertyChangeListener(LocalUser.PROPERTY_SPOTIFY_CURRENTLY_PLAYING, localUserCurrentlyPlayingTrackListener);
             editor.getAccordClient().listeners().addPropertyChangeListener(AccordClient.PROPERTY_LOCAL_USER, localUserListener);
@@ -44,15 +36,31 @@ public class SpotifyManager {
     public void setupRefreshAuthTimer() {
         this.spotifyIntegration = this.editor.getSpotifyIntegration();
         if (editor.getLocalUser() != null && spotifyIntegration != null) {
-            refreshTimer = new Timer();
-            refreshTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    spotifyIntegration.reauthorize();
-                }
-            }, REFRESH_TIMER, REFRESH_TIMER);
+            refreshTimer = createRefreshTimer();
             editor.getLocalUser().setRefreshSpotifyAuthTimer(refreshTimer);
         }
+    }
+
+    public Timer createTrackTimer() {
+        Timer trackTimer = new Timer();
+        trackTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                spotifyIntegration.setUsersCurrentlyPlayingTrack();
+            }
+        }, 0, 1000);
+        return trackTimer;
+    }
+
+    public Timer createRefreshTimer() {
+        Timer refreshTimer = new Timer();
+        refreshTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                spotifyIntegration.reauthorize();
+            }
+        }, 3540000, 3540000);
+        return refreshTimer;
     }
 
     public void terminateTrackTimer() {
