@@ -92,6 +92,11 @@ public class Editor {
         return accordClient;
     }
 
+    public Editor setAccordClient(AccordClient accordClient) {
+        this.accordClient = accordClient;
+        return this;
+    }
+
     /**
      * @return private final WebSocketManager webSocketManager
      */
