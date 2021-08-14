@@ -121,8 +121,10 @@ public class ServerListController implements Controller {
             this.editor.getLocalUser().listeners().addPropertyChangeListener(LocalUser.PROPERTY_SERVERS, this.serverListListener);
             // Add server websockets
             for (Server server : editor.getLocalUser().getServers()) {
-                webSocketServerUrls.add(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
-                editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+                if (server != editor.getCurrentServer()) {
+                    webSocketServerUrls.add(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId());
+                    editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
+                }
             }
         } else {
             Platform.runLater(() -> this.editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
