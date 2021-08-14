@@ -97,6 +97,8 @@ public class SpotifyIntegration implements HttpHandler {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
             this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
+
+            this.editor.getSpotifyManager().setupTrackTimer();
         } catch (Exception e) {
             e.printStackTrace();
         }
