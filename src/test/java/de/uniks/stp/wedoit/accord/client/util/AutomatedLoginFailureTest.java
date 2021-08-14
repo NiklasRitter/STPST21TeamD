@@ -55,7 +55,7 @@ public class AutomatedLoginFailureTest extends ApplicationTest {
         this.oldOptions = new Options();
         this.stageManager.getResourceManager().getPreferenceManager().setStageManager(this.stageManager);
         this.stageManager.getEditor().setStageManager(stageManager);
-        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().loadOptions(this.oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(true));
         oldLocalUser = new LocalUser();
         stageManager.getResourceManager().loadLocalUser(oldLocalUser);
@@ -79,7 +79,8 @@ public class AutomatedLoginFailureTest extends ApplicationTest {
 
     @Override
     public void stop() {
-        stageManager.getResourceManager().saveOptions(this.oldOptions);
+        ResourceManager resourceManager = stageManager.getResourceManager();
+        resourceManager.saveOptions(this.oldOptions);
         stageManager.getResourceManager().saveLocalUser(this.oldLocalUser);
         oldLocalUser = null;
         rule = null;

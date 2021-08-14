@@ -121,7 +121,7 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
      */
     public void insertEmoji(Emoji emoji) {
         String hex = emoji.getHex();
-        String imagePath = Objects.requireNonNull(StageManager.class.getResource("emoji_images/" + hex + ".png")).toString();
+        String imagePath = Objects.requireNonNull(StageManager.class.getResource("/emoji_images/" + hex + ".png")).toString();
         ReadOnlyStyledDocument<ParStyle, Either<String, LinkedImage>, TextStyle> ros =
                 ReadOnlyStyledDocument.fromSegment(Either.right(new RealLinkedImage(imagePath)),
                         ParStyle.EMPTY, TextStyle.EMPTY, this.getSegOps());
