@@ -74,7 +74,7 @@
   roles: 	invitation_server
 
 - localUser: 	org.fulib.classmodel.Clazz
-  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_spotifyCurrentlyPlaying 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_inGame 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer 	localUser_trackTimer 	localUser_refreshSpotifyAuthTimer
+  attributes: 	localUser_password 	localUser_name 	localUser_userKey 	localUser_id 	localUser_spotifyCurrentlyPlaying 	localUser_steam64ID 	localUser_steamGameExtraInfo 	localUser_inGame 	localUser_gameInvites 	localUser_gameRequests 	localUser_audioChannel 	localUser_muted 	localUser_allMuted 	localUser_steamGameExtraInfoTimer 	localUser_trackTimer
   model: 	c
   modified: 	false
   name: 	LocalUser
@@ -753,15 +753,6 @@
   id: 	LocalUser_trackTimer
   modified: 	false
   name: 	trackTimer
-  propertyStyle: 	Bean
-  type: 	"import(java.util.Timer)"
-  typeSignature: 	Timer
-
-- localUser_refreshSpotifyAuthTimer: 	org.fulib.classmodel.Attribute
-  clazz: 	localUser
-  id: 	LocalUser_refreshSpotifyAuthTimer
-  modified: 	false
-  name: 	refreshSpotifyAuthTimer
   propertyStyle: 	Bean
   type: 	"import(java.util.Timer)"
   typeSignature: 	Timer

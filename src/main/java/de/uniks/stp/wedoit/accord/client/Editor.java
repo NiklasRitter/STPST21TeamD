@@ -42,7 +42,6 @@ public class Editor {
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
     private final SpotifyManager spotifyManager = new SpotifyManager(this);
-    // private final IntegerProperty chatFontSize = new SimpleIntegerProperty();
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
@@ -126,8 +125,6 @@ public class Editor {
         LocalUser localUser = new LocalUser();
         accordClient.setLocalUser(localUser);
         steamManager.setupSteamTimer();
-        spotifyManager.setupTrackTimer();
-        spotifyManager.setupRefreshAuthTimer();
         return localUser;
     }
 

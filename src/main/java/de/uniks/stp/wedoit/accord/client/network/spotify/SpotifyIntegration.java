@@ -6,10 +6,9 @@ import com.sun.net.httpserver.HttpServer;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
+import com.wrapper.spotify.exceptions.detailed.UnauthorizedException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlaying;
-import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlayingContext;
-import com.wrapper.spotify.model_objects.specification.Artist;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
@@ -17,7 +16,6 @@ import com.wrapper.spotify.requests.authorization.authorization_code.pkce.Author
 import com.wrapper.spotify.requests.authorization.authorization_code.pkce.AuthorizationCodePKCERequest;
 import com.wrapper.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackRequest;
 import de.uniks.stp.wedoit.accord.client.Editor;
-import javafx.application.Platform;
 import org.apache.hc.core5.http.ParseException;
 
 import java.awt.*;
@@ -31,7 +29,6 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,7 +44,6 @@ public class SpotifyIntegration implements HttpHandler {
     public ExecutorService executorService;
     private HttpServer server;
     private AuthorizationCodeCredentials authorizationCodeCredentials;
-    private AuthorizationCodePKCERequest authorizationCodePKCERequest;
 
     public SpotifyIntegration(Editor editor) {
         this.editor = editor;
@@ -101,6 +97,8 @@ public class SpotifyIntegration implements HttpHandler {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
             this.editor.saveRefreshToken(this.spotifyApi.getRefreshToken());
+
+            this.editor.getSpotifyManager().setupTrackTimer();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -115,7 +113,7 @@ public class SpotifyIntegration implements HttpHandler {
 
         if (queryMap.containsKey("code")) {
             response = "authorization successful";
-            authorizationCodePKCERequest = spotifyApi.authorizationCodePKCE(queryMap.get("code"), codeVerifier)
+            AuthorizationCodePKCERequest authorizationCodePKCERequest = spotifyApi.authorizationCodePKCE(queryMap.get("code"), codeVerifier)
                     .build();
 
             getAuthCodeCredentials(authorizationCodePKCERequest);
@@ -140,8 +138,6 @@ public class SpotifyIntegration implements HttpHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        this.editor.getSpotifyManager().setupRefreshAuthTimer();
         this.editor.getSpotifyManager().setupTrackTimer();
         stopServer();
     }
@@ -177,36 +173,39 @@ public class SpotifyIntegration implements HttpHandler {
     // Get Users currently playing track
     //------------------------------------------------------------------------------------------------------------------
 
-    public String getUsersCurrentlyPlayingTrack() {
+    public void setUsersCurrentlyPlayingTrack() {
         GetUsersCurrentlyPlayingTrackRequest getUsersCurrentlyPlayingTrackRequest = this.spotifyApi
                 .getUsersCurrentlyPlayingTrack()
                 .build();
         CurrentlyPlaying currentlyPlaying = null;
         try {
             currentlyPlaying = getUsersCurrentlyPlayingTrackRequest.execute();
-        } catch (Exception e) {
+        } catch (UnauthorizedException e) {
+            reauthorize();
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
             e.printStackTrace();
         }
         String description = createDescription(currentlyPlaying);
         this.editor.getLocalUser().setSpotifyCurrentlyPlaying(description);
-        return description;
     }
 
     public String createDescription(CurrentlyPlaying currentlyPlaying) {
-        String response;
+        String response = "";
         if (currentlyPlaying != null) {
             Track track = (Track) currentlyPlaying.getItem();
             StringBuilder artistNames = new StringBuilder();
             boolean multipleArtists = false;
-            for (ArtistSimplified artist : track.getArtists()) {
-                if (!multipleArtists) {
-                    artistNames.append(artist.getName());
-                    multipleArtists = true;
-                } else {
-                    artistNames.append(" , ").append(artist.getName());
+            if (track != null) {
+                for (ArtistSimplified artist : track.getArtists()) {
+                    if (!multipleArtists) {
+                        artistNames.append(artist.getName());
+                        multipleArtists = true;
+                    } else {
+                        artistNames.append(" , ").append(artist.getName());
+                    }
                 }
+                response = track.getName() + " - " + artistNames;
             }
-            response = track.getName() + " - " + artistNames;
         } else {
             response = null;
         }
@@ -232,7 +231,7 @@ public class SpotifyIntegration implements HttpHandler {
     private String generateCodeChallenge(String codeVerifier) {
         byte[] digest = null;
         try {
-            byte[] bytes = codeVerifier.getBytes("US-ASCII");
+            byte[] bytes = codeVerifier.getBytes(StandardCharsets.US_ASCII);
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             messageDigest.update(bytes, 0, bytes.length);
             digest = messageDigest.digest();
