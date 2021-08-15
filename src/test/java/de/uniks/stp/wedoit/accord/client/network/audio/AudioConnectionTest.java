@@ -5,29 +5,36 @@ import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.Options;
-import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.TestFactory;
 
 import javax.json.Json;
 import javax.sound.sampled.AudioSystem;
-
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.NAME;
+import javax.sound.sampled.Mixer;
 
 public class AudioConnectionTest {
     @TestFactory
     public AudioConnection generateAudioConnection(LocalUser localUser, Channel channel, Editor editor) {
         if (editor == null) {
             editor = new Editor();
-            if (localUser == null || localUser.getAccordClient() == null) editor.haveAccordClient();
+            if (localUser == null)
+                editor.haveAccordClient().setOptions(new Options().setInputDevice(new TestMixerInfo("test"))
+                        .setOutputDevice(new TestMixerInfo("test"))
+                        .setInputVolume(1f).setSystemVolume(100f));
             else if (localUser != null && localUser.getAccordClient() == null)
-                editor.getAccordClient().setLocalUser(localUser);
+                editor.haveAccordClient().setOptions(new Options().setInputDevice(new TestMixerInfo("test"))
+                        .setOutputDevice(new TestMixerInfo("test"))
+                        .setInputVolume(1f).setSystemVolume(100f)).setLocalUser(localUser);
             else editor.setAccordClient(localUser.getAccordClient());
 
         }
         if (localUser == null) {
-            localUser = editor.haveLocalUser("username", "userKey");
+            localUser = editor.haveLocalUser("username", "userKey")
+                    .setAccordClient(editor.getAccordClient()
+                            .setOptions(new Options().setInputDevice(new TestMixerInfo("test"))
+                                    .setOutputDevice(new TestMixerInfo("test"))
+                                    .setInputVolume(1f).setSystemVolume(100f)));
         }
         if (channel == null) {
             channel = editor.getChannelManager().haveChannel("channelID", "channelName", "text", false,
@@ -46,42 +53,32 @@ public class AudioConnectionTest {
     public void testConnection() {
         LocalUser localUser = new LocalUser().setName("username").setUserKey("userKey")
                 .setAccordClient(new AccordClient()
-                        .setOptions(new Options().setInputDevice(AudioSystem.getMixerInfo()[0])
-                                .setOutputDevice(AudioSystem.getMixerInfo()[0])
+                        .setOptions(new Options().setInputDevice(new TestMixerInfo("test"))
+                                .setOutputDevice(new TestMixerInfo("test"))
                                 .setInputVolume(1f).setSystemVolume(100f)));
-        System.out.println("This");
         AudioConnection audioConnection = generateAudioConnection(localUser, null, null);
-        System.out.println("Should");
         Assert.assertNull(audioConnection.getAudioSend());
-        System.out.println("Totally");
         Assert.assertNull(audioConnection.getAudioReceive());
-        System.out.println("Work");
         Assert.assertNotNull(audioConnection.getChannel());
-        System.out.println("Why");
+        audioConnection.startSendingAudio("localhost", 0);
+        audioConnection.startReceivingAudio();
+        localUser.getAccordClient().getOptions().setInputDevice(new TestMixerInfo("test1"));
+        localUser.getAccordClient().getOptions().setOutputDevice(new TestMixerInfo("test1"));
+        Assert.assertNotNull(audioConnection.createSocket());
+        audioConnection.stop();
+    }
+
+    @Test
+    public void testStartingConnection() {
+        AudioConnection audioConnection = generateAudioConnection(null, null, null);
         audioConnection.startConnection("localhost", 0);
-        System.out.println("Doesn't");
         Assert.assertNotNull(audioConnection.getAudioSend());
-        System.out.println("It");
         Assert.assertNotNull(audioConnection.getAudioReceive());
-        System.out.println("Terminate");
-        try {
-            System.out.println(AudioSystem.getMixerInfo()[1]);
-            localUser.getAccordClient().getOptions().setInputDevice(AudioSystem.getMixerInfo()[1]);
-        } catch (Exception e){
-            e.printStackTrace();
+    }
+
+    class TestMixerInfo extends Mixer.Info {
+        protected TestMixerInfo(String strings) {
+            super(strings, strings, strings, strings);
         }
-        System.out.println("There");
-        try {
-            localUser.getAccordClient().getOptions().setOutputDevice(AudioSystem.getMixerInfo()[1]);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        System.out.println("Is");
-        String username = "name";
-        System.out.println("No");
-        Assert.assertEquals(audioConnection.getAudioReceive().getAudioSenderName(JsonUtil.stringify(Json.createObjectBuilder().add(NAME, username).build()).getBytes()), "username");
-        System.out.println("Reason");
-        audioConnection.close();
-        System.out.println("!!!");
     }
 }

@@ -16,9 +16,9 @@ public class AudioConnection {
 
     private final LocalUser localUser;
     private final Channel channel;
+    private final Editor editor;
     private AudioSend sendingThread;
     private AudioReceive receivingThread;
-    private final Editor editor;
     private DatagramSocket audioSocket;
     private String url;
     private int port;
@@ -29,6 +29,8 @@ public class AudioConnection {
         this.localUser = localUser;
         this.channel = channel;
         this.editor = editor;
+        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
+        this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_INPUT_DEVICE, inputDeviceListener);
     }
 
     public void startConnection(String url, int port) {
@@ -38,34 +40,40 @@ public class AudioConnection {
             this.audioSocket = createSocket();
             startSendingAudio(url, port);
             startReceivingAudio();
-            this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
-            this.localUser.getAccordClient().getOptions().listeners().addPropertyChangeListener(Options.PROPERTY_INPUT_DEVICE, inputDeviceListener);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void startSendingAudio(String url, int port) {
-        this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port, editor);
-        this.sendingThread.start();
+        if (audioSocket != null) {
+            this.sendingThread = new AudioSend(localUser, channel, audioSocket, url, port, editor);
+            this.sendingThread.start();
+        }
     }
 
     public void startReceivingAudio() {
-        List<User> audioMembers = channel.getAudioMembers();
-        ArrayList<String> connectedUser = new ArrayList<>();
-        for (User member : audioMembers) {
-            connectedUser.add(member.getName());
+        if (audioSocket != null) {
+            List<User> audioMembers = channel.getAudioMembers();
+            ArrayList<String> connectedUser = new ArrayList<>();
+            for (User member : audioMembers) {
+                connectedUser.add(member.getName());
+            }
+            this.receivingThread = new AudioReceive(localUser, audioSocket, connectedUser);
+            this.receivingThread.init();
+            this.receivingThread.start();
         }
-        this.receivingThread = new AudioReceive(localUser, audioSocket, connectedUser);
-        this.receivingThread.init();
-        this.receivingThread.start();
     }
 
-    public void close() {
+    public void stop() {
+        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
+        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, inputDeviceListener);
+        this.outputDeviceListener = null;
+        this.inputDeviceListener = null;
         stopReceivingAudio();
         stopSendingAudio();
-        audioSocket.close();
-        stop();
+        if (audioSocket != null) audioSocket.close();
+        audioSocket = null;
     }
 
     private void stopSendingAudio() {
@@ -115,13 +123,6 @@ public class AudioConnection {
             e.printStackTrace();
         }
         return datagramSocket;
-    }
-
-    private void stop() {
-        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, outputDeviceListener);
-        this.localUser.getAccordClient().getOptions().listeners().removePropertyChangeListener(Options.PROPERTY_OUTPUT_DEVICE, inputDeviceListener);
-        this.outputDeviceListener = null;
-        this.inputDeviceListener = null;
     }
 
     public AudioReceive getAudioReceive() {

@@ -8,7 +8,6 @@ import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.network.audio.AudioConnection;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
@@ -32,14 +31,10 @@ import org.testfx.util.WaitForAsyncUtils;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.sound.sampled.Control;
-import javax.sound.sampled.FloatControl;
 import java.net.DatagramSocket;
 import java.util.concurrent.TimeUnit;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -245,7 +240,7 @@ public class AudioManagerTest extends ApplicationTest {
         Assert.assertTrue(user.isMuted());
         audioManager.unmuteUser(user);
         Assert.assertFalse(user.isMuted());
-        tempAudioCon.close();
+        tempAudioCon.stop();
     }
 
     @Test
@@ -279,7 +274,7 @@ public class AudioManagerTest extends ApplicationTest {
                 Assert.assertFalse(user.isMuted());
             }
         }
-        tempAudioCon.close();
+        tempAudioCon.stop();
     }
 
     @Test
@@ -310,7 +305,7 @@ public class AudioManagerTest extends ApplicationTest {
         Assert.assertTrue(localUser.isMuted());
         press(KeyCode.CONTROL, KeyCode.M).release(KeyCode.CONTROL, KeyCode.M);
         Assert.assertFalse(localUser.isMuted());
-        tempAudioCon.close();
+        tempAudioCon.stop();
     }
 
     @Test
