@@ -160,7 +160,7 @@ public class AudioReceive extends Thread {
         }
     }
 
-    private User getUser(String userName){
+    protected User getUser(String userName){
         for(User user : localUser.getUsers()){
             if(user.getName().equals(userName)){
                 return user;
@@ -169,7 +169,7 @@ public class AudioReceive extends Thread {
         return null;
     }
 
-    private float calculateVolume(float optionsVolume, FloatControl volumeControl, String userName){
+    protected float calculateVolume(float optionsVolume, FloatControl volumeControl, String userName){
         float finalVolume;
         float userVolume = 0;
         // get the user and his audio volume setting
