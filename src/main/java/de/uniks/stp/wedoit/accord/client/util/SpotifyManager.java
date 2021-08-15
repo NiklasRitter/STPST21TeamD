@@ -43,7 +43,7 @@ public class SpotifyManager {
             public void run() {
                 spotifyIntegration.setUsersCurrentlyPlayingTrack();
             }
-        }, 0, 1000);
+        }, 0, 5000);
         return trackTimer;
     }
 

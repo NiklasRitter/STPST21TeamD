@@ -28,7 +28,7 @@ public class SteamManager {
                 public void run() {
                     editor.getRestManager().getLocalUserSteamGameExtraInfo();
                 }
-            }, 0, 60000);
+            }, 0, 10000);
             editor.getLocalUser().setSteamGameExtraInfoTimer(gameExtraInfoTimer);
             editor.getLocalUser().listeners().addPropertyChangeListener(LocalUser.PROPERTY_STEAM_GAME_EXTRA_INFO, localUserGameExtraInfoListener);
             editor.getAccordClient().listeners().addPropertyChangeListener(AccordClient.PROPERTY_LOCAL_USER, localUserListener);
