@@ -33,8 +33,10 @@ public class DescriptionController implements Controller {
         for (User user : editor.getLocalUser().getUsers()) {
             if (user.getName().equals(editor.getLocalUser().getName()) && user.getDescription() != null) {
                 editor.getLocalUser().setDescription(user.getDescription());
-                richTextArea.setText(user.getDescription());
             }
+        }
+        if(editor.getLocalUser().getDescription() != null && editor.getLocalUser().getDescription().length() > 0 && editor.getLocalUser().getDescription().startsWith("+")) {
+            richTextArea.setText(editor.getLocalUser().getDescription().substring(1));
         }
         vBoxDescription.getChildren().add(richTextArea);
 
