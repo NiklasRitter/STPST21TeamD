@@ -123,11 +123,12 @@ public class WebSocketManager {
 
         if (jsonObject.getString(ACTION).equals(USER_JOINED)) {
             editor.haveUser(data.getString(ID), data.getString(NAME));
+            editor.getRestManager().getOnlineUsers(editor.getLocalUser(), null);
 
         } else if (jsonObject.getString(ACTION).equals(USER_LEFT)) {
             editor.userLeft(data.getString(ID));
         } else if (jsonObject.getString(ACTION).equals(USER_DESCRIPTION_CHANGED)) {
-            editor.changeUserDescription(data.getString(ID), data.getString(JSON.DESCRIPTION));
+            editor.changeUserDescription(data.getString(ID), JsonUtil.parseDescription(data.getString(JSON.DESCRIPTION)));
         }
     }
 

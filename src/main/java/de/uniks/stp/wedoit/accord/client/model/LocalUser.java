@@ -29,6 +29,7 @@ public class LocalUser
    public static final String PROPERTY_SPOTIFY_CURRENTLY_PLAYING = "spotifyCurrentlyPlaying";
    public static final String PROPERTY_TRACK_TIMER = "trackTimer";
    public static final String PROPERTY_IN_GAME = "inGame";
+   public static final String PROPERTY_CUSTOM_DESCRIPTION = "customDescription";
    private String password;
    private String name;
    private String userKey;
@@ -47,8 +48,10 @@ public class LocalUser
    private String steamGameExtraInfo;
    private Timer steamGameExtraInfoTimer;
    private String spotifyCurrentlyPlaying;
-   private Timer trackTimer;
    private boolean inGame;
+   private Timer trackTimer;
+   private Timer refreshSpotifyAuthTimer;
+   private String customDescription;
 
    public String getPassword()
    {
@@ -533,6 +536,24 @@ public class LocalUser
       return this;
    }
 
+   public String getCustomDescription()
+   {
+      return this.customDescription;
+   }
+
+   public LocalUser setCustomDescription(String value)
+   {
+      if (Objects.equals(value, this.customDescription))
+      {
+         return this;
+      }
+
+      final String oldValue = this.customDescription;
+      this.customDescription = value;
+      this.firePropertyChange(PROPERTY_CUSTOM_DESCRIPTION, oldValue, value);
+      return this;
+   }
+
    public boolean isInGame()
    {
       return this.inGame;
@@ -610,6 +631,7 @@ public class LocalUser
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
+      result.append(' ').append(this.getCustomDescription());
       result.append(' ').append(this.getPassword());
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());

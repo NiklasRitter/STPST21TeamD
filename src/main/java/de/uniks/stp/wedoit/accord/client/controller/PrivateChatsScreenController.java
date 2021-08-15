@@ -169,7 +169,7 @@ public class PrivateChatsScreenController implements Controller {
         // load list view
         OnlineUsersCellFactory usersListViewCellFactory = new OnlineUsersCellFactory(null, null);
         lwOnlineUsers.setCellFactory(usersListViewCellFactory);
-        availableUsers = new ArrayList<>(localUser.getUsers());
+        availableUsers = new ArrayList<>(editor.getOnlineUsers());
 
         // Add listener for the loaded listView
         this.localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_USERS, this.newUsersListener);
@@ -177,8 +177,9 @@ public class PrivateChatsScreenController implements Controller {
                 .collect(Collectors.toList()));
         this.onlineUserObservableList.sort((Comparator.comparing(User::isOnlineStatus).reversed()
                 .thenComparing(User::getName, String::compareToIgnoreCase).reversed()).reversed());
-
-        this.onlineUserObservableList.addAll(editor.loadOldChats());
+        List<User> offlineUser = editor.loadOldChats();
+        offlineUser.removeAll(availableUsers);
+        this.onlineUserObservableList.addAll(offlineUser);
 
         this.lwOnlineUsers.setItems(onlineUserObservableList);
 

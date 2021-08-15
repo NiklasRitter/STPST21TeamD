@@ -8,8 +8,6 @@ import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
@@ -19,17 +17,22 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.nio.charset.StandardCharsets;
 import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.MESSAGE_LINK;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SLASH;
-import static de.uniks.stp.wedoit.accord.client.constants.JSON.AUDIO;
 import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class Editor {
@@ -47,6 +50,18 @@ public class Editor {
     private StageManager stageManager;
     private SqliteDB db;
     private SpotifyIntegration spotifyIntegration;
+    private PropertyChangeListener descriptionChanged = this::descriptionChanged;
+    private LocalUser lastLocalUser = new LocalUser();
+
+    private void descriptionChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String) {
+            if (propertyChangeEvent.getNewValue().equals("?")) {
+                getLocalUser().setDescription("+");
+            } else {
+                restManager.updateDescription((String) propertyChangeEvent.getNewValue());
+            }
+        }
+    }
 
     /**
      * used to decode the given string
@@ -128,6 +143,14 @@ public class Editor {
         return localUser;
     }
 
+    private void setUpDescription(LocalUser localUser) {
+        lastLocalUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_DESCRIPTION, this.descriptionChanged);
+        lastLocalUser = localUser;
+        if (localUser.listeners().getPropertyChangeListeners(LocalUser.PROPERTY_DESCRIPTION).length == 0) {
+            localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_DESCRIPTION, this.descriptionChanged);
+        }
+    }
+
     /**
      * creates a new AccordClient
      *
@@ -156,6 +179,7 @@ public class Editor {
         localUser.setUserKey(userKey);
         webSocketManager.setClearUsername();
         setUpDB();
+        setUpDescription(localUser);
         return localUser;
     }
 
@@ -403,7 +427,7 @@ public class Editor {
     public double calculateRMS(byte[] buf, int bytes) {
         float[] samples = new float[1024];
 
-        for(int i = 0, s = 0; i < bytes;) {
+        for (int i = 0, s = 0; i < bytes; ) {
             int sample = 0;
 
             sample |= buf[i++] & 0xFF; // (reverse these two lines
@@ -579,7 +603,9 @@ public class Editor {
      */
     public Channel getChannelById(Server server, String categoryId, String channelId) {
         Category category = getCategoryById(server, categoryId);
-        if (category == null) {return null;}
+        if (category == null) {
+            return null;
+        }
         for (Channel channel : category.getChannels()) {
             if (channel.getId().equals(channelId)) {
                 return channel;
@@ -690,11 +716,6 @@ public class Editor {
     }
 
     public void changeUserDescription(String userId, String newDescription) {
-
-        if (this.getLocalUser().getId().equals(userId)) {
-            this.getLocalUser().setDescription(newDescription);
-
-        }
         for (User user : getLocalUser().getUsers()) {
 
             if (user.getId().equals(userId)) {
@@ -752,10 +773,10 @@ public class Editor {
      * removes the audiomembers of a channel of a given server
      */
     public void removeUserFromAudioChannelOfServer(Server server) {
-        for (Category category: server.getCategories()) {
-            for (Channel channel: category.getChannels()) {
-                if (channel.getType().equals(AUDIO) && channel != getLocalUser().getAudioChannel()){
-                    for (User user: channel.getAudioMembers()) {
+        for (Category category : server.getCategories()) {
+            for (Channel channel : category.getChannels()) {
+                if (channel.getType().equals(AUDIO) && channel != getLocalUser().getAudioChannel()) {
+                    for (User user : channel.getAudioMembers()) {
                         channel.withoutAudioMembers(user);
                         break;
                     }

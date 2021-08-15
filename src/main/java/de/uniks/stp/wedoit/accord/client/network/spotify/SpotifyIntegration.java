@@ -186,6 +186,7 @@ public class SpotifyIntegration implements HttpHandler {
             e.printStackTrace();
         }
         String description = createDescription(currentlyPlaying);
+        this.editor.getLocalUser().setSpotifyCurrentlyPlaying(description + " ");
         this.editor.getLocalUser().setSpotifyCurrentlyPlaying(description);
     }
 

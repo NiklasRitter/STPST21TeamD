@@ -12,6 +12,7 @@ public class Recorder implements Runnable{
     private TargetDataLine line;
     private SourceDataLine sourceDataLine;
     private final Editor editor;
+    private boolean stop = false;
 
     AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
 
@@ -33,8 +34,13 @@ public class Recorder implements Runnable{
     }
 
     public void stop(){
-        cleanup();
-        worker.stop();
+        stop = true;
+        try {
+            worker.join();
+        } catch (InterruptedException e) {
+            System.err.println("Error on closing recorder");
+            e.printStackTrace();
+        }
     }
 
     private void cleanup(){
@@ -95,8 +101,11 @@ public class Recorder implements Runnable{
             if(rms > editor.getAccordClient().getOptions().getAudioRootMeanSquare())sourceDataLine.write(buf,0,buf.length);
             else sourceDataLine.flush();
             if(bar != null) bar.setProgress(rms);
-
+            if(stop){
+                break;
+            }
         }
+        cleanup();
     }
 
 }

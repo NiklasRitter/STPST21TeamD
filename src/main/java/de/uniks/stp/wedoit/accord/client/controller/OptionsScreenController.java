@@ -83,6 +83,8 @@ public class OptionsScreenController implements Controller {
         btnDescription.setOnAction(null);
         btnLanguage.setOnAction(null);
         btnVoice.setOnAction(null);
+        if(currentController != null) currentController.stop();
+
     }
 
     private void btnAppearanceOptions(ActionEvent actionEvent) {
