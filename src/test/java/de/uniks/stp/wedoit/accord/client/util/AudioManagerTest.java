@@ -78,7 +78,7 @@ public class AudioManagerTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.oldOptions = new Options();
-        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().loadOptions(this.oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
         stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 

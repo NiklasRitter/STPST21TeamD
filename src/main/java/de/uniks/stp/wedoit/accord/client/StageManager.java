@@ -440,7 +440,6 @@ public class StageManager extends Application {
             stageMap.forEach((k, v) -> v.getIcons().remove(logoImage));
             this.editor.getAudioManager().closeAudioConnection();
             this.editor.getSteamManager().terminateSteamTimer();
-            this.editor.getSpotifyManager().terminateRefreshTimer();
             this.editor.getSpotifyManager().terminateTrackTimer();
             if (systemTrayController != null) systemTrayController.stop();
             editor.getWebSocketManager().stop();

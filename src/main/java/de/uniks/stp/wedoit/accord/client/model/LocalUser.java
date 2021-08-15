@@ -28,9 +28,7 @@ public class LocalUser
    public static final String PROPERTY_STEAM_GAME_EXTRA_INFO_TIMER = "steamGameExtraInfoTimer";
    public static final String PROPERTY_SPOTIFY_CURRENTLY_PLAYING = "spotifyCurrentlyPlaying";
    public static final String PROPERTY_TRACK_TIMER = "trackTimer";
-   public static final String PROPERTY_REFRESH_SPOTIFY_AUTH_TIMER = "refreshSpotifyAuthTimer";
    public static final String PROPERTY_IN_GAME = "inGame";
-   public static final String PROPERTY_CUSTOM_DESCRIPTION = "customDescription";
    private String password;
    private String name;
    private String userKey;
@@ -53,6 +51,13 @@ public class LocalUser
    private Timer trackTimer;
    private Timer refreshSpotifyAuthTimer;
    private String customDescription;
+
+   private String steam64ID;
+   private String steamGameExtraInfo;
+   private Timer steamGameExtraInfoTimer;
+   private String spotifyCurrentlyPlaying;
+   private Timer trackTimer;
+   private boolean inGame;
 
    public String getPassword()
    {
@@ -606,24 +611,6 @@ public class LocalUser
       final Timer oldValue = this.trackTimer;
       this.trackTimer = value;
       this.firePropertyChange(PROPERTY_TRACK_TIMER, oldValue, value);
-      return this;
-   }
-
-   public Timer getRefreshSpotifyAuthTimer()
-   {
-      return this.refreshSpotifyAuthTimer;
-   }
-
-   public LocalUser setRefreshSpotifyAuthTimer(Timer value)
-   {
-      if (Objects.equals(value, this.refreshSpotifyAuthTimer))
-      {
-         return this;
-      }
-
-      final Timer oldValue = this.refreshSpotifyAuthTimer;
-      this.refreshSpotifyAuthTimer = value;
-      this.firePropertyChange(PROPERTY_REFRESH_SPOTIFY_AUTH_TIMER, oldValue, value);
       return this;
    }
 
