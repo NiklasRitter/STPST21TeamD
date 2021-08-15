@@ -330,4 +330,28 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertEquals(stageManager.getEditor().getLocalUser().getDescription(), "+");
 
     }
+
+    @Test
+    public void steamTest() {
+        directToMainScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+        directToOptionsScreen();
+        Button btnConnections = (Button) lookup("#btnConnections").query();
+        clickOn(btnConnections);
+        Assert.assertEquals(stage.getTitle(),"Options - Connections");
+        clickOn("#btnSteam");
+        Assert.assertEquals(stage.getTitle(),"Options - Connections");
+        Assert.assertEquals(popupStage.getTitle(),"Connect to Steam");
+        clickOn("#btnCancel");
+        Assert.assertEquals(stage.getTitle(),"Options - Connections");
+        Assert.assertEquals(popupStage.isShowing(),false);
+        clickOn("#btnSteam");
+        Assert.assertEquals(stage.getTitle(),"Options - Connections");
+        Assert.assertEquals(popupStage.isShowing(),true);
+        clickOn("#btnSave");
+        Assert.assertEquals(stage.getTitle(),"Options - Connections");
+        Assert.assertEquals(popupStage.isShowing(),false);
+        press(KeyCode.ESCAPE);
+
+    }
 }

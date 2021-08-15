@@ -69,13 +69,12 @@ public class ConnectToSteamScreenController implements Controller {
 
 
     private void btnCancelOnClick(Object object) {
-//        Platform.runLater(() -> localUser.setSteam64ID(tfSteam64ID.getText()));
         editor.getStageManager().getStage(POPUP_STAGE).close();
     }
 
 
     private void btnSaveOnClick(Object object) {
-        if (tfSteam64ID.getText().isEmpty()) {
+        if (tfSteam64ID.getText() == null || tfSteam64ID.getText().isEmpty()) {
             tfSteam64ID.setText("");
         }
         editor.getLocalUser().setSteamGameExtraInfo("");
