@@ -54,12 +54,6 @@ public class AudioReceiveTest {
         AudioReceive audioSend = generateAudioReceive(null, null, null);
         audioSend.start();
         Assert.assertEquals(Thread.State.RUNNABLE, audioSend.getState());
-        try {
-            audioSend.join();
-        } catch (InterruptedException e) {
-            Assert.fail(e.getMessage());
-        }
-        Assert.assertEquals(Thread.State.TERMINATED, audioSend.getState());
     }
 
     @Test
