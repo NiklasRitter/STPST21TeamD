@@ -64,10 +64,11 @@ public class SpotifyManager {
 
     public void localUserCurrentlyPlayingTrackOnChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String) {
+            System.out.println(propertyChangeEvent);
             String description = editor.getLocalUser().getDescription();
             if (description != null && description.startsWith(CUSTOM_KEY) && description.length() > 1 || description != null && description.startsWith(STEAM_KEY) && description.length() > 1) return;
             if (propertyChangeEvent.getNewValue().equals("null ")) {
-                editor.getLocalUser().setDescription(JsonUtil.buildDescription(CUSTOM_KEY, " "));
+                editor.getLocalUser().setDescription(JsonUtil.buildDescription(CUSTOM_KEY, ""));
                 return;
             }
             editor.getLocalUser().setDescription(JsonUtil.buildDescription(SPOTIFY_KEY, (String) propertyChangeEvent.getNewValue()));
