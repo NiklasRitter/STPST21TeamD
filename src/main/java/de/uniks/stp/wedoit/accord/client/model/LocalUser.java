@@ -29,6 +29,7 @@ public class LocalUser
    public static final String PROPERTY_SPOTIFY_CURRENTLY_PLAYING = "spotifyCurrentlyPlaying";
    public static final String PROPERTY_TRACK_TIMER = "trackTimer";
    public static final String PROPERTY_IN_GAME = "inGame";
+   public static final String PROPERTY_CUSTOM_DESCRIPTION = "customDescription";
    private String password;
    private String name;
    private String userKey;
@@ -51,13 +52,6 @@ public class LocalUser
    private Timer trackTimer;
    private Timer refreshSpotifyAuthTimer;
    private String customDescription;
-
-   private String steam64ID;
-   private String steamGameExtraInfo;
-   private Timer steamGameExtraInfoTimer;
-   private String spotifyCurrentlyPlaying;
-   private Timer trackTimer;
-   private boolean inGame;
 
    public String getPassword()
    {

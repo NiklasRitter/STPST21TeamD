@@ -290,7 +290,7 @@ public class JsonUtil {
     }
 
     public static String buildDescription(String type, String description) {
-        if (description.length() >= 100) {
+        if (description.length() > 100) {
             description = description.substring(0, 100) + "...";
         }
         switch (type) {
