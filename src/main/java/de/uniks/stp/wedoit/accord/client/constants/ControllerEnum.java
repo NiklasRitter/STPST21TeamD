@@ -31,10 +31,10 @@ public enum ControllerEnum {
     CREATE_SERVER_SCREEN(StageEnum.POPUP_STAGE, LanguageResolver.getString("CREATE_SERVER"), "CreateServerScreen", CREATE_SERVER_SCREEN_CONTROLLER, false),
     JOIN_SERVER_SCREEN(StageEnum.POPUP_STAGE, LanguageResolver.getString("JOIN_SERVER"), "JoinServerScreen", JOIN_SERVER_SCREEN_CONTROLLER, false),
     CREATE_CATEGORY_SCREEN(StageEnum.POPUP_STAGE, LanguageResolver.getString("ADD_CATEGORY"), "CreateCategoryScreen", CREATE_CATEGORY_SCREEN_CONTROLLER, false),
-    UPDATE_MESSAGE_SCREEN(StageEnum.POPUP_STAGE, "UPDATE_MESSAGE", "UpdateMessageScreen", UPDATE_MESSAGE_SCREEN_CONTROLLER, false),
+    UPDATE_MESSAGE_SCREEN(StageEnum.POPUP_STAGE, LanguageResolver.getString("UPDATE_MESSAGE"), "UpdateMessageScreen", UPDATE_MESSAGE_SCREEN_CONTROLLER, false),
     LEAVE_SERVER_AS_OWNER_SCREEN(StageEnum.POPUP_STAGE, LanguageResolver.getString("ATTENTION"), "AttentionLeaveServerAsOwnerScreen", ATTENTION_LEAVE_SERVER_AS_OWNER_SCREEN_CONTROLLER, false),
     PRIVATE_MESSAGE_SERVER_SCREEN(StageEnum.POPUP_STAGE, "PRIVATE MESSAGE", "PrivateMessageServerScreen", PRIVATE_MESSAGE_SERVER_SCREEN_CONTROLLER, false),
-    CREATE_CHANNEL_SCREEN(StageEnum.POPUP_STAGE, "Create Channel", "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true),
+    CREATE_CHANNEL_SCREEN(StageEnum.POPUP_STAGE, LanguageResolver.getString("CREATE_CHANNEL"), "EditChannelScreen", CREATE_CHANNEL_SCREEN_CONTROLLER, true),
 
 
     EMOJI_PICKER_SCREEN(StageEnum.EMOJI_PICKER_STAGE, "Emoji Picker", "EmojiScreen", EMOJI_SCREEN_CONTROLLER, false),
