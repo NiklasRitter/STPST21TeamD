@@ -252,38 +252,38 @@ public class StageManager extends Application {
         Scene scene = sceneMap.get(StageEnum.STAGE), popup = sceneMap.get(StageEnum.POPUP_STAGE), game = sceneMap.get(StageEnum.POPUP_STAGE);
         if (darkmode) {
             if (scene != null) {
-                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                scene.getStylesheets().removeAll(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
                 scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
             if (popup != null) {
-                popup.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                popup.getStylesheets().removeAll(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
                 popup.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
             if (game != null) {
-                game.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                game.getStylesheets().removeAll(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
                 game.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
             }
         } else {
             if (scene != null) {
-                scene.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                scene.getStylesheets().removeAll(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
                 scene.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
             if (popup != null) {
-                popup.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                popup.getStylesheets().removeAll(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
                 popup.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
             }
             if (game != null) {
-                game.getStylesheets().remove(Objects.requireNonNull(StageManager.class.getResource(
+                game.getStylesheets().removeAll(Objects.requireNonNull(StageManager.class.getResource(
                         "dark-theme.css")).toExternalForm());
                 game.getStylesheets().add(Objects.requireNonNull(StageManager.class.getResource(
                         "light-theme.css")).toExternalForm());
