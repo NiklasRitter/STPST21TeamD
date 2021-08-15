@@ -3,10 +3,8 @@ package de.uniks.stp.wedoit.accord.client.util;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
-import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.GameScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.SystemTrayController;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import javafx.application.Platform;
 
@@ -15,11 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_RESULT_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.GAME_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.GAME_STAGE;
 
 public class MessageManager {
 
@@ -66,7 +62,7 @@ public class MessageManager {
      */
     private boolean handleGameMessages(PrivateMessage message) {
 
-        if(GAME_NOT_SUPPORTED.stream().anyMatch((e) -> message.getText().startsWith(e))) return true;
+        if (GAME_NOT_SUPPORTED.stream().anyMatch((e) -> message.getText().startsWith(e))) return true;
 
         //Game invites come from opponents
         //Game requests comes from localUser to opponent
@@ -90,7 +86,7 @@ public class MessageManager {
         }
 
         if (message.getText().startsWith(GAME_PREFIX) && (message.getText().endsWith(GAME_ROCK) || message.getText().endsWith(GAME_PAPER) || message.getText().endsWith(GAME_SCISSORS))) {
-            if (!message.getFrom().equals(editor.getLocalUser().getName())){
+            if (!message.getFrom().equals(editor.getLocalUser().getName())) {
                 editor.getUser(message.getFrom()).setGameMove(message.getText().substring(GAME_PREFIX.length() + GAME_CHOOSE_MOVE.length()));
             }
             return true;

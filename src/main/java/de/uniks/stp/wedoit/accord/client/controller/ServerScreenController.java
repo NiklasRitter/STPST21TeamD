@@ -11,7 +11,6 @@ import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
-import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.OnlineUsersCellFactory;
 import javafx.application.Platform;
@@ -55,14 +54,13 @@ public class ServerScreenController implements Controller {
     // PropertyChangeListener
     private PropertyChangeListener userListViewListener = this::changeUserList;
     private PropertyChangeListener serverNameListener = this::handleServerNameChange;
-    private PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
     private PropertyChangeListener languageRefreshed = this::refreshStage;
-
     private CategoryTreeViewController categoryTreeViewController;
     private ServerChatController serverChatController;
     private VBox audioChannelSubViewContainer;
     private AudioChannelSubViewController audioChannelSubViewController;
-    private PropertyChangeListener userDescriptionListener = this::userDescriptionChanged;
+    private PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
+    private final PropertyChangeListener userDescriptionListener = this::userDescriptionChanged;
     private MenuButton serverMenuButton;
     private HBox hBoxText;
     private RichTextArea richTextArea;

@@ -67,7 +67,7 @@ public class AppearanceController implements Controller {
         Platform.runLater(() -> sliderZoomLevel.setValue(options.getZoomLevel()));
     }
 
-    private void changeIfLoginScreen(){
+    private void changeIfLoginScreen() {
         if (editor.getLocalUser().getUserKey() == null) {
             VBox vBoxAppearance = (VBox) view.lookup("#vBoxAppearance");
             HBox hBoxTextSize = (HBox) view.lookup("#hBoxTextSize");

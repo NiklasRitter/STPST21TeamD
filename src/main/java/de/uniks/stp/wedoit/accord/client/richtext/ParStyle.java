@@ -37,7 +37,8 @@ public class ParStyle {
         }
 
         @Override
-        public void encode(DataOutputStream os, ParStyle t) throws IOException {}
+        public void encode(DataOutputStream os, ParStyle t) throws IOException {
+        }
 
         @Override
         public ParStyle decode(DataInputStream is) throws IOException {
@@ -47,7 +48,8 @@ public class ParStyle {
     };
 
 
-    public ParStyle() {}
+    public ParStyle() {
+    }
 
 
     @Override
@@ -65,7 +67,9 @@ public class ParStyle {
         return toCss();
     }
 
-    public String toCss() {return "";}
+    public String toCss() {
+        return "";
+    }
 
 
 }

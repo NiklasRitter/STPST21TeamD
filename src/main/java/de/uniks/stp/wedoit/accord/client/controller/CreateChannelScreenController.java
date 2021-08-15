@@ -31,13 +31,13 @@ public class CreateChannelScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Category category;
+    private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
+    private final List<String> userList = new LinkedList<>();
     private TextField tfChannelName;
     private Button btnCreateChannel, btnDeleteChannel;
     private CheckBox checkBoxPrivileged;
     private Label lblError, lblMembers, lblChannelName, lblPrivileged;
     private VBox vBoxMemberNameAndCheckBox;
-    private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
-    private final List<String> userList = new LinkedList<>();
     private RadioButton radioBtnText;
     private RadioButton radioBtnAudio;
 

@@ -66,10 +66,9 @@ public class AudioReceive extends Thread {
             for (String memberName : connectedUser) {
                 if (!memberName.equals(localUser.getName())) {
                     SourceDataLine membersSourceDataLine;
-                    if(outputDevice != null) {
+                    if (outputDevice != null) {
                         membersSourceDataLine = (SourceDataLine) AudioSystem.getMixer(outputDevice).getLine(dataLineInfo);
-                    }
-                    else {
+                    } else {
                         membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
                     }
                     membersSourceDataLine.open(audioFormat);
@@ -91,10 +90,9 @@ public class AudioReceive extends Thread {
 
                 if (!sourceDataLineMap.containsKey(audioSender) && !audioSender.equals(localUser.getName())) {
                     SourceDataLine membersSourceDataLine;
-                    if(outputDevice != null) {
+                    if (outputDevice != null) {
                         membersSourceDataLine = (SourceDataLine) AudioSystem.getMixer(outputDevice).getLine(dataLineInfo);
-                    }
-                    else {
+                    } else {
                         membersSourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
                     }
                     membersSourceDataLine.open(audioFormat);
@@ -160,21 +158,21 @@ public class AudioReceive extends Thread {
         }
     }
 
-    protected User getUser(String userName){
-        for(User user : localUser.getUsers()){
-            if(user.getName().equals(userName)){
+    protected User getUser(String userName) {
+        for (User user : localUser.getUsers()) {
+            if (user.getName().equals(userName)) {
                 return user;
             }
         }
         return null;
     }
 
-    protected float calculateVolume(float optionsVolume, FloatControl volumeControl, String userName){
+    protected float calculateVolume(float optionsVolume, FloatControl volumeControl, String userName) {
         float finalVolume;
         float userVolume = 0;
         // get the user and his audio volume setting
         User user = getUser(userName);
-        if(user != null) {
+        if (user != null) {
             userVolume = user.getAudioVolume();
         }
         // check the volume setting from the OptionsScreen and the user volume setting and set the overall volume accordingly
@@ -183,22 +181,19 @@ public class AudioReceive extends Thread {
             if (userVolume >= 0) {
                 float right = volumeControl.getMaximum() - volumeSettingOptions;
                 finalVolume = volumeSettingOptions + right * userVolume / 100;
-            }
-            else {
+            } else {
                 float left = volumeSettingOptions - volumeControl.getMinimum();
                 finalVolume = left * userVolume / -100;
-                if (finalVolume > volumeSettingOptions){
+                if (finalVolume > volumeSettingOptions) {
                     finalVolume = (finalVolume - volumeSettingOptions) * -1;
                 }
             }
-        }
-        else if(optionsVolume < 0) {
+        } else if (optionsVolume < 0) {
             float volumeSettingOptions = volumeControl.getMinimum() * optionsVolume / -100;
             if (userVolume <= 0) {
                 float left = volumeControl.getMinimum() - volumeSettingOptions;
                 finalVolume = volumeSettingOptions - left * userVolume / 100;
-            }
-            else {
+            } else {
                 float right = (volumeSettingOptions * -1) + volumeControl.getMaximum();
                 finalVolume = volumeSettingOptions + right * userVolume / 100;
                 if (finalVolume > volumeControl.getMaximum()) {
@@ -210,15 +205,14 @@ public class AudioReceive extends Thread {
         else {
             if (userVolume > 0) {
                 finalVolume = (volumeControl.getMaximum() / 100) * userVolume;
-            }
-            else {
+            } else {
                 finalVolume = (volumeControl.getMinimum() / -100) * userVolume;
             }
         }
         return finalVolume;
     }
 
-    public Map<String, SourceDataLine> getSourceDataLineMap(){
+    public Map<String, SourceDataLine> getSourceDataLineMap() {
         return sourceDataLineMap;
     }
 }

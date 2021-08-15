@@ -49,7 +49,7 @@ public enum Icons {
     HANDSHAKE("\uD83E\uDD1D"),
     GERMANY_FLAG("\uD83C\uDDE9\uD83C\uDDEA"),
     ENGLISH_FLAG("\uD83C\uDDEC\uD83C\uDDE7"),
-    PERSIAN_FLAG(	"\uD83C\uDDEE\uD83C\uDDF7");
+    PERSIAN_FLAG("\uD83C\uDDEE\uD83C\uDDF7");
 
     private final String iconName;
 

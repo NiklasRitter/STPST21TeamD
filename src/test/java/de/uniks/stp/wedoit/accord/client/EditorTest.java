@@ -194,9 +194,9 @@ public class EditorTest {
     }
 
     @Test
-    public void calculateRMS(){
-        byte[] sample = {30,40,2,10,100,125,97};
-        Assert.assertEquals(0.010094394907355309,editor.calculateRMS(sample,4),0.000001);
+    public void calculateRMS() {
+        byte[] sample = {30, 40, 2, 10, 100, 125, 97};
+        Assert.assertEquals(0.010094394907355309, editor.calculateRMS(sample, 4), 0.000001);
     }
 
     @Test

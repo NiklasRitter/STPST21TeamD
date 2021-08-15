@@ -1,7 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
-import de.uniks.stp.wedoit.accord.client.controller.subcontroller.optionsSubController.AppearanceController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -46,12 +45,10 @@ public enum ControllerEnum {
     DESCRIPTION_OPTION_SCREEN("DescriptionScreen");
 
 
-
+    private final String fxmlName;
     public StageEnum stage;
     public String controllerName;
-
     private String title;
-    private final String fxmlName;
     private boolean resizable;
 
 
@@ -75,7 +72,8 @@ public enum ControllerEnum {
             return null;
         }
     }
-    public Parent loadSubOptionScreen(){
+
+    public Parent loadSubOptionScreen() {
         try {
             return FXMLLoader.load(Objects.requireNonNull(StageManager.class.getResource("view/subview/options/" + this.fxmlName + ".fxml")), LanguageResolver.getLanguage());
         } catch (IOException e) {

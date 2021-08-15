@@ -35,10 +35,8 @@ import javax.json.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
-import static de.uniks.stp.wedoit.accord.client.constants.Stages.STAGE;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -637,7 +635,6 @@ public class EditServerScreenTest extends ApplicationTest {
                         .add("name", newServerName))
                 .build();
     }
-
 
 
     @Override

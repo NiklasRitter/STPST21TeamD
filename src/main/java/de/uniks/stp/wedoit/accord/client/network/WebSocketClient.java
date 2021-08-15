@@ -16,7 +16,7 @@ public class WebSocketClient extends Endpoint {
     private Session session;
     private WSCallback callback;
     private ClientEndpointConfig clientEndpointConfig;
-    private URI endpoint;
+    private final URI endpoint;
 
     /**
      * Create a new WebsocketClient.

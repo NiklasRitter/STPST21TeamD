@@ -1,22 +1,26 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 
-import com.pavlobu.emojitextflow.EmojiTextFlow;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.PrivateChatController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
 import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import de.uniks.stp.wedoit.accord.client.view.EmojiButton;
-import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -42,7 +46,8 @@ import javax.json.JsonObject;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.PRIVATE_CHATS_SCREEN_CONTROLLER;
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CLOSE;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_INVITE;
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
@@ -360,7 +365,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertTrue(this.stageManager.getStage(StageEnum.GAME_STAGE).isShowing());
-        Assert.assertEquals("Result",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
+        Assert.assertEquals("Result", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
         Label lbOutcome = lookup("#lbOutcome").query();
         Assert.assertEquals(lbOutcome.getText(), LanguageResolver.getString("OPPONENT_LEFT"));
     }
@@ -441,14 +446,14 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("",lblDescription.getText());
-        Assert.assertEquals("Albert",lblSelectedUser.getText());
+        Assert.assertEquals("", lblDescription.getText());
+        Assert.assertEquals("Albert", lblSelectedUser.getText());
 
         mockSystemWebSocket(descriptionChangedMessage());
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("- new Description",lblDescription.getText());
-        Assert.assertEquals("Albert",lblSelectedUser.getText());
+        Assert.assertEquals("- new Description", lblDescription.getText());
+        Assert.assertEquals("Albert", lblSelectedUser.getText());
     }
 
 
@@ -750,7 +755,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         PrivateMessage selectedItem = lwPrivateChat.getSelectionModel().getSelectedItem();
         clickOn("- quote");
         WaitForAsyncUtils.waitForFxEvents();
-        Button btnCancelQuote = (Button) lookup("#btnCancelQuote").query();
+        Button btnCancelQuote = lookup("#btnCancelQuote").query();
         PrivateChatsScreenController privateChatsScreenController = (PrivateChatsScreenController) stageManager.getControllerMap().get(PRIVATE_CHATS_SCREEN_CONTROLLER);
         PrivateChatController privateChatController = privateChatsScreenController.getPrivateChatController();
 
@@ -983,6 +988,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
     private JsonObject descriptionChangedMessage() {
         return Json.createObjectBuilder().add("action", USER_DESCRIPTION_CHANGED)
-                .add("data",Json.createObjectBuilder().add("id","12345").add("description",JsonUtil.buildDescription(CUSTOM_KEY, "new Description"))).build();
+                .add("data", Json.createObjectBuilder().add("id", "12345").add("description", JsonUtil.buildDescription(CUSTOM_KEY, "new Description"))).build();
     }
 }

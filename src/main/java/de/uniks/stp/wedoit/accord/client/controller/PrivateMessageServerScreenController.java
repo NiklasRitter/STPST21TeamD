@@ -34,10 +34,9 @@ public class PrivateMessageServerScreenController implements Controller {
     private final User memberToWrite;
 
     private RichTextArea taMessage;
+    private final PropertyChangeListener onlineListener = this::onOnlineChanged;
     private Button btnShowChat;
     private Button btnEmoji;
-
-    private final PropertyChangeListener onlineListener = this::onOnlineChanged;
     private PropertyChangeListener darkmodeChanged = this::darkModeChanged;
 
     public PrivateMessageServerScreenController(Parent root, Editor editor, Server server, User memberToWrite) {

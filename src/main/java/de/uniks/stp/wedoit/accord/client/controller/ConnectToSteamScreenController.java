@@ -1,8 +1,6 @@
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.Editor;
-import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import javafx.scene.Parent;
@@ -16,7 +14,7 @@ public class ConnectToSteamScreenController implements Controller {
 
     private final LocalUser localUser;
     private final Editor editor;
-    private Parent view;
+    private final Parent view;
     private Button btnCancel, btnSave;
     private TextField tfSteam64ID;
     private Hyperlink hlSteamIDLookup;

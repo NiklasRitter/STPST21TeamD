@@ -2,7 +2,6 @@ package de.uniks.stp.wedoit.accord.client.db;
 
 import de.uniks.stp.wedoit.accord.client.model.PrivateMessage;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 
 import java.sql.*;
 import java.util.ArrayList;

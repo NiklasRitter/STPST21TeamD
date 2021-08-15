@@ -5,7 +5,6 @@ import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 
-import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Timer;
@@ -16,10 +15,8 @@ import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 public class SpotifyManager {
     private final Editor editor;
     private final PropertyChangeListener localUserCurrentlyPlayingTrackListener = this::localUserCurrentlyPlayingTrackOnChange;
-    private final PropertyChangeListener localUserListener = this::localUserOnChange;
-    private Timer trackTimer;
+    private Timer trackTimer;    private final PropertyChangeListener localUserListener = this::localUserOnChange;
     private SpotifyIntegration spotifyIntegration;
-
     public SpotifyManager(Editor editor) {
         this.editor = editor;
         this.spotifyIntegration = this.editor.getSpotifyIntegration();
@@ -65,7 +62,8 @@ public class SpotifyManager {
     public void localUserCurrentlyPlayingTrackOnChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String) {
             String description = editor.getLocalUser().getDescription();
-            if (description != null && description.startsWith(CUSTOM_KEY) && description.length() > 1 || description != null && description.startsWith(STEAM_KEY) && description.length() > 1) return;
+            if (description != null && description.startsWith(CUSTOM_KEY) && description.length() > 1 || description != null && description.startsWith(STEAM_KEY) && description.length() > 1)
+                return;
             if (propertyChangeEvent.getNewValue().equals("null ")) {
                 editor.getLocalUser().setDescription(JsonUtil.buildDescription(CUSTOM_KEY, ""));
                 return;
@@ -80,4 +78,6 @@ public class SpotifyManager {
                 terminateTrackTimer();
             }
     }
+
+
 }

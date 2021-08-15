@@ -4,8 +4,8 @@ import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import de.uniks.stp.wedoit.accord.client.view.SelectChannelCellFactory;
 import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
+import de.uniks.stp.wedoit.accord.client.view.SelectChannelCellFactory;
 import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -58,66 +58,6 @@ public class MarkingController implements Controller {
         vBoxTextField = null;
         atPositions = null;
         textArea = null;
-    }
-
-    public static class AtPositions {
-        int start;
-        int end;
-        boolean complete;
-        String content;
-
-        public AtPositions(int start, int end, String content) {
-            this.start = start;
-            this.end = end;
-            this.complete = false;
-            this.content = content;
-        }
-
-        public void shiftLeft() {
-            this.start = this.start - 1;
-            this.end = this.end - 1;
-        }
-
-        public void shiftRight() {
-            this.start = this.start + 1;
-            this.end = this.end + 1;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public boolean isComplete() {
-            return complete;
-        }
-
-        public void setStart(int start) {
-            this.start = start;
-        }
-
-        public void setEnd(int end) {
-            this.end = end;
-        }
-
-        public void setComplete(boolean complete) {
-            this.complete = complete;
-        }
-
-        public void setContent(String content) {
-            this.content = content;
-        }
-
-        public int getLength() {
-            return content.length();
-        }
     }
 
     private void isMarking(KeyEvent keyEvent) {
@@ -541,5 +481,65 @@ public class MarkingController implements Controller {
         vBoxTextField.getChildren().add(lvSelectChannel);
         lvSelectChannel.setVisible(true);
         this.lvSelectChannel.setOnMousePressed(this::lvSelectChannelOnClick);
+    }
+
+    public static class AtPositions {
+        int start;
+        int end;
+        boolean complete;
+        String content;
+
+        public AtPositions(int start, int end, String content) {
+            this.start = start;
+            this.end = end;
+            this.complete = false;
+            this.content = content;
+        }
+
+        public void shiftLeft() {
+            this.start = this.start - 1;
+            this.end = this.end - 1;
+        }
+
+        public void shiftRight() {
+            this.start = this.start + 1;
+            this.end = this.end + 1;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public void setStart(int start) {
+            this.start = start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+        public void setEnd(int end) {
+            this.end = end;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public boolean isComplete() {
+            return complete;
+        }
+
+        public void setComplete(boolean complete) {
+            this.complete = complete;
+        }
+
+        public int getLength() {
+            return content.length();
+        }
     }
 }

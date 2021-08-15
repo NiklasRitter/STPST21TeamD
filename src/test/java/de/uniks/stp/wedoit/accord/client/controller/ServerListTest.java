@@ -89,7 +89,6 @@ public class ServerListTest extends ApplicationTest {
 
         this.stageManager.getEditor().getRestManager().setRestClient(restMock);
         this.stageManager.initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
-        ;
         this.stage.centerOnScreen();
         this.stage.setAlwaysOnTop(true);
     }

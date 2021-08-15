@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 
 
 public enum StageEnum {
-    STAGE{
+    STAGE {
         @Override
         public void setUpStage(Stage currentStage) {
 
@@ -15,10 +15,10 @@ public enum StageEnum {
         @Override
         public void setUpStage(Stage currentStage) {
             currentStage.centerOnScreen();
-            if(currentStage.getTitle().equals(LanguageResolver.getString("Rock - Paper - Scissors"))){
-            currentStage.setHeight(450);
-            currentStage.setWidth(600);
-            }else{
+            if (currentStage.getTitle().equals(LanguageResolver.getString("Rock - Paper - Scissors"))) {
+                currentStage.setHeight(450);
+                currentStage.setWidth(600);
+            } else {
                 currentStage.setMinHeight(0);
                 currentStage.setMinWidth(0);
                 currentStage.setHeight(170);

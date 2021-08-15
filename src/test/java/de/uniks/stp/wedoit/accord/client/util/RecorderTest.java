@@ -16,7 +16,7 @@ public class RecorderTest {
     private Editor editor;
 
     @Before
-    public void initRecorderTest(){
+    public void initRecorderTest() {
         editor = new Editor();
         editor.setStageManager(new StageManager());
         AccordClient client = editor.haveAccordClient();
@@ -28,14 +28,12 @@ public class RecorderTest {
 
         recorder = new Recorder(null, editor);
         recorder.start();
-        Thread t = new Thread(new Recorder(null,editor));
+        Thread t = new Thread(new Recorder(null, editor));
         t.start();
         Assert.assertTrue(t.isAlive());
         recorder.stop();
 
     }
-
-
 
 
 }

@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.jupiter.api.TestFactory;
 
 import javax.json.Json;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
 
 public class AudioConnectionTest {

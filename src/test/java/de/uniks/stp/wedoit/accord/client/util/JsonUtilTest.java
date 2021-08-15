@@ -218,18 +218,18 @@ public class JsonUtilTest {
 
     @Test
     public void parseDescriptionTest() {
-        Assert.assertEquals("",JsonUtil.parseDescription(GITHUB_KEY + "asdasd,ss{"));
-        Assert.assertEquals("",JsonUtil.parseDescription(Json.createObjectBuilder().add(DESC, "Test").build().toString()));
-        Assert.assertEquals("#Test",JsonUtil.parseDescription(SPOTIFY_KEY +Json.createObjectBuilder().add(DESC, "Test").add(DATA,"").build().toString()));
-        Assert.assertEquals("%Test",JsonUtil.parseDescription(GITHUB_KEY+Json.createObjectBuilder().add(DESC, "Test").add(DATA,"").build().toString()));
-        Assert.assertEquals("?Test",STEAM_KEY + "Test");
-        Assert.assertEquals("+Test",CUSTOM_KEY + "Test");
-        Assert.assertEquals("#Test",JsonUtil.parseDescription(JsonUtil.buildDescription(SPOTIFY_KEY, "Test")));
-        Assert.assertEquals("%Test",JsonUtil.parseDescription(JsonUtil.buildDescription(GITHUB_KEY, "Test")));
-        Assert.assertEquals("?Test",JsonUtil.parseDescription(JsonUtil.buildDescription(STEAM_KEY, "Test")));
-        Assert.assertEquals("+Test",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "Test")));
-        Assert.assertEquals("",JsonUtil.buildDescription("s","s"));
-        Assert.assertEquals("+amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnja",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnja")));
-        Assert.assertEquals("+amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7Q...",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnjaaaa")));
+        Assert.assertEquals("", JsonUtil.parseDescription(GITHUB_KEY + "asdasd,ss{"));
+        Assert.assertEquals("", JsonUtil.parseDescription(Json.createObjectBuilder().add(DESC, "Test").build().toString()));
+        Assert.assertEquals("#Test", JsonUtil.parseDescription(SPOTIFY_KEY + Json.createObjectBuilder().add(DESC, "Test").add(DATA, "").build().toString()));
+        Assert.assertEquals("%Test", JsonUtil.parseDescription(GITHUB_KEY + Json.createObjectBuilder().add(DESC, "Test").add(DATA, "").build().toString()));
+        Assert.assertEquals("?Test", STEAM_KEY + "Test");
+        Assert.assertEquals("+Test", CUSTOM_KEY + "Test");
+        Assert.assertEquals("#Test", JsonUtil.parseDescription(JsonUtil.buildDescription(SPOTIFY_KEY, "Test")));
+        Assert.assertEquals("%Test", JsonUtil.parseDescription(JsonUtil.buildDescription(GITHUB_KEY, "Test")));
+        Assert.assertEquals("?Test", JsonUtil.parseDescription(JsonUtil.buildDescription(STEAM_KEY, "Test")));
+        Assert.assertEquals("+Test", JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "Test")));
+        Assert.assertEquals("", JsonUtil.buildDescription("s", "s"));
+        Assert.assertEquals("+amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnja", JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnja")));
+        Assert.assertEquals("+amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7Q...", JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnjaaaa")));
     }
 }

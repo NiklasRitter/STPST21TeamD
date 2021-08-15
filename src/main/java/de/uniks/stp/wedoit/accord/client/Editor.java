@@ -50,18 +50,8 @@ public class Editor {
     private StageManager stageManager;
     private SqliteDB db;
     private SpotifyIntegration spotifyIntegration;
-    private PropertyChangeListener descriptionChanged = this::descriptionChanged;
+    private final PropertyChangeListener descriptionChanged = this::descriptionChanged;
     private LocalUser lastLocalUser = new LocalUser();
-
-    private void descriptionChanged(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String) {
-            if (propertyChangeEvent.getNewValue().equals("?")) {
-                getLocalUser().setDescription("+");
-            } else {
-                restManager.updateDescription((String) propertyChangeEvent.getNewValue());
-            }
-        }
-    }
 
     /**
      * used to decode the given string
@@ -89,6 +79,16 @@ public class Editor {
             }
         }
         return rawDescription;
+    }
+
+    private void descriptionChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String) {
+            if (propertyChangeEvent.getNewValue().equals("?")) {
+                getLocalUser().setDescription("+");
+            } else {
+                restManager.updateDescription((String) propertyChangeEvent.getNewValue());
+            }
+        }
     }
 
     /**

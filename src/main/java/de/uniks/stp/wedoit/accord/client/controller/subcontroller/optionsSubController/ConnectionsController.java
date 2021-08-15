@@ -17,7 +17,7 @@ public class ConnectionsController implements Controller {
 
     private Button btnSpotify, btnSteam;
 
-    public ConnectionsController(Parent view, Options model, Editor editor){
+    public ConnectionsController(Parent view, Options model, Editor editor) {
         this.view = view;
         this.options = model;
         this.editor = editor;

@@ -10,7 +10,7 @@
     -fx-font-size: 13
 }
 
-.listView2  > .virtual-flow > .clipped-container > .sheet > .list-cell {
+.listView2 > .virtual-flow > .clipped-container > .sheet > .list-cell {
     -fx-font-size: 13;
 }
 

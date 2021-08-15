@@ -200,7 +200,7 @@ public class PreferenceManager {
         try {
             Preferences preferences = Preferences.userNodeForPackage(StageManager.class);
             int size = preferences.getInt(ZOOM_LEVEL, 100);
-            if(size == 0) size = 100;
+            if (size == 0) size = 100;
             return size;
         } catch (Exception e) {
             System.err.println("Error while loading chat font size:");

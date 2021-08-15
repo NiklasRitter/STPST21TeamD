@@ -9,7 +9,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.CUSTOM_KEY;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.STEAM_KEY;
 
 public class SteamManager {
     private final Editor editor;

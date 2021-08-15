@@ -41,14 +41,13 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AudioManagerTest extends ApplicationTest {
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
     private Stage stage;
     private StageManager stageManager;
     private LocalUser localUser;
     private Server server;
     private Options oldOptions;
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
     @Mock
     private RestClient restMock;
     @Mock
@@ -301,7 +300,6 @@ public class AudioManagerTest extends ApplicationTest {
         stageManager.getEditor().getAudioManager().unmuteYourself(localUser);
         Assert.assertFalse(localUser.isMuted());
         press(KeyCode.CONTROL, KeyCode.M).release(KeyCode.CONTROL, KeyCode.M);
-        ;
         Assert.assertTrue(localUser.isMuted());
         press(KeyCode.CONTROL, KeyCode.M).release(KeyCode.CONTROL, KeyCode.M);
         Assert.assertFalse(localUser.isMuted());

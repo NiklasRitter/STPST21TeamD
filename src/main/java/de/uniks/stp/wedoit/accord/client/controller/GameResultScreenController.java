@@ -14,17 +14,18 @@ import javafx.scene.control.Label;
 
 import javax.json.JsonObject;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_CLOSE;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_REVENGE;
 
 public class GameResultScreenController implements Controller {
 
-    private Button btnQuit, btnPlayAgain;
-    private Label lbOutcome;
     private final Parent view;
     private final LocalUser localUser;
     private final Editor editor;
     private final User opponent;
     private final Boolean isWinner;
+    private Button btnQuit, btnPlayAgain;
+    private Label lbOutcome;
 
     /**
      * Create a new Controller

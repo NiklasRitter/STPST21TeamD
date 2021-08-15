@@ -36,12 +36,12 @@ import java.util.concurrent.Executors;
 public class SpotifyIntegration implements HttpHandler {
 
     private final Editor editor;
-    private SpotifyApi spotifyApi;
     private final String clientId = "14d2a17f341444c189820d1f5d704839";
     private final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8000/spotify");
+    public ExecutorService executorService;
+    private SpotifyApi spotifyApi;
     private String codeChallenge;
     private String codeVerifier;
-    public ExecutorService executorService;
     private HttpServer server;
     private AuthorizationCodeCredentials authorizationCodeCredentials;
 
@@ -156,7 +156,7 @@ public class SpotifyIntegration implements HttpHandler {
     private Map<String, String> getQuery(String queryString) {
         Map<String, String> queryParts = new LinkedHashMap<>();
         String[] parts = queryString.split("&");
-        for (String part: parts) {
+        for (String part : parts) {
             int index = part.indexOf("=");
             queryParts.put(URLDecoder.decode(part.substring(0, index), StandardCharsets.UTF_8),
                     URLDecoder.decode(part.substring(index + 1), StandardCharsets.UTF_8));

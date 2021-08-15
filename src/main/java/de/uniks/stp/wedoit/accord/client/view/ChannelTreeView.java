@@ -2,17 +2,16 @@ package de.uniks.stp.wedoit.accord.client.view;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Category;
 import de.uniks.stp.wedoit.accord.client.model.Channel;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.model.User;
-import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
@@ -32,94 +31,6 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         return new ChannelTreeCell();
     }
 
-    private class ChannelTreeCell extends TreeCell<Object> {
-        protected void updateItem(Object item, boolean empty) {
-            super.updateItem(item, empty);
-            this.getStyleClass().remove("newMessage");
-            this.getStyleClass().remove("item-selected");
-            if (!empty) {
-                if (item instanceof Category) {
-                    this.setText(((Category) item).getName());
-                    this.setContextMenu(addContextMenuCategory((Category) item));
-                }
-                if (item instanceof Channel) {
-                    Channel channel = (Channel) item;
-                    handleChannel(channel);
-                }
-                if (item instanceof User) {
-                    User user = (User) item;
-                    handleUser(user);
-                }
-            } else {
-                this.setText(null);
-                this.setContextMenu(null);
-                this.setGraphic(null);
-            }
-        }
-
-        private void handleChannel(Channel channel) {
-            ImageView icon;
-            if (channel.getType().equals(TEXT)) {
-                icon = addIconText();
-            } else {
-                icon = addIconAudio();
-            }
-            if (isSelected()) {
-                this.getStyleClass().add("item-selected");
-            }
-            this.setGraphic(icon);
-            this.setText(channel.getName());
-            this.setContextMenu(addContextMenuChannel(channel));
-            if (!channel.isRead()) {
-                this.getStyleClass().add("newMessage");
-            }
-        }
-
-        private void handleUser(User user) {
-            this.setText(user.getName());
-            if (stageManager.getEditor().getLocalUser().getAudioChannel() != null && stageManager.getEditor().getLocalUser().getAudioChannel().getId().equals(user.getAudioChannel().getId())) {
-                if (!user.getId().equals(stageManager.getEditor().getLocalUser().getId())) {
-                    if (user.isMuted()) {
-                        this.setContextMenu(addContextMenuUnMute(user, this));
-                        ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound-off-red.png"))));
-                        icon.setFitHeight(13);
-                        icon.setFitWidth(13);
-                        this.setGraphic(icon);
-                    } else {
-                        this.setContextMenu(addContextMenuMute(user, this));
-                        this.setGraphic(null);
-                    }
-                } else {
-                    this.setContextMenu(addContextMenuLocalUser(stageManager.getEditor().getLocalUser(), this));
-                }
-            }
-        }
-
-        private ImageView addIconText() {
-            ImageView icon;
-            if (!stageManager.getModel().getOptions().isDarkmode()) {
-                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit_dark.png"))));
-            } else {
-                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit.png"))));
-            }
-            icon.setFitHeight(13);
-            icon.setFitWidth(13);
-            return icon;
-        }
-
-        private ImageView addIconAudio() {
-            ImageView icon;
-            if (!stageManager.getModel().getOptions().isDarkmode()) {
-                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound_dark.png"))));
-            } else {
-                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound.png"))));
-            }
-            icon.setFitHeight(15);
-            icon.setFitWidth(15);
-            return icon;
-        }
-    }
-
     private ContextMenu addContextMenuChannel(Channel item) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("ADD_CATEGORY"));
@@ -136,9 +47,9 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         if (item.getType().equals(AUDIO)) {
             MenuItem menuItem4;
             if (stageManager.getEditor().getAccordClient().getLocalUser().getAudioChannel() == item) {
-                menuItem4= new MenuItem("- " + LanguageResolver.getString("LEAVE_AUDIO_CHANNEL") +" "+ item.getName());
+                menuItem4 = new MenuItem("- " + LanguageResolver.getString("LEAVE_AUDIO_CHANNEL") + " " + item.getName());
             } else {
-                menuItem4 = new MenuItem("- " + LanguageResolver.getString("JOIN_AUDIO_CHANNEL") +" "+ item.getName());
+                menuItem4 = new MenuItem("- " + LanguageResolver.getString("JOIN_AUDIO_CHANNEL") + " " + item.getName());
             }
             contextMenu.getItems().add(menuItem4);
             ServerScreenController controller = (ServerScreenController) this.stageManager.getControllerMap().get(SERVER_SCREEN_CONTROLLER);
@@ -242,7 +153,7 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
         return contextMenu;
     }
 
-    public Slider createSlider(User user){
+    public Slider createSlider(User user) {
         Slider slider = new Slider();
         slider.setId("sliderVolumeUser");
         slider.setMax(100);
@@ -254,6 +165,94 @@ public class ChannelTreeView implements javafx.util.Callback<TreeView<Object>, T
             stageManager.getEditor().getAudioManager().getAudioConnection().getAudioReceive().updateVolume();
         });
         return slider;
+    }
+
+    private class ChannelTreeCell extends TreeCell<Object> {
+        protected void updateItem(Object item, boolean empty) {
+            super.updateItem(item, empty);
+            this.getStyleClass().remove("newMessage");
+            this.getStyleClass().remove("item-selected");
+            if (!empty) {
+                if (item instanceof Category) {
+                    this.setText(((Category) item).getName());
+                    this.setContextMenu(addContextMenuCategory((Category) item));
+                }
+                if (item instanceof Channel) {
+                    Channel channel = (Channel) item;
+                    handleChannel(channel);
+                }
+                if (item instanceof User) {
+                    User user = (User) item;
+                    handleUser(user);
+                }
+            } else {
+                this.setText(null);
+                this.setContextMenu(null);
+                this.setGraphic(null);
+            }
+        }
+
+        private void handleChannel(Channel channel) {
+            ImageView icon;
+            if (channel.getType().equals(TEXT)) {
+                icon = addIconText();
+            } else {
+                icon = addIconAudio();
+            }
+            if (isSelected()) {
+                this.getStyleClass().add("item-selected");
+            }
+            this.setGraphic(icon);
+            this.setText(channel.getName());
+            this.setContextMenu(addContextMenuChannel(channel));
+            if (!channel.isRead()) {
+                this.getStyleClass().add("newMessage");
+            }
+        }
+
+        private void handleUser(User user) {
+            this.setText(user.getName());
+            if (stageManager.getEditor().getLocalUser().getAudioChannel() != null && stageManager.getEditor().getLocalUser().getAudioChannel().getId().equals(user.getAudioChannel().getId())) {
+                if (!user.getId().equals(stageManager.getEditor().getLocalUser().getId())) {
+                    if (user.isMuted()) {
+                        this.setContextMenu(addContextMenuUnMute(user, this));
+                        ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound-off-red.png"))));
+                        icon.setFitHeight(13);
+                        icon.setFitWidth(13);
+                        this.setGraphic(icon);
+                    } else {
+                        this.setContextMenu(addContextMenuMute(user, this));
+                        this.setGraphic(null);
+                    }
+                } else {
+                    this.setContextMenu(addContextMenuLocalUser(stageManager.getEditor().getLocalUser(), this));
+                }
+            }
+        }
+
+        private ImageView addIconText() {
+            ImageView icon;
+            if (!stageManager.getModel().getOptions().isDarkmode()) {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit_dark.png"))));
+            } else {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/edit.png"))));
+            }
+            icon.setFitHeight(13);
+            icon.setFitWidth(13);
+            return icon;
+        }
+
+        private ImageView addIconAudio() {
+            ImageView icon;
+            if (!stageManager.getModel().getOptions().isDarkmode()) {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound_dark.png"))));
+            } else {
+                icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/sound.png"))));
+            }
+            icon.setFitHeight(15);
+            icon.setFitWidth(15);
+            return icon;
+        }
     }
 
 }

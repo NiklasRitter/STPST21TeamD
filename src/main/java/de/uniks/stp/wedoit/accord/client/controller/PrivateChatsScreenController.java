@@ -57,7 +57,7 @@ public class PrivateChatsScreenController implements Controller {
     private PropertyChangeListener audioChannelChange = this::handleAudioChannelChange;
     private PropertyChangeListener languageRefreshed = this::refreshStage;
     private Label lblDescription;
-    private PropertyChangeListener usersDescriptionListener = this::userDescriptionChanged;
+    private final PropertyChangeListener usersDescriptionListener = this::userDescriptionChanged;
 
     /**
      * Create a new Controller

@@ -135,48 +135,48 @@ public class GameScreenTest extends ApplicationTest {
         //play a round until result screen
         //send game action
         clickOn("#btnRock");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_ROCK));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_ROCK));
         WaitForAsyncUtils.waitForFxEvents();
 
 
         //receive game action
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_PAPER));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_PAPER));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("0:1", ((Label) lookup("#lbScore").query()).getText());
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_ROCK));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_ROCK));
 
         clickOn("#btnPaper");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_PAPER));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_PAPER));
         WaitForAsyncUtils.waitForFxEvents();
 
         Assert.assertEquals("1:1", ((Label) lookup("#lbScore").query()).getText());
 
         clickOn("#btnPaper");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_PAPER));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_PAPER));
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_PAPER));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_PAPER));
         //1:1 Score
 
 
         clickOn("#btnScissors");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_SCISSORS));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_SCISSORS));
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_PAPER));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_PAPER));
         //2:1 Score
 
         clickOn("#btnScissors");
-        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_SCISSORS));
+        mockChatWebSocket(getTestMessageServerAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_SCISSORS));
 
-        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE  + GAME_PAPER));
+        mockChatWebSocket(getServerMessageUserAnswer(user, GAME_PREFIX + GAME_CHOOSE_MOVE + GAME_PAPER));
         WaitForAsyncUtils.waitForFxEvents();
 
         user.setPrivateChat(new Chat());
         user.setLocalUser(localUser);
 
         //got to result screen
-        Assert.assertEquals("Result",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
+        Assert.assertEquals("Result", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
         clickOn("#btnPlayAgain");
         mockChatWebSocket(getTestMessageServerAnswer(user, GAME_REVENGE));
@@ -187,11 +187,11 @@ public class GameScreenTest extends ApplicationTest {
         //Platform.runLater(() -> this.stageManager.initView(ControllerEnum.GAME_SCREEN_INGAME, user, null));
         //WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
         Platform.runLater(() -> this.stageManager.initView(ControllerEnum.GAME_SCREEN_RESULT, user, false));
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertEquals("Result",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
+        Assert.assertEquals("Result", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
         mockChatWebSocket(getServerMessageUserAnswer(user, GAME_REVENGE));
 
@@ -201,7 +201,7 @@ public class GameScreenTest extends ApplicationTest {
         mockChatWebSocket(getTestMessageServerAnswer(user, GAME_REVENGE));
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("Rock - Paper - Scissors",this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
+        Assert.assertEquals("Rock - Paper - Scissors", this.stageManager.getStage(StageEnum.GAME_STAGE).getTitle());
 
         Platform.runLater(() -> this.stageManager.initView(ControllerEnum.GAME_SCREEN_RESULT, user, true));
         WaitForAsyncUtils.waitForFxEvents();

@@ -7,16 +7,14 @@ import java.util.logging.Logger;
 public class LanguagePreferences {
 
     private static final Logger logger = Logger.getLogger(LanguagePreferences.class.getName());
+    private static LanguagePreferences instance = null;
 
     static {
         logger.setLevel(Level.FINE);
     }
 
-    private static LanguagePreferences instance = null;
-
-    private String language;
-
     String s = "English";
+    private String language;
 
     private LanguagePreferences() {
 
@@ -47,19 +45,19 @@ public class LanguagePreferences {
     }
 
     /**
+     * @return the used language
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    /**
      * Sets the language used
      *
      * @param language to be set
      */
     public void setLanguage(String language) {
         this.language = language;
-    }
-
-    /**
-     * @return the used language
-     */
-    public String getLanguage() {
-        return language;
     }
 
     public Locale getCurrentLocale(String languageURL) {

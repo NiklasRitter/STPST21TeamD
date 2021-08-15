@@ -1,8 +1,5 @@
 package de.uniks.stp.wedoit.accord.client.constants;
 
-import com.pavlobu.emojitextflow.EmojiParser;
-import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
-
 import java.util.List;
 
 /**
