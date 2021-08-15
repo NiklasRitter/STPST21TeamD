@@ -5,6 +5,7 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.db.SqliteDB;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.util.*;
 import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
@@ -16,6 +17,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.nio.charset.StandardCharsets;
 import java.security.AlgorithmParameters;
 import java.security.Key;
@@ -41,10 +44,24 @@ public class Editor {
     private final CategoryManager categoryManager = new CategoryManager();
     private final MessageManager messageManager = new MessageManager(this);
     private final AudioManager audioManager = new AudioManager(this);
+    private final SpotifyManager spotifyManager = new SpotifyManager(this);
     private AccordClient accordClient;
     private Server currentServer;
     private StageManager stageManager;
     private SqliteDB db;
+    private SpotifyIntegration spotifyIntegration;
+    private PropertyChangeListener descriptionChanged = this::descriptionChanged;
+    private LocalUser lastLocalUser = new LocalUser();
+
+    private void descriptionChanged(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String) {
+            if (propertyChangeEvent.getNewValue().equals("?")) {
+                getLocalUser().setDescription("+");
+            } else {
+                restManager.updateDescription((String) propertyChangeEvent.getNewValue());
+            }
+        }
+    }
 
     /**
      * used to decode the given string
@@ -131,6 +148,14 @@ public class Editor {
         return localUser;
     }
 
+    private void setUpDescription(LocalUser localUser) {
+        lastLocalUser.listeners().removePropertyChangeListener(LocalUser.PROPERTY_DESCRIPTION, this.descriptionChanged);
+        lastLocalUser = localUser;
+        if (localUser.listeners().getPropertyChangeListeners(LocalUser.PROPERTY_DESCRIPTION).length == 0) {
+            localUser.listeners().addPropertyChangeListener(LocalUser.PROPERTY_DESCRIPTION, this.descriptionChanged);
+        }
+    }
+
     /**
      * creates a new AccordClient
      *
@@ -159,6 +184,7 @@ public class Editor {
         localUser.setUserKey(userKey);
         webSocketManager.setClearUsername();
         setUpDB();
+        setUpDescription(localUser);
         return localUser;
     }
 
@@ -424,6 +450,14 @@ public class Editor {
 
     }
 
+    public void authorizeSpotify() {
+        String refreshToken = getRefreshToken();
+        if (refreshToken != null) {
+            SpotifyIntegration spotifyIntegration = setSpotifyIntegration(new SpotifyIntegration(this));
+            spotifyIntegration.reauthorize();
+        }
+    }
+
     /**
      * creates a instance of the sqlite databank and loads the font size
      * right after log in since the username is needed
@@ -431,6 +465,7 @@ public class Editor {
     public void setUpDB() {
         db = new SqliteDB(webSocketManager.getCleanLocalUserName());
         getLocalUser().setSteam64ID(getSteam64ID());
+        authorizeSpotify();
     }
 
     /**
@@ -686,11 +721,6 @@ public class Editor {
     }
 
     public void changeUserDescription(String userId, String newDescription) {
-
-        if (this.getLocalUser().getId().equals(userId)) {
-            this.getLocalUser().setDescription(newDescription);
-
-        }
         for (User user : getLocalUser().getUsers()) {
 
             if (user.getId().equals(userId)) {
@@ -707,6 +737,27 @@ public class Editor {
             }
         }
 
+    }
+
+    public SpotifyIntegration setSpotifyIntegration(SpotifyIntegration spotifyIntegration) {
+        this.spotifyIntegration = spotifyIntegration;
+        return spotifyIntegration;
+    }
+
+    public SpotifyIntegration getSpotifyIntegration() {
+        return this.spotifyIntegration;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.db.updateRefreshToken(refreshToken);
+    }
+
+    public String getRefreshToken() {
+        return this.db.getRefreshToken();
+    }
+
+    public SpotifyManager getSpotifyManager() {
+        return spotifyManager;
     }
 
 

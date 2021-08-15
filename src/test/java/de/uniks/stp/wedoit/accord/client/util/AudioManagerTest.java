@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import kong.unirest.Callback;
 import kong.unirest.HttpResponse;
@@ -77,7 +78,7 @@ public class AudioManagerTest extends ApplicationTest {
         this.stage = stage;
         this.stageManager = new StageManager();
         this.oldOptions = new Options();
-        stageManager.getResourceManager().loadOptions(oldOptions);
+        stageManager.getResourceManager().loadOptions(this.oldOptions);
         stageManager.getResourceManager().saveOptions(new Options().setRememberMe(false));
         stageManager.getResourceManager().saveOptions(new Options().setLanguage("en_GB"));
 
@@ -191,7 +192,7 @@ public class AudioManagerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         ObservableList<TreeItem<Object>> treeItems = treeView.getRoot().getChildren().get(0).getChildren().get(0).getChildren();
         User user = (User) treeItems.get(0).getValue();
-        if(user.getId().equals("I1")) {
+        if (user.getId().equals("I1")) {
             user = (User) treeItems.get(1).getValue();
         }
         Assert.assertEquals("I2", user.getId());
@@ -304,11 +305,16 @@ public class AudioManagerTest extends ApplicationTest {
         Assert.assertTrue(localUser.isMuted());
         stageManager.getEditor().getAudioManager().unmuteYourself(localUser);
         Assert.assertFalse(localUser.isMuted());
+        press(KeyCode.CONTROL, KeyCode.M).release(KeyCode.CONTROL, KeyCode.M);
+        ;
+        Assert.assertTrue(localUser.isMuted());
+        press(KeyCode.CONTROL, KeyCode.M).release(KeyCode.CONTROL, KeyCode.M);
+        Assert.assertFalse(localUser.isMuted());
         tempAudioCon.close();
     }
 
     @Test
-    public void changeUserVolume(){
+    public void changeUserVolume() {
         joinAudioServerTest();
         Channel channel = stageManager.getEditor().getChannelById(server, "idTest", "idTest1");
         AudioConnection tempAudioCon = new AudioConnection(localUser, channel, stageManager.getEditor()) {

@@ -8,6 +8,7 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatCont
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
+import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import kong.unirest.JsonNode;
@@ -191,10 +192,15 @@ public class RestManager {
                 String name = getServersResponse.getJsonObject(index).getString(NAME);
                 String id = getServersResponse.getJsonObject(index).getString(ID);
                 String description = getServersResponse.getJsonObject(index).getString(DESCRIPTION);
-
-                editor.haveUser(id, name, description);
+                String parsedDescription = JsonUtil.parseDescription(description);
+                User user = editor.haveUser(id, name, parsedDescription);
+                if (user.getName().equals(localUser.getName()) && description.startsWith("+") && user.getDescription() != null){
+                    localUser.setDescription(description);
+                }
             }
-            controller.handleGetOnlineUsers();
+            if (controller != null) {
+                controller.handleGetOnlineUsers();
+            }
         });
     }
 
@@ -214,6 +220,7 @@ public class RestManager {
                 String name = getServersResponse.getJsonObject(index).getString(NAME);
                 String id = getServersResponse.getJsonObject(index).getString(ID);
                 String description = getServersResponse.getJsonObject(index).getString(DESCRIPTION);
+                description = JsonUtil.parseDescription(description);
                 User user = editor.haveUser(id, name, description);
                 if (user.getName().equals(localUser.getName())) {
                     localUser.setId(id);
@@ -797,6 +804,7 @@ public class RestManager {
             restClient.getCurrentGameForSteamUser(editor.getLocalUser().getSteam64ID(), (response) -> {
                 String steamGameExtraInfo =
                         JsonUtil.parse(String.valueOf(response.getBody().getObject())).getJsonObject(RESPONSE).getJsonArray(PLAYERS).getJsonObject(0).getString(GAME_EXTRA_INfO);
+                editor.getLocalUser().setSteamGameExtraInfo(steamGameExtraInfo + " ");
                 editor.getLocalUser().setSteamGameExtraInfo(steamGameExtraInfo);
             });
         }

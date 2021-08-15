@@ -39,10 +39,12 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class LocalUser {
+        String customDescription;
         String password;
         String name;
         String userKey;
         String id;
+        String spotifyCurrentlyPlaying;
         String steam64ID;
         String steamGameExtraInfo;
         boolean inGame;
@@ -52,6 +54,7 @@ public class GenModel implements ClassModelDecorator {
         boolean muted;
         boolean allMuted;
         Timer steamGameExtraInfoTimer;
+        Timer trackTimer;
 
         @Link("localUser")
         List<User> users;
@@ -64,6 +67,7 @@ public class GenModel implements ClassModelDecorator {
     }
 
     class User {
+        String description;
         String name;
         boolean onlineStatus;
         boolean chatRead;

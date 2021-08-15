@@ -7,7 +7,8 @@ import java.util.Collection;
 import java.beans.PropertyChangeSupport;
 import java.util.Timer;
 
-public class LocalUser
+public class LocalUser
+
 {
    public static final String PROPERTY_PASSWORD = "password";
    public static final String PROPERTY_NAME = "name";
@@ -25,7 +26,10 @@ public class LocalUser
    public static final String PROPERTY_STEAM64_ID = "steam64ID";
    public static final String PROPERTY_STEAM_GAME_EXTRA_INFO = "steamGameExtraInfo";
    public static final String PROPERTY_STEAM_GAME_EXTRA_INFO_TIMER = "steamGameExtraInfoTimer";
+   public static final String PROPERTY_SPOTIFY_CURRENTLY_PLAYING = "spotifyCurrentlyPlaying";
+   public static final String PROPERTY_TRACK_TIMER = "trackTimer";
    public static final String PROPERTY_IN_GAME = "inGame";
+   public static final String PROPERTY_CUSTOM_DESCRIPTION = "customDescription";
    private String password;
    private String name;
    private String userKey;
@@ -43,7 +47,11 @@ public class LocalUser
    private String steam64ID;
    private String steamGameExtraInfo;
    private Timer steamGameExtraInfoTimer;
+   private String spotifyCurrentlyPlaying;
    private boolean inGame;
+   private Timer trackTimer;
+   private Timer refreshSpotifyAuthTimer;
+   private String customDescription;
 
    public String getPassword()
    {
@@ -528,6 +536,24 @@ public class LocalUser
       return this;
    }
 
+   public String getCustomDescription()
+   {
+      return this.customDescription;
+   }
+
+   public LocalUser setCustomDescription(String value)
+   {
+      if (Objects.equals(value, this.customDescription))
+      {
+         return this;
+      }
+
+      final String oldValue = this.customDescription;
+      this.customDescription = value;
+      this.firePropertyChange(PROPERTY_CUSTOM_DESCRIPTION, oldValue, value);
+      return this;
+   }
+
    public boolean isInGame()
    {
       return this.inGame;
@@ -543,6 +569,42 @@ public class LocalUser
       final boolean oldValue = this.inGame;
       this.inGame = value;
       this.firePropertyChange(PROPERTY_IN_GAME, oldValue, value);
+      return this;
+   }
+
+   public String getSpotifyCurrentlyPlaying()
+   {
+      return this.spotifyCurrentlyPlaying;
+   }
+
+   public LocalUser setSpotifyCurrentlyPlaying(String value)
+   {
+      if (Objects.equals(value, this.spotifyCurrentlyPlaying))
+      {
+         return this;
+      }
+
+      final String oldValue = this.spotifyCurrentlyPlaying;
+      this.spotifyCurrentlyPlaying = value;
+      this.firePropertyChange(PROPERTY_SPOTIFY_CURRENTLY_PLAYING, oldValue, value);
+      return this;
+   }
+
+   public Timer getTrackTimer()
+   {
+      return this.trackTimer;
+   }
+
+   public LocalUser setTrackTimer(Timer value)
+   {
+      if (Objects.equals(value, this.trackTimer))
+      {
+         return this;
+      }
+
+      final Timer oldValue = this.trackTimer;
+      this.trackTimer = value;
+      this.firePropertyChange(PROPERTY_TRACK_TIMER, oldValue, value);
       return this;
    }
 
@@ -569,10 +631,12 @@ public class LocalUser
    public String toString()
    {
       final StringBuilder result = new StringBuilder();
+      result.append(' ').append(this.getCustomDescription());
       result.append(' ').append(this.getPassword());
       result.append(' ').append(this.getName());
       result.append(' ').append(this.getUserKey());
       result.append(' ').append(this.getId());
+      result.append(' ').append(this.getSpotifyCurrentlyPlaying());
       result.append(' ').append(this.getSteam64ID());
       result.append(' ').append(this.getSteamGameExtraInfo());
       return result.substring(1);

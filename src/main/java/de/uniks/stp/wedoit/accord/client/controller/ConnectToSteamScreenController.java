@@ -46,7 +46,7 @@ public class ConnectToSteamScreenController implements Controller {
         btnSave = (Button) view.lookup("#btnSave");
         tfSteam64ID = (TextField) view.lookup("#tfSteam64ID");
         hlSteamIDLookup = (Hyperlink) view.lookup("#hlSteamIDLookup");
-
+        tfSteam64ID.setStyle("-fx-text-fill: WHITE");
         editor.getStageManager().getStage(POPUP_STAGE).setTitle(LanguageResolver.getString("CONNECT_TO_STEAM"));
 
         tfSteam64ID.setText(editor.getLocalUser().getSteam64ID());
@@ -75,12 +75,15 @@ public class ConnectToSteamScreenController implements Controller {
 
 
     private void btnSaveOnClick(Object object) {
-        if (!tfSteam64ID.getText().isEmpty()) {
-            localUser.setSteam64ID(tfSteam64ID.getText());
-            editor.saveSteam64ID(tfSteam64ID.getText());
-            editor.getRestManager().getLocalUserSteamGameExtraInfo();
-            editor.getStageManager().getStage(POPUP_STAGE).close();
+        if (tfSteam64ID.getText().isEmpty()) {
+            tfSteam64ID.setText("");
         }
+        editor.getLocalUser().setSteamGameExtraInfo("");
+
+        localUser.setSteam64ID(tfSteam64ID.getText());
+        editor.saveSteam64ID(tfSteam64ID.getText());
+        editor.getRestManager().getLocalUserSteamGameExtraInfo();
+        editor.getStageManager().getStage(POPUP_STAGE).close();
     }
 
     private void hlSteamIDLookupOnClick(Object object) {

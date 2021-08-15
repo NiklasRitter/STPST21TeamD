@@ -281,7 +281,7 @@ public class PrivateChatController implements Controller {
      * removes a quote from the view
      */
     public void removeQuote() {
-        quoteTextFlow.parseAndAppend("");
+        quoteTextFlow = new EmojiTextFlow(new EmojiTextFlowParameterHelper(10).createParameters());
         quotedText = "";
         hBoxQuoteVisible.getChildren().clear();
     }
