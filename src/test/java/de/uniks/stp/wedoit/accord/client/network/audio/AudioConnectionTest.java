@@ -11,6 +11,7 @@ import org.junit.jupiter.api.TestFactory;
 
 import javax.json.Json;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 
 public class AudioConnectionTest {
     @TestFactory
@@ -18,12 +19,12 @@ public class AudioConnectionTest {
         if (editor == null) {
             editor = new Editor();
             if (localUser == null)
-                editor.haveAccordClient().setOptions(new Options().setInputDevice(AudioSystem.getMixerInfo()[0])
-                        .setOutputDevice(AudioSystem.getMixerInfo()[0])
+                editor.haveAccordClient().setOptions(new Options().setInputDevice(new TestMixerInfo("test"))
+                        .setOutputDevice(new TestMixerInfo("test"))
                         .setInputVolume(1f).setSystemVolume(100f));
             else if (localUser != null && localUser.getAccordClient() == null)
-                editor.haveAccordClient().setOptions(new Options().setInputDevice(AudioSystem.getMixerInfo()[0])
-                        .setOutputDevice(AudioSystem.getMixerInfo()[0])
+                editor.haveAccordClient().setOptions(new Options().setInputDevice(new TestMixerInfo("test"))
+                        .setOutputDevice(new TestMixerInfo("test"))
                         .setInputVolume(1f).setSystemVolume(100f)).setLocalUser(localUser);
             else editor.setAccordClient(localUser.getAccordClient());
 
@@ -31,8 +32,8 @@ public class AudioConnectionTest {
         if (localUser == null) {
             localUser = editor.haveLocalUser("username", "userKey")
                     .setAccordClient(editor.getAccordClient()
-                            .setOptions(new Options().setInputDevice(AudioSystem.getMixerInfo()[0])
-                                    .setOutputDevice(AudioSystem.getMixerInfo()[0])
+                            .setOptions(new Options().setInputDevice(new TestMixerInfo("test"))
+                                    .setOutputDevice(new TestMixerInfo("test"))
                                     .setInputVolume(1f).setSystemVolume(100f)));
         }
         if (channel == null) {
@@ -52,8 +53,8 @@ public class AudioConnectionTest {
     public void testConnection() {
         LocalUser localUser = new LocalUser().setName("username").setUserKey("userKey")
                 .setAccordClient(new AccordClient()
-                        .setOptions(new Options().setInputDevice(AudioSystem.getMixerInfo()[0])
-                                .setOutputDevice(AudioSystem.getMixerInfo()[0])
+                        .setOptions(new Options().setInputDevice(new TestMixerInfo("test"))
+                                .setOutputDevice(new TestMixerInfo("test"))
                                 .setInputVolume(1f).setSystemVolume(100f)));
         AudioConnection audioConnection = generateAudioConnection(localUser, null, null);
         Assert.assertNull(audioConnection.getAudioSend());
@@ -61,8 +62,8 @@ public class AudioConnectionTest {
         Assert.assertNotNull(audioConnection.getChannel());
         audioConnection.startSendingAudio("localhost", 0);
         audioConnection.startReceivingAudio();
-        localUser.getAccordClient().getOptions().setInputDevice(AudioSystem.getMixerInfo()[1]);
-        localUser.getAccordClient().getOptions().setOutputDevice(AudioSystem.getMixerInfo()[1]);
+        localUser.getAccordClient().getOptions().setInputDevice(new TestMixerInfo("test1"));
+        localUser.getAccordClient().getOptions().setOutputDevice(new TestMixerInfo("test1"));
         Assert.assertNotNull(audioConnection.createSocket());
         audioConnection.stop();
     }
@@ -73,5 +74,11 @@ public class AudioConnectionTest {
         audioConnection.startConnection("localhost", 0);
         Assert.assertNotNull(audioConnection.getAudioSend());
         Assert.assertNotNull(audioConnection.getAudioReceive());
+    }
+
+    class TestMixerInfo extends Mixer.Info {
+        protected TestMixerInfo(String strings) {
+            super(strings, strings, strings, strings);
+        }
     }
 }
