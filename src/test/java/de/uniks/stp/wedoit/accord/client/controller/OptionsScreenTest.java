@@ -318,7 +318,7 @@ public class OptionsScreenTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
         Button btnDescription = (Button) lookup("#btnDescription").query();
         clickOn(btnDescription);
-        RichTextArea query = lookup("#rTArea").query();
+        TextField query = lookup("#rTArea").query();
         clickOn(query);
         press(KeyCode.CONTROL, KeyCode.ESCAPE).release(KeyCode.CONTROL, KeyCode.ESCAPE);
         Assert.assertEquals(stageManager.getEditor().getLocalUser().getDescription(), CUSTOM_KEY);

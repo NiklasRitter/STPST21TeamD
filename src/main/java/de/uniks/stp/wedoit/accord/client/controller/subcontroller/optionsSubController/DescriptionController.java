@@ -7,6 +7,7 @@ import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import de.uniks.stp.wedoit.accord.client.util.JsonUtil;
 import javafx.scene.Parent;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.CUSTOM_KEY;
@@ -17,7 +18,7 @@ public class DescriptionController implements Controller {
     private final Options options;
     private final Editor editor;
     private VBox vBoxDescription;
-    private RichTextArea richTextArea = new RichTextArea();
+    private TextField textfield = new TextField();
 
     public DescriptionController(Parent view, Options model, Editor editor) {
         this.view = view;
@@ -28,7 +29,9 @@ public class DescriptionController implements Controller {
     @Override
     public void init() {
         this.vBoxDescription = (VBox) view.lookup("#vBoxDescription");
-        richTextArea.setId("rTArea");
+        textfield.setId("rTArea");
+        textfield.setStyle("-fx-text-fill: WHITE");
+        textfield.setPrefWidth(450);
         vBoxDescription.setMaxWidth(500);
         for (User user : editor.getLocalUser().getUsers()) {
             if (user.getName().equals(editor.getLocalUser().getName()) && user.getDescription() != null) {
@@ -36,16 +39,15 @@ public class DescriptionController implements Controller {
             }
         }
         if(editor.getLocalUser().getDescription() != null && editor.getLocalUser().getDescription().length() > 0 && editor.getLocalUser().getDescription().startsWith("+")) {
-            richTextArea.setText(editor.getLocalUser().getDescription().substring(1));
+            textfield.setText(editor.getLocalUser().getDescription().substring(1));
         }
-        vBoxDescription.getChildren().add(richTextArea);
-
+        vBoxDescription.getChildren().add(textfield);
     }
 
     @Override
     public void stop() {
-        if (richTextArea.getText() != null) {
-            options.getAccordClient().getLocalUser().setDescription(JsonUtil.buildDescription(CUSTOM_KEY, richTextArea.getText()));
+        if (textfield.getText() != null) {
+            options.getAccordClient().getLocalUser().setDescription(JsonUtil.buildDescription(CUSTOM_KEY, textfield.getText()));
         }
     }
 }

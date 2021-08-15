@@ -229,7 +229,7 @@ public class JsonUtilTest {
         Assert.assertEquals("?Test",JsonUtil.parseDescription(JsonUtil.buildDescription(STEAM_KEY, "Test")));
         Assert.assertEquals("+Test",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "Test")));
         Assert.assertEquals("",JsonUtil.buildDescription("s","s"));
-        Assert.assertEquals("+amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnjaaa",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnjaaa")));
-        Assert.assertEquals("+amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSn...",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnjaaaa")));
+        Assert.assertEquals("+amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnja",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnja")));
+        Assert.assertEquals("+amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7Q...",JsonUtil.parseDescription(JsonUtil.buildDescription(CUSTOM_KEY, "amRHSWtqdiLbDXSWvjqMViwiqf35JaSiWRRbk0qjbpwuvgmHWRbjcazGw5K9iXMetvmtpHVb4UPsWo3zV7g6XJbTJhwV7QSnjaaaa")));
     }
 }

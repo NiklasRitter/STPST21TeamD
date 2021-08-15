@@ -290,8 +290,8 @@ public class JsonUtil {
     }
 
     public static String buildDescription(String type, String description) {
-        if (description.length() > 100) {
-            description = description.substring(0, 96) + "...";
+        if (description.length() > 98) {
+            description = description.substring(0, 94) + "...";
         }
         switch (type) {
             case SPOTIFY_KEY:

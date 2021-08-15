@@ -811,6 +811,7 @@ public class RestManager {
     }
 
     public void updateDescription(String userDescription) {
+        System.out.println(userDescription);
         restClient.postDescription(null, editor.getLocalUser().getId(), editor.getLocalUser().getUserKey(),
                 userDescription);
     }
