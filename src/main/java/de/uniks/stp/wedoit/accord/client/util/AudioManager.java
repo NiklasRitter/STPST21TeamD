@@ -74,7 +74,7 @@ public class AudioManager {
                 unmuteYourself(localUser);
             }
             localUser.setAudioChannel(null);
-            audioConnection.close();
+            audioConnection.stop();
             this.audioConnection = null;
         }
     }
