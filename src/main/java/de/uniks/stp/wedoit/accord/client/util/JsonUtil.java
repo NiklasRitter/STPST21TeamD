@@ -291,13 +291,13 @@ public class JsonUtil {
 
     public static String buildDescription(String type, String description) {
         if (description.length() > 100) {
-            description = description.substring(0, 100) + "...";
+            description = description.substring(0, 96) + "...";
         }
         switch (type) {
             case SPOTIFY_KEY:
-                return SPOTIFY_KEY + Json.createObjectBuilder().add(DESC, description).build().toString();
+                return SPOTIFY_KEY + Json.createObjectBuilder().add(DESC, description).add(DATA,"").build().toString();
             case GITHUB_KEY:
-                return GITHUB_KEY + Json.createObjectBuilder().add(DESC, description).build().toString();
+                return GITHUB_KEY + Json.createObjectBuilder().add(DESC, description).add(DATA,"").build().toString();
             case STEAM_KEY:
                 return STEAM_KEY + description;
             case CUSTOM_KEY:
