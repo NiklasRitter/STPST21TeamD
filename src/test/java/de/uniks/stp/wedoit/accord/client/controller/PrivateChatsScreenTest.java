@@ -47,6 +47,7 @@ import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.PRIVATE_USER_CHAT_PREFIX;
 import static de.uniks.stp.wedoit.accord.client.constants.Network.SYSTEM_SOCKET_URL;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.CUSTOM_KEY;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -446,7 +447,7 @@ public class PrivateChatsScreenTest extends ApplicationTest {
         mockSystemWebSocket(descriptionChangedMessage());
         WaitForAsyncUtils.waitForFxEvents();
 
-        Assert.assertEquals("- newDescription",lblDescription.getText());
+        Assert.assertEquals("- new Description",lblDescription.getText());
         Assert.assertEquals("Albert",lblSelectedUser.getText());
     }
 
@@ -982,6 +983,6 @@ public class PrivateChatsScreenTest extends ApplicationTest {
 
     private JsonObject descriptionChangedMessage() {
         return Json.createObjectBuilder().add("action", USER_DESCRIPTION_CHANGED)
-                .add("data",Json.createObjectBuilder().add("id","12345").add("description","newDescription")).build();
+                .add("data",Json.createObjectBuilder().add("id","12345").add("description",JsonUtil.buildDescription(CUSTOM_KEY, "new Description"))).build();
     }
 }

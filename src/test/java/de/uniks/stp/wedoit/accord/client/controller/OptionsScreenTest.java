@@ -5,9 +5,12 @@ import de.uniks.stp.wedoit.accord.client.StageManager;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.model.Options;
+import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
+import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import javafx.application.Platform;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -34,6 +37,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.Network.*;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.STEAM_KEY;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -304,5 +309,25 @@ public class OptionsScreenTest extends ApplicationTest {
         options.setZoomLevel(old);
     }
 
+    @Test
+    public void descriptionsInputTest() {
+        directToMainScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+        directToOptionsScreen();
+        stageManager.getEditor().getLocalUser().withUsers(new User().setName(stageManager.getEditor().getLocalUser().getName()).setDescription(""));
+        WaitForAsyncUtils.waitForFxEvents();
+        Button btnDescription = (Button) lookup("#btnDescription").query();
+        clickOn(btnDescription);
+        TextField query = lookup("#rTArea").query();
+        clickOn(query);
+        press(KeyCode.CONTROL, KeyCode.ESCAPE).release(KeyCode.CONTROL, KeyCode.ESCAPE);
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getDescription(), CUSTOM_KEY);
+        stageManager.getEditor().getLocalUser().setDescription(SPOTIFY_KEY + "Test");
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getDescription(), "#Test");
+        stageManager.getEditor().getLocalUser().setDescription(STEAM_KEY + "Test");
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getDescription(), STEAM_KEY + "Test");
+        stageManager.getEditor().getLocalUser().setDescription(STEAM_KEY);
+        Assert.assertEquals(stageManager.getEditor().getLocalUser().getDescription(), "+");
 
+    }
 }

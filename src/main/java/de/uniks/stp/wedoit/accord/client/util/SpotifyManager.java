@@ -5,10 +5,13 @@ import de.uniks.stp.wedoit.accord.client.model.AccordClient;
 import de.uniks.stp.wedoit.accord.client.model.LocalUser;
 import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 
+import javax.json.JsonObject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class SpotifyManager {
     private final Editor editor;
@@ -40,7 +43,7 @@ public class SpotifyManager {
             public void run() {
                 spotifyIntegration.setUsersCurrentlyPlayingTrack();
             }
-        }, 0, 1000);
+        }, 0, 5000);
         return trackTimer;
     }
 
@@ -60,8 +63,10 @@ public class SpotifyManager {
     }
 
     public void localUserCurrentlyPlayingTrackOnChange(PropertyChangeEvent propertyChangeEvent) {
-        if (editor.getLocalUser() != null && propertyChangeEvent.getNewValue() instanceof String) {
-            editor.getRestManager().updateDescription(this.editor.getLocalUser().getSpotifyCurrentlyPlaying());
+        if (propertyChangeEvent.getNewValue() != null && propertyChangeEvent.getNewValue() instanceof String) {
+            String description = editor.getLocalUser().getDescription();
+            if (description != null && description.startsWith(CUSTOM_KEY) && description.length() > 1 || description != null && description.startsWith(STEAM_KEY) && description.length() > 1) return;
+            editor.getLocalUser().setDescription(JsonUtil.buildDescription(SPOTIFY_KEY, (String) propertyChangeEvent.getNewValue()));
         }
     }
 

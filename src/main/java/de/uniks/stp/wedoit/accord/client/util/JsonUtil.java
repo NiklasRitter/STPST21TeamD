@@ -2,15 +2,13 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.model.*;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
+import javax.json.*;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.JSON.*;
+import static de.uniks.stp.wedoit.accord.client.constants.UserDescription.*;
 
 public class JsonUtil {
 
@@ -259,7 +257,7 @@ public class JsonUtil {
                 .setId(jsonUser.getString(ID))
                 .setName(jsonUser.getString(NAME))
                 .setOnlineStatus(jsonUser.getBoolean(ONLINE))
-                .setDescription(jsonUser.getString(DESCRIPTION));
+                .setDescription(JsonUtil.parseDescription(jsonUser.getString(DESCRIPTION)));
     }
 
     public static List<User> parseUserArray(JsonArray jsonUsers) {
@@ -269,6 +267,43 @@ public class JsonUtil {
             users.add(user);
         }
         return users;
+    }
+
+    public static String parseDescription(String description) {
+        if (description == null || description.length() == 0) {return "";}
+        switch (description.substring(0,1)) {
+            case SPOTIFY_KEY:
+            case GITHUB_KEY:
+                JsonObject parse;
+            try {
+                 parse = parse(description.substring(1));
+            } catch (Exception e) {
+                return "";
+            }
+                return description.charAt(0) + parse.getString(DESC);
+            case STEAM_KEY:
+            case CUSTOM_KEY:
+                return description;
+            default:
+                return "";
+        }
+    }
+
+    public static String buildDescription(String type, String description) {
+        if (description.length() > 98) {
+            description = description.substring(0, 94) + "...";
+        }
+        switch (type) {
+            case SPOTIFY_KEY:
+                return SPOTIFY_KEY + Json.createObjectBuilder().add(DESC, description).add(DATA,"").build().toString();
+            case GITHUB_KEY:
+                return GITHUB_KEY + Json.createObjectBuilder().add(DESC, description).add(DATA,"").build().toString();
+            case STEAM_KEY:
+                return STEAM_KEY + description;
+            case CUSTOM_KEY:
+                return CUSTOM_KEY + description;
+        }
+        return "";
     }
 
 }

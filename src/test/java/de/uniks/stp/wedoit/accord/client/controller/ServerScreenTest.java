@@ -1165,8 +1165,8 @@ public class ServerScreenTest extends ApplicationTest {
         }
         Assert.assertNotNull(n1);
         Assert.assertNotNull(n2);
-        Assert.assertTrue(n1.getDescription().equals("plays a game"));
-        Assert.assertTrue(n2.getDescription().equals("is afk"));
+        Assert.assertTrue(n1.getDescription().equals("+plays a game"));
+        Assert.assertTrue(n2.getDescription().equals("+is afk"));
 
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(SYSTEM_SOCKET_URL, systemWebSocketClient);
         this.stageManager.getEditor().getWebSocketManager().haveWebSocket(PRIVATE_USER_CHAT_PREFIX +
@@ -1185,7 +1185,7 @@ public class ServerScreenTest extends ApplicationTest {
                 n1 = user;
             }
         }
-        Assert.assertEquals("newTest", n1.getDescription());
+        Assert.assertEquals("+newTest", n1.getDescription());
 
     }
 
@@ -1627,7 +1627,7 @@ public class ServerScreenTest extends ApplicationTest {
 
     private JsonStructure changeDescription() {
         return Json.createObjectBuilder().add("action", USER_DESCRIPTION_CHANGED).add("data",
-                Json.createObjectBuilder().add("id", "I1").add("description", "newTest")).build();
+                Json.createObjectBuilder().add("id", "I1").add("description", "+newTest")).build();
 
     }
 
@@ -1773,13 +1773,13 @@ public class ServerScreenTest extends ApplicationTest {
                 .add("data", Json.createObjectBuilder().add("id", server.getId())
                         .add("name", server.getName()).add("owner", "ow12ner").add("categories",
                                 Json.createArrayBuilder()).add("members", Json.createArrayBuilder()
-                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1").add("description", "plays a game")
+                                .add(Json.createObjectBuilder().add("id", "I1").add("name", "N1").add("description", "+plays a game")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2").add("description", "is afk")
+                                .add(Json.createObjectBuilder().add("id", "I2").add("name", "N2").add("description", "+is afk")
                                         .add("online", false))
-                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "")
+                                .add(Json.createObjectBuilder().add("id", "I3").add("name", "N3").add("description", "+")
                                         .add("online", true))
-                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "")
+                                .add(Json.createObjectBuilder().add("id", "123456").add("name", "Phil").add("description", "+")
                                         .add("online", false))
                         )).build();
     }
