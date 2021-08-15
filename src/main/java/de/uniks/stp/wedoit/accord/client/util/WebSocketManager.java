@@ -188,7 +188,7 @@ public class WebSocketManager {
             case SERVER_DELETED:
                 Server serverToDelete = editor.haveServer(editor.getLocalUser(), data.getString(ID), data.getString(NAME));
                 Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null));
-                serverToDelete.removeYou();
+                serverToDelete.setLocalUser(null);
                 break;
             case CATEGORY_CREATED:
                 editor.getCategoryManager().haveCategory(data.getString(ID), data.getString(NAME), server);
