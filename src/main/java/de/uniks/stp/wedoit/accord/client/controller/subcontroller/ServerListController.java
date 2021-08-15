@@ -4,11 +4,11 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
-import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
-import de.uniks.stp.wedoit.accord.client.model.*;
+import de.uniks.stp.wedoit.accord.client.model.AccordClient;
+import de.uniks.stp.wedoit.accord.client.model.LocalUser;
+import de.uniks.stp.wedoit.accord.client.model.Server;
 import de.uniks.stp.wedoit.accord.client.network.WSCallback;
 import de.uniks.stp.wedoit.accord.client.view.MainScreenServerListView;
-import de.uniks.stp.wedoit.accord.client.view.SelectUserCellFactory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,15 +37,15 @@ public class ServerListController implements Controller {
     private final AccordClient model;
     private final Editor editor;
     private final Server server;
+    private final List<String> webSocketServerUrls = new ArrayList<>();
     private Button btnOptions;
     private Button btnHome;
     private Button addServerButton;
     private Button enterInvitationButton;
     private ListView<Server> lvServerList;
-    private PropertyChangeListener serverListListener = this::serverListViewChanged;
-    private WSCallback serverWSCallback = this::handleServersMessage;
-    private final List<String> webSocketServerUrls = new ArrayList<>();
+    private final WSCallback serverWSCallback = this::handleServersMessage;
     private ObservableList<Server> observableServerList;
+    private final PropertyChangeListener serverListListener = this::serverListViewChanged;
 
     public ServerListController(Parent view, AccordClient model, Editor editor, Server server) {
         this.view = view;
@@ -88,8 +88,7 @@ public class ServerListController implements Controller {
             });
 
             btnHome.getStyleClass().remove("button-selected");
-        }
-        else {
+        } else {
             btnHome.getStyleClass().add("button-selected");
         }
     }
@@ -131,8 +130,7 @@ public class ServerListController implements Controller {
                 if (this.server != null && server.getId().equals(this.server.getId())) {
                     WSCallback callback = (msg) -> editor.getWebSocketManager().handleServerMessage(msg, server);
                     editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), callback);
-                }
-                else {
+                } else {
                     editor.getWebSocketManager().haveWebSocket(WS_SERVER_URL + WS_SERVER_ID_URL + server.getId(), serverWSCallback);
                 }
             }

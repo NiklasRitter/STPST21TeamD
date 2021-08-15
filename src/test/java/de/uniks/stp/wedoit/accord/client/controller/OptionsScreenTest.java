@@ -1,4 +1,3 @@
-
 package de.uniks.stp.wedoit.accord.client.controller;
 
 import de.uniks.stp.wedoit.accord.client.StageManager;
@@ -8,7 +7,6 @@ import de.uniks.stp.wedoit.accord.client.model.Options;
 import de.uniks.stp.wedoit.accord.client.model.User;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
 import de.uniks.stp.wedoit.accord.client.network.WebSocketClient;
-import de.uniks.stp.wedoit.accord.client.richtext.RichTextArea;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -316,7 +314,7 @@ public class OptionsScreenTest extends ApplicationTest {
         directToOptionsScreen();
         stageManager.getEditor().getLocalUser().withUsers(new User().setName(stageManager.getEditor().getLocalUser().getName()).setDescription(""));
         WaitForAsyncUtils.waitForFxEvents();
-        Button btnDescription = (Button) lookup("#btnDescription").query();
+        Button btnDescription = lookup("#btnDescription").query();
         clickOn(btnDescription);
         TextField query = lookup("#rTArea").query();
         clickOn(query);
@@ -328,6 +326,30 @@ public class OptionsScreenTest extends ApplicationTest {
         Assert.assertEquals(stageManager.getEditor().getLocalUser().getDescription(), STEAM_KEY + "Test");
         stageManager.getEditor().getLocalUser().setDescription(STEAM_KEY);
         Assert.assertEquals(stageManager.getEditor().getLocalUser().getDescription(), "+");
+
+    }
+
+    @Test
+    public void steamTest() {
+        directToMainScreen();
+        WaitForAsyncUtils.waitForFxEvents();
+        directToOptionsScreen();
+        Button btnConnections = lookup("#btnConnections").query();
+        clickOn(btnConnections);
+        Assert.assertEquals(stage.getTitle(), "Options - Connections");
+        clickOn("#btnSteam");
+        Assert.assertEquals(stage.getTitle(), "Options - Connections");
+        Assert.assertEquals(popupStage.getTitle(), "Connect to Steam");
+        clickOn("#btnCancel");
+        Assert.assertEquals(stage.getTitle(), "Options - Connections");
+        Assert.assertEquals(popupStage.isShowing(), false);
+        clickOn("#btnSteam");
+        Assert.assertEquals(stage.getTitle(), "Options - Connections");
+        Assert.assertEquals(popupStage.isShowing(), true);
+        clickOn("#btnSave");
+        Assert.assertEquals(stage.getTitle(), "Options - Connections");
+        Assert.assertEquals(popupStage.isShowing(), false);
+        press(KeyCode.ESCAPE);
 
     }
 }

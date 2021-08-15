@@ -9,8 +9,6 @@ import javafx.application.Platform;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_PREFIX;
-
 public class SystemTrayController {
     private final Editor editor;
     private TrayIcon trayIcon;

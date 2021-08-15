@@ -6,12 +6,9 @@ import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.optionsSubController.*;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Options;
-import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
-import de.uniks.stp.wedoit.accord.client.util.Recorder;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -47,7 +44,7 @@ public class OptionsScreenController implements Controller {
      * Load necessary GUI elements
      * Add action listeners
      */
-    public void init(){
+    public void init() {
         this.btnLogout = (Button) view.lookup("#btnLogout");
         this.hBoxOuter = (HBox) view.lookup("#hBoxOuter");
         this.btnBack = (Button) view.lookup("#btnBack");
@@ -75,7 +72,7 @@ public class OptionsScreenController implements Controller {
      * <p>
      * Remove action listeners
      */
-    public void stop(){
+    public void stop() {
         btnBack.setOnAction(null);
         btnLogout.setOnAction(null);
         btnAppearance.setOnAction(null);
@@ -83,7 +80,7 @@ public class OptionsScreenController implements Controller {
         btnDescription.setOnAction(null);
         btnLanguage.setOnAction(null);
         btnVoice.setOnAction(null);
-        if(currentController != null) currentController.stop();
+        if (currentController != null) currentController.stop();
 
     }
 
@@ -107,15 +104,15 @@ public class OptionsScreenController implements Controller {
         selectSubController(ControllerEnum.DESCRIPTION_OPTION_SCREEN);
     }
 
-    public void selectSubController(ControllerEnum e){
-        if(e != currentControllerEnum || e == ControllerEnum.LANGUAGE_OPTIONS_SCREEN){
+    public void selectSubController(ControllerEnum e) {
+        if (e != currentControllerEnum || e == ControllerEnum.LANGUAGE_OPTIONS_SCREEN) {
             currentControllerEnum = e;
-            if(currentController != null) currentController.stop();
+            if (currentController != null) currentController.stop();
             hBoxOuter.getChildren().remove(loadedOptions);
             loadedOptions = e.loadSubOptionScreen();
             hBoxOuter.getChildren().add(loadedOptions);
             String stageTitle = LanguageResolver.getString("OPTIONS");
-            switch (e){
+            switch (e) {
                 case APPEARANCE_OPTIONS_SCREEN:
                     currentController = new AppearanceController(loadedOptions, options, editor);
                     stageTitle += " - " + LanguageResolver.getString("APPEARANCE");
@@ -152,11 +149,13 @@ public class OptionsScreenController implements Controller {
 
     /**
      * sends user form options screen back to the private chats
+     *
      * @param actionEvent occurs when Back button is pressed
      */
     private void btnBackToChats(ActionEvent actionEvent) {
-        if(editor.getLocalUser().getUserKey() != null) editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN,null,null);
-        else editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN,true, null);
+        if (editor.getLocalUser().getUserKey() != null)
+            editor.getStageManager().initView(ControllerEnum.PRIVATE_CHAT_SCREEN, null, null);
+        else editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null);
     }
 
     private void changeIfLoginScreen() {
@@ -165,6 +164,7 @@ public class OptionsScreenController implements Controller {
             vBoxButtons.getChildren().removeAll(btnConnections, btnVoice, btnLogout, btnDescription);
         }
     }
+
     /**
      * The localUser will be logged out and redirect to the LoginScreen
      *

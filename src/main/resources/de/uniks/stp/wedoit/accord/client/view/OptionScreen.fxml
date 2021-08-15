@@ -1,44 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-
-<HBox id="hBoxOuter" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox id="vBoxButtons" alignment="TOP_CENTER" minWidth="90.0" spacing="20.0" styleClass="styleBackgroundHighlight">
-         <children>
-            <Button id="btnBack" mnemonicParsing="false" styleClass="sidebar-Button" text="%BACK">
-               <tooltip>
-                  <Tooltip text="BACK" />
-               </tooltip>
-            </Button>
-            <Button id="btnAppearance" mnemonicParsing="false" styleClass="sidebar-Button" text="%APPEARANCE" />
-            <Button id="btnLanguage" mnemonicParsing="false" styleClass="sidebar-Button" text="%LANGUAGE" />
-            <Button id="btnConnections" mnemonicParsing="false" styleClass="sidebar-Button" text="%CONNECTIONS" />
-            <Button id="btnVoice" mnemonicParsing="false" styleClass="sidebar-Button" text="%SOUND" />
-            <Button id="btnDescription" mnemonicParsing="false" styleClass="sidebar-Button" text="%DESCRIPTION" />
-            <Region VBox.vgrow="ALWAYS" />
-            <Button id="btnLogout" mnemonicParsing="false" text="%LOGOUT">
-               <tooltip>
-                  <Tooltip text="%LOGOUT" />
-               </tooltip>
-               <styleClass>
-                  <String fx:value="sidebar-Button" />
-                  <String fx:value="logout-button-color" />
-               </styleClass>
-            </Button>
-         </children>
-         <padding>
-            <Insets bottom="10.0" top="10.0" />
-         </padding>
-         <HBox.margin>
-            <Insets />
-         </HBox.margin>
-      </VBox>
-   </children>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<HBox xmlns:fx="http://javafx.com/fxml/1" id="hBoxOuter" spacing="20.0" xmlns="http://javafx.com/javafx">
+    <children>
+        <VBox id="vBoxButtons" alignment="TOP_CENTER" minWidth="90.0" spacing="20.0"
+              styleClass="styleBackgroundHighlight">
+            <children>
+                <Button id="btnBack" mnemonicParsing="false" styleClass="sidebar-Button" text="%BACK">
+                    <tooltip>
+                        <Tooltip text="BACK"/>
+                    </tooltip>
+                </Button>
+                <Button id="btnAppearance" mnemonicParsing="false" styleClass="sidebar-Button" text="%APPEARANCE"/>
+                <Button id="btnLanguage" mnemonicParsing="false" styleClass="sidebar-Button" text="%LANGUAGE"/>
+                <Button id="btnConnections" mnemonicParsing="false" styleClass="sidebar-Button" text="%CONNECTIONS"/>
+                <Button id="btnVoice" mnemonicParsing="false" styleClass="sidebar-Button" text="%SOUND"/>
+                <Button id="btnDescription" mnemonicParsing="false" styleClass="sidebar-Button" text="%DESCRIPTION"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button id="btnLogout" mnemonicParsing="false" text="%LOGOUT">
+                    <tooltip>
+                        <Tooltip text="%LOGOUT"/>
+                    </tooltip>
+                    <styleClass>
+                        <String fx:value="sidebar-Button"/>
+                        <String fx:value="logout-button-color"/>
+                    </styleClass>
+                </Button>
+            </children>
+            <padding>
+                <Insets bottom="10.0" top="10.0"/>
+            </padding>
+            <HBox.margin>
+                <Insets/>
+            </HBox.margin>
+        </VBox>
+    </children>
 </HBox>

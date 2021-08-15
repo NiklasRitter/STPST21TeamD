@@ -28,21 +28,18 @@ public class CategoryTreeViewController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Server server;
-    private ServerScreenController controller;
     private final Map<String, Channel> channelMap = new HashMap<>();
-
+    private ServerScreenController controller;
     private TreeView<Object> tvServerChannels;
     private TreeItem<Object> tvServerChannelsRoot;
     private MenuItem addCategory;
 
     private PropertyChangeListener channelReadListener = this::handleChannelReadChange;
-    private PropertyChangeListener categoriesListener = this::handleCategoryChange;
-    private PropertyChangeListener channelListener = this::handleChannelChange;
+    private PropertyChangeListener channelListener = this::handleChannelChange;    private PropertyChangeListener categoriesListener = this::handleCategoryChange;
     private PropertyChangeListener audioMemberListener = this::handleChannelAudioMemberChange;
     private PropertyChangeListener userListViewListener = this::changeUserList;
     private MenuButton serverMenuButton;
     private PropertyChangeListener localUserAudioChannel = this::localUserAudioChannelChanged;
-
     public CategoryTreeViewController(Parent view, LocalUser model, Editor editor, Server server, ServerScreenController controller) {
         this.view = view;
         this.localUser = model;
@@ -120,11 +117,11 @@ public class CategoryTreeViewController implements Controller {
         this.addCategory.setOnAction(null);
     }
 
-    // Channel and Category init
-
     private void localUserAudioChannelChanged(PropertyChangeEvent propertyChangeEvent) {
         this.tvServerChannels.refresh();
     }
+
+    // Channel and Category init
 
     /**
      * initialize channel List view
@@ -134,7 +131,6 @@ public class CategoryTreeViewController implements Controller {
         editor.getRestManager().getCategories(localUser, server, this);
     }
 
-
     /**
      * handles the categories of a server in the view
      */
@@ -142,8 +138,7 @@ public class CategoryTreeViewController implements Controller {
         if (categoryList == null) {
             System.err.println("Error while loading categories from server");
             Platform.runLater(() -> editor.getStageManager().initView(ControllerEnum.LOGIN_SCREEN, true, null));
-        }
-        else if (!tvServerChannels.getRoot().getChildren().isEmpty()){
+        } else if (!tvServerChannels.getRoot().getChildren().isEmpty()) {
             for (Category category : categoryList) {
                 loadCategoryChannels(category);
             }
@@ -158,7 +153,6 @@ public class CategoryTreeViewController implements Controller {
     private void loadCategoryChannels(Category category) {
         editor.getRestManager().getChannels(localUser, server, category, this);
     }
-
 
     /**
      * handles the channels of a server in the view
@@ -445,4 +439,6 @@ public class CategoryTreeViewController implements Controller {
     public ServerScreenController getController() {
         return controller;
     }
+
+
 }

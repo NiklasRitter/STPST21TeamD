@@ -1,10 +1,8 @@
 package de.uniks.stp.wedoit.accord.client.controller.subcontroller;
 
-import com.pavlobu.emojitextflow.EmojiParser;
 import com.pavlobu.emojitextflow.EmojiTextFlow;
 import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
-import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.constants.StageEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
@@ -36,7 +34,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_INVITE;
+import static de.uniks.stp.wedoit.accord.client.constants.Game.GAME_SYSTEM;
 import static de.uniks.stp.wedoit.accord.client.constants.MessageOperations.*;
 
 public class PrivateChatController implements Controller {
@@ -50,10 +49,10 @@ public class PrivateChatController implements Controller {
     private Button btnCancelQuote, btnPlay;
     private RichTextArea tfPrivateChat;
     private ObservableList<PrivateMessage> privateMessageObservableList;
+    private final PropertyChangeListener chatListener = this::newMessage;
     private ListView<PrivateMessage> lwPrivateChat;
     private Button btnEmoji;
     private Chat currentChat;
-    private final PropertyChangeListener chatListener = this::newMessage;
     private MenuItem quote;
     private User selectedUser;
     private MenuItem copy;

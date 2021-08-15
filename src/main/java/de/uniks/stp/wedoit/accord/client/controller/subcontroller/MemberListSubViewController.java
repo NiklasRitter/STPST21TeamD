@@ -19,8 +19,8 @@ public class MemberListSubViewController implements Controller {
     private final User user;
     private final Parent view;
     private final Controller controller;
-    private CheckBox checkBoxPrivilegedMember;
     private final Boolean isPrivilegedUser;
+    private CheckBox checkBoxPrivilegedMember;
 
     public MemberListSubViewController(User user, Parent view, Controller controller, Boolean isPrivilegedUser) {
         this.user = user;

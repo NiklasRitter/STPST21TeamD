@@ -27,14 +27,13 @@ public class GameScreenController implements Controller {
     private final Parent view;
     private final Editor editor;
     private final User opponent;
+    private final Image choosingIMG = new Image(String.valueOf(getClass().getResource(GAME_CHOOSINGIMG)));
+    private final IntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
     private Label lbScore;
     private ImageView imgYouPlayed, imgOppPlayed;
     private Button btnRock, btnPaper, btnScissors;
     private String gameAction;
     private final PropertyChangeListener opponentGameMove = this::onOpponentGameMove;
-    private final Image choosingIMG = new Image(String.valueOf(getClass().getResource(GAME_CHOOSINGIMG)));
-
-    private final IntegerProperty ownScore = new SimpleIntegerProperty(0), oppScore = new SimpleIntegerProperty(0);
 
 
     /**

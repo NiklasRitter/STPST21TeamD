@@ -12,9 +12,11 @@ import java.util.TimerTask;
 @ClientEndpoint
 public class WebSocketClient extends Endpoint {
     private final Editor editor;
-    private Session session;
     private final Timer noopTimer;
+    private Session session;
     private WSCallback callback;
+    private ClientEndpointConfig clientEndpointConfig;
+    private final URI endpoint;
 
     /**
      * Create a new WebsocketClient.
@@ -26,18 +28,30 @@ public class WebSocketClient extends Endpoint {
     public WebSocketClient(Editor editor, URI endpoint, WSCallback callback) {
         this.editor = editor;
         this.noopTimer = new Timer();
+        this.callback = callback;
+        this.endpoint = endpoint;
 
         try {
-            ClientEndpointConfig clientEndpointConfig = ClientEndpointConfig.Builder.create().configurator(new CustomWebSocketConfigurator(this.editor.getLocalUser().getUserKey()))
-                    .build();
+            this.clientEndpointConfig =
+                    ClientEndpointConfig.Builder.create().configurator(new CustomWebSocketConfigurator(this.editor.getLocalUser().getUserKey())).build();
+        } catch (Exception e) {
+            System.err.println("Error while preparing websocket connection:");
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * Connects to server
+     */
+    public WebSocketClient connectToServer() {
+        try {
             WebSocketContainer WebSocketContainer = ContainerProvider.getWebSocketContainer();
             WebSocketContainer.connectToServer(this, clientEndpointConfig, endpoint);
-            this.callback = callback;
         } catch (Exception e) {
             System.err.println("Error while establishing websocket connection:");
             e.printStackTrace();
         }
+        return this;
     }
 
     /**
@@ -67,7 +81,7 @@ public class WebSocketClient extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         this.session = session;
-        this.session.addMessageHandler(String.class, this::onMessage);
+        if (this.session != null) this.session.addMessageHandler(String.class, this::onMessage);
 
         this.noopTimer.schedule(new TimerTask() {
             @Override
@@ -111,7 +125,7 @@ public class WebSocketClient extends Endpoint {
      * @param message The Message to be sent.
      */
     public void sendMessage(String message) {
-        if (this.session.isOpen()) {
+        if (this.session != null && this.session.isOpen()) {
             this.session.getAsyncRemote().sendText(message);
         }
     }

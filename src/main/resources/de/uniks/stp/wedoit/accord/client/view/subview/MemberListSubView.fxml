@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<HBox id="hBoxPlaceHolder" alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox id="vBoxMemberName" alignment="CENTER" prefWidth="150.0" spacing="5.0" HBox.hgrow="ALWAYS" />
-      <VBox id="vBoxCheckBox" alignment="CENTER" prefWidth="150.0" spacing="5.0" HBox.hgrow="ALWAYS" />
-   </children>
+<?import javafx.scene.layout.*?>
+<HBox xmlns:fx="http://javafx.com/fxml/1" id="hBoxPlaceHolder" alignment="CENTER" spacing="15.0"
+      xmlns="http://javafx.com/javafx">
+    <children>
+        <VBox id="vBoxMemberName" alignment="CENTER" prefWidth="150.0" spacing="5.0" HBox.hgrow="ALWAYS"/>
+        <VBox id="vBoxCheckBox" alignment="CENTER" prefWidth="150.0" spacing="5.0" HBox.hgrow="ALWAYS"/>
+    </children>
 </HBox>

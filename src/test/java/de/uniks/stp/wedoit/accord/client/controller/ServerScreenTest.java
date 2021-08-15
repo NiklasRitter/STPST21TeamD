@@ -36,7 +36,6 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javax.json.*;
-import javax.websocket.DeploymentException;
 import java.util.List;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ControllerNames.SERVER_SCREEN_CONTROLLER;
@@ -54,7 +53,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ServerScreenTest extends ApplicationTest {
-/**/
+    /**/
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
     @Mock
@@ -416,7 +415,7 @@ public class ServerScreenTest extends ApplicationTest {
         verify(restMock).getCategories(anyString(), anyString(), callbackArgumentCaptor.capture());
         Callback<JsonNode> catCallback = callbackArgumentCaptor.getValue();
         catCallback.completed(res);
-
+        WaitForAsyncUtils.waitForFxEvents();
         when(res.getBody()).thenReturn(new JsonNode(getChannels().toString()));
 
         verify(restMock, atLeastOnce()).getChannels(anyString(), anyString(), anyString(), channelsCallbackArgumentCaptor.capture());
@@ -1234,7 +1233,7 @@ public class ServerScreenTest extends ApplicationTest {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         Platform.runLater(() -> {
 
-            Assert.assertEquals(clipboard.getString(),"messageLink/testId/idTest/idTest1/5e2ffbd8770dd077d03dr458/1616935874");
+            Assert.assertEquals(clipboard.getString(), "messageLink/testId/idTest/idTest1/5e2ffbd8770dd077d03dr458/1616935874");
         });
         WaitForAsyncUtils.waitForFxEvents();
     }
@@ -1576,13 +1575,13 @@ public class ServerScreenTest extends ApplicationTest {
         serverMenuButton.getItems().get(1).setId("ADD_CATEGORY");
         clickOn(serverMenuButton).clickOn("#LEAVE_SERVER");
 
-        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(),"Attention");
+        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Attention");
 
         clickOn("#btnCancel");
 
         clickOn(serverMenuButton).clickOn("#ADD_CATEGORY");
 
-        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(),"Add Category");
+        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Add Category");
 
     }
 
@@ -1605,13 +1604,13 @@ public class ServerScreenTest extends ApplicationTest {
         serverMenuButton.getItems().get(1).setId("ADD_CATEGORY");
         clickOn(serverMenuButton).clickOn("#SERVER_SETTINGS");
 
-        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(),"Edit Server");
+        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Edit Server");
 
         clickOn("#btnSave");
 
         clickOn(serverMenuButton).clickOn("#ADD_CATEGORY");
 
-        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(),"Add Category");
+        Assert.assertEquals(stageManager.getStage(StageEnum.POPUP_STAGE).getTitle(), "Add Category");
 
     }
 
@@ -1695,58 +1694,58 @@ public class ServerScreenTest extends ApplicationTest {
 
     public JsonObject webSocketCallbackMessageUpdated(String text) {
         return Json.createObjectBuilder().add("action", "messageUpdated").add("data",
-                Json.createObjectBuilder()
-                        .add("id", "5e2ffbd8770dd077d03dr458")
-                        .add("category", "idTest")
-                        .add("channel", "idTest1")
-                        .add("text", text))
+                        Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03dr458")
+                                .add("category", "idTest")
+                                .add("channel", "idTest1")
+                                .add("text", text))
                 .build();
     }
 
     public JsonObject webSocketCallbackMessageDeleted() {
         return Json.createObjectBuilder().add("action", "messageDeleted").add("data",
-                Json.createObjectBuilder()
-                        .add("id", "5e2ffbd8770dd077d03dr458")
-                        .add("category", "idTest")
-                        .add("channel", "idTest1"))
+                        Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03dr458")
+                                .add("category", "idTest")
+                                .add("channel", "idTest1"))
                 .build();
     }
 
     public JsonObject webSocketCallbackMessageUpdatedError() {
         return Json.createObjectBuilder().add("action", "messageUpdated").add("data",
-                Json.createObjectBuilder()
-                        .add("id", "5e2ffbd8770dd077d03dr458")
-                        .add("category", "idTest")
-                        .add("channel", "idInvalid")
-                        .add("text", "error"))
+                        Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03dr458")
+                                .add("category", "idTest")
+                                .add("channel", "idInvalid")
+                                .add("text", "error"))
                 .build();
     }
 
     public JsonObject webSocketCallbackMessageDeleteError() {
         return Json.createObjectBuilder().add("action", "messageDeleted").add("data",
-                Json.createObjectBuilder()
-                        .add("id", "5e2ffbd8770dd077d03dr458")
-                        .add("category", "idTest")
-                        .add("channel", "idInvalid")
-                        .add("text", "error"))
+                        Json.createObjectBuilder()
+                                .add("id", "5e2ffbd8770dd077d03dr458")
+                                .add("category", "idTest")
+                                .add("channel", "idInvalid")
+                                .add("text", "error"))
                 .build();
     }
 
     public JsonObject webSocketCallbackAudioJoined() {
         return Json.createObjectBuilder().add("action", "audioJoined").add("data",
-                Json.createObjectBuilder()
-                        .add("category", "idTest")
-                        .add("channel", "idTest1")
-                        .add("id", "123456"))
+                        Json.createObjectBuilder()
+                                .add("category", "idTest")
+                                .add("channel", "idTest1")
+                                .add("id", "123456"))
                 .build();
     }
 
     public JsonObject webSocketCallbackAudioLeft() {
         return Json.createObjectBuilder().add("action", "audioLeft").add("data",
-                Json.createObjectBuilder()
-                        .add("category", "idTest")
-                        .add("channel", "idTest1")
-                        .add("id", "123456"))
+                        Json.createObjectBuilder()
+                                .add("category", "idTest")
+                                .add("channel", "idTest1")
+                                .add("id", "123456"))
                 .build();
     }
 
@@ -1891,11 +1890,11 @@ public class ServerScreenTest extends ApplicationTest {
 
     public JsonObject getChannelMessageReference(Channel channel) {
         return Json.createObjectBuilder()
-                                .add(ID, "message_id_1")
-                                .add(CHANNEL, channel.getId())
-                                .add(TIMESTAMP, 1616935874)
-                                .add(FROM, "Bob")
-                                .add(TEXT, "#channelName2 1#channelName2 1")
+                .add(ID, "message_id_1")
+                .add(CHANNEL, channel.getId())
+                .add(TIMESTAMP, 1616935874)
+                .add(FROM, "Bob")
+                .add(TEXT, "#channelName2 1#channelName2 1")
                 .build();
     }
 

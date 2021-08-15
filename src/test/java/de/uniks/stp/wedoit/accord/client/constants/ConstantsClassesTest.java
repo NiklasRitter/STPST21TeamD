@@ -11,55 +11,55 @@ public class ConstantsClassesTest {
     @Test
     public void testControllerNames() {
         ControllerNames controllerNames = new ControllerNames();
-        Assert.assertEquals(controllerNames.LOGIN_SCREEN_CONTROLLER, "loginScreenController");
+        Assert.assertEquals(ControllerNames.LOGIN_SCREEN_CONTROLLER, "loginScreenController");
     }
 
     @Test
     public void testChatMedia() {
         ChatMedia chatMedia = new ChatMedia();
-        Assert.assertEquals(chatMedia.YT_PREFIX, "https://www.youtube.com/watch?v=");
+        Assert.assertEquals(ChatMedia.YT_PREFIX, "https://www.youtube.com/watch?v=");
     }
 
     @Test
     public void testGame() {
         Game game = new Game();
-        Assert.assertEquals(game.GAME_INVITE, game.GAME_PREFIX + "play " + Icons.HANDSHAKE);
+        Assert.assertEquals(Game.GAME_INVITE, Game.GAME_PREFIX + "play " + Icons.HANDSHAKE);
     }
 
     @Test
     public void testImages() {
         Images images = new Images();
-        Assert.assertEquals(images.IMAGE_MICRO, "micro.png");
+        Assert.assertEquals(Images.IMAGE_MICRO, "micro.png");
     }
 
     @Test
     public void testJSON() {
         JSON json = new JSON();
-        Assert.assertEquals(json.MESSAGE, "message");
+        Assert.assertEquals(JSON.MESSAGE, "message");
     }
 
     @Test
     public void testMessageOperations() {
         MessageOperations messageOperations = new MessageOperations();
-        Assert.assertEquals(messageOperations.QUOTE_MESSAGE, "###quoteMESSAGE###");
+        Assert.assertEquals(MessageOperations.QUOTE_MESSAGE, "###quoteMESSAGE###");
     }
 
     @Test
     public void testNetwork() {
         Network network = new Network();
-        Assert.assertEquals(network.AND_SERVER_ID_URL, "&" + network.SERVER_ID_URL);
+        Assert.assertEquals(Network.AND_SERVER_ID_URL, "&" + Network.SERVER_ID_URL);
     }
 
     @Test
     public void testPreferences() {
         Preferences preferences = new Preferences();
-        Assert.assertEquals(preferences.INITIALIZATION_VECTOR, "initialization_vector");
+        Assert.assertEquals(Preferences.INITIALIZATION_VECTOR, "initialization_vector");
     }
 
     @Test
     public void testStages() {
         Stages stages = new Stages();
-        Assert.assertEquals(stages.EMOJI_PICKER_STAGE, "emojiPickerStage");
+        Assert.assertEquals(Stages.EMOJI_PICKER_STAGE, "emojiPickerStage");
     }
 
     @Test

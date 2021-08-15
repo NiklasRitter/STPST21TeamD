@@ -5,26 +5,26 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<VBox alignment="CENTER" prefHeight="100.0" prefWidth="400.0" spacing="5.0" styleClass="styleBackgroundPopup" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" prefHeight="100.0" prefWidth="400.0" spacing="5.0"
+      styleClass="styleBackgroundPopup" xmlns="http://javafx.com/javafx">
     <children>
         <Label id="lblYourAreOwner" styleClass="redLabel" text="%YOU_ARE_SERVER_OWNER">
             <font>
-                <Font name="System Bold" size="18.0" />
+                <Font name="System Bold" size="18.0"/>
             </font>
         </Label>
         <Label id="lblLeaveServerError" text="%CAN_NO_LEAVE_SERVER_AS_OWNER">
             <font>
-                <Font size="18.0" />
+                <Font size="18.0"/>
             </font>
         </Label>
         <Button id="btnCancel" mnemonicParsing="false" styleClass="styleButton" text="%CANCEL">
             <font>
-                <Font size="14.0" />
+                <Font size="14.0"/>
             </font>
         </Button>
     </children>
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
     </padding>
 </VBox>

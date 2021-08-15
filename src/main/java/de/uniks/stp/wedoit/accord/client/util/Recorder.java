@@ -5,35 +5,33 @@ import javafx.scene.control.ProgressBar;
 
 import javax.sound.sampled.*;
 
-public class Recorder implements Runnable{
+public class Recorder implements Runnable {
 
-    private Thread worker;
     final ProgressBar bar;
-    private TargetDataLine line;
-    private SourceDataLine sourceDataLine;
     private final Editor editor;
-    private boolean stop = false;
-
     AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
-
     int channels = 1;
     int sampleSize = 16;
     float bitRate = 48000.0f;
     boolean bigEndian = false;
     AudioFormat audioFormat = new AudioFormat(encoding, bitRate, sampleSize, channels,
             (sampleSize / 8) * channels, bitRate, bigEndian);
+    private Thread worker;
+    private TargetDataLine line;
+    private SourceDataLine sourceDataLine;
+    private boolean stop = false;
 
     public Recorder(ProgressBar bar, Editor editor) {
         this.bar = bar;
         this.editor = editor;
     }
 
-    public void start(){
+    public void start() {
         worker = new Thread(this);
         worker.start();
     }
 
-    public void stop(){
+    public void stop() {
         stop = true;
         try {
             worker.join();
@@ -43,8 +41,8 @@ public class Recorder implements Runnable{
         }
     }
 
-    private void cleanup(){
-        if(line != null) {
+    private void cleanup() {
+        if (line != null) {
             if (line.isRunning()) {
                 line.stop();
                 line.flush();
@@ -53,7 +51,7 @@ public class Recorder implements Runnable{
                 line.close();
             }
         }
-        if(sourceDataLine != null) {
+        if (sourceDataLine != null) {
             if (sourceDataLine.isRunning()) {
                 sourceDataLine.stop();
                 sourceDataLine.flush();
@@ -72,21 +70,21 @@ public class Recorder implements Runnable{
             DataLine.Info sourceDataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
             Mixer.Info inputDevice = editor.getStageManager().getPrefManager().loadInputDevice();
             Mixer.Info outputDevice = editor.getStageManager().getPrefManager().loadOutputDevice();
-            if(inputDevice != null){
+            if (inputDevice != null) {
                 line = (TargetDataLine) AudioSystem.getMixer(inputDevice).getLine(info);
-            }else{
+            } else {
                 line = (TargetDataLine) AudioSystem.getLine(info);
             }
 
-            if(outputDevice != null){
+            if (outputDevice != null) {
                 sourceDataLine = (SourceDataLine) AudioSystem.getMixer(outputDevice).getLine(sourceDataLineInfo);
-            }else{
+            } else {
                 sourceDataLine = (SourceDataLine) AudioSystem.getLine(sourceDataLineInfo);
             }
 
             sourceDataLine.open(audioFormat);
             line.open(audioFormat);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -95,13 +93,14 @@ public class Recorder implements Runnable{
 
         line.start();
         sourceDataLine.start();
-        for(int b; (b = line.read(buf, 0, buf.length)) > -1;) {
+        for (int b; (b = line.read(buf, 0, buf.length)) > -1; ) {
 
-            double rms = editor.calculateRMS(buf,b);
-            if(rms > editor.getAccordClient().getOptions().getAudioRootMeanSquare())sourceDataLine.write(buf,0,buf.length);
+            double rms = editor.calculateRMS(buf, b);
+            if (rms > editor.getAccordClient().getOptions().getAudioRootMeanSquare())
+                sourceDataLine.write(buf, 0, buf.length);
             else sourceDataLine.flush();
-            if(bar != null) bar.setProgress(rms);
-            if(stop){
+            if (bar != null) bar.setProgress(rms);
+            if (stop) {
                 break;
             }
         }

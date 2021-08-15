@@ -316,7 +316,7 @@ public class ScenarioTest {
     }
 
     @Test
-    public void AccordClientTest(){
+    public void AccordClientTest() {
         AccordClient accordClient = new AccordClient();
         accordClient.setOptions(new Options());
 
@@ -324,8 +324,7 @@ public class ScenarioTest {
     }
 
     @Test
-   public void myFirstScenario()
-   {
-      // start typing your scenario or select an example using the dropdown above.
-   }
+    public void myFirstScenario() {
+        // start typing your scenario or select an example using the dropdown above.
+    }
 }

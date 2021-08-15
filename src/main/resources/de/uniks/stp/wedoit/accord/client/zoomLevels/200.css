@@ -10,12 +10,12 @@
     -fx-font-size: 17;
 }
 
-.listView2  > .virtual-flow > .clipped-container > .sheet > .list-cell {
+.listView2 > .virtual-flow > .clipped-container > .sheet > .list-cell {
     -fx-font-size: 17;
 }
 
 .tree-cell {
-     -fx-font-size: 17;
+    -fx-font-size: 17;
 }
 
 .radio-button {

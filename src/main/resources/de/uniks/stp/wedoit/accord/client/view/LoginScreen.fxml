@@ -1,114 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Stop?>
-<?import javafx.scene.text.Font?>
-
-<VBox alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox VBox.vgrow="NEVER">
-         <children>
-            <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="28.0" prefWidth="36.0" style="-fx-background-color: transparent;" styleClass="styleButton">
-               <graphic>
-                  <ImageView id="btnSetting" fitHeight="52.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/options.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <textFill>
-                  <LinearGradient endX="1.0" endY="1.0">
-                     <stops>
-                        <Stop>
-                           <color>
-                              <Color />
-                           </color>
-                        </Stop>
-                        <Stop offset="1.0">
-                           <color>
-                              <Color red="1.0" green="1.0" blue="1.0" />
-                           </color>
-                        </Stop>
-                     </stops>
-                  </LinearGradient>
-               </textFill>
-            </Button>
-         </children>
-      </HBox>
-      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="332.0">
-         <children>
-            <Label id="lblEnterUserName" layoutX="46.0" layoutY="35.0" text="Username">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <TextField id="tfUserName" layoutX="45.0" layoutY="68.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="250.0" />
-            <Label id="lblEnterPw" layoutX="48.0" layoutY="117.0" text="Password">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <PasswordField id="pwUserPw" layoutX="45.0" layoutY="146.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="250.0" />
-            <Label id="lblRememberMe" layoutX="78.0" layoutY="190.0" text="Remember me">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <CheckBox id="btnRememberMe" layoutX="48.0" layoutY="192.0" mnemonicParsing="false" styleClass="styleButton" />
-            <Label id="lblError" alignment="CENTER" contentDisplay="CENTER" layoutX="46.0" layoutY="222.0" styleClass="redLabel" textFill="#dd0c0c">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" layoutX="42.0" layoutY="250.0" prefHeight="30.0" prefWidth="242.0" spacing="25.0">
-               <children>
-                  <Button id="btnLogin" mnemonicParsing="false" styleClass="styleButton">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
-                  <Button id="btnRegister" mnemonicParsing="false" styleClass="styleButton">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
-               </children>
-            </HBox>
-            <VBox alignment="CENTER" layoutX="48.0" layoutY="305.0" minWidth="238.0" spacing="2.0" AnchorPane.bottomAnchor="21.0">
-               <children>
-                  <Button id="btnGuestLogin" mnemonicParsing="false" styleClass="styleButton">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Button>
-                  <Label id="lblUserValid">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label id="lblGuestPassword">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
-         </children>
-      </AnchorPane>
-   </children>
-   <padding>
-      <Insets bottom="5.0" top="5.0" />
-   </padding>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx">
+    <children>
+        <HBox VBox.vgrow="NEVER">
+            <children>
+                <Button id="btnOptions" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
+                        prefHeight="28.0" prefWidth="36.0" style="-fx-background-color: transparent;"
+                        styleClass="styleButton">
+                    <graphic>
+                        <ImageView id="btnSetting" fitHeight="52.0" fitWidth="33.0" pickOnBounds="true"
+                                   preserveRatio="true">
+                            <image>
+                                <Image url="@images/options.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                    <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color/>
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" green="1.0" blue="1.0"/>
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </textFill>
+                </Button>
+            </children>
+        </HBox>
+        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                    prefHeight="400.0" prefWidth="332.0">
+            <children>
+                <Label id="lblEnterUserName" layoutX="46.0" layoutY="35.0" text="Username">
+                    <font>
+                        <Font name="System Bold" size="14.0"/>
+                    </font>
+                </Label>
+                <TextField id="tfUserName" layoutX="45.0" layoutY="68.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                           prefHeight="25.0" prefWidth="250.0"/>
+                <Label id="lblEnterPw" layoutX="48.0" layoutY="117.0" text="Password">
+                    <font>
+                        <Font name="System Bold" size="14.0"/>
+                    </font>
+                </Label>
+                <PasswordField id="pwUserPw" layoutX="45.0" layoutY="146.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                               prefHeight="25.0" prefWidth="250.0"/>
+                <Label id="lblRememberMe" layoutX="78.0" layoutY="190.0" text="Remember me">
+                    <font>
+                        <Font name="System Bold" size="14.0"/>
+                    </font>
+                </Label>
+                <CheckBox id="btnRememberMe" layoutX="48.0" layoutY="192.0" mnemonicParsing="false"
+                          styleClass="styleButton"/>
+                <Label id="lblError" alignment="CENTER" contentDisplay="CENTER" layoutX="46.0" layoutY="222.0"
+                       styleClass="redLabel" textFill="#dd0c0c">
+                    <font>
+                        <Font name="System Bold" size="14.0"/>
+                    </font>
+                </Label>
+                <HBox alignment="CENTER" layoutX="42.0" layoutY="250.0" prefHeight="30.0" prefWidth="242.0"
+                      spacing="25.0">
+                    <children>
+                        <Button id="btnLogin" mnemonicParsing="false" styleClass="styleButton">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Button>
+                        <Button id="btnRegister" mnemonicParsing="false" styleClass="styleButton">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
+                <VBox alignment="CENTER" layoutX="48.0" layoutY="305.0" minWidth="238.0" spacing="2.0"
+                      AnchorPane.bottomAnchor="21.0">
+                    <children>
+                        <Button id="btnGuestLogin" mnemonicParsing="false" styleClass="styleButton">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Button>
+                        <Label id="lblUserValid">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label id="lblGuestPassword">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </children>
+    <padding>
+        <Insets bottom="5.0" top="5.0"/>
+    </padding>
 </VBox>

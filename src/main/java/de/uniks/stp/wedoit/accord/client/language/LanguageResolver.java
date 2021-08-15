@@ -14,18 +14,16 @@ import java.util.logging.Logger;
  */
 public class LanguageResolver {
 
-    private LanguageResolver() {
-        throw new AssertionError();
-    }
-
     private static final Logger logger = Logger.getLogger(LanguageResolver.class.getName());
-
+    private static volatile ResourceBundle resource;
 
     static {
         logger.setLevel(Level.WARNING);
     }
 
-    private static volatile ResourceBundle resource;
+    private LanguageResolver() {
+        throw new AssertionError();
+    }
 
     /**
      * Searches for a key in the language file and returns its value.

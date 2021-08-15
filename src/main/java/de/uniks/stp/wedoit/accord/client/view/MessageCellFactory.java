@@ -7,7 +7,6 @@ import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.controller.Controller;
 import de.uniks.stp.wedoit.accord.client.controller.ServerScreenController;
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.CategoryTreeViewController;
-import de.uniks.stp.wedoit.accord.client.constants.Icons;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.util.EmojiTextFlowParameterHelper;
@@ -36,7 +35,10 @@ import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Objects;
 
 import static de.uniks.stp.wedoit.accord.client.constants.ChatMedia.*;
 import static de.uniks.stp.wedoit.accord.client.constants.Game.*;
@@ -74,6 +76,40 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         }
     }
 
+    private void referenceButtonOnClick(Channel channel) {
+        ServerScreenController serverScreenController = (ServerScreenController) controller;
+        CategoryTreeViewController categoryTreeViewController = serverScreenController.getCategoryTreeViewController();
+
+        TreeView<Object> tvServerChannels = categoryTreeViewController.getTvServerChannels();
+        TreeItem<Object> treeItem = tvServerChannels.getRoot();
+
+        if (channel.getType().equals(AUDIO)) {
+            categoryTreeViewController.handleAudioDoubleClicked(channel);
+        } else if (channel.getType().equals(TEXT)) {
+            serverScreenController.getServerChatController().initChannelChat(channel);
+            serverScreenController.refreshLvUsers(channel);
+
+            treeItem = getItem(treeItem, channel.getName());
+
+            if (treeItem != null) {
+                tvServerChannels.getSelectionModel().select(treeItem);
+            }
+        }
+    }
+
+    private TreeItem<Object> getItem(TreeItem<Object> item, String name) {
+
+        if (item != null && (item.getValue() instanceof Channel) && ((Channel) item.getValue()).getName().equals(name))
+            return item;
+
+        for (TreeItem<Object> child : item.getChildren()) {
+            TreeItem<Object> treeItem = getItem(child, name);
+            if (treeItem != null)
+                return treeItem;
+        }
+        return null;
+    }
+
     private class MessageCell<S extends Message> extends ListCell<S> {
 
         private final ListView<S> param;
@@ -90,6 +126,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private final Label lblTime = new Label();
         private final Hyperlink hyperlink = new Hyperlink(), descBox = new Hyperlink();
         private final WebView webView = new WebView();
+        private final Button spoilerButton = new Button("Spoiler");
         private MediaPlayer mediaPlayer;
         private String time;
         private EmojiTextFlowParameters parameters;
@@ -98,7 +135,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private EmojiTextFlowParameters referenceParameters;
         private EmojiTextFlow emojiTextFlow;
         private EmojiTextFlow quoteTextFlow;
-        private final Button spoilerButton = new Button("Spoiler");
 
 
         private MessageCell(ListView<S> param) {
@@ -195,17 +231,16 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 }
 
                 if (item.getText().startsWith("%") && item.getText().endsWith("%")) {
-                    if (item.getText().charAt(item.getText().length()-2) != 92) {
+                    if (item.getText().charAt(item.getText().length() - 2) != 92) {
                         //spoiler function
                         displayNameAndDate(item);
                         displaySpoilerButton(item);
-                    }
-                    else {
+                    } else {
                         Message newMessage = new Message();
                         newMessage.setId(item.getId());
                         newMessage.setFrom(item.getFrom());
                         newMessage.setTimestamp(item.getTimestamp());
-                        newMessage.setText(item.getText().substring(0, item.getText().length()-2) + item.getText().substring(item.getText().length()-1));
+                        newMessage.setText(item.getText().substring(0, item.getText().length() - 2) + item.getText().substring(item.getText().length() - 1));
                         displayNameAndDate(newMessage);
                         displayTextWithEmoji(newMessage);
                     }
@@ -269,7 +304,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                     displayTextWithEmoji(item);
                 }
 
-                if(item.getText().startsWith(MESSAGE_LINK + SLASH) && item.getText().split("/").length == 6) {
+                if (item.getText().startsWith(MESSAGE_LINK + SLASH) && item.getText().split("/").length == 6) {
                     Hyperlink hyperlink = new Hyperlink(item.getText());
                     hyperlink.setId("messageLink");
                     vBox.getChildren().clear();
@@ -285,8 +320,8 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
         private void openMessage(Message message) {
             String[] parsedReferenceMessage = stageManager.getEditor().parseReferenceMessage(message.getText());
             Server server = null;
-            for (Server serverIndex: stageManager.getModel().getLocalUser().getServers()) {
-                if (serverIndex.getId().equals(parsedReferenceMessage[1])){
+            for (Server serverIndex : stageManager.getModel().getLocalUser().getServers()) {
+                if (serverIndex.getId().equals(parsedReferenceMessage[1])) {
                     server = serverIndex;
                 }
             }
@@ -383,7 +418,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 if (url.contains(GIF)) return true;
                 if (Url.getHost().equals(SUPPORTED_CLOUD)) {
                     Document doc = Jsoup.connect(url).get();
-                    if (doc.title() != null){
+                    if (doc.title() != null) {
                         descBox.setText(doc.title());
                         descBox.getStyleClass().add("descBox");
                     }
@@ -596,7 +631,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                 String[] messageTextBlocks = item.getText().split(BOLD_STYLING_KEY_SPLITTER);
                 boolean lastBoldKey = false;
                 for (String messageTextBlock : messageTextBlocks) {
-                    if (messageTextBlock.length() >= 2 && messageTextBlock.charAt(messageTextBlock.length()-2) == 92) {
+                    if (messageTextBlock.length() >= 2 && messageTextBlock.charAt(messageTextBlock.length() - 2) == 92) {
                         messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - 2) + BOLD_STYLING_KEY;
                         EmojiTextFlow messageBlock = new EmojiTextFlow(this.parameters);
                         if (lastBoldKey) {
@@ -604,8 +639,7 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
                         }
                         messageBlock.parseAndAppend(messageTextBlock);
                         this.styleHBox.getChildren().add(messageBlock);
-                    }
-                    else if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
+                    } else if (messageTextBlock.endsWith(BOLD_STYLING_KEY) && lastBoldKey) {
                         lastBoldKey = false;
                         messageTextBlock = messageTextBlock.substring(0, messageTextBlock.length() - BOLD_STYLING_KEY.length());
                         EmojiTextFlow messageBlock = new EmojiTextFlow(this.parametersBold);
@@ -666,41 +700,6 @@ public class MessageCellFactory<T extends Message> implements Callback<ListView<
             this.vBox.getChildren().add(nameAndDateHBox);
             setGraphic(vBox);
         }
-    }
-
-
-    private void referenceButtonOnClick(Channel channel) {
-        ServerScreenController serverScreenController = (ServerScreenController) controller;
-        CategoryTreeViewController categoryTreeViewController = serverScreenController.getCategoryTreeViewController();
-
-        TreeView<Object> tvServerChannels = categoryTreeViewController.getTvServerChannels();
-        TreeItem<Object> treeItem = tvServerChannels.getRoot();
-
-        if (channel.getType().equals(AUDIO)) {
-            categoryTreeViewController.handleAudioDoubleClicked(channel);
-        } else if (channel.getType().equals(TEXT)) {
-            serverScreenController.getServerChatController().initChannelChat(channel);
-            serverScreenController.refreshLvUsers(channel);
-
-            treeItem = getItem(treeItem, channel.getName());
-
-            if (treeItem != null) {
-                tvServerChannels.getSelectionModel().select(treeItem);
-            }
-        }
-    }
-
-    private TreeItem<Object> getItem(TreeItem<Object> item, String name) {
-
-        if (item != null && (item.getValue() instanceof Channel) && ((Channel) item.getValue()).getName().equals(name))
-            return item;
-
-        for (TreeItem<Object> child : item.getChildren()) {
-            TreeItem<Object> treeItem = getItem(child, name);
-            if (treeItem != null)
-                return treeItem;
-        }
-        return null;
     }
 
 }

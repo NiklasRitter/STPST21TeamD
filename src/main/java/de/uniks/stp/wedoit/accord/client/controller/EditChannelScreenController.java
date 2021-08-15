@@ -33,14 +33,14 @@ public class EditChannelScreenController implements Controller {
     private final Editor editor;
     private final Parent view;
     private final Channel channel;
+    private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
+    private final List<String> userList;
     private TextField tfChannelName;
     private Button btnSave;
     private CheckBox checkBoxPrivileged;
     private Button btnDeleteChannel;
     private Label lblError, lblMembers, lblChannelName, lblPrivileged;
     private VBox vBoxMemberNameAndCheckBox;
-    private final ArrayList<MemberListSubViewController> memberListSubViewControllers;
-    private final List<String> userList;
     private Boolean isPrivilegedUser = false;
     private HBox hBoxChannelType;
 

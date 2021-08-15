@@ -1,76 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
-
-<VBox alignment="TOP_CENTER" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" spacing="20.0" styleClass="styleBackgroundHighlight" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="TOP_CENTER" maxWidth="75.0" minWidth="75.0" prefWidth="75.0"
+      spacing="20.0" styleClass="styleBackgroundHighlight" xmlns="http://javafx.com/javafx">
     <children>
         <Button id="btnOptions" alignment="CENTER" mnemonicParsing="false" styleClass="sidebar-Button">
             <graphic>
                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@images/options.png" />
+                        <Image url="@images/options.png"/>
                     </image>
                 </ImageView>
             </graphic>
             <textFill>
                 <LinearGradient endX="1.0" endY="1.0">
                     <stops>
-                        <Stop color="BLACK" />
-                        <Stop color="WHITE" offset="1.0" />
+                        <Stop color="BLACK"/>
+                        <Stop color="WHITE" offset="1.0"/>
                     </stops>
                 </LinearGradient>
             </textFill>
             <tooltip>
-                <Tooltip text="%OPTIONS" />
+                <Tooltip text="%OPTIONS"/>
             </tooltip>
         </Button>
         <Button id="btnHome" mnemonicParsing="false" styleClass="sidebar-Button">
             <graphic>
                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@images/home.png" />
+                        <Image url="@images/home.png"/>
                     </image>
                 </ImageView>
             </graphic>
             <tooltip>
-                <Tooltip text="%HOME" />
+                <Tooltip text="%HOME"/>
             </tooltip>
         </Button>
-        <ListView id="lwServerList" editable="true" prefHeight="68.0" prefWidth="75.0" styleClass="listViewServer" VBox.vgrow="ALWAYS" />
+        <ListView id="lwServerList" editable="true" prefHeight="68.0" prefWidth="75.0" styleClass="listViewServer"
+                  VBox.vgrow="ALWAYS"/>
         <Button id="btnEnterInvitation" mnemonicParsing="false" styleClass="sidebar-Button">
             <graphic>
                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@images/enter_invitation.png" />
+                        <Image url="@images/enter_invitation.png"/>
                     </image>
                 </ImageView>
             </graphic>
-         <tooltip>
-            <Tooltip text="%JOIN_SERVER" />
-         </tooltip>
+            <tooltip>
+                <Tooltip text="%JOIN_SERVER"/>
+            </tooltip>
         </Button>
         <Button id="btnAddServer" mnemonicParsing="false" styleClass="sidebar-Button">
             <graphic>
                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@images/addServer.png" />
+                        <Image url="@images/addServer.png"/>
                     </image>
                 </ImageView>
             </graphic>
-         <tooltip>
-            <Tooltip text="%CREATE_INVITATION" />
-         </tooltip>
+            <tooltip>
+                <Tooltip text="%CREATE_INVITATION"/>
+            </tooltip>
         </Button>
     </children>
     <padding>
-        <Insets bottom="5.0" top="5.0" />
+        <Insets bottom="5.0" top="5.0"/>
     </padding>
 </VBox>

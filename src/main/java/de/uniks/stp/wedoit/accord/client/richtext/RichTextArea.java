@@ -32,15 +32,10 @@ import java.util.function.BiConsumer;
  */
 public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, LinkedImage>, TextStyle> {
 
-    HashMap<String, Emoji> typedEmojis = new HashMap<>();
-
     private final static TextOps<String, TextStyle> styledTextOps = SegmentOps.styledTextOps();
     private final static LinkedImageOps<TextStyle> linkedImageOps = new LinkedImageOps<>();
+    HashMap<String, Emoji> typedEmojis = new HashMap<>();
     private boolean isDarkmode = false;
-
-    public boolean isDarkmode() {
-        return isDarkmode;
-    }
 
     public RichTextArea() {
         super(
@@ -56,9 +51,22 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         this.setWrapText(true);
     }
 
+    private static Node createNode(StyledSegment<Either<String, LinkedImage>, TextStyle> seg,
+                                   BiConsumer<? super TextExt, TextStyle> applyStyle) {
+        return seg.getSegment().unify(
+                text -> StyledTextArea.createStyledTextNode(text, seg.getStyle(), applyStyle),
+                LinkedImage::createNode
+        );
+    }
+
+    public boolean isDarkmode() {
+        return isDarkmode;
+    }
+
     /**
      * updates the text color of the text of a area and the text color of a prompt text of this area
      * True -> color white, false -> color black
+     *
      * @param isDarkMode boolean which shows whether the dark mode is switched on
      */
     public void updateTextColor(boolean isDarkMode) {
@@ -101,14 +109,6 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
 
     }
 
-    private static Node createNode(StyledSegment<Either<String, LinkedImage>, TextStyle> seg,
-                                   BiConsumer<? super TextExt, TextStyle> applyStyle) {
-        return seg.getSegment().unify(
-                text -> StyledTextArea.createStyledTextNode(text, seg.getStyle(), applyStyle),
-                LinkedImage::createNode
-        );
-    }
-
     public void setStyleCodecs() {
         this.setStyleCodecs(
                 ParStyle.CODEC,
@@ -117,6 +117,7 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
 
     /**
      * inserts a emoji at the caret position
+     *
      * @param emoji
      */
     public void insertEmoji(Emoji emoji) {
@@ -131,7 +132,6 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
     }
 
     /**
-     *
      * @return the converted text
      */
     @Override
@@ -139,9 +139,15 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         return this.getConvertedText();
     }
 
+    public RichTextArea setText(String newText) {
+        Platform.runLater(() -> this.replaceText(newText));
+        return this;
+    }
+
     /**
      * converts the text in a text area.
      * included emojis will be transformed to their shortnames
+     *
      * @return converted text
      */
     public String getConvertedText() {
@@ -169,11 +175,6 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
         return buf.toString();
     }
 
-    public RichTextArea setText(String newText) {
-        Platform.runLater(() -> this.replaceText(newText));
-        return this;
-    }
-
     private Emoji getEmojiFromPath(String imagePath) {
         String[] split = imagePath.split("/");
         String temp = split[split.length - 1];
@@ -184,6 +185,7 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
     /**
      * similar to setPlaceholder. The given text is set as javafx Label as placeholder. The text color depends on the isDarkMode parameter.
      * true -> white, false -> black
+     *
      * @param promptText text which should set as prompt text
      * @param isDarkMode boolean which shows whether the dark mode is switched on
      */
@@ -202,6 +204,7 @@ public class RichTextArea extends GenericStyledArea<ParStyle, Either<String, Lin
 
     /**
      * returns a prompt text, set with setPromptText
+     *
      * @return text of the prompt text
      */
     public String getPromptText() {

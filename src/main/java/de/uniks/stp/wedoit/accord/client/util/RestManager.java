@@ -8,7 +8,6 @@ import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerChatCont
 import de.uniks.stp.wedoit.accord.client.controller.subcontroller.ServerListController;
 import de.uniks.stp.wedoit.accord.client.model.*;
 import de.uniks.stp.wedoit.accord.client.network.RestClient;
-import de.uniks.stp.wedoit.accord.client.network.spotify.SpotifyIntegration;
 import de.uniks.stp.wedoit.accord.client.view.MessageCellFactory;
 import javafx.application.Platform;
 import kong.unirest.JsonNode;
@@ -28,7 +27,7 @@ public class RestManager {
 
     private final Editor editor;
     private RestClient restClient = new RestClient();
-    private int count = 0;
+    private final int count = 0;
 
     /**
      * Create a RestManager.
@@ -194,7 +193,7 @@ public class RestManager {
                 String description = getServersResponse.getJsonObject(index).getString(DESCRIPTION);
                 String parsedDescription = JsonUtil.parseDescription(description);
                 User user = editor.haveUser(id, name, parsedDescription);
-                if (user.getName().equals(localUser.getName()) && description.startsWith("+") && user.getDescription() != null){
+                if (user.getName().equals(localUser.getName()) && description.startsWith("+") && user.getDescription() != null) {
                     localUser.setDescription(description);
                 }
             }
@@ -611,10 +610,11 @@ public class RestManager {
                 List<Message> messages = JsonUtil.parseMessageArray(data, channel);
                 messages.stream().sorted(Comparator.comparing(Message::getTimestamp));
                 if (toTimestamp.matches("[0-9][0-9]*")) {
-                    if(messages.size() >= 50 && messages.get(messages.size()-1).getTimestamp() > Long.parseLong(toTimestamp)){
-                        getChannelMessagesToTimeStamp(localUser, server, category, channel, messages.get(0).getTimestamp() +"", toTimestamp, messageId, controller);
+                    if (messages.size() >= 50 && messages.get(messages.size() - 1).getTimestamp() > Long.parseLong(toTimestamp)) {
+                        getChannelMessagesToTimeStamp(localUser, server, category, channel, messages.get(0).getTimestamp() + "", toTimestamp, messageId, controller);
                     } else {
-                    Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));}
+                        Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));
+                    }
                 } else {
                     Platform.runLater(() -> controller.handleGetChannelMessagesToTimeStamp(channel, messageId));
 

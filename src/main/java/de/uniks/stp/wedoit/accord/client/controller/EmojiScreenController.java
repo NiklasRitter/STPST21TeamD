@@ -24,13 +24,12 @@ import java.util.Objects;
 public class EmojiScreenController implements Controller {
 
     private final Parent view;
-    private GridPane pane;
     private final RichTextArea txtAreaForEmoji;
     private final Bounds pos;
-
-    private EmojiButton emojiButton;
     private final HashMap<EmojiButton, Emoji> hashMapForEmojiButtons = new HashMap<>();
     private final List<Icons> iconsUnicodeList = Arrays.asList(Icons.values());
+    private GridPane pane;
+    private EmojiButton emojiButton;
 
     public EmojiScreenController(Parent view, RichTextArea txtAreaForEmoji, Bounds pos) {
         this.view = view;

@@ -2,7 +2,10 @@ package de.uniks.stp.wedoit.accord.client.util;
 
 import de.uniks.stp.wedoit.accord.client.model.*;
 
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -184,7 +187,7 @@ public class JsonUtil {
     }
 
     private static Message haveMessage(Channel channel, String id) {
-        for (Message message: channel.getMessages()) {
+        for (Message message : channel.getMessages()) {
             if (message.getId().equals(id)) {
                 return message;
             }
@@ -270,16 +273,18 @@ public class JsonUtil {
     }
 
     public static String parseDescription(String description) {
-        if (description == null || description.length() == 0) {return "";}
-        switch (description.substring(0,1)) {
+        if (description == null || description.length() == 0) {
+            return "";
+        }
+        switch (description.substring(0, 1)) {
             case SPOTIFY_KEY:
             case GITHUB_KEY:
                 JsonObject parse;
-            try {
-                 parse = parse(description.substring(1));
-            } catch (Exception e) {
-                return "";
-            }
+                try {
+                    parse = parse(description.substring(1));
+                } catch (Exception e) {
+                    return "";
+                }
                 return description.charAt(0) + parse.getString(DESC);
             case STEAM_KEY:
             case CUSTOM_KEY:
@@ -295,9 +300,9 @@ public class JsonUtil {
         }
         switch (type) {
             case SPOTIFY_KEY:
-                return SPOTIFY_KEY + Json.createObjectBuilder().add(DESC, description).add(DATA,"").build().toString();
+                return SPOTIFY_KEY + Json.createObjectBuilder().add(DESC, description).add(DATA, "").build().toString();
             case GITHUB_KEY:
-                return GITHUB_KEY + Json.createObjectBuilder().add(DESC, description).add(DATA,"").build().toString();
+                return GITHUB_KEY + Json.createObjectBuilder().add(DESC, description).add(DATA, "").build().toString();
             case STEAM_KEY:
                 return STEAM_KEY + description;
             case CUSTOM_KEY:

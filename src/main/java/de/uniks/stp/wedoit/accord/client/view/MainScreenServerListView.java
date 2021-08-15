@@ -5,17 +5,11 @@ import de.uniks.stp.wedoit.accord.client.Editor;
 import de.uniks.stp.wedoit.accord.client.constants.ControllerEnum;
 import de.uniks.stp.wedoit.accord.client.language.LanguageResolver;
 import de.uniks.stp.wedoit.accord.client.model.Server;
-import javafx.geometry.Bounds;
 import javafx.scene.control.*;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
-
-import java.awt.*;
 
 public class MainScreenServerListView implements javafx.util.Callback<ListView<Server>, ListCell<Server>> {
 
@@ -28,6 +22,15 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
     @Override
     public ListCell<Server> call(ListView<Server> param) {
         return new ServerListCell();
+    }
+
+    public ContextMenu addContextMenu(Server item) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("LEAVE_SERVER"));
+        contextMenu.getItems().add(menuItem1);
+        menuItem1.setOnAction((event) -> this.editor.getStageManager().initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, item, null));
+
+        return contextMenu;
     }
 
     private class ServerListCell extends ListCell<Server> {
@@ -76,15 +79,6 @@ public class MainScreenServerListView implements javafx.util.Callback<ListView<S
             }
             return result.toString().toUpperCase();
         }
-    }
-
-    public ContextMenu addContextMenu(Server item) {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem1 = new MenuItem("- " + LanguageResolver.getString("LEAVE_SERVER"));
-        contextMenu.getItems().add(menuItem1);
-        menuItem1.setOnAction((event) -> this.editor.getStageManager().initView(ControllerEnum.ATTENTION_LEAVE_SERVER_SCREEN, item, null));
-
-        return contextMenu;
     }
 
 }

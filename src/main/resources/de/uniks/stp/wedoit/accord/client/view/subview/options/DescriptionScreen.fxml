@@ -5,20 +5,19 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<VBox id="vBoxDescription" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox alignment="CENTER_LEFT" spacing="91.0">
-         <children>
-            <Label text="%DESCRIPTION">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-   </children>
-   <padding>
-      <Insets top="40.0" />
-   </padding>
+<VBox xmlns:fx="http://javafx.com/fxml/1" id="vBoxDescription" xmlns="http://javafx.com/javafx">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="91.0">
+            <children>
+                <Label text="%DESCRIPTION">
+                    <font>
+                        <Font size="14.0"/>
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets top="40.0"/>
+    </padding>
 </VBox>
