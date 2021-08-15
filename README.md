@@ -3,18 +3,18 @@
 [![Build Status](https://www.travis-ci.com/sekassel/STPST21TeamD.svg?token=iv8L4W51ZozK2puhSbJk&branch=master)](https://www.travis-ci.com/sekassel/STPST21TeamD)
 [![codecov](https://codecov.io/gh/sekassel/STPST21TeamD/branch/master/graph/badge.svg?token=Y6F8AP879T)](https://codecov.io/gh/sekassel/STPST21TeamD/branch/master)
 
-
 ## Accord - Message Client
+
 Accord is an Application developed by a small Team at the University of Kassel.
 <img src="src/main/resources/de/uniks/stp/wedoit/accord/client/view/images/LogoAccord.png" width="150" align="right">
 <br/>
-Designed for an optimal user experience while communication with others. 
-Accord gives you the choice between writing text messages directly to your friends, or chatting in a joint server 
-with everyone you choose to include at the same time. With the latest release we have also added the ability to talk 
-to your friends in voice channels on any server you have joined.
-
+Designed for an optimal user experience while communication with others. Accord gives you the choice between writing
+text messages directly to your friends, or chatting in a joint server with everyone you choose to include at the same
+time. With the latest release we have also added the ability to talk to your friends in voice channels on any server you
+have joined.
 
 ## Features
+
 - Login
     - Create a new account and login
     - Communicate with other users without an own account via guest access
@@ -45,21 +45,12 @@ to your friends in voice channels on any server you have joined.
     - Get logged in automatically
     - Set the font size for chat messages
     - Logout from your account
+    - Select input and output devices
+    - Adjust the input and output volume
+    - Test your microphone
 
 ## Last added
-- New login screen and design
-- Audio channels and audio channel options to mute users
-- Integration of various media formats like mp4, gif and png integrated via links
-- Editing and deleting of messages
-- Sending private messages via a popup on the server screen
-- Tagging users in server chats function
-- Different languages to choose from
-- Insertion of line breaks with [Shift] + [Enter]
-- New colored style for emojis in chats
-- Changing of the font size for chat messages
-- Copying of messages to the clipboard
 
-## Upcoming next Release
 - More settings for audio channels
     - Input and Output selection
     - Adjusting the volume
@@ -68,16 +59,15 @@ to your friends in voice channels on any server you have joined.
 - No more main screen for choosing a server
 - Many smaller changes
 
-
 ## Authors and acknowledgment
+
 <img src="src/main/resources/de/uniks/stp/wedoit/accord/client/view/images/WeDoIT.png" width="75" align="right"/>
 This project is under development as part of a university assignment concentrating on the usage of the agile 
 developing framework called scrum.
 <br/>
 The WeDoIT Team consists of a Product Owner, a Scrum Master and six Programmers changing roles for every release.
 
-
 ## Support
-If there are any questions or concerns feel free to address us over GitHub or directly using the emails provided in 
-the different users profiles.
-We are looking forward to helping you.
+
+If there are any questions or concerns feel free to address us over GitHub or directly using the emails provided in the
+different users profiles. We are looking forward to helping you.
