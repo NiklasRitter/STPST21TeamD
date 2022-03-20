@@ -8,56 +8,52 @@
 Accord is an Application developed by a small Team at the University of Kassel.
 <img src="src/main/resources/de/uniks/stp/wedoit/accord/client/view/images/LogoAccord.png" width="150" align="right">
 <br/>
-Designed for an optimal user experience while communication with others. Accord gives you the choice between writing
+Designed for an optimal user experience while communicating with others. Accord gives you the choice between writing
 text messages directly to your friends, or chatting in a joint server with everyone you choose to include at the same
 time. With the latest release we have also added the ability to talk to your friends in voice channels on any server you
 have joined.
 
 ## Features
 
-- Login
-    - Create a new account and login
-    - Communicate with other users without an own account via guest access
-- Server
-    - Create new servers or delete old ones
-    - Join and leave other servers or invite people to your servers
+- Server:
+    - Create and delete servers
+    - Join and leave servers or invite people to your servers
     - Chat in text channels
+    - Send private messages on the server screen
     - Speak with people in voice channels
     - Mute users in audio channels
     - Change the name of the server, channels and categories
-    - Send private messages via a popup on the server screen
 - Chats:
-    - Chat with users who are online or in text channels
-    - Send various media formats
-    - Edit and delete messages in text channels
-    - Mark users with **@** in messages
-    - Style your messages with line breaks with [Shift] + [Enter]
-    - Enter a server with an invitation link
-    - Join a server you've been invited to in a private chat
-    - Use Emojis
+    - Chat with users
     - Get notified about new private messages
+    - Send various media formats
+    - Mark users with **@** in messages
+    - Use Emojis
+    - Style your messages with line breaks with [Shift] + [Enter]
     - Copy messages to the system clip board
-- Privat Chats:
-    - Play Rock-Paper-Scissors against another user other
+    - Enter a server with an invitation link
+    - Edit and delete messages in text channels
+- Private Chats:
+    - Play Rock-Paper-Scissors against other users
+- Audio Options:
+    - Select input and output devices
+    - Adjust the input and output volume
+    - Test your microphone
 - Options:
     - Select a languages: English, German or Farsi
     - Choose between a dark or light theme
     - Get logged in automatically
+    - Guest access
     - Set the font size for chat messages
-    - Logout from your account
-    - Select input and output devices
-    - Adjust the input and output volume
-    - Test your microphone
 
-## Last added
+## My main contribution
 
-- More settings for audio channels
-    - Input and Output selection
-    - Adjusting the volume
-    - Microphone test
-- Integration of various services like Spotify and Steam
-- No more main screen for choosing a server
-- Many smaller changes
+- Audio Connection
+    - Send and receive audio data
+    - Handle audio data of multiple users in one channel
+- Integration of Spotify API
+    - Show currently playing song of a user
+    - Authorization via PKCE 
 
 ## Authors and acknowledgment
 
