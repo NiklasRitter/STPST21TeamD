@@ -65,5 +65,4 @@ The WeDoIT Team consists of a Product Owner, a Scrum Master and six Programmers 
 
 ## Support
 
-If there are any questions or concerns feel free to address us over GitHub or directly using the emails provided in the
-different users profiles. We are looking forward to helping you.
+If there are any questions or concerns feel free to concat us. We are looking forward to helping you.
